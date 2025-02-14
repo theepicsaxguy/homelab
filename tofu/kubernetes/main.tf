@@ -29,28 +29,28 @@ module "talos" {
       host_node     = "host3"
       machine_type  = "controlplane"
       ip            = "10.25.150.11"
-      mac_address   = "BC:24:11:2E:C8:00"
+      mac_address   = "bc:24:11:e6:ba:07"
       vm_id         = 8101
       cpu           = 8
       ram_dedicated = 2672
-      igpu          = true
+      igpu          = false
     }
     "ctrl-01" = {
       host_node     = "host3"
       machine_type  = "controlplane"
-      ip            = "10.25.150.101"
-      mac_address   = "BC:24:11:2E:C8:01"
+      ip            = "10.25.150.12"
+      mac_address   = "bc:24:11:44:94:5c"
       vm_id         = 8102
       cpu           = 4
       ram_dedicated = 2480
-      igpu          = true
+      igpu          = false
       #update        = true
     }
     "ctrl-02" = {
       host_node     = "host3"
       machine_type  = "controlplane"
       ip            = "10.25.150.13"
-      mac_address   = "BC:24:11:2E:C8:02"
+      mac_address   = "bc:24:11:1e:1d:2f"
       vm_id         = 8103
       cpu           = 4
       ram_dedicated = 2480
@@ -60,7 +60,7 @@ module "talos" {
           host_node     = "host3"
           machine_type  = "worker"
           ip            = "10.25.150.21"
-          mac_address   = "BC:24:11:2E:A8:00"
+          mac_address   = "bc:24:11:64:5b:cb"
           vm_id         = 8201
           cpu           = 4
           ram_dedicated = 2480
