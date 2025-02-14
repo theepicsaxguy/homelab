@@ -46,7 +46,7 @@ variable "proxmox" {
 #    object({
 #      node = string
 #      size = string
-#      storage = optional(string, "local-zfs")
+#      storage = optional(string, "rpool3")
 #      vmid = optional(number, 9999)
 #      format = optional(string, "raw")
 #    })
