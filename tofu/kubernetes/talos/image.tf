@@ -17,27 +17,14 @@ resource "talos_image_factory_schematic" "updated" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  for_each = var.nodes
+  for_each = toset(distinct([for k, v in var.nodes : "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"]))
 
-  node_name    = each.value.host_node
+  node_name    = split("_", each.key)[0]
   content_type = "iso"
   datastore_id = var.image.proxmox_datastore
 
-  file_name = "talos-${each.value.update ? (local.update_image_id) : (local.image_id)}-${var.image.platform}-${var.image.arch}.img"
-  url       = "${var.image.factory_url}/image/${each.value.update ? (local.update_image_id) : (local.image_id)}/${var.image.platform}-${var.image.arch}.raw.gz"
+  file_name               = "talos-${split("_",each.key)[1]}-${split("_", each.key)[2]}-${var.image.platform}-${var.image.arch}.img"
+  url = "${var.image.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${var.image.platform}-${var.image.arch}.raw.gz"
   decompression_algorithm = "gz"
   overwrite               = false
 }
-
-# resource "proxmox_virtual_environment_download_file" "this" {
-#   for_each = toset(distinct([for k, v in var.nodes : "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"]))
-
-#   node_name    = split("_", each.key)[0]
-#   content_type = "iso"
-#   datastore_id = var.image.proxmox_datastore
-
-#   file_name               = "talos-${split("_",each.key)[1]}-${split("_", each.key)[2]}-${var.image.platform}-${var.image.arch}.img"
-#   url = "${var.image.factory_url}/image/${split("_", each.key)[1]}/${split("_", each.key)[2]}/${var.image.platform}-${var.image.arch}.raw.gz"
-#   decompression_algorithm = "gz"
-#   overwrite               = false
-# }
