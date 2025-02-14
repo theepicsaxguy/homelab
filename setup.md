@@ -44,4 +44,10 @@ image = {
   factory_url       = "https://factory.talos.dev"
 }
 
+# plan
+
+
+tofu apply -target=module.talos.talos_image_factory_schematic.this -target=module.talos.talos_image_factory_schematic.updated
+
+tofu apply
 
