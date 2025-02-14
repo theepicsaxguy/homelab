@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - prometheus.stonegarden.dev
+    - prometheus.pc-tips.se
   rules:
     - matches:
         - path:

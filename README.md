@@ -28,24 +28,24 @@ and [Home Assistant](https://www.home-assistant.io/) VM for home automation.
 
 To organise all the configuration I've opted for an approach using Kustomized Helm
 with [Argo CD](https://argoproj.github.io/cd/) which I've explained in more
-detail [in this article](https://blog.stonegarden.dev/articles/2023/09/argocd-kustomize-with-helm/).
+detail [in this article](https://blog.pc-tips.se/articles/2023/09/argocd-kustomize-with-helm/).
 
-I journal my homelab journey over at my self-hosted [blog](https://blog.stonegarden.dev).
+I journal my homelab journey over at my self-hosted [blog](https://blog.pc-tips.se).
 
 ## 🧑‍💻 Getting Started
 
 If you're new to Kubernetes I've written a fairly thorough guide
-on [Bootstrapping k3s with Cilium](https://blog.stonegarden.dev/articles/2024/02/bootstrapping-k3s-with-cilium/).
+on [Bootstrapping k3s with Cilium](https://blog.pc-tips.se/articles/2024/02/bootstrapping-k3s-with-cilium/).
 In the article I try to guide you from a fresh Debian 12 Bookworm install to a working cluster using
 the [k3s](https://k3s.io) flavour of Kubernetes with [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev)
 and [IngressController](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/).
 
 I've also written an article on how to get started
-with [Kubernetes on Proxmox](https://blog.stonegarden.dev/articles/2024/03/proxmox-k8s-with-cilium/) if virtualisation
+with [Kubernetes on Proxmox](https://blog.pc-tips.se/articles/2024/03/proxmox-k8s-with-cilium/) if virtualisation
 is more your thing.
 
 The current iteration of my homelab runs on [Talos](https://talos.dev) Kubernetes and is set up according
-to [this article](https://blog.stonegarden.dev/articles/2024/08/talos-proxmox-tofu/).
+to [this article](https://blog.pc-tips.se/articles/2024/08/talos-proxmox-tofu/).
 
 ## ⚙️ Core Components
 

@@ -11,7 +11,7 @@ configMapGenerator:
   - name: lldap-config
     namespace: lldap
     literals:
-      - LLDAP_HTTP_URL="https://lldap.stonegarden.dev"
+      - LLDAP_HTTP_URL="https://lldap.pc-tips.se"
       - LLDAP_LDAPS_OPTIONS__ENABLED="true"
       - LLDAP_LDAPS_OPTIONS__CERT_FILE="/cert/tls.crt"
       - LLDAP_LDAPS_OPTIONS__KEY_FILE="/cert/tls.key"

@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "blog.stonegarden.dev"
+    - "blog.pc-tips.se"
   rules:
     - matches:
         - path:
