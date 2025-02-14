@@ -24,4 +24,24 @@ proxmox = {
   insecure     = false
   username     = "root"
   api_token    = "root@pam!ID=TOKEN"
+}proxmox = {
+  name         = "host3"
+  cluster_name = "host3"
+  endpoint     = "https://adress:8006"
+  insecure     = false
+  username     = "root"
+  api_token    = "root@pam!ID=TOKEN"
 }
+
+image = {
+  version           = "v1.6.4"
+  schematic         = "standard"
+  update_version    = "v1.6.4"
+  update_schematic  = "standard"
+  platform          = "proxmox"
+  arch              = "amd64"
+  proxmox_datastore = "local"
+  factory_url       = "https://factory.talos.dev"
+}
+
+
