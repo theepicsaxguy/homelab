@@ -28,7 +28,7 @@ variable "nodes" {
   type = map(object({
     host_node     = string
     machine_type  = string
-    datastore_id = optional(string, "local-zfs")
+    datastore_id = optional(string, "rpool3")
     ip            = string
     mac_address   = string
     vm_id         = number
