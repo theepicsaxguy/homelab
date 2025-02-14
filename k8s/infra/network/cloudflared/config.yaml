@@ -7,22 +7,22 @@ warp-routing:
   enabled: true
 
 ingress:
-  - hostname: hello.stonegarden.dev
+  - hostname: hello.pc-tips.se
     service: hello_world
-#  - hostname: proxmox.stonegarden.dev
+#  - hostname: proxmox.pc-tips.se
 #    service: https://proxmox.proxmox.svc.cluster.local:443
 #    originRequest:
-#      originServerName: proxmox.stonegarden.dev
-#  - hostname: truenas.stonegarden.dev
+#      originServerName: proxmox.pc-tips.se
+#  - hostname: truenas.pc-tips.se
 #    service: https://truenas.truenas.svc.cluster.local:443
 #    originRequest:
-#      originServerName: truenas.stonegarden.dev
-  - hostname: "*.stonegarden.dev"
+#      originServerName: truenas.pc-tips.se
+  - hostname: "*.pc-tips.se"
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:
-      originServerName: "*.stonegarden.dev"
-  - hostname: stonegarden.dev
+      originServerName: "*.pc-tips.se"
+  - hostname: pc-tips.se
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:
-      originServerName: stonegarden.dev
+      originServerName: pc-tips.se
   - service: http_status:404

@@ -10,22 +10,22 @@ configMapGenerator:
   - name: management-auth-config
     namespace: netbird
     literals:
-      - AUTH_AUTHORITY="https://authelia.stonegarden.dev"
+      - AUTH_AUTHORITY="https://authelia.pc-tips.se"
       - AUTH_USER_ID_CLAIM="preferred_username"
       - AUTH_SUPPORTED_SCOPES="openid profile email"
   - name: management-connection-config
     namespace: netbird
     literals:
-      - RELAY_URI="rels://netbird.stonegarden.dev:443"
-      - SIGNAL_URI="netbird.stonegarden.dev:443"
+      - RELAY_URI="rels://netbird.pc-tips.se:443"
+      - SIGNAL_URI="netbird.pc-tips.se:443"
       - SIGNAL_PROTOCOL="https"
-      - STUN_URI="stun:coturn.stonegarden.dev:5349"
-      - TURN_URI="turn:coturn.stonegarden.dev:5349"
+      - STUN_URI="stun:coturn.pc-tips.se:5349"
+      - TURN_URI="turn:coturn.pc-tips.se:5349"
   - name: management-runtime-config
     namespace: netbird
     literals:
       - LOG_LEVEL="info"
-      - DNS_DOMAIN="stonegarden.dev"
+      - DNS_DOMAIN="pc-tips.se"
 
 resources:
   - deployment.yaml

@@ -7,8 +7,8 @@ configMapGenerator:
     literals:
       - NB_HOSTNAME="talos-agent"
       - NB_LOG_LEVEL="warn"
-      - NB_MANAGEMENT_URL="https://netbird.stonegarden.dev"
-      - NB_ADMIN_URL="https://netbird.stonegarden.dev"
+      - NB_MANAGEMENT_URL="https://netbird.pc-tips.se"
+      - NB_ADMIN_URL="https://netbird.pc-tips.se"
       - NB_CONFIG="/var/lib/netbird/config.json"
 
 resources:

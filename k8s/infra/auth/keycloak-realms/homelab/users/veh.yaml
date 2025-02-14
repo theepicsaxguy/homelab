@@ -5,7 +5,7 @@ metadata:
 spec:
   forProvider:
     enabled: true
-    email: vegard@stonegarden.dev
+    email: vegard@pc-tips.se
     firstName: Vegard
     lastName: Hagen
     username: veh

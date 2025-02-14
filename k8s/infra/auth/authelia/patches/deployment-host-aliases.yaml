@@ -8,4 +8,4 @@ spec:
       hostAliases:
         - ip: 10.96.0.15
           hostnames:
-            - lldap.stonegarden.dev
+            - lldap.pc-tips.se

@@ -6,8 +6,8 @@ configMapGenerator:
     namespace: blog
     literals:
       - TIME_ZONE=Europe/Oslo
-      - REMARK_URL=https://remark42.stonegarden.dev
-      - SITE=stonegarden.dev
+      - REMARK_URL=https://remark42.pc-tips.se
+      - SITE=pc-tips.se
 
 resources:
   - svc.yaml

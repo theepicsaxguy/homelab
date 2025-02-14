@@ -141,15 +141,15 @@ filtering:
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
-    - domain: coturn.stonegarden.dev
+    - domain: coturn.pc-tips.se
       answer: 10.25.150.226
-    - domain: proxmox.stonegarden.dev
+    - domain: proxmox.pc-tips.se
       answer: 10.25.150.221
-    - domain: truenas.stonegarden.dev
+    - domain: truenas.pc-tips.se
       answer: 10.25.150.221
-    - domain: '*.stonegarden.dev'
+    - domain: '*.pc-tips.se'
       answer: 10.25.150.220
-    - domain: stonegarden.dev
+    - domain: pc-tips.se
       answer: 10.25.150.220
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576

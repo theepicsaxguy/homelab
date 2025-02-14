@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - grafana.stonegarden.dev
+    - grafana.pc-tips.se
   rules:
     - matches:
         - path:

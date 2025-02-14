@@ -12,7 +12,7 @@ configMapGenerator:
       - LISTENING_IP="0.0.0.0"
       - LISTENING_PORT="3478"
       - TLS_LISTENING_PORT="5349"
-      - REALM="coturn.stonegarden.dev"
+      - REALM="coturn.pc-tips.se"
 
 resources:
   - ns.yaml

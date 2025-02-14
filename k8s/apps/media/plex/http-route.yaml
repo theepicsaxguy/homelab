@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "plex.stonegarden.dev"
+    - "plex.pc-tips.se"
   rules:
     - matches:
         - path:
