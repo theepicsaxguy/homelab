@@ -8,7 +8,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/vehagn/homelab
+        repoURL: https://github.com/theepicsaxguy/homelab
         revision: HEAD
         directories:
           - path: k8s/apps/*
@@ -22,7 +22,7 @@ spec:
     spec:
       project: applications
       source:
-        repoURL: https://github.com/vehagn/homelab
+        repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: HEAD
         path: '{{ path }}'
       destination:

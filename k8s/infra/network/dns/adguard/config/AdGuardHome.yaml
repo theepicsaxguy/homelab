@@ -142,15 +142,15 @@ filtering:
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
     - domain: coturn.stonegarden.dev
-      answer: 192.168.1.226
+      answer: 10.25.150.226
     - domain: proxmox.stonegarden.dev
-      answer: 192.168.1.221
+      answer: 10.25.150.221
     - domain: truenas.stonegarden.dev
-      answer: 192.168.1.221
+      answer: 10.25.150.221
     - domain: '*.stonegarden.dev'
-      answer: 192.168.1.220
+      answer: 10.25.150.220
     - domain: stonegarden.dev
-      answer: 192.168.1.220
+      answer: 10.25.150.220
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576

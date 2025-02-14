@@ -21,7 +21,7 @@ spec:
       dnsConfig:
         # Internal AdGuard Home DNS
         nameservers:
-          - 192.168.1.253
+          - 10.25.150.253
       dnsPolicy: None
       securityContext:
         seccompProfile:
