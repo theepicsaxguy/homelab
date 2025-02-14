@@ -14,7 +14,7 @@ spec:
       helm:
         valueFiles:
           - $values/k8s/infra/monitoring/prometheus-stack/values.yaml
-    - repoURL: https://github.com/vehagn/homelab
+    - repoURL: https://github.com/theepicsaxguy/homelab
       targetRevision: HEAD
       ref: values
   destination:

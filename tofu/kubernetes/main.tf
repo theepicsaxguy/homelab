@@ -18,53 +18,53 @@ module "talos" {
 
   cluster = {
     name            = "talos"
-    endpoint        = "192.168.1.102"
-    gateway         = "192.168.1.1"
-    talos_version   = "v1.8"
-    proxmox_cluster = "homelab"
+    endpoint        = "10.25.150.11"
+    gateway         = "10.25.150.1"
+    talos_version   = "v1.9.4"
+    proxmox_cluster = "kube"
   }
 
   nodes = {
     "ctrl-00" = {
-      host_node     = "abel"
+      host_node     = "host3"
       machine_type  = "controlplane"
-      ip            = "192.168.1.100"
+      ip            = "10.25.150.11"
       mac_address   = "BC:24:11:2E:C8:00"
-      vm_id         = 800
+      vm_id         = 8101
       cpu           = 8
-      ram_dedicated = 28672
+      ram_dedicated = 2672
       igpu          = true
     }
     "ctrl-01" = {
-      host_node     = "euclid"
+      host_node     = "host3"
       machine_type  = "controlplane"
-      ip            = "192.168.1.101"
+      ip            = "10.25.150.101"
       mac_address   = "BC:24:11:2E:C8:01"
-      vm_id         = 801
+      vm_id         = 8102
       cpu           = 4
-      ram_dedicated = 20480
+      ram_dedicated = 2480
       igpu          = true
       #update        = true
     }
     "ctrl-02" = {
-      host_node     = "cantor"
+      host_node     = "host3"
       machine_type  = "controlplane"
-      ip            = "192.168.1.102"
+      ip            = "10.25.150.13"
       mac_address   = "BC:24:11:2E:C8:02"
-      vm_id         = 802
+      vm_id         = 8103
       cpu           = 4
-      ram_dedicated = 4096
+      ram_dedicated = 2480
       #update        = true
     }
-    #    "work-00" = {
-    #      host_node     = "abel"
-    #      machine_type  = "worker"
-    #      ip            = "192.168.1.110"
-    #      mac_address   = "BC:24:11:2E:A8:00"
-    #      vm_id         = 810
-    #      cpu           = 8
-    #      ram_dedicated = 4096
-    #    }
+        "work-00" = {
+          host_node     = "host3"
+          machine_type  = "worker"
+          ip            = "10.25.150.21"
+          mac_address   = "BC:24:11:2E:A8:00"
+          vm_id         = 8201
+          cpu           = 4
+          ram_dedicated = 2480
+        }
   }
 
 }
@@ -79,7 +79,7 @@ module "sealed_secrets" {
 
   // openssl req -x509 -days 365 -nodes -newkey rsa:4096 -keyout sealed-secrets.key -out sealed-secrets.cert -subj "/CN=sealed-secret/O=sealed-secret"
   cert = {
-    cert = file("${path.module}/bootstrap/sealed-secrets/certificate/sealed-secrets.crt")
+    cert = file("${path.module}/bootstrap/sealed-secrets/certificate/sealed-secrets.cert")
     key = file("${path.module}/bootstrap/sealed-secrets/certificate/sealed-secrets.key")
   }
 }
@@ -107,59 +107,59 @@ module "volumes" {
   proxmox_api = var.proxmox
   volumes = {
     pv-sonarr = {
-      node = "cantor"
+      node = "host3"
       size = "4G"
     }
     pv-radarr = {
-      node = "cantor"
+      node = "host3"
       size = "4G"
     }
     pv-lidarr = {
-      node = "cantor"
+      node = "host3"
       size = "4G"
     }
     pv-prowlarr = {
-      node = "euclid"
+      node = "host3"
       size = "1G"
     }
     pv-torrent = {
-      node = "euclid"
+      node = "host3"
       size = "1G"
     }
     pv-remark42 = {
-      node = "euclid"
+      node = "host3"
       size = "1G"
     }
     pv-authelia-postgres = {
-      node = "euclid"
+      node = "host3"
       size = "2G"
     }
     pv-lldap-postgres = {
-      node = "euclid"
+      node = "host3"
       size = "2G"
     }
     pv-keycloak-postgres = {
-      node = "euclid"
+      node = "host3"
       size = "2G"
     }
     pv-jellyfin = {
-      node = "euclid"
+      node = "host3"
       size = "12G"
     }
     pv-netbird-signal = {
-      node = "abel"
+      node = "host3"
       size = "512M"
     }
     pv-netbird-management = {
-      node = "abel"
+      node = "host3"
       size = "512M"
     }
     pv-plex = {
-      node = "abel"
+      node = "host3"
       size = "12G"
     }
     pv-prometheus = {
-      node = "abel"
+      node = "host3"
       size = "10G"
     }
   }

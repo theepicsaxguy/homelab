@@ -59,7 +59,7 @@ data "talos_cluster_health" "this" {
     talos_machine_configuration_apply.this,
     talos_machine_bootstrap.this
   ]
-  skip_kubernetes_checks = false
+  #skip_kubernetes_checks = false
   client_configuration = data.talos_client_configuration.this.client_configuration
   control_plane_nodes  = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
   worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]

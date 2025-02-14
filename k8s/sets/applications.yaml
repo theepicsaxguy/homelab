@@ -7,7 +7,7 @@ spec:
   project: app-of-apps
   source:
     path: k8s/apps
-    repoURL: https://github.com/vehagn/homelab
+    repoURL: https://github.com/theepicsaxguy/homelab
     targetRevision: HEAD
   destination:
     namespace: argocd

@@ -7,7 +7,7 @@ spec:
   gatewayClassName: cilium
   infrastructure:
     annotations:
-      io.cilium/lb-ipam-ips: 192.168.1.221
+      io.cilium/lb-ipam-ips: 10.25.150.221
   listeners:
     - protocol: TLS
       port: 443
