@@ -12,7 +12,7 @@ spec:
         revision: HEAD
         directories:
           - path: k8s/infra/auth/*
-  template:
+    template:
     metadata:
       name: '{{ path.basename }}'
       labels:
