@@ -5,12 +5,18 @@ machine:
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   network:
     hostname: ${hostname}
+    interfaces:
+      - interface: eth0
+        dhcp: true
+        vip:
+          ip: 10.25.150.10
+
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
 
 cluster:
-  allowSchedulingOnControlPlanes: true
+  allowSchedulingOnControlPlanes: false
   apiServer:
     extraArgs:
       oidc-issuer-url: https://authelia.pc-tips.se
