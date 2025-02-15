@@ -48,33 +48,45 @@ resource "talos_machine_configuration_apply" "this" {
     replace_triggered_by = [proxmox_virtual_environment_vm.this[each.key]]
   }
 }
-resource "null_resource" "wait_machine_config" {
+
+resource "time_sleep" "wait_machine_config" {
   depends_on = [talos_machine_configuration_apply.this]
-
-  provisioner "local-exec" {
-    command = "sleep 30"
-  }
+  create_duration = "60s"
 }
-
 
 resource "talos_machine_bootstrap" "this" {
   depends_on = [
     talos_machine_configuration_apply.this,
-    null_resource.wait_machine_config
+    time_sleep.wait_machine_config
   ]
-  //for_each             = var.nodes
-  //node                 = each.value.ip
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
   endpoint             = var.cluster.endpoint
   client_configuration = talos_machine_secrets.this.client_configuration
 }
 
-data "talos_cluster_health" "this" {
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [talos_machine_bootstrap.this]
+  create_duration = "60s"
+}
+
+resource "talos_cluster_kubeconfig" "this" {
   depends_on = [
-    talos_machine_configuration_apply.this,
     talos_machine_bootstrap.this
   ]
-  #skip_kubernetes_checks = false
+  node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
+  endpoint             = var.cluster.endpoint
+  client_configuration = talos_machine_secrets.this.client_configuration
+  timeouts = {
+    read = "1m"
+  }
+}
+
+data "talos_cluster_health" "this" {
+  depends_on = [
+    talos_cluster_kubeconfig.this,
+    time_sleep.wait_60_seconds,
+    talos_machine_configuration_apply.this
+  ]
   client_configuration = data.talos_client_configuration.this.client_configuration
   control_plane_nodes  = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
   worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
@@ -84,15 +96,3 @@ data "talos_cluster_health" "this" {
   }
 }
 
-resource "talos_cluster_kubeconfig" "this" {
-  depends_on = [
-    talos_machine_bootstrap.this,
-    data.talos_cluster_health.this
-  ]
-  node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
-  endpoint             = var.cluster.endpoint
-  client_configuration = talos_machine_secrets.this.client_configuration
-  timeouts = {
-    read = "1m"
-  }
-}
