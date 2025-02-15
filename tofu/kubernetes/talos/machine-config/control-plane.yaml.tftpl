@@ -1,4 +1,10 @@
 machine:
+  certSANs:
+    - 10.25.150.10
+    - 10.25.150.11
+    - 10.25.150.12
+    - 10.25.150.13
+    - api.kube.pc-tips.se
   kubelet:
     extraArgs:
       # Needed for Netbird agent https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
