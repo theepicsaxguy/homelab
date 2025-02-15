@@ -65,6 +65,24 @@ module "talos" {
           cpu           = 4
           ram_dedicated = 2480
         }
+        "work-01" = {
+          host_node     = "host3"
+          machine_type  = "worker"
+          ip            = "10.25.150.22"
+          mac_address   = "bc:24:11:c9:22:c3"
+          vm_id         = 8201
+          cpu           = 4
+          ram_dedicated = 2480
+        }
+        "work-02" = {
+          host_node     = "host3"
+          machine_type  = "worker"
+          ip            = "10.25.150.23"
+          mac_address   = "bc:24:11:6f:20:03"
+          vm_id         = 8201
+          cpu           = 4
+          ram_dedicated = 2480
+        }
   }
 
 }
