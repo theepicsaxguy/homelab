@@ -1,0 +1,21 @@
+---
+name: Validate Charts
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  helm-lint:
+    runs-on: ubuntu-latest
+    env:
+      HELM_VERSION: 3.12.3
+      HELM_DIRS: .
+    steps:
+      - name: Install Helm
+        run: |
+          sudo curl -L -o /usr/bin/helm https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
+          sudo chmod +x /usr/bin/helm
+      - name: Code Checkout
+        uses: actions/checkout@v3
+      - name: Validate Charts
+        run: |
+            ./scripts/validate_charts.sh
