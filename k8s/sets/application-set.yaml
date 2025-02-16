@@ -1,34 +1,36 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: crossplane-crds
+  name: root-aggregator
   namespace: argocd
-  labels:
-    dev.stonegarden: crossplane-crds
 spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/infra/crossplane-crds/*
+          - path: k8s/apps/*/
+          - path: k8s/infra/*/
   template:
     metadata:
-      name: 'crossplane-crds-{{ path.basename }}'
+      name: '{{path.basename}}'
       labels:
-        dev.stonegarden: crossplane-crds
+        part-of: homelab
+        environment: staging
     spec:
-      project: crossplane-crds
+      project: homelab-apps
       source:
-        plugin:
-          name: kustomize-build-with-helm
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
-        name: in-cluster
-        namespace: argocd
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
       syncPolicy:
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - Validate=true
+          - PruneLast=true

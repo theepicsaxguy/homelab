@@ -9,10 +9,10 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
-        revision: HEAD
+        revision: main
         directories:
           - path: k8s/infra/auth/*
-    template:
+  template:
     metadata:
       name: '{{ path.basename }}'
       labels:
@@ -23,7 +23,7 @@ spec:
         plugin:
           name: kustomize-build-with-helm
         repoURL: https://github.com/theepicsaxguy/homelab
-        targetRevision: HEAD
+        targetRevision: main
         path: '{{ path }}'
       destination:
         name: in-cluster

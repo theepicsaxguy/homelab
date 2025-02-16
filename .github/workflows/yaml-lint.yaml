@@ -1,0 +1,12 @@
+---
+name: yamllint
+"on":
+  pull_request:
+    branches: [main]
+jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint YAML files
+        run: yamllint .

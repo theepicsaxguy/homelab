@@ -1,0 +1,23 @@
+---
+name: Validate Kustomize
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  lint-kustomize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+      - name: Verify Kustomize CLI Installation
+        run: |
+          which kustomize
+          kustomize version
+      - name: Validate Manifests
+        run: |
+          ./scripts/validate_manifests.sh
