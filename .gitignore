@@ -30,3 +30,4 @@ override.tf.json
 
 *.pem
 *.crt
+.github/prompts/

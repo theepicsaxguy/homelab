@@ -13,7 +13,5 @@ ports:
     port: 8006
 endpoints:
   - addresses:
-      - 10.25.150.42  # euclid
-      - 10.25.150.52  # cantor
-      - 10.25.150.62  # abel
-    conditions: { } # https://github.com/argoproj/argo-cd/issues/15554
+      - 172.20.20.5
+    conditions: {} # https://github.com/argoproj/argo-cd/issues/15554
