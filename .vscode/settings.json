@@ -1,0 +1,23 @@
+{
+  "[yaml]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.22.0-standalone-strict/all.json": "*.yaml"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "kubernetes.autoComplete": true,
+  "kubernetes.validate": true,
+  "prettier.printWidth": 120,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.proseWrap": "always"
+}
