@@ -5,9 +5,6 @@
   },
   "yaml.validate": true,
   "yaml.format.enable": true,
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.22.0-standalone-strict/all.json": "*.yaml"
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.fixAll.eslint": "explicit"
