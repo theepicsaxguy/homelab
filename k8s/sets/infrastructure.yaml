@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: applications
+  name: infrastructure
   namespace: argocd
 spec:
   project: app-of-apps
   source:
-    path: k8s/apps
+    path: k8s/infra
     repoURL: https://github.com/theepicsaxguy/homelab
     targetRevision: main
   destination:
