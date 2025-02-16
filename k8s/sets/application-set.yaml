@@ -18,7 +18,7 @@ spec:
         part-of: homelab
         environment: staging
     spec:
-      project: homelab-apps
+      project: app-of-apps
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
