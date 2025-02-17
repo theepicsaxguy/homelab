@@ -4,7 +4,7 @@ metadata:
   name: monitoring
   namespace: argocd
   labels:
-    dev.stonegarden: monitoring
+    dev.pc-tips: monitoring
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: controllers
+        dev.pc-tips: controllers
     spec:
       project: monitoring
       source:
