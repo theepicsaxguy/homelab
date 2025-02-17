@@ -2,4 +2,8 @@ network_policy: false
 
 bitwarden_eso_provider:
   auth:
-    existingSecret: bweso-login
+    existingSecret: 'bweso-credentials'
+    secretKeys:
+      clientSecret: 'BW_CLIENTSECRET'
+      clientID: 'BW_CLIENTID'
+      host: 'BW_HOST'
