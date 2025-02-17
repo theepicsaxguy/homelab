@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/theepicsaxguy/homelab/compare/v1.0.0...v1.1.0) (2025-02-17)
+
+
+### Features
+
+* add Bitwarden ESO provider configuration and namespace ([#29](https://github.com/theepicsaxguy/homelab/issues/29)) ([82b2ae0](https://github.com/theepicsaxguy/homelab/commit/82b2ae024783da7a674daa64baddebfcd72480d8))
+
 ## 1.0.0 (2025-02-16)
 
 
