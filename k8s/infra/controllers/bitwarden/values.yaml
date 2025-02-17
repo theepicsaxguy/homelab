@@ -1,0 +1,5 @@
+network_policy: false
+
+bitwarden_eso_provider:
+  auth:
+    existingSecret: bweso-login
