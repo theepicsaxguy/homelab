@@ -4,7 +4,7 @@ metadata:
   name: crossplane-crds
   namespace: argocd
   labels:
-    dev.stonegarden: crossplane-crds
+    dev.pc-tips: crossplane-crds
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: 'crossplane-crds-{{ path.basename }}'
       labels:
-        dev.stonegarden: crossplane-crds
+        dev.pc-tips: crossplane-crds
     spec:
       project: crossplane-crds
       source:

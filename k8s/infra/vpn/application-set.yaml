@@ -4,7 +4,7 @@ metadata:
   name: vpn
   namespace: argocd
   labels:
-    dev.stonegarden: auth
+    dev.pc-tips: auth
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: controllers
+        dev.pc-tips: controllers
     spec:
       project: vpn
       source:

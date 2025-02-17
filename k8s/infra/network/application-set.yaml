@@ -4,7 +4,7 @@ metadata:
   name: network
   namespace: argocd
   labels:
-    dev.stonegarden: network
+    dev.pc-tips: network
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: network
+        dev.pc-tips: network
     spec:
       project: network
       source:

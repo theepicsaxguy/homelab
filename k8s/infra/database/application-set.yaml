@@ -4,7 +4,7 @@ metadata:
   name: database
   namespace: argocd
   labels:
-    dev.stonegarden: database
+    dev.pc-tips: database
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: controllers
+        dev.pc-tips: controllers
     spec:
       project: database
       source:
@@ -33,5 +33,5 @@ spec:
           selfHeal: true
           prune: true
         syncOptions:
-#          - ApplyOutOfSyncOnly=true
+          #          - ApplyOutOfSyncOnly=true
           - ServerSideApply=true

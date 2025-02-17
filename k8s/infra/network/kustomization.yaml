@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonLabels:
-  dev.stonegarden: network
+  dev.pc-tips: network
   app.kubernetes.io/managed-by: argocd
 
 resources:

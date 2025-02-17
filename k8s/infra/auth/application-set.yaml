@@ -4,7 +4,7 @@ metadata:
   name: auth
   namespace: argocd
   labels:
-    dev.stonegarden: auth
+    dev.pc-tips: auth
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: auth
+        dev.pc-tips: auth
     spec:
       project: auth
       source:
