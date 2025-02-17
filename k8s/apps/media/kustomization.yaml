@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: argocd
 commonLabels:
-  dev.stonegarden: app-management
+  dev.pc-tips: app-management
   app.kubernetes.io/managed-by: argocd
 
 resources:

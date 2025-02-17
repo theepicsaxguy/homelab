@@ -4,7 +4,7 @@ metadata:
   name: controllers
   namespace: argocd
   labels:
-    dev.stonegarden: controllers
+    dev.pc-tips: controllers
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.stonegarden: controllers
+        dev.pc-tips: controllers
     spec:
       project: controllers
       source:
