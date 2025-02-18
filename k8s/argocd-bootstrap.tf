@@ -51,18 +51,6 @@ resource "helm_release" "cilium" {
   values     = [file("${path.module}/infra/network/cilium/values.yaml")]
 }
 
-# Deploy Sealed-Secrets
-data "kustomization_build" "sealed_secrets" {
-  path = "${path.module}/infra/controllers/sealed-secrets"
-  kustomize_options {
-    enable_helm = true
-  }
-}
-
-resource "kubectl_manifest" "sealed_secrets" {
-  yaml_body = join("\n", values(data.kustomization_build.sealed_secrets.manifests))
-  wait      = true
-}
 
 # Deploy Proxmox CSI Plugin
 data "kustomization_build" "proxmox_csi" {
