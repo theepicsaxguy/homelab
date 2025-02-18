@@ -1,7 +1,7 @@
 .idea
 charts/example
 **/infra/**/charts
-*secret*.yaml
+!*secret*.yaml
 
 .terraform
 output
