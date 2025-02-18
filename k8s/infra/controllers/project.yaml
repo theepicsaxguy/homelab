@@ -19,6 +19,8 @@ spec:
       server: '*'
     - namespace: 'kube-system'
       server: '*'
+    - namespace: 'external-secrets'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
