@@ -7,3 +7,11 @@ bitwarden_eso_provider:
       clientSecret: 'BW_CLIENTSECRET'
       clientID: 'BW_CLIENTID'
       host: 'BW_HOST'
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    capabilities:
+      drop: ['ALL']
+    seccompProfile:
+      type: RuntimeDefault
