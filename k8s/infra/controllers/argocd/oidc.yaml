@@ -1,14 +1,28 @@
-apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
 metadata:
   name: oidc
   namespace: argocd
 spec:
-  encryptedData:
-    authelia.clientSecret: AgCPZgB0p0vkCe452dsk2rj83m8usN8K8EPOcIe5OGddf+kZtfZbIPqUfxYtqetkmGC5mxCfdz/oPhRKOlpJEEGmw91Lbil0cZ9rfyKsN6MSMOxCxiUSuL02Q9PjwcG56tr9YGdclzm7VeSienuTlNP8bilueNLUKpAt9T1nhIwkMSmj9MbQdv1G5kHlxDmdMnJEqgULIHrPW1HZUtXB/6DHIQ7uMSIF+YBRK2BKh3DGj4OKDxXPvdA0kviBjlXIgyd63Mjt0WpmDyXG6TtrH2tahzCG3ywHm5p9ZIXW+gCOZDcqUHCnmfGkWHfwwGXNP90nPGlUXT5DkMufjx71BU8MEGTrCYVK+WLAQwdrIEzL326OaiQXl9F+I8GiA+GRoBX797rFhDFYTfivZ0O/uczE8xzCNM9OHC/IC6DADx6SPoX0aSEXyRDExSxt5x+CkH87OKh+B9t7WpIe9ZNKcZ/au3efEw76K87vkL0a2G8iZdTJ2g1MDjP7TCdGl8+yVW7vNIhePCsDvJi6rOuyjGjhehctNQhxpdsuHrORZwI44i80WGRhndmfTfka/pm1cTTQCIHBgwP10UpRRzzHZkI4m/CvX72ionWv8SHYSbtcqNU5y9jg3rBO1HAz7/Vwo59L325F3feo39P6qp5PkLhP3rxptFGiKAAsi1N3L2XE/NMzqMWhZMCrWd7FJRrP02K17ZsAd8QSvJbXC2lvETCpZYwuNdw6v8Gw5kGTQTeifeAxFdhhhJ/06TrkrYA29q8iiZNh4iOO6ohV5ItnQQ1TA7M+9sKIR68=
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/part-of: argocd
-      name: oidc
-      namespace: argocd
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-login
+    kind: ClusterSecretStore
+  target:
+    name: oidc
+    creationPolicy: Owner
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/part-of: argocd
+        name: oidc
+        namespace: argocd
+  data:
+    - secretKey: authelia.clientSecret
+      sourceRef:
+        storeRef:
+          name: bitwarden-login
+          kind: ClusterSecretStore
+      remoteRef:
+        key: oidc
+        property: authelia.clientSecret
