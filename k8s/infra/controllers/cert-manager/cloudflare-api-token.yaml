@@ -18,5 +18,5 @@ spec:
           name: bitwarden-login
           kind: ClusterSecretStore
       remoteRef:
-        key: cloudflare-api-token # EXACT name in Bitwarden Secrets Manager
-        property: password # The field inside Bitwarden containing your token
+        key: cloudflare-api-token
+        property: password

@@ -11,3 +11,10 @@ helmCharts:
     releaseName: bitwarden-eso-provider
     namespace: external-secrets
     valuesFile: values.yaml
+
+  - name: external-secrets
+    repo: https://charts.external-secrets.io
+    version: 0.9.16 # use the latest compatible version
+    releaseName: external-secrets
+    namespace: external-secrets
+    valuesFile: external-secrets-values.yaml
