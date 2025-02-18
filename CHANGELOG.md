@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/theepicsaxguy/homelab/compare/v1.1.0...v1.2.0) (2025-02-18)
+
+
+### Features
+
+* update common labels from dev.stonegarden to dev.pc-tips across k8s configurations ([#32](https://github.com/theepicsaxguy/homelab/issues/32)) ([d73b8a5](https://github.com/theepicsaxguy/homelab/commit/d73b8a50bc53f6a82ed328f4e372e660beb1a45b))
+
 ## [1.1.0](https://github.com/theepicsaxguy/homelab/compare/v1.0.0...v1.1.0) (2025-02-17)
 
 
