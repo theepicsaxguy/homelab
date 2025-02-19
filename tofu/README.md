@@ -20,6 +20,12 @@ cd kubernetes
 cp terraform.tfvars.example terraform.tfvars
 # Edit your variables
 tofu init && tofu apply
+
+kubectl create secret generic bweso-credentials \
+   --from-literal=BW_CLIENTSECRET='your-client-secret' \
+   --from-literal=BW_CLIENTID='your-client-id' \
+   --from-literal=BW_HOST='your-bitwarden-host' \
+   -n external-secrets --dry-run=client -o yaml | kubectl apply -f -
 ```
 
 ## Performance Tweaks
