@@ -1,15 +1,67 @@
 ---
-name: Pull Request Check
-  
-on: [pull_request]
+name: Validate Kubernetes Manifests
+
+on:
+  pull_request:
+    paths:
+      - 'k8s/**'
+      - '.github/workflows/manifests-validation.yml'
+
+permissions:
+  contents: read
+  pull-requests: read
+  security-events: write
 
 jobs:
   validation:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        k8s-version: ['1.32.0']
     steps:
       - uses: actions/checkout@v4
-      - name: validate manifests in k8s
-        uses: makocchi-git/actions-k8s-manifests-validate-kubeval@v1.0.1
+
+      - name: Cache validation tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/kubeval
+            ~/.cache/kustomize
+          key: ${{ runner.os }}-k8s-tools-${{ hashFiles('k8s/**') }}
+
+      - name: Validate k8s manifests
+        uses: instrumenta/kubeval-action@master
         with:
           files: k8s
-          token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ matrix.k8s-version }}
+          strict: true
+          ignore_missing_schemas: true
+
+      - name: Run Trivy vulnerability scanner for manifests
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          hide-progress: false
+          scan-ref: 'k8s'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Validate with ArgoCD
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+          argocd admin app manifests --source k8s/ | argocd app diff - --local=k8s/
+
+      # Add drift detection
+      - name: Check for configuration drift
+        run: |
+          if [ -f k8s/current-state.yaml ]; then
+            kubectl diff -f k8s/current-state.yaml -f k8s/
+          fi
