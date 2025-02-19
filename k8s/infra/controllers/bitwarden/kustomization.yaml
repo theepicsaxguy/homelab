@@ -19,4 +19,4 @@ helmCharts:
     releaseName: external-secrets
     repo: https://charts.external-secrets.io
     valuesFile: external-secrets-values.yaml
-    version: 0.21.0 # renovate: registryUrl=https://charts.external-secrets.io
+    version: 0.14.2 # renovate: registryUrl=https://charts.external-secrets.io
