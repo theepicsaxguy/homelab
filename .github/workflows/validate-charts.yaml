@@ -26,5 +26,7 @@ jobs:
           tar xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz
           sudo mv linux-amd64/helm /usr/local/bin/helm
           rm -rf linux-amd64 helm-v${HELM_VERSION}-linux-amd64.tar.gz
+      - name: Make scripts executable
+        run: chmod +x ./scripts/*.sh
       - name: Validate Charts
         run: ./scripts/validate_charts.sh

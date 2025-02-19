@@ -14,4 +14,4 @@ helmCharts:
     releaseName: sm-operator
     repo: https://charts.bitwarden.com
     valuesFile: sm-operator-values.yaml
-    version: 0.1.0-beta.1
+    version: '>=0.1.0-Beta'
