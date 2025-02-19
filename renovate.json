@@ -3,12 +3,12 @@
   "extends": [
     "config:recommended",
     ":rebaseStalePrs",
-    "config:base",
+    "config:recommended",
     ":enablePreCommit",
     "docker:enableMajor",
     ":automergePatch",
     ":automergeMinor",
-    "github>whitesource/merge-confidence:beta"
+    "mergeConfidence:all-badges"
   ],
   "platform": "github",
   "onboarding": false,
@@ -32,20 +32,20 @@
   "packageRules": [
     {
       "groupName": "Media containers",
-      "matchPackagePatterns": ["ghcr.io/onedr0p/.*", "ghcr.io/jellyfin/.*"]
+      "matchPackageNames": ["/ghcr.io/onedr0p/.*/", "/ghcr.io/jellyfin/.*/"]
     },
     {
       "groupName": "Netbird",
-      "matchPackagePatterns": ["docker.io/netbirdio/.*"]
+      "matchPackageNames": ["/docker.io/netbirdio/.*/"]
     },
     {
       "groupName": "Intel Device Plugins",
-      "matchPackagePatterns": ["intel-device-plugins/.*"]
+      "matchPackageNames": ["/intel-device-plugins/.*/"]
     },
     {
       "groupName": "Cilium",
-      "matchPackagePatterns": ["cilium/.*"],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": ["/cilium/.*/"]
     },
     {
       "matchManagers": ["terraform"],
@@ -59,12 +59,12 @@
       "automerge": true
     },
     {
-      "matchPackagePatterns": ["^ghcr.io/external-secrets/"],
-      "groupName": "external-secrets"
+      "groupName": "external-secrets",
+      "matchPackageNames": ["/^ghcr.io/external-secrets//"]
     },
     {
-      "packagePatterns": ["*"],
-      "groupName": "all dependencies"
+      "groupName": "all dependencies",
+      "matchPackageNames": ["*"]
     }
   ],
   "kubernetes": {
