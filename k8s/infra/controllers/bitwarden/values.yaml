@@ -15,3 +15,7 @@ bitwarden_eso_provider:
       drop: ['ALL']
     seccompProfile:
       type: RuntimeDefault
+
+serviceAccount:
+  create: false
+  name: bitwarden-eso-provider

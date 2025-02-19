@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - SVC.yaml
 
 helmCharts:
   - name: bitwarden-eso-provider
