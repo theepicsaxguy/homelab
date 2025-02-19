@@ -4,10 +4,10 @@
 
 Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?
 
-[![Kubernetes](docs/assets/kubernetes-logo.svg)](https://kubernetes.io)
-[![Proxmox](docs/assets/proxmox-logo-stacked-color.svg)](https://www.proxmox.com)
-[![Talos](docs/assets/talos-logo.svg)](https://talos.dev)
-[![OpenTofu](docs/assets/tofu-on-light.svg)](https://opentofu.org)
+[![Kubernetes](docs/assets/kubernetes-logo.svg){ height=100px }](https://kubernetes.io)
+[![Proxmox](docs/assets/proxmox-logo-stacked-color.svg){ height=100px }](https://www.proxmox.com)
+[![Talos](docs/assets/talos-logo.svg){ height=100px }](https://talos.dev)
+[![OpenTofu](docs/assets/tofu-on-light.svg){ height=100px }](https://opentofu.org)
 
 _Built with love, coffee, and probably too much time spent reading Kubernetes docs_
 
