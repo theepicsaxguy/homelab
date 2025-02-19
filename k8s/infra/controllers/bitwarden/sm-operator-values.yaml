@@ -1,0 +1,12 @@
+settings:
+  bwSecretsManagerRefreshInterval: 180
+  cloudRegion: 'EU'
+  # For self-hosted users only, uncomment and set these if needed:
+  # bwApiUrlOverride: "https://your-instance/api"
+  # bwIdentityUrlOverride: "https://your-instance/identity"
+
+containers:
+  enableSeccompProfileRuntimeDefault: true
+  manager:
+    image:
+      tag: 'latest'

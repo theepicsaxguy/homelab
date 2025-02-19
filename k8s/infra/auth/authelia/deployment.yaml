@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authelia
+spec:
+  template:
+    spec:
+      containers:
+        - name: authelia
+          env:
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: smtp_password
+            - name: AUTHELIA_STORAGE_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: crypto_key
+            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_0_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: argocd_oidc_secret
+            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_1_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: netbird_oidc_secret
+            - name: STORAGE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: lldap_password

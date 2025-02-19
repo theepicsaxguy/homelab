@@ -21,12 +21,12 @@ spec:
       initContainers:
         - name: copy-base-config
           image: busybox
-          command: [ "cp", "/tmp/AdGuardHome.yaml", "/opt/adguardhome/conf/AdGuardHome.yaml" ]
+          command: ['cp', '/tmp/AdGuardHome.yaml', '/opt/adguardhome/conf/AdGuardHome.yaml']
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: [ "ALL" ]
+              drop: ['ALL']
           volumeMounts:
             - name: config
               mountPath: /tmp/AdGuardHome.yaml
@@ -35,12 +35,12 @@ spec:
               mountPath: /opt/adguardhome/conf
         - name: append-users
           image: busybox
-          command: [ "sh", "-c", "cat /tmp/users.yaml >> /opt/adguardhome/conf/AdGuardHome.yaml" ]
+          command: ['sh', '-c', 'cat /tmp/users.yaml >> /opt/adguardhome/conf/AdGuardHome.yaml']
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: [ "ALL" ]
+              drop: ['ALL']
           volumeMounts:
             - name: users
               mountPath: /tmp/users.yaml
@@ -48,7 +48,7 @@ spec:
             - name: config-folder
               mountPath: /opt/adguardhome/conf
       containers:
-        - name: adguard
+        - name: adguard-home
           image: docker.io/adguard/adguardhome:v0.107.56 # renovate: docker=docker.io/adguard/adguardhome
           securityContext:
             allowPrivilegeEscalation: false
@@ -80,6 +80,13 @@ spec:
               mountPath: /opt/adguardhome/conf
             - name: work-folder
               mountPath: /opt/adguardhome/work
+          env:
+            - name: ADGUARD_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: infrastructure-secrets
+                  key: adguard_users
+                  namespace: sm-operator-system
       volumes:
         - name: config
           configMap:
@@ -88,6 +95,6 @@ spec:
           secret:
             secretName: users
         - name: config-folder
-          emptyDir: { }
+          emptyDir: {}
         - name: work-folder
-          emptyDir: { }
+          emptyDir: {}
