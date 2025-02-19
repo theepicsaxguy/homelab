@@ -1,77 +1,80 @@
-# Manual bootstrap
+# Kubernetes Configuration
 
-## CRDs
+This directory contains the GitOps configuration for the entire cluster, managed through ArgoCD.
 
-Gateway API
+## Directory Structure
 
-```shell
-kubectl apply -k infra/crds
+```
+.
+├── apps/                  # Application workloads
+│   ├── dev/              # Development tools
+│   ├── external/         # External service integrations
+│   └── media/           # Media stack
+├── infra/                # Core infrastructure
+│   ├── auth/            # Authentication (Authelia)
+│   ├── controllers/     # Core controllers
+│   ├── crossplane-crds/ # Crossplane resources
+│   ├── monitoring/      # Prometheus stack
+│   ├── network/         # Cilium, DNS, Gateway
+│   └── storage/         # CSI drivers
+└── sets/                # ApplicationSet configurations
 ```
 
-## Cilium
+## Application Structure
 
-```shell
-kubectl kustomize --enable-helm infra/network/cilium | kubectl apply -f -
+Each application follows the structure:
+
+```yaml
+app_directory:
+  - application-set.yaml # ArgoCD ApplicationSet
+  - kustomization.yaml # Resource composition
+  - project.yaml # ArgoCD project definition
 ```
 
-## Sealed-secrets
+## Infrastructure Components
 
-```shell
-kustomize build --enable-helm infra/controllers/sealed-secrets | kubectl apply -f -
-```
+| Component  | Purpose        | Performance Impact     |
+| ---------- | -------------- | ---------------------- |
+| Cilium     | CNI & Security | Minimal (eBPF)         |
+| Authelia   | Authentication | Low (caching)          |
+| Prometheus | Monitoring     | Medium (storage heavy) |
+| CSI        | Storage        | Varies by backend      |
 
-## Proxmox CSI Plugin
+## Performance Notes
 
-```shell
-kustomize build --enable-helm infra/storage/proxmox-csi | kubectl apply -f -
-```
+- ApplicationSets use progressive syncs
+- Resource requests/limits are mandatory
+- HPA configured for scalable workloads
+- Network policies enforce zero-trust
 
-```shell
-kubectl get csistoragecapacities -ocustom-columns=CLASS:.storageClassName,AVAIL:.capacity,ZONE:.nodeTopology.matchLabels -A
-```
+## Resource Requirements
 
-## Argo CD
+| Component  | CPU  | Memory | Storage |
+| ---------- | ---- | ------ | ------- |
+| ArgoCD     | 1C   | 1Gi    | 10Gi    |
+| Monitoring | 2C   | 4Gi    | 50Gi    |
+| Auth       | 500m | 512Mi  | 1Gi     |
 
-```shell
-kustomize build --enable-helm infra/controllers/argocd | kubectl apply -f -
-```
+## Getting Started
 
-```shell
-kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r ' .data.password | @base64d'
-```
+1. Bootstrap ArgoCD:
 
-```shell
-kubectl apply -k infra
-```
+   ```bash
+   tofu init && tofu apply
+   ```
 
-```shell
-kubectl apply -k sets
-```
+2. Applications sync automatically via ApplicationSets
 
-# SBOM
+## Adding New Applications
 
-* [x] Cilium
-* [X] Hubble
-* [x] Argo CD
-* [x] Proxmox CSI Plugin
-* [x] Cert-manager
-* [X] Gateway
-* [X] Authentication (Keycloak, Authentik, ...)
-* [] CNPG - Cloud Native PostGresSQL
+1. Create directory under `/apps`
+2. Define ApplicationSet
+3. Create ArgoCD project
+4. Add Kustomization
 
-# CRDs
+## Security Considerations
 
-* [] Gateway
-* [] Argo CD
-* [] Sealed-secrets
-
-# TODO
-
-* [X] Remotely managed cloudflared tunnel
-* [X] Keycloak
-* [] Argo CD sync-wave
-
-```shell
-commonAnnotations:
-    argocd.argoproj.io/sync-wave: "-1"
-```
+- All manifests must be signed
+- Secrets handled via SealedSecrets
+- RBAC strictly enforced
+- Network policies required

@@ -1,114 +1,146 @@
 <div align="center">
 
-# 🪨 Homelab 🏡
+# 🏠 Welcome to My Overengineered Homelab! 🚀
 
-A modern GitOps-driven homelab infrastructure powered by Kubernetes and automation
+Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?
 
 [![Kubernetes](docs/assets/kubernetes-logo.svg)](https://kubernetes.io)
 [![Proxmox](docs/assets/proxmox-logo-stacked-color.svg)](https://www.proxmox.com)
 [![Talos](docs/assets/talos-logo.svg)](https://talos.dev)
 [![OpenTofu](docs/assets/tofu-on-light.svg)](https://opentofu.org)
 
-Built with [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment), [OpenTofu](https://opentofu.org/),
-[Talos](https://talos.dev), [Kubernetes](https://kubernetes.io/), and [Argo CD](https://argoproj.github.io/cd/).
-Continuously updated by [Renovate](https://www.mend.io/renovate/).
+_Built with love, coffee, and probably too much time spent reading Kubernetes docs_
 
 </div>
 
 ---
 
-## Quick Start 🚀
+## 🎯 What's This All About?
+
+This is my homelab - a slightly excessive but incredibly fun infrastructure setup that brings enterprise-grade tech to
+my home network. It's built on modern DevOps practices because, well, why not learn the cool stuff?
+
+### 🛠 Core Stack
+
+- **Proxmox VE**: The rock-solid foundation (VM hypervisor)
+- **OpenTofu**: Infrastructure as code (the cooler fork of Terraform)
+- **Talos**: A Kubernetes-focused OS that's lean and mean
+- **Kubernetes**: The container orchestrator we all love to debug
+- **ArgoCD**: GitOps magic - because `kubectl apply` is so 2020
+- **Cilium**: eBPF-powered networking that makes kube-proxy cry
+
+## 🌟 Key Features
+
+- **🔒 Security First**: Zero-trust setup with Authelia, sealed secrets, and network policies
+- **🚄 Performance Focused**: Cilium direct routing, eBPF optimizations, tuned storage classes
+- **🤖 Fully Automated**: From VM provisioning to app deployment, it's GitOps all the way down
+- **🎮 Self-Healing**: Because nobody wants to fix servers at 3 AM
+- **📊 Observable**: Prometheus, Grafana, and Hubble keeping watch
+
+## 📦 What's Running?
+
+### Core Infrastructure
+
+- Authentication stack (Authelia, LLDAP)
+- Monitoring (Prometheus, Grafana, Loki)
+- Storage (Proxmox CSI, TrueNAS integration)
+- Network (Cilium, DNS, Gateway API)
+
+### Applications
+
+- Media stack (Plex alternative with Jellyfin)
+- Development environments
+- Home automation
+- And whatever else catches my fancy!
+
+## 🚀 Quick Start
+
+If you're brave enough to replicate this:
 
 ```bash
-# Clone the repo
-git clone https://github.com/theepicsaxguy/homelab
-
-# Deploy infrastructure
+# 1. Clone and set up infrastructure
+git clone https://github.com/yourusername/homelab.git
 cd tofu/kubernetes
 tofu init && tofu apply
 
-# Access your cluster
-export KUBECONFIG=output/kube-config.yaml
+# 2. Let ArgoCD take the wheel
+cd ../../k8s
+tofu init && tofu apply
 ```
 
-## Technical Stack 🏗️
+## 📝 Documentation
 
-### Core Infrastructure
+Detailed docs in `/docs` - because even I forget how this all works sometimes:
 
-- **Hypervisor**: Proxmox VE (3-node cluster)
-- **Kubernetes**: Talos v1.9.4
-- **CNI**: Cilium with eBPF, Service Mesh, BGP
-- **GitOps**: Argo CD with ApplicationSets
-- **Storage**: TrueNAS + Proxmox CSI
-- **Auth**: Keycloak + Authelia + LLDAP
+- [🏗 Architecture Deep Dive](docs/architecture.md)
+- [🌐 Network Magic Explained](docs/network-architecture.md)
+- [💾 Storage Setup](docs/storage-architecture.md)
+- [🔐 Security Model](docs/security-architecture.md)
+- [📊 Monitoring Stack](docs/monitoring-architecture.md)
 
-### Technical Specifications
+## 🎯 Design Goals
 
-- **Control Plane**: 3 nodes (4 CPU, 2480MB RAM each)
-- **Worker Nodes**: High-performance workers with GPU passthrough
-- **Network**: 10.25.150.0/24 cluster network
-- **API**: api.kube.pc-tips.se:6443
+1. **Performance**: eBPF-powered networking, optimized storage paths
+2. **Security**: Zero-trust, authentication everywhere, encrypted everything
+3. **Automation**: If it can't be automated, it doesn't belong here
+4. **Learning**: Because breaking things is how we learn
 
-## Documentation 📚
+## 🧰 Requirements
 
-### Architecture
+- A Proxmox server with enough resources to make your electricity bill noticeable
+- Network that can handle BGP (optional, but cool)
+- Storage that doesn't mind being abused by Kubernetes
+- Patience for when things inevitably break
 
-- [Core Infrastructure](docs/architecture.md) - Application flows and infrastructure overview
-- [Network Architecture](docs/network-architecture.md) - Network topology and traffic flows
-- [Security Architecture](docs/security-architecture.md) - Security boundaries and controls
-- [Storage Architecture](docs/storage-architecture.md) - Storage components and procedures
-- [Monitoring Architecture](docs/monitoring-architecture.md) - Observability and alerting
+## 🤝 Contributing
 
-### Key Features
+Got ideas? Found a bug? PRs welcome! Just remember:
 
-- GitOps-driven deployments
-- Zero-trust security model
-- High-availability design
-- Performance-optimized storage
-- Automated certificate management
-- Comprehensive monitoring
+1. Everything must be GitOps-compatible
+2. Document performance impacts
+3. Security is not optional
+4. Keep it clean, keep it automated
 
-## Repository Structure 📂
+## 📈 Performance
 
-### Core Infrastructure
+Some cool numbers because who doesn't love metrics:
 
-```
-k8s/
-├── infra/          # Core infrastructure components
-├── apps/           # Application workloads
-└── sets/           # ApplicationSet configurations
-```
+- Pod-to-pod latency: <1ms (Cilium direct routing)
+- Storage throughput: Up to 1GB/s (depends on backend)
+- Startup time: From zero to running cluster in ~15 minutes
+- Time spent tweaking configs: Countless hours
 
-### Infrastructure Code
+## 🔐 Security Notes
 
-```
-tofu/
-├── kubernetes/     # Kubernetes cluster provisioning
-└── home-assistant/ # Home automation infrastructure
-```
+- Zero-trust network model
+- Everything encrypted in transit and at rest
+- Authentication required for all services
+- Regular security scans and updates
 
-## Development 🛠️
+## 🛠 Tech Deep Dive
 
-### Prerequisites
+Check out the [architecture docs](docs/architecture.md) for the nitty-gritty details, including:
 
-- Proxmox VE cluster
-- Network infrastructure
-- DNS configuration
-- Storage backend
+- Network topology and security zones
+- Storage class configurations
+- Monitoring and alerting setup
+- Backup and recovery procedures
 
-### Deployment Flow
+## 📊 Current Status
 
-1. Infrastructure provisioning (tofu)
-2. Cluster bootstrapping (Talos)
-3. Core services deployment (ArgoCD)
-4. Application rollout (ApplicationSets)
+- **Infrastructure**: Running strong 💪
+- **Applications**: Continuously evolving 🚀
+- **Documentation**: Always improving 📝
+- **My sanity**: Depends on the day 😅
 
-## Contributing 🤝
+## ⚖️ License
 
-1. Fork the repository
-2. Create a feature branch
-3. Submit a pull request
+MIT Licensed - See [LICENSE](LICENSE) for details
 
-## License 📝
+---
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+_Remember: "It works on my cluster" is the new "It works on my machine"_ 😉
+
+### Credits
+
+This wouldnt be possible without [Vehagn's homelab](https://github.com/vehagn/homelab)

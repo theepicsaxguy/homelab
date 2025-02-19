@@ -1,170 +1,283 @@
 # Monitoring Architecture
 
-## Monitoring Stack
+## Overview
 
-```mermaid
-graph TB
-    subgraph Data Collection
-        Metrics[Prometheus Metrics]
-        Logs[Loki Logs]
-        Traces[Tempo Traces]
-        Flows[Hubble Network Flows]
-    end
+The monitoring stack is built around Prometheus and Grafana, providing comprehensive observability across the
+infrastructure and application layers.
 
-    subgraph Processing
-        Prometheus[Prometheus]
-        AlertManager[Alert Manager]
-        LogProcessor[Loki]
-        TraceProcessor[Tempo]
-    end
-
-    subgraph Visualization
-        Grafana[Grafana]
-        subgraph Dashboards
-            Infrastructure[Infrastructure]
-            Application[Applications]
-            Network[Network]
-            Security[Security]
-        end
-    end
-
-    Data Collection --> Processing
-    Processing --> Visualization
-```
-
-## Monitoring Components
+## Core Components
 
 ### Metrics Collection
 
-- **Prometheus**
-  - Node metrics
-  - Pod metrics
-  - Service metrics
-  - Custom metrics
+```yaml
+component:
+  prometheus:
+    purpose: 'Time-series metrics'
+    features:
+      - Service discovery
+      - Alert management
+      - PromQL queries
+      - Long-term storage
+```
 
-### Logging
+### Visualization
 
-- **Loki**
-  - Application logs
-  - System logs
-  - Security logs
-  - Audit logs
+```yaml
+component:
+  grafana:
+    purpose: 'Metrics visualization'
+    features:
+      - Custom dashboards
+      - Alert integration
+      - Data source federation
+      - Access control
+```
 
-### Tracing
+## Monitoring Layers
 
-- **Tempo**
-  - Request tracing
-  - Service dependencies
-  - Performance analysis
+### Infrastructure Monitoring
 
-### Network Monitoring
+1. Node Metrics
 
-- **Hubble**
-  - Network flows
-  - L7 visibility
-  - Security events
+   - CPU usage
+   - Memory utilization
+   - Disk I/O
+   - Network traffic
+
+2. Kubernetes Metrics
+   - Control plane health
+   - Node conditions
+   - Resource utilization
+   - Workload metrics
+
+### Application Monitoring
+
+```yaml
+metrics:
+  standard:
+    - Request latency
+    - Error rates
+    - Throughput
+    - Saturation
+  custom:
+    - Business metrics
+    - User experience
+    - Application health
+```
 
 ## Alert Management
 
 ### Alert Rules
 
-- Resource utilization
-- Service health
-- Security incidents
-- Performance thresholds
+```yaml
+alert_categories:
+  infrastructure:
+    - Node health
+    - Resource exhaustion
+    - Network issues
+  applications:
+    - Service health
+    - Performance degradation
+    - Error thresholds
+```
 
 ### Alert Routing
 
-1. Severity classification
-2. Team assignment
-3. Notification channels
-4. Escalation paths
+1. Severity Levels
 
-## Dashboard Categories
+   - Critical: Immediate action
+   - Warning: Investigation needed
+   - Info: Awareness only
 
-### Infrastructure
+2. Notification Channels
+   - Email notifications
+   - Chat integrations
+   - On-call rotation
 
-- Node status
-- Resource usage
-- Storage metrics
-- Network metrics
+## Performance Monitoring
 
-### Applications
+### Resource Metrics
 
-- Service health
-- Request metrics
-- Error rates
-- Performance metrics
+```yaml
+thresholds:
+  cpu:
+    warning: '80%'
+    critical: '90%'
+  memory:
+    warning: '85%'
+    critical: '95%'
+  disk:
+    warning: '80%'
+    critical: '90%'
+```
 
-### Network
+### Network Monitoring
 
-- Traffic flows
-- Latency metrics
-- DNS queries
-- Security events
+1. Hubble Integration
 
-### Security
+   - Flow monitoring
+   - Latency tracking
+   - Policy validation
 
-- Auth attempts
-- Policy violations
-- Certificate status
-- Vulnerability alerts
+2. Service Metrics
+   - Request rates
+   - Error percentages
+   - Latency percentiles
 
-## Retention Policies
+## Log Management
 
-### Metrics
+### Log Collection
 
-- High-resolution: 7 days
-- Medium-resolution: 30 days
-- Low-resolution: 1 year
+```yaml
+log_sources:
+  system:
+    - Kernel logs
+    - Service logs
+    - Security events
+  applications:
+    - Container logs
+    - Application logs
+    - Access logs
+```
 
-### Logs
+### Log Processing
 
-- Application: 30 days
-- System: 90 days
-- Security: 1 year
-- Audit: 2 years
+1. Aggregation
 
-### Traces
+   - Centralized collection
+   - Parsing and indexing
+   - Retention policies
 
-- Detailed: 7 days
-- Sampled: 30 days
+2. Analysis
+   - Pattern detection
+   - Anomaly detection
+   - Correlation
 
-## Performance Considerations
+## Dashboard Organization
 
-### Resource Usage
+### Standard Dashboards
 
-- Prometheus storage
-- Log aggregation
-- Trace sampling
-- Query optimization
+```yaml
+dashboards:
+  cluster_overview:
+    - Resource utilization
+    - Node status
+    - Workload health
+  application_metrics:
+    - Service status
+    - Performance metrics
+    - Error rates
+```
 
-### Scaling
+### Custom Views
 
-- Horizontal scaling
-- Data retention
-- Query distribution
-- Cache utilization
+1. Team Dashboards
+
+   - Role-specific metrics
+   - SLO tracking
+   - Custom alerts
+
+2. Business Metrics
+   - User metrics
+   - System usage
+   - Performance KPIs
+
+## Storage and Retention
+
+### Metrics Retention
+
+```yaml
+retention_policies:
+  raw_metrics: '15 days'
+  aggregated: '90 days'
+  alerts: '180 days'
+  logs: '30 days'
+```
+
+### Storage Configuration
+
+1. Local Storage
+
+   - High-performance storage
+   - Regular backups
+   - Compression
+
+2. Long-term Storage
+   - Historical data
+   - Compliance records
+   - Performance analysis
 
 ## Integration Points
 
-### Infrastructure
+### External Systems
 
-- Node exporters
-- cAdvisor
-- kube-state-metrics
-- Storage exporters
+```yaml
+integrations:
+  alerting:
+    - Email
+    - Chat platforms
+    - Incident management
+  visualization:
+    - External Grafana
+    - Custom dashboards
+    - API access
+```
 
-### Applications
+### Authentication
 
-- Service monitors
-- Log shipping
-- Trace injection
-- Health probes
+1. Access Control
 
-### Security
+   - RBAC integration
+   - SSO support
+   - API tokens
 
-- Auth monitoring
-- Policy auditing
-- Network flows
-- Certificate tracking
+2. Audit Trail
+   - User actions
+   - Configuration changes
+   - Alert management
+
+## Performance Impact
+
+### Resource Usage
+
+```yaml
+monitoring_footprint:
+  prometheus:
+    cpu: '2 cores'
+    memory: '8GB'
+  grafana:
+    cpu: '1 core'
+    memory: '2GB'
+```
+
+### Optimization
+
+1. Scrape Intervals
+
+   - Default: 30s
+   - Critical: 15s
+   - Long-term: 5m
+
+2. Data Retention
+   - Hot storage
+   - Cold storage
+   - Archive storage
+
+## Future Enhancements
+
+1. Monitoring Capabilities
+
+   - Enhanced tracing
+   - ML-based anomaly detection
+   - Automated remediation
+
+2. Integration Improvements
+
+   - Additional data sources
+   - Advanced correlations
+   - Custom exporters
+
+3. Visualization Updates
+   - New dashboard templates
+   - Enhanced reporting
+   - Real-time analytics
