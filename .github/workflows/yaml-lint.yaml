@@ -1,12 +1,22 @@
 ---
 name: yamllint
-"on":
+on:
   pull_request:
+    paths:
+      - '**/*.{yml,yaml}'
     branches: [main]
+
+permissions:
+  contents: read
+
 jobs:
   yamllint:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Lint YAML files
-        run: yamllint .
+      - name: Setup yamllint
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          config_file: .yamllint.yml
+          strict: true

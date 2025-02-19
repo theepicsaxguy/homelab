@@ -2,20 +2,29 @@
 name: Validate Charts
 on:
   pull_request:
+    paths:
+      - 'k8s/**/*.yaml'
+      - '.github/workflows/validate-charts.yaml'
     branches: [main]
+
+permissions:
+  contents: read
+
 jobs:
   helm-lint:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
-      HELM_VERSION: 3.17.0
+      HELM_VERSION: 3.13.3
       HELM_DIRS: k8s
     steps:
-      - name: Install Helm
-        run: |
-          sudo curl -L -o /usr/bin/helm https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
-          sudo chmod +x /usr/bin/helm
       - name: Code Checkout
         uses: actions/checkout@v4
-      - name: Validate Charts
+      - name: Install Helm
         run: |
-            ./scripts/validate_charts.sh
+          wget https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
+          tar xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
+          rm -rf linux-amd64 helm-v${HELM_VERSION}-linux-amd64.tar.gz
+      - name: Validate Charts
+        run: ./scripts/validate_charts.sh
