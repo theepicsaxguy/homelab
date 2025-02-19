@@ -1,15 +1,18 @@
 <div align="center">
 
-# 🏠 Welcome to My Overengineered Homelab! 🚀
+<h1>🏠 Welcome to My Overengineered Homelab! 🚀</h1>
 
-Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?
+<p>Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?</p>
 
-[![Kubernetes](docs/assets/kubernetes-logo.svg){ height=100px }](https://kubernetes.io)
-[![Proxmox](docs/assets/proxmox-logo-stacked-color.svg){ height=100px }](https://www.proxmox.com)
-[![Talos](docs/assets/talos-logo.svg){ height=100px }](https://talos.dev)
-[![OpenTofu](docs/assets/tofu-on-light.svg){ height=100px }](https://opentofu.org)
+<a href="https://kubernetes.io"><img src="docs/assets/kubernetes-logo.svg" height="100px"></a>
 
-_Built with love, coffee, and probably too much time spent reading Kubernetes docs_
+<a href="https://www.proxmox.com"><img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px"></a>
+
+<a href="https://talos.dev"><img src="docs/assets/talos-logo.svg" height="100px"></a>
+
+<a href="https://opentofu.org"><img src="docs/assets/tofu-on-light.svg" height="100px"></a>
+
+<p><em>Built with love, coffee, and probably too much time spent reading Kubernetes docs</em></p>
 
 </div>
 
