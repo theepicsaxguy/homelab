@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - ServiceAccount.yaml
   - secret-store.yaml
+  - external-secret.yaml
 
 helmCharts:
   - name: bitwarden-eso-provider
