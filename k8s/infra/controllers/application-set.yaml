@@ -22,6 +22,9 @@ spec:
       source:
         plugin:
           name: kustomize-build-with-helm
+          parameters:
+            - name: helm-params
+              value: --devel
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
         path: '{{ path }}'

@@ -31,3 +31,4 @@ override.tf.json
 *.pem
 *.crt
 .github/prompts/
+.github/copilot/*

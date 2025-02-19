@@ -2,14 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ns.yaml
-- http-route.yaml
-- oidc.yaml
+  - ns.yaml
+  - http-route.yaml
 
 helmCharts:
-- name: argo-cd
-  namespace: argocd
-  releaseName: argocd
-  repo: https://argoproj.github.io/argo-helm
-  valuesFile: values.yaml
-  version: 7.8.2
+  - name: argo-cd
+    namespace: argocd
+    releaseName: argocd
+    repo: https://argoproj.github.io/argo-helm
+    valuesFile: values.yaml
+    version: 7.8.2
