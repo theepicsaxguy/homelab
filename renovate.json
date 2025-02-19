@@ -2,22 +2,28 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":rebaseStalePrs"
+    ":rebaseStalePrs",
+    "config:base",
+    ":enablePreCommit",
+    "docker:enableMajor",
+    ":automergePatch",
+    ":automergeMinor",
+    "github>whitesource/merge-confidence:beta"
   ],
+  "platform": "github",
+  "onboarding": false,
+  "requireConfig": "optional",
+  "dependencyDashboard": true,
   "kustomize": {
-    "fileMatch": [
-      "(^|/)kustomization\\.ya?ml(\\.j2)?$"
-    ]
+    "fileMatch": ["(^|/)kustomization\\.ya?ml(\\.j2)?$"]
+  },
+  "helm-values": {
+    "fileMatch": ["k8s/.+/values\\.yaml$"]
   },
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "\\.tf$",
-        "\\.tftpl$",
-        "\\.yaml$",
-        "\\.sh$"
-      ],
+      "fileMatch": ["\\.tf$", "\\.tftpl$", "\\.yaml$", "\\.sh$"],
       "matchStrings": [
         "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?"
       ]
@@ -26,42 +32,42 @@
   "packageRules": [
     {
       "groupName": "Media containers",
-      "matchPackageNames": [
-        "ghcr.io/onedr0p/**",
-        "ghcr.io/jellyfin/**"
-      ]
+      "matchPackagePatterns": ["ghcr.io/onedr0p/.*", "ghcr.io/jellyfin/.*"]
     },
     {
       "groupName": "Netbird",
-      "matchPackageNames": [
-        "docker.io/netbirdio/**"
-      ]
+      "matchPackagePatterns": ["docker.io/netbirdio/.*"]
     },
     {
       "groupName": "Intel Device Plugins",
-      "matchPackageNames": [
-        "/intel-device-plugins/"
-      ]
+      "matchPackagePatterns": ["intel-device-plugins/.*"]
     },
     {
       "groupName": "Cilium",
-      "matchPackageNames": [
-        "/cilium/"
-      ]
+      "matchPackagePatterns": ["cilium/.*"],
+      "automerge": true
     },
     {
-      "matchManagers": [
-        "terraform"
-      ],
-      "matchDepTypes": [
-        "provider",
-        "required_provider"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["provider", "required_provider"],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "matchManagers": ["helm-values", "helm-requirements"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["^ghcr.io/external-secrets/"],
+      "groupName": "external-secrets"
+    },
+    {
+      "packagePatterns": ["*"],
+      "groupName": "all dependencies"
     }
-  ]
+  ],
+  "kubernetes": {
+    "fileMatch": ["k8s/.+\\.yaml$", "k8s/.+\\.yml$"]
+  }
 }

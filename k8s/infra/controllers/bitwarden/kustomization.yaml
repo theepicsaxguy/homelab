@@ -2,20 +2,20 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- namespace.yaml
-- ServiceAccount.yaml
-
+  - namespace.yaml
+  - ServiceAccount.yaml
+  - secret-store.yaml
 
 helmCharts:
-- name: bitwarden-eso-provider
-  namespace: external-secrets
-  releaseName: bitwarden-eso-provider
-  repo: https://small-hack.github.io/bitwarden-eso-provider
-  valuesFile: values.yaml
-  version: 0.11.0
-- name: external-secrets
-  namespace: external-secrets
-  releaseName: external-secrets
-  repo: https://charts.external-secrets.io
-  valuesFile: external-secrets-values.yaml
-  version: 0.14.2
+  - name: bitwarden-eso-provider
+    namespace: external-secrets
+    releaseName: bitwarden-eso-provider
+    repo: https://small-hack.github.io/bitwarden-eso-provider
+    valuesFile: values.yaml
+    version: 0.11.0 # renovate: registryUrl=https://small-hack.github.io/bitwarden-eso-provider
+  - name: external-secrets
+    namespace: external-secrets
+    releaseName: external-secrets
+    repo: https://charts.external-secrets.io
+    valuesFile: external-secrets-values.yaml
+    version: 0.21.0 # renovate: registryUrl=https://charts.external-secrets.io
