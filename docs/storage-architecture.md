@@ -1,6 +1,24 @@
 # Storage Architecture
 
+## Overview
+
+The cluster storage architecture is built around Proxmox CSI (Container Storage Interface) driver, providing dynamic
+persistent storage provisioning for containerized applications.
+
 ## Storage Components
+
+### Proxmox CSI Driver
+
+```yaml
+component:
+  name: Proxmox CSI
+  purpose: Dynamic volume provisioning
+  features:
+    - Volume lifecycle management
+    - Snapshot support
+    - Clone capabilities
+    - Online volume expansion
+```
 
 ```mermaid
 graph TB
@@ -26,103 +44,202 @@ graph TB
     Volume Types --> Applications
 ```
 
-## Storage Classes
+### Storage Classes
 
-### Performance Tiers
+```yaml
+classes:
+  standard:
+    type: 'Proxmox Block Storage'
+    provisioner: 'proxmox.csi.k8s.io'
+    parameters:
+      format: 'raw'
+      size: 'dynamic'
+  fast:
+    type: 'SSD-backed storage'
+    provisioner: 'proxmox.csi.k8s.io'
+    parameters:
+      format: 'raw'
+      pool: 'fast-pool'
+```
 
-1. **high-performance**
+## Volume Management
 
-   - SSD-backed storage
-   - Low latency requirements
-   - Database workloads
+### PVC Lifecycle
 
-2. **standard**
+1. Provisioning
 
-   - General purpose storage
-   - Mixed workload support
-   - Application data
+   - Dynamic allocation
+   - Size-based provisioning
+   - Storage class selection
 
-3. **capacity**
-   - HDD-backed storage
-   - High capacity needs
-   - Media storage
+2. Attachment
+   - Node-level attachment
+   - Multi-attach policies
+   - Mount propagation
 
-## Backup Architecture
+### Snapshots and Backups
 
-### Components
+```yaml
+backup_strategy:
+  snapshots:
+    frequency: 'Daily'
+    retention: '7 days'
+  backups:
+    type: 'Application-specific'
+    location: 'Secondary storage'
+```
 
-- Scheduled snapshots
-- Volume replication
-- Off-site backups
-- Retention policies
+## Performance Characteristics
 
-### Backup Procedures
+### I/O Profiles
 
-1. Database backups (CloudNative PG)
-2. PV snapshots (CSI)
-3. Configuration backups
-4. System state backups
+```yaml
+performance_profiles:
+  standard:
+    iops: 'Medium'
+    throughput: 'Up to 100MB/s'
+    latency: '<10ms'
+  fast:
+    iops: 'High'
+    throughput: 'Up to 500MB/s'
+    latency: '<5ms'
+```
 
-## Recovery Procedures
+### Resource Quotas
 
-### Volume Recovery
+```yaml
+quotas:
+  default:
+    storage: '10Gi per PVC'
+    snapshots: '5 per PVC'
+  expanded:
+    storage: '100Gi per PVC'
+    snapshots: '10 per PVC'
+```
 
-1. Identify failed volume
-2. Create recovery snapshot
-3. Restore volume data
-4. Validate application state
+## High Availability
 
-### Database Recovery
+### Storage Redundancy
 
-1. Stop affected workload
-2. Restore from backup
-3. Validate data integrity
-4. Resume operations
+1. Volume Replication
 
-## Maintenance Operations
+   - Node-level redundancy
+   - Data consistency
+   - Failover capabilities
 
-### Regular Tasks
+2. Backup Strategy
+   - Regular snapshots
+   - Off-site backups
+   - Recovery testing
 
-- Storage health monitoring
-- Capacity planning
-- Performance optimization
-- Backup verification
+## Monitoring and Operations
 
-### Emergency Procedures
+### Storage Metrics
 
-1. Volume failure response
-2. Emergency snapshots
-3. Quick recovery steps
-4. Data salvage process
+```yaml
+metrics:
+  capacity:
+    warning: '80% used'
+    critical: '90% used'
+  performance:
+    latency_threshold: '20ms'
+    iops_minimum: '1000'
+```
 
-## Scaling Guidelines
+### Health Checks
 
-### Vertical Scaling
+1. Volume Health
 
-- Volume expansion
-- Storage pool growth
-- Performance tuning
-- IOPS management
+   - Mount point checks
+   - Filesystem integrity
+   - Performance monitoring
 
-### Horizontal Scaling
+2. CSI Driver Health
+   - Controller status
+   - Node plugin status
+   - Provisioner health
 
-- Additional storage nodes
-- Replication targets
-- Backup destinations
-- Cache layers
+## Security
 
-## Performance Monitoring
+### Access Control
 
-### Metrics
+1. Storage RBAC
 
-- IOPS monitoring
-- Latency tracking
-- Throughput measurement
-- Capacity trending
+   - Volume access policies
+   - Namespace quotas
+   - SecurityContext enforcement
 
-### Alerts
+2. Encryption
+   - Volume encryption support
+   - Key management
+   - Secure deletion
 
-- Capacity thresholds
-- Performance degradation
-- Hardware failures
-- Backup failures
+## Troubleshooting
+
+### Common Issues
+
+```yaml
+issues:
+  volume_mount:
+    checks:
+      - PVC status
+      - Node mount points
+      - CSI node logs
+  performance:
+    checks:
+      - IO stats
+      - Latency metrics
+      - Resource contention
+```
+
+### Debug Procedures
+
+1. Volume Issues
+
+   - Check PVC/PV status
+   - Verify node mounts
+   - Review CSI logs
+
+2. Performance Issues
+   - Monitor IO metrics
+   - Check resource limits
+   - Verify storage class
+
+## Resource Requirements
+
+### Storage Resources
+
+```yaml
+minimum_requirements:
+  capacity: '100GB per node'
+  iops: '1000 IOPS'
+  throughput: '100MB/s'
+```
+
+### Node Requirements
+
+```yaml
+node_storage:
+  system: '20GB'
+  containers: '40GB'
+  volumes: 'Varies by workload'
+```
+
+## Future Improvements
+
+1. Storage Features
+
+   - Enhanced snapshot management
+   - Automated backup solutions
+   - Advanced quota management
+
+2. Performance Optimization
+
+   - IO scheduling improvements
+   - Cache optimization
+   - Monitoring enhancements
+
+3. Management Features
+   - Storage analytics
+   - Capacity planning
+   - Automated scaling

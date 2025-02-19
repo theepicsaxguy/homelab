@@ -1,158 +1,157 @@
-# Infrastructure Architecture Documentation
+# Homelab Infrastructure Architecture
 
-## Application Deployment Flow
+## Overview
 
-### GitOps Pipeline
+This homelab infrastructure implements a fully GitOps-managed Kubernetes cluster using OpenTofu (previously Terraform) for initial provisioning and ArgoCD for ongoing configuration management.
 
-1. Infrastructure changes are committed to the repository
-2. ArgoCD detects changes in the following paths:
-   - `/k8s/apps/*` - Application workloads
-   - `/k8s/infra/*` - Core infrastructure components
-   - `/k8s/sets/*` - ApplicationSet configurations
+## Infrastructure Layers
 
-### Deployment Process
+### 1. Provisioning Layer (OpenTofu)
 
-1. Changes are validated through ApplicationSets
-2. ArgoCD synchronizes the desired state
-3. Components are deployed in the following order:
-   - Core Infrastructure (CNI, Storage, Auth)
-   - Platform Services (Monitoring, Databases)
-   - Applications (Media, Home Automation)
+Located in `/tofu/kubernetes/`, this layer handles:
 
-## Infrastructure Provisioning
+- Proxmox VM provisioning
+- Talos OS installation and configuration
+- Initial Kubernetes cluster bootstrap
+- Base cluster configuration
 
-### Prerequisites
+Key Components:
+```yaml
+components:
+  proxmox:
+    purpose: "VM infrastructure provider"
+    configuration: "Custom VM templates and resources"
+  talos:
+    purpose: "Kubernetes-focused OS"
+    configuration: "Minimal, secure, immutable"
+  kubernetes:
+    purpose: "Container orchestration"
+    configuration: "High-availability control plane"
+```
 
-- Proxmox VE cluster
-- Network connectivity (10.25.150.0/24)
-- DNS configuration for api.kube.pc-tips.se
+### 2. Configuration Management Layer (ArgoCD)
 
-### Provisioning Steps
+Located in `/k8s/`, implements a hierarchical GitOps structure:
 
-1. **Cluster Bootstrap**
-   ```bash
-   cd tofu/kubernetes
-   tofu init && tofu apply
-   ```
-2. **Post-Installation**
-   - ArgoCD bootstraps automatically
-   - Core infrastructure components deploy
-   - Application workloads roll out
+- Infrastructure Components (`/k8s/infra/`)
+  - Network (Cilium)
+  - Storage (Proxmox CSI)
+  - Authentication
+  - Monitoring
+  - Controllers
+  - Crossplane CRDs
 
-## Authentication Setup
+- Applications (`/k8s/apps/`)
+  - Media services
+  - Development environments
+  - External integrations
 
-### Components
+### 3. Network Architecture
 
-- Keycloak: Primary identity provider
-- Authelia: Secondary authentication layer
-- LLDAP: Lightweight directory service
+The cluster uses Cilium for networking, providing:
+- Service mesh capabilities
+- Network policies
+- Load balancing
+- Direct routing where possible
+- Enhanced security through eBPF
 
-### Security Boundaries
+### 4. Storage Architecture
 
-1. External perimeter (Cloudflared)
-2. Network layer (Cilium)
-3. Service mesh (mTLS)
-4. Application authentication
+Implements:
+- Proxmox CSI driver for persistent storage
+- Dynamic volume provisioning
+- Storage classes for different performance tiers
 
-## Dependencies Map
+## Security Model
 
-### Core Infrastructure
+1. Infrastructure Security:
+   - Talos OS: Minimal attack surface
+   - API authentication using tokens
+   - SSH with agent forwarding
+   - No password authentication
 
-- Cilium CNI ← Network connectivity
-- CloudNative PG ← Database workloads
-- Cert-Manager ← TLS certificates
-- SealedSecrets ← Secret management
+2. Cluster Security:
+   - RBAC enforcement
+   - Network policies
+   - Secure endpoints with Authelia
+   - Secret management via sealed secrets
 
-### Application Stack
+## Performance Considerations
 
-- Authentication ← Keycloak, Authelia
-- Storage ← TrueNAS, Proxmox CSI
-- Monitoring ← Prometheus Stack
-- DNS ← AdGuardHome
+### Resource Management
+- VM resources allocated based on node roles
+- Control plane nodes: 2 CPU, 4GB RAM minimum
+- Worker nodes: Scalable based on workload
 
-## Resource Requirements
+### Network Performance
+- Cilium direct routing when possible
+- eBPF for optimized networking
+- Hubble for network observability
 
-### Control Plane
+### Storage Performance
+- CSI driver with local path provisioner
+- Different storage classes for various performance needs
 
-- 3 nodes
-- 4 CPU per node
-- 2480MB RAM per node
+## Monitoring and Operations
 
-### Worker Nodes
-
-- Variable configuration
-- GPU passthrough support
-- High-performance storage access
-
-## Scaling Considerations
-
-### Horizontal Scaling
-
-- Worker nodes can be added through Talos
-- ApplicationSets support multi-instance deployments
-- Database clustering through CloudNative PG
-
-### Vertical Scaling
-
-- Node resources manageable through Proxmox
-- Application resources defined in manifests
-- Storage expandable through CSI
+Monitoring stack includes:
+- Prometheus for metrics
+- Grafana for visualization
+- Hubble for network monitoring
+- Alert manager for notifications
 
 ## Disaster Recovery
 
-### Backup Components
+1. Infrastructure Recovery:
+   - All configuration in Git
+   - OpenTofu state backed up
+   - Reproducible through automation
 
-1. Talos system state
-2. Kubernetes manifests (GitOps)
-3. Application data (CSI volumes)
-4. Database backups (CloudNative PG)
+2. Application Recovery:
+   - GitOps-based deployment
+   - Persistent storage backup
+   - Application-specific backup solutions
 
-### Recovery Procedures
+## Version Control and Updates
 
-1. Infrastructure recovery through GitOps
-2. State restoration from backups
-3. Service validation and testing
+- Infrastructure changes through pull requests
+- Automated updates via Renovate
+- Semantic versioning for changes
+- Changelog maintenance
 
-## Maintenance Procedures
+## Resource Requirements
 
-### Regular Maintenance
+Minimum cluster requirements:
+```yaml
+control_plane:
+  cpu: 2 cores per node
+  memory: 4GB per node
+  nodes: 3 (HA setup)
+workers:
+  cpu: 4 cores per node
+  memory: 8GB per node
+  nodes: 2+ (scalable)
+storage:
+  type: "Proxmox storage"
+  minimum: "100GB per node"
+```
 
-1. System updates (Talos, managed by configuration)
-2. Application updates (managed by Renovate)
-3. Certificate rotation (automated by cert-manager)
-4. Database maintenance (automated by operators)
+## Known Limitations
 
-### Upgrade Process
+1. Single Proxmox instance as infrastructure provider
+2. Network dependent on underlying Proxmox network
+3. Storage performance tied to Proxmox storage performance
 
-1. Test changes in development environment
-2. Apply infrastructure updates
-3. Validate core services
-4. Roll out application updates
+## Future Improvements
 
-## Troubleshooting Guide
+1. Multi-cluster federation
+2. Enhanced backup solutions
+3. Expanded monitoring capabilities
+4. Additional storage providers
 
-### Common Issues
+## Related Documentation
 
-1. Network connectivity
-
-   - Check Cilium status
-   - Verify BGP peering
-   - Validate DNS resolution
-
-2. Application deployment
-
-   - Check ArgoCD sync status
-   - Verify ApplicationSet configuration
-   - Review pod events and logs
-
-3. Authentication
-   - Validate Keycloak realms
-   - Check Authelia configuration
-   - Verify LLDAP connectivity
-
-### Monitoring
-
-- Prometheus metrics
-- Hubble network flows
-- Loki logs
-- Grafana dashboards
+- [Network Architecture](network-architecture.md)
+- [Storage Architecture](storage-architecture.md)
+- [Security Architecture](security-architecture.md)
+- [Monitoring Architecture](monitoring-architecture.md)
