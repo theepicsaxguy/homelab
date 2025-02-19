@@ -1,23 +1,26 @@
 ---
 name: Validate Kustomize
 on:
-  push:
-    branches:
-      - "*"
   pull_request:
-    branches:
-      - "*"
+    paths:
+      - 'k8s/**'
+      - '.github/workflows/validate-kustomize.yaml'
+    branches: [main]
+
+permissions:
+  contents: read
 
 jobs:
   lint-kustomize:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
-      - name: Verify Kustomize CLI Installation
-        run: |
-          which kustomize
-          kustomize version
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+        with:
+          kustomize-version: 5.2.1
       - name: Validate Manifests
         run: |
           ./scripts/validate_manifests.sh
