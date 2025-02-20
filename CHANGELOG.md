@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/theepicsaxguy/homelab/compare/v1.2.0...v1.3.0) (2025-02-20)
+
+
+### Features
+
+* **argocd:** enable Redis authentication and specify chart version for compatibility ([#65](https://github.com/theepicsaxguy/homelab/issues/65)) ([f447b02](https://github.com/theepicsaxguy/homelab/commit/f447b020feefbf8eaa1b9872c3feabd5412e576d))
+
 ## [1.2.0](https://github.com/theepicsaxguy/homelab/compare/v1.1.0...v1.2.0) (2025-02-18)
 
 
