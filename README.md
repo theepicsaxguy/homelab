@@ -1,19 +1,23 @@
 <div align="center">
+  <h1>🏠 Welcome to My Overengineered Homelab! 🚀</h1>
+  <p>Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?</p>
 
-<h1>🏠 Welcome to My Overengineered Homelab! 🚀</h1>
+  <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+    <a href="https://kubernetes.io">
+      <img src="docs/assets/kubernetes-logo.svg" height="100px">
+    </a>
+    <a href="https://www.proxmox.com">
+      <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px">
+    </a>
+    <a href="https://talos.dev">
+      <img src="docs/assets/talos-logo.svg" height="100px">
+    </a>
+    <a href="https://opentofu.org">
+      <img src="docs/assets/tofu-on-light.svg" height="100px">
+    </a>
+  </div>
 
-<p>Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?</p>
-
-<a href="https://kubernetes.io"><img src="docs/assets/kubernetes-logo.svg" height="100px"></a>
-
-<a href="https://www.proxmox.com"><img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px"></a>
-
-<a href="https://talos.dev"><img src="docs/assets/talos-logo.svg" height="100px"></a>
-
-<a href="https://opentofu.org"><img src="docs/assets/tofu-on-light.svg" height="100px"></a>
-
-<p><em>Built with love, coffee, and probably too much time spent reading Kubernetes docs</em></p>
-
+  <p><em>Built with love, coffee, and probably too much time spent reading Kubernetes docs</em></p>
 </div>
 
 ---
