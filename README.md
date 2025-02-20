@@ -46,11 +46,6 @@ minimizes manual intervention—letting you focus on what truly matters.
   <img src="https://img.shields.io/github/issues-pr/theepicsaxguy/homelab" alt="GitHub pull requests">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/github/workflow/status/theepicsaxguy/homelab/Build?label=Build%20Status" alt="Build Status">
-  <img src="https://img.shields.io/codecov/c/github/theepicsaxguy/homelab" alt="Code Coverage">
-</p>
-
 <details>
   <summary>📊 GitHub Stats</summary>
   
@@ -60,7 +55,8 @@ minimizes manual intervention—letting you focus on what truly matters.
 
 ---
 
-## 📑 Table of Contents
+<details>
+  <summary>📑 Table of Contents</summary>
 
 - [Project Summary & Key Features](#-project-summary--key-features)
 - [Quick Start Guide](#-quick-start-guide)
@@ -83,40 +79,7 @@ minimizes manual intervention—letting you focus on what truly matters.
 - [FAQ](#-faq)
 - [Final Thoughts](#final-thoughts)
 - [License](#license)
-
----
-
-## 🚀 Quick Start Guide
-
-If you’re eager to deploy your homelab without delay, follow these concise steps:
-
-1. **Clone the Repository:**
-
-   ```bash
-   git clone https://github.com/theepicsaxguy/homelab.git
-   cd homelab
-   ```
-
-2. **Install Prerequisites:**  
-   Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary dependencies.
-
-3. **Deploy Your Infrastructure:**
-
-   - Navigate to the infrastructure directory and run:
-     ```bash
-     cd tofu/kubernetes
-     tofu init && tofu apply
-     ```
-   - Deploy Kubernetes workloads via ArgoCD:
-     ```bash
-     cd ../../k8s
-     tofu init && tofu apply
-     ```
-     _Refer to the [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section for more
-     details._
-
-4. **Verify & Enjoy:**  
-   Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and scale on its own.
+</details>
 
 ---
 
@@ -197,6 +160,40 @@ Detailed docs in `/docs` - because even I forget how this all works sometimes:
 - [💾 Storage Setup](docs/storage-architecture.md)
 - [🔐 Security Model](docs/security-architecture.md)
 - [📊 Monitoring Stack](docs/monitoring-architecture.md)
+
+---
+
+## 🚀 Quick Start Guide
+
+If you’re eager to deploy your homelab without delay, follow these concise steps:
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/theepicsaxguy/homelab.git
+   cd homelab
+   ```
+
+2. **Install Prerequisites:**  
+   Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary dependencies.
+
+3. **Deploy Your Infrastructure:**
+
+   - Navigate to the infrastructure directory and run:
+     ```bash
+     cd tofu/kubernetes
+     tofu init && tofu apply
+     ```
+   - Deploy Kubernetes workloads via ArgoCD:
+     ```bash
+     cd ../../k8s
+     tofu init && tofu apply
+     ```
+     _Refer to the [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section for more
+     details._
+
+4. **Verify & Enjoy:**  
+   Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and scale on its own.
 
 ---
 
