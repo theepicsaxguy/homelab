@@ -57,6 +57,16 @@ redis:
       memory: 64Mi
     limits:
       memory: 1Gi
+  # Enable Redis authentication
+  auth:
+    enabled: true
+    existingSecret: argocd-redis
+    existingSecretPasswordKey: auth
+
+# Specify Chart version to ensure Redis auth compatibility
+global:
+  image:
+    tag: 'v2.9.3' # Compatible with Argo CD Helm chart >= 7.1.1
 
 server:
   service:
@@ -67,6 +77,12 @@ server:
       memory: 64Mi
     limits:
       memory: 1Gi
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
 
 repoServer:
   containerSecurityContext:
