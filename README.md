@@ -136,6 +136,23 @@ Check out the [architecture docs](docs/architecture.md) for the nitty-gritty det
 - **Documentation**: Always improving 📝
 - **My sanity**: Depends on the day 😅
 
+
+## 🚀 Future To-Do / Improvements
+
+Some planned enhancements to make this even more absurdly overengineered:
+
+🔹 Longhorn: Distributed block storage for better persistence and redundancy
+
+☁️ External Cloud Storage: Hybrid storage integration (e.g., S3, Backblaze B2)
+
+🔄 Node Autoscaler: Dynamic scaling to optimize resources
+
+🏗 More CI/CD: Automating even the tiniest things for efficiency
+
+🌍 Multi-Cluster Federation: Because one cluster isn’t enough
+
+🛡️ More Security Layers: Further hardening network policies and auth
+
 ## ⚖️ License
 
 MIT Licensed - See [LICENSE](LICENSE) for details
