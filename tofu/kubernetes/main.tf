@@ -32,7 +32,7 @@ module "talos" {
       mac_address   = "bc:24:11:e6:ba:07"
       vm_id         = 8101
       cpu           = 8
-      ram_dedicated = 2672
+      ram_dedicated = 3072
       igpu          = false
     }
     "ctrl-01" = {
@@ -42,7 +42,7 @@ module "talos" {
       mac_address   = "bc:24:11:44:94:5c"
       vm_id         = 8102
       cpu           = 4
-      ram_dedicated = 2480
+      ram_dedicated = 3072
       igpu          = false
       #update        = true
     }
@@ -53,7 +53,7 @@ module "talos" {
       mac_address   = "bc:24:11:1e:1d:2f"
       vm_id         = 8103
       cpu           = 4
-      ram_dedicated = 2480
+      ram_dedicated = 3072
       #update        = true
     }
         "work-00" = {
@@ -62,8 +62,8 @@ module "talos" {
           ip            = "10.25.150.21"
           mac_address   = "bc:24:11:64:5b:cb"
           vm_id         = 8201
-          cpu           = 4
-          ram_dedicated = 2480
+          cpu           = 6
+          ram_dedicated = 4096
         }
         "work-01" = {
           host_node     = "host3"
@@ -71,8 +71,8 @@ module "talos" {
           ip            = "10.25.150.22"
           mac_address   = "bc:24:11:c9:22:c3"
           vm_id         = 8202
-          cpu           = 4
-          ram_dedicated = 2480
+          cpu           = 6
+          ram_dedicated = 4096
         }
         "work-02" = {
           host_node     = "host3"
@@ -80,8 +80,8 @@ module "talos" {
           ip            = "10.25.150.23"
           mac_address   = "bc:24:11:6f:20:03"
           vm_id         = 8203
-          cpu           = 4
-          ram_dedicated = 2480
+          cpu           = 6
+          ram_dedicated = 4096
         }
   }
 
