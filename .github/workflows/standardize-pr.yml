@@ -7,17 +7,22 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   standardize-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0
 
       - name: Standardize PR title
+        id: semantic-pr-title
         uses: amannn/action-semantic-pull-request@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           types: |
             feat
@@ -36,12 +41,13 @@ jobs:
           subjectPatternError: |
             The subject must start with a lowercase letter
           wip: true
+        continue-on-error: true
 
       - name: Update PR title if needed
-        if: failure()
+        if: steps.semantic-pr-title.outcome == 'failure'
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             try {
               const title = context.payload.pull_request.title;
@@ -64,9 +70,5 @@ jobs:
                 title: newTitle
               });
             } catch (error) {
-              console.error('Error updating PR:', error);
-              if (error.status === 403) {
-                console.error('Permission denied. Please check token permissions.');
-              }
-              process.exit(1);
+              core.setFailed(`Failed to update PR title: ${error.message}`);
             }
