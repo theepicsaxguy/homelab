@@ -16,7 +16,23 @@ worker_ips       = ["10.25.150.20", "10.25.150.21"]
 2. Launch:
 
 ```bash
-tofu init && tofu apply
+ssh-add ~/.ssh/id_rsa # Replace with the correct private key path
+```
+
+```bash
+ssh-add -L
+```
+
+```bash
+ cd kubernetes
+```
+
+```bash
+tofu init
+```
+
+```bash
+tofu apply
 ```
 
 ## Infrastructure Design

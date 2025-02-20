@@ -6,7 +6,6 @@ namespace: sm-operator-system
 resources:
   - namespace.yaml
   - bitwarden-secret.yaml
-  - create-auth-token-job.yaml
 
 helmCharts:
   - name: sm-operator
@@ -14,4 +13,4 @@ helmCharts:
     releaseName: sm-operator
     repo: https://charts.bitwarden.com
     valuesFile: sm-operator-values.yaml
-    version: '>=0.1.0-Beta'
+    version: '0.1.0-Beta'

@@ -20,6 +20,10 @@ kubectl kustomize --enable-helm infra/network/cilium | kubectl apply -f -
 kustomize build --enable-helm infra/controllers/bitwarden | kubectl apply -f -
 ```
 
+```shell
+kubectl create secret generic bw-auth-token -n sm-operator-system  --from-literal=token="<Auth-Token-Here>"
+```
+
 ## Proxmox CSI Plugin
 
 ```shell
@@ -45,31 +49,35 @@ kubectl apply -k infra
 ```
 
 ```shell
+kubectl apply -k apps
+```
+
+```shell
 kubectl apply -k sets
 ```
 
 # SBOM
 
-* [x] Cilium
-* [X] Hubble
-* [x] Argo CD
-* [x] Proxmox CSI Plugin
-* [x] Cert-manager
-* [X] Gateway
-* [X] Authentication (Keycloak, Authentik, ...)
-* [] CNPG - Cloud Native PostGresSQL
+- [x] Cilium
+- [x] Hubble
+- [x] Argo CD
+- [x] Proxmox CSI Plugin
+- [x] Cert-manager
+- [x] Gateway
+- [x] Authentication (Keycloak, Authentik, ...)
+- [] CNPG - Cloud Native PostGresSQL
 
 # CRDs
 
-* [] Gateway
-* [] Argo CD
-* [] Sealed-secrets
+- [] Gateway
+- [] Argo CD
+- [] Sealed-secrets
 
 # TODO
 
-* [X] Remotely managed cloudflared tunnel
-* [X] Keycloak
-* [] Argo CD sync-wave
+- [x] Remotely managed cloudflared tunnel
+- [x] Keycloak
+- [] Argo CD sync-wave
 
 ```shell
 commonAnnotations:

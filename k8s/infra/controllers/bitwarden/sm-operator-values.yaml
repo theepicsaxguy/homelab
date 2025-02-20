@@ -9,4 +9,5 @@ containers:
   enableSeccompProfileRuntimeDefault: true
   manager:
     image:
-      tag: 'latest'
+      repository: ghcr.io/bitwarden/sm-operator
+      # Will default to the Chart's AppVersion
