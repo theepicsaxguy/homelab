@@ -7,8 +7,13 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: 'argocd'
-      server: '*'
+    - namespace: '*'
+      server: 'https://kubernetes.default.svc'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true

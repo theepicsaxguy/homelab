@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: infrastructure
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '-1'
 spec:
   project: app-of-apps
   source:
@@ -16,3 +18,6 @@ spec:
     automated:
       selfHeal: true
       prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
