@@ -1,19 +1,23 @@
 <div align="center">
+  <h1>🏠 Welcome to My Overengineered Homelab! 🚀</h1>
+  <p>Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?</p>
 
-<h1>🏠 Welcome to My Overengineered Homelab! 🚀</h1>
+  <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+    <a href="https://kubernetes.io">
+      <img src="docs/assets/kubernetes-logo.svg" height="100px">
+    </a>
+    <a href="https://www.proxmox.com">
+      <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px">
+    </a>
+    <a href="https://talos.dev">
+      <img src="docs/assets/talos-logo.svg" height="100px">
+    </a>
+    <a href="https://opentofu.org">
+      <img src="docs/assets/tofu-on-light.svg" height="100px">
+    </a>
+  </div>
 
-<p>Because why run Plex on a Raspberry Pi when you can have a full Kubernetes cluster?</p>
-
-<a href="https://kubernetes.io"><img src="docs/assets/kubernetes-logo.svg" height="100px"></a>
-
-<a href="https://www.proxmox.com"><img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px"></a>
-
-<a href="https://talos.dev"><img src="docs/assets/talos-logo.svg" height="100px"></a>
-
-<a href="https://opentofu.org"><img src="docs/assets/tofu-on-light.svg" height="100px"></a>
-
-<p><em>Built with love, coffee, and probably too much time spent reading Kubernetes docs</em></p>
-
+  <p><em>Built with love, coffee, and probably too much time spent reading Kubernetes docs</em></p>
 </div>
 
 ---
@@ -135,6 +139,23 @@ Check out the [architecture docs](docs/architecture.md) for the nitty-gritty det
 - **Applications**: Continuously evolving 🚀
 - **Documentation**: Always improving 📝
 - **My sanity**: Depends on the day 😅
+
+
+## 🚀 Future To-Do / Improvements
+
+Some planned enhancements to make this even more absurdly overengineered:
+
+🔹 Longhorn: Distributed block storage for better persistence and redundancy
+
+☁️ External Cloud Storage: Hybrid storage integration (e.g., S3, Backblaze B2)
+
+🔄 Node Autoscaler: Dynamic scaling to optimize resources
+
+🏗 More CI/CD: Automating even the tiniest things for efficiency
+
+🌍 Multi-Cluster Federation: Because one cluster isn’t enough
+
+🛡️ More Security Layers: Further hardening network policies and auth
 
 ## ⚖️ License
 
