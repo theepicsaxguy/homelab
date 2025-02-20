@@ -1,0 +1,74 @@
+name: Standardize Commits
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  standardize-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin "https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}"
+
+      - name: Get PR commits
+        id: get-pr-commits
+        run: |
+          # Ensure we're on the PR branch
+          git checkout ${{ github.head_ref }}
+          
+          COMMITS=$(git log --pretty=format:'%H' origin/${{ github.base_ref }}..HEAD)
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Standardize commit messages
+        run: |
+          # Sanitize branch name for git operations
+          BRANCH_NAME=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9-]/_/g')
+          
+          while IFS= read -r commit; do
+            [ -z "$commit" ] && continue
+            
+            message=$(git log --format=%B -n 1 "$commit")
+            if ! echo "$message" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+'; then
+              type="fix"
+              if echo "$message" | grep -qi "feat\|feature\|add"; then
+                type="feat"
+              elif echo "$message" | grep -qi "doc\|docs\|documentation"; then
+                type="docs"
+              elif echo "$message" | grep -qi "style\|format"; then
+                type="style"
+              elif echo "$message" | grep -qi "refactor"; then
+                type="refactor"
+              fi
+              scope=""
+              if echo "$message" | grep -qi "k8s\|kubernetes"; then
+                scope="(k8s)"
+              elif echo "$message" | grep -qi "ci\|workflow"; then
+                scope="(ci)"
+              fi
+              standardized_message="$type$scope: ${message}"
+              git filter-branch --msg-filter \
+                "if [ \"\$GIT_COMMIT\" = \"$commit\" ]; then echo \"$standardized_message\"; else cat; fi" \
+                -f HEAD^..HEAD
+            fi
+          done <<< "${{ steps.get-pr-commits.outputs.commits }}"
+          
+      - name: Push changes
+        run: |
+          # Sanitize branch name and push
+          BRANCH_NAME=$(echo "${{ github.head_ref }}" | sed 's/[^a-zA-Z0-9-]/_/g')
+          git push -f origin "HEAD:refs/heads/$BRANCH_NAME"
