@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, edited, synchronize]
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   standardize-pr:
     runs-on: ubuntu-latest
@@ -37,23 +41,32 @@ jobs:
         if: failure()
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const title = context.payload.pull_request.title;
-            let type = 'fix';
-            if (title.match(/feat|feature|add/i)) type = 'feat';
-            else if (title.match(/doc|docs|documentation/i)) type = 'docs';
-            else if (title.match(/style|format/i)) type = 'style';
-            else if (title.match(/refactor/i)) type = 'refactor';
-
-            let scope = '';
-            if (title.match(/k8s|kubernetes/i)) scope = '(k8s)';
-            else if (title.match(/ci|workflow/i)) scope = '(ci)';
-
-            const newTitle = `${type}${scope}: ${title.replace(/^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?:\s*/, '')}`;
-
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number,
-              title: newTitle
-            });
+            try {
+              const title = context.payload.pull_request.title;
+              let type = 'fix';
+              if (title.match(/feat|feature|add/i)) type = 'feat';
+              else if (title.match(/doc|docs|documentation/i)) type = 'docs';
+              else if (title.match(/style|format/i)) type = 'style';
+              else if (title.match(/refactor/i)) type = 'refactor';
+              
+              let scope = '';
+              if (title.match(/k8s|kubernetes/i)) scope = '(k8s)';
+              else if (title.match(/ci|workflow/i)) scope = '(ci)';
+              
+              const newTitle = `${type}${scope}: ${title.replace(/^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?:\s*/, '')}`;
+              
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                title: newTitle
+              });
+            } catch (error) {
+              console.error('Error updating PR:', error);
+              if (error.status === 403) {
+                console.error('Permission denied. Please check token permissions.');
+              }
+              process.exit(1);
+            }
