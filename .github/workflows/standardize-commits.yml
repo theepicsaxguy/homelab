@@ -1,0 +1,50 @@
+name: Standardize Commits
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  standardize-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR commits
+        id: get-pr-commits
+        run: echo "commits=$(git log --pretty=format:'%H' origin/${{ github.base_ref }}..HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Standardize commit messages
+        run: |
+          while IFS= read -r commit; do
+            message=$(git log --format=%B -n 1 "$commit")
+            if ! echo "$message" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .+'; then
+              type="fix"
+              if echo "$message" | grep -qi "feat\|feature\|add"; then
+                type="feat"
+              elif echo "$message" | grep -qi "doc\|docs\|documentation"; then
+                type="docs"
+              elif echo "$message" | grep -qi "style\|format"; then
+                type="style"
+              elif echo "$message" | grep -qi "refactor"; then
+                type="refactor"
+              fi
+              scope=""
+              if echo "$message" | grep -qi "k8s\|kubernetes"; then
+                scope="(k8s)"
+              elif echo "$message" | grep -qi "ci\|workflow"; then
+                scope="(ci)"
+              fi
+              standardized_message="$type$scope: ${message}"
+              git filter-branch --msg-filter \
+                "if [ \"\$GIT_COMMIT\" = \"$commit\" ]; then echo \"$standardized_message\"; else cat; fi" \
+                -f HEAD^..HEAD
+            fi
+          done <<< "${{ steps.get-pr-commits.outputs.commits }}"
+
+      - name: Push changes
+        run: |
+          git remote set-url origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
+          git push origin HEAD:${{ github.head_ref }} -f
