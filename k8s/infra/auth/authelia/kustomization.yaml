@@ -8,7 +8,8 @@ resources:
   - cert-ecdsa-jwk.yaml
   - http-route.yaml
   - cnpg-db.yaml
-  - bitwarden-secret.yaml
+  - secret.yaml
+  - deployment.yaml
 
 helmCharts:
   - name: authelia

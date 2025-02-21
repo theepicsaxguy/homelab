@@ -28,7 +28,7 @@
     "yaml.validate": true,
     "yaml.schemas": {
       "kubernetes": "k8s/**/*.{yml,yaml}",
-      "http://json.schemastore.org/kustomization": ["k8s/**/kustomization.yaml"]
+      "http://json.schemastore.org/kustomization": ["*/kustomization.yaml"]
     },
     "[yaml]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",

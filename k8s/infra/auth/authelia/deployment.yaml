@@ -7,29 +7,23 @@ spec:
     spec:
       containers:
         - name: authelia
-          env:
-            - name: SMTP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: smtp_password
-            - name: AUTHELIA_STORAGE_ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: crypto_key
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_0_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: argocd_oidc_secret
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_1_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: netbird_oidc_secret
-            - name: STORAGE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: lldap_password
+          volumeMounts:
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+            - name: rsa-jwk
+              mountPath: /secrets/rsa-jwk
+              readOnly: true
+            - name: ecdsa-jwk
+              mountPath: /secrets/ecdsa-jwk
+              readOnly: true
+      volumes:
+        - name: secrets
+          secret:
+            secretName: authelia-secrets
+        - name: rsa-jwk
+          secret:
+            secretName: authelia-rsa-jwk
+        - name: ecdsa-jwk
+          secret:
+            secretName: authelia-ecdsa-jwk
