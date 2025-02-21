@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/theepicsaxguy/homelab/compare/v1.4.0...v1.4.1) (2025-02-21)
+
+
+### Bug Fixes
+
+* create CommitLint.yml ([#72](https://github.com/theepicsaxguy/homelab/issues/72)) ([3eecc06](https://github.com/theepicsaxguy/homelab/commit/3eecc06c98b1dc8f5de546a4be061ff2cac5e05d))
+
 ## [1.4.0](https://github.com/theepicsaxguy/homelab/compare/v1.3.0...v1.4.0) (2025-02-20)
 
 
