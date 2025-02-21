@@ -1,0 +1,118 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    // File associations
+    "files.associations": {
+      "*.yaml": "yaml",
+      "*.yml": "yaml",
+      "*.tf": "terraform",
+      "*.tfvars": "terraform",
+      "Tiltfile": "python"
+    },
+
+    // Editor settings
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.rulers": [120],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    },
+
+    // YAML settings
+    "yaml.format.enable": true,
+    "yaml.validate": true,
+    "yaml.schemas": {
+      "kubernetes": "k8s/**/*.{yml,yaml}",
+      "http://json.schemastore.org/kustomization": ["k8s/**/kustomization.yaml"]
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
+    },
+
+    // Terraform/OpenTofu settings
+    "[terraform]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "hashicorp.terraform"
+    },
+    "terraform.experimentalFeatures.validateOnSave": true,
+
+    // Kubernetes settings
+    "kubernetes.autoComplete": true,
+    "kubernetes.validate": true,
+
+    // Prettier settings
+    "prettier.printWidth": 120,
+    "prettier.singleQuote": true,
+    "prettier.trailingComma": "es5",
+    "prettier.proseWrap": "always",
+
+    // Search settings
+    "search.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/*.tfstate*": true
+    },
+
+    // Git settings
+    "git.enableCommitSigning": false,
+    "git.autofetch": true,
+
+    // Extensions recommendations
+    "extensions.ignoreRecommendations": false,
+
+    // File saving
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+
+    // Terminal
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.persistentSessionReviveProcess": "never",
+
+    // Chat settings
+    "chat.promptFiles": [
+      ".github/prompts/**/*"
+    ],
+    "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
+    "github.copilot.chat.edits.codesearch.enabled": true,
+    "githubIssues.alwaysPromptForNewIssueRepo": true,
+    "githubPullRequests.defaultMergeMethod": "squash",
+    "githubPullRequests.experimental.chat": true,
+    "githubPullRequests.experimental.notificationsView": true,
+    "githubPullRequests.experimental.useQuickChat": true,
+    "github.copilot.chat.scopeSelection": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "github.copilot.chat.editor.temporalContext.enabled": true,
+    "github.copilot.chat.edits.temporalContext.enabled": true,
+    "github.copilot.chat.enableUserPreferences": true,
+    "github.copilot.chat.generateTests.codeLens": true,
+    "github.copilot.chat.languageContext.typescript.enabled": true,
+    "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+      {
+        "file": ".github/.copilot-pull-request-description-instructions.md"
+      }
+    ],
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+      {
+        "file": ".github/commit-convention.md"
+      }
+    ],
+    "git.diagnosticsCommitHook.Enabled": true,
+    "git.enableSmartCommit": true,
+  },
+  "extensions": {
+    "recommendations": [
+      "hashicorp.terraform",
+      "redhat.vscode-yaml",
+      "ms-kubernetes-tools.vscode-kubernetes-tools",
+      "davidanson.vscode-markdownlint",
+      "golang.go",
+      "tamasfe.even-better-toml"
+    ]
+  }
+}
