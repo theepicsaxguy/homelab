@@ -5,16 +5,12 @@ namespace: longhorn-system
 
 resources:
   - ns.yaml
-  - https://raw.githubusercontent.com/longhorn/longhorn/v1.5.3/deploy/longhorn.yaml
 
-patches:
-  - target:
-      kind: Deployment
-      name: longhorn-driver-deployer
-    patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/0/env/0/value
-        value: longhorn-system
-
-patchesStrategicMerge:
-  - values.yaml
+helmCharts:
+  - name: longhorn
+    includeCRDs: true
+    namespace: longhorn-system
+    releaseName: longhorn
+    repo: https://charts.longhorn.io
+    version: 1.8.0 # renovate: datasource=helm registryUrl=https://charts.longhorn.io
+    valuesFile: values.yaml
