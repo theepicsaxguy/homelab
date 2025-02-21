@@ -1,0 +1,44 @@
+name: Fix Commit Messages
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fix-commits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full commit history for rewriting
+
+      - name: Install Conventional Commit Tools
+        run: |
+          npm install --save-dev @commitlint/{config-conventional,cli}
+
+      - name: Check for Invalid Commit Messages
+        id: check-commits
+        run: |
+          if ! npx commitlint --from=$(git merge-base origin/main HEAD) --to=HEAD; then
+            echo "fix_needed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Auto-Fix Commit Messages
+        if: env.fix_needed == 'true'
+        run: |
+          # Rewriting commit history to conform to Conventional Commits
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git rebase -i --root --autosquash --exec "
+            COMMIT_MSG=\$(git log -1 --pretty=%B)
+            FIXED_MSG=\$(echo \$COMMIT_MSG | sed -E 's/^(fix|feat|docs|style|refactor|perf|test|build|ci|chore|revert)?:? ?/fix: /' | awk '{print tolower(substr($0,0,1)) substr($0,2)}')
+            git commit --amend -m \"\$FIXED_MSG\" --no-edit
+          "
+
+          git push --force
