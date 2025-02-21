@@ -52,7 +52,7 @@ helmCharts:
         cpu: 100m
         memory: 256Mi
     tty: false
-  version: 4.4.2
+  version: 4.4.3
 
 patches:
 - patch: |-
