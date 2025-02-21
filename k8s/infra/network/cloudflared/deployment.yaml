@@ -1,16 +1,2 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: cloudflared
-spec:
-  template:
-    spec:
-      containers:
-        - name: cloudflared
-          env:
-            - name: TUNNEL_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: infrastructure-secrets
-                  key: cloudflared_token
-                  namespace: sm-operator-system
+# This file should be removed as we're using the DaemonSet pattern
+# The deployment approach with environment variables is not the recommended pattern with sm-operator

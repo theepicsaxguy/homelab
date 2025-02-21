@@ -17,7 +17,7 @@ This is a **GitOps-focused homelab infrastructure repository**, managing:
 
 - **GitOps-Only**: All infrastructure is managed declaratively via GitOps.
 - **Networking**: Prefer **Cilium** over Talos' default setup.
-
+- **Clean code**: All provided code is excpected to be clean and best practice. Never use inline comments.
 ---
 
 ## Code Structure
