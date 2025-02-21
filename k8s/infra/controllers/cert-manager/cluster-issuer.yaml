@@ -5,7 +5,9 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: veghag@gmail.com
+    emailSecretRef:
+      name: cert-manager-email
+      key: email
     privateKeySecretRef:
       name: cloudflare-key
     solvers:

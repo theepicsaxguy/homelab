@@ -48,7 +48,7 @@ minimizes manual intervention—letting you focus on what truly matters.
 
 <details>
   <summary>📊 GitHub Stats</summary>
-  
+
   ![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username=theepicsaxguy&show_icons=true&theme=radical)
   ![GitHub Streak](https://streak-stats.demolab.com/?user=theepicsaxguy&theme=monokai)
 </details>
@@ -79,6 +79,7 @@ minimizes manual intervention—letting you focus on what truly matters.
 - [FAQ](#-faq)
 - [Final Thoughts](#final-thoughts)
 - [License](#license)
+
 </details>
 
 ---
@@ -126,7 +127,7 @@ A carefully curated (and occasionally overengineered) mix of the best tools, bec
 
 - **Authentication:** Authelia, LDAP (keeping the riff-raff out so the baby can nap in peace)
 - **Monitoring:** Prometheus, Grafana, Loki (metrics to soothe even the most anxious parent)
-- **Storage:** Proxmox CSI, TrueNAS (for fast, reliable storage that doesn’t throw tantrums)
+- **Storage:** Proxmox CSI, Longhorn, TrueNAS (distributed storage that scales with your dreams)
 - **Networking:** Cilium, CoreDNS, Gateway API (networking wizardry to keep things connected)
 
 #### **Applications**
@@ -174,25 +175,29 @@ If you’re eager to deploy your homelab without delay, follow these concise ste
    cd homelab
    ```
 
-2. **Install Prerequisites:**  
+2. **Install Prerequisites:**
    Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary dependencies.
 
 3. **Deploy Your Infrastructure:**
 
    - Navigate to the infrastructure directory and run:
+
      ```bash
      cd tofu/kubernetes
      tofu init && tofu apply
      ```
+
    - Deploy Kubernetes workloads via ArgoCD:
+
      ```bash
      cd ../../k8s
      tofu init && tofu apply
      ```
+
      _Refer to the [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section for more
      details._
 
-4. **Verify & Enjoy:**  
+4. **Verify & Enjoy:**
    Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and scale on its own.
 
 ---
@@ -266,9 +271,9 @@ Let's break down the numbers (because numbers are fun, especially when they tell
 
 #### **High Priority**
 
-- **Longhorn Integration:** Distributed block storage for superior persistence.
 - **Hybrid Cloud Backups:** Offload backups to S3 or Backblaze B2, because redundancy is key.
 - **Node Autoscaling:** Dynamic scaling to keep pace with unpredictable life (and unpredictable kids).
+- **Disaster Recovery Testing:** Automated DR testing to ensure your 4-command recovery always works.
 
 #### **Security & Stability**
 
@@ -304,13 +309,13 @@ Ready to join the revolution? Here’s your starter pack:
    cd homelab
    ```
 
-2. **Install Dependencies:**  
+2. **Install Dependencies:**
    Make sure you have [Tofu](https://opentofu.org) and any other prerequisites installed.
 
-3. **Deploy:**  
+3. **Deploy:**
    Follow the Disaster Recovery section above to deploy your homelab with confidence.
 
-4. **Kick Back & Enjoy:**  
+4. **Kick Back & Enjoy:**
    Sit back, relax, and watch as your infrastructure self-heals—so you can focus on life’s more important moments (like
    baby giggles).
 
@@ -319,7 +324,7 @@ Ready to join the revolution? Here’s your starter pack:
 Your ideas, fixes, and love for overengineering are welcome here! If you’d like to contribute:
 
 - **Fork the Repo**
-- **Create a Feature Branch:**  
+- **Create a Feature Branch:**
   `git checkout -b feature/your-awesome-idea`
 - **Commit Your Changes** and open a Pull Request
 
@@ -341,14 +346,14 @@ If you encounter broken links or have accessibility suggestions, please open an 
 
 ## 🤔 Final Thoughts
 
-This isn’t just another homelab—it’s a love letter to overengineering, automation, and the beautiful chaos of life.  
+This isn’t just another homelab—it’s a love letter to overengineering, automation, and the beautiful chaos of life.
 It’s built for:
 
 - **Automation:** So you can sleep in on weekends.
 - **Rapid Recovery:** Because even the best laid plans occasionally go awry.
 - **Zero Headaches:** Let the system fix itself while you focus on the little one coming up.
 
-When things break, they get fixed. When all seems lost, a quick set of commands restores order.  
+When things break, they get fixed. When all seems lost, a quick set of commands restores order.
 _All to free up time for what truly matters: family, love, and a little bit of code-induced adrenaline._
 
 ---

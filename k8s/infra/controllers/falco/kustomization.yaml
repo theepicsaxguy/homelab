@@ -1,0 +1,67 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: falco-system
+
+resources:
+- ns.yaml
+
+
+
+
+
+
+helmCharts:
+- includeCRDs: true
+  name: falco
+  namespace: falco-system
+  releaseName: falco
+  repo: https://falcosecurity.github.io/charts
+  valuesInline:
+    customRules:
+      rules-ssh.yaml: |-
+        - rule: SSH access by non-root user
+          desc: SSH access by a user that is not root
+          condition: spawned_process and proc.name = sshd and user.name != root
+          output: "Detected SSH access by non-root user (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline container=%container.name)"
+          priority: WARNING
+          tags: [process, ssh]
+    driver:
+      enabled: true
+      kind: ebpf
+    falco:
+      http_output:
+        enabled: true
+        url: http://falcosidekick:2801/
+      json_include_output_property: true
+      json_output: true
+    falcosidekick:
+      config:
+        alertmanager:
+          hostport: http://alertmanager-operated.monitoring:9093
+        loki:
+          hostport: http://loki-gateway.monitoring:80
+        prometheus:
+          enabled: true
+      enabled: true
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    tty: false
+  version: 4.4.2
+
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/spec/tolerations
+      value:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+  target:
+    kind: DaemonSet
+    name: falco
