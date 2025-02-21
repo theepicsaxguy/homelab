@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: karpenter
+
+resources:
+  - ns.yaml
+  - https://raw.githubusercontent.com/aws/karpenter/v0.34.0/pkg/apis/crds/karpenter.sh_provisioners.yaml
+  - https://raw.githubusercontent.com/aws/karpenter/v0.34.0/pkg/apis/crds/karpenter.k8s.aws_awsnodetemplates.yaml
+  - rbac.yaml
+  - controller.yaml
+  - provisioner.yaml
+
+patchesStrategicMerge:
+  - values.yaml

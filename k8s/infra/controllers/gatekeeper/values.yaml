@@ -1,0 +1,24 @@
+replicas: 3
+
+auditInterval: 300
+constraintViolationsLimit: 100
+auditFromCache: false
+disableMutation: false
+
+controllerManager:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+audit:
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi

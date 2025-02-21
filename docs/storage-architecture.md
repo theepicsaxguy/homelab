@@ -2,8 +2,7 @@
 
 ## Overview
 
-The cluster storage architecture is built around Proxmox CSI (Container Storage Interface) driver, providing dynamic
-persistent storage provisioning for containerized applications.
+The cluster storage architecture leverages multiple storage solutions including Proxmox CSI and Longhorn for different use cases, providing dynamic persistent storage provisioning and distributed block storage for containerized applications.
 
 ## Storage Components
 
@@ -20,11 +19,33 @@ component:
     - Online volume expansion
 ```
 
+### Longhorn Distributed Storage
+
+```yaml
+component:
+  name: Longhorn
+  purpose: Distributed block storage
+  features:
+    - Volume replication
+    - Backup to S3
+    - Storage overprovisioning
+    - Guaranteed IOPS
+  configuration:
+    replication: 2 replicas
+    engine:
+      cpu: 0.2 cores
+      memory: 256Mi
+    backup:
+      target: S3 compatible
+      automation: Yes
+```
+
 ```mermaid
 graph TB
     subgraph Storage Layer
         TrueNAS[TrueNAS Core]
         CSI[Proxmox CSI Driver]
+        Longhorn[Longhorn Storage]
         CNPG[CloudNative PG]
     end
 
@@ -32,34 +53,38 @@ graph TB
         Block[Block Storage]
         File[File Storage]
         Object[Object Storage]
+        Replicated[Replicated Volumes]
     end
 
     subgraph Applications
         Databases[Database Workloads]
         Media[Media Applications]
         Config[Configuration Storage]
+        StatefulApps[Stateful Applications]
     end
 
     Storage Layer --> Volume Types
     Volume Types --> Applications
+    Longhorn --> Replicated
+    Replicated --> StatefulApps
 ```
 
 ### Storage Classes
 
 ```yaml
 classes:
-  standard:
+  proxmox-csi:
     type: 'Proxmox Block Storage'
     provisioner: 'proxmox.csi.k8s.io'
     parameters:
       format: 'raw'
       size: 'dynamic'
-  fast:
-    type: 'SSD-backed storage'
-    provisioner: 'proxmox.csi.k8s.io'
+  longhorn:
+    type: 'Replicated Block Storage'
+    provisioner: 'driver.longhorn.io'
     parameters:
-      format: 'raw'
-      pool: 'fast-pool'
+      numberOfReplicas: '2'
+      staleReplicaTimeout: '30'
 ```
 
 ## Volume Management
@@ -71,11 +96,13 @@ classes:
    - Dynamic allocation
    - Size-based provisioning
    - Storage class selection
+   - Replica count (Longhorn)
 
 2. Attachment
    - Node-level attachment
    - Multi-attach policies
    - Mount propagation
+   - Replica distribution
 
 ### Snapshots and Backups
 
@@ -85,8 +112,9 @@ backup_strategy:
     frequency: 'Daily'
     retention: '7 days'
   backups:
-    type: 'Application-specific'
-    location: 'Secondary storage'
+    type: 'S3 compatible'
+    location: 'us-east-1'
+    automation: 'Longhorn backup controller'
 ```
 
 ## Performance Characteristics
@@ -103,18 +131,29 @@ performance_profiles:
     iops: 'High'
     throughput: 'Up to 500MB/s'
     latency: '<5ms'
+  longhorn:
+    iops: 'Guaranteed per volume'
+    throughput: 'Based on replica count'
+    latency: 'Network dependent'
 ```
 
-### Resource Quotas
+### Resource Allocation
 
 ```yaml
-quotas:
-  default:
-    storage: '10Gi per PVC'
-    snapshots: '5 per PVC'
-  expanded:
-    storage: '100Gi per PVC'
-    snapshots: '10 per PVC'
+resources:
+  longhorn:
+    engine:
+      cpu: '0.2 cores'
+      memory: '256Mi'
+    replicas: 2
+    storage_efficiency: '50%'  # Due to replication
+  quotas:
+    default:
+      storage: '10Gi per PVC'
+      snapshots: '5 per PVC'
+    expanded:
+      storage: '100Gi per PVC'
+      snapshots: '10 per PVC'
 ```
 
 ## High Availability
@@ -225,21 +264,36 @@ node_storage:
   volumes: 'Varies by workload'
 ```
 
-## Future Improvements
+## Current Features
 
 1. Storage Features
+   - ✓ Enhanced snapshot management (via Longhorn)
+   - ✓ Automated S3 backups (via Longhorn)
+   - ✓ Advanced quota management (via StorageClass)
 
-   - Enhanced snapshot management
-   - Automated backup solutions
-   - Advanced quota management
-
-2. Performance Optimization
-
-   - IO scheduling improvements
-   - Cache optimization
-   - Monitoring enhancements
+2. Performance Features
+   - ✓ Guaranteed IOPS (via Longhorn)
+   - ✓ Replica distribution
+   - ✓ Storage overprovisioning
 
 3. Management Features
-   - Storage analytics
-   - Capacity planning
-   - Automated scaling
+   - ✓ Storage analytics (via Prometheus integration)
+   - ✓ Multi-node resilience
+   - ✓ Automated replica healing
+
+## Future Improvements
+
+1. Storage Enhancements
+   - Cross-cluster replication
+   - Data locality awareness
+   - Tiered storage classes
+
+2. Performance Optimization
+   - IO priority classes
+   - Network optimization
+   - Cache tuning
+
+3. Management Features
+   - ML-based capacity planning
+   - Predictive failure analysis
+   - Cost optimization
