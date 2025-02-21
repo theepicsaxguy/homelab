@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/theepicsaxguy/homelab/compare/v1.4.1...v1.4.2) (2025-02-21)
+
+
+### Bug Fixes
+
+* update ([#74](https://github.com/theepicsaxguy/homelab/issues/74)) ([3935c19](https://github.com/theepicsaxguy/homelab/commit/3935c19f42347dc41588f1dbb5cc78a6d40dd8ca))
+
 ## [1.4.1](https://github.com/theepicsaxguy/homelab/compare/v1.4.0...v1.4.1) (2025-02-21)
 
 
