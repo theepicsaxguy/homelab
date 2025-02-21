@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: karpenter
+
+resources:
+- ns.yaml
+
+helmCharts:
+- includeCRDs: true
+  name: karpenter
+  namespace: karpenter
+  releaseName: karpenter
+  repo: https://charts.karpenter.sh
+  valuesInline:
+    nodePoolController:
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    settings:
+      clusterName: talos
+  version: 0.16.2

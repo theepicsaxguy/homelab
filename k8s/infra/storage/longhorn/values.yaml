@@ -1,0 +1,30 @@
+csi:
+  attacherReplicaCount: 3
+  provisionerReplicaCount: 3
+  resizerReplicaCount: 3
+  snapshotterReplicaCount: 3
+
+defaultSettings:
+  backupTarget: s3://homelab-backup@us-east-1/
+  backupTargetCredentialSecret: longhorn-backup-secret
+  createDefaultDiskLabeledNodes: true
+  defaultReplicaCount: 2
+  guaranteedEngineManagerCPU: 0.2
+  guaranteedReplicaManagerCPU: 0.2
+  storageOverProvisioningPercentage: 200
+  storageMinimalAvailablePercentage: 10
+  taintToleration: 'true'
+
+persistence:
+  defaultClassReplicaCount: 2
+  reclaimPolicy: Retain
+  defaultClass: true
+  defaultFsType: ext4
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

@@ -1,0 +1,20 @@
+replicas: 1
+
+priorityClassName: system-cluster-critical
+
+serviceAccount:
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi

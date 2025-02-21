@@ -20,15 +20,15 @@ spec:
     spec:
       project: storage
       source:
-        plugin:
-          name: kustomize-build-with-helm
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
         path: '{{ path }}'
       destination:
-        name: in-cluster
-        namespace: argocd
+        server: https://kubernetes.default.svc
+        namespace: '{{ path.basename }}'
       syncPolicy:
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

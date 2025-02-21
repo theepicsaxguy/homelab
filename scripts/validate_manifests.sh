@@ -102,7 +102,7 @@ kustomization_process(){
   do
     echo "${LINT}"
     kustomization_build "${LINT}"
-    # kustomization_auto_fix "${LINT}"
+    kustomization_auto_fix "${LINT}"
   done
 
   echo "Kustomize check passed :)"

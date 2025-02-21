@@ -1,0 +1,42 @@
+---
+name: Fix Kustomize Files
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0' # Run weekly on Sunday at midnight
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  fix-kustomize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v2
+        with:
+          kustomize-version: 5.2.1
+
+      - name: Make scripts executable
+        run: chmod +x ./scripts/*.sh
+
+      - name: Run Kustomize Fix
+        run: ./scripts/fix_kustomize.sh -d k8s
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: 'fix: update kustomize configurations'
+          commit-message: 'fix: update kustomize configurations with automatic fixes'
+          branch: fix/kustomize-updates
+          delete-branch: true
+          body: |
+            This PR contains automated fixes for Kustomize configurations.
+            - Updates deprecated fields
+            - Fixes formatting issues
+            - Ensures consistent style
