@@ -33,7 +33,7 @@ graph TB
         end
 
         subgraph Secret Management
-            SealedSecrets
+            SMOperator[Bitwarden SM Operator]
             CertManager[Cert Manager]
         end
     end
@@ -107,11 +107,11 @@ auth_stack:
 
 ```yaml
 secret_management:
-  type: 'Sealed Secrets'
+  type: 'Bitwarden SM Operator'
   features:
-    - Encryption at rest
-    - Version control safe
-    - Key rotation
+    - Centralized secret management
+    - Dynamic secret distribution
+    - Automated rotation
     - Backup support
 ```
 
