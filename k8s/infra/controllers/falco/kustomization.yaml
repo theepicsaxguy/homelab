@@ -4,27 +4,64 @@ kind: Kustomization
 namespace: falco-system
 
 resources:
-- ns.yaml
+  - ns.yaml
 
 helmCharts:
-- name: falco
-  includeCRDs: true
-  namespace: falco-system
-  releaseName: falco
-  repo: https://falcosecurity.github.io/charts
-  version: 4.4.2  # renovate: datasource=helm registryUrl=https://falcosecurity.github.io/charts
+  - name: falco
+    includeCRDs: true
+    namespace: falco-system
+    releaseName: falco
+    repo: https://falcosecurity.github.io/charts
+    version: 4.4.2 # renovate: datasource=helm registryUrl=https://falcosecurity.github.io/charts
+    valuesInline:
+      driver:
+        enabled: true
+        kind: ebpf
+
+      falco:
+        json_output: true
+        json_include_output_property: true
+        http_output:
+          enabled: true
+          url: 'http://falcosidekick:2801/'
+
+      customRules:
+        rules-ssh.yaml: |-
+          - rule: SSH access by non-root user
+            desc: SSH access by a user that is not root
+            condition: spawned_process and proc.name = sshd and user.name != root
+            output: "Detected SSH access by non-root user (user=%user.name user_loginuid=%user.loginuid command=%proc.cmdline container=%container.name)"
+            priority: WARNING
+            tags: [process, ssh]
+
+      tty: false
+
+      falcosidekick:
+        enabled: true
+        config:
+          alertmanager:
+            hostport: 'http://alertmanager-operated.monitoring:9093'
+          prometheus:
+            enabled: true
+          loki:
+            hostport: 'http://loki-gateway.monitoring:80'
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 512Mi
 
 patches:
-- target:
-    kind: DaemonSet
-    name: falco
-  patch: |-
-    - op: add
-      path: /spec/template/spec/tolerations
-      value:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
-
-patchesStrategicMerge:
-- values.yaml
+  - target:
+      kind: DaemonSet
+      name: falco
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule

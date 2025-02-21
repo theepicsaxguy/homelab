@@ -5,11 +5,22 @@ namespace: karpenter
 
 resources:
   - ns.yaml
-  - https://raw.githubusercontent.com/aws/karpenter/v0.34.0/pkg/apis/crds/karpenter.sh_provisioners.yaml
-  - https://raw.githubusercontent.com/aws/karpenter/v0.34.0/pkg/apis/crds/karpenter.k8s.aws_awsnodetemplates.yaml
-  - rbac.yaml
-  - controller.yaml
-  - provisioner.yaml
 
-patchesStrategicMerge:
-  - values.yaml
+helmCharts:
+  - name: karpenter
+    includeCRDs: true
+    namespace: karpenter
+    releaseName: karpenter
+    repo: https://charts.karpenter.sh
+    version: 0.16.2 # renovate: datasource=helm registryUrl=https://charts.karpenter.sh
+    valuesInline:
+      settings:
+        clusterName: talos
+      nodePoolController:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
