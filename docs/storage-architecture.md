@@ -24,6 +24,7 @@ component:
 ```yaml
 component:
   name: Longhorn
+  version: 1.8.0
   purpose: Distributed block storage
   features:
     - Volume replication
@@ -38,6 +39,9 @@ component:
     backup:
       target: S3 compatible
       automation: Yes
+    deployment:
+      method: Helm chart
+      repository: https://charts.longhorn.io
 ```
 
 ```mermaid
