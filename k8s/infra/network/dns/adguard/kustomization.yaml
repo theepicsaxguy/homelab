@@ -11,3 +11,4 @@ resources:
   - svc.yaml
   - deployment.yaml
   - http-route.yaml
+  - secret.yaml
