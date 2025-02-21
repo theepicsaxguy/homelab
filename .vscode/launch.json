@@ -1,0 +1,54 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OpenTofu Plan",
+      "type": "node",
+      "request": "launch",
+      "program": "/usr/bin/tofu",
+      "args": ["plan"],
+      "cwd": "${fileDirname}",
+      "env": {
+        "TF_LOG": "DEBUG",
+        "TF_LOG_PATH": "/tmp/terraform.log",
+        "TF_PLUGIN_CACHE_DIR": "${env:HOME}/.terraform.d/plugin-cache",
+        "TF_CLI_CONFIG_FILE": "${workspaceFolder}/.terraformrc"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "OpenTofu Validate",
+      "type": "node",
+      "request": "launch",
+      "program": "/usr/bin/tofu",
+      "args": ["validate"],
+      "cwd": "${fileDirname}",
+      "env": {
+        "TF_LOG": "DEBUG",
+        "TF_LOG_PATH": "/tmp/terraform.log",
+        "TF_PLUGIN_CACHE_DIR": "${env:HOME}/.terraform.d/plugin-cache",
+        "TF_CLI_CONFIG_FILE": "${workspaceFolder}/.terraformrc"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Shell Scripts",
+      "type": "node",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}/scripts",
+      "env": {
+        "DEBUG": "1"
+      }
+    },
+    {
+      "name": "Kustomize Build",
+      "type": "node",
+      "request": "launch",
+      "program": "/usr/local/bin/kustomize",
+      "args": ["build", "${fileDirname}"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
