@@ -4,35 +4,35 @@ kind: Kustomization
 namespace: gatekeeper-system
 
 resources:
-  - https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.15.0/deploy/gatekeeper.yaml
+- https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.15.0/deploy/gatekeeper.yaml
 
 patches:
-  - target:
-      kind: Deployment
-      name: gatekeeper-controller-manager
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 3
-      - op: replace
-        path: /spec/template/spec/containers/0/resources
-        value:
-          limits:
-            cpu: 1000m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
-  - target:
-      kind: Deployment
-      name: gatekeeper-audit
-    patch: |-
-      - op: replace
-        path: /spec/template/spec/containers/0/resources
-        value:
-          limits:
-            cpu: 1000m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 3
+    - op: replace
+      path: /spec/template/spec/containers/0/resources
+      value:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+  target:
+    kind: Deployment
+    name: gatekeeper-controller-manager
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/resources
+      value:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+  target:
+    kind: Deployment
+    name: gatekeeper-audit

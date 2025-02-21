@@ -4,13 +4,13 @@ kind: Kustomization
 namespace: sm-operator-system
 
 resources:
-  - namespace.yaml
-  - bitwarden-secret.yaml
+- namespace.yaml
+- bitwarden-secret.yaml
 
 helmCharts:
-  - name: sm-operator
-    namespace: sm-operator-system
-    releaseName: sm-operator
-    repo: https://charts.bitwarden.com
-    valuesFile: sm-operator-values.yaml
-    version: '0.1.0-Beta'
+- name: sm-operator
+  namespace: sm-operator-system
+  releaseName: sm-operator
+  repo: https://charts.bitwarden.com
+  valuesFile: sm-operator-values.yaml
+  version: 0.1.0-Beta

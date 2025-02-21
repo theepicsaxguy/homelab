@@ -3,20 +3,20 @@ kind: Kustomization
 namespace: authelia
 
 resources:
-  - ns.yaml
-  - cert-rsa-jwk.yaml
-  - cert-ecdsa-jwk.yaml
-  - http-route.yaml
-  - cnpg-db.yaml
-  - secret.yaml
+- ns.yaml
+- cert-rsa-jwk.yaml
+- cert-ecdsa-jwk.yaml
+- http-route.yaml
+- cnpg-db.yaml
+- secret.yaml
 
 helmCharts:
-  - name: authelia
-    namespace: authelia
-    releaseName: authelia
-    repo: https://charts.authelia.com
-    valuesFile: values.yaml
-    version: 0.9.16
+- name: authelia
+  namespace: authelia
+  releaseName: authelia
+  repo: https://charts.authelia.com
+  valuesFile: values.yaml
+  version: 0.9.16
 
 patches:
-  - path: patches/deployment-host-aliases.yaml
+- path: patches/deployment-host-aliases.yaml

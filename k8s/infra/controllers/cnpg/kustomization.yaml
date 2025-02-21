@@ -7,18 +7,18 @@ resources:
 - ns.yaml
 
 helmCharts:
-- name: cloudnative-pg
-  includeCRDs: true
+- includeCRDs: true
+  name: cloudnative-pg
   namespace: cnpg-system
   releaseName: cloudnative-pg
   repo: https://cloudnative-pg.github.io/charts
-  version: 0.20.2 # renovate: datasource=helm registryUrl=https://cloudnative-pg.github.io/charts
   valuesInline:
     config:
       data_directory: /var/lib/postgresql/data
       pg_hba:
-        - hostssl all all all cert
+      - hostssl all all all cert
       shared_preload_libraries:
-        - pg_stat_statements
+      - pg_stat_statements
     monitoring:
       enablePodMonitor: true
+  version: 0.20.2

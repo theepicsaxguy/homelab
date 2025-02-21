@@ -4,23 +4,23 @@ kind: Kustomization
 namespace: karpenter
 
 resources:
-  - ns.yaml
+- ns.yaml
 
 helmCharts:
-  - name: karpenter
-    includeCRDs: true
-    namespace: karpenter
-    releaseName: karpenter
-    repo: https://charts.karpenter.sh
-    version: 0.16.2 # renovate: datasource=helm registryUrl=https://charts.karpenter.sh
-    valuesInline:
-      settings:
-        clusterName: talos
-      nodePoolController:
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 1000m
-            memory: 512Mi
+- includeCRDs: true
+  name: karpenter
+  namespace: karpenter
+  releaseName: karpenter
+  repo: https://charts.karpenter.sh
+  valuesInline:
+    nodePoolController:
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    settings:
+      clusterName: talos
+  version: 0.16.2

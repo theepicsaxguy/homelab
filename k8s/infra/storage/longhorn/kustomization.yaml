@@ -4,13 +4,13 @@ kind: Kustomization
 namespace: longhorn-system
 
 resources:
-  - ns.yaml
+- ns.yaml
 
 helmCharts:
-  - name: longhorn
-    includeCRDs: true
-    namespace: longhorn-system
-    releaseName: longhorn
-    repo: https://charts.longhorn.io
-    version: 1.8.0 # renovate: datasource=helm registryUrl=https://charts.longhorn.io
-    valuesFile: values.yaml
+- includeCRDs: true
+  name: longhorn
+  namespace: longhorn-system
+  releaseName: longhorn
+  repo: https://charts.longhorn.io
+  valuesFile: values.yaml
+  version: 1.8.0
