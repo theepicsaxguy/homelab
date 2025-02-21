@@ -71,7 +71,7 @@ resource "helm_release" "argocd" {
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  version    = "7.8.3"
+  version    = "7.8.4"
   values     = [file("${path.module}/infra/controllers/argocd/values.yaml")]
   set {
     name  = "commonAnnotations.argocd.argoproj.io/sync-wave"
