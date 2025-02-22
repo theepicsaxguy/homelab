@@ -19,7 +19,18 @@ jobs:
       - name: Code Checkout
         uses: actions/checkout@v4
 
+      - name: Cache Helm binary and cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/helm 
+            ~/.cache/helm
+            ~/.helm
+          key: ${{ runner.os }}-helm-${{ env.HELM_VERSION }}
+
       - name: Install Helm
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           wget https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz
           tar xzf helm-v${HELM_VERSION}-linux-amd64.tar.gz
@@ -29,8 +40,14 @@ jobs:
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Run chart validation from k8s directory
-        working-directory: k8s
+      - name: Run chart validation
+        env:
+          HELM_KUBEVERSION: v1.32.0
         run: |
-          cd ../
+          # Update Helm repos to ensure we can validate dependencies
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          
+          # Run the validation script
           ./scripts/validate_charts.sh
