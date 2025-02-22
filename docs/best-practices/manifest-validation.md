@@ -21,6 +21,14 @@ outlines the validation requirements and tools used.
 - Components and ApplicationSets must be properly referenced
 - Helm chart references must be properly configured with appropriate version pinning
 
+### Helm Chart Validation
+
+- All Helm charts referenced in kustomizations must pass `helm lint`
+- Charts must be compatible with Kubernetes v1.32.0
+- Charts are validated in their downloaded location under the component's `charts/` directory
+- Chart dependencies must be properly declared and versioned
+- Icons in Chart.yaml are recommended but not required
+
 ### Trivy Security Scanner
 
 - All manifests are scanned for security issues
@@ -57,4 +65,3 @@ kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.32.0 
 find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
     kustomize build --enable-helm "$dir"
 done
-```
