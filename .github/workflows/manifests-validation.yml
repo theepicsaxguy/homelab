@@ -1,4 +1,3 @@
----
 name: Validate Kubernetes Manifests
 
 on:
@@ -29,17 +28,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.cache/kubeval
+            ~/.cache/kubeconform
             ~/.cache/kustomize
           key: ${{ runner.os }}-k8s-tools-${{ hashFiles('k8s/**') }}
 
-      - name: Validate k8s manifests
-        uses: instrumenta/kubeval-action@master
-        with:
-          files: k8s
-          version: ${{ matrix.k8s-version }}
-          strict: true
-          ignore_missing_schemas: true
+      - name: Install kubeconform
+        run: |
+          curl -L -o kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
+          chmod +x kubeconform
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate Kubernetes manifests with kubeconform
+        run: |
+          kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=${{ matrix.k8s-version }} k8s/**/*.yaml
 
       - name: Run Trivy vulnerability scanner for manifests
         uses: aquasecurity/trivy-action@master
@@ -62,7 +63,6 @@ jobs:
           chmod +x /usr/local/bin/argocd
           argocd admin app manifests --source k8s/ | argocd app diff - --local=k8s/
 
-      # Add drift detection
       - name: Check for configuration drift
         run: |
           if [ -f k8s/current-state.yaml ]; then
