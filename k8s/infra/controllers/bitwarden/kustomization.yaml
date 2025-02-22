@@ -5,12 +5,18 @@ namespace: sm-operator-system
 
 resources:
 - namespace.yaml
-- bitwarden-secret.yaml
+- infrastructure-secrets.yaml
 
 helmCharts:
 - name: sm-operator
   namespace: sm-operator-system
   releaseName: sm-operator
   repo: https://charts.bitwarden.com
-  valuesFile: sm-operator-values.yaml
-  version: 0.1.0-Beta
+  version: 0.1.0-Beta # Pinning version as per guidelines
+  valuesInline:
+    settings:
+      cloudRegion: "EU"
+      bwSecretsManagerRefreshInterval: 300  # 5 minutes in seconds
+      kubernetesClusterDomain: "cluster.local"
+    containers:
+      enableSeccompProfileRuntimeDefault: true
