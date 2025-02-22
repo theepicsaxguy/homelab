@@ -29,8 +29,5 @@ jobs:
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Run chart validation from k8s directory
-        working-directory: k8s
-        run: |
-          cd ../
-          ./scripts/validate_charts.sh
+      - name: Run chart validation
+        run: ./scripts/validate_charts.sh
