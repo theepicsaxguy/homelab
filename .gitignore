@@ -31,3 +31,5 @@ override.tf.json
 *.pem
 *.crt
 
+node_modules/
+package-lock.json

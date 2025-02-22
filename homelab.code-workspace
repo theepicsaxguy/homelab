@@ -1,11 +1,35 @@
 {
   "folders": [
+
     {
+      "name": "k8s",
+      "path": "k8s"
+    },
+    {
+      "name": "tofu",
+      "path": "tofu"
+    },
+    {
+      "name": "github",
+      "path": ".github"
+    },
+    {
+      "name": "docs",
+      "path": "docs"
+    },
+    {
+      "name": "scripts",
+      "path": "scripts"
+    },
+    {
+      "name": "root",
       "path": "."
-    }
+    },
   ],
+
   "settings": {
     // File associations
+
     "files.associations": {
       "*.yaml": "yaml",
       "*.yml": "yaml",
