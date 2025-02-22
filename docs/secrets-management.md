@@ -1,10 +1,12 @@
 # Secrets Management with Bitwarden SM Operator
 
-This document describes how secrets are managed in our homelab infrastructure using Bitwarden Secrets Manager Operator (sm-operator).
+This document describes how secrets are managed in our homelab infrastructure using Bitwarden Secrets Manager Operator
+(sm-operator).
 
 ## Architecture Overview
 
 The secrets management system follows these principles:
+
 1. Secrets are stored in Bitwarden Secrets Manager
 2. The sm-operator syncs secrets from Bitwarden to Kubernetes
 3. Applications reference these secrets using standard Kubernetes secrets
@@ -46,6 +48,7 @@ spec:
 To use a secret in your application:
 
 1. Create a standard Kubernetes secret with Bitwarden annotations:
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -53,14 +56,15 @@ metadata:
   name: my-app-secret
   namespace: my-namespace
   annotations:
-    bitwarden.com/sync: "true"
+    bitwarden.com/sync: 'true'
     bitwarden.com/source-secret: infrastructure-secrets
 type: Opaque
 stringData:
-  config.json: "{{ .secret_key_name }}"
+  config.json: '{{ .secret_key_name }}'
 ```
 
 2. Reference the secret in your application:
+
 ```yaml
 spec:
   template:
@@ -90,19 +94,53 @@ spec:
 If secrets are not syncing:
 
 1. Check sm-operator logs:
+
 ```bash
 kubectl logs -n sm-operator-system -l app.kubernetes.io/name=sm-operator
 ```
 
 2. Verify the auth token secret exists:
+
 ```bash
 kubectl get secret bw-auth-token -n sm-operator-system
 ```
 
 3. Check BitwardenSecret status:
+
 ```bash
 kubectl get bitwardensecret -n sm-operator-system
 ```
+
+### Common Issues
+
+1. **Secret Not Syncing** // ...existing code...
+
+2. **Pod Initialization Failures with Configuration** If pods fail to start with configuration-related issues:
+
+a) **CrashLoopBackOff in Init Containers**
+
+- Check if you're using init containers to inject secrets
+- Convert to using environment variables where possible
+- Verify the secret exists and is properly synced
+- Example: AdGuard users configuration should use environment variables (ADGUARD_USERS) instead of file injection
+
+b) **Mount Path Issues**
+
+- Verify the correct secret keys are referenced
+- Check if the application supports environment variables as an alternative
+- Ensure proper permissions on mounted paths
+
+3. **Secret Content Template Issues**
+
+   ```yaml
+   # Incorrect
+   stringData:
+     users.yaml: '{{ .users }}' # Wrong extension or key name
+
+   # Correct
+   stringData:
+     ENVIRONMENT_VARIABLE: '{{ .secret_key_name }}'
+   ```
 
 ## Infrastructure Secrets Organization
 
@@ -111,12 +149,14 @@ kubectl get bitwardensecret -n sm-operator-system
 The infrastructure uses these main categories of secrets:
 
 1. **Authentication Secrets**
+
    - SMTP credentials
    - Crypto keys
    - OIDC client secrets
    - LLDAP credentials
 
 2. **Network Secrets**
+
    - Cloudflared tunnel credentials
    - AdGuard user configurations
    - API tokens
@@ -128,6 +168,7 @@ The infrastructure uses these main categories of secrets:
 ### Secret Mapping Pattern
 
 The BitwardenSecret resource follows this structure:
+
 ```yaml
 spec:
   map:
@@ -149,20 +190,22 @@ spec:
 ## GitOps Integration
 
 1. **Bootstrap Process**:
+
    - SM Operator deployment is part of the manual bootstrap process
    - Must be installed before other components that depend on secrets
 
 2. **Secret Template Pattern**:
+
    ```yaml
    apiVersion: v1
    kind: Secret
    metadata:
      annotations:
-       bitwarden.com/sync: "true"
+       bitwarden.com/sync: 'true'
        bitwarden.com/source-secret: infrastructure-secrets
    type: Opaque
    stringData:
-     key: "{{ .secret_key_name }}"
+     key: '{{ .secret_key_name }}'
    ```
 
 3. **ArgoCD Integration**:
@@ -173,11 +216,13 @@ spec:
 ## Security Considerations
 
 1. **Access Control**:
+
    - SM Operator runs with minimal permissions
    - Secrets are namespace-scoped
    - Use RBAC to control secret access
 
 2. **Secret Rotation**:
+
    - Automatic sync every 180 seconds (configurable)
    - No pod restart required for secret updates
    - Use checksum annotations when pod restart is needed
@@ -206,12 +251,14 @@ spec:
 ### Troubleshooting Steps
 
 1. **Verify SM Operator Status**:
+
    ```bash
    kubectl get pods -n sm-operator-system
    kubectl logs -l app.kubernetes.io/name=sm-operator -n sm-operator-system
    ```
 
 2. **Check Secret Sync Status**:
+
    ```bash
    kubectl get events -n <namespace> --field-selector involvedObject.name=<secret-name>
    ```
@@ -228,6 +275,7 @@ spec:
 This homelab uses a centralized pattern where:
 
 1. **Single Source of Truth**:
+
    - One main BitwardenSecret (`infrastructure-secrets`)
    - Located in `sm-operator-system` namespace
    - Maps all secrets across the infrastructure
@@ -248,22 +296,24 @@ metadata:
   name: app-secret
   namespace: app-namespace
   annotations:
-    bitwarden.com/sync: "true"
-    bitwarden.com/source-secret: infrastructure-secrets  # References the central secret
+    bitwarden.com/sync: 'true'
+    bitwarden.com/source-secret: infrastructure-secrets # References the central secret
 type: Opaque
 stringData:
   # Uses the secretKeyName from the central BitwardenSecret mapping
-  config.yaml: "{{ .app_config }}"
+  config.yaml: '{{ .app_config }}'
 ```
 
 ### Benefits of This Pattern
 
 1. **Simplified Management**:
+
    - Single point of configuration in BitwardenSecret
    - Clear mapping between Bitwarden and Kubernetes secrets
    - Easier secret rotation and auditing
 
 2. **GitOps Friendly**:
+
    - Secret templates can be version controlled
    - No sensitive data in Git
    - Automated secret distribution
@@ -280,11 +330,13 @@ stringData:
 The Bitwarden Secrets Manager integrates with the homelab's zero-trust architecture:
 
 1. **Authentication Chain**:
+
    - SM Operator authenticates with Bitwarden using machine tokens
    - Applications authenticate to Kubernetes to access secrets
    - All secret access is audited and logged
 
 2. **Security Zones**:
+
    ```mermaid
    graph TB
        Bitwarden[Bitwarden Secrets Manager]
@@ -300,12 +352,14 @@ The Bitwarden Secrets Manager integrates with the homelab's zero-trust architect
 ### Compliance with Security Standards
 
 1. **Secret Lifecycle**:
+
    - Creation through Bitwarden UI/API
    - Distribution via SM Operator
    - Rotation through Bitwarden
    - Deletion with proper garbage collection
 
 2. **Security Controls**:
+
    - No secrets in Git repositories
    - Encryption at rest in Kubernetes
    - Network policy restrictions
@@ -319,6 +373,7 @@ The Bitwarden Secrets Manager integrates with the homelab's zero-trust architect
 ### Security Best Practices
 
 1. **Access Control**:
+
    ```yaml
    security_controls:
      rbac:
@@ -332,6 +387,7 @@ The Bitwarden Secrets Manager integrates with the homelab's zero-trust architect
    ```
 
 2. **Secret Distribution**:
+
    - Least privilege principle
    - Just-in-time access where possible
    - Regular access reviews
@@ -350,6 +406,7 @@ The Bitwarden Secrets Manager integrates with the homelab's zero-trust architect
 The sm-operator has the following key dependencies:
 
 1. **Pre-requisites**:
+
    - Running Kubernetes cluster
    - Network access to Bitwarden API
    - Authentication token configured
@@ -362,6 +419,7 @@ The sm-operator has the following key dependencies:
 ### Common Integration Patterns
 
 1. **Database Credentials**:
+
    ```yaml
    apiVersion: v1
    kind: Secret
@@ -369,15 +427,16 @@ The sm-operator has the following key dependencies:
      name: db-creds
      namespace: database
      annotations:
-       bitwarden.com/sync: "true"
+       bitwarden.com/sync: 'true'
        bitwarden.com/source-secret: infrastructure-secrets
    type: Opaque
    stringData:
-     username: "{{ .db_user }}"
-     password: "{{ .db_password }}"
+     username: '{{ .db_user }}'
+     password: '{{ .db_password }}'
    ```
 
 2. **TLS Certificates**:
+
    ```yaml
    apiVersion: v1
    kind: Secret
@@ -385,11 +444,11 @@ The sm-operator has the following key dependencies:
      name: tls-auth
      namespace: cert-manager
      annotations:
-       bitwarden.com/sync: "true"
+       bitwarden.com/sync: 'true'
        bitwarden.com/source-secret: infrastructure-secrets
    type: Opaque
    stringData:
-     api-token: "{{ .cloudflare_api_token }}"
+     api-token: '{{ .cloudflare_api_token }}'
    ```
 
 3. **Authentication Config**:
@@ -400,11 +459,11 @@ The sm-operator has the following key dependencies:
      name: oidc-config
      namespace: auth
      annotations:
-       bitwarden.com/sync: "true"
+       bitwarden.com/sync: 'true'
        bitwarden.com/source-secret: infrastructure-secrets
    type: Opaque
    stringData:
-     config.yaml: "{{ .oidc_config }}"
+     config.yaml: '{{ .oidc_config }}'
    ```
 
 ### Bootstrap Order
@@ -412,16 +471,19 @@ The sm-operator has the following key dependencies:
 For new cluster deployments:
 
 1. **Phase 1 (Pre-requisites)**:
+
    - Deploy Kubernetes cluster
    - Configure network access
    - Apply CRDs
 
 2. **Phase 2 (Core Security)**:
+
    - Deploy Cilium networking
    - Configure network policies
    - Deploy sm-operator
 
 3. **Phase 3 (Secret Distribution)**:
+
    - Create auth token secret
    - Deploy BitwardenSecret resource
    - Verify secret sync
@@ -436,11 +498,13 @@ For new cluster deployments:
 Key components that depend on sm-operator:
 
 1. **Authentication Stack**:
+
    - Authelia configurations
    - OIDC client secrets
    - LLDAP credentials
 
 2. **Networking**:
+
    - Cloudflared tokens
    - API credentials
    - TLS certificates
@@ -449,3 +513,115 @@ Key components that depend on sm-operator:
    - Database credentials
    - Backup encryption keys
    - CSI provider secrets
+
+## Integration with Applications
+
+### Common Patterns
+
+1. **Basic Secret Reference**
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: basic-secret
+  namespace: my-namespace
+  annotations:
+    bitwarden.com/sync: 'true'
+    bitwarden.com/source-secret: infrastructure-secrets
+type: Opaque
+stringData:
+  key: '{{ .secret_key }}'
+```
+
+2. **Environment Variables Pattern**
+
+```yaml
+# Secret Definition
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-env-secret
+  annotations:
+    bitwarden.com/sync: 'true'
+    bitwarden.com/source-secret: infrastructure-secrets
+type: Opaque
+stringData:
+  ENV_VAR: '{{ .secret_key }}'
+
+# Deployment Usage
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          envFrom:
+            - secretRef:
+                name: app-env-secret
+```
+
+3. **Application Configuration Pattern** (e.g., AdGuard) When an application requires configuration that includes
+   secrets:
+
+```yaml
+# Base ConfigMap for static configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  config.yaml: |
+    static_config: value
+    users: placeholder
+
+# Secret for dynamic user configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-users
+  annotations:
+    bitwarden.com/sync: 'true'
+    bitwarden.com/source-secret: infrastructure-secrets
+type: Opaque
+stringData:
+  ENV_VAR: '{{ .app_users }}'
+
+# Deployment
+spec:
+  template:
+    spec:
+      containers:
+        - name: app
+          envFrom:
+            - secretRef:
+                name: app-users
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.yaml
+              subPath: config.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
+```
+
+This pattern is particularly useful when:
+
+- The application reads configuration from both files and environment variables
+- You need to separate static configuration from sensitive data
+- The application supports environment variable overrides
+
+### Anti-Patterns to Avoid
+
+1. **Direct Secret Volume Mounts** Do not mount secrets directly as files unless absolutely required by the application.
+   Prefer environment variables when possible as they:
+
+- Are easier to rotate
+- Don't require pod restarts when updated
+- Are more secure (no filesystem exposure)
+
+2. **Init Container Secret Injection** Avoid using init containers to inject secrets into configuration files. Instead:
+
+- Use environment variables when possible
+- Leverage the application's built-in environment variable support
+- If file-based secrets are required, consider using CSI secret provider

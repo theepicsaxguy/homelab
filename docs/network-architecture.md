@@ -351,3 +351,47 @@ requirements:
    - Zero-trust implementation
    - Enhanced encryption
    - Advanced threat detection
+
+## DNS Management
+
+### AdGuard Configuration Pattern
+
+For services that require both static configuration and sensitive data like AdGuard:
+
+1. **Configuration Management**
+   - Static configuration lives in ConfigMaps
+   - Sensitive data (users, API keys) managed through sm-operator
+   - Environment variables preferred over file injection
+   - No manual secret mounting or init container injection
+
+2. **Service Configuration**
+   - Use LoadBalancer services with Cilium IP allocation
+   - Define strict network policies
+   - Enable metrics endpoints for monitoring
+
+Example service configuration:
+```yaml
+metadata:
+  annotations:
+    io.cilium/lb-ipam-ips: <static-ip>  # Fixed IP allocation
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 3000
+    - name: dns-tcp
+      port: 53
+    - name: dns-udp
+      port: 53
+```
+
+3. **Security Considerations**
+   - Restrict pod capabilities to minimum required
+   - Use read-only root filesystem
+   - Implement proper seccomp profiles
+   - Avoid privileged operations
+
+4. **Configuration Updates**
+   - Changes must go through GitOps workflow
+   - Use ArgoCD for deployment management
+   - Leverage sm-operator for secret rotation

@@ -378,3 +378,56 @@ secure_development:
    - Security review process
    - Change documentation
    - Impact assessment
+
+## Pod Security Standards
+
+### Application-Specific Patterns
+
+1. **DNS Services (e.g., AdGuard)**
+   - Run as non-root
+   - Read-only root filesystem
+   - No privilege escalation
+   - Drop all capabilities by default
+   - Use seccomp profile: RuntimeDefault
+   - Separate static config from secrets
+
+2. **Secret Management Integration**
+   - Environment variables over volume mounts
+   - No init containers for secret injection
+   - Leverage sm-operator templating
+   - Use centralized infrastructure-secrets
+
+### Security Context Example
+```yaml
+spec:
+  template:
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: app
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+```
+
+### Configuration Management
+1. **Static Configuration**
+   - Store in ConfigMaps
+   - Version controlled in Git
+   - Applied through ArgoCD
+
+2. **Dynamic/Sensitive Configuration**
+   - Managed by sm-operator
+   - Templates in Git
+   - No secrets in manifests
+   - Environment variable injection
+
+3. **Application Updates**
+   - All changes through GitOps
+   - No direct pod or secret modification
+   - Proper RBAC enforcement
+   - Audit logging enabled

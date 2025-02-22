@@ -281,3 +281,57 @@ monitoring_footprint:
    - New dashboard templates
    - Enhanced reporting
    - Real-time analytics
+
+## Application Integration Patterns
+
+### Network Services Monitoring
+
+1. **DNS Services (AdGuard, CoreDNS)**
+
+   - Expose metrics on dedicated port
+   - Use consistent port naming conventions:
+     ```yaml
+     ports:
+       - name: metrics
+         port: 9100
+       - name: http
+         port: 3000
+       - name: dns-tcp
+         port: 53
+       - name: dns-udp
+         port: 53
+     ```
+   - Label ports consistently for service discovery
+   - Keep monitoring configuration separate from sensitive data
+
+2. **Configuration Monitoring**
+
+   - Monitor configuration file integrity
+   - Track secret sync status via sm-operator metrics
+   - Alert on configuration drift
+   - Monitor service health through readiness/liveness probes
+
+3. **Service Health Indicators**
+
+   - DNS query success rates
+   - Configuration reload status
+   - Secret sync status
+   - Resource utilization
+
+4. **Alerting Rules**
+
+   ```yaml
+   - alert: ConfigurationDrift
+     expr: kube_configmap_metadata_resource_version changes(1h) > 3
+     labels:
+       severity: warning
+     annotations:
+       description: 'Configuration changes detected, verify through GitOps'
+
+   - alert: SecretSyncFailure
+     expr: sm_operator_secret_sync_status != 1
+     labels:
+       severity: critical
+     annotations:
+       description: 'Secret sync failure detected in {{ $labels.namespace }}'
+   ```
