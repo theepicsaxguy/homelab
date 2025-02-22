@@ -1,48 +1,29 @@
-#!/bin/bash
+#!/bin/sh
 
-display_help(){
-  echo "./$(basename "$0") [ -d | --directory DIRECTORY ] [ -h | --help ]
-Script to fix and update Kustomize configurations
-Where:
-  -d  | --directory DIRECTORY  Base directory containing Kustomize overlays
-  -h  | --help                 Display this help text"
-}
+# Find all directories containing kustomization.yaml
+kustomize_dirs=$(find . -type f -name "kustomization.yaml" -exec dirname {} \;)
 
-KUSTOMIZE_DIRS="."
+if [ -z "$kustomize_dirs" ]; then
+    echo "Error: No kustomization.yaml files found."
+    exit 1
+fi
 
-init(){
-  for i in "${@}"
-  do
-    case $i in
-      -d | --directory )
-        shift
-        KUSTOMIZE_DIRS="${1}"
-        shift
-        ;;
-      -h | --help )
-        display_help
-        exit 0
-        ;;
-      -*) echo >&2 "Invalid option: " "${@}"
+# Loop through each kustomization directory and apply fix
+for i in $kustomize_dirs; do
+    echo
+    echo "Fixing kustomization in $i"
+    echo
+
+    # Change to directory and run kustomize fix
+    (cd "$i" && kustomize edit fix)
+
+    fix_response=$?
+
+    if [ $fix_response -ne 0 ]; then
+        echo "Error fixing kustomization in $i"
         exit 1
-        ;;
-    esac
-  done
-}
+    fi
+done
 
-fix_kustomization(){
-  echo "Fixing Kustomize configurations..."
-
-  for DIR in $(find "${KUSTOMIZE_DIRS}" -name "kustomization.yaml" -exec dirname {} \;)
-  do
-    echo "Processing ${DIR}"
-    pushd "${DIR}" || continue
-    kustomize edit fix
-    popd || continue
-  done
-
-  echo "Kustomize fix completed successfully!"
-}
-
-init "${@}"
-fix_kustomization
+echo
+echo "Kustomization files successfully fixed!"

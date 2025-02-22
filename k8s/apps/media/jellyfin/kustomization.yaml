@@ -13,6 +13,7 @@ resources:
 - pvc.yaml
 - http-route.yaml
 - deployment.yaml
+
 labels:
 - includeSelectors: true
   pairs:

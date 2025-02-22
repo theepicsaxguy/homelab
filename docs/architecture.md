@@ -16,6 +16,7 @@ Located in `/tofu/kubernetes/`, this layer handles:
 - Base cluster configuration
 
 Key Components:
+
 ```yaml
 components:
   proxmox:
@@ -49,15 +50,43 @@ Located in `/k8s/`, implements a hierarchical GitOps structure:
 ### 3. Network Architecture
 
 The cluster uses Cilium for networking, providing:
+
 - Service mesh capabilities
 - Network policies
 - Load balancing
 - Direct routing where possible
 - Enhanced security through eBPF
 
+### Services Exposure
+
+#### Services Exposed via Subdomains
+
+- AdGuard: `adguard.pc-tips.se`
+- Authelia: `authelia.pc-tips.se`
+- Grafana: `grafana.pc-tips.se`
+- Hubble: `hubble.pc-tips.se`
+- Jellyfin: `jellyfin.pc-tips.se`
+- Lidarr: `lidarr.pc-tips.se`
+- Prowlarr: `prowlarr.pc-tips.se`
+- Prometheus: `prometheus.pc-tips.se`
+- Radarr: `radarr.pc-tips.se`
+- Sonarr: `sonarr.pc-tips.se`
+- Home Assistant: `haos.pc-tips.se`
+- Proxmox: `proxmox.pc-tips.se`
+- TrueNAS: `truenas.pc-tips.se`
+- ArgoCD: `argocd.pc-tips.se`
+
+#### Services Exposed via IPs
+
+- Unbound DNS: `10.25.150.252`
+- AdGuard DNS: `10.25.150.253`
+- Torrent: `10.25.150.225`
+- Whoami: `10.25.150.223`
+
 ### 4. Storage Architecture
 
 Implements:
+
 - Proxmox CSI driver for persistent storage
 - Dynamic volume provisioning
 - Storage classes for different performance tiers
@@ -79,22 +108,26 @@ Implements:
 ## Performance Considerations
 
 ### Resource Management
+
 - VM resources allocated based on node roles
 - Control plane nodes: 2 CPU, 4GB RAM minimum
 - Worker nodes: Scalable based on workload
 
 ### Network Performance
+
 - Cilium direct routing when possible
 - eBPF for optimized networking
 - Hubble for network observability
 
 ### Storage Performance
+
 - CSI driver with local path provisioner
 - Different storage classes for various performance needs
 
 ## Monitoring and Operations
 
 Monitoring stack includes:
+
 - Prometheus for metrics
 - Grafana for visualization
 - Hubble for network monitoring
@@ -122,6 +155,7 @@ Monitoring stack includes:
 ## Resource Requirements
 
 Minimum cluster requirements:
+
 ```yaml
 control_plane:
   cpu: 2 cores per node
