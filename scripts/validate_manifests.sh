@@ -14,6 +14,7 @@ Where:
 which kustomize && KUSTOMIZE_CMD="kustomize build" || echo "Kustomize not in path; using 'oc kustomize' instead"
 which helm && GOT_HELM="--enable-helm" || echo "Helm not in path; skipping kustomizations that use helm"
 
+# DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 KUSTOMIZE_CMD="${KUSTOMIZE_CMD:-oc kustomize}"
 IGNORE_MISSING_SCHEMAS="--ignore-missing-schemas"
 SCHEMA_LOCATION="./openshift-json-schema"
@@ -53,11 +54,9 @@ kustomization_auto_fix(){
 
   [ "${KUSTOMIZE_CMD}" == "kustomize build" ] || return
   FIX_CMD="${FIX_CMD:-kustomize edit fix}"
-  FIX_VARS_CMD="kustomize edit fix --vars"
 
   pushd "${BUILD_PATH}" || return
   ${FIX_CMD}
-  ${FIX_VARS_CMD}
   popd || return
 }
 
@@ -73,12 +72,17 @@ kustomization_build(){
       return 0
     fi
 
+    # Don't include "${GOT_HELM}" otherwise kustomize thinks that "" (empty string) is another input directory and
+    # kustomize immediately exits with message: "Error: specify one path to kustomization.yaml"
     KUSTOMIZE_BUILD_OUTPUT=$(${KUSTOMIZE_CMD} "${BUILD}")
   fi
+  # echo "$KUSTOMIZE_BUILD_OUTPUT" | kubeval ${IGNORE_MISSING_SCHEMAS} --schema-location="file://${SCHEMA_LOCATION}" --force-color
 
   cmd_response=$?
 
   if [ $cmd_response -ne 0 ]; then
+    # It is valid for components to reference resources not directly included into the component definition, so don't
+    # error out on components that fail a `kustomize build`
     if grep -qe '^kind: Component$' "${BUILD}/kustomization.yaml"; then
       echo "[SKIP]"
       return 0
@@ -103,13 +107,6 @@ kustomization_process(){
 
   echo "Kustomize check passed :)"
 }
-kustomization_fix_all() {
-  echo "Running kustomize edit fix --vars for all kustomization.yaml files..."
-  find "${KUSTOMIZE_DIRS}" -type f -name "kustomization.yaml" -execdir kustomize edit fix --vars \;
-  echo "Kustomization fixes applied!"
-}
-
-kustomization_fix_all
 
 init "${@}"
 kustomization_process
