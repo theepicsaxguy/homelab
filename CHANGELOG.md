@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/theepicsaxguy/homelab/compare/v1.5.0...v1.6.0) (2025-02-22)
+
+
+### Features
+
+* **k8s:** enhance secret management with Bitwarden integration ([#93](https://github.com/theepicsaxguy/homelab/issues/93)) ([03365f0](https://github.com/theepicsaxguy/homelab/commit/03365f09eec0f2d353935fada6647d80c33180bd))
+* **k8s:** update Bitwarden API version and enhance project configuration ([#94](https://github.com/theepicsaxguy/homelab/issues/94)) ([39061cb](https://github.com/theepicsaxguy/homelab/commit/39061cb87c2dcbb331f3dc1143786fb797f739fa))
+
+
+### Bug Fixes
+
+* **k8s:** correct DHCP service name and enhance AdGuard secret management ([#91](https://github.com/theepicsaxguy/homelab/issues/91)) ([3965795](https://github.com/theepicsaxguy/homelab/commit/3965795711a5ac866e886a36f5ea45e4c2f963d5))
+
 ## [1.5.0](https://github.com/theepicsaxguy/homelab/compare/v1.4.2...v1.5.0) (2025-02-22)
 
 
