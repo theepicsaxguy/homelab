@@ -8,15 +8,12 @@ configMapGenerator:
     namespace: jellyfin
 
 resources:
-  - base/ns.yaml
-  - base/svc.yaml
-  - base/pvc.yaml
-  - base/http-route.yaml
-  - base/deployment.yaml
-  - base/service.yaml
-
-patchesStrategicMerge:
-  - overlays/production/patch.yaml
+  - ns.yaml
+  - svc.yaml
+  - pvc.yaml
+  - http-route.yaml
+  - deployment.yaml
+  - service.yaml
 
 labels:
   - includeSelectors: true
