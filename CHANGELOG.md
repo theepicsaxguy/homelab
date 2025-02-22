@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/theepicsaxguy/homelab/compare/v1.4.2...v1.5.0) (2025-02-22)
+
+
+### Features
+
+* **k8s:** enhance kustomization and service configurations ([#88](https://github.com/theepicsaxguy/homelab/issues/88)) ([857bb35](https://github.com/theepicsaxguy/homelab/commit/857bb358c8722360ed7063b8369694239b8dbbcb))
+
 ## [1.4.2](https://github.com/theepicsaxguy/homelab/compare/v1.4.1...v1.4.2) (2025-02-21)
 
 
