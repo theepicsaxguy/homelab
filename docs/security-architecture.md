@@ -175,7 +175,7 @@ ingress_controls:
 
 ### Secret Management
 
-- SealedSecrets for Git storage
+- sm-operator for Git storage
 - Cert-manager for TLS automation
 - Kubernetes secrets encryption
 - GitOps security practices
