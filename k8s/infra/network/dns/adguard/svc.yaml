@@ -17,7 +17,7 @@ spec:
     - name: dns-udp
       port: 53
       protocol: UDP
-    - name: dchp
+    - name: dhcp
       port: 67
       protocol: UDP
   selector:
