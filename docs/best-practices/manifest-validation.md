@@ -57,3 +57,4 @@ kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.32.0 
 find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
     kustomize build --enable-helm "$dir"
 done
+```
