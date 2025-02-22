@@ -3,28 +3,19 @@ kind: AppProject
 metadata:
   name: controllers
   namespace: argocd
+  labels:
+    dev.pc-tips: controllers
 spec:
-  description: Core infrastructure controllers
+  description: Project for core infrastructure controllers
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: sm-operator-system
-      server: 'https://kubernetes.default.svc'
-    - namespace: argocd
-      server: 'https://kubernetes.default.svc'
-    - namespace: 'cert-manager'
-      server: '*'
-    - namespace: 'crossplane'
-      server: '*'
-    - namespace: 'node-feature-discovery'
-      server: '*'
-    - namespace: 'intel-device-plugins'
+    - namespace: 'argocd'
       server: '*'
     - namespace: 'kube-system'
       server: '*'
+    - namespace: 'sm-operator-system'
+      server: '*'
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
