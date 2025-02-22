@@ -2,7 +2,11 @@
 
 ## Overview
 
-This document describes how secrets are managed in the homelab infrastructure using Bitwarden Secrets Manager Operator (sm-operator).
+This document describes how secrets are managed in the homelab infrastructure using Bitwarden Secrets Manager Operator
+(sm-operator).
+
+⚠️ **Important**: Direct volume mounting of secrets is strictly prohibited. All secrets must be managed through the
+Bitwarden Secrets Manager Operator.
 
 ## Core Components
 
@@ -22,6 +26,7 @@ components:
 ### Secret Types
 
 1. **Infrastructure Secrets**
+
    - Cluster certificates
    - API tokens
    - Service account keys
@@ -54,6 +59,7 @@ access_control:
 ### Secret Storage
 
 1. **Encryption**
+
    - At-rest encryption
    - In-transit encryption
    - Key rotation
@@ -70,6 +76,7 @@ access_control:
 ### Workflow
 
 1. **Secret Creation**
+
    - Secret defined in Git (encrypted)
    - ArgoCD syncs configuration
    - Operator fetches from Bitwarden
@@ -86,10 +93,11 @@ access_control:
 ### Secret Management
 
 1. **Naming Convention**
+
    ```yaml
    secret_naming:
-     format: "{app}-{environment}-{type}"
-     example: "postgres-prod-credentials"
+     format: '{app}-{environment}-{type}'
+     example: 'postgres-prod-credentials'
    ```
 
 2. **Access Patterns**
@@ -101,6 +109,7 @@ access_control:
 ### Security Controls
 
 1. **Network Security**
+
    - Internal network only
    - mTLS enforcement
    - Network policies
@@ -117,6 +126,7 @@ access_control:
 ### Authentication Chain
 
 1. **Service Authentication**
+
    - Service account tokens
    - mTLS certificates
    - Limited scope access
@@ -131,6 +141,7 @@ access_control:
 ### Security Controls
 
 1. **Infrastructure**
+
    - Encrypted storage
    - Network isolation
    - Access logging
@@ -143,6 +154,16 @@ access_control:
    - Rotation policies
 
 ## Implementation Details
+
+### Prohibited Practices
+
+The following secret management practices are explicitly forbidden:
+
+- Direct volume mounting of secrets in pods
+- Using local secret volumes
+- Manual secret creation via kubectl
+- Using legacy SealedSecrets
+- Storing unencrypted secrets in Git
 
 ### Setup Process
 
@@ -158,6 +179,7 @@ installation:
 ### Central Secret Configuration
 
 1. **Main BitwardenSecret Resource**
+
    - Located in `sm-operator-system` namespace
    - Maps all secrets across the infrastructure
 
@@ -188,11 +210,13 @@ stringData:
 ### Implementation Benefits
 
 1. **Simplified Management**
+
    - Single point of configuration in BitwardenSecret
    - Clear mapping between Bitwarden and Kubernetes secrets
    - Easier secret rotation and auditing
 
 2. **GitOps Friendly**
+
    - Secret templates can be version controlled
    - No sensitive data in Git
    - Automated secret distribution

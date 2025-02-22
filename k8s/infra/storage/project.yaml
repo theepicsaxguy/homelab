@@ -7,9 +7,7 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: 'argocd'
-      server: '*'
-    - namespace: 'csi-proxmox'
+    - namespace: '*'
       server: '*'
   clusterResourceWhitelist:
     - group: '*'
