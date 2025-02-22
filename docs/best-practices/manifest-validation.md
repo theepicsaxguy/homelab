@@ -9,7 +9,7 @@ outlines the validation requirements and tools used.
 
 ### Kubeconform
 
-- All manifests must pass validation against Kubernetes v1.29.0 schemas
+- All manifests must pass validation against Kubernetes v1.32.0 schemas
 - Strict validation is enabled
 - CustomResourceDefinitions are exempted from schema validation
 - Missing schemas are ignored to allow for custom resources
@@ -51,10 +51,9 @@ To run validation checks locally:
 ./scripts/validate_manifests.sh -d k8s
 
 # Validate with kubeconform
-kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.29.0 -skip CustomResourceDefinition k8s/**/*.yaml
+kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.32.0 -skip CustomResourceDefinition k8s/**/*.yaml
 
 # Validate kustomize builds
 find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
     kustomize build --enable-helm "$dir"
 done
-```
