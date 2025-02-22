@@ -1,17 +1,45 @@
 {
   "folders": [
+
     {
+      "name": "k8s",
+      "path": "k8s"
+    },
+    {
+      "name": "tofu",
+      "path": "tofu"
+    },
+    {
+      "name": "github",
+      "path": ".github"
+    },
+    {
+      "name": "docs",
+      "path": "docs"
+    },
+    {
+      "name": "scripts",
+      "path": "scripts"
+    },
+    {
+      "name": "root",
       "path": "."
-    }
+    },
   ],
+
   "settings": {
     // File associations
+
     "files.associations": {
       "*.yaml": "yaml",
       "*.yml": "yaml",
       "*.tf": "terraform",
       "*.tfvars": "terraform",
       "Tiltfile": "python"
+    },
+    "[markdown]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.formatOnSave": true
     },
 
     // Editor settings
@@ -26,10 +54,6 @@
     // YAML settings
     "yaml.format.enable": true,
     "yaml.validate": true,
-    "yaml.schemas": {
-      "kubernetes": "k8s/**/*.{yml,yaml}",
-      "http://json.schemastore.org/kustomization": ["*/kustomization.yaml"]
-    },
     "[yaml]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.formatOnSave": true
@@ -75,11 +99,13 @@
     "terminal.integrated.persistentSessionReviveProcess": "never",
 
     // Chat settings
-    "chat.promptFiles": [
-      ".github/prompts/**/*"
-    ],
+    "chat.promptFiles": {
+      ".github/prompts": true
+    },
     "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
+    "github.copilot.chat.followUps": true,
     "github.copilot.chat.edits.codesearch.enabled": true,
+    "github.copilot.chat.runCommand.enabled": true,
     "githubIssues.alwaysPromptForNewIssueRepo": true,
     "githubPullRequests.defaultMergeMethod": "squash",
     "githubPullRequests.experimental.chat": true,
@@ -92,6 +118,12 @@
     "github.copilot.chat.enableUserPreferences": true,
     "github.copilot.chat.generateTests.codeLens": true,
     "github.copilot.chat.languageContext.typescript.enabled": true,
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.chat.codeGeneration.instructions": [
+      {
+        "file": ".github/copilot-instructions.md"
+      }
+    ],
     "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
       {
         "file": ".github/.copilot-pull-request-description-instructions.md"
@@ -104,6 +136,9 @@
     ],
     "git.diagnosticsCommitHook.Enabled": true,
     "git.enableSmartCommit": true,
+    "yaml.schemas": {
+      "https://json.schemastore.org/yamllint.json": "file:///root/homelab/k8s/infra/controllers/argocd/charts/argo-cd-7.8.2/argo-cd/templates/aggregate-roles.yaml"
+    }
   },
   "extensions": {
     "recommendations": [
