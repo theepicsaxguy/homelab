@@ -46,6 +46,13 @@ jobs:
           curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
           sudo mv kustomize /usr/local/bin/
 
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+          rm get_helm.sh
+
       - name: Validate manifests structure
         run: ./scripts/validate_manifests.sh -d k8s
 
@@ -76,9 +83,17 @@ jobs:
           sarif_file: 'trivy-results.sarif'
 
       - name: Validate Kustomize builds
+        env:
+          KUBERNETES_VERSION: ${{ matrix.k8s-version }}
         run: |
           KUSTOMIZE_PLUGIN_HOME="${PWD}/.config/kustomize/plugin"
+          export HELM_KUBERNETES_VERSION="v${KUBERNETES_VERSION}"
           find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
             echo "Validating kustomization in $dir"
-            kustomize build --enable-helm "$dir" >/dev/null || exit 1
+            KUSTOMIZE_BUILD_OPTIONS="--enable-helm"
+            if grep -q "helmCharts:" "$dir/kustomization.yaml"; then
+              echo "Helm charts detected, using Kubernetes version ${HELM_KUBERNETES_VERSION}"
+              export HELM_KUBEVERSION="${HELM_KUBERNETES_VERSION}"
+            fi
+            kustomize build ${KUSTOMIZE_BUILD_OPTIONS} "$dir" >/dev/null || exit 1
           done
