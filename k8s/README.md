@@ -75,6 +75,6 @@ app_directory:
 ## Security Considerations
 
 - All manifests must be signed
-- Secrets handled via SealedSecrets
+- Secrets handled via sm-operator
 - RBAC strictly enforced
 - Network policies required

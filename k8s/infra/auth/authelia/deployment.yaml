@@ -3,7 +3,13 @@ kind: Deployment
 metadata:
   name: authelia
 spec:
+  selector:
+    matchLabels:
+      app: authelia
   template:
+    metadata:
+      labels:
+        app: authelia
     spec:
       containers:
         - name: authelia

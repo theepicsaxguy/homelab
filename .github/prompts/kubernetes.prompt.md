@@ -30,7 +30,7 @@ provider "kubectl" {
 
 ## Security Requirements
 
-- All secrets must use SealedSecrets
+- All secrets must use sm-operator
 - Implement RBAC strictly
 - Enable network policies
 - Use SecurityContexts appropriately
