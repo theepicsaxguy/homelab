@@ -2,7 +2,22 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ns.yaml
-- svc.yaml
-- endpoint-slice.yaml
-- http-route.yaml
+  - ns.yaml
+  - svc.yaml
+  - endpoint-slice.yaml
+  - http-route.yaml
+  - service.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant
+  namespace: haos
+spec:
+  type: LoadBalancer
+  selector:
+    app: home-assistant
+  ports:
+    - protocol: TCP
+      port: 8123
+      targetPort: 8123

@@ -137,6 +137,32 @@ A carefully curated (and occasionally overengineered) mix of the best tools, bec
 - **Home Automation:** Making your home smarter while you catch a few winks
 - **And More:** Because the best ideas often come at 2 AM amidst diaper changes
 
+### Services Exposure
+
+#### Services Exposed via Subdomains
+
+- AdGuard: `adguard.pc-tips.se`
+- Authelia: `authelia.pc-tips.se`
+- Grafana: `grafana.pc-tips.se`
+- Hubble: `hubble.pc-tips.se`
+- Jellyfin: `jellyfin.pc-tips.se`
+- Lidarr: `lidarr.pc-tips.se`
+- Prowlarr: `prowlarr.pc-tips.se`
+- Prometheus: `prometheus.pc-tips.se`
+- Radarr: `radarr.pc-tips.se`
+- Sonarr: `sonarr.pc-tips.se`
+- Home Assistant: `haos.pc-tips.se`
+- Proxmox: `proxmox.pc-tips.se`
+- TrueNAS: `truenas.pc-tips.se`
+- ArgoCD: `argocd.pc-tips.se`
+
+#### Services Exposed via IPs
+
+- Unbound DNS: `10.25.150.252`
+- AdGuard DNS: `10.25.150.253`
+- Torrent: `10.25.150.225`
+- Whoami: `10.25.150.223`
+
 <details>
   <summary>💡 Advanced Kubernetes Provider Configuration</summary>
 
