@@ -15,7 +15,6 @@ jobs:
     timeout-minutes: 10
     env:
       HELM_VERSION: 3.13.3
-      HELM_DIRS: k8s
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
@@ -30,6 +29,8 @@ jobs:
       - name: Make scripts executable
         run: chmod +x ./scripts/*.sh
 
-      - name: Validate Charts
+      - name: Run chart validation from k8s directory
         working-directory: k8s
-        run: HELM_DIRS=k8s ../scripts/validate_charts.sh
+        run: |
+          cd ../
+          ./scripts/validate_charts.sh

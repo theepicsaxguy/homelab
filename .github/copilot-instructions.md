@@ -1,68 +1,109 @@
-### **GitHub Copilot Context & Instructions**
+# GitHub Copilot Context & Instructions
 
-This repository manages a **GitOps-focused homelab infrastructure**, using:
+This repository manages a GitOps-only homelab infrastructure with
 
-- **Kubernetes** (Talos)
-- **OpenTofu** (Terraform)
-- **ArgoCD-based deployments**
-- **Monitoring & Security components**
+- Kubernetes (Talos)
+- OpenTofu (Terraform)
+- ArgoCD-based deployments
+- Monitoring and security components
 
----
+## Core Principles
 
-## **Key Preferences**
+### GitOps-Only: No Manual Changes
 
-### **Infrastructure Patterns**
+- All infrastructure changes must be defined in Git and applied automatically.
+- ArgoCD is responsible for all deployments.
+  - kubectl is only allowed for troubleshooting.
+  - Manual `kubectl apply` or `helm install` is strictly prohibited.
+- All changes must maintain a reproducible, fully documented state.
 
-- **GitOps-Only**: All infrastructure is declaratively managed.
-- **Networking**: Use **Cilium** over Talos' default setup.
-- **Performance-First**: Optimize for minimal overhead.
+## Repository Structure and Rules
 
----
+### Kubernetes (k8s)
 
-## **Repository Structure**
+#### ArgoCD (k8s/argocd/)
 
-### **Kubernetes (`k8s/`)**
+- The only entry point for deployments
+- Uses ApplicationSets for dynamic app management
+- All apps must be defined here
 
-- **Applications** → `k8s/apps/` (e.g., auth, monitoring)
-- **Infra Components** → `k8s/infra/` (e.g., DNS, networking)
-- **ArgoCD** → `k8s/argocd/` (ApplicationSets, configs)
+#### Applications (k8s/apps/)
 
-### **OpenTofu (`tofu/`)**
+- Functional workloads such as authentication and monitoring
+- Must use Kustomization overlays
+- No raw manifests
 
-- **Clusters** → `tofu/kubernetes/`
-- **Stateful Apps** → `tofu/apps/`
-- **IoT/Home Assistant** → `tofu/home-assistant/`
+#### Infrastructure Components (k8s/infra/)
 
----
+- Covers networking, DNS, storage, and other foundational services
+- Networking must use Cilium instead of Talos' default setup
+- Ingress must be managed via ArgoCD using predefined templates
 
-## **Development Workflow**
+#### Monitoring and Security (k8s/monitoring/)
 
-- **Commits**: Follow [Conventional Commits](https://www.conventionalcommits.org/)
-- **CI/CD**: Enforce commit standardization via GitHub Actions.
-- **Code Quality**: Clean, best-practice code **without inline comments**.
+- Covers observability components such as Prometheus, Loki, and Falco
+- Must prioritize self-healing and alerting
 
----
+### OpenTofu (tofu)
 
-## **Best Practices & Documentation Sync**
+#### Clusters (tofu/kubernetes/)
 
-Whenever **code changes**, Copilot must:
+- Manages Talos cluster definitions
+- Control planes must remain immutable and be rebuilt via GitOps if necessary
 
-1. **Verify & update documentation** to prevent drift.
-2. **Ensure accuracy in READMEs & architectural overviews.**
-3. **Check for outdated information & revise as needed.**
-4. **Preserve GitOps principles (declarative, version-controlled, reproducible).**
-5. **Assess the impact on infrastructure before recommending changes.**
-6. **Follow Kubernetes best practices for manifests & resource allocation.**
-7. **Consider monitoring & security implications.**
+#### Stateful Apps (tofu/apps/)
 
-**All changes must result in a consistent, fully documented state.**
+- Covers workloads requiring persistent storage
+- All persistent storage must be declared here
 
----
+#### IoT and Home Assistant (tofu/home-assistant/)
 
-### **Conventions**
+- Covers home automation and IoT-related deployments
+- Uses Terraform only for provisioning external dependencies
 
-- **Group Kubernetes apps by functionality**.
-- **Use Kustomization for overlays**.
-- **Follow ArgoCD ApplicationSet patterns**.
-- **Separate Stateful & Stateless IaC components**.
-- **Adhere to OpenTofu best practices**.
+### Documentation (docs)
+
+#### Architecture (docs/architecture/)
+
+- Covers high-level infrastructure design
+
+#### Best Practices (docs/best-practices/)
+
+- Defines guidelines for GitOps, ArgoCD, Kubernetes, and Terraform usage
+
+## Development Workflow
+
+### READMEs (README.md)
+
+- Must always reflect the current state of the repository
+
+### CI/CD and Automation
+
+- GitHub Actions enforce commit standardization
+- ArgoCD ensures state reconciliation and prevents configuration drift
+
+### Best Practices and Documentation Sync
+
+Every code change must
+
+1. Verify and update documentation to prevent drift
+2. Maintain GitOps principles with no manual interventions
+3. Follow Kubernetes best practices for manifests and resource allocation
+4. Ensure ArgoCD ApplicationSets are structured correctly
+5. Assess security and monitoring implications before recommending changes
+
+## Conventions and Best Practices
+
+- Kubernetes applications must be grouped by functionality
+- Kustomization overlays must be used for all applications
+- ArgoCD ApplicationSet patterns must be followed, no direct ArgoCD app definitions
+- Terraform must follow OpenTofu best practices with modular, declarative configurations
+
+## Enforcement Rules
+
+- kubectl usage is strictly for troubleshooting
+  - If a change is required, it must go through Git
+- Manual edits to cluster resources are not permitted
+  - Exceptions apply only in emergency recovery scenarios and must be reverted via Git
+- ArgoCD is the single source of truth
+- All implementations must be correct before merging
