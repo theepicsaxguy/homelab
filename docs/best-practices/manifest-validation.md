@@ -19,6 +19,7 @@ outlines the validation requirements and tools used.
 - All kustomization directories must successfully build
 - Kustomize overlays must follow the repository structure guidelines
 - Components and ApplicationSets must be properly referenced
+- Helm chart references must be properly configured with appropriate version pinning
 
 ### Trivy Security Scanner
 
@@ -54,6 +55,6 @@ kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.29.0 
 
 # Validate kustomize builds
 find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
-    kustomize build "$dir"
+    kustomize build --enable-helm "$dir"
 done
 ```

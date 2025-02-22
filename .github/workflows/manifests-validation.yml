@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        k8s-version: ['1.29.0']
+        k8s-version: ['1.32.0']
     steps:
       - uses: actions/checkout@v4
 
@@ -77,7 +77,8 @@ jobs:
 
       - name: Validate Kustomize builds
         run: |
+          KUSTOMIZE_PLUGIN_HOME="${PWD}/.config/kustomize/plugin"
           find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
             echo "Validating kustomization in $dir"
-            kustomize build "$dir" >/dev/null
+            kustomize build --enable-helm "$dir" >/dev/null || exit 1
           done
