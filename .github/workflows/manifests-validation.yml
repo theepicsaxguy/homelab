@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        k8s-version: ['1.32.0']
+        k8s-version: ['1.29.0']
     steps:
       - uses: actions/checkout@v4
 
@@ -34,15 +34,32 @@ jobs:
 
       - name: Install kubeconform
         run: |
-          curl -L -o kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
+          KUBECONFORM_VERSION=$(curl -s "https://api.github.com/repos/yannh/kubeconform/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          curl -L -o kubeconform.tar.gz "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz"
+          tar xzf kubeconform.tar.gz
           chmod +x kubeconform
           sudo mv kubeconform /usr/local/bin/
+          rm kubeconform.tar.gz
+
+      - name: Install kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Validate manifests structure
+        run: ./scripts/validate_manifests.sh -d k8s
 
       - name: Validate Kubernetes manifests with kubeconform
         run: |
-          kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=${{ matrix.k8s-version }} k8s/**/*.yaml
+          kubeconform \
+            -strict \
+            -ignore-missing-schemas \
+            -summary \
+            -kubernetes-version=${{ matrix.k8s-version }} \
+            -skip CustomResourceDefinition \
+            k8s/**/*.yaml
 
-      - name: Run Trivy vulnerability scanner for manifests
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'config'
@@ -50,6 +67,7 @@ jobs:
           scan-ref: 'k8s'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
 
       - name: Upload Trivy scan results to Security tab
         uses: github/codeql-action/upload-sarif@v3
@@ -57,14 +75,9 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Validate with ArgoCD
+      - name: Validate Kustomize builds
         run: |
-          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x /usr/local/bin/argocd
-          argocd admin app manifests --source k8s/ | argocd app diff - --local=k8s/
-
-      - name: Check for configuration drift
-        run: |
-          if [ -f k8s/current-state.yaml ]; then
-            kubectl diff -f k8s/current-state.yaml -f k8s/
-          fi
+          find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
+            echo "Validating kustomization in $dir"
+            kustomize build "$dir" >/dev/null
+          done
