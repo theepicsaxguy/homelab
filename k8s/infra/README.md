@@ -1,6 +1,60 @@
-# Core Infrastructure Components
+# Infrastructure Components
 
-The beating heart of our cluster. Here lives the critical infrastructure that keeps everything running smoothly. 🏗️
+This directory contains the core infrastructure components managed through GitOps. All changes are deployed via ArgoCD
+ApplicationSets with environment-specific configurations.
+
+## Directory Structure
+
+```
+.
+├── base/               # Base infrastructure components
+│   ├── network/       # Networking components
+│   │   ├── cilium/    # CNI configuration
+│   │   ├── dns/       # DNS services
+│   │   └── gateway/   # Gateway API controllers
+│   ├── storage/       # Storage components
+│   │   ├── proxmox-csi/
+│   │   └── longhorn/
+│   ├── auth/         # Authentication services
+│   ├── controllers/  # Core controllers
+│   ├── monitoring/   # Observability stack
+│   └── vpn/         # VPN services
+├── overlays/          # Environment-specific configurations
+│   ├── dev/         # Development environment
+│   ├── staging/     # Staging environment
+│   └── prod/        # Production environment
+├── application-set.yaml  # Infrastructure ApplicationSet
+└── project.yaml         # ArgoCD project definition
+
+```
+
+## Component Architecture
+
+Each infrastructure component follows a standardized structure:
+
+- Base configuration in `base/<component>`
+- Environment-specific patches in `overlays/<env>/patches`
+- Graduated resource limits across environments
+- High availability in staging/production
+
+## Deployment Strategy
+
+Components are deployed through ArgoCD ApplicationSets with:
+
+- Progressive sync waves (0 → 1 → 2)
+- Environment-specific configurations
+- Automated pruning and self-healing
+- Strict resource management
+
+## Adding New Components
+
+1. Add base configuration in `base/<component>`
+2. Create environment patches in `overlays/<env>/patches`
+3. Update ApplicationSet if needed
+4. Validate with:
+   ```bash
+   ./scripts/validate_manifests.sh -d k8s/infra
+   ```
 
 ## Component Overview
 
@@ -62,6 +116,12 @@ components:
 
 ## Resource Requirements
 
+| Environment | CPU Request | Memory Request | CPU Limit | Memory Limit |
+| ----------- | ----------- | -------------- | --------- | ------------ |
+| Dev         | 100m        | 128Mi          | 200m      | 256Mi        |
+| Staging     | 500m        | 512Mi          | 1000m     | 1Gi          |
+| Production  | 1000m       | 1Gi            | 2000m     | 2Gi          |
+
 | Component  | CPU       | Memory     | Storage | Notes               |
 | ---------- | --------- | ---------- | ------- | ------------------- |
 | Cilium     | 500m/node | 512Mi/node | -       | Per node            |
@@ -105,6 +165,15 @@ Every component exports:
 - Performance data
 - Resource usage
 - Security events
+
+## Best Practices
+
+- Always use Kustomize overlays for environment customization
+- Maintain high availability in staging/production
+- Follow GitOps workflow for all changes
+- Validate all changes before deployment
+- Document component dependencies
+- Use resource limits appropriate for environment
 
 ## Known Limitations
 
