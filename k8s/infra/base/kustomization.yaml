@@ -2,12 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../network
-  - ../storage
-  - ../auth
-  - ../controllers
-  - ../monitoring
+- network
+- storage
+- auth
+- controllers
+- monitoring
+- vpn
 
 labels:
-  - pairs:
-      app.kubernetes.io/part-of: infrastructure
+- pairs:
+    app.kubernetes.io/part-of: infrastructure
