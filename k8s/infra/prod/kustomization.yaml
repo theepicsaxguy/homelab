@@ -5,11 +5,11 @@ resources:
   - ../base
 
 patches:
-  - path: prod-patches.yaml
+  - path: monitoring-patch.yaml
     target:
       kind: ConfigMap
       name: monitoring-config
-  - path: prod-patches.yaml
+  - path: network-patch.yaml
     target:
       kind: ConfigMap
       name: network-config
