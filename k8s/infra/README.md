@@ -21,10 +21,15 @@ ApplicationSets with environment-specific configurations.
 │   └── vpn/         # VPN services
 ├── overlays/          # Environment-specific configurations
 │   ├── dev/         # Development environment
+│   │   ├── kustomization.yaml
+│   │   └── patches/  # All environment patches
 │   ├── staging/     # Staging environment
+│   │   ├── kustomization.yaml
+│   │   └── patches/  # All environment patches
 │   └── prod/        # Production environment
-├── application-set.yaml  # Infrastructure ApplicationSet
-└── project.yaml         # ArgoCD project definition
+│       ├── kustomization.yaml
+│       └── patches/  # All environment patches
+└── application-set.yaml  # Infrastructure ApplicationSet
 
 ```
 
@@ -33,7 +38,7 @@ ApplicationSets with environment-specific configurations.
 Each infrastructure component follows a standardized structure:
 
 - Base configuration in `base/<component>`
-- Environment-specific patches in `overlays/<env>/patches`
+- All environment-specific patches are centralized in `overlays/<env>/patches/`
 - Graduated resource limits across environments
 - High availability in staging/production
 
@@ -49,9 +54,15 @@ Components are deployed through ArgoCD ApplicationSets with:
 ## Adding New Components
 
 1. Add base configuration in `base/<component>`
-2. Create environment patches in `overlays/<env>/patches`
-3. Update ApplicationSet if needed
+2. Add patches in each environment's centralized patches directory:
+
+   ```
+   overlays/<env>/patches/<component>.yaml
+   ```
+
+3. Update the environment's kustomization.yaml to reference the new patch
 4. Validate with:
+
    ```bash
    ./scripts/validate_manifests.sh -d k8s/infra
    ```
@@ -96,121 +107,59 @@ components:
 
 ## Performance Features
 
-### Network Layer
-
-- eBPF for direct routing
-- XDP programs for packet processing
-- Optimized service mesh
-
-### Storage Layer
-
-- Local path provisioner
-- Direct volume binding
-- SSD storage classes
-
-### Monitoring Stack
-
-- Efficient metrics collection
-- Optimized retention policies
-- Grafana caching enabled
+- Traffic optimization through Cilium
+- Efficient resource utilization
+- Load balancing and auto-scaling
 
 ## Resource Requirements
 
-| Environment | CPU Request | Memory Request | CPU Limit | Memory Limit |
-| ----------- | ----------- | -------------- | --------- | ------------ |
-| Dev         | 100m        | 128Mi          | 200m      | 256Mi        |
-| Staging     | 500m        | 512Mi          | 1000m     | 1Gi          |
-| Production  | 1000m       | 1Gi            | 2000m     | 2Gi          |
+Graduated across environments:
 
-| Component  | CPU       | Memory     | Storage | Notes               |
-| ---------- | --------- | ---------- | ------- | ------------------- |
-| Cilium     | 500m/node | 512Mi/node | -       | Per node            |
-| Authelia   | 500m      | 512Mi      | 1Gi     | HA ready            |
-| Prometheus | 2C        | 4Gi        | 50Gi    | Scales with metrics |
-| CSI Driver | 200m      | 256Mi      | -       | Per node            |
+- Development: Basic resources
+- Staging: Moderate HA setup
+- Production: Full HA with anti-affinity
 
 ## Security Implementation
 
-1. Network Security
-
-   - Default deny all
-   - Explicit allow rules
-   - mTLS everywhere
-
-2. Authentication
-
-   - 2FA required
-   - Short-lived tokens
-   - Audit logging
-
-3. Storage Security
-   - Volume encryption
-   - Secure mount options
-   - Access auditing
+- Zero-trust network policies
+- Strict pod security standards
+- Automated secret management
 
 ## High Availability
 
-All critical components run with:
-
-- Multiple replicas
-- Anti-affinity rules
-- Pod disruption budgets
-- Automatic failover
+- Component replication (staging/prod)
+- Pod anti-affinity rules
+- Topology spread constraints
 
 ## Monitoring Integration
 
-Every component exports:
-
-- Health metrics
-- Performance data
-- Resource usage
-- Security events
+- Prometheus metrics
+- Grafana dashboards
+- Alert manager rules
 
 ## Best Practices
 
-- Always use Kustomize overlays for environment customization
-- Maintain high availability in staging/production
-- Follow GitOps workflow for all changes
-- Validate all changes before deployment
-- Document component dependencies
-- Use resource limits appropriate for environment
+1. Follow GitOps principles
+2. Use declarative configurations
+3. Implement proper resource limits
+4. Enable security policies
+5. Configure monitoring/alerts
 
 ## Known Limitations
 
-1. Cilium BGP
-
-   - Requires node networking setup
-   - Hardware support needed
-
-2. Storage Performance
-   - Limited by Proxmox backend
-   - Network bottlenecks possible
+- Single cluster deployment
+- Manual secret rotation
+- Limited multi-region support
 
 ## Troubleshooting
 
-### Network Issues
-
-```bash
-# Check Cilium status
-cilium status
-# View Hubble flows
-hubble observe
-```
-
-### Storage Problems
-
-```bash
-# Verify CSI
-kubectl get volumeattachment
-# Check PV binding
-kubectl describe pv <name>
-```
+1. Check ArgoCD sync status
+2. Validate Kustomize builds
+3. Review component logs
+4. Check resource constraints
 
 ## Future Enhancements
 
-- [ ] Enhanced BGP peering
-- [ ] Storage replication
-- [ ] Advanced audit logging
-- [ ] ML-based monitoring
-
-Remember: Infrastructure is like a good joke - timing is everything! ⚡
+- Multi-cluster federation
+- Automated secret rotation
+- Enhanced disaster recovery

@@ -15,6 +15,10 @@ patches:
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
+  - path: patches/argo-rollouts.yaml
+    target:
+      kind: Deployment
+      name: argo-rollouts
 
 labels:
   - pairs:
