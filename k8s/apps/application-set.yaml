@@ -4,7 +4,7 @@ metadata:
   name: applications
   namespace: argocd
   labels:
-    dev.pc-tips: application
+    app.kubernetes.io/part-of: applications
 spec:
   generators:
     - matrix:
@@ -15,14 +15,20 @@ spec:
                   namespace: dev-apps
                   allowEmpty: true
                   syncWave: '3'
+                  minReplicas: '1'
+                  healthCheckTimeout: '30'
                 - environment: staging
                   namespace: staging-apps
                   allowEmpty: false
                   syncWave: '4'
+                  minReplicas: '2'
+                  healthCheckTimeout: '60'
                 - environment: prod
                   namespace: prod-apps
                   allowEmpty: false
                   syncWave: '5'
+                  minReplicas: '3'
+                  healthCheckTimeout: '300'
           - git:
               repoURL: https://github.com/theepicsaxguy/homelab
               revision: main
@@ -32,7 +38,7 @@ spec:
     metadata:
       name: '{{path.basename}}-{{environment}}'
       labels:
-        dev.pc-tips: application
+        app.kubernetes.io/part-of: applications
         environment: '{{environment}}'
       annotations:
         argocd.argoproj.io/sync-wave: '{{syncWave}}'
@@ -51,6 +57,34 @@ spec:
         automated:
           selfHeal: true
           prune: true
+          allowEmpty: '{{allowEmpty}}'
         syncOptions:
           - CreateNamespace=true
-          - AllowEmpty={{allowEmpty}}
+          - PruneLast=true
+          - ValidateSignatures=true
+          - Replace=true
+        retry:
+          limit: 5
+          backoff:
+            duration: '30s'
+            factor: 2
+            maxDuration: '10m'
+      ignoreDifferences:
+        - group: 'apps'
+          kind: 'Deployment'
+          jsonPointers:
+            - /spec/replicas
+      revisionHistoryLimit: 3
+      info:
+        - name: MinReplicas
+          value: '{{minReplicas}}'
+      orphanedResources:
+        warn: true
+      automatedPromotion:
+        enabled: true
+        allowedPreviousEnvironments:
+          - dev
+          - staging
+        conditions:
+          - type: Healthy
+            timeoutSeconds: '{{healthCheckTimeout}}'

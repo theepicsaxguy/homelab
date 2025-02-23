@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: preview
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: pr-preview
+spec:
+  description: Preview environments for pull requests
+  sourceRepos:
+    - '*' # Allow any repo since PRs could come from forks
+  destinations:
+    - namespace: 'pr-*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - name: github-preview
+      description: Role for GitHub PR preview automation
+      policies:
+        - p, proj:preview:github-preview, applications, *, preview/*, allow
