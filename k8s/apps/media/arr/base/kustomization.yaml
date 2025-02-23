@@ -3,11 +3,11 @@ kind: Kustomization
 
 resources:
 - ns.yaml
-- lidarr
-- prowlarr
-- radarr
-- sonarr
-- torrent
+- resources/lidarr
+- resources/prowlarr
+- resources/radarr
+- resources/sonarr
+- resources/torrent
 
 configMapGenerator:
 - name: common-env

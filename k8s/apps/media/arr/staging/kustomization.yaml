@@ -5,11 +5,7 @@ resources:
 - ../base
 
 patches:
-- path: resource-patches.yaml
-  target:
-    kind: Deployment
-    name: .*  # This will match all deployments
-    namespace: arr
+- path: patches/deployment.yaml
 
 labels:
 - includeSelectors: true

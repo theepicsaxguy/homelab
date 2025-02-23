@@ -1,0 +1,127 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: app
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: torrent
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: torrent
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidarr
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: lidarr
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: prowlarr
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: radarr
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LOG_LEVEL
+          value: "debug"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarr
+  namespace: arr
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: sonarr
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        env:
+        - name: LOG_LEVEL
+          value: "debug"

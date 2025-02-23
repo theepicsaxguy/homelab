@@ -30,7 +30,7 @@ spec:
         path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: '{{path.parent.basename}}'  # Uses the app name as namespace
+        namespace: '{{path.parent.basename}}' # Uses the app name as namespace
       syncPolicy:
         automated:
           selfHeal: true
