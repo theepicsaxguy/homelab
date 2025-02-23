@@ -4,7 +4,7 @@ metadata:
   name: monitoring-config
   namespace: monitoring
 data:
-  retention.period: '7d'
+  retention.period: '14d'
   storage.size: '100Gi'
-  environment: 'base'
+  environment: 'staging'
   log.level: 'info'

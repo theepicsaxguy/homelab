@@ -8,13 +8,3 @@ data:
   storage.size: '50Gi'
   environment: 'dev'
   log.level: 'debug'
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: network-config
-  namespace: network
-data:
-  environment: 'dev'
-  ingress.replicas: '1'
-  cilium.debug: 'true'

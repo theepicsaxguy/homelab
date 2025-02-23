@@ -4,10 +4,10 @@ metadata:
   name: monitoring-config
   namespace: monitoring
 data:
-  retention.period: "30d"
-  storage.size: "500Gi"
-  environment: "prod"
-  log.level: "warn"
+  retention.period: '30d'
+  storage.size: '500Gi'
+  environment: 'prod'
+  log.level: 'warn'
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -15,6 +15,6 @@ metadata:
   name: network-config
   namespace: network
 data:
-  environment: "prod"
-  ingress.replicas: "3"
-  cilium.debug: "false"
+  environment: 'prod'
+  ingress.replicas: '3'
+  cilium.debug: 'false'

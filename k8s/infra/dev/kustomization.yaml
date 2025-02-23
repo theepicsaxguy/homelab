@@ -1,22 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
 resources:
-- ../base/configs
-- ../base/auth
-- ../base/controllers
-- ../base/crds
-- ../base/crossplane-crds
-- ../base/monitoring
-- ../base/network
-- ../base/storage
-- ../base/users
-- ../base/vpn
+  - ../base
 
 patches:
-- path: dev-patches.yaml
+  - path: monitoring-patch.yaml
+    target:
+      kind: ConfigMap
+      name: monitoring-config
+  - path: network-patch.yaml
+    target:
+      kind: ConfigMap
+      name: network-config
 
 namespace: argocd
 
 labels:
-- includeSelectors: true
-  pairs:
-    environment: dev
-    dev.pc-tips: infrastructure
+  - includeSelectors: true
+    pairs:
+      environment: dev
+      app.kubernetes.io/managed-by: argocd
