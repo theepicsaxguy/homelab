@@ -22,6 +22,9 @@ patches:
       kind: Deployment
       name: argo-rollouts
 
+patchesStrategicMerge:
+  - patches/resources-patch.yaml
+
 labels:
   - pairs:
       environment: staging

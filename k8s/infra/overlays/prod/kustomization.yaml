@@ -13,6 +13,9 @@ patches:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
+patchesStrategicMerge:
+  - patches/resources-patch.yaml
+
 labels:
   - pairs:
       environment: prod
