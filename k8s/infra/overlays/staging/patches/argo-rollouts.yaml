@@ -16,5 +16,14 @@ spec:
               cpu: 500m
               memory: 512Mi
             limits:
-              cpu: 2
+              cpu: 2000m
               memory: 1Gi
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: argo-rollouts
+                topologyKey: kubernetes.io/hostname

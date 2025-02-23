@@ -5,9 +5,3 @@ namespace: argo-rollouts
 
 resources:
   - https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
-
-patches:
-  - path: patches/resource-limits.yaml
-    target:
-      kind: Deployment
-      name: argo-rollouts
