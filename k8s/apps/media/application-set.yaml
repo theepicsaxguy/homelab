@@ -4,19 +4,22 @@ metadata:
   name: media
   namespace: argocd
   labels:
-    dev.pc-tips: application
+    dev.pc-tips: media
 spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/apps/media/*
+          - path: k8s/apps/media/*/dev
+          - path: k8s/apps/media/*/staging
+          - path: k8s/apps/media/*/prod
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: '{{path.basename}}-{{path.parent.basename}}'
       labels:
-        dev.pc-tips: application
+        environment: '{{path.basename}}'
+        dev.pc-tips: media
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
@@ -24,10 +27,10 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{path.parent.basename}}'  # Uses the app name as namespace
       syncPolicy:
         automated:
           selfHeal: true

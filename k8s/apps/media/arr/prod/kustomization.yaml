@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../base
+
+patches:
+- path: resource-patches.yaml
+  target:
+    kind: Deployment
+    name: .*  # This will match all deployments
+    namespace: arr
+
+labels:
+- includeSelectors: true
+  pairs:
+    environment: prod
+    app.kubernetes.io/managed-by: argocd
+    dev.pc-tips: media
