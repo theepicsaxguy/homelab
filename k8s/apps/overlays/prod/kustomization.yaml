@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - rollout.yaml
+  - analysis-template.yaml
 
 patches:
   - path: patches/resource-limits.yaml
@@ -26,3 +28,6 @@ labels:
       app.kubernetes.io/environment: prod
 
 namespace: prod-apps
+
+commonLabels:
+  environment: prod

@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: app-rollout-template
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause: {duration: 30s}
+      - setWeight: 40
+      - pause: {duration: 30s}
+      - setWeight: 60
+      - pause: {duration: 30s}
+      - setWeight: 80
+      - pause: {duration: 30s}
+      analysis:
+        templates:
+        - templateName: success-rate
+        startingStep: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: applications
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/part-of: applications
+    spec:
+      containers:
+      - name: app
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi

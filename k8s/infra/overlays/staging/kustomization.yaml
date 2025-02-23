@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - rollout.yaml
+  - analysis-template.yaml
 
 namespace: staging-infra
 
@@ -23,3 +25,4 @@ patches:
 labels:
   - pairs:
       environment: staging
+      app.kubernetes.io/part-of: infrastructure

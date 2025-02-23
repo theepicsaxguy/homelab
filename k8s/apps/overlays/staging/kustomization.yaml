@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - rollout.yaml
+  - analysis-template.yaml
 
 patches:
   - path: patches/resource-limits.yaml
@@ -21,3 +23,6 @@ labels:
       app.kubernetes.io/environment: staging
 
 namespace: staging-apps
+
+commonLabels:
+  environment: staging
