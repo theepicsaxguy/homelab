@@ -12,11 +12,13 @@ minimizes manual intervention—letting you focus on what truly matters.
 
 **Key Features:**
 
-- **Self-Healing:** Automatically recovers from failures so you don’t have to.
-- **Rapid Recovery:** Rebuilds the entire system with 4 simple commands.
-- **Zero-Babysitting:** Fully automated management that lets your homelab run on autopilot.
-- **GitOps-Driven:** Uses Git as the single source of truth for configuration.
-- **Robust Security:** Implements Zero Trust principles to protect your environment.
+A fully automated, GitOps-driven infrastructure solution with:
+
+- Three-environment progression (dev → staging → prod)
+- Self-healing through ArgoCD
+- Environment-specific resource management
+- High availability in staging/production
+- Pure GitOps workflow
 
 <div align="center" style="display: flex; justify-content: center; gap: 20px; align-items: center;">
   <a href="https://kubernetes.io">
@@ -49,8 +51,9 @@ minimizes manual intervention—letting you focus on what truly matters.
 <details>
   <summary>📊 GitHub Stats</summary>
 
-  ![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username=theepicsaxguy&show_icons=true&theme=radical)
-  ![GitHub Streak](https://streak-stats.demolab.com/?user=theepicsaxguy&theme=monokai)
+![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username=theepicsaxguy&show_icons=true&theme=radical)
+![GitHub Streak](https://streak-stats.demolab.com/?user=theepicsaxguy&theme=monokai)
+
 </details>
 
 ---
@@ -110,16 +113,30 @@ tantrum.
 
 ## 🖥 Infrastructure & Applications
 
-### The Tech Stack
+### Core Infrastructure
 
-A carefully curated (and occasionally overengineered) mix of the best tools, because why settle for less?
+Our infrastructure follows a strict GitOps-based organization:
 
-- **Proxmox VE** – The hypervisor that lays the foundation for both your dreams and your nightmares.
-- **OpenTofu** – Infrastructure as Code, because manually clicking buttons is sooo last decade.
-- **Talos Linux** – A minimalist OS built exclusively for Kubernetes (no SSH, no package manager, just pure magic).
-- **Kubernetes** – The container orchestrator that brings order (and a hint of chaos) to your digital domain.
-- **ArgoCD** – GitOps done right (because `kubectl apply -f` is for the faint-hearted).
-- **Cilium** – eBPF networking that’ll have kube-proxy shedding tears of joy (or despair).
+```
+k8s/
+├── infra/          # Core Infrastructure
+│   ├── base/       # Base components
+│   └── overlays/   # Environment configs
+│       ├── dev/    # Development (Wave 0)
+│       ├── staging/# Staging (Wave 1)
+│       └── prod/   # Production (Wave 2)
+└── apps/          # Applications
+    ├── base/      # Base applications
+    └── overlays/  # App environments
+```
+
+### Technology Stack
+
+- **Talos Linux**: Kubernetes-native OS
+- **ArgoCD**: GitOps deployment engine
+- **Cilium**: eBPF-powered networking
+- **Kustomize**: Configuration management
+- **Bitwarden**: Secrets management
 
 ### What’s Inside?
 
@@ -201,8 +218,8 @@ If you’re eager to deploy your homelab without delay, follow these concise ste
    cd homelab
    ```
 
-2. **Install Prerequisites:**
-   Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary dependencies.
+2. **Install Prerequisites:** Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary
+   dependencies.
 
 3. **Deploy Your Infrastructure:**
 
@@ -223,8 +240,8 @@ If you’re eager to deploy your homelab without delay, follow these concise ste
      _Refer to the [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section for more
      details._
 
-4. **Verify & Enjoy:**
-   Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and scale on its own.
+4. **Verify & Enjoy:** Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and
+   scale on its own.
 
 ---
 
@@ -335,23 +352,19 @@ Ready to join the revolution? Here’s your starter pack:
    cd homelab
    ```
 
-2. **Install Dependencies:**
-   Make sure you have [Tofu](https://opentofu.org) and any other prerequisites installed.
+2. **Install Dependencies:** Make sure you have [Tofu](https://opentofu.org) and any other prerequisites installed.
 
-3. **Deploy:**
-   Follow the Disaster Recovery section above to deploy your homelab with confidence.
+3. **Deploy:** Follow the Disaster Recovery section above to deploy your homelab with confidence.
 
-4. **Kick Back & Enjoy:**
-   Sit back, relax, and watch as your infrastructure self-heals—so you can focus on life’s more important moments (like
-   baby giggles).
+4. **Kick Back & Enjoy:** Sit back, relax, and watch as your infrastructure self-heals—so you can focus on life’s more
+   important moments (like baby giggles).
 
 ### Contributing
 
 Your ideas, fixes, and love for overengineering are welcome here! If you’d like to contribute:
 
 - **Fork the Repo**
-- **Create a Feature Branch:**
-  `git checkout -b feature/your-awesome-idea`
+- **Create a Feature Branch:** `git checkout -b feature/your-awesome-idea`
 - **Commit Your Changes** and open a Pull Request
 
 Every little contribution helps make this homelab even more resilient (and maybe even a bit more fun).
@@ -372,23 +385,21 @@ If you encounter broken links or have accessibility suggestions, please open an 
 
 ## 🤔 Final Thoughts
 
-This isn’t just another homelab—it’s a love letter to overengineering, automation, and the beautiful chaos of life.
-It’s built for:
+This isn’t just another homelab—it’s a love letter to overengineering, automation, and the beautiful chaos of life. It’s
+built for:
 
 - **Automation:** So you can sleep in on weekends.
 - **Rapid Recovery:** Because even the best laid plans occasionally go awry.
 - **Zero Headaches:** Let the system fix itself while you focus on the little one coming up.
 
-When things break, they get fixed. When all seems lost, a quick set of commands restores order.
-_All to free up time for what truly matters: family, love, and a little bit of code-induced adrenaline._
+When things break, they get fixed. When all seems lost, a quick set of commands restores order. _All to free up time for
+what truly matters: family, love, and a little bit of code-induced adrenaline._
 
 ---
 
 ## 📄 License
 
-```
-Distributed under the MIT License. See [LICENSE](LICENSE) for more details.
-```
+MIT License - See [LICENSE](LICENSE) for details
 
 ### Credits
 

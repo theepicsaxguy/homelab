@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: pr-preview
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: pr-preview
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: theepicsaxguy
+          repo: homelab
+          tokenRef:
+            secretName: github-token
+            key: token
+        filters:
+          - label: 'DeployPR'
+  template:
+    metadata:
+      name: 'pr-{{number}}'
+      labels:
+        type: pr-preview
+      annotations:
+        argocd.argoproj.io/sync-wave: '-2' # Run before infrastructure
+    spec:
+      project: preview
+      source:
+        repoURL: '{{source.repoURL}}'
+        targetRevision: '{{head.sha}}'
+        path: k8s/apps/overlays/dev # Use dev overlay as base for PR previews
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'pr-{{number}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+        retry:
+          limit: 2
+          backoff:
+            duration: '10s'
+            factor: 2
+            maxDuration: '1m'

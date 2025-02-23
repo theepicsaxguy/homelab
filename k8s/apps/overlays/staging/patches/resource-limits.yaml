@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-deployments
+spec:
+  selector:
+    matchLabels:
+      patched-by: resource-limits
+  template:
+    spec:
+      containers:
+        - name: all-containers
+          resources:
+            requests:
+              cpu: '500m'
+              memory: '1Gi'
+            limits:
+              cpu: '2'
+              memory: '2Gi'
