@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: infra-health
+spec:
+  metrics:
+  - name: resource-health
+    interval: 300s
+    successCondition: result[0] >= 0.999
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        query: |
+          min(
+            avg_over_time(
+              rate(container_cpu_usage_seconds_total{namespace="{{args.namespace}}"}[15m])[30m:]
+              /
+              on(pod) kube_pod_container_resource_requests{resource="cpu",namespace="{{args.namespace}}"}[30m:]
+            )
+          )
+  - name: error-rate
+    interval: 300s
+    successCondition: result[0] <= 0.001
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        query: |
+          sum(rate(container_last_seen{namespace="{{args.namespace}}",container!=""}[15m])) by (container)
+          /
+          sum(rate(container_cpu_usage_seconds_total{namespace="{{args.namespace}}"}[15m])) by (container)
