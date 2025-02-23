@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-config
+  namespace: monitoring
+data:
+  retention.period: "7d"
+  storage.size: "100Gi"
+  environment: "base"
+  log.level: "info"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: network-config
+  namespace: network
+data:
+  environment: "base"
+  ingress.replicas: "2"
+  cilium.debug: "false"
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- resources.yaml

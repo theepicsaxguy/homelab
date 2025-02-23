@@ -1,4 +1,5 @@
 resources:
+- ../base/configs
 - ../base/auth
 - ../base/controllers
 - ../base/crds

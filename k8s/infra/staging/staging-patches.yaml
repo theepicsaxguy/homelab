@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-config
+  namespace: monitoring
+data:
+  retention.period: "14d"
+  storage.size: "100Gi"
+  environment: "staging"
+  log.level: "info"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: network-config
+  namespace: network
+data:
+  environment: "staging"
+  ingress.replicas: "2"
+  cilium.debug: "false"
