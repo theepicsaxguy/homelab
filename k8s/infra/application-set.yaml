@@ -55,13 +55,12 @@ spec:
         automated:
           prune: true
           selfHeal: true
-          allowEmpty: { { allowEmpty } }
+          allowEmpty: '{{allowEmpty}}'
         syncOptions:
           - CreateNamespace=true
           - PruneLast=true
           - RespectIgnoreDifferences=true
-          - ValidateSignatures=true
-          - Replace=true
+          - ServerSideApply=true
         retry:
           limit: 5
           backoff:
@@ -77,14 +76,7 @@ spec:
       info:
         - name: MinReplicas
           value: '{{minReplicas}}'
+        - name: Environment
+          value: '{{environment}}'
       orphanedResources:
         warn: true
-      # Wait for health check before proceeding to next wave
-      automatedPromotion:
-        enabled: true
-        allowedPreviousEnvironments:
-          - dev
-          - staging
-        conditions:
-          - type: Healthy
-            timeoutSeconds: '{{healthCheckTimeout}}'
