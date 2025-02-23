@@ -3,14 +3,17 @@ kind: Deployment
 metadata:
   name: all-deployments
 spec:
+  selector:
+    matchLabels:
+      app: all-deployments
   template:
     spec:
       containers:
         - name: all-containers
           resources:
             requests:
-              cpu: '500m'
-              memory: '512Mi'
+              cpu: '1000m'
+              memory: '1Gi'
             limits:
-              cpu: '4000m'
-              memory: '4Gi'
+              cpu: '2000m'
+              memory: '2Gi'

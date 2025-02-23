@@ -11,6 +11,10 @@ patches:
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
+  - path: patches/high-availability.yaml
+    target:
+      kind: Deployment
+      labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
 labels:
   - pairs:

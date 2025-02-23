@@ -4,7 +4,7 @@ metadata:
   name: infrastructure
   namespace: argocd
   labels:
-    dev.pc-tips: infrastructure
+    app.kubernetes.io/part-of: infrastructure
 spec:
   generators:
     - matrix:
@@ -14,20 +14,28 @@ spec:
                 - environment: dev
                   namespace: dev-infra
                   allowEmpty: true
+                  syncWave: "0"
                 - environment: staging
                   namespace: staging-infra
                   allowEmpty: false
+                  syncWave: "1"
                 - environment: prod
                   namespace: prod-infra
                   allowEmpty: false
+                  syncWave: "2"
+          - git:
+              repoURL: https://github.com/theepicsaxguy/homelab
+              revision: main
+              directories:
+                - path: k8s/infra/overlays/{{environment}}
   template:
     metadata:
       name: 'infra-{{environment}}'
       labels:
-        dev.pc-tips: infrastructure
         environment: '{{environment}}'
+        app.kubernetes.io/part-of: infrastructure
       annotations:
-        argocd.argoproj.io/sync-wave: '-1'
+        argocd.argoproj.io/sync-wave: '{{syncWave}}'
     spec:
       project: infrastructure
       source:
@@ -35,7 +43,7 @@ spec:
         targetRevision: main
         path: k8s/infra/overlays/{{environment}}
       destination:
-        name: in-cluster
+        server: https://kubernetes.default.svc
         namespace: '{{namespace}}'
       syncPolicy:
         automated:
@@ -45,7 +53,6 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - PruneLast=true
-          - PrunePropagationPolicy=foreground
           - RespectIgnoreDifferences=true
         retry:
           limit: 5
@@ -53,11 +60,3 @@ spec:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
-      healthChecks:
-        - apiVersion: apps/v1
-          kind: Deployment
-          name: '*'
-          failureThreshold: 3
-          successThreshold: 1
-          initialDelay: '30s'
-          timeoutSeconds: 5
