@@ -1,32 +1,86 @@
-# Manual Post-Bootstrap Steps
+# Manual bootstrap
 
 ## Pre-requisites
 
-- Talos cluster is running (via OpenTofu)
-- kubeconfig is available (from OpenTofu output)
+- Talos cluster is running
+- kubeconfig is available
 
-## Steps
+## CRDs
 
-### 1. ArgoCD Bootstrap
-
-```shell
-cd k8s
-tofu init && tofu apply
-```
-
-> **Note**: If ArgoCD is already installed, the bootstrap process will skip the installation and only ensure the App-of-Apps configuration is applied.
-
-### 2. Create Bitwarden Auth Token
-
-Once ArgoCD installs the Bitwarden Secrets Manager operator, create the auth token:
+First apply CRDs to avoid dependency issues:
 
 ```shell
-kubectl create secret generic bw-auth-token \
-  -n sm-operator-system \
-  --from-literal=token="<Auth-Token-Here>"
+kubectl apply -k infra/base/crds
+kubectl apply -k infra/base/crossplane-crds
 ```
 
-Get your auth token from Bitwarden EU region: https://api.bitwarden.eu
+## Core Infrastructure
+
+Apply Cilium networking before other components:
+
+```shell
+kubectl kustomize --enable-helm infra/base/network/cilium | kubectl apply -f -
+```
+
+Wait for Cilium to be ready:
+
+```shell
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
+```
+
+## Bitwarden Secrets
+
+```shell
+kustomize build --enable-helm infra/base/controllers/bitwarden | kubectl apply -f -
+```
+
+Create secrets token (required for sm-operator):
+
+```shell
+kubectl create secret generic bw-auth-token -n sm-operator-system --from-literal=token="Auth-Token-Here"
+```
+
+## ArgoCD Bootstrap
+
+temporary set redis password.
+
+```shell
+openssl rand -base64 32 | kubectl create secret generic argocd-redis --namespace argocd --from-file=auth=/dev/stdin
+secret/argocd-redis created
+```
+
+Install ArgoCD:
+
+```shell
+kustomize build --enable-helm infra/base/controllers/argocd | kubectl apply -f -
+```
+
+Wait for ArgoCD to be ready:
+
+```shell
+kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=120s
+```
+
+Get initial admin password:
+
+```shell
+kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.password | @base64d'
+```
+
+## GitOps Configuration
+
+Apply root applications in order:
+
+```shell
+kubectl apply -k sets
+```
+
+This will trigger the following applications with sync-waves:
+
+1. infrastructure (-1): Core infrastructure components
+2. applications (0): User applications
+
+# Components Status
 
 ## Components Status
 
@@ -44,33 +98,3 @@ Get your auth token from Bitwarden EU region: https://api.bitwarden.eu
 - [x] Cert-manager
 - [x] Authentication (Keycloak)
 - [x] CNPG - Cloud Native PostgreSQL
-
-## Next Steps
-
-1. Verify ArgoCD status:
-```shell
-kubectl get pods -n argocd
-```
-
-2. Get the ArgoCD admin password (if newly installed):
-```shell
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-```
-
-3. Monitor the App-of-Apps sync status:
-```shell
-kubectl get applications -n argocd
-```
-
-## Troubleshooting
-
-If you need to reinstall ArgoCD:
-
-1. Remove the existing installation:
-```shell
-kubectl delete ns argocd
-```
-
-2. Run the bootstrap process again:
-```shell
-tofu apply
