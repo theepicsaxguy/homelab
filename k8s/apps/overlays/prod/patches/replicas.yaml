@@ -9,9 +9,9 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  patched-by: resource-limits
-              topologyKey: "kubernetes.io/hostname"
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    patched-by: resource-limits
+                topologyKey: 'kubernetes.io/hostname'
