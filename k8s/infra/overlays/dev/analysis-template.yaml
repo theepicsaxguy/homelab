@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: infra-health
+spec:
+  metrics:
+  - name: success-rate
+    interval: 60s
+    successCondition: result[0] >= 0.98
+    failureLimit: 2
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        query: |
+          min(
+            rate(container_cpu_usage_seconds_total{namespace="{{args.namespace}}"}[5m])
+            /
+            on(pod) kube_pod_container_resource_requests{resource="cpu",namespace="{{args.namespace}}"}
+          )

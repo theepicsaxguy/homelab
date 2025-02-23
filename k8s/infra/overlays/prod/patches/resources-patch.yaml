@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: infra-rollout-template
+spec:
+  replicas: 3 # Production requires 3 replicas
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: { duration: 300s } # Production timeout
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 30
+        - pause: { duration: 300s }
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 100
+  template:
+    spec:
+      containers:
+        - name: infra
+          resources:
+            requests:
+              cpu: 1
+              memory: 512Mi
+            limits:
+              cpu: 4
+              memory: 1Gi
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: infrastructure
+              topologyKey: kubernetes.io/hostname
