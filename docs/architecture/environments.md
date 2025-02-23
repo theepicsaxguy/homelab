@@ -88,6 +88,7 @@ Located in `k8s/infra/overlays/<environment>`:
 - Environment-specific labels
 
 Directory structure:
+
 ```
 k8s/infra/overlays/<environment>/
 ├── kustomization.yaml    # Environment overlay configuration
