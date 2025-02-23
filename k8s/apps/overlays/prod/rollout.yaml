@@ -7,27 +7,19 @@ spec:
   revisionHistoryLimit: 5
   strategy:
     canary:
+      # Analysis is performed while paused on steps
+      analysis:
+        templates:
+        - templateName: success-rate
       steps:
       - setWeight: 10
       - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: success-rate
       - setWeight: 30
       - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: success-rate
       - setWeight: 50
       - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: success-rate
       - setWeight: 80
       - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: success-rate
   template:
     metadata:
       labels:
@@ -38,10 +30,10 @@ spec:
         resources:
           requests:
             cpu: 1
-            memory: 512Mi
+            memory: 1Gi
           limits:
             cpu: 4
-            memory: 1Gi
+            memory: 4Gi
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

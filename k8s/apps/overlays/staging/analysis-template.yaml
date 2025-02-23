@@ -5,13 +5,13 @@ metadata:
 spec:
   metrics:
   - name: success-rate
-    interval: 60s
+    interval: 60s  # Match staging timeout requirement
     successCondition: result[0] >= 0.98
     failureLimit: 2
     provider:
       prometheus:
         address: http://prometheus-operated.monitoring.svc.cluster.local:9090
         query: |
-          sum(rate(http_requests_total{status=~"2..",job="{{args.service-name}}"}[5m])) 
+          sum(rate(http_requests_total{status=~"2..",namespace="{{args.namespace}}"}[5m]))
           /
-          sum(rate(http_requests_total{job="{{args.service-name}}"}[5m]))
+          sum(rate(http_requests_total{namespace="{{args.namespace}}"}[5m]))
