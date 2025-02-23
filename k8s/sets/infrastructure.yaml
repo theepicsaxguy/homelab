@@ -37,7 +37,7 @@ spec:
         automated:
           prune: true
           selfHeal: true
-          allowEmpty: '{{allowEmpty}}'
+          allowEmpty: { { allowEmpty } }
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true
@@ -47,3 +47,5 @@ spec:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
+      orphanedResources:
+        warn: true
