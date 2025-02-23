@@ -7,10 +7,10 @@ resources:
 namespace: dev-infra
 
 patches:
-  - path: patches/resource-limits.yaml
+  - path: patches/argo-rollouts.yaml
     target:
       kind: Deployment
-      labelSelector: 'app.kubernetes.io/part-of=infrastructure'
+      name: argo-rollouts
 
 labels:
   - pairs:

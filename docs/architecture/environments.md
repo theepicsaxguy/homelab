@@ -81,9 +81,22 @@ The infrastructure follows a three-environment pattern with progressive configur
 Located in `k8s/infra/overlays/<environment>`:
 
 - Namespace definitions
-- Resource limit patches
-- High availability configurations
+- Centralized patches directory containing:
+  - Resource limit patches
+  - High availability configurations
+  - Component-specific overrides
 - Environment-specific labels
+
+Directory structure:
+
+```
+k8s/infra/overlays/<environment>/
+├── kustomization.yaml    # Environment overlay configuration
+└── patches/             # Centralized location for all patches
+    ├── resource-limits.yaml    # Global resource limits
+    ├── high-availability.yaml  # HA configurations
+    └── <component>.yaml        # Component-specific patches
+```
 
 ### ApplicationSet Integration
 
