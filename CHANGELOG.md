@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/theepicsaxguy/homelab/compare/v1.9.0...v1.10.0) (2025-02-23)
+
+
+### Features
+
+* **security:** add Bitwarden Secrets Manager bootstrap documentation ([#111](https://github.com/theepicsaxguy/homelab/issues/111)) ([f0bcb07](https://github.com/theepicsaxguy/homelab/commit/f0bcb071956ec9365c6c1eb20b6eb474ef1e5faa))
+
 ## [1.9.0](https://github.com/theepicsaxguy/homelab/compare/v1.8.0...v1.9.0) (2025-02-23)
 
 
