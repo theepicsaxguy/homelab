@@ -14,6 +14,8 @@ cd k8s
 tofu init && tofu apply
 ```
 
+> **Note**: If ArgoCD is already installed, the bootstrap process will skip the installation and only ensure the App-of-Apps configuration is applied.
+
 ### 2. Create Bitwarden Auth Token
 
 Once ArgoCD installs the Bitwarden Secrets Manager operator, create the auth token:
@@ -45,14 +47,30 @@ Get your auth token from Bitwarden EU region: https://api.bitwarden.eu
 
 ## Next Steps
 
-1. Get the ArgoCD admin password:
+1. Verify ArgoCD status:
+```shell
+kubectl get pods -n argocd
+```
 
+2. Get the ArgoCD admin password (if newly installed):
 ```shell
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
-2. Monitor the App-of-Apps sync status:
-
+3. Monitor the App-of-Apps sync status:
 ```shell
 kubectl get applications -n argocd
 ```
+
+## Troubleshooting
+
+If you need to reinstall ArgoCD:
+
+1. Remove the existing installation:
+```shell
+kubectl delete ns argocd
+```
+
+2. Run the bootstrap process again:
+```shell
+tofu apply
