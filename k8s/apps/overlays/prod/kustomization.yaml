@@ -2,31 +2,28 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - rollout.yaml
-  - analysis-template.yaml
+- rollout.yaml
+- analysis-template.yaml
 
 patches:
-  - path: patches/resource-limits.yaml
-    target:
-      kind: Deployment
-      labelSelector: 'app.kubernetes.io/part-of=infrastructure'
-  - path: patches/high-availability.yaml
-    target:
-      kind: Deployment
-      labelSelector: 'app.kubernetes.io/part-of=infrastructure'
-  - path: patches/replicas.yaml
-    target:
-      kind: Deployment
-  - path: patches/pod-disruption-budget.yaml
-    target:
-      kind: Deployment
+- path: patches/resource-limits.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+- path: patches/high-availability.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+- path: patches/replicas.yaml
+  target:
+    kind: Deployment
+- path: patches/pod-disruption-budget.yaml
+  target:
+    kind: Deployment
 
 labels:
-  - pairs:
-      environment: prod
-      app.kubernetes.io/part-of: applications
+- pairs:
+    app.kubernetes.io/part-of: applications
+    environment: prod
 
 namespace: prod-apps
-
-commonLabels:
-  environment: prod
