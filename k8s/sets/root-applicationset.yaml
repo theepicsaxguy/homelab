@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: root-infrastructure
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: core-network
+            path: infra/network
+            wave: "-2"
+          - name: core-storage
+            path: infra/storage
+            wave: "-1"
+          - name: core-crds
+            path: infra/crds
+            wave: "-3"
+          - name: crossplane-crds
+            path: infra/crossplane-crds
+            wave: "-3"
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/YOUR_USERNAME/homelab.git  # You'll need to adjust this
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            maxDuration: 3m0s
+            factor: 2
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true

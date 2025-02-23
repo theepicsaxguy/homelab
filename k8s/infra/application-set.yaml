@@ -4,7 +4,7 @@ metadata:
   name: infrastructure
   namespace: argocd
   labels:
-    dev.pc-tips: infrastructure
+    app.kubernetes.io/name: infrastructure
 spec:
   generators:
     - git:
@@ -12,21 +12,44 @@ spec:
         revision: main
         directories:
           - path: k8s/infra/*
+          - exclude: true
+            path: k8s/infra/crds
+          - exclude: true
+            path: k8s/infra/crossplane-crds
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: 'infra-{{path.basename}}'
       labels:
-        dev.pc-tips: infrastructure
+        app.kubernetes.io/name: infrastructure
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{values.sync.wave}}'
+        argocd.argoproj.io/sync-options: ServerSideApply=true
+        argocd.argoproj.io/compare-options: ServerSideApply=true
     spec:
       project: infrastructure
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{values.namespace}}'
       syncPolicy:
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
+          allowEmpty: true
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
