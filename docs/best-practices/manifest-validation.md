@@ -42,6 +42,36 @@ outlines the validation requirements and tools used.
 - Infrastructure-level resources must be in `k8s/infra/`
 - Application resources must be in `k8s/apps/`
 
+## Environment-Specific Configurations
+
+### Patch Structure
+
+Each environment (dev/staging/prod) should follow these guidelines for patches:
+
+1. Each configuration type should have its own patch file (e.g., `monitoring-patch.yaml`, `network-patch.yaml`)
+2. Patches must be explicitly targeted in kustomization.yaml:
+
+```yaml
+patches:
+  - path: monitoring-patch.yaml
+    target:
+      kind: ConfigMap
+      name: monitoring-config
+```
+
+3. Never combine multiple resource patches in a single file
+4. Use consistent naming patterns across environments
+5. Each patch file should modify only one resource
+
+### Environment Organization
+
+- Base configurations in `k8s/infra/base/`
+- Environment-specific patches in respective directories:
+  - `k8s/infra/dev/`
+  - `k8s/infra/staging/`
+  - `k8s/infra/prod/`
+- Each environment should maintain its own set of patch files
+
 ## Best Practices
 
 1. Use kustomization overlays for environment-specific changes
@@ -65,3 +95,4 @@ kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.32.0 
 find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
     kustomize build --enable-helm "$dir"
 done
+```

@@ -7,6 +7,15 @@ components, please refer to the dedicated sections linked below.
 
 ## Core Components
 
+### Environment Architecture
+
+See [Environment Architecture Overview](architecture/environments.md) for details on:
+
+- Development, staging, and production environments
+- Configuration management patterns
+- Resource allocation guidelines
+- Environment-specific monitoring
+
 ### Network Architecture
 
 See [Network Architecture Overview](networking/overview.md) for details on:
@@ -93,6 +102,7 @@ workers:
 
 ## Related Documentation
 
+- [Environment Architecture](architecture/environments.md)
 - [Service Registry](service-registry.md)
 - [Network Architecture](networking/overview.md)
 - [Storage Architecture](storage/overview.md)
