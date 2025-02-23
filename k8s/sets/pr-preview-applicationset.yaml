@@ -18,7 +18,7 @@ spec:
     metadata:
       name: 'pr-{{ number }}'
       labels:
-        preview: "true"
+        preview: 'true'
         pr-number: '{{ number }}'
     spec:
       project: default
@@ -40,14 +40,14 @@ spec:
         retry:
           limit: 3
           backoff:
-            duration: "5s"
+            duration: '5s'
             factor: 2
-            maxDuration: "1m"
+            maxDuration: '1m'
       healthChecks:
         - apiVersion: apps/v1
           kind: Deployment
-          name: "*"
+          name: '*'
           failureThreshold: 3
           successThreshold: 1
-          initialDelay: "30s"
+          initialDelay: '30s'
           timeoutSeconds: 5

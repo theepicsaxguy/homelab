@@ -7,37 +7,41 @@ metadata:
     dev.pc-tips: infrastructure
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/theepicsaxguy/homelab
-        revision: main
-        directories:
-          - path: k8s/infra/crds
-          - path: k8s/infra/network
-          - path: k8s/infra/storage
-          - path: k8s/infra/auth
-          - path: k8s/infra/monitoring
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - environment: dev
+                  namespace: dev-infra
+                  allowEmpty: true
+                - environment: staging
+                  namespace: staging-infra
+                  allowEmpty: false
+                - environment: prod
+                  namespace: prod-infra
+                  allowEmpty: false
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: 'infra-{{environment}}'
       labels:
         dev.pc-tips: infrastructure
+        environment: '{{environment}}'
       annotations:
-        # Sync waves to ensure proper dependency order
-        argocd.argoproj.io/sync-wave: '{{ path[9:13] == "crds" | ternary "-2" (path[9:16] == "network" | ternary "-1" "0") }}'
+        argocd.argoproj.io/sync-wave: '-1'
     spec:
       project: infrastructure
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: k8s/infra/overlays/{{environment}}
       destination:
         name: in-cluster
-        namespace: '{{ path.basename }}'
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-          allowEmpty: false
+          allowEmpty: '{{allowEmpty}}'
         syncOptions:
           - CreateNamespace=true
           - PruneLast=true
@@ -46,15 +50,14 @@ spec:
         retry:
           limit: 5
           backoff:
-            duration: "30s"
+            duration: '30s'
             factor: 2
-            maxDuration: "10m"
-      # Health checks for deployments
+            maxDuration: '10m'
       healthChecks:
         - apiVersion: apps/v1
           kind: Deployment
-          name: "*"
+          name: '*'
           failureThreshold: 3
           successThreshold: 1
-          initialDelay: "30s"
+          initialDelay: '30s'
           timeoutSeconds: 5

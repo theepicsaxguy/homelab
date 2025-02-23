@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- crds/
+- network/
+- storage/
+- auth/
+- monitoring/
+
+commonLabels:
+  app.kubernetes.io/managed-by: argocd
+  app.kubernetes.io/part-of: infrastructure
+
+commonAnnotations:
+  argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
