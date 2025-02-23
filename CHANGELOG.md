@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/theepicsaxguy/homelab/compare/v1.7.0...v1.7.1) (2025-02-23)
+
+
+### Bug Fixes
+
+* **k8s:** correct allowEmpty syntax in ApplicationSet configurations ([#100](https://github.com/theepicsaxguy/homelab/issues/100)) ([2ff9d0b](https://github.com/theepicsaxguy/homelab/commit/2ff9d0bf98afbee8e74da9c07f5729d329dc7d45))
+
 ## [1.7.0](https://github.com/theepicsaxguy/homelab/compare/v1.6.0...v1.7.0) (2025-02-23)
 
 
