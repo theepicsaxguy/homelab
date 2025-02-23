@@ -6,13 +6,13 @@ configs:
     admin.enabled: true
     url: https://argocd.pc-tips.se
     # https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets
-    oidc.config: |
-      name: 'Authelia'
-      issuer: 'https://authelia.pc-tips.se'
-      clientID: 'argocd'
-      clientSecret: $oidc:authelia.clientSecret
-      cliClientID: 'argocd-cli'
-      requestedScopes: [ 'openid', 'profile', 'email', 'groups', 'offline_access' ]
+    # oidc.config: |
+    #   name: 'Authelia'
+    #   issuer: 'https://authelia.pc-tips.se'
+    #   clientID: 'argocd'
+    #   clientSecret: $oidc:authelia.clientSecret
+    #   cliClientID: 'argocd-cli'
+    #   requestedScopes: [ 'openid', 'profile', 'email', 'groups', 'offline_access' ]
   cmp:
     create: true
     plugins:
@@ -40,6 +40,17 @@ controller:
       memory: 700Mi
     limits:
       memory: 4Gi
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
+    - name: REDISCLI_AUTH
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
 
 dex:
   enabled: false
@@ -51,22 +62,41 @@ dex:
       memory: 128Mi
 
 redis:
+  enabled: true
+  name: redis
+  image:
+    repository: public.ecr.aws/docker/library/redis
+    tag: 7.4.2-alpine
   resources:
     requests:
       cpu: 100m
       memory: 64Mi
     limits:
       memory: 1Gi
-  # Enable Redis authentication
   auth:
     enabled: true
     existingSecret: argocd-redis
     existingSecretPasswordKey: auth
+  config:
+    save: '""' # Disable persistence
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  service:
+    port: 6379
+  servicePort: 6379
 
-# Specify Chart version to ensure Redis auth compatibility
+# Global settings that affect all components
 global:
   image:
-    tag: 'v2.9.3' # Compatible with Argo CD Helm chart >= 7.1.1
+    tag: 'v2.9.3'
+  redis:
+    password:
+      existingSecret: argocd-redis
+      key: auth
 
 server:
   service:
@@ -78,7 +108,7 @@ server:
     limits:
       memory: 1Gi
   env:
-    - name: REDIS_PASSWORD
+    - name: REDISCLI_AUTH
       valueFrom:
         secretKeyRef:
           name: argocd-redis
@@ -99,6 +129,17 @@ repoServer:
       memory: 256Mi
     limits:
       memory: 2Gi
+  extraEnv:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
+    - name: REDISCLI_AUTH
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
   extraContainers:
     - name: kustomize-build-with-helm
       command:
@@ -131,6 +172,17 @@ applicationSet:
       memory: 64Mi
     limits:
       memory: 1Gi
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
+    - name: REDISCLI_AUTH
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
 
 notifications:
   enabled: false
