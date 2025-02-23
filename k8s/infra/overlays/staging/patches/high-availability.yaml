@@ -7,18 +7,18 @@ spec:
   template:
     spec:
       topologySpreadConstraints:
-      - maxSkew: 1
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfied: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            app.kubernetes.io/part-of: infrastructure
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfied: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/part-of: infrastructure
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/part-of: infrastructure
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/part-of: infrastructure
+                topologyKey: kubernetes.io/hostname

@@ -14,15 +14,15 @@ spec:
                 - environment: dev
                   namespace: dev-infra
                   allowEmpty: true
-                  syncWave: "0"
+                  syncWave: '0'
                 - environment: staging
                   namespace: staging-infra
                   allowEmpty: false
-                  syncWave: "1"
+                  syncWave: '1'
                 - environment: prod
                   namespace: prod-infra
                   allowEmpty: false
-                  syncWave: "2"
+                  syncWave: '2'
           - git:
               repoURL: https://github.com/theepicsaxguy/homelab
               revision: main
