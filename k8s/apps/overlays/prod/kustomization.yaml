@@ -13,9 +13,16 @@ patches:
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
+  - path: patches/replicas.yaml
+    target:
+      kind: Deployment
+  - path: patches/pod-disruption-budget.yaml
+    target:
+      kind: Deployment
 
 labels:
   - pairs:
-      environment: production
+      environment: prod
+      app.kubernetes.io/environment: prod
 
-namespace: prod-infra
+namespace: prod-apps

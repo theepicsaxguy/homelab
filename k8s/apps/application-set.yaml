@@ -7,16 +7,35 @@ metadata:
     dev.pc-tips: application
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/theepicsaxguy/homelab
-        revision: main
-        directories:
-          - path: k8s/apps/*
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - environment: dev
+                  namespace: dev-apps
+                  allowEmpty: true
+                  syncWave: '3'
+                - environment: staging
+                  namespace: staging-apps
+                  allowEmpty: false
+                  syncWave: '4'
+                - environment: prod
+                  namespace: prod-apps
+                  allowEmpty: false
+                  syncWave: '5'
+          - git:
+              repoURL: https://github.com/theepicsaxguy/homelab
+              revision: main
+              directories:
+                - path: k8s/apps/overlays/{{environment}}
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: '{{path.basename}}-{{environment}}'
       labels:
         dev.pc-tips: application
+        environment: '{{environment}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{syncWave}}'
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
@@ -24,11 +43,14 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           selfHeal: true
           prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - AllowEmpty={{allowEmpty}}
