@@ -4,13 +4,13 @@ kind: Kustomization
 resources:
   - ../../base
 
+namespace: staging-infra
+
 patches:
   - path: patches/resource-limits.yaml
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
-labels:
+commonLabels:
   environment: staging
-
-namespace: staging-infra

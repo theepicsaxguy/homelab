@@ -4,14 +4,13 @@ kind: Kustomization
 resources:
   - ../../base
 
-# Dev-specific patches and configurations
+namespace: dev-infra
+
 patches:
   - path: patches/resource-limits.yaml
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
-labels:
+commonLabels:
   environment: development
-
-namespace: dev-infra

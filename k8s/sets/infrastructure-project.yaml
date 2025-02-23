@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+spec:
+  description: Core infrastructure components
+  sourceRepos:
+    - https://github.com/theepicsaxguy/homelab
+    - '*'  # Allow all Helm repositories
+  destinations:
+    - namespace: '*-infra'
+      name: in-cluster
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true
