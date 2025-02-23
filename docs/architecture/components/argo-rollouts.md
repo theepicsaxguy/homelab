@@ -1,7 +1,8 @@
 # Progressive Deployment with Argo Rollouts
 
-Our infrastructure uses Argo Rollouts for advanced deployment strategies. The configuration follows our standard
-environment pattern:
+## Overview
+
+This document describes the progressive deployment configuration using Argo Rollouts in our infrastructure.
 
 ## Configuration Structure
 
@@ -10,37 +11,37 @@ infra/
 ├── base/
 │   └── controllers/
 │       └── argo-rollouts/
-│           ├── kustomization.yaml    # Base configuration
-│           └── patches/
-│               └── resource-limits.yaml
+│           └── kustomization.yaml    # Base configuration
 └── overlays/
     ├── dev/
+    │   ├── kustomization.yaml
     │   └── patches/
     │       └── argo-rollouts.yaml    # Single replica, basic resources
     ├── staging/
+    │   ├── kustomization.yaml
     │   └── patches/
     │       └── argo-rollouts.yaml    # 2 replicas, increased resources
     └── prod/
+        ├── kustomization.yaml
         └── patches/
             └── argo-rollouts.yaml    # 3 replicas, HA with pod anti-affinity
 ```
 
-## Environment-Specific Configurations
+## Configuration Details
 
-- **Development**: Single replica with basic resource allocation
+### Base Configuration
 
-  - CPU: 200m request, 1000m limit
-  - Memory: 256Mi request, 512Mi limit
+The base configuration installs Argo Rollouts from the official release manifest without any modifications.
 
-- **Staging**: Two replicas with increased resources
+### Environment-Specific Configurations
 
-  - CPU: 500m request, 2 CPU limit
-  - Memory: 512Mi request, 1Gi limit
+Each environment customizes the deployment through patches in their respective `patches/` directory:
 
-- **Production**: Three replicas with HA configuration
-  - CPU: 500m request, 2 CPU limit
-  - Memory: 512Mi request, 1Gi limit
-  - Pod anti-affinity for high availability
+- **Development**: Single replica with minimal resource allocation
+- **Staging**: Two replicas with moderate resources
+- **Production**: Three replicas with HA configuration and pod anti-affinity
+
+All patches follow our centralized patches structure within each environment's overlay directory.
 
 ## Usage
 
