@@ -10,7 +10,8 @@ patches:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
-commonLabels:
-  environment: staging
+labels:
+  - pairs:
+      environment: staging
 
 namespace: staging-infra

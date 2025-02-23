@@ -6,5 +6,6 @@ resources:
   - media
   - external
 
-commonLabels:
-  app.kubernetes.io/managed-by: argocd
+labels:
+  - pairs:
+      app.kubernetes.io/managed-by: argocd

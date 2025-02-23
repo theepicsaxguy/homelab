@@ -12,5 +12,6 @@ patches:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
 
-commonLabels:
-  environment: production
+labels:
+  - pairs:
+      environment: production

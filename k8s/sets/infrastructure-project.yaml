@@ -7,7 +7,7 @@ spec:
   description: Core infrastructure components
   sourceRepos:
     - https://github.com/theepicsaxguy/homelab
-    - '*'  # Allow all Helm repositories
+    - '*' # Allow all Helm repositories
   destinations:
     - namespace: '*-infra'
       name: in-cluster
