@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/theepicsaxguy/homelab/compare/v1.6.0...v1.7.0) (2025-02-23)
+
+
+### Features
+
+* **k8s:** enhance ApplicationSet configuration and add PR preview support ([#97](https://github.com/theepicsaxguy/homelab/issues/97)) ([4662fbd](https://github.com/theepicsaxguy/homelab/commit/4662fbdefe57a1bbb56af8ab47d52071079b3c38))
+
 ## [1.6.0](https://github.com/theepicsaxguy/homelab/compare/v1.5.0...v1.6.0) (2025-02-22)
 
 
