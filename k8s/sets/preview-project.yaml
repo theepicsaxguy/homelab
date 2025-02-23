@@ -8,7 +8,7 @@ metadata:
 spec:
   description: Preview environments for pull requests
   sourceRepos:
-    - '*' # Allow any repo since PRs could come from forks
+    - https://github.com/theepicsaxguy/homelab # Only allow your repository
   destinations:
     - namespace: 'pr-*'
       server: https://kubernetes.default.svc
