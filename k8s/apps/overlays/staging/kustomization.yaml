@@ -20,7 +20,7 @@ patches:
 labels:
   - pairs:
       environment: staging
-      app.kubernetes.io/environment: staging
+      app.kubernetes.io/part-of: applications
 
 namespace: staging-apps
 

@@ -5,8 +5,10 @@ resources:
   - rollout.yaml
   - analysis-template.yaml
 
-commonLabels:
-  environment: dev
+labels:
+  - pairs:
+      environment: dev
+      app.kubernetes.io/part-of: applications
 
 # Dev-specific patches and configurations
 patches:
@@ -14,9 +16,5 @@ patches:
     target:
       kind: Deployment
       labelSelector: 'app.kubernetes.io/part-of=infrastructure'
-
-labels:
-  - pairs:
-      environment: development
 
 namespace: dev-infra
