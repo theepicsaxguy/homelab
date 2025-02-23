@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.0](https://github.com/theepicsaxguy/homelab/compare/v1.8.0...v1.9.0) (2025-02-23)
+
+
+### Features
+
+* **k8s:** enhance infrastructure project configuration with sync windows ([#104](https://github.com/theepicsaxguy/homelab/issues/104)) ([609fd5c](https://github.com/theepicsaxguy/homelab/commit/609fd5ce836d39d8d5538927b08fcccdffbefb94))
+* **k8s:** enhance rollout and analysis configurations for infrastructure ([#110](https://github.com/theepicsaxguy/homelab/issues/110)) ([35301ee](https://github.com/theepicsaxguy/homelab/commit/35301eeb3d81a4d543393c3c874bbdd088a6c184))
+
 ## [1.8.0](https://github.com/theepicsaxguy/homelab/compare/v1.7.1...v1.8.0) (2025-02-23)
 
 
