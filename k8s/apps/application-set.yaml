@@ -4,19 +4,44 @@ metadata:
   name: applications
   namespace: argocd
   labels:
-    dev.pc-tips: application
+    app.kubernetes.io/part-of: applications
 spec:
   generators:
-    - git:
-        repoURL: https://github.com/theepicsaxguy/homelab
-        revision: main
-        directories:
-          - path: k8s/apps/*
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - environment: dev
+                  namespace: dev-apps
+                  allowEmpty: true
+                  syncWave: '3'
+                  minReplicas: '1'
+                  healthCheckTimeout: '30'
+                - environment: staging
+                  namespace: staging-apps
+                  allowEmpty: false
+                  syncWave: '4'
+                  minReplicas: '2'
+                  healthCheckTimeout: '60'
+                - environment: prod
+                  namespace: prod-apps
+                  allowEmpty: false
+                  syncWave: '5'
+                  minReplicas: '3'
+                  healthCheckTimeout: '300'
+          - git:
+              repoURL: https://github.com/theepicsaxguy/homelab
+              revision: main
+              directories:
+                - path: k8s/apps/overlays/{{environment}}
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: '{{path.basename}}-{{environment}}'
       labels:
-        dev.pc-tips: application
+        app.kubernetes.io/part-of: applications
+        environment: '{{environment}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{syncWave}}'
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
@@ -24,11 +49,42 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           selfHeal: true
           prune: true
+          allowEmpty: '{{allowEmpty}}'
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+          - ValidateSignatures=true
+          - Replace=true
+        retry:
+          limit: 5
+          backoff:
+            duration: '30s'
+            factor: 2
+            maxDuration: '10m'
+      ignoreDifferences:
+        - group: 'apps'
+          kind: 'Deployment'
+          jsonPointers:
+            - /spec/replicas
+      revisionHistoryLimit: 3
+      info:
+        - name: MinReplicas
+          value: '{{minReplicas}}'
+      orphanedResources:
+        warn: true
+      automatedPromotion:
+        enabled: true
+        allowedPreviousEnvironments:
+          - dev
+          - staging
+        conditions:
+          - type: Healthy
+            timeoutSeconds: '{{healthCheckTimeout}}'

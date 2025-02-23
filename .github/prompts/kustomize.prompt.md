@@ -9,7 +9,7 @@ that **all configurations are properly structured, linked, and functional**.
 
    - Ensure `kustomization.yaml` exists in each deployment directory.
    - Validate that all `resources`, `bases`, and `overlays` are correctly referenced.
-   - Verify `commonLabels`, `commonAnnotations`, and `namespace` are consistently applied.
+   - Verify `labels`, `commonAnnotations`, and `namespace` are consistently applied.
 
 2. **Component Linking & Dependencies**
 

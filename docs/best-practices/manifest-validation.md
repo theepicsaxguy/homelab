@@ -2,8 +2,7 @@
 
 ## Overview
 
-All Kubernetes manifests in this repository must pass automated validation checks before being merged. This document
-outlines the validation requirements and tools used.
+This document outlines the validation requirements and procedures for Kubernetes manifests in our GitOps workflow.
 
 ## Validation Tools
 
@@ -18,50 +17,125 @@ outlines the validation requirements and tools used.
 
 - All kustomization directories must successfully build
 - Kustomize overlays must follow the repository structure guidelines
+- Helm support must be enabled with --enable-helm flag
 - Components and ApplicationSets must be properly referenced
-- Helm chart references must be properly configured with appropriate version pinning
 
-### Helm Chart Validation
+### Resource Validation
 
-- All Helm charts referenced in kustomizations must pass `helm lint`
-- Charts must be compatible with Kubernetes v1.32.0
-- Charts are validated in their downloaded location under the component's `charts/` directory
-- Chart dependencies must be properly declared and versioned
-- Icons in Chart.yaml are recommended but not required
+#### Development Environment
 
-### Trivy Security Scanner
+```yaml
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+```
 
-- All manifests are scanned for security issues
-- Critical and High severity issues must be addressed
-- Results are uploaded to GitHub Security tab for tracking
+#### Staging Environment
 
-## Structure Requirements
+```yaml
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+replicas: 3
+```
 
-- All manifests must be in YAML format
-- Raw manifests should be avoided in favor of kustomizations
-- Infrastructure-level resources must be in `k8s/infra/`
-- Application resources must be in `k8s/apps/`
+#### Production Environment
 
-## Best Practices
+```yaml
+resources:
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+replicas: 3
+```
 
-1. Use kustomization overlays for environment-specific changes
-2. Keep base configurations minimal
-3. Version all images explicitly
-4. Document any security-related exceptions
-5. Test builds locally before pushing changes
+## Validation Process
 
-## Local Validation
+1. **Local Validation**
 
-To run validation checks locally:
+   ```bash
+   # Run from repository root
+   ./scripts/validate_manifests.sh -d k8s/infra
+   ```
 
-```bash
-# Validate manifests structure
-./scripts/validate_manifests.sh -d k8s
+2. **CI/CD Validation**
 
-# Validate with kubeconform
-kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version=1.32.0 -skip CustomResourceDefinition k8s/**/*.yaml
+   - Runs automatically on pull requests
+   - Validates all environments
+   - Checks resource specifications
+   - Verifies high availability configs
 
-# Validate kustomize builds
-find k8s -name kustomization.yaml -exec dirname {} \; | while read dir; do
-    kustomize build --enable-helm "$dir"
-done
+3. **Security Scanning**
+   - Trivy scans for vulnerabilities
+   - Critical and High severity issues must be addressed
+   - Results uploaded to GitHub Security tab
+
+## Common Validation Rules
+
+1. **Resource Requirements**
+
+   - All containers must have resource requests/limits
+   - Values must match environment specifications
+   - No over-provisioning allowed
+
+2. **High Availability**
+
+   - Staging/Production require 3 replicas
+   - Pod anti-affinity rules enforced
+   - Topology spread constraints validated
+
+3. **Network Policies**
+
+   - Must be present for all components
+   - Follow zero-trust model
+   - Proper ingress/egress rules
+
+4. **Health Checks**
+   - Liveness probes required
+   - Readiness probes configured
+   - Appropriate timeouts set
+
+## Validation Scripts
+
+### validate_manifests.sh
+
+- Validates Kubernetes manifests
+- Checks kustomize builds
+- Verifies resource specifications
+- Run from repository root
+
+### fix_kustomize.sh
+
+- Fixes common kustomization issues
+- Updates deprecated fields
+- Standardizes formatting
+
+## Error Resolution
+
+1. **Resource Validation Failures**
+
+   - Check environment-specific requirements
+   - Verify resource limits
+   - Validate replica counts
+
+2. **Kustomize Build Errors**
+
+   - Verify path references
+   - Check component existence
+   - Validate patches
+
+3. **Security Scan Failures**
+   - Address Critical/High issues
+   - Document exceptions
+   - Update affected components
