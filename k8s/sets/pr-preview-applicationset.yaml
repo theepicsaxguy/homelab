@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: pr-preview-environments
+  namespace: argocd
+  labels:
+    dev.pc-tips: preview
+spec:
+  generators:
+    - pullRequest:
+        github:
+          owner: theepicsaxguy
+          repo: homelab
+          tokenRef:
+            secretName: github-token
+            key: token
+  template:
+    metadata:
+      name: 'pr-{{ number }}'
+      labels:
+        preview: "true"
+        pr-number: '{{ number }}'
+    spec:
+      project: default
+      source:
+        repoURL: '{{ source.repoURL }}'
+        targetRevision: '{{ source.targetBranch }}'
+        path: k8s
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'pr-{{ number }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+          - PrunePropagationPolicy=foreground
+        retry:
+          limit: 3
+          backoff:
+            duration: "5s"
+            factor: 2
+            maxDuration: "1m"
+      healthChecks:
+        - apiVersion: apps/v1
+          kind: Deployment
+          name: "*"
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelay: "30s"
+          timeoutSeconds: 5

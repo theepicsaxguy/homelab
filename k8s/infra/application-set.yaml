@@ -11,12 +11,19 @@ spec:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/infra/*
+          - path: k8s/infra/crds
+          - path: k8s/infra/network
+          - path: k8s/infra/storage
+          - path: k8s/infra/auth
+          - path: k8s/infra/monitoring
   template:
     metadata:
       name: '{{ path.basename }}'
       labels:
         dev.pc-tips: infrastructure
+      annotations:
+        # Sync waves to ensure proper dependency order
+        argocd.argoproj.io/sync-wave: '{{ path[9:13] == "crds" | ternary "-2" (path[9:16] == "network" | ternary "-1" "0") }}'
     spec:
       project: infrastructure
       source:
@@ -25,8 +32,29 @@ spec:
         path: '{{ path }}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{ path.basename }}'
       syncPolicy:
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
+          allowEmpty: false
+        syncOptions:
+          - CreateNamespace=true
+          - PruneLast=true
+          - PrunePropagationPolicy=foreground
+          - RespectIgnoreDifferences=true
+        retry:
+          limit: 5
+          backoff:
+            duration: "30s"
+            factor: 2
+            maxDuration: "10m"
+      # Health checks for deployments
+      healthChecks:
+        - apiVersion: apps/v1
+          kind: Deployment
+          name: "*"
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelay: "30s"
+          timeoutSeconds: 5
