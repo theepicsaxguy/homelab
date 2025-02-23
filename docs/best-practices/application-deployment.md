@@ -47,9 +47,16 @@
    - Wave 5: Production applications
 
 2. **Labels and Annotations**
+
    - Always include environment labels
    - Use proper app.kubernetes.io/\* labels
    - Include necessary ArgoCD annotations
+
+3. **Orphaned Resources**
+   - Enable orphaned resource warnings in all ApplicationSets
+   - Monitor orphaned resources through ArgoCD UI
+   - Clean up orphaned resources through GitOps workflows
+   - Never delete orphaned resources manually outside of Git
 
 ## Security Requirements
 

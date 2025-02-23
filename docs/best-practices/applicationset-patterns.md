@@ -60,7 +60,7 @@ syncPolicy:
   automated:
     prune: true
     selfHeal: true
-    allowEmpty: '{{allowEmpty}}'
+    allowEmpty: { { allowEmpty } }
   syncOptions:
     - CreateNamespace=true
     - PruneLast=true
