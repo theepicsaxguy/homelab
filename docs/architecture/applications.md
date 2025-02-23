@@ -89,3 +89,52 @@ Resource limits are defined per environment:
 - Must validate against Kubernetes 1.32.0
 - Must pass security scanning
 - Must conform to resource limit requirements
+
+## Resource Management
+
+### Media Applications
+
+- CPU: 1-4 cores
+- Memory: 4-8 GiB
+- Storage: 10-20 GiB ephemeral
+- Suitable for: Jellyfin, \*arr stack
+
+### External Integrations
+
+- CPU: 250m-1 core
+- Memory: 512Mi-2GiB
+- Storage: 1-5 GiB ephemeral
+- Suitable for: Proxmox, TrueNAS, HAOS integrations
+
+### Development Tools
+
+- CPU: 500m-2 cores
+- Memory: 1-4 GiB
+- Storage: 5-10 GiB ephemeral
+- Suitable for: Debug tools, utility containers
+
+## Security Policies
+
+### Network Security
+
+- Default deny-all with explicit allows
+- Namespace isolation
+- Monitoring access (port 9090)
+- DNS resolution for external access
+- ArgoCD connectivity for GitOps
+
+### Pod Security
+
+- Non-root execution
+- Read-only root filesystem
+- Drop all capabilities
+- Resource quotas enforcement
+- Proper security contexts
+
+### High Availability
+
+- Production/Staging: 3 replicas minimum
+- Pod anti-affinity rules
+- Topology spread constraints
+- Pod disruption budgets
+- Zero-downtime deployments

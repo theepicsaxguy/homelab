@@ -3,7 +3,7 @@ kind: CiliumNetworkPolicy
 metadata:
   name: default-app-policy
 spec:
-  description: "Default application network policy with namespace isolation"
+  description: 'Default application network policy with namespace isolation'
   endpointSelector:
     matchLabels:
       app.kubernetes.io/part-of: applications
@@ -13,24 +13,24 @@ spec:
             io.kubernetes.pod.namespace: monitoring
       toPorts:
         - ports:
-            - port: "9090"
+            - port: '9090'
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: argocd
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: "${NAMESPACE}"
+            k8s:io.kubernetes.pod.namespace: '${NAMESPACE}'
   egress:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kube-system
       toPorts:
         - ports:
-            - port: "53"
+            - port: '53'
               protocol: UDP
-            - port: "53"
+            - port: '53'
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: "${NAMESPACE}"
+            k8s:io.kubernetes.pod.namespace: '${NAMESPACE}'

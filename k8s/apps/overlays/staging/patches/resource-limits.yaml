@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: all-deployments
 spec:
+  selector:
+    matchLabels:
+      patched-by: resource-limits
   template:
     spec:
       containers:
@@ -10,7 +13,7 @@ spec:
           resources:
             requests:
               cpu: '500m'
-              memory: '512Mi'
-            limits:
-              cpu: '1000m'
               memory: '1Gi'
+            limits:
+              cpu: '2'
+              memory: '2Gi'

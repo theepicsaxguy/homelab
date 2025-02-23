@@ -66,7 +66,7 @@ validate_manifest() {
 kustomization_build(){
   BUILD=${1}
   local KUSTOMIZE_BUILD_OUTPUT
-  
+
   echo "Building ${BUILD}..."
   if [ -n "${GOT_HELM}" ]; then
     KUSTOMIZE_BUILD_OUTPUT=$(${KUSTOMIZE_CMD} "${BUILD}" "${GOT_HELM}")
@@ -77,7 +77,7 @@ kustomization_build(){
     fi
     KUSTOMIZE_BUILD_OUTPUT=$(${KUSTOMIZE_CMD} "${BUILD}")
   fi
-  
+
   if [ $? -ne 0 ]; then
     if grep -qe '^kind: Component$' "${BUILD}/kustomization.yaml"; then
       echo "[SKIP] Component detected"
