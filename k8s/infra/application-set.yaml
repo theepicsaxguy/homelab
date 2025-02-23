@@ -11,13 +11,13 @@ spec:
         elements:
           - environment: dev
             namespace: dev-infra
-            syncWave: "0"
+            syncWave: '0'
           - environment: staging
             namespace: staging-infra
-            syncWave: "1"
+            syncWave: '1'
           - environment: prod
             namespace: prod-infra
-            syncWave: "2"
+            syncWave: '2'
   template:
     metadata:
       name: 'infra-{{environment}}'
@@ -46,6 +46,6 @@ spec:
       retry:
         limit: 5
         backoff:
-          duration: "30s"
+          duration: '30s'
           factor: 2
-          maxDuration: "10m"
+          maxDuration: '10m'

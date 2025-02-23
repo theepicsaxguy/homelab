@@ -11,13 +11,13 @@ spec:
         elements:
           - environment: dev
             namespace: dev-apps
-            syncWave: "1"
+            syncWave: '1'
           - environment: staging
-            namespace: staging-apps 
-            syncWave: "2"
+            namespace: staging-apps
+            syncWave: '2'
           - environment: prod
             namespace: prod-apps
-            syncWave: "3"
+            syncWave: '3'
   template:
     metadata:
       name: 'apps-{{environment}}'
@@ -46,6 +46,6 @@ spec:
       retry:
         limit: 5
         backoff:
-          duration: "30s"
+          duration: '30s'
           factor: 2
-          maxDuration: "10m"
+          maxDuration: '10m'
