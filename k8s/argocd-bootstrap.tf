@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.5.1"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.23.0"
+    }
   }
 }
 
@@ -29,80 +33,51 @@ provider "helm" {
   }
 }
 
+provider "kubernetes" {
+  config_path = pathexpand(var.kubeconfig_path)
+}
+
 variable "kubeconfig_path" {
   description = "Path to your kubeconfig file"
   type        = string
   default     = "~/.kube/config"
 }
 
-# Apply Gateway API CRDs
-resource "kubectl_manifest" "gateway_api_crds" {
-  yaml_body = file("${path.module}/infra/crds/kustomization.yaml")
-  wait      = true
-}
-
-# Deploy Cilium with Helm and Kustomize
-resource "helm_release" "cilium" {
-  name       = "cilium"
-  namespace  = "kube-system"
-  repository = "https://helm.cilium.io"
-  chart      = "cilium"
-  version    = "1.17.1"
-  values     = [file("${path.module}/infra/network/cilium/values.yaml")]
-}
-
-
-# Deploy Proxmox CSI Plugin
-data "kustomization_build" "proxmox_csi" {
-  path = "${path.module}/infra/storage/proxmox-csi"
-  kustomize_options {
-    enable_helm = true
+# Check if ArgoCD namespace exists
+data "kubernetes_namespace" "argocd" {
+  count = 1
+  metadata {
+    name = "argocd"
   }
 }
 
-resource "kubectl_manifest" "proxmox_csi" {
-  yaml_body = join("\n", values(data.kustomization_build.proxmox_csi.manifests))
-  wait      = true
-}
-
-# Helm release for ArgoCD
+# Helm release for ArgoCD - Only installs if not present
 resource "helm_release" "argocd" {
   name       = "argocd"
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "7.8.4"
-  values     = [file("${path.module}/infra/controllers/argocd/values.yaml")]
+
+  create_namespace = true
+  cleanup_on_fail  = true
+
+  # Skip installation if ArgoCD already exists
+  count = can(data.kubernetes_namespace.argocd[0]) ? 0 : 1
+
   set {
     name  = "commonAnnotations.argocd.argoproj.io/sync-wave"
     value = "-1"
   }
 }
 
-# Apply the infra directory
-data "kustomization_build" "infra" {
-  path = "${path.module}/infra"
-}
-
-resource "kubectl_manifest" "infra" {
-  yaml_body = join("\n", values(data.kustomization_build.infra.manifests))
-  wait      = true
-}
-
-# Apply the App-of-Apps manifests
+# Apply the App-of-Apps manifests only if ArgoCD is running
 data "kustomization_build" "app_of_apps" {
   path = "${path.module}/sets"
 }
 
 resource "kubectl_manifest" "app_of_apps" {
-  depends_on = [helm_release.argocd, kubectl_manifest.infra]
+  depends_on = [data.kubernetes_namespace.argocd]
   yaml_body  = join("\n", values(data.kustomization_build.app_of_apps.manifests))
   wait       = true
-}
-
-# Display Proxmox CSI Storage Capacities
-resource "null_resource" "proxmox_csi_check" {
-  provisioner "local-exec" {
-    command = "kubectl get csistoragecapacities -ocustom-columns=CLASS:.storageClassName,AVAIL:.capacity,ZONE:.nodeTopology.matchLabels -A"
-  }
 }

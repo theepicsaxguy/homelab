@@ -47,3 +47,5 @@ spec:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
+      orphanedResources:
+        warn: true

@@ -6,7 +6,7 @@ resources:
 - project.yaml
 - application-set.yaml
 labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: app-management
+  - pairs:
+      app.kubernetes.io/managed-by: argocd
+      dev.pc-tips: app-management
+    includeSelectors: true
