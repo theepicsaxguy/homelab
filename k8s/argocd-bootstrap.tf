@@ -35,36 +35,6 @@ variable "kubeconfig_path" {
   default     = "~/.kube/config"
 }
 
-# Apply Gateway API CRDs
-resource "kubectl_manifest" "gateway_api_crds" {
-  yaml_body = file("${path.module}/infra/crds/kustomization.yaml")
-  wait      = true
-}
-
-# Deploy Cilium with Helm and Kustomize
-resource "helm_release" "cilium" {
-  name       = "cilium"
-  namespace  = "kube-system"
-  repository = "https://helm.cilium.io"
-  chart      = "cilium"
-  version    = "1.17.1"
-  values     = [file("${path.module}/infra/network/cilium/values.yaml")]
-}
-
-
-# Deploy Proxmox CSI Plugin
-data "kustomization_build" "proxmox_csi" {
-  path = "${path.module}/infra/storage/proxmox-csi"
-  kustomize_options {
-    enable_helm = true
-  }
-}
-
-resource "kubectl_manifest" "proxmox_csi" {
-  yaml_body = join("\n", values(data.kustomization_build.proxmox_csi.manifests))
-  wait      = true
-}
-
 # Helm release for ArgoCD
 resource "helm_release" "argocd" {
   name       = "argocd"
@@ -72,21 +42,10 @@ resource "helm_release" "argocd" {
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "7.8.4"
-  values     = [file("${path.module}/infra/controllers/argocd/values.yaml")]
   set {
     name  = "commonAnnotations.argocd.argoproj.io/sync-wave"
     value = "-1"
   }
-}
-
-# Apply the infra directory
-data "kustomization_build" "infra" {
-  path = "${path.module}/infra"
-}
-
-resource "kubectl_manifest" "infra" {
-  yaml_body = join("\n", values(data.kustomization_build.infra.manifests))
-  wait      = true
 }
 
 # Apply the App-of-Apps manifests
@@ -95,14 +54,7 @@ data "kustomization_build" "app_of_apps" {
 }
 
 resource "kubectl_manifest" "app_of_apps" {
-  depends_on = [helm_release.argocd, kubectl_manifest.infra]
+  depends_on = [helm_release.argocd]
   yaml_body  = join("\n", values(data.kustomization_build.app_of_apps.manifests))
   wait       = true
-}
-
-# Display Proxmox CSI Storage Capacities
-resource "null_resource" "proxmox_csi_check" {
-  provisioner "local-exec" {
-    command = "kubectl get csistoragecapacities -ocustom-columns=CLASS:.storageClassName,AVAIL:.capacity,ZONE:.nodeTopology.matchLabels -A"
-  }
 }
