@@ -57,7 +57,7 @@ spec:
         automated:
           selfHeal: true
           prune: true
-          allowEmpty: '{{allowEmpty}}'
+          allowEmpty: {{allowEmpty}}
         syncOptions:
           - CreateNamespace=true
           - PruneLast=true
