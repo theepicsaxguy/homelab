@@ -1,0 +1,21 @@
+resources:
+- ../base/auth
+- ../base/controllers
+- ../base/crds
+- ../base/crossplane-crds
+- ../base/monitoring
+- ../base/network
+- ../base/storage
+- ../base/users
+- ../base/vpn
+
+patches:
+- path: staging-patches.yaml
+
+namespace: argocd
+
+labels:
+- includeSelectors: true
+  pairs:
+    environment: staging
+    dev.pc-tips: infrastructure

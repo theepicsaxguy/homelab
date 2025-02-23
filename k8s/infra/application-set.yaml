@@ -11,7 +11,9 @@ spec:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/infra/*
+          - path: k8s/infra/dev/*
+          - path: k8s/infra/staging/*
+          - path: k8s/infra/prod/*
   template:
     metadata:
       name: '{{ path.basename }}'
