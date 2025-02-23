@@ -1,12 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: applications
+  name: infrastructure
   namespace: argocd
 spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
+    - namespace: 'kube-system'
+      server: '*'
     - namespace: 'argocd'
       server: '*'
   clusterResourceWhitelist:

@@ -14,7 +14,29 @@ components.
 
 ### Environment-Specific Components
 
-#### Development (k8s/infra/dev)
+Each environment is managed through ArgoCD ApplicationSets that use a consistent path-based pattern:
+
+- Applications: `k8s/apps/{env}/*`
+- Infrastructure: `k8s/infra/{env}/*`
+
+Where `{env}` is one of:
+
+- `dev` - Development environment
+- `staging` - Pre-production validation
+- `prod` - Production environment
+
+### Resource Management
+
+All resources are labeled with their environment using:
+
+```yaml
+labels:
+  environment: dev|staging|prod
+```
+
+This label is automatically applied by ApplicationSets based on the path structure.
+
+### Development Environment (k8s/apps/dev/, k8s/infra/dev/)
 
 - Purpose: Feature development and testing
 - Characteristics:
@@ -23,7 +45,7 @@ components.
   - Rapid deployment cycles
   - Development-specific tools
 
-#### Staging (k8s/infra/staging)
+### Staging Environment (k8s/apps/staging/, k8s/infra/staging/)
 
 - Purpose: Pre-production validation
 - Characteristics:
@@ -32,7 +54,7 @@ components.
   - Standard logging levels
   - Integration testing focus
 
-#### Production (k8s/infra/prod)
+### Production Environment (k8s/apps/prod/, k8s/infra/prod/)
 
 - Purpose: Live workloads
 - Characteristics:
@@ -41,311 +63,35 @@ components.
   - Warning-level logging
   - Maximum replication
 
-## Configuration Management
+## Environment Promotion
 
-### Patch Strategy
+Applications can be promoted between environments by:
 
-Each environment manages its configurations through targeted patches:
+1. Testing changes in `dev/`
+2. Copying successful configurations to `staging/`
+3. After validation, promoting to `prod/`
 
-```yaml
-patches:
-  - path: monitoring-patch.yaml # Component-specific patches
-    target:
-      kind: ConfigMap
-      name: monitoring-config
-  - path: network-patch.yaml # Network configurations
-    target:
-      kind: ConfigMap
-      name: network-config
-```
+### Promotion Process
 
-### Resource Allocation Guidelines
-
-| Resource Type | Development | Staging | Production |
-| ------------- | ----------- | ------- | ---------- |
-| Storage       | 100Gi       | 100Gi   | 500Gi      |
-| Retention     | 7d          | 14d     | 30d        |
-| Replicas      | 1           | 2       | 3          |
-| Log Level     | debug       | info    | warn       |
-
-## GitOps Workflow
-
-1. Changes start in development
-2. Promoted to staging for validation
-3. Finally deployed to production
-4. All changes tracked in Git
-5. ArgoCD ensures state reconciliation
+1. Copy the application directory between environments
+2. Update environment-specific configurations in kustomization overlays
+3. Let ArgoCD detect and apply the changes automatically
 
 ## Best Practices
 
-1. Always use separate patch files for different components
-2. Maintain consistent naming across environments
-3. Document resource requirements per environment
-4. Use progressive sync waves for dependencies
-5. Implement proper validation at each stage
+1. Always use environment-specific overlays for configuration
+2. Maintain consistent directory structure across environments
+3. Use environment labels for resource selection
+4. Test all changes in dev before promotion
+5. Use GitOps workflow for all environment changes
+6. Document environment-specific requirements in each overlay
 
-## Validation Requirements
+## ApplicationSet Configuration
 
-Each environment must pass:
+Applications and infrastructure are managed by ApplicationSets that:
 
-1. Kustomize build validation
-2. Resource configuration checks
-3. Security policy compliance
-4. Network policy verification
-
-## Monitoring and Alerting
-
-Different thresholds and retention periods per environment:
-
-- Development: Focused on debugging
-- Staging: Testing alert configurations
-- Production: Critical alerts only
-
-## Environment Promotion
-
-### Promotion Process
-1. Development to Staging
-   - Create feature branch from `main`
-   - Make changes in `k8s/infra/dev/`
-   - Test and validate in dev environment
-   - Create PR to promote to staging
-   - Apply changes to `k8s/infra/staging/`
-   - Validate in staging environment
-
-2. Staging to Production
-   - Ensure all staging tests pass
-   - Create promotion PR
-   - Apply changes to `k8s/infra/prod/`
-   - Validate in production environment
-   - Merge to `main`
-
-### Validation Steps
-For each promotion:
-1. Run manifest validation:
-```bash
-./scripts/validate_manifests.sh -d k8s/infra/{target-env}
-```
-2. Review resource allocation changes
-3. Verify configuration differences
-4. Test dependent services
-5. Check monitoring dashboards
-
-### Rollback Procedure
-If issues are detected:
-1. Revert the promotion commit
-2. ArgoCD will automatically sync back
-3. Verify services return to previous state
-4. Document issues found
-5. Update test cases
-
-### Environment Labels
-Applications are tracked using labels:
-```yaml
-labels:
-  environment: dev|staging|prod
-  app.kubernetes.io/managed-by: argocd
-  dev.pc-tips: infrastructure
-```
-
-### Sync Wave Order
-Infrastructure components sync in this order:
-1. CRDs and Operators (wave -1)
-2. Core Infrastructure (wave 0)
-3. Environment-specific components (wave 1)
-4. Applications (wave 2)
-
-## Environment Promotion Examples
-
-### Example: Updating Monitoring Retention
-
-Here's a practical example of promoting a monitoring configuration change:
-
-1. Development Change
-```yaml
-# k8s/infra/dev/monitoring-patch.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: monitoring-config
-  namespace: monitoring
-data:
-  retention.period: '7d'    # Testing new retention period
-  storage.size: '100Gi'
-  environment: 'dev'
-  log.level: 'debug'
-```
-
-2. Staging Validation
-```yaml
-# k8s/infra/staging/monitoring-patch.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: monitoring-config
-  namespace: monitoring
-data:
-  retention.period: '14d'   # Validate with more data
-  storage.size: '100Gi'
-  environment: 'staging'
-  log.level: 'info'
-```
-
-3. Production Deployment
-```yaml
-# k8s/infra/prod/monitoring-patch.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: monitoring-config
-  namespace: monitoring
-data:
-  retention.period: '30d'   # Final production value
-  storage.size: '500Gi'
-  environment: 'prod'
-  log.level: 'warn'
-```
-
-### Promotion Checklist
-
-Before promoting between environments:
-
-1. Resource Impact Assessment
-   - Storage requirements
-   - CPU/Memory changes
-   - Network policy updates
-   - Security implications
-
-2. Testing Requirements
-   - Unit tests in dev
-   - Integration tests in staging
-   - Load tests before prod
-   - Backup verification
-
-3. Documentation Updates
-   - Update change logs
-   - Record configuration decisions
-   - Update runbooks if needed
-   - Document test results
-
-### Common Pitfalls
-
-1. Resource Mismatch
-   - Always validate resource quotas
-   - Check storage class availability
-   - Verify node capacity
-
-2. Configuration Drift
-   - Use `kustomize build` to verify changes
-   - Compare environment differences
-   - Check for missing patches
-
-3. Dependency Management
-   - Validate service dependencies
-   - Check API versions
-   - Verify CRD compatibility
-
-## Application Structure
-
-### Standard Application Layout
-```
-apps/
-└── {app-name}/             # e.g., media, monitoring, auth
-    ├── application-set.yaml   # Environment-aware ApplicationSet
-    ├── {component}/          # e.g., arr, jellyfin
-    │   ├── base/            # Base configuration
-    │   │   ├── kustomization.yaml
-    │   │   └── resources/   # Core manifests
-    │   ├── dev/            # Development overlay
-    │   │   ├── kustomization.yaml
-    │   │   └── resource-patches.yaml
-    │   ├── staging/        # Staging overlay
-    │   │   ├── kustomization.yaml
-    │   │   └── resource-patches.yaml
-    │   └── prod/           # Production overlay
-    │       ├── kustomization.yaml
-    │       └── resource-patches.yaml
-    └── kustomization.yaml  # App-level kustomization
-```
-
-### Environment-Specific ApplicationSet
-```yaml
-spec:
-  generators:
-    - git:
-        directories:
-          - path: k8s/apps/{app-name}/*/dev
-          - path: k8s/apps/{app-name}/*/staging
-          - path: k8s/apps/{app-name}/*/prod
-  template:
-    metadata:
-      name: '{{path.basename}}-{{path.parent.basename}}'
-      labels:
-        environment: '{{path.basename}}'
-        dev.pc-tips: {app-type}
-```
-
-### Label Standards
-Each application must use consistent labels across environments:
-
-1. Environment Label:
-   ```yaml
-   environment: dev|staging|prod
-   ```
-
-2. Management Label:
-   ```yaml
-   app.kubernetes.io/managed-by: argocd
-   ```
-
-3. Application Type Label:
-   ```yaml
-   dev.pc-tips: {app-type}  # e.g., media, infrastructure, monitoring
-   ```
-
-### Resource Guidelines
-
-Applications should define environment-specific resources following these patterns:
-
-#### Development
-- Single replica deployments
-- Debug-level logging
-- Minimal resource requests
-- Loose resource limits
-- Development-specific environment variables
-
-#### Staging
-- Multi-replica deployments (typically 2)
-- Info-level logging
-- Moderate resource requests
-- Production-like limits
-- Testing-specific configurations
-
-#### Production
-- High-availability replicas (3+)
-- Warning-level logging
-- Production-grade resources
-- Strict resource limits
-- Production-only features
-
-### Application Promotion
-Applications follow the same promotion process as infrastructure:
-
-1. Development Phase
-   - Create in dev environment
-   - Test functionality
-   - Validate resource usage
-   - Debug and iterate
-
-2. Staging Phase
-   - Deploy to staging
-   - Test multi-replica behavior
-   - Validate monitoring
-   - Performance testing
-
-3. Production Phase
-   - Final security review
-   - Resource validation
-   - HA testing
-   - Production deployment
-
-## Environment Migration
+- Use path-based environment detection
+- Apply consistent environment labels
+- Handle namespace creation
+- Enable automated sync and pruning
+- Support server-side apply

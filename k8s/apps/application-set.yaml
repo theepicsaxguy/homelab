@@ -1,33 +1,34 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: applications
+  name: infrastructure
   namespace: argocd
   labels:
-    dev.pc-tips: application
+    dev.pc-tips: infrastructure
 spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/apps/*
+          - path: k8s/infra/dev/*
+          - path: k8s/infra/staging/*
+          - path: k8s/infra/prod/*
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: '{{path.basename}}'
       labels:
-        dev.pc-tips: application
-      finalizers:
-        - resources-finalizer.argocd.argoproj.io
+        dev.pc-tips: infrastructure
+        environment: '{{path.segments.2}}' # Will extract dev/staging/prod from path
     spec:
-      project: applications
+      project: infrastructure
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{path.basename}}'
       syncPolicy:
         automated:
           selfHeal: true

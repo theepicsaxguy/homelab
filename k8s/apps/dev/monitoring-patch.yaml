@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: monitoring-config
+  namespace: monitoring
+data:
+  retention.period: '7d'
+  storage.size: '50Gi'
+  environment: 'dev'
+  log.level: 'debug'

@@ -18,7 +18,7 @@ spec:
     metadata:
       name: '{{path.basename}}'
       labels:
-        environment: '{{path.segments.2}}'  # Will extract dev/staging/prod from path
+        environment: '{{path.segments.2}}' # Will extract dev/staging/prod from path
     spec:
       project: applications
       source:

@@ -19,5 +19,5 @@ namespace: argocd
 labels:
   - includeSelectors: true
     pairs:
-      environment: dev
+      environment: prod
       app.kubernetes.io/managed-by: argocd

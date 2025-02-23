@@ -19,7 +19,7 @@ spec:
       name: '{{path.basename}}'
       labels:
         dev.pc-tips: infrastructure
-        environment: '{{path.segments.2}}'  # Will extract dev/staging/prod from path
+        environment: '{{path.segments.2}}' # Will extract dev/staging/prod from path
     spec:
       project: infrastructure
       source:
