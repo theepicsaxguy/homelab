@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/theepicsaxguy/homelab/compare/v1.7.1...v1.8.0) (2025-02-23)
+
+
+### Features
+
+* **k8s:** add Argo Rollouts configuration and resource limits ([#102](https://github.com/theepicsaxguy/homelab/issues/102)) ([d604013](https://github.com/theepicsaxguy/homelab/commit/d604013bdb2e6382795aa1765744fdd44917971b))
+
 ## [1.7.1](https://github.com/theepicsaxguy/homelab/compare/v1.7.0...v1.7.1) (2025-02-23)
 
 
