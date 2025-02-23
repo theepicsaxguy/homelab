@@ -5,18 +5,20 @@
 - Talos cluster is running
 - kubeconfig is available
 
-## CRDs
+## Essential Bootstrap Steps
 
-First apply CRDs to avoid dependency issues:
+### 1. CRDs 
+
+Apply CRDs required for core functionality:
 
 ```shell
 kubectl apply -k infra/crds
 kubectl apply -k infra/crossplane-crds
 ```
 
-## Core Infrastructure
+### 2. Network Layer
 
-Apply Cilium networking before other components:
+Apply Cilium CNI:
 
 ```shell
 kubectl kustomize --enable-helm infra/network/cilium | kubectl apply -f -
@@ -28,31 +30,7 @@ Wait for Cilium to be ready:
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
 ```
 
-## Bitwarden Secrets
-
-```shell
-kustomize build --enable-helm infra/controllers/bitwarden | kubectl apply -f -
-```
-
-Create secrets token (required for sm-operator):
-
-```shell
-kubectl create secret generic bw-auth-token -n sm-operator-system --from-literal=token="<Auth-Token-Here>"
-```
-
-## Storage Setup
-
-```shell
-kustomize build --enable-helm infra/storage/proxmox-csi | kubectl apply -f -
-```
-
-Verify storage classes:
-
-```shell
-kubectl get csistoragecapacities -ocustom-columns=CLASS:.storageClassName,AVAIL:.capacity,ZONE:.nodeTopology.matchLabels -A
-```
-
-## ArgoCD Bootstrap
+### 3. ArgoCD Bootstrap
 
 Install ArgoCD:
 
@@ -66,48 +44,43 @@ Wait for ArgoCD to be ready:
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=120s
 ```
 
-Get initial admin password:
+### 4. Initialize GitOps
 
-```shell
-kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.password | @base64d'
-```
-
-## GitOps Configuration
-
-Apply root applications in order:
+Apply the root ApplicationSet:
 
 ```shell
 kubectl apply -k sets
 ```
 
-This will trigger the following applications with sync-waves:
+ArgoCD will now manage the following components in order:
 
-1. infrastructure (-1): Core infrastructure components
-2. applications (0): User applications
+1. Core Infrastructure (sync-wave: -1)
+   - Bitwarden Secrets Manager
+   - Storage Controllers
+   - Gateway API
+   - Certificate Management
+   - Authentication
 
-# Components Status
+2. Applications (sync-wave: 0)
+   - Monitoring Stack
+   - User Applications
 
-## Core Components
+## Access Information
 
-- [x] Cilium CNI
-- [x] Hubble Network Monitoring
-- [x] ArgoCD
-- [x] Proxmox CSI Plugin
-- [x] Cert-manager
-- [x] Gateway API
-- [x] Authentication (Keycloak)
-- [x] CNPG - Cloud Native PostgreSQL
+Get initial ArgoCD admin password:
 
-## Required CRDs
+```shell
+kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.password | @base64d'
+```
 
-- [x] Gateway API (via infra/crds)
-- [x] ArgoCD (via operator)
-- [x] Sealed-secrets (via operator)
-- [x] Crossplane (via crossplane-crds)
+## Post-Bootstrap Secret Configuration
 
-## Implemented Features
+After Bitwarden Secrets Manager is deployed by ArgoCD, configure the auth token:
 
-- [x] Remotely managed cloudflared tunnel
-- [x] Keycloak authentication
-- [x] ArgoCD sync-waves
-- [x] Automated infrastructure healing
+```shell
+kubectl create secret generic bw-auth-token -n sm-operator-system \
+  --from-literal=token="<Auth-Token-Here>" \
+  --from-literal=organization-id="4a014e57-f197-4852-9831-b287013e47b6"
+```
+
+This is a one-time setup required for the secrets manager to function.
