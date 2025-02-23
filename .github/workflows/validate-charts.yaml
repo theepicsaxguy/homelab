@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            /usr/local/bin/helm 
+            /usr/local/bin/helm
             ~/.cache/helm
             ~/.helm
           key: ${{ runner.os }}-helm-${{ env.HELM_VERSION }}
@@ -48,6 +48,6 @@ jobs:
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add jetstack https://charts.jetstack.io
           helm repo update
-          
-          # Run the validation script
-          ./scripts/validate_charts.sh
+
+          # Run the validation script from the root directory
+          ./scripts/validate_charts.sh -d k8s/
