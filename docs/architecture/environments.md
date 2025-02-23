@@ -244,4 +244,108 @@ Before promoting between environments:
    - Check API versions
    - Verify CRD compatibility
 
+## Application Structure
+
+### Standard Application Layout
+```
+apps/
+└── {app-name}/             # e.g., media, monitoring, auth
+    ├── application-set.yaml   # Environment-aware ApplicationSet
+    ├── {component}/          # e.g., arr, jellyfin
+    │   ├── base/            # Base configuration
+    │   │   ├── kustomization.yaml
+    │   │   └── resources/   # Core manifests
+    │   ├── dev/            # Development overlay
+    │   │   ├── kustomization.yaml
+    │   │   └── resource-patches.yaml
+    │   ├── staging/        # Staging overlay
+    │   │   ├── kustomization.yaml
+    │   │   └── resource-patches.yaml
+    │   └── prod/           # Production overlay
+    │       ├── kustomization.yaml
+    │       └── resource-patches.yaml
+    └── kustomization.yaml  # App-level kustomization
+```
+
+### Environment-Specific ApplicationSet
+```yaml
+spec:
+  generators:
+    - git:
+        directories:
+          - path: k8s/apps/{app-name}/*/dev
+          - path: k8s/apps/{app-name}/*/staging
+          - path: k8s/apps/{app-name}/*/prod
+  template:
+    metadata:
+      name: '{{path.basename}}-{{path.parent.basename}}'
+      labels:
+        environment: '{{path.basename}}'
+        dev.pc-tips: {app-type}
+```
+
+### Label Standards
+Each application must use consistent labels across environments:
+
+1. Environment Label:
+   ```yaml
+   environment: dev|staging|prod
+   ```
+
+2. Management Label:
+   ```yaml
+   app.kubernetes.io/managed-by: argocd
+   ```
+
+3. Application Type Label:
+   ```yaml
+   dev.pc-tips: {app-type}  # e.g., media, infrastructure, monitoring
+   ```
+
+### Resource Guidelines
+
+Applications should define environment-specific resources following these patterns:
+
+#### Development
+- Single replica deployments
+- Debug-level logging
+- Minimal resource requests
+- Loose resource limits
+- Development-specific environment variables
+
+#### Staging
+- Multi-replica deployments (typically 2)
+- Info-level logging
+- Moderate resource requests
+- Production-like limits
+- Testing-specific configurations
+
+#### Production
+- High-availability replicas (3+)
+- Warning-level logging
+- Production-grade resources
+- Strict resource limits
+- Production-only features
+
+### Application Promotion
+Applications follow the same promotion process as infrastructure:
+
+1. Development Phase
+   - Create in dev environment
+   - Test functionality
+   - Validate resource usage
+   - Debug and iterate
+
+2. Staging Phase
+   - Deploy to staging
+   - Test multi-replica behavior
+   - Validate monitoring
+   - Performance testing
+
+3. Production Phase
+   - Final security review
+   - Resource validation
+   - HA testing
+   - Production deployment
+
 ## Environment Migration
