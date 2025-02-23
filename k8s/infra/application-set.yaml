@@ -16,18 +16,19 @@ spec:
           - path: k8s/infra/prod/*
   template:
     metadata:
-      name: '{{ path.basename }}'
+      name: '{{path.basename}}'
       labels:
         dev.pc-tips: infrastructure
+        environment: '{{path.segments.2}}'  # Will extract dev/staging/prod from path
     spec:
       project: infrastructure
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{ path }}'
+        path: '{{path}}'
       destination:
         name: in-cluster
-        namespace: argocd
+        namespace: '{{path.basename}}'
       syncPolicy:
         automated:
           selfHeal: true

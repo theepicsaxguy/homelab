@@ -1,23 +1,37 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: applications
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: '0'
 spec:
-  project: app-of-apps
-  source:
-    path: k8s/apps
-    repoURL: https://github.com/theepicsaxguy/homelab
-    targetRevision: main
-  destination:
-    namespace: argocd
-    name: in-cluster
-  syncPolicy:
-    automated:
-      selfHeal: true
-      prune: true
-    syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
+  generators:
+    - git:
+        repoURL: https://github.com/theepicsaxguy/homelab
+        revision: main
+        directories:
+          - path: k8s/apps/dev/*
+          - path: k8s/apps/staging/*
+          - path: k8s/apps/prod/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+      labels:
+        environment: '{{path.segments.2}}'  # Will extract dev/staging/prod from path
+    spec:
+      project: applications
+      source:
+        repoURL: https://github.com/theepicsaxguy/homelab
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        name: in-cluster
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
