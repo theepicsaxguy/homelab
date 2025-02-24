@@ -3,8 +3,11 @@ kind: Rollout
 metadata:
   name: app-rollout-template
 spec:
-  replicas: 3
-  revisionHistoryLimit: 5
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: apps
   strategy:
     canary:
       # Analysis is performed while paused on steps
