@@ -55,9 +55,9 @@ spec:
       orphanedResources:
         warn: true
         ignore:
-          - group: ""
+          - group: ''
             kind: ConfigMap
             name: kube-root-ca.crt
-          - group: ""
+          - group: ''
             kind: ServiceAccount
             name: default

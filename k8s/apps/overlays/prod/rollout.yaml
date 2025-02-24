@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: app-rollout-template
 spec:
-  replicas: 3  # Prod requires 3 replicas
+  replicas: 3 # Prod requires 3 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -12,7 +12,7 @@ spec:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 300s }  # Prod timeout
+        - pause: { duration: 300s } # Prod timeout
         - analysis:
             templates:
               - templateName: success-rate
@@ -39,7 +39,7 @@ spec:
               memory: 2Gi
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:  # Stronger HA requirement for prod
+          requiredDuringSchedulingIgnoredDuringExecution: # Stronger HA requirement for prod
             - labelSelector:
                 matchLabels:
                   app.kubernetes.io/part-of: applications
