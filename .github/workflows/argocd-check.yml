@@ -48,7 +48,7 @@ jobs:
       - name: Run ArgoCD Validation Script
         id: validate
         run: |
-          bash ./validate.sh | tee output.log
+          bash scripts/validate_argocd.sh | tee output.log
         continue-on-error: true
 
       - name: Check validation result
