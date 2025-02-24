@@ -3,8 +3,11 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: infrastructure
   strategy:
     canary:
       steps:
