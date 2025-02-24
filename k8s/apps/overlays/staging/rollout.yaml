@@ -3,31 +3,22 @@ kind: Rollout
 metadata:
   name: app-rollout-template
 spec:
-  replicas: 1
+  replicas: 2  # Staging requires 2 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app.kubernetes.io/part-of: apps
+      app.kubernetes.io/part-of: applications
   strategy:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 60s }
+        - pause: { duration: 60s }  # Staging timeout
         - analysis:
             templates:
               - templateName: success-rate
-        - setWeight: 40
+        - setWeight: 50
         - pause: { duration: 60s }
-        - analysis:
-            templates:
-              - templateName: success-rate
-        - setWeight: 60
-        - pause: { duration: 60s }
-        - analysis:
-            templates:
-              - templateName: success-rate
-        - setWeight: 80
-        - pause: { duration: 60s }
+        - setWeight: 100
   template:
     metadata:
       labels:
@@ -35,12 +26,13 @@ spec:
     spec:
       containers:
         - name: app
+          image: app-service:v1.0.0
           resources:
             requests:
               cpu: 500m
               memory: 256Mi
             limits:
-              cpu: 2
+              cpu: 2000m
               memory: 512Mi
       affinity:
         podAntiAffinity:

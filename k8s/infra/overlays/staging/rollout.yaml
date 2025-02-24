@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 1
+  replicas: 2  # Staging requires 2 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -11,42 +11,35 @@ spec:
   strategy:
     canary:
       steps:
-      - setWeight: 10
-      - pause: {duration: 120s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 25
-      - pause: {duration: 120s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 50
-      - pause: {duration: 120s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 100
+        - setWeight: 20
+        - pause: { duration: 60s }  # Staging timeout
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 50
+        - pause: { duration: 60s }
+        - setWeight: 100
   template:
     metadata:
       labels:
         app.kubernetes.io/part-of: infrastructure
     spec:
       containers:
-      - name: infra
-        resources:
-          requests:
-            cpu: 500m
-            memory: 256Mi
-          limits:
-            cpu: 2
-            memory: 512Mi
+        - name: infra
+          image: infra-service:v1.0.0
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+            limits:
+              cpu: 2000m
+              memory: 512Mi
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/part-of: infrastructure
-              topologyKey: kubernetes.io/hostname
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/part-of: infrastructure
+                topologyKey: kubernetes.io/hostname
