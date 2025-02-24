@@ -1,4 +1,137 @@
-# ApplicationSet Patterns
+# ApplicationSet and Rollout Patterns
+
+## ApplicationSet Management
+
+### Environment-Driven ApplicationSet Structure
+
+All ApplicationSets must follow these patterns:
+
+```yaml
+spec:
+  generators:
+    - list:
+        elements:
+          - values:
+              environment: dev
+              namespace: dev-infra  # or dev for apps
+              minReplicas: '1'
+              healthTimeout: '30s'
+          # ...staging and prod configurations
+```
+
+### Critical Configuration Fields
+
+1. Orphaned Resources:
+   - Must be under spec.template.spec
+   - Must have both warn and ignore configurations
+   - Must ignore default resources (kube-root-ca.crt, default ServiceAccount)
+
+2. Sync Policy:
+   - Must include retry configuration
+   - Must enable automated prune and selfHeal
+   - Must use proper boolean values (not strings)
+
+3. Template References:
+   - Must use values.environment notation
+   - Must maintain consistent labeling
+   - Must use appropriate sync waves
+
+## Rollout Management
+
+### Environment-Specific Requirements
+
+1. Development:
+   - Single replica
+   - Fast canary progression (30s pauses)
+   - Basic resource limits
+   - No anti-affinity requirements
+
+2. Staging:
+   - Two replicas minimum
+   - Moderate canary progression (60s pauses)
+   - Preferred pod anti-affinity
+   - Production-like resource allocation
+
+3. Production:
+   - Three replicas minimum
+   - Conservative canary progression (300s pauses)
+   - Required pod anti-affinity
+   - Full production resource allocation
+
+### Common Rollout Patterns
+
+1. Template Structure:
+   ```yaml
+   spec:
+     revisionHistoryLimit: 3
+     selector:
+       matchLabels:
+         app.kubernetes.io/part-of: [component-type]
+     template:
+       metadata:
+         labels:
+           app.kubernetes.io/part-of: [component-type]
+   ```
+
+2. Canary Strategy:
+   - Start with lower weights in production
+   - Include analysis templates
+   - Use environment-appropriate pause durations
+   - Implement proper health checks
+
+3. Resource Management:
+   - Define explicit resource requests and limits
+   - Scale appropriately per environment
+   - Use consistent memory/CPU ratios
+
+### Anti-Affinity Configuration
+
+1. Staging:
+   ```yaml
+   affinity:
+     podAntiAffinity:
+       preferredDuringSchedulingIgnoredDuringExecution:
+         - weight: 100
+           podAffinityTerm:
+             labelSelector:
+               matchLabels:
+                 app.kubernetes.io/part-of: [component-type]
+             topologyKey: kubernetes.io/hostname
+   ```
+
+2. Production:
+   ```yaml
+   affinity:
+     podAntiAffinity:
+       requiredDuringSchedulingIgnoredDuringExecution:
+         - labelSelector:
+             matchLabels:
+               app.kubernetes.io/part-of: [component-type]
+           topologyKey: kubernetes.io/hostname
+   ```
+
+## Implementation Checklist
+
+- [ ] Validate ApplicationSet configuration
+  - [ ] Proper template references
+  - [ ] Correct orphaned resources configuration
+  - [ ] Appropriate sync policy settings
+
+- [ ] Verify Rollout configuration
+  - [ ] Environment-specific replicas
+  - [ ] Correct resource limits
+  - [ ] Appropriate anti-affinity rules
+  - [ ] Proper canary progression
+
+- [ ] Test deployment progression
+  - [ ] Development validation
+  - [ ] Staging verification
+  - [ ] Production readiness
+
+- [ ] Validate health checks
+  - [ ] Timeout configurations
+  - [ ] Analysis templates
+  - [ ] Rollback behavior
 
 ## Overview
 

@@ -6,7 +6,7 @@ This document describes the progressive deployment configuration using Argo Roll
 
 ## Configuration Structure
 
-```
+```bash
 infra/
 ├── base/
 │   └── controllers/
@@ -27,23 +27,111 @@ infra/
             └── argo-rollouts.yaml    # 3 replicas, HA with pod anti-affinity
 ```
 
-## Configuration Details
+## Environment-Specific Configuration Details
 
-### Base Configuration
+### Development Environment
 
-The base configuration installs Argo Rollouts from the official release manifest without any modifications.
+- **Replicas**: 1 (Single replica deployment)
+- **Resource Limits**:
 
-### Environment-Specific Configurations
+  ```yaml
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  ```
 
-Each environment customizes the deployment through patches in their respective `patches/` directory:
+- **Canary Strategy**:
+  - Initial weight: 10%
+  - Pause duration: 30s
+  - Analysis after each step
+  - Final promotion to 100%
 
-- **Development**: Single replica with minimal resource allocation
-- **Staging**: Two replicas with moderate resources
-- **Production**: Three replicas with HA configuration and pod anti-affinity
+### Staging Environment
 
-All patches follow our centralized patches structure within each environment's overlay directory.
+- **Replicas**: 2 (Multi-replica deployment)
+- **Resource Limits**:
+
+  ```yaml
+  requests:
+    cpu: 500m
+    memory: 256Mi
+  limits:
+    cpu: 2000m
+    memory: 512Mi
+  ```
+
+- **High Availability**:
+  - Preferred pod anti-affinity
+  - Topology key: kubernetes.io/hostname
+  - Weight: 100
+
+- **Canary Strategy**:
+  - Initial weight: 20%
+  - Pause duration: 60s
+  - Analysis after initial deployment
+  - Intermediate step at 50%
+  - Final promotion to 100%
+
+### Production Environment
+
+- **Replicas**: 3 (High availability deployment)
+- **Resource Limits**:
+
+  ```yaml
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  ```
+
+- **High Availability**:
+  - Required pod anti-affinity
+  - Topology key: kubernetes.io/hostname
+  - Strict node distribution
+
+- **Canary Strategy**:
+  - Conservative initial weight: 10%
+  - Extended pause duration: 300s
+  - Multiple analysis steps
+  - Intermediate step at 30%
+  - Final promotion to 100%
+
+## Common Configuration
+
+### Template Structure
+
+All rollout templates must include:
+
+- Proper label selectors using app.kubernetes.io/part-of
+- Consistent revision history limit (3)
+- Image specification
+- Resource limits
+- Environment-appropriate affinity rules
+
+### Health Checks
+
+- Development: 30s timeout
+- Staging: 60s timeout
+- Production: 300s timeout
 
 ## Usage
 
 The Rollouts controller is deployed automatically through our infrastructure ApplicationSet with appropriate sync waves.
-For using Rollouts in your applications, refer to the [external documentation](../external-docs/getting-started.md).
+Both infrastructure and application rollouts follow the same pattern with environment-specific configurations.
+
+### Implementing New Rollouts
+
+When implementing new rollouts:
+
+1. Start with the development environment configuration
+2. Ensure proper resource limits are set
+3. Configure appropriate anti-affinity rules for staging/production
+4. Set environment-specific analysis templates
+5. Validate configurations using validate_manifests.sh
+
+For application-specific rollout implementations, refer to the applications documentation.
