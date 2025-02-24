@@ -53,6 +53,8 @@ Install ArgoCD:
 
 ```shell
 kustomize build --enable-helm infra/base/controllers/argocd | kubectl apply -f -
+
+kubectl apply -k infra/base/controllers/argo-rollouts
 ```
 
 Wait for ArgoCD to be ready:
