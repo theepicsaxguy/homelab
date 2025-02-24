@@ -24,10 +24,10 @@ spec:
               healthTimeout: '300s'
   template:
     metadata:
-      name: 'infra-{{environment}}'
+      name: 'infra-{{values.environment}}'
       labels:
         type: infrastructure
-        environment: '{{environment}}'
+        environment: '{{values.environment}}'
       annotations:
         argocd.argoproj.io/sync-wave: '-1'
     spec:
@@ -35,10 +35,10 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: k8s/infra/overlays/{{environment}}
+        path: k8s/infra/overlays/{{values.environment}}
       destination:
         server: https://kubernetes.default.svc
-        namespace: '{{namespace}}'
+        namespace: '{{values.namespace}}'
       syncPolicy:
         automated:
           prune: true
@@ -53,3 +53,12 @@ spec:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
+      orphanedResources:
+        warn: true
+        ignore:
+          - group: ''
+            kind: ConfigMap
+            name: kube-root-ca.crt
+          - group: ''
+            kind: ServiceAccount
+            name: default

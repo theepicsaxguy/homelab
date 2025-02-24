@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 1
+  replicas: 3 # Prod requires 3 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -11,45 +11,36 @@ spec:
   strategy:
     canary:
       steps:
-      - setWeight: 5
-      - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 15
-      - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 30
-      - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 50
-      - pause: {duration: 300s}
-      - analysis:
-          templates:
-          - templateName: infra-health
-      - setWeight: 100
+        - setWeight: 10
+        - pause: { duration: 300s } # Prod timeout
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 30
+        - pause: { duration: 300s }
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 100
   template:
     metadata:
       labels:
         app.kubernetes.io/part-of: infrastructure
     spec:
       containers:
-      - name: infra
-        resources:
-          requests:
-            cpu: 1
-            memory: 512Mi
-          limits:
-            cpu: 4
-            memory: 1Gi
+        - name: infra
+          image: infra-service:v1.0.0
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
       affinity:
         podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/part-of: infrastructure
-            topologyKey: kubernetes.io/hostname
+          requiredDuringSchedulingIgnoredDuringExecution: # Stronger HA requirement for prod
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: infrastructure
+              topologyKey: kubernetes.io/hostname
