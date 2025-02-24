@@ -1,0 +1,63 @@
+name: ArgoCD Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure full history for PR diffing
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y parallel jq
+          curl -Lo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64
+          chmod +x /usr/local/bin/kustomize
+          curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
+          chmod +x /usr/local/bin/kubectl
+          curl -Lo /usr/local/bin/kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
+          chmod +x /usr/local/bin/kubeconform
+          curl -Lo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+          curl -Lo /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+          curl -Lo /usr/local/bin/helm https://get.helm.sh/helm-v3.11.2-linux-amd64.tar.gz
+          tar -xzf helm-v3.11.2-linux-amd64.tar.gz
+          mv linux-amd64/helm /usr/local/bin/helm
+          rm -rf helm-v3.11.2-linux-amd64.tar.gz linux-amd64
+
+      - name: Set Up ArgoCD Authentication
+        env:
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
+          ARGOCD_TOKEN: ${{ secrets.ARGOCD_TOKEN }}
+        run: |
+          if [[ -z "$ARGOCD_SERVER" || -z "$ARGOCD_TOKEN" ]]; then
+            echo "❌ Missing ArgoCD credentials. Skipping ArgoCD checks."
+            exit 0
+          fi
+          echo "🔐 Logging into ArgoCD..."
+          argocd login "$ARGOCD_SERVER" --token "$ARGOCD_TOKEN" --grpc-web
+
+      - name: Run ArgoCD Validation Script
+        id: validate
+        run: |
+          bash scripts/validate_argocd.sh | tee output.log
+        continue-on-error: true
+
+      - name: Check validation result
+        id: check_status
+        run: echo "status=$(grep -q '❌' output.log && echo 'failed' || echo 'passed')" >> "$GITHUB_ENV"
+
+      - name: Comment on PR if validation fails
+        if: env.status == 'failed'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: output.log
+          comment_tag: argocd-validation
