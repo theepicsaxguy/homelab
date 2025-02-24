@@ -46,7 +46,7 @@ echo "Found ${#DIRS[@]} directories to validate"
 check_resources() {
     local cpu_count=$(nproc --all)
     local mem_free=$(free -m | grep "Mem" | awk '{print $4}')
-    
+
     # Dynamically adjust parallelism
     if [ "$cpu_count" -lt 4 ] || [ "$mem_free" -lt 500 ]; then
         echo "⚠️ Low system resources detected. Adjusting parallelism."
@@ -95,15 +95,24 @@ if [ -n "$ARGO_APPS" ]; then
         manifest="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
         if [ -f "$manifest" ]; then
             app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null)
+
+            # Debugging: Print the extracted app name
+            echo "App name extracted: $app_name"
+
             if [[ " $ARGO_APPS " =~ " $app_name " ]]; then
                 echo "Checking diff for $app_name..."
                 if ! argocd app diff "$app_name" --local "$manifest" > /dev/null 2>&1; then
                     echo "⚠️ Diff detected for $app_name"
+                else
+                    echo "✅ No diff for $app_name"
                 fi
+            else
+                echo "❌ $app_name not found in ArgoCD apps."
             fi
         fi
     done
 fi
+
 
 echo "✅ Validation completed successfully!"
 exit 0
