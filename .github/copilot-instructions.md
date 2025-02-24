@@ -101,7 +101,8 @@ Every code change must
 
 ## Enforcement Rules
 
-- kubectl usage is strictly for troubleshooting
+- kubectl usage is strictly for troubleshooting. Getting logs, states or bootstraping is okay. But state should always
+  match git.
   - If a change is required, it must go through Git
 - Manual edits to cluster resources are not permitted
   - Exceptions apply only in emergency recovery scenarios and must be reverted via Git
