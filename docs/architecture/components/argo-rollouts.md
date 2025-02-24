@@ -64,6 +64,7 @@ infra/
   ```
 
 - **High Availability**:
+
   - Preferred pod anti-affinity
   - Topology key: kubernetes.io/hostname
   - Weight: 100
@@ -90,6 +91,7 @@ infra/
   ```
 
 - **High Availability**:
+
   - Required pod anti-affinity
   - Topology key: kubernetes.io/hostname
   - Strict node distribution

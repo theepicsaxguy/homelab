@@ -2,7 +2,8 @@
 
 ## Overview
 
-This document describes our environment architecture and configuration patterns across development, staging, and production environments.
+This document describes our environment architecture and configuration patterns across development, staging, and
+production environments.
 
 ## Environment Structure
 
@@ -10,6 +11,7 @@ This document describes our environment architecture and configuration patterns 
 
 - **Purpose**: Testing and development environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 100m
@@ -18,6 +20,7 @@ This document describes our environment architecture and configuration patterns 
     cpu: 200m
     memory: 256Mi
   ```
+
 - **Characteristics**:
   - Allows empty applications
   - Single replica deployments
@@ -28,6 +31,7 @@ This document describes our environment architecture and configuration patterns 
 
 - **Purpose**: Pre-production validation environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 500m
@@ -36,6 +40,7 @@ This document describes our environment architecture and configuration patterns 
     cpu: 1000m
     memory: 1Gi
   ```
+
 - **Characteristics**:
   - Mirrors production topology
   - Two replicas minimum
@@ -47,6 +52,7 @@ This document describes our environment architecture and configuration patterns 
 
 - **Purpose**: Production environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 1000m
@@ -55,6 +61,7 @@ This document describes our environment architecture and configuration patterns 
     cpu: 2000m
     memory: 2Gi
   ```
+
 - **Characteristics**:
   - Strict resource limits
   - Three replicas minimum
@@ -111,19 +118,21 @@ Managed through ArgoCD ApplicationSets with:
 ### Key Configuration Requirements
 
 1. **Orphaned Resources**:
+
    ```yaml
    orphanedResources:
      warn: true
      ignore:
-       - group: ""
+       - group: ''
          kind: ConfigMap
          name: kube-root-ca.crt
-       - group: ""
+       - group: ''
          kind: ServiceAccount
          name: default
    ```
 
 2. **Sync Policy**:
+
    ```yaml
    syncPolicy:
      automated:

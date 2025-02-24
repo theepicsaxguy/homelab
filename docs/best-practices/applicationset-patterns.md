@@ -13,7 +13,7 @@ spec:
         elements:
           - values:
               environment: dev
-              namespace: dev-infra  # or dev for apps
+              namespace: dev-infra # or dev for apps
               minReplicas: '1'
               healthTimeout: '30s'
           # ...staging and prod configurations
@@ -22,11 +22,13 @@ spec:
 ### Critical Configuration Fields
 
 1. Orphaned Resources:
+
    - Must be under spec.template.spec
    - Must have both warn and ignore configurations
    - Must ignore default resources (kube-root-ca.crt, default ServiceAccount)
 
 2. Sync Policy:
+
    - Must include retry configuration
    - Must enable automated prune and selfHeal
    - Must use proper boolean values (not strings)
@@ -41,12 +43,14 @@ spec:
 ### Environment-Specific Requirements
 
 1. Development:
+
    - Single replica
    - Fast canary progression (30s pauses)
    - Basic resource limits
    - No anti-affinity requirements
 
 2. Staging:
+
    - Two replicas minimum
    - Moderate canary progression (60s pauses)
    - Preferred pod anti-affinity
@@ -61,6 +65,7 @@ spec:
 ### Common Rollout Patterns
 
 1. Template Structure:
+
    ```yaml
    spec:
      revisionHistoryLimit: 3
@@ -74,6 +79,7 @@ spec:
    ```
 
 2. Canary Strategy:
+
    - Start with lower weights in production
    - Include analysis templates
    - Use environment-appropriate pause durations
@@ -87,6 +93,7 @@ spec:
 ### Anti-Affinity Configuration
 
 1. Staging:
+
    ```yaml
    affinity:
      podAntiAffinity:
@@ -113,17 +120,20 @@ spec:
 ## Implementation Checklist
 
 - [ ] Validate ApplicationSet configuration
+
   - [ ] Proper template references
   - [ ] Correct orphaned resources configuration
   - [ ] Appropriate sync policy settings
 
 - [ ] Verify Rollout configuration
+
   - [ ] Environment-specific replicas
   - [ ] Correct resource limits
   - [ ] Appropriate anti-affinity rules
   - [ ] Proper canary progression
 
 - [ ] Test deployment progression
+
   - [ ] Development validation
   - [ ] Staging verification
   - [ ] Production readiness
