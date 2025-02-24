@@ -7,15 +7,21 @@ spec:
   generators:
     - list:
         elements:
-          - environment: dev
-            namespace: dev-infra
-            allowEmpty: true
-          - environment: staging
-            namespace: staging-infra
-            allowEmpty: false
-          - environment: prod
-            namespace: prod-infra
-            allowEmpty: false
+          - values:
+              environment: dev
+              namespace: dev-infra
+              minReplicas: '1'
+              healthTimeout: '30s'
+          - values:
+              environment: staging
+              namespace: staging-infra
+              minReplicas: '2'
+              healthTimeout: '60s'
+          - values:
+              environment: prod
+              namespace: prod-infra
+              minReplicas: '3'
+              healthTimeout: '300s'
   template:
     metadata:
       name: 'infra-{{environment}}'
@@ -37,7 +43,7 @@ spec:
         automated:
           prune: true
           selfHeal: true
-          allowEmpty: false
+          allowEmpty: true
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true
