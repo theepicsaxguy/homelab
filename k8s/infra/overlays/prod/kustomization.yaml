@@ -2,20 +2,20 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- rollout.yaml
-- analysis-template.yaml
+  - ../../base
+  - rollout.yaml
+  - analysis-template.yaml
 
 namespace: prod-infra
 
 patches:
-- path: patches/resource-limits.yaml
-  target:
-    kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/resources-patch.yaml
-
+  - path: patches/resource-limits.yaml
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/part-of=infrastructure
+  - path: patches/resources-patch.yaml
 
 labels:
-- pairs:
-    app.kubernetes.io/part-of: infrastructure
-    environment: prod
+  - pairs:
+      app.kubernetes.io/part-of: infrastructure
+      environment: prod
