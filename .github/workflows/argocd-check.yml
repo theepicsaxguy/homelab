@@ -18,20 +18,27 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y parallel jq
-          curl -Lo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64
-          chmod +x /usr/local/bin/kustomize
-          curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
-          chmod +x /usr/local/bin/kubectl
-          curl -Lo /usr/local/bin/kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
-          chmod +x /usr/local/bin/kubeconform
-          curl -Lo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
-          curl -Lo /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x /usr/local/bin/argocd
-          curl -Lo /usr/local/bin/helm https://get.helm.sh/helm-v3.11.2-linux-amd64.tar.gz
-          tar -xzf helm-v3.11.2-linux-amd64.tar.gz
-          mv linux-amd64/helm /usr/local/bin/helm
-          rm -rf helm-v3.11.2-linux-amd64.tar.gz linux-amd64
+          
+          # Download and install tools with sudo where necessary
+          sudo curl -Lo /usr/local/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64
+          sudo chmod +x /usr/local/bin/kustomize
+
+          sudo curl -Lo /usr/local/bin/kubectl https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
+          sudo chmod +x /usr/local/bin/kubectl
+
+          sudo curl -Lo /usr/local/bin/kubeconform https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64
+          sudo chmod +x /usr/local/bin/kubeconform
+
+          sudo curl -Lo /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          sudo curl -Lo /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo chmod +x /usr/local/bin/argocd
+
+          sudo curl -Lo helm.tar.gz https://get.helm.sh/helm-v3.11.2-linux-amd64.tar.gz
+          tar -xzf helm.tar.gz
+          sudo mv linux-amd64/helm /usr/local/bin/helm
+          rm -rf helm.tar.gz linux-amd64
 
       - name: Set Up ArgoCD Authentication
         env:
