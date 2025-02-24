@@ -57,7 +57,7 @@ jobs:
 
       - name: Comment on PR if validation fails
         if: env.status == 'failed'
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@v3
         with:
           filePath: output.log
           comment_tag: argocd-validation
