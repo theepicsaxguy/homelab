@@ -2,16 +2,16 @@
 
 ## Overview
 
-This document describes the environment configuration patterns used across our GitOps-based infrastructure.
+This document describes our environment architecture and configuration patterns across development, staging, and
+production environments.
 
 ## Environment Structure
-
-The infrastructure follows a three-environment pattern with progressive configuration and requirements:
 
 ### Development (dev-infra)
 
 - **Purpose**: Testing and development environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 100m
@@ -20,16 +20,18 @@ The infrastructure follows a three-environment pattern with progressive configur
     cpu: 200m
     memory: 256Mi
   ```
+
 - **Characteristics**:
   - Allows empty applications
-  - Relaxed resource constraints
   - Single replica deployments
+  - 30s health check timeout
   - Sync Wave: 0 (First to deploy)
 
 ### Staging (staging-infra)
 
 - **Purpose**: Pre-production validation environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 500m
@@ -38,16 +40,19 @@ The infrastructure follows a three-environment pattern with progressive configur
     cpu: 1000m
     memory: 1Gi
   ```
+
 - **Characteristics**:
   - Mirrors production topology
-  - High availability (3 replicas)
-  - Pod anti-affinity rules
+  - Two replicas minimum
+  - 60s health check timeout
+  - Pod anti-affinity (preferred)
   - Sync Wave: 1 (Deploys after dev)
 
 ### Production (prod-infra)
 
 - **Purpose**: Production environment
 - **Resource Configuration**:
+
   ```yaml
   requests:
     cpu: 1000m
@@ -56,11 +61,12 @@ The infrastructure follows a three-environment pattern with progressive configur
     cpu: 2000m
     memory: 2Gi
   ```
+
 - **Characteristics**:
   - Strict resource limits
-  - High availability (3 replicas)
-  - Pod anti-affinity rules
-  - No empty applications
+  - Three replicas minimum
+  - 300s health check timeout
+  - Required pod anti-affinity
   - Sync Wave: 2 (Deploys last)
 
 ## Implementation Details
@@ -107,6 +113,53 @@ Managed through ArgoCD ApplicationSets with:
 - Automated pruning and self-healing
 - Retry policies with exponential backoff
 
+## ApplicationSet Configuration
+
+### Key Configuration Requirements
+
+1. **Orphaned Resources**:
+
+   ```yaml
+   orphanedResources:
+     warn: true
+     ignore:
+       - group: ''
+         kind: ConfigMap
+         name: kube-root-ca.crt
+       - group: ''
+         kind: ServiceAccount
+         name: default
+   ```
+
+2. **Sync Policy**:
+
+   ```yaml
+   syncPolicy:
+     automated:
+       prune: true
+       selfHeal: true
+     syncOptions:
+       - CreateNamespace=true
+       - ServerSideApply=true
+     retry:
+       limit: 5
+       backoff:
+         duration: '30s'
+         factor: 2
+         maxDuration: '10m'
+   ```
+
+3. **Environment Variables**:
+   - Must use `values.environment` in template references
+   - Must use `values.namespace` for namespace definitions
+
+### Implementation Notes
+
+- ApplicationSets must be defined at the infrastructure level
+- All boolean values should be direct (`true`/`false`), not strings
+- Retry configuration belongs under syncPolicy
+- Orphaned resources configuration belongs under spec.template.spec
+
 ## High Availability Configuration
 
 ### Production & Staging
@@ -141,3 +194,11 @@ spec:
 - Resource limits must be appropriate for environment
 - High availability configurations must be validated
 - Security policies must be environment-appropriate
+
+## Best Practices
+
+- Use targeted patches for environment-specific changes
+- Maintain consistent structure across all environments
+- Follow progressive deployment patterns
+- Implement proper health checks for each environment
+- Configure appropriate resource limits
