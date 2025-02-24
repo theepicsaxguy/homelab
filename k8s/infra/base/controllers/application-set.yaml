@@ -20,14 +20,13 @@ spec:
     spec:
       project: controllers
       source:
-        plugin:
-          name: kustomize-build-with-helm
-          parameters:
-            - name: helm-params
-              value: --devel
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
         path: '{{ path }}'
+        plugin:
+          env:
+            - name: HELM_PARAMS
+              value: "--devel"
       destination:
         name: in-cluster
         namespace: argocd

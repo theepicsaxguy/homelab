@@ -7,7 +7,7 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app.kubernetes.io/part-of: apps
+      app.kubernetes.io/part-of: applications
   strategy:
     canary:
       steps:
@@ -23,9 +23,6 @@ spec:
         templates:
           - templateName: success-rate
         startingStep: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/part-of: applications
   template:
     metadata:
       labels:

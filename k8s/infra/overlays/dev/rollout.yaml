@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 1
+  replicas: 1  # Dev environment requires 1 replica
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -12,12 +12,12 @@ spec:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 60s }
+        - pause: { duration: 30s }  # Dev environment timeout of 30s
         - analysis:
             templates:
               - templateName: infra-health
         - setWeight: 30
-        - pause: { duration: 60s }
+        - pause: { duration: 30s }
         - analysis:
             templates:
               - templateName: infra-health
@@ -29,6 +29,7 @@ spec:
     spec:
       containers:
         - name: infra
+          image: infra-service:v1.0.0
           resources:
             requests:
               cpu: 100m
