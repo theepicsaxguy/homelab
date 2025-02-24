@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/theepicsaxguy/homelab/compare/v1.10.0...v1.11.0) (2025-02-24)
+
+
+### Features
+
+* **k8s:** update Kustomization and ApplicationSet configurations ([#115](https://github.com/theepicsaxguy/homelab/issues/115)) ([ba2851d](https://github.com/theepicsaxguy/homelab/commit/ba2851de49b3300f29288b94efaa818e687b91d8))
+
 ## [1.10.0](https://github.com/theepicsaxguy/homelab/compare/v1.9.0...v1.10.0) (2025-02-23)
 
 
