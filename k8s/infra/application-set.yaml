@@ -20,12 +20,14 @@ spec:
             syncWave: '2'
   template:
     metadata:
-      name: 'infra-{{environment}}'
+      name: infra-{{environment}}
       labels:
         app.kubernetes.io/part-of: infrastructure
         environment: '{{environment}}'
       annotations:
         argocd.argoproj.io/sync-wave: '{{syncWave}}'
+        argocd.argoproj.io/sync-options: ServerSideApply=true
+        argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       project: infrastructure
       source:
@@ -39,13 +41,25 @@ spec:
         automated:
           selfHeal: true
           prune: true
+          allowEmpty: true
         syncOptions:
           - CreateNamespace=true
           - RespectIgnoreDifferences=true
           - ServerSideApply=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
         retry:
           limit: 5
           backoff:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
+      ignoreDifferences:
+        - group: ''
+          kind: Secret
+          jsonPointers:
+            - /data
+        - group: ''
+          kind: ConfigMap
+          jsonPointers:
+            - /data
