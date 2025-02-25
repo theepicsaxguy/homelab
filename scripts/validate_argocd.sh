@@ -2,23 +2,35 @@
 
 set -eo pipefail
 
-# Function to check for required tools
-check_tools() {
-    for tool in "${REQUIRED_TOOLS[@]}"; do
-        if ! command -v "$tool" &> /dev/null; then
-            echo "❌ Tool $tool is missing. Please install it to proceed."
-            exit 2  # Custom exit code for missing tool
-        fi
-    done
+# Function to get the Kubernetes version dynamically
+get_kubernetes_version() {
+    # Get the client version dynamically using kubectl
+    kubectl version --client -o=json | jq -r .clientVersion.gitVersion
 }
 
-# List of required tools
-REQUIRED_TOOLS=("kustomize" "kubectl" "kubeconform" "yq" "argocd" "helm" "jq" "parallel")
+# Configurable variables
+KUBERNETES_VERSION="${KUBERNETES_VERSION:-$(get_kubernetes_version)}"
 
-# Check for required tools
+# Function to check for required tools
+check_tools() {
+    local missing=()
+    for tool in "${REQUIRED_TOOLS[@]}"; do
+        if ! command -v "$tool" &> /dev/null; then
+            missing+=("$tool")
+        fi
+    done
+
+    if [ ${#missing[@]} -ne 0 ]; then
+        echo "❌ Missing required tools: ${missing[*]}. Install them before running."
+        exit 2
+    fi
+}
+
+# Required tools
+REQUIRED_TOOLS=("kustomize" "kubectl" "kubeconform" "yq" "argocd" "helm" "jq" "parallel")
 check_tools
 
-# Create temporary directory for build outputs
+# Create temp dir for build outputs
 TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
@@ -31,10 +43,8 @@ else
     CHANGED_DIRS=$(find k8s -type f -name "kustomization.*" | xargs -n1 dirname | sort -u)
 fi
 
-# Convert newline-separated string to array
 mapfile -t DIRS <<< "$CHANGED_DIRS"
 
-# Validate array is not empty
 if [ ${#DIRS[@]} -eq 0 ]; then
     echo "❌ No valid kustomization files found. Aborting validation."
     exit 4
@@ -42,77 +52,94 @@ fi
 
 echo "Found ${#DIRS[@]} directories to validate"
 
-# Function to check available system resources
-check_resources() {
-    local cpu_count=$(nproc --all)
-    local mem_free=$(free -m | grep "Mem" | awk '{print $4}')
+# Dynamic parallelism tuning
+PARALLEL_JOBS="${PARALLEL_JOBS:-$(nproc --all)}"
+echo "Using parallelism level: $PARALLEL_JOBS"
 
-    # Dynamically adjust parallelism
-    if [ "$cpu_count" -lt 4 ] || [ "$mem_free" -lt 500 ]; then
-        echo "⚠️ Low system resources detected. Adjusting parallelism."
-        echo 2
-    else
-        echo 4
+# Logs for collected errors
+ERROR_LOG="validation_errors.log"
+> "$ERROR_LOG"
+
+# Function to log errors
+log_error() {
+    echo "$1" >> "$ERROR_LOG"
+}
+
+# Validate and check for missing resources in URLs in kustomizations
+check_kustomization_urls() {
+    local dir=$1
+    echo "🔍 Checking URLs in kustomization for $dir..."
+
+    # Get the list of URLs in the kustomization file(s)
+    local urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml")
+
+    if [ -n "$urls" ]; then
+        for url in $urls; do
+            # Check if the URL is reachable
+            if ! curl --silent --head --fail "$url" > /dev/null; then
+                log_error "❌ ERROR: URL not reachable: $url in $dir"
+            fi
+        done
     fi
 }
 
-PARALLEL_JOBS=$(check_resources)
-echo "Using parallelism level: $PARALLEL_JOBS"
-
-# Pre-build kustomizations and store in temp files
+# Pre-build kustomizations **strictly fail on errors**
 echo "🔨 Building kustomizations..."
 for dir in "${DIRS[@]}"; do
+    check_kustomization_urls "$dir"
     output_file="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
     echo "Building $dir -> $output_file"
-    if ! kustomize build "$dir" --enable-helm > "$output_file" 2>/dev/null; then
-        echo "❌ Failed to build kustomization in $dir"
-        continue
+    if ! kustomize build "$dir" --enable-helm > "$output_file"; then
+        log_error "❌ ERROR: Failed to build kustomization in $dir"
     fi
 done
 
-# Get list of ArgoCD applications for diff checks
+# Get list of ArgoCD applications
 ARGO_APPS=$(argocd app list -o json | jq -r '.[].metadata.name' 2>/dev/null || echo "")
 
-# Validate built files in parallel
+# Validate built YAMLs in parallel with **detailed errors**
 echo "🔍 Validating YAML files..."
 export TEMP_DIR
-export KUBERNETES_VERSION=1.32.0
+export KUBERNETES_VERSION
 
 find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" --halt soon,fail=1 '
     file="{}";
     dir=$(basename "$file" .yaml | tr "_" "/");
     echo "[$dir] 🔍 Validating YAML...";
-    if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file"; then
-        echo "❌ Validation failed for $dir";
-        exit 1;
+    if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" 2>&1; then
+        log_error "❌ YAML validation failed in $dir"
     fi;
 '
 
-# Only run ArgoCD diff checks if we have access to ArgoCD
+# ArgoCD diff check with **full output** and **validated app names**
 if [ -n "$ARGO_APPS" ]; then
     echo "📊 Running ArgoCD diff checks..."
     for dir in "${DIRS[@]}"; do
         manifest="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
         if [ -f "$manifest" ]; then
-            app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null)
+            app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null || echo "")
 
-            # Debugging: Print the extracted app name
-            echo "App name extracted: $app_name"
-
-            if [[ " $ARGO_APPS " =~ " $app_name " ]]; then
-                echo "Checking diff for $app_name..."
-                if ! argocd app diff "$app_name" --local "$manifest" > /dev/null 2>&1; then
-                    echo "⚠️ Diff detected for $app_name"
+            # **New Fix: Explicit Validation**
+            if [[ -z "$app_name" || ! " $ARGO_APPS " =~ " $app_name " ]]; then
+                log_error "❌ ERROR: Unable to find a matching ArgoCD app for $dir ($app_name)"
+            else
+                echo "🔍 Checking diff for $app_name..."
+                if ! DIFF_OUTPUT=$(argocd app diff "$app_name" --local "$manifest" --ignore-extraneous 2>&1); then
+                    log_error "⚠️ Diff detected for $app_name: $DIFF_OUTPUT"
                 else
                     echo "✅ No diff for $app_name"
                 fi
-            else
-                echo "❌ $app_name not found in ArgoCD apps."
             fi
         fi
     done
 fi
 
-
-echo "✅ Validation completed successfully!"
-exit 0
+# Final log output of all errors encountered
+if [ -s "$ERROR_LOG" ]; then
+    echo "❌ Validation completed with errors. Please review the log:"
+    cat "$ERROR_LOG"
+    exit 1
+else
+    echo "✅ Validation completed successfully!"
+    exit 0
+fi

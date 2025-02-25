@@ -49,3 +49,12 @@ spec:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
+        orphanedResources:
+          warn: true
+          ignore:
+            - group: ""
+              kind: ServiceAccount
+              name: default
+            - group: ""
+              kind: ConfigMap
+              name: kube-root-ca.crt
