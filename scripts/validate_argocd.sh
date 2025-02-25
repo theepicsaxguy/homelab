@@ -71,10 +71,12 @@ echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "info", "message
 # Set schema locations for kubeconform
 SCHEMA_LOCATIONS=(
     "default"
-    "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/application-crd.json"
-    "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/appproject-crd.json"
-    "https://raw.githubusercontent.com/argoproj/applicationset/master/manifests/crds/applicationset-crd.json"
+    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/application-crd.yaml"
+    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/appproject-crd.yaml"
+    "https://raw.githubusercontent.com/argoproj/applicationset/v0.4.1/config/crd/bases/argoproj.io_applicationsets.yaml"
 )
+
+# Combine schema locations into args
 SCHEMA_ARGS=""
 for location in "${SCHEMA_LOCATIONS[@]}"; do
     SCHEMA_ARGS="$SCHEMA_ARGS -schema-location $location"
