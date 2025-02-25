@@ -153,6 +153,111 @@ build_and_validate() {
 }
 export -f build_and_validate
 
+# Global configuration
+readonly DEFAULT_PARALLEL_JOBS=4
+readonly MAX_FILE_SIZE=$((10 * 1024 * 1024))  # 10MB in bytes
+
+# Improved error handling with aggregation
+declare -A validation_errors
+
+log_validation_error() {
+    local component=$1
+    local message=$2
+    validation_errors["$component"]="${validation_errors[$component]}${validation_errors[$component]:+$'\n'}$message"
+}
+
+# Improved kustomize validation with error aggregation
+validate_kustomize() {
+    local dir=$1
+    local output_file=$2
+
+    if ! kustomize build "$dir" --enable-helm > "$output_file" 2>&1; then
+        log_validation_error "kustomize" "Failed to build: $dir"
+        return 1
+    fi
+
+    # Validate kustomization.yaml structure
+    if ! yq eval '.labels' "$dir/kustomization.yaml" >/dev/null 2>&1; then
+        log_validation_error "kustomize" "Warning: Consider using 'labels' instead of 'commonLabels' in $dir/kustomization.yaml"
+    fi
+
+    return 0
+}
+
+# Improved YAML validation with chunking
+validate_yaml() {
+    local file=$1
+    local chunk_size=$((5 * 1024 * 1024))  # 5MB chunks
+
+    if [ ! -f "$file" ]; then
+        log_validation_error "yaml" "File not found: $file"
+        return 1
+    fi
+
+    local file_size
+    file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
+
+    if [ "$file_size" -gt "$MAX_FILE_SIZE" ]; then
+        local chunk_dir
+        chunk_dir=$(mktemp -d)
+        split -b "$chunk_size" "$file" "$chunk_dir/chunk."
+
+        local has_errors=0
+        for chunk in "$chunk_dir"/chunk.*; do
+            if ! kubeconform -strict -ignore-missing-schemas \
+                -kubernetes-version "$KUBERNETES_VERSION" "$chunk" $SCHEMA_ARGS; then
+                has_errors=1
+                log_validation_error "yaml" "Validation failed for chunk in: $file"
+            fi
+        done
+
+        rm -rf "$chunk_dir"
+        return "$has_errors"
+    else
+        if ! kubeconform -strict -ignore-missing-schemas \
+            -kubernetes-version "$KUBERNETES_VERSION" "$file" $SCHEMA_ARGS; then
+            log_validation_error "yaml" "Validation failed: $file"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+# Improved main validation loop
+main() {
+    local parallel_jobs=${PARALLEL_JOBS:-$DEFAULT_PARALLEL_JOBS}
+    
+    # Validate base directories first
+    if [ ${#base_dirs[@]} -gt 0 ]; then
+        echo "Validating base directories..."
+        export -f validate_kustomize validate_yaml log_validation_error
+        printf '%s\n' "${base_dirs[@]}" | parallel -j "$parallel_jobs" --line-buffer \
+            'dir="{}"; validate_kustomize "$dir" "$(mktemp)" && validate_yaml "$(mktemp)"'
+    fi
+    
+    # Only proceed with overlays if bases are valid
+    if [ ${#validation_errors[@]} -eq 0 ] && [ ${#overlay_dirs[@]} -gt 0 ]; then
+        echo "Validating overlay directories..."
+        printf '%s\n' "${overlay_dirs[@]}" | parallel -j "$parallel_jobs" --line-buffer \
+            'dir="{}"; validate_kustomize "$dir" "$(mktemp)" && validate_yaml "$(mktemp)"'
+    fi
+    
+    # Report all validation errors at once
+    if [ ${#validation_errors[@]} -gt 0 ]; then
+        echo "=== Validation Errors ==="
+        for component in "${!validation_errors[@]}"; do
+            echo "[$component]"
+            echo "${validation_errors[$component]}"
+            echo
+        done
+        exit 1
+    fi
+}
+
+# Call the main function to start validation
+main
+
 # Validate base layers first
 if [ ${#base_dirs[@]} -gt 0 ]; then
     echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "info", "message": "Validating base directories."}'
