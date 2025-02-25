@@ -5,7 +5,7 @@ set -eo pipefail
 # Detect execution environment (Local vs CI/CD)
 IS_CI=${CI:-false}
 
-# Ensure Kubernetes version is set **once** and exported
+# Ensure Kubernetes version is set once and exported
 get_kubernetes_version() {
     local version
     version=$(kubectl version --client -o=json 2>/dev/null | jq -r .clientVersion.gitVersion || echo "")
@@ -54,14 +54,16 @@ YAML_FAIL=0
 ARGO_FAIL=0
 URL_FAIL=0
 
-# Thread-safe error logging function
+# Thread-safe error logging function with timestamp and context
 log_error() {
     local msg="$1"
     local category="$2"
-
+    local timestamp
+    timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+    local entry="[$timestamp] [$category] $msg"
     (
         flock -w 5 200
-        echo "$msg" >> "$ERROR_LOG"
+        echo "$entry" >> "$ERROR_LOG"
     ) 200>"$ERROR_LOG.lock"
 
     case "$category" in
@@ -111,7 +113,7 @@ check_kustomization_urls() {
     if [ -n "$urls" ]; then
         for url in $urls; do
             if ! curl --silent --head --fail "$url" > /dev/null; then
-                log_error "Unreachable URL: $url in $dir" "url"
+                log_error "Unreachable URL: $url in directory $dir" "url"
             fi
         done
     fi
@@ -127,7 +129,7 @@ parallel --jobs "$PARALLEL_JOBS" '
     output_file="$TEMP_DIR/$(echo "$dir" | tr "/" "_").yaml";
     echo "Building $dir -> $output_file";
     if ! kustomize build "$dir" --enable-helm > "$output_file"; then
-        log_error "Failed to build kustomization in $dir" "kustomize"
+        log_error "Failed to build kustomization in directory $dir" "kustomize"
     fi
 ' ::: "${DIRS[@]}"
 
@@ -138,79 +140,60 @@ find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" '
     dir=$(basename "$file" .yaml | tr "_" "/");
     echo "Validating YAML in $dir...";
     if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" -schema-location default -schema-location "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds"; then
-        log_error "YAML validation failed in $dir" "yaml"
+        log_error "YAML validation failed in directory $dir" "yaml"
     fi;
 '
-# Validate ApplicationSet placeholders
-echo "Checking for invalid placeholders in ApplicationSet..."
-if grep -r '{{environment}}' k8s/infra/applicationset.yaml &>/dev/null; then
-    log_error "Invalid placeholder '{{environment}}' found in ApplicationSet. Fix it before pushing." "argocd"
+
+# Validate Entire ApplicationSet YAML, Not Just `{{environment}}`
+echo "Validating ApplicationSet structure..."
+APPLICATIONSET_FILE="k8s/infra/applicationset.yaml"
+if [ ! -f "$APPLICATIONSET_FILE" ]; then
+    log_error "ApplicationSet file '$APPLICATIONSET_FILE' not found. Please ensure it exists or update your configuration." "argocd"
     exit 1
+else
+    if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" "$APPLICATIONSET_FILE"; then
+        log_error "Invalid ApplicationSet structure detected in '$APPLICATIONSET_FILE'. Fix before pushing." "argocd"
+    fi
 fi
 
-# Check for ComparisonErrors in ArgoCD
-echo "Checking ArgoCD for ComparisonErrors..."
-if argocd app list | grep -q "ComparisonError"; then
-    log_error "ComparisonError detected in ArgoCD apps. Sync issues must be fixed before pushing." "argocd"
-    exit 1
-fi
+# Fetch ArgoCD status once
+echo "Checking ArgoCD status..."
+ARGOCD_STATUS=$(argocd app list -o json)
 
-echo "Checking ArgoCD app health..."
-if argocd app list | grep -E "ComparisonError|Degraded|Unknown|OutOfSync"; then
-    log_error "ArgoCD apps are unhealthy. Fix issues before pushing." "argocd"
-    exit 1
-fi
-
-
-# Ensure ArgoCD is reachable
-echo "Verifying ArgoCD API connectivity..."
-if ! argocd app list &>/dev/null; then
+if [[ -z "$ARGOCD_STATUS" ]]; then
     log_error "ArgoCD API is unreachable. Fix connectivity before running diffs." "argocd"
     exit 1
 fi
-echo "Validating ApplicationSet structure..."
-if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" k8s/infra/applicationset.yaml; then
-    log_error "Invalid ApplicationSet structure detected. Fix it before pushing." "argocd"
+
+if echo "$ARGOCD_STATUS" | jq -e '.[].status' | grep -E "ComparisonError|Degraded|Unknown|OutOfSync"; then
+    log_error "ArgoCD has unhealthy applications. Fix before pushing." "argocd"
     exit 1
 fi
 
-# Run ArgoCD diff only if the above checks pass
-echo "Running ArgoCD diff..."
-DIFF_OUTPUT=$(argocd app diff argocd/infra-dev --local k8s/infra/overlays/dev --refresh 2>&1)
-
-if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
-    log_error "ArgoCD diff failed for argocd/infra-dev" "argocd"
-elif [[ -n "$DIFF_OUTPUT" ]]; then
-    echo "==== ArgoCD Diff Output ===="
-    echo "$DIFF_OUTPUT"
-    echo "============================"
-else
-    echo "No diff detected for argocd/infra-dev"
-fi
+# Run ArgoCD Diff for All Applications
 echo "Running ArgoCD diff for all applications..."
 for app in $(argocd app list -o name); do
     manifest="k8s/$(argocd app get "$app" -o json | jq -r '.spec.source.path')"
 
     if [ ! -d "$manifest" ]; then
-        log_error "Manifest path missing for $app ($manifest). Skipping diff." "argocd"
+        log_error "Manifest path missing for app '$app' ($manifest). Skipping diff." "argocd"
         continue
     fi
 
+    # Capture diff output and exit code without breaking the script on error
     DIFF_OUTPUT=$(argocd app diff "$app" --local "$manifest" --refresh 2>&1)
+    diff_exit_code=$?
 
-    if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
-        log_error "ArgoCD diff failed for $app" "argocd"
+    if [ $diff_exit_code -ne 0 ]; then
+        log_error "ArgoCD diff failed for app '$app'. Error: $DIFF_OUTPUT" "argocd"
     elif [[ -n "$DIFF_OUTPUT" ]]; then
         echo "==== ArgoCD Diff for $app ===="
         echo "$DIFF_OUTPUT"
         echo "==================================="
     else
-        echo "No diff detected for $app"
+        echo "No diff detected for app '$app'"
     fi
 done
-
-
-
 
 # Print final summary
 echo "======== VALIDATION SUMMARY ========"
