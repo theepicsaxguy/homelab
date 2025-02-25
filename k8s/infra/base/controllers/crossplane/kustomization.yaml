@@ -8,5 +8,5 @@ helmCharts:
   - name: crossplane
     namespace: crossplane
     releaseName: crossplane
-    repo: https://marketplace.upbound.io/stable
+    repo: https://charts.crossplane.io/stable
     version: 1.19.0

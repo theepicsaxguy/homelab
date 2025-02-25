@@ -11,6 +11,6 @@ helmCharts:
     name: longhorn
     namespace: longhorn-system
     releaseName: longhorn
-    repo: https://github.com/longhorn/charts/releases/download/longhorn-1.8.0
+    repo: https://charts.longhorn.io
     valuesFile: values.yaml
     version: 1.8.0
