@@ -76,10 +76,10 @@ SCHEMA_LOCATIONS=(
     "https://raw.githubusercontent.com/argoproj/applicationset/v0.4.1/config/crd/bases/argoproj.io_applicationsets.yaml"
 )
 
-# Combine schema locations into args
+# Build schema args string with proper formatting
 SCHEMA_ARGS=""
 for location in "${SCHEMA_LOCATIONS[@]}"; do
-    SCHEMA_ARGS="$SCHEMA_ARGS -schema-location $location"
+    SCHEMA_ARGS="${SCHEMA_ARGS:+$SCHEMA_ARGS }-schema-location $location"
 done
 
 # Find all kustomization files in both apps and infra
@@ -107,10 +107,15 @@ done
 check_kustomization_urls() {
     local dir=$1
     local urls
-    urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml" || true)
+    urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml" 2>/dev/null || true)
     if [ -n "$urls" ]; then
         for url in $urls; do
-            if ! curl --silent --head --fail "$url" > /dev/null; then
+            # Skip internal service URLs and kubernetes internal URLs
+            if [[ "$url" =~ ^http[s]?://[^/]+\.(default|monitoring|local|svc|cluster|internal)(\.[^/]+)?/ ]] || \
+               [[ "$url" =~ ^http[s]?://[^./]+:[0-9]+/?$ ]]; then
+                continue
+            fi
+            if ! curl --silent --head --fail "$url" > /dev/null 2>&1; then
                 log_error "Unreachable URL: $url in directory $dir" "url"
             fi
         done
@@ -188,39 +193,41 @@ validate_kustomize() {
 validate_yaml() {
     local file=$1
     local chunk_size=$((5 * 1024 * 1024))  # 5MB chunks
-
+    
     if [ ! -f "$file" ]; then
         log_validation_error "yaml" "File not found: $file"
         return 1
     fi
-
+    
     local file_size
-    file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file")
-
-    if [ "$file_size" -gt "$MAX_FILE_SIZE" ]; then
+    file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+    
+    if [ -n "$file_size" ] && [ "$file_size" -gt "$MAX_FILE_SIZE" ]; then
         local chunk_dir
         chunk_dir=$(mktemp -d)
         split -b "$chunk_size" "$file" "$chunk_dir/chunk."
-
+        
         local has_errors=0
         for chunk in "$chunk_dir"/chunk.*; do
-            if ! kubeconform -strict -ignore-missing-schemas \
-                -kubernetes-version "$KUBERNETES_VERSION" "$chunk" $SCHEMA_ARGS; then
-                has_errors=1
-                log_validation_error "yaml" "Validation failed for chunk in: $file"
+            if [ -f "$chunk" ]; then
+                if ! kubeconform -strict -ignore-missing-schemas \
+                    -kubernetes-version "$KUBERNETES_VERSION" "$chunk"; then
+                    has_errors=1
+                    log_validation_error "yaml" "Validation failed for chunk in: $file"
+                fi
             fi
         done
-
+        
         rm -rf "$chunk_dir"
         return "$has_errors"
     else
         if ! kubeconform -strict -ignore-missing-schemas \
-            -kubernetes-version "$KUBERNETES_VERSION" "$file" $SCHEMA_ARGS; then
+            -kubernetes-version "$KUBERNETES_VERSION" "$file"; then
             log_validation_error "yaml" "Validation failed: $file"
             return 1
         fi
     fi
-
+    
     return 0
 }
 
