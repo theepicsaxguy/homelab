@@ -36,17 +36,17 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # Detect CI/CD Mode (Partial validation for PRs, full validation on merge)
 if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
-    echo "🔍 Running partial validation (PR mode)"
+    echo "Running partial validation (PR mode)"
     CHANGED_DIRS=$(git diff --name-only origin/main | grep "kustomization.*" | xargs -n1 dirname | sort -u)
 else
-    echo "🚀 Running full validation"
+    echo "Running full validation"
     CHANGED_DIRS=$(find k8s -type f -name "kustomization.*" | xargs -n1 dirname | sort -u)
 fi
 
 mapfile -t DIRS <<< "$CHANGED_DIRS"
 
 if [ ${#DIRS[@]} -eq 0 ]; then
-    echo "❌ No valid kustomization files found. Aborting validation."
+    echo "No valid kustomization files found. Aborting validation."
     exit 4
 fi
 
@@ -68,7 +68,7 @@ log_error() {
 # Validate and check for missing resources in URLs in kustomizations
 check_kustomization_urls() {
     local dir=$1
-    echo "🔍 Checking URLs in kustomization for $dir..."
+    echo "Checking URLs in kustomization for $dir..."
 
     # Get the list of URLs in the kustomization file(s)
     local urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml")
@@ -77,20 +77,20 @@ check_kustomization_urls() {
         for url in $urls; do
             # Check if the URL is reachable
             if ! curl --silent --head --fail "$url" > /dev/null; then
-                log_error "❌ ERROR: URL not reachable: $url in $dir"
+                log_error "URL not reachable: $url in $dir"
             fi
         done
     fi
 }
 
 # Pre-build kustomizations **strictly fail on errors**
-echo "🔨 Building kustomizations..."
+echo "Building kustomizations..."
 for dir in "${DIRS[@]}"; do
     check_kustomization_urls "$dir"
     output_file="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
     echo "Building $dir -> $output_file"
     if ! kustomize build "$dir" --enable-helm > "$output_file"; then
-        log_error "❌ ERROR: Failed to build kustomization in $dir"
+        log_error "Failed to build kustomization in $dir"
     fi
 done
 
@@ -98,36 +98,36 @@ done
 ARGO_APPS=$(argocd app list -o json | jq -r '.[].metadata.name' 2>/dev/null || echo "")
 
 # Validate built YAMLs in parallel with **detailed errors**
-echo "🔍 Validating YAML files..."
+echo "Validating YAML files..."
 export TEMP_DIR
 export KUBERNETES_VERSION
 
 find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" --halt soon,fail=1 '
     file="{}";
     dir=$(basename "$file" .yaml | tr "_" "/");
-    echo "[$dir] 🔍 Validating YAML...";
+    echo "Validating YAML in $dir...";
     if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" 2>&1; then
-        log_error "❌ YAML validation failed in $dir"
+        log_error "YAML validation failed in $dir"
     fi;
 '
 
 # ArgoCD diff check with **full output** and **validated app names**
 if [ -n "$ARGO_APPS" ]; then
-    echo "📊 Running ArgoCD diff checks..."
+    echo "Running ArgoCD diff checks..."
     for dir in "${DIRS[@]}"; do
         manifest="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
         if [ -f "$manifest" ]; then
             app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null || echo "")
 
-            # **New Fix: Explicit Validation**
+            # Validation for app_name presence
             if [[ -z "$app_name" || ! " $ARGO_APPS " =~ " $app_name " ]]; then
-                log_error "❌ ERROR: Unable to find a matching ArgoCD app for $dir ($app_name)"
+                log_error "Unable to find a matching ArgoCD app for $dir ($app_name)"
             else
-                echo "🔍 Checking diff for $app_name..."
+                echo "Checking diff for $app_name..."
                 if ! DIFF_OUTPUT=$(argocd app diff "$app_name" --local "$manifest" --ignore-extraneous 2>&1); then
-                    log_error "⚠️ Diff detected for $app_name: $DIFF_OUTPUT"
+                    log_error "Diff detected for $app_name: $DIFF_OUTPUT"
                 else
-                    echo "✅ No diff for $app_name"
+                    echo "No diff for $app_name"
                 fi
             fi
         fi
@@ -136,10 +136,10 @@ fi
 
 # Final log output of all errors encountered
 if [ -s "$ERROR_LOG" ]; then
-    echo "❌ Validation completed with errors. Please review the log:"
+    echo "Validation completed with errors. Please review the log:"
     cat "$ERROR_LOG"
     exit 1
 else
-    echo "✅ Validation completed successfully!"
+    echo "Validation completed successfully!"
     exit 0
 fi
