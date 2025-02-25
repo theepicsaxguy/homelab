@@ -128,7 +128,7 @@ build_and_validate() {
         log_error "Failed to build kustomization in directory $dir" "kustomize"
         exit 1
     fi
-    
+
     # Check file size before validation
     local file_size
     file_size=$(wc -c < "$output_file")
