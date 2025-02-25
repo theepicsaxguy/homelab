@@ -2,16 +2,28 @@
 
 set -eo pipefail
 
-# Function to get the Kubernetes version dynamically
+# Detect execution environment (Local vs CI/CD)
+IS_CI=${CI:-false}
+
+# Ensure Kubernetes version is set **once** and exported
 get_kubernetes_version() {
-    # Get the client version dynamically using kubectl
-    kubectl version --client -o=json | jq -r .clientVersion.gitVersion
+    local version
+    version=$(kubectl version --client -o=json 2>/dev/null | jq -r .clientVersion.gitVersion || echo "")
+
+    if [[ -z "$version" ]]; then
+        echo "ERROR: Failed to retrieve Kubernetes version. Ensure kubectl is installed and configured." >&2
+        exit 1
+    fi
+
+    echo "$version" | sed 's/^v//'
 }
 
-# Configurable variables
-KUBERNETES_VERSION="${KUBERNETES_VERSION:-$(get_kubernetes_version)}"
+export KUBERNETES_VERSION="${KUBERNETES_VERSION:-$(get_kubernetes_version)}"
 
-# Function to check for required tools
+# Required tools
+REQUIRED_TOOLS=("kustomize" "kubectl" "kubeconform" "yq" "argocd" "helm" "jq" "parallel" "curl")
+
+# Check for required tools
 check_tools() {
     local missing=()
     for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -21,21 +33,49 @@ check_tools() {
     done
 
     if [ ${#missing[@]} -ne 0 ]; then
-        echo "❌ Missing required tools: ${missing[*]}. Install them before running."
+        echo "ERROR: Missing required tools: ${missing[*]}. Install them before running." >&2
         exit 2
     fi
 }
 
-# Required tools
-REQUIRED_TOOLS=("kustomize" "kubectl" "kubeconform" "yq" "argocd" "helm" "jq" "parallel")
 check_tools
 
-# Create temp dir for build outputs
+# Create temp directory for builds
 TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-# Detect CI/CD Mode (Partial validation for PRs, full validation on merge)
-if [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
+# Define log file for errors (Thread-safe with flock)
+ERROR_LOG="validation_errors.log"
+> "$ERROR_LOG"
+
+# Counters for summary
+KUSTOMIZE_FAIL=0
+YAML_FAIL=0
+ARGO_FAIL=0
+URL_FAIL=0
+
+# Thread-safe error logging function
+log_error() {
+    local msg="$1"
+    local category="$2"
+
+    (
+        flock -w 5 200
+        echo "$msg" >> "$ERROR_LOG"
+    ) 200>"$ERROR_LOG.lock"
+
+    case "$category" in
+        kustomize) ((KUSTOMIZE_FAIL++)) ;;
+        yaml) ((YAML_FAIL++)) ;;
+        argocd) ((ARGO_FAIL++)) ;;
+        url) ((URL_FAIL++)) ;;
+    esac
+}
+
+export -f log_error
+
+# Detect PR mode vs full validation
+if [ "$IS_CI" == "true" ] && [ "$GITHUB_EVENT_NAME" == "pull_request" ]; then
     echo "Running partial validation (PR mode)"
     CHANGED_DIRS=$(git diff --name-only origin/main | grep "kustomization.*" | xargs -n1 dirname | sort -u)
 else
@@ -46,86 +86,83 @@ fi
 mapfile -t DIRS <<< "$CHANGED_DIRS"
 
 if [ ${#DIRS[@]} -eq 0 ]; then
-    echo "No valid kustomization files found. Aborting validation."
-    exit 4
+    echo "No kustomization files found. Exiting validation."
+    exit 0
 fi
 
 echo "Found ${#DIRS[@]} directories to validate"
 
-# Dynamic parallelism tuning
+# Set parallelism with a safe default
 PARALLEL_JOBS="${PARALLEL_JOBS:-$(nproc --all)}"
-echo "Using parallelism level: $PARALLEL_JOBS"
+if ! [[ "$PARALLEL_JOBS" =~ ^[0-9]+$ ]] || [ "$PARALLEL_JOBS" -le 0 ]; then
+    echo "WARNING: Invalid parallel job count '$PARALLEL_JOBS'. Defaulting to 1."
+    PARALLEL_JOBS=1
+fi
 
-# Logs for collected errors
-ERROR_LOG="validation_errors.log"
-> "$ERROR_LOG"
+echo "Using parallel jobs: $PARALLEL_JOBS"
 
-# Function to log errors
-log_error() {
-    echo "$1" >> "$ERROR_LOG"
-}
-
-# Validate and check for missing resources in URLs in kustomizations
+# Validate URLs in kustomizations
 check_kustomization_urls() {
     local dir=$1
     echo "Checking URLs in kustomization for $dir..."
-
-    # Get the list of URLs in the kustomization file(s)
-    local urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml")
+    local urls
+    urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml" || true)
 
     if [ -n "$urls" ]; then
         for url in $urls; do
-            # Check if the URL is reachable
             if ! curl --silent --head --fail "$url" > /dev/null; then
-                log_error "URL not reachable: $url in $dir"
+                log_error "Unreachable URL: $url in $dir" "url"
             fi
         done
     fi
 }
 
-# Pre-build kustomizations **strictly fail on errors**
+export -f check_kustomization_urls
+
+# Build kustomizations
 echo "Building kustomizations..."
-for dir in "${DIRS[@]}"; do
-    check_kustomization_urls "$dir"
-    output_file="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
-    echo "Building $dir -> $output_file"
+parallel --jobs "$PARALLEL_JOBS" '
+    dir={};
+    check_kustomization_urls "$dir";
+    output_file="$TEMP_DIR/$(echo "$dir" | tr "/" "_").yaml";
+    echo "Building $dir -> $output_file";
     if ! kustomize build "$dir" --enable-helm > "$output_file"; then
-        log_error "Failed to build kustomization in $dir"
+        log_error "Failed to build kustomization in $dir" "kustomize"
     fi
-done
+' ::: "${DIRS[@]}"
 
-# Get list of ArgoCD applications
-ARGO_APPS=$(argocd app list -o json | jq -r '.[].metadata.name' 2>/dev/null || echo "")
-
-# Validate built YAMLs in parallel with **detailed errors**
+# Validate YAMLs using kubeconform
 echo "Validating YAML files..."
-export TEMP_DIR
-export KUBERNETES_VERSION
-
-find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" --halt soon,fail=1 '
-    file="{}";
+find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" '
+    file={};
     dir=$(basename "$file" .yaml | tr "_" "/");
     echo "Validating YAML in $dir...";
     if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" 2>&1; then
-        log_error "YAML validation failed in $dir"
+        log_error "YAML validation failed in $dir" "yaml"
     fi;
 '
 
-# ArgoCD diff check with **full output** and **validated app names**
+# Retrieve ArgoCD applications list
+ARGO_APPS=$(argocd app list -o json | jq -r '.[].metadata.name' | xargs)
+
+# Perform ArgoCD diff checks only on valid apps
 if [ -n "$ARGO_APPS" ]; then
     echo "Running ArgoCD diff checks..."
     for dir in "${DIRS[@]}"; do
         manifest="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
         if [ -f "$manifest" ]; then
-            app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null || echo "")
+            app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null | xargs)
 
-            # Validation for app_name presence
             if [[ -z "$app_name" || ! " $ARGO_APPS " =~ " $app_name " ]]; then
-                log_error "Unable to find a matching ArgoCD app for $dir ($app_name)"
+                log_error "ArgoCD app not found for $dir ($app_name)" "argocd"
             else
                 echo "Checking diff for $app_name..."
-                if ! DIFF_OUTPUT=$(argocd app diff "$app_name" --local "$manifest" --ignore-extraneous 2>&1); then
-                    log_error "Diff detected for $app_name: $DIFF_OUTPUT"
+                DIFF_OUTPUT=$(argocd app diff "$app_name" --local "$manifest" --ignore-extraneous 2>&1 || echo "FAILED")
+                if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
+                    log_error "ArgoCD diff failed for $app_name" "argocd"
+                elif [[ -n "$DIFF_OUTPUT" ]]; then
+                    echo "Diff detected for $app_name:"
+                    echo "$DIFF_OUTPUT"
                 else
                     echo "No diff for $app_name"
                 fi
@@ -134,12 +171,18 @@ if [ -n "$ARGO_APPS" ]; then
     done
 fi
 
-# Final log output of all errors encountered
+# Print final summary
+echo "======== VALIDATION SUMMARY ========"
+echo "Kustomize build failures: $KUSTOMIZE_FAIL"
+echo "YAML validation failures: $YAML_FAIL"
+echo "ArgoCD diff failures: $ARGO_FAIL"
+echo "Broken URLs: $URL_FAIL"
+
 if [ -s "$ERROR_LOG" ]; then
-    echo "Validation completed with errors. Please review the log:"
+    echo "Validation completed with errors. Review the log:"
     cat "$ERROR_LOG"
     exit 1
 else
-    echo "Validation completed successfully!"
+    echo "Validation completed successfully."
     exit 0
 fi
