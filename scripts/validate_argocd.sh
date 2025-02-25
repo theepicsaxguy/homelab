@@ -68,18 +68,24 @@ if ! [[ "$PARALLEL_JOBS" =~ ^[0-9]+$ ]]; then
 fi
 echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "info", "message": "Using parallel jobs: '"$PARALLEL_JOBS"'."}'
 
-# Set schema locations for kubeconform
+# Set schema locations for kubeconform with properly formatted local paths
 SCHEMA_LOCATIONS=(
     "default"
-    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/application-crd.yaml"
-    "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/appproject-crd.yaml"
-    "https://raw.githubusercontent.com/argoproj/applicationset/v0.4.1/config/crd/bases/argoproj.io_applicationsets.yaml"
+    "$TEMP_DIR/application-crd.yaml"
+    "$TEMP_DIR/appproject-crd.yaml"
+    "$TEMP_DIR/applicationset-crd.yaml"
 )
 
-# Build schema args string with proper formatting
-SCHEMA_ARGS=""
+# Download schema files
+echo "Downloading schema files..."
+curl -sSL "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/application-crd.yaml" -o "$TEMP_DIR/application-crd.yaml"
+curl -sSL "https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/crds/appproject-crd.yaml" -o "$TEMP_DIR/appproject-crd.yaml"
+curl -sSL "https://raw.githubusercontent.com/argoproj/applicationset/v0.4.1/config/crd/bases/argoproj.io_applicationsets.yaml" -o "$TEMP_DIR/applicationset-crd.yaml"
+
+# Combine schema locations into an array of arguments
+declare -a SCHEMA_ARGS=()
 for location in "${SCHEMA_LOCATIONS[@]}"; do
-    SCHEMA_ARGS="${SCHEMA_ARGS:+$SCHEMA_ARGS }-schema-location $location"
+    SCHEMA_ARGS+=( -schema-location "$location" )
 done
 
 # Find all kustomization files in both apps and infra
@@ -106,8 +112,16 @@ done
 # Validate URLs in a kustomization file
 check_kustomization_urls() {
     local dir=$1
+    local kustomization_file=""
+    if [ -f "$dir/kustomization.yaml" ]; then
+        kustomization_file="$dir/kustomization.yaml"
+    elif [ -f "$dir/kustomization.yml" ]; then
+        kustomization_file="$dir/kustomization.yml"
+    else
+        return 0
+    fi
     local urls
-    urls=$(grep -o 'http[s]*://[^"]*' "$dir/kustomization.yaml" 2>/dev/null || true)
+    urls=$(grep -o 'http[s]*://[^"]*' "$kustomization_file" 2>/dev/null || true)
     if [ -n "$urls" ]; then
         for url in $urls; do
             # Skip internal service URLs and kubernetes internal URLs
@@ -131,7 +145,7 @@ build_and_validate() {
     echo "Building $dir -> $output_file"
     if ! kustomize build "$dir" --enable-helm > "$output_file" 2>&1; then
         log_error "Failed to build kustomization in directory $dir" "kustomize"
-        exit 1
+        return 1
     fi
 
     # Check file size before validation
@@ -142,128 +156,21 @@ build_and_validate() {
         split -b 5M "$output_file" "$output_file.part."
         for part in "$output_file".part.*; do
             echo "Validating part: $part"
-            if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$part" $SCHEMA_ARGS; then
+            if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$part" "${SCHEMA_ARGS[@]}"; then
                 log_error "YAML validation failed in directory $dir (part: $part)" "yaml"
-                exit 1
+                return 1
             fi
         done
         rm "$output_file".part.*
     else
         echo "Validating YAML in $dir"
-        if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$output_file" $SCHEMA_ARGS; then
+        if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$output_file" "${SCHEMA_ARGS[@]}"; then
             log_error "YAML validation failed in directory $dir" "yaml"
-            exit 1
+            return 1
         fi
     fi
 }
 export -f build_and_validate
-
-# Global configuration
-readonly DEFAULT_PARALLEL_JOBS=4
-readonly MAX_FILE_SIZE=$((10 * 1024 * 1024))  # 10MB in bytes
-
-# Improved error handling with aggregation
-declare -A validation_errors
-
-log_validation_error() {
-    local component=$1
-    local message=$2
-    validation_errors["$component"]="${validation_errors[$component]}${validation_errors[$component]:+$'\n'}$message"
-}
-
-# Improved kustomize validation with error aggregation
-validate_kustomize() {
-    local dir=$1
-    local output_file=$2
-
-    if ! kustomize build "$dir" --enable-helm > "$output_file" 2>&1; then
-        log_validation_error "kustomize" "Failed to build: $dir"
-        return 1
-    fi
-
-    # Validate kustomization.yaml structure
-    if ! yq eval '.labels' "$dir/kustomization.yaml" >/dev/null 2>&1; then
-        log_validation_error "kustomize" "Warning: Consider using 'labels' instead of 'commonLabels' in $dir/kustomization.yaml"
-    fi
-
-    return 0
-}
-
-# Improved YAML validation with chunking
-validate_yaml() {
-    local file=$1
-    local chunk_size=$((5 * 1024 * 1024))  # 5MB chunks
-    
-    if [ ! -f "$file" ]; then
-        log_validation_error "yaml" "File not found: $file"
-        return 1
-    fi
-    
-    local file_size
-    file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
-    
-    if [ -n "$file_size" ] && [ "$file_size" -gt "$MAX_FILE_SIZE" ]; then
-        local chunk_dir
-        chunk_dir=$(mktemp -d)
-        split -b "$chunk_size" "$file" "$chunk_dir/chunk."
-        
-        local has_errors=0
-        for chunk in "$chunk_dir"/chunk.*; do
-            if [ -f "$chunk" ]; then
-                if ! kubeconform -strict -ignore-missing-schemas \
-                    -kubernetes-version "$KUBERNETES_VERSION" "$chunk"; then
-                    has_errors=1
-                    log_validation_error "yaml" "Validation failed for chunk in: $file"
-                fi
-            fi
-        done
-        
-        rm -rf "$chunk_dir"
-        return "$has_errors"
-    else
-        if ! kubeconform -strict -ignore-missing-schemas \
-            -kubernetes-version "$KUBERNETES_VERSION" "$file"; then
-            log_validation_error "yaml" "Validation failed: $file"
-            return 1
-        fi
-    fi
-    
-    return 0
-}
-
-# Improved main validation loop
-main() {
-    local parallel_jobs=${PARALLEL_JOBS:-$DEFAULT_PARALLEL_JOBS}
-    
-    # Validate base directories first
-    if [ ${#base_dirs[@]} -gt 0 ]; then
-        echo "Validating base directories..."
-        export -f validate_kustomize validate_yaml log_validation_error
-        printf '%s\n' "${base_dirs[@]}" | parallel -j "$parallel_jobs" --line-buffer \
-            'dir="{}"; validate_kustomize "$dir" "$(mktemp)" && validate_yaml "$(mktemp)"'
-    fi
-    
-    # Only proceed with overlays if bases are valid
-    if [ ${#validation_errors[@]} -eq 0 ] && [ ${#overlay_dirs[@]} -gt 0 ]; then
-        echo "Validating overlay directories..."
-        printf '%s\n' "${overlay_dirs[@]}" | parallel -j "$parallel_jobs" --line-buffer \
-            'dir="{}"; validate_kustomize "$dir" "$(mktemp)" && validate_yaml "$(mktemp)"'
-    fi
-    
-    # Report all validation errors at once
-    if [ ${#validation_errors[@]} -gt 0 ]; then
-        echo "=== Validation Errors ==="
-        for component in "${!validation_errors[@]}"; do
-            echo "[$component]"
-            echo "${validation_errors[$component]}"
-            echo
-        done
-        exit 1
-    fi
-}
-
-# Call the main function to start validation
-main
 
 # Validate base layers first
 if [ ${#base_dirs[@]} -gt 0 ]; then
@@ -288,7 +195,13 @@ APPLICATIONSET_FILES=(
 for appset_file in "${APPLICATIONSET_FILES[@]}"; do
     if [ -f "$appset_file" ]; then
         echo "Validating ApplicationSet $appset_file..."
-        if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" "$appset_file" $SCHEMA_ARGS; then
+        if ! kubeconform -strict -summary \
+            -kubernetes-version "$KUBERNETES_VERSION" \
+            -schema-location default \
+            -schema-location "$TEMP_DIR/application-crd.yaml" \
+            -schema-location "$TEMP_DIR/appproject-crd.yaml" \
+            -schema-location "$TEMP_DIR/applicationset-crd.yaml" \
+            "$appset_file"; then
             log_error "Invalid ApplicationSet structure detected in '$appset_file'. Fix before pushing." "argocd"
             exit 1
         fi
