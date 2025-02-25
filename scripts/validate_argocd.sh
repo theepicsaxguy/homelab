@@ -42,6 +42,7 @@ KUSTOMIZE_FAIL=0
 YAML_FAIL=0
 ARGO_FAIL=0
 URL_FAIL=0
+KUBECTL_FAIL=0
 
 # JSON logging function
 log_error() {
@@ -58,6 +59,7 @@ log_error() {
         yaml) ((YAML_FAIL++)) ;;
         argocd) ((ARGO_FAIL++)) ;;
         url) ((URL_FAIL++)) ;;
+        kubectl) ((KUBECTL_FAIL++)) ;;
     esac
 }
 export -f log_error
@@ -184,14 +186,13 @@ if [ ${#overlay_dirs[@]} -gt 0 ]; then
     parallel --halt now,fail=1 --jobs "$PARALLEL_JOBS" build_and_validate ::: "${overlay_dirs[@]}"
 fi
 
-# Validate all ApplicationSet files
+# Validate all ApplicationSet files using kubeconform with the relevant CRDs only
 echo "Validating ApplicationSet files..."
 APPLICATIONSET_FILES=(
     "k8s/infra/application-set.yaml"
     "k8s/apps/application-set.yaml"
     "k8s/sets/applications.yaml"
 )
-
 for appset_file in "${APPLICATIONSET_FILES[@]}"; do
     if [ -f "$appset_file" ]; then
         echo "Validating ApplicationSet $appset_file..."
@@ -242,13 +243,33 @@ for app in $(argocd app list -o name); do
     fi
 done
 
+# --- New Section: Server-side Dry Run Validation with kubectl ---
+validate_manifests_with_kubectl() {
+    local dirs=("k8s/apps" "k8s/infra" "k8s/sets")
+    for dir in "${dirs[@]}"; do
+        if [ -d "$dir" ]; then
+            echo "Validating manifests in $dir with kubectl dry-run..."
+            # Find all YAML files in the directory (recursively)
+            find "$dir" -type f -name "*.yaml" -print0 | while IFS= read -r -d '' file; do
+                echo "Dry-run applying $file"
+                if ! kubectl apply --dry-run=server -f "$file" >/dev/null 2>&1; then
+                    log_error "kubectl dry-run failed for file $file" "kubectl"
+                fi
+            done
+        fi
+    done
+}
+validate_manifests_with_kubectl
+# --- End of Dry Run Section ---
+
 echo "======== VALIDATION SUMMARY ========"
 echo "Kustomize build failures: $KUSTOMIZE_FAIL"
 echo "YAML validation failures: $YAML_FAIL"
 echo "ArgoCD diff failures: $ARGO_FAIL"
 echo "Broken URLs: $URL_FAIL"
+echo "kubectl dry-run failures: $KUBECTL_FAIL"
 
-if [ -s "$ERROR_LOG" ]; then
+if [ -s "$ERROR_LOG" ] || [ "$KUBECTL_FAIL" -ne 0 ]; then
     echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "error", "message": "Validation completed with errors. Review the log below."}'
     cat "$ERROR_LOG"
     exit 1
