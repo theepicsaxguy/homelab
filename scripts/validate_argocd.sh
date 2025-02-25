@@ -68,8 +68,20 @@ if ! [[ "$PARALLEL_JOBS" =~ ^[0-9]+$ ]]; then
 fi
 echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "info", "message": "Using parallel jobs: '"$PARALLEL_JOBS"'."}'
 
-# Find all directories with a kustomization file
-ALL_DIRS=$(find k8s -type f -name "kustomization.*" | xargs -n1 dirname | sort -u)
+# Set schema locations for kubeconform
+SCHEMA_LOCATIONS=(
+    "default"
+    "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/application-crd.json"
+    "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds/appproject-crd.json"
+    "https://raw.githubusercontent.com/argoproj/applicationset/master/manifests/crds/applicationset-crd.json"
+)
+SCHEMA_ARGS=""
+for location in "${SCHEMA_LOCATIONS[@]}"; do
+    SCHEMA_ARGS="$SCHEMA_ARGS -schema-location $location"
+done
+
+# Find all kustomization files in both apps and infra
+ALL_DIRS=$(find k8s -type f \( -name "kustomization.yaml" -o -name "kustomization.yml" \) -exec dirname {} \; | sort -u)
 mapfile -t DIRS <<< "$ALL_DIRS"
 
 if [ ${#DIRS[@]} -eq 0 ]; then
@@ -110,20 +122,31 @@ build_and_validate() {
     check_kustomization_urls "$dir"
     local output_file="$TEMP_DIR/$(echo "$dir" | tr "/" "_").yaml"
     echo "Building $dir -> $output_file"
-    if ! build_output=$(kustomize build "$dir" --enable-helm 2>&1); then
-        log_error "Failed to build kustomization in directory $dir: $build_output" "kustomize"
+    if ! kustomize build "$dir" --enable-helm > "$output_file" 2>&1; then
+        log_error "Failed to build kustomization in directory $dir" "kustomize"
         exit 1
+    fi
+    
+    # Check file size before validation
+    local file_size
+    file_size=$(wc -c < "$output_file")
+    if [ "$file_size" -gt 10485760 ]; then  # 10MB limit
+        echo "Large file detected ($file_size bytes), splitting validation"
+        split -b 5M "$output_file" "$output_file.part."
+        for part in "$output_file".part.*; do
+            echo "Validating part: $part"
+            if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$part" $SCHEMA_ARGS; then
+                log_error "YAML validation failed in directory $dir (part: $part)" "yaml"
+                exit 1
+            fi
+        done
+        rm "$output_file".part.*
     else
-        if echo "$build_output" | grep -q "environment:"; then
-            log_error "Build output for $dir contains environment errors: $build_output" "kustomize"
+        echo "Validating YAML in $dir"
+        if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$output_file" $SCHEMA_ARGS; then
+            log_error "YAML validation failed in directory $dir" "yaml"
             exit 1
         fi
-        echo "$build_output" > "$output_file"
-    fi
-    echo "Validating YAML in $dir"
-    if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$output_file" -schema-location default -schema-location "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds"; then
-        log_error "YAML validation failed in directory $dir" "yaml"
-        exit 1
     fi
 }
 export -f build_and_validate
@@ -140,18 +163,26 @@ if [ ${#overlay_dirs[@]} -gt 0 ]; then
     parallel --halt now,fail=1 --jobs "$PARALLEL_JOBS" build_and_validate ::: "${overlay_dirs[@]}"
 fi
 
-# Validate ApplicationSet structure
-APPLICATIONSET_FILE="k8s/infra/applicationset.yaml"
-if [ ! -f "$APPLICATIONSET_FILE" ]; then
-    log_error "ApplicationSet file '$APPLICATIONSET_FILE' not found. This is required for production integrity." "argocd"
-    exit 1
-else
-    echo "Validating ApplicationSet structure..."
-    if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" "$APPLICATIONSET_FILE"; then
-        log_error "Invalid ApplicationSet structure detected in '$APPLICATIONSET_FILE'. Fix before pushing." "argocd"
+# Validate all ApplicationSet files
+echo "Validating ApplicationSet files..."
+APPLICATIONSET_FILES=(
+    "k8s/infra/application-set.yaml"
+    "k8s/apps/application-set.yaml"
+    "k8s/sets/applications.yaml"
+)
+
+for appset_file in "${APPLICATIONSET_FILES[@]}"; do
+    if [ -f "$appset_file" ]; then
+        echo "Validating ApplicationSet $appset_file..."
+        if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" "$appset_file" $SCHEMA_ARGS; then
+            log_error "Invalid ApplicationSet structure detected in '$appset_file'. Fix before pushing." "argocd"
+            exit 1
+        fi
+    else
+        log_error "Required ApplicationSet file '$appset_file' not found." "argocd"
         exit 1
     fi
-fi
+done
 
 # Check ArgoCD health before diff
 echo "Checking ArgoCD status..."
