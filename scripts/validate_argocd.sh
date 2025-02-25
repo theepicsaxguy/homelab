@@ -131,45 +131,86 @@ parallel --jobs "$PARALLEL_JOBS" '
     fi
 ' ::: "${DIRS[@]}"
 
-# Validate YAMLs using kubeconform
+# Validate YAMLs using kubeconform (INCLUDING ArgoCD components)
 echo "Validating YAML files..."
 find "$TEMP_DIR" -type f -name "*.yaml" | parallel --jobs "$PARALLEL_JOBS" '
     file={};
     dir=$(basename "$file" .yaml | tr "_" "/");
     echo "Validating YAML in $dir...";
-    if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" 2>&1; then
+    if ! kubeconform -strict -ignore-missing-schemas -summary -kubernetes-version "$KUBERNETES_VERSION" "$file" -schema-location default -schema-location "https://raw.githubusercontent.com/argoproj/argo-cd/master/manifests/crds"; then
         log_error "YAML validation failed in $dir" "yaml"
     fi;
 '
-
-# Retrieve ArgoCD applications list
-ARGO_APPS=$(argocd app list -o json | jq -r '.[].metadata.name' | xargs)
-
-# Perform ArgoCD diff checks only on valid apps
-if [ -n "$ARGO_APPS" ]; then
-    echo "Running ArgoCD diff checks..."
-    for dir in "${DIRS[@]}"; do
-        manifest="$TEMP_DIR/$(echo "$dir" | tr '/' '_').yaml"
-        if [ -f "$manifest" ]; then
-            app_name=$(yq e ".metadata.name" "$manifest" 2>/dev/null | xargs)
-
-            if [[ -z "$app_name" || ! " $ARGO_APPS " =~ " $app_name " ]]; then
-                log_error "ArgoCD app not found for $dir ($app_name)" "argocd"
-            else
-                echo "Checking diff for $app_name..."
-                DIFF_OUTPUT=$(argocd app diff "$app_name" --local "$manifest" --ignore-extraneous 2>&1 || echo "FAILED")
-                if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
-                    log_error "ArgoCD diff failed for $app_name" "argocd"
-                elif [[ -n "$DIFF_OUTPUT" ]]; then
-                    echo "Diff detected for $app_name:"
-                    echo "$DIFF_OUTPUT"
-                else
-                    echo "No diff for $app_name"
-                fi
-            fi
-        fi
-    done
+# Validate ApplicationSet placeholders
+echo "Checking for invalid placeholders in ApplicationSet..."
+if grep -r '{{environment}}' k8s/infra/applicationset.yaml &>/dev/null; then
+    log_error "Invalid placeholder '{{environment}}' found in ApplicationSet. Fix it before pushing." "argocd"
+    exit 1
 fi
+
+# Check for ComparisonErrors in ArgoCD
+echo "Checking ArgoCD for ComparisonErrors..."
+if argocd app list | grep -q "ComparisonError"; then
+    log_error "ComparisonError detected in ArgoCD apps. Sync issues must be fixed before pushing." "argocd"
+    exit 1
+fi
+
+echo "Checking ArgoCD app health..."
+if argocd app list | grep -E "ComparisonError|Degraded|Unknown|OutOfSync"; then
+    log_error "ArgoCD apps are unhealthy. Fix issues before pushing." "argocd"
+    exit 1
+fi
+
+
+# Ensure ArgoCD is reachable
+echo "Verifying ArgoCD API connectivity..."
+if ! argocd app list &>/dev/null; then
+    log_error "ArgoCD API is unreachable. Fix connectivity before running diffs." "argocd"
+    exit 1
+fi
+echo "Validating ApplicationSet structure..."
+if ! kubeconform -strict -summary -kubernetes-version "$KUBERNETES_VERSION" k8s/infra/applicationset.yaml; then
+    log_error "Invalid ApplicationSet structure detected. Fix it before pushing." "argocd"
+    exit 1
+fi
+
+# Run ArgoCD diff only if the above checks pass
+echo "Running ArgoCD diff..."
+DIFF_OUTPUT=$(argocd app diff argocd/infra-dev --local k8s/infra/overlays/dev --refresh 2>&1)
+
+if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
+    log_error "ArgoCD diff failed for argocd/infra-dev" "argocd"
+elif [[ -n "$DIFF_OUTPUT" ]]; then
+    echo "==== ArgoCD Diff Output ===="
+    echo "$DIFF_OUTPUT"
+    echo "============================"
+else
+    echo "No diff detected for argocd/infra-dev"
+fi
+echo "Running ArgoCD diff for all applications..."
+for app in $(argocd app list -o name); do
+    manifest="k8s/$(argocd app get "$app" -o json | jq -r '.spec.source.path')"
+
+    if [ ! -d "$manifest" ]; then
+        log_error "Manifest path missing for $app ($manifest). Skipping diff." "argocd"
+        continue
+    fi
+
+    DIFF_OUTPUT=$(argocd app diff "$app" --local "$manifest" --refresh 2>&1)
+
+    if [[ "$DIFF_OUTPUT" == "FAILED" ]]; then
+        log_error "ArgoCD diff failed for $app" "argocd"
+    elif [[ -n "$DIFF_OUTPUT" ]]; then
+        echo "==== ArgoCD Diff for $app ===="
+        echo "$DIFF_OUTPUT"
+        echo "==================================="
+    else
+        echo "No diff detected for $app"
+    fi
+done
+
+
+
 
 # Print final summary
 echo "======== VALIDATION SUMMARY ========"
