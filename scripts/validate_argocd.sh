@@ -172,7 +172,7 @@ build_and_validate() {
 }
 export -f build_and_validate
 
-# Validate base layers first
+# Validate base directories first
 if [ ${#base_dirs[@]} -gt 0 ]; then
     echo '{"timestamp": "'$(date --iso-8601=seconds)'", "category": "info", "message": "Validating base directories."}'
     parallel --halt now,fail=1 --jobs "$PARALLEL_JOBS" build_and_validate ::: "${base_dirs[@]}"
@@ -197,10 +197,8 @@ for appset_file in "${APPLICATIONSET_FILES[@]}"; do
         echo "Validating ApplicationSet $appset_file..."
         if ! kubeconform -strict -summary \
             -kubernetes-version "$KUBERNETES_VERSION" \
-            -schema-location default \
-            -schema-location "$TEMP_DIR/application-crd.yaml" \
-            -schema-location "$TEMP_DIR/appproject-crd.yaml" \
             -schema-location "$TEMP_DIR/applicationset-crd.yaml" \
+            -schema-location "$TEMP_DIR/appproject-crd.yaml" \
             "$appset_file"; then
             log_error "Invalid ApplicationSet structure detected in '$appset_file'. Fix before pushing." "argocd"
             exit 1

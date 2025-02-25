@@ -7,20 +7,20 @@ metadata:
     app.kubernetes.io/part-of: infrastructure
 spec:
   generators:
-    - list:
-        elements:
-          - environment: dev
-            namespace: dev-infra
-            syncWave: '0'
-          - environment: staging
-            namespace: staging-infra
-            syncWave: '1'
-          - environment: prod
-            namespace: prod-infra
-            syncWave: '2'
+  - list:
+      elements:
+      - environment: dev
+        namespace: dev-infra
+        syncWave: '0'
+      - environment: staging
+        namespace: staging-infra
+        syncWave: '1'
+      - environment: prod
+        namespace: prod-infra
+        syncWave: '2'
   template:
     metadata:
-      name: 'infra-{{environment}}'
+      name: infra-{{environment}}
       labels:
         app.kubernetes.io/part-of: infrastructure
         environment: '{{environment}}'
@@ -40,21 +40,12 @@ spec:
           selfHeal: true
           prune: true
         syncOptions:
-          - CreateNamespace=true
-          - RespectIgnoreDifferences=true
-          - ServerSideApply=true
+        - CreateNamespace=true
+        - RespectIgnoreDifferences=true
+        - ServerSideApply=true
         retry:
           limit: 5
           backoff:
             duration: '30s'
             factor: 2
             maxDuration: '10m'
-        orphanedResources:
-          warn: true
-          ignore:
-            - group: ""
-              kind: ServiceAccount
-              name: default
-            - group: ""
-              kind: ConfigMap
-              name: kube-root-ca.crt
