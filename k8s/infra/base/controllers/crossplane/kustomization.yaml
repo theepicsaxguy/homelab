@@ -2,11 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ns.yaml
+  - ns.yaml
 
 helmCharts:
-- name: crossplane
-  namespace: crossplane
-  releaseName: crossplane
-  repo: https://charts.crossplane.io/stable
-  version: 1.19.0
+  - name: crossplane
+    namespace: crossplane
+    releaseName: crossplane
+    repo: https://marketplace.upbound.io/stable
+    version: 1.19.0
