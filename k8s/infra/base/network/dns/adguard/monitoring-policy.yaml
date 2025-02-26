@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: monitoring-access
+  namespace: dns
+spec:
+  description: 'Allow metrics collection by Prometheus'
+  endpointSelector:
+    matchLabels:
+      app: adguard
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+            - port: '3000'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
