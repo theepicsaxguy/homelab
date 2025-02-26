@@ -4,9 +4,14 @@ namespace: kubechecks
 
 resources:
   - namespace.yaml
-  - repository.yaml
   - vcs-secret.yaml
+  - repo.yaml
+  - release.yaml
   - application.yaml
+
+commonLabels:
+  app.kubernetes.io/name: kubechecks
+  app.kubernetes.io/part-of: infrastructure
 
 generatorOptions:
   disableNameSuffixHash: true
