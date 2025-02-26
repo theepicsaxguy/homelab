@@ -87,21 +87,21 @@ module "talos" {
 
 }
 
-
-module "proxmox_csi_plugin" {
-  depends_on = [module.talos]
-  source = "./bootstrap/proxmox-csi-plugin"
-
-  providers = {
-    proxmox    = proxmox
-    kubernetes = kubernetes
-  }
-
-  proxmox = var.proxmox
-}
+// Removing Proxmox CSI Module
+// module "proxmox_csi_plugin" {
+//   depends_on = [module.talos]
+//   source = "./bootstrap/proxmox-csi-plugin"
+//
+//   providers = {
+//     proxmox    = proxmox
+//     kubernetes = kubernetes
+//   }
+//
+//   proxmox = var.proxmox
+// }
 
 module "volumes" {
-  depends_on = [module.proxmox_csi_plugin]
+  depends_on = []  // Removing proxmox_csi_plugin dependency
   source = "./bootstrap/volumes"
 
   providers = {
