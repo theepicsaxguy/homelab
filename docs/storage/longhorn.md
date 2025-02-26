@@ -74,12 +74,14 @@ component:
 ## Best Practices
 
 1. Volume Management
+
    - Use appropriate replica count
    - Enable auto-salvage
    - Configure backups
    - Monitor space usage
 
 2. Performance
+
    - Balance workload distribution
    - Monitor resource usage
    - Use appropriate storage classes

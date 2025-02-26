@@ -19,21 +19,20 @@ spec:
       owner: authelia
   managed:
     services:
-      disabledDefaultServices: [ "ro", "r" ]
-#      additional:
-#        - selectorType: rw
-#          updateStrategy: patch
-#          serviceTemplate:
-#            metadata:
-#              name: authelia-postgres-db
-#              annotations:
-#                io.cilium/lb-ipam-ips: 10.25.150.240
-#            spec:
-#              type: LoadBalancer
+      disabledDefaultServices: ['ro', 'r']
+  #      additional:
+  #        - selectorType: rw
+  #          updateStrategy: patch
+  #          serviceTemplate:
+  #            metadata:
+  #              name: authelia-postgres-db
+  #              annotations:
+  #                io.cilium/lb-ipam-ips: 10.25.150.240
+  #            spec:
+  #              type: LoadBalancer
   storage:
     size: 1G
     pvcTemplate:
-      storageClassName: proxmox-csi
-      volumeName: pv-authelia-postgres
+      storageClassName: longhorn
       accessModes:
         - ReadWriteOnce

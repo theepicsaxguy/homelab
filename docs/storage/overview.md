@@ -24,9 +24,9 @@ storage_classes:
     provisioner: 'driver.longhorn.io'
     volumeBindingMode: WaitForFirstConsumer
     parameters:
-      numberOfReplicas: "3"
-      staleReplicaTimeout: "30"
-      fsType: "ext4"
+      numberOfReplicas: '3'
+      staleReplicaTimeout: '30'
+      fsType: 'ext4'
 ```
 
 ### 3. Backup and Recovery

@@ -5,8 +5,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
-          storageClassName: proxmox-csi
-          volumeName: pv-prometheus
+          storageClassName: longhorn
           accessModes:
             - ReadWriteOnce
           resources:
