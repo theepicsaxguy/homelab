@@ -143,16 +143,17 @@ filtering:
   rewrites:
     - domain: api.kube.pc-tips.se
       answer: 10.25.150.10
-    - domain: coturn.pc-tips.se
+    - domain: '*.kube.pc-tips.se'
+      answer: 10.25.150.220
+    - domain: kube.pc-tips.se
+      answer: 10.25.150.220
+    - domain: coturn.kube.pc-tips.se
       answer: 10.25.150.226
     - domain: proxmox.pc-tips.se
       answer: 10.25.150.221
     - domain: truenas.pc-tips.se
       answer: 10.25.150.221
-    - domain: '*.pc-tips.se'
-      answer: 10.25.150.220
-    - domain: pc-tips.se
-      answer: 10.25.150.220
+
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576
