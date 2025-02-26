@@ -131,9 +131,16 @@ Common first-boot issues:
 
 Remember: You only bootstrap once (hopefully)! 🤞
 
-```shell
-tofu output -raw kube_config
-tofu output -raw talos_config
-```
+## Configuration Setup
 
-tofu output -raw talos_config > ~/.talos/config chmod 600 ~/.talos/config
+After running terraform/tofu, set up your configs:
+
+```shell
+# Get the configs
+tofu output -raw talos_config > ~/.talos/config
+tofu output -raw kube_config > ~/.kube/config
+
+# Set proper permissions
+chmod 600 ~/.talos/config
+chmod 600 ~/.kube/config
+```
