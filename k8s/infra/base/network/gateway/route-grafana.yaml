@@ -1,19 +1,19 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: argocd
-  namespace: argocd
+  name: grafana
+  namespace: monitoring
 spec:
   parentRefs:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'argocd.kube.pc-tips.se'
+    - 'grafana.kube.pc-tips.se'
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: argocd-server
+        - name: grafana
           port: 80
