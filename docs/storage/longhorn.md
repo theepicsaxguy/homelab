@@ -6,23 +6,22 @@ Longhorn provides distributed block storage with replication, backup, and guaran
 
 ## Configuration
 
+Default configuration optimized for our homelab:
+
 ```yaml
 component:
-  name: Longhorn
-  version: 1.8.0
-  features:
-    - Volume replication
-    - Backup to S3
-    - Storage overprovisioning
-    - Guaranteed IOPS
-  configuration:
-    replication: 2 replicas
-    engine:
-      cpu: 0.2 cores
+  replication:
+    count: 3
+  resources:
+    manager:
+      cpu: 250m
       memory: 256Mi
-    backup:
-      target: S3 compatible
-      automation: Yes
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  storage:
+    overprovisioning: 200%
+    minimalAvailable: 10%
 ```
 
 ## Storage Features
@@ -39,57 +38,55 @@ component:
 - Volume replication
 - Node failure handling
 - Automatic failover
-- Data locality
+- Data locality options
 
 ## Performance Settings
 
 ### Resource Allocation
 
-```yaml
-resources:
-  engine:
-    cpu: 0.2
-    memory: 256Mi
-  replica:
-    cpu: 0.1
-    memory: 128Mi
-```
+- Guaranteed Engine CPU: 0.2 cores
+- Guaranteed Replica CPU: 0.2 cores
+- Priority class: system-cluster-critical
 
 ### IOPS Management
 
-- Quality of Service
-- Resource limits
-- Priority classes
-- Bandwidth control
+- Auto-balancing enabled
+- Concurrent rebuild limit: 2
+- Storage network optimization
+- Disk pressure handling
 
 ## Backup Configuration
 
-### S3 Integration
+### Default Settings
 
-- Automated backups
-- Retention policies
-- Incremental backups
-- Restore validation
+- Backup store poll interval: 300s
+- Auto salvage: enabled
+- Auto deletion on detach: enabled
+- Default filesystem: ext4
 
-### Schedule Management
+### Monitoring Integration
 
-- Backup frequency
-- Retention period
-- Recovery objectives
-- Verification process
-
-## Monitoring Integration
-
-### Metrics Collection
-
-- Volume health
-- Replication status
+- Volume metrics
+- Node metrics
 - Backup status
-- Performance metrics
+- Performance data
 
-### Alert Configuration
+## Best Practices
 
-- Volume degradation
-- Replication failures
-- Backup failures
-- Resource constraints
+1. Volume Management
+   - Use appropriate replica count
+   - Enable auto-salvage
+   - Configure backups
+   - Monitor space usage
+
+2. Performance
+   - Balance workload distribution
+   - Monitor resource usage
+   - Use appropriate storage classes
+   - Configure IOPS limits
+
+3. Maintenance
+   - Regular backup verification
+   - Monitor replica health
+   - Update component versions
+   - Resource optimization

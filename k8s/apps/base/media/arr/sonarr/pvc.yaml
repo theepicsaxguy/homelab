@@ -4,8 +4,7 @@ metadata:
   name: sonarr-config
   namespace: arr
 spec:
-  storageClassName: proxmox-csi
-  volumeName: pv-sonarr
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:
