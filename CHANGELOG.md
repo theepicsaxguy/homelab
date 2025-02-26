@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/theepicsaxguy/homelab/compare/v1.12.0...v1.13.0) (2025-02-26)
+
+
+### Features
+
+* **k8s:** enhance AdGuardHome and Cilium configurations with troubleshooting documentation ([#135](https://github.com/theepicsaxguy/homelab/issues/135)) ([5ded39a](https://github.com/theepicsaxguy/homelab/commit/5ded39aa3fd55c7e97537a583717ddef9a75b4ad))
+
 ## [1.12.0](https://github.com/theepicsaxguy/homelab/compare/v1.11.0...v1.12.0) (2025-02-26)
 
 
