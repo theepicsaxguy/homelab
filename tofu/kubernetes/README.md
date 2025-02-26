@@ -16,7 +16,11 @@ worker_ips       = ["10.25.150.20", "10.25.150.21"]
 2. Launch:
 
 ```bash
-ssh-add ~/.ssh/id_rsa # Replace with the correct private key path
+eval $(ssh-agent)
+```
+
+```bash
+ssh-add ~/.ssh/id_rsa
 ```
 
 ```bash
@@ -117,6 +121,7 @@ Common first-boot issues:
    ```
 
 2. etcd Cluster
+
    ```bash
    # Verify quorum
    talosctl etcd members
