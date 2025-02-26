@@ -13,7 +13,7 @@ spec:
     targetRevision: '>=0.1.0'
     helm:
       releaseName: kubechecks
-      values: |
+      values:
         config:
           argocd:
             apiServerAddr: argocd-server.argocd.svc
@@ -22,7 +22,6 @@ spec:
             repositoryInsecure: true
           vcs:
             type: github
-            # Secret managed by sm-operator
             tokenSecretRef:
               name: kubechecks-vcs-token
               key: KUBECHECKS_VCS_TOKEN
@@ -31,6 +30,21 @@ spec:
           monitorAllApplications: true
           logLevel: info
           showDebugInfo: false
+          enableKubeconform: true
+          enablePreupgrade: true
+          repoRefreshInterval: 5m
+          maxConcurrentChecks: 32
+          maxQueueSize: 1024
+          tidyOutdatedCommentsMode: hide
+          worstKubeconformState: panic
+          worstPreupgradeState: panic
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 256Mi
   destination:
     server: https://kubernetes.default.svc
     namespace: kubechecks
@@ -38,5 +52,12 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
