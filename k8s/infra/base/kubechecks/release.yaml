@@ -42,10 +42,11 @@ spec:
         repositoryInsecure: true
       vcs:
         type: github
-        # You'll need to create a secret with the proper token
-        # token will be injected via secrets
+        baseUrl: https://api.github.com/ # Adding explicit GitHub API URL
       kubernetes:
         type: local
       monitorAllApplications: true
       logLevel: info
       showDebugInfo: false
+      enableKubeconform: true
+      enablePreupgrade: true

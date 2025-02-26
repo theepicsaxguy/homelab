@@ -5,9 +5,22 @@ namespace: kubechecks
 resources:
   - namespace.yaml
   - vcs-secret.yaml
-  - repository.yaml
   - release.yaml
-  - application.yaml
+
+configMapGenerator:
+  - name: kubechecks-values
+    files:
+      - values.yaml
+
+patches:
+  - target:
+      kind: HelmRelease
+      name: kubechecks
+    patch: |
+      - op: replace
+        path: /spec/values
+        value:
+          $load: values.yaml
 
 commonLabels:
   app.kubernetes.io/name: kubechecks
