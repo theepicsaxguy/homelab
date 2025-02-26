@@ -146,45 +146,25 @@ filtering:
     - domain: api.kube.pc-tips.se
       answer: 10.25.150.10 # API Server VIP
     - domain: '*.kube.pc-tips.se'
-      answer: 10.25.150.100 # Main ingress controller IP
+      answer: 10.25.150.220 # Internal gateway IP
     - domain: kube.pc-tips.se
-      answer: 10.25.150.100 # Main ingress controller IP
+      answer: 10.25.150.220 # Internal gateway IP
 
-    # Core Platform Services
-    - domain: argocd.kube.pc-tips.se
-      answer: 10.25.150.220 # ArgoCD dedicated IP
-    - domain: traefik.kube.pc-tips.se
-      answer: 10.25.150.100
-    - domain: cert-manager.kube.pc-tips.se
-      answer: 10.25.150.100
-    - domain: metallb.kube.pc-tips.se
-      answer: 10.25.150.100
-
-    # Monitoring Stack
-    - domain: grafana.kube.pc-tips.se
-      answer: 10.25.150.100
-    - domain: prometheus.kube.pc-tips.se
-      answer: 10.25.150.100
-    - domain: alertmanager.kube.pc-tips.se
-      answer: 10.25.150.100
-
-    # Authentication
-    - domain: authelia.kube.pc-tips.se
-      answer: 10.25.150.100
-
-    # Storage Management
-    - domain: longhorn.kube.pc-tips.se
-      answer: 10.25.150.100
-
-    # External Services
-    - domain: coturn.kube.pc-tips.se
-      answer: 10.25.150.226 # Dedicated TURN server IP
-
-    # Infrastructure Management
+    # TLS Passthrough Services (External)
     - domain: proxmox.pc-tips.se
-      answer: 10.25.150.221
+      answer: 10.25.150.221 # TLS passthrough gateway IP
     - domain: truenas.pc-tips.se
-      answer: 10.25.150.221
+      answer: 10.25.150.221 # TLS passthrough gateway IP
+
+    # External Domain Services
+    - domain: '*.external.pc-tips.se'
+      answer: 10.25.150.222 # External gateway IP
+    - domain: external.pc-tips.se
+      answer: 10.25.150.222 # External gateway IP
+
+    # Special Load Balanced Services
+    - domain: hubble-ui.kube.pc-tips.se
+      answer: 10.25.150.224 # Dedicated Hubble UI IP
 
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
