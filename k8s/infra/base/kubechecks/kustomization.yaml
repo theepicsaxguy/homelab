@@ -3,28 +3,30 @@ kind: Kustomization
 namespace: kubechecks
 
 resources:
-  - namespace.yaml
-  - vcs-secret.yaml
-  - release.yaml
+- namespace.yaml
+- vcs-secret.yaml
+- release.yaml
 
 configMapGenerator:
-  - name: kubechecks-values
-    files:
-      - values.yaml
+- files:
+  - values.yaml
+  name: kubechecks-values
 
 patches:
-  - target:
-      kind: HelmRelease
-      name: kubechecks
-    patch: |
-      - op: replace
-        path: /spec/values
-        value:
-          $load: values.yaml
+- patch: |
+    - op: replace
+      path: /spec/values
+      value:
+        $load: values.yaml
+  target:
+    kind: HelmRelease
+    name: kubechecks
 
-commonLabels:
-  app.kubernetes.io/name: kubechecks
-  app.kubernetes.io/part-of: infrastructure
 
 generatorOptions:
   disableNameSuffixHash: true
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/name: kubechecks
+    app.kubernetes.io/part-of: infrastructure

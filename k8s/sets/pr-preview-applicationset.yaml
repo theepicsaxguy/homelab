@@ -14,18 +14,22 @@ spec:
           tokenRef:
             secretName: github-token
             key: token
+          labels:
+            - DeployPR
+        requeueAfterSeconds: 600
   template:
     metadata:
       name: 'pr-{{ number }}'
       labels:
         preview: 'true'
         pr-number: '{{ number }}'
+        branch: '{{ head_branch }}'
     spec:
       project: default
       source:
-        repoURL: '{{ source.repoURL }}'
-        targetRevision: '{{ source.targetBranch }}'
-        path: k8s
+        repoURL: 'https://github.com/theepicsaxguy/homelab.git'
+        targetRevision: '{{ head_sha }}'
+        path: k8s # This now includes cleanup-job.yaml
       destination:
         server: https://kubernetes.default.svc
         namespace: 'pr-{{ number }}'
@@ -35,19 +39,10 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - PruneLast=true
-          - PrunePropagationPolicy=foreground
+          - PrunePropagationPolicy=background
         retry:
           limit: 3
           backoff:
             duration: '5s'
             factor: 2
             maxDuration: '1m'
-      healthChecks:
-        - apiVersion: apps/v1
-          kind: Deployment
-          name: '*'
-          failureThreshold: 3
-          successThreshold: 1
-          initialDelay: '30s'
-          timeoutSeconds: 5

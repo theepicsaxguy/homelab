@@ -3,20 +3,20 @@ kind: Kustomization
 
 # NFD rules for Intel HW
 resources:
-  - ns.yaml
-  - https://raw.githubusercontent.com/intel/intel-device-plugins-for-kubernetes/v0.32.0/deployments/nfd/overlays/node-feature-rules/node-feature-rules.yaml
-  - https://raw.githubusercontent.com/intel/intel-device-plugins-for-kubernetes/v0.32.0/deployments/nfd/overlays/node-feature-rules/platform-labeling-rules.yaml
+- ns.yaml
+- https://raw.githubusercontent.com/intel/intel-device-plugins-for-kubernetes/v0.32.0/deployments/nfd/overlays/node-feature-rules/node-feature-rules.yaml
+- https://raw.githubusercontent.com/intel/intel-device-plugins-for-kubernetes/v0.32.0/deployments/nfd/overlays/node-feature-rules/platform-labeling-rules.yaml
 
 # https://kubernetes-sigs.github.io/node-feature-discovery/v0.16/deployment/helm.html
 helmCharts:
-  - includeCRDs: true
-    name: node-feature-discovery
-    namespace: node-feature-discovery
-    releaseName: nfd
-    repo: https://kubernetes-sigs.github.io/node-feature-discovery/charts
-    valuesInline:
-      worker:
-        config:
-          core:
-            sleepInterval: 0s
-    version: 0.17.2
+- includeCRDs: true
+  name: node-feature-discovery
+  namespace: node-feature-discovery
+  releaseName: nfd
+  repo: https://kubernetes-sigs.github.io/node-feature-discovery/charts
+  valuesInline:
+    worker:
+      config:
+        core:
+          sleepInterval: 0s
+  version: 0.17.2

@@ -2,25 +2,25 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base
-  - rollout.yaml
-  - analysis-template.yaml
-  - kubechecks
+- ../../base
+- rollout.yaml
+- analysis-template.yaml
+- kubechecks
 
 namespace: dev-infra
 
 patches:
-  - path: patches/resource-limits.yaml
-    target:
-      kind: Deployment
-      labelSelector: app.kubernetes.io/part-of=infrastructure
-  - path: patches/argo-rollouts.yaml
-    target:
-      kind: Deployment
-      name: argo-rollouts
-  - path: patches/resources-patch.yaml
+- path: patches/resource-limits.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+- path: patches/argo-rollouts.yaml
+  target:
+    kind: Deployment
+    name: argo-rollouts
+- path: patches/resources-patch.yaml
 
 labels:
-  - pairs:
-      app.kubernetes.io/part-of: infrastructure
-      environment: dev
+- pairs:
+    app.kubernetes.io/part-of: infrastructure
+    environment: dev
