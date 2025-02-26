@@ -21,7 +21,7 @@ jobs:
 
       - name: Cache Helm binary and cache
         id: cache
-        uses: actions/cache@387e18722e6ff315b24a3b8b071feddd27b7bf7e # v3.4.2
+        uses: actions/cache@0c907a75c2c80ebcb7f088228285e798b750cf8f # v4.2.1
         with:
           path: |
             /usr/local/bin/helm
