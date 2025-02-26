@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.0](https://github.com/theepicsaxguy/homelab/compare/v1.11.0...v1.12.0) (2025-02-26)
+
+
+### Features
+
+* **k8s:** enhance validation script and ApplicationSet configurations ([#131](https://github.com/theepicsaxguy/homelab/issues/131)) ([ddf1fb7](https://github.com/theepicsaxguy/homelab/commit/ddf1fb7ada922cbdc668aa6f448f10c13d1e3070))
+* **k8s:** integrate and enhance Kubechecks for GitOps workflow ([#133](https://github.com/theepicsaxguy/homelab/issues/133)) ([ad73e6f](https://github.com/theepicsaxguy/homelab/commit/ad73e6f224628705db1237c26c022e1bb6a3e198))
+
 ## [1.11.0](https://github.com/theepicsaxguy/homelab/compare/v1.10.0...v1.11.0) (2025-02-24)
 
 
