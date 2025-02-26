@@ -5,6 +5,7 @@ resources:
   - ../../base
   - rollout.yaml
   - analysis-template.yaml
+  - kubechecks
 
 namespace: prod-infra
 
@@ -13,6 +14,13 @@ patches:
     target:
       kind: Deployment
       labelSelector: app.kubernetes.io/part-of=infrastructure
+  - path: patches/high-availability.yaml
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/part-of=infrastructure
+  - path: patches/pod-disruption-budget.yaml
+    target:
+      kind: Deployment
   - path: patches/resources-patch.yaml
 
 labels:

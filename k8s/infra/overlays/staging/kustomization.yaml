@@ -5,6 +5,7 @@ resources:
 - ../../base
 - rollout.yaml
 - analysis-template.yaml
+- kubechecks
 
 namespace: staging-infra
 
@@ -22,7 +23,6 @@ patches:
     kind: Deployment
     name: argo-rollouts
 - path: patches/resources-patch.yaml
-
 
 labels:
 - pairs:

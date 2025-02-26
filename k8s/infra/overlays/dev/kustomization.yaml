@@ -5,10 +5,15 @@ resources:
   - ../../base
   - rollout.yaml
   - analysis-template.yaml
+  - kubechecks
 
 namespace: dev-infra
 
 patches:
+  - path: patches/resource-limits.yaml
+    target:
+      kind: Deployment
+      labelSelector: app.kubernetes.io/part-of=infrastructure
   - path: patches/argo-rollouts.yaml
     target:
       kind: Deployment
