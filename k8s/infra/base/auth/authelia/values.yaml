@@ -57,12 +57,12 @@ configMap:
       enabled: true
       implementation: lldap
       address: ldaps://lldap.pc-tips.se
-      base_dn: dc=stonegarden,dc=dev
+      base_dn: dc=pctips,dc=dev
       users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=person))
       additional_users_dn: ou=people
       groups_filter: (member={dn})
       additional_groups_dn: ou=groups
-      user: UID=authelia,OU=people,DC=stonegarden,DC=dev
+      user: UID=authelia,OU=people,DC=pctips,DC=dev
       password:
         path: /secrets/lldap_password
 

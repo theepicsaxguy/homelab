@@ -151,18 +151,21 @@ filtering:
       answer: 10.25.150.220 # Internal gateway IP
 
     # TLS Passthrough Services (External)
+
     - domain: proxmox.pc-tips.se
       answer: 10.25.150.221 # TLS passthrough gateway IP
     - domain: truenas.pc-tips.se
       answer: 10.25.150.221 # TLS passthrough gateway IP
 
     # External Domain Services
+
     - domain: '*.external.pc-tips.se'
       answer: 10.25.150.222 # External gateway IP
     - domain: external.pc-tips.se
       answer: 10.25.150.222 # External gateway IP
 
     # Special Load Balanced Services
+
     - domain: hubble-ui.kube.pc-tips.se
       answer: 10.25.150.224 # Dedicated Hubble UI IP
 

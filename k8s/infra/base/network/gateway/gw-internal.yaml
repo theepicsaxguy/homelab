@@ -13,6 +13,7 @@ spec:
       port: 443
       name: https-gateway
       hostname: "*.kube.pc-tips.se"
+
       tls:
         certificateRefs:
           - kind: Secret
