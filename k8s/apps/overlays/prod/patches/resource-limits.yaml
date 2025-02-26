@@ -2,15 +2,23 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: all-deployments
+  labels:
+    app.kubernetes.io/part-of: apps
 spec:
+  selector:
+    matchLabels:
+      app: all-deployments
   template:
+    metadata:
+      labels:
+        app: all-deployments
     spec:
       containers:
         - name: all-containers
           resources:
             requests:
-              cpu: '1000m'
-              memory: '2Gi'
+              cpu: 500m
+              memory: 512Mi
             limits:
-              cpu: '4'
-              memory: '4Gi'
+              cpu: 500m
+              memory: 512Mi

@@ -25,7 +25,7 @@ resources:
 
 ```yaml
 spec:
-  replicas: 3
+  replicas: 2
   template:
     spec:
       topologySpreadConstraints:

@@ -44,7 +44,7 @@ resources:
   limits:
     cpu: 1000m
     memory: 1Gi
-replicas: 3
+replicas: 2
 ```
 
 #### Production Environment
@@ -57,7 +57,7 @@ resources:
   limits:
     cpu: 2000m
     memory: 2Gi
-replicas: 3
+replicas: 2
 ```
 
 ## Validation Process

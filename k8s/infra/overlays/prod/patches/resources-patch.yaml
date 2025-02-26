@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 3 # Production requires 3 replicas
+  replicas: 2 # Production requires 3 replicas
   strategy:
     canary:
       steps:
