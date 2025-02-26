@@ -30,6 +30,13 @@ kubectl create secret generic kubechecks-vcs-token \
 echo "Installing Kubechecks via Helm..."
 helm upgrade --install kubechecks kubechecks/kubechecks \
   --namespace kubechecks \
+  --set "securityContext.allowPrivilegeEscalation=false" \
+  --set "securityContext.capabilities.drop[0]=ALL" \
+  --set "securityContext.runAsNonRoot=true" \
+  --set "securityContext.seccompProfile.type=RuntimeDefault" \
+  --set "podSecurityContext.runAsNonRoot=true" \
+  --set "podSecurityContext.runAsUser=1000" \
+  --set "podSecurityContext.fsGroup=1000" \
   --set "config.argocd.apiServerAddr=argocd-server.argocd.svc" \
   --set "config.argocd.namespace=argocd" \
   --set "config.argocd.repositoryEndpoint=argocd-repo-server.argocd.svc:8081" \
