@@ -5,8 +5,8 @@ csi:
   snapshotterReplicaCount: 3
 
 defaultSettings:
-  backupTarget: s3://homelab-backup@us-east-1/
-  backupTargetCredentialSecret: longhorn-backup-secret
+  #backupTarget: s3://homelab-backup@us-east-1/
+  #backupTargetCredentialSecret: longhorn-backup-secret
   createDefaultDiskLabeledNodes: true
   defaultReplicaCount: 2
   guaranteedEngineManagerCPU: 0.2
