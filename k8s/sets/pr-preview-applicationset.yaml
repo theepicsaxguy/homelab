@@ -16,7 +16,7 @@ spec:
             key: token
           labels:
             - DeployPR
-        requeueAfterSeconds: 600
+        #requeueAfterSeconds: 600
   template:
     metadata:
       name: 'pr-{{ number }}'
@@ -29,7 +29,7 @@ spec:
       source:
         repoURL: 'https://github.com/theepicsaxguy/homelab.git'
         targetRevision: '{{ head_sha }}'
-        path: k8s # This now includes cleanup-job.yaml
+        path: k8s
       destination:
         server: https://kubernetes.default.svc
         namespace: 'pr-{{ number }}'
