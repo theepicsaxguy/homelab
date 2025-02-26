@@ -16,7 +16,11 @@ worker_ips       = ["10.25.150.20", "10.25.150.21"]
 2. Launch:
 
 ```bash
-ssh-add ~/.ssh/id_rsa # Replace with the correct private key path
+eval $(ssh-agent)
+```
+
+```bash
+ssh-add ~/.ssh/id_rsa
 ```
 
 ```bash
@@ -117,6 +121,7 @@ Common first-boot issues:
    ```
 
 2. etcd Cluster
+
    ```bash
    # Verify quorum
    talosctl etcd members
@@ -131,9 +136,16 @@ Common first-boot issues:
 
 Remember: You only bootstrap once (hopefully)! 🤞
 
-```shell
-tofu output -raw kube_config
-tofu output -raw talos_config
-```
+## Configuration Setup
 
-tofu output -raw talos_config > ~/.talos/config chmod 600 ~/.talos/config
+After running terraform/tofu, set up your configs:
+
+```shell
+# Get the configs
+tofu output -raw talos_config > ~/.talos/config
+tofu output -raw kube_config > ~/.kube/config
+
+# Set proper permissions
+chmod 600 ~/.talos/config
+chmod 600 ~/.kube/config
+```

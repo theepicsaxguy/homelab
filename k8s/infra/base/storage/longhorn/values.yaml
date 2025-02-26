@@ -5,21 +5,26 @@ csi:
   snapshotterReplicaCount: 3
 
 defaultSettings:
-  #backupTarget: s3://homelab-backup@us-east-1/
-  #backupTargetCredentialSecret: longhorn-backup-secret
   createDefaultDiskLabeledNodes: true
-  defaultReplicaCount: 2
+  defaultReplicaCount: 3
   guaranteedEngineManagerCPU: 0.2
   guaranteedReplicaManagerCPU: 0.2
   storageOverProvisioningPercentage: 200
   storageMinimalAvailablePercentage: 10
   taintToleration: 'true'
+  defaultDataPath: /var/lib/longhorn/
+  autoDeletePodWhenVolumeDetachedUnexpectedly: true
+  autoSalvage: true
+  replicaZoneSoftAntiAffinity: true
+  concurrentReplicaRebuildPerNodeLimit: 2
+  backupstorePollInterval: 300
 
 persistence:
-  defaultClassReplicaCount: 2
-  reclaimPolicy: Retain
   defaultClass: true
+  defaultClassReplicaCount: 3
+  reclaimPolicy: Delete
   defaultFsType: ext4
+  defaultDataLocality: disabled
 
 resources:
   requests:
@@ -28,3 +33,13 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
+
+service:
+  ui:
+    type: ClusterIP
+
+longhornManager:
+  priorityClass: system-cluster-critical
+
+longhornDriver:
+  priorityClass: system-cluster-critical

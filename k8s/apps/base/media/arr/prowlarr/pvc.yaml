@@ -4,8 +4,7 @@ metadata:
   name: prowlarr-config
   namespace: arr
 spec:
-  storageClassName: proxmox-csi
-  volumeName: pv-prowlarr
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

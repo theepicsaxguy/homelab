@@ -4,8 +4,7 @@ metadata:
   name: lidarr-config
   namespace: arr
 spec:
-  storageClassName: proxmox-csi
-  volumeName: pv-lidarr
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:
