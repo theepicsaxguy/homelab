@@ -20,10 +20,10 @@ dns:
   ratelimit_whitelist: []
   refuse_any: true
   upstream_dns:
-    - 10.96.0.11
+    - 10.96.0.10  # Update to use cluster DNS service IP
   upstream_dns_file: ''
   bootstrap_dns:
-    - 10.96.0.11
+    - 10.96.0.10  # Update to use cluster DNS service IP
   fallback_dns:
     - 1.1.1.1
     - 9.9.9.9
@@ -141,14 +141,45 @@ filtering:
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
+    # Core Access and Base Domain
     - domain: api.kube.pc-tips.se
-      answer: 10.25.150.10
+      answer: 10.25.150.10  # API Server VIP
     - domain: '*.kube.pc-tips.se'
-      answer: 10.25.150.220
+      answer: 10.25.150.100  # Main ingress controller IP
     - domain: kube.pc-tips.se
-      answer: 10.25.150.220
+      answer: 10.25.150.100  # Main ingress controller IP
+
+    # Core Platform Services
+    - domain: argocd.kube.pc-tips.se
+      answer: 10.25.150.220  # ArgoCD dedicated IP
+    - domain: traefik.kube.pc-tips.se
+      answer: 10.25.150.100
+    - domain: cert-manager.kube.pc-tips.se
+      answer: 10.25.150.100
+    - domain: metallb.kube.pc-tips.se
+      answer: 10.25.150.100
+
+    # Monitoring Stack
+    - domain: grafana.kube.pc-tips.se
+      answer: 10.25.150.100
+    - domain: prometheus.kube.pc-tips.se
+      answer: 10.25.150.100
+    - domain: alertmanager.kube.pc-tips.se
+      answer: 10.25.150.100
+
+    # Authentication
+    - domain: authelia.kube.pc-tips.se
+      answer: 10.25.150.100
+
+    # Storage Management
+    - domain: longhorn.kube.pc-tips.se
+      answer: 10.25.150.100
+
+    # External Services
     - domain: coturn.kube.pc-tips.se
-      answer: 10.25.150.226
+      answer: 10.25.150.226  # Dedicated TURN server IP
+
+    # Infrastructure Management
     - domain: proxmox.pc-tips.se
       answer: 10.25.150.221
     - domain: truenas.pc-tips.se
