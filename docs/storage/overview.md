@@ -2,67 +2,58 @@
 
 ## Storage Infrastructure
 
-The cluster uses a flexible storage architecture built on Proxmox's storage capabilities and the Proxmox CSI driver.
+The cluster uses a distributed block storage architecture built on Longhorn for high availability and reliability.
 
 ## Components
 
-### 1. Storage Providers
+### 1. Storage Provider
 
-- **Proxmox CSI Driver**
-
+- **Longhorn Distributed Storage**
   - Dynamic volume provisioning
-  - Storage class support
-  - Direct Proxmox storage integration
-
-- **Local Path Provisioner**
-  - Node-local storage
-  - High-performance options
-  - Development workloads
+  - Storage replication (3 replicas)
+  - Backup and recovery support
+  - Volume snapshots
+  - Live volume expansion
 
 ### 2. Storage Classes
 
 ```yaml
 storage_classes:
-  proxmox-standard:
-    type: 'general purpose'
-    provisioner: 'proxmox.csi.pc-tips.se'
-    volumeBindingMode: WaitForFirstConsumer
-
-  proxmox-fast:
-    type: 'high performance'
-    provisioner: 'proxmox.csi.pc-tips.se'
+  longhorn:
+    type: 'distributed block storage'
+    provisioner: 'driver.longhorn.io'
     volumeBindingMode: WaitForFirstConsumer
     parameters:
-      type: 'ssd'
+      numberOfReplicas: '3'
+      staleReplicaTimeout: '30'
+      fsType: 'ext4'
 ```
 
 ### 3. Backup and Recovery
 
 - Volume snapshots
-- Persistent volume backups
+- Automated backup scheduling
 - Disaster recovery procedures
+- Data locality options
 
-## Detailed Documentation
+### 4. Performance Optimization
 
-- [Proxmox CSI Configuration](proxmox-csi.md)
-- [Storage Performance](performance.md)
-- [Monitoring Storage](monitoring.md)
+- Storage overprovisioning (200%)
+- Replica auto-balancing
+- Resource limits
+  - CPU: 500m
+  - Memory: 512Mi
 
-## Best Practices
+## Network Considerations
 
-1. **Volume Management**
+- Direct container storage access
+- Internal cluster traffic
+- Backup network segregation
+- iSCSI communication
 
-   - Use appropriate storage classes
-   - Implement resource quotas
-   - Regular monitoring
+## Monitoring Integration
 
-2. **Performance Optimization**
-
-   - Storage class selection
-   - Volume placement strategy
-   - I/O considerations
-
-3. **Data Protection**
-   - Regular backups
-   - Snapshot policies
-   - Recovery testing
+- Volume health monitoring
+- Performance metrics
+- Replica status
+- Backup verification

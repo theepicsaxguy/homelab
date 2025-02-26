@@ -4,8 +4,7 @@ metadata:
   name: radarr-config
   namespace: arr
 spec:
-  storageClassName: proxmox-csi
-  volumeName: pv-radarr
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

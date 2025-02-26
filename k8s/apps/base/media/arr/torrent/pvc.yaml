@@ -4,8 +4,7 @@ metadata:
   name: torrent-config
   namespace: arr
 spec:
-  storageClassName: proxmox-csi
-  volumeName: pv-torrent
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:

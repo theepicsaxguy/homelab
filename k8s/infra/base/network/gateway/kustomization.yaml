@@ -9,7 +9,7 @@ resources:
 
   # Certificates
   - cert-internal.yaml
-  - cert-stonegarden.yaml
+  - cert-pctips.yaml
 
   # Internal Routes
   - route-argocd.yaml
@@ -26,4 +26,3 @@ resources:
   - gw-external.yaml
   - gw-internal.yaml
   - gw-tls-passthrough.yaml
-
