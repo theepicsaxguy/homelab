@@ -17,11 +17,11 @@ jobs:
       HELM_VERSION: 3.13.3
     steps:
       - name: Code Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Cache Helm binary and cache
         id: cache
-        uses: actions/cache@e12d46a63a90f2fae62d114769bbf2a179198b5c # v3.3.3
+        uses: actions/cache@387e18722e6ff315b24a3b8b071feddd27b7bf7e # v3.4.2
         with:
           path: |
             /usr/local/bin/helm
