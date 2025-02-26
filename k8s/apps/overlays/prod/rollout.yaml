@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: app-rollout-template
 spec:
-  replicas: 3 # Prod requires 3 replicas
+  replicas: 2 # Prod requires 3 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:

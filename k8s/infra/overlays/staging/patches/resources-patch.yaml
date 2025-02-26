@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 2 # Staging uses 2 replicas
+  replicas: 1 # Staging uses 2 replicas
   strategy:
     canary:
       steps:

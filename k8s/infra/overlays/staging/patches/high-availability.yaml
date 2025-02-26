@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: all-deployments
 spec:
-  replicas: 3
+  replicas: 2
   template:
     spec:
       topologySpreadConstraints:
