@@ -101,69 +101,54 @@ module "talos" {
 // }
 
 module "volumes" {
-  depends_on = []  // Removing proxmox_csi_plugin dependency
+  depends_on = [module.talos]  // Only depends on talos now
   source = "./bootstrap/volumes"
 
   providers = {
-    restapi    = restapi
     kubernetes = kubernetes
   }
-  proxmox_api = var.proxmox
+
   volumes = {
     pv-sonarr = {
-      node = "host3"
       size = "4G"
     }
     pv-radarr = {
-      node = "host3"
       size = "4G"
     }
     pv-lidarr = {
-      node = "host3"
       size = "4G"
     }
     pv-prowlarr = {
-      node = "host3"
       size = "1G"
     }
     pv-torrent = {
-      node = "host3"
       size = "1G"
     }
     pv-remark42 = {
-      node = "host3"
       size = "1G"
     }
     pv-authelia-postgres = {
-      node = "host3"
       size = "2G"
     }
     pv-lldap-postgres = {
-      node = "host3"
       size = "2G"
     }
     pv-keycloak-postgres = {
-      node = "host3"
       size = "2G"
     }
     pv-jellyfin = {
-      node = "host3"
       size = "12G"
     }
     pv-netbird-signal = {
-      node = "host3"
       size = "512M"
     }
     pv-netbird-management = {
-      node = "host3"
       size = "512M"
     }
     pv-plex = {
-      node = "host3"
       size = "12G"
     }
     pv-prometheus = {
-      node = "host3"
       size = "10G"
     }
   }

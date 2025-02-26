@@ -98,5 +98,4 @@ This will trigger the following applications with sync-waves:
 - [x] Bitwarden Secrets Manager
 - [x] Hubble Network Monitoring
 - [x] Cert-manager
-- [x] Authentication (Keycloak)
 - [x] CNPG - Cloud Native PostgreSQL
