@@ -42,7 +42,7 @@ storage_classes:
 ```yaml
 csi_config:
   controller:
-    replicas: 2
+    replicas: 1
     resources:
       requests:
         cpu: 100m

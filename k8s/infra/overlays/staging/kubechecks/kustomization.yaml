@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubechecks
+
+resources:
+- ../../../base/kubechecks
+
+patches:
+- path: patches/resource-limits.yaml
+  target:
+    kind: HelmRelease
+    name: kubechecks
+- path: patches/high-availability.yaml
+  target:
+    kind: HelmRelease
+    name: kubechecks

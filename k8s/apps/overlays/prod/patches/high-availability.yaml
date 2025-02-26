@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: $(APP_NAME)
-  replicas: 3
+  replicas: 2
   template:
     spec:
       affinity:

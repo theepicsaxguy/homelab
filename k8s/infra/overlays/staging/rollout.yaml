@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: infra-rollout-template
 spec:
-  replicas: 2 # Staging requires 2 replicas
+  replicas: 1 # Staging requires 2 replicas
   revisionHistoryLimit: 3
   selector:
     matchLabels:
