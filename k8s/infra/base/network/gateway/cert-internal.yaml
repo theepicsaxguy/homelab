@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-internal
+  namespace: gateway
+spec:
+  dnsNames:
+    - "*.kube.pc-tips.se"
+    - "kube.pc-tips.se"
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: cloudflare-cluster-issuer
+  secretName: cert-internal
+  usages:
+    - digital signature
+    - key encipherment
