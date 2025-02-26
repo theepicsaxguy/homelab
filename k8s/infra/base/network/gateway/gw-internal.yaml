@@ -16,7 +16,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-stonegarden
+            name: cert-internal
       allowedRoutes:
         namespaces:
           from: All
@@ -27,7 +27,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-stonegarden
+            name: cert-internal
       allowedRoutes:
         namespaces:
           from: All
