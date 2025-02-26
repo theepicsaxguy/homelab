@@ -5,7 +5,7 @@ namespace: kubechecks
 resources:
   - namespace.yaml
   - vcs-secret.yaml
-  - repo.yaml
+  - repository.yaml
   - release.yaml
   - application.yaml
 
