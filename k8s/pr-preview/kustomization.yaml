@@ -4,4 +4,4 @@ namespace: argocd
 
 resources:
   - pr-preview-applicationset.yaml
-  - project
+  - project.yaml

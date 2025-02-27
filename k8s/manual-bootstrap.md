@@ -105,3 +105,5 @@ kubectl apply -k infrastructure/base/crds
 kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
 
 kubectl kustomize --enable-helm argocd | kubectl apply -f -
+
+kubectl apply -k sets
