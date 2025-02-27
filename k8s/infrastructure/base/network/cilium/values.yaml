@@ -79,8 +79,6 @@ gatewayAPI:
   enableProxyProtocol: false
   enableAlpn: true
   externalTrafficPolicy: Local
-  gatewayClass:
-    create: 'true' # Changed from boolean to string
 
 l7Proxy: true
 enableK8sEndpointSlice: true

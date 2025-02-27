@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: external
+  name: media
   namespace: argocd
   labels:
-    dev.pc-tips: external
+    dev.pc-tips: application
 spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/apps/external/*
+          - path: k8s/applications/media/*
   template:
     metadata:
       name: '{{ path.basename }}'
@@ -20,7 +20,7 @@ spec:
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
-      project: external
+      project: media
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main

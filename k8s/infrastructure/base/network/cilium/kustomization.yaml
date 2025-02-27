@@ -6,7 +6,6 @@ resources:
   - ip-pool.yaml
   - gateway-policies.yaml
   - base-policies.yaml
-  - ns.yaml
   - gateway/gw-external.yaml
   - gateway/gw-internal.yaml
   - gateway/gw-tls-passthrough.yaml
@@ -21,7 +20,6 @@ resources:
   - gateway/route-arr.yaml
   - gateway/route-home-assistant.yaml
   - gateway/config.yaml
-  - gateway/ns.yaml
 
 helmCharts:
   - includeCRDs: true

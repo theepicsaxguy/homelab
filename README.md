@@ -403,4 +403,4 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ### Credits
 
-This wouldnt be possible without [Vehagn's homelab](https://github.com/vehagn/homelab)
+This wouldnt be possible without [Vehagn's homelab](https://github.com/theepicsaxguy/homelab)

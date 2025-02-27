@@ -22,4 +22,3 @@ resources:
 
   # Gateway configuration
   - gateway-class.yaml
-  - ns.yaml

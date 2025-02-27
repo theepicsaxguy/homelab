@@ -31,7 +31,7 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: k8s/apps/overlays/{{environment}}
+        path: k8s/applications/overlays/{{environment}}
       destination:
         name: in-cluster
         namespace: '{{namespace}}'

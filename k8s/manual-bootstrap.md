@@ -82,8 +82,6 @@ This will trigger the following applications with sync-waves:
 1. infrastructure (-1): Core infrastructure components
 2. applications (0): User applications
 
-# Components Status
-
 ## Components Status
 
 ### Pre-installed via Talos
@@ -99,3 +97,11 @@ This will trigger the following applications with sync-waves:
 - [x] Hubble Network Monitoring
 - [x] Cert-manager
 - [x] CNPG - Cloud Native PostgreSQL
+
+---
+
+kubectl apply -k infrastructure/base/crds
+
+kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
+
+kubectl kustomize --enable-helm argocd | kubectl apply -f -

@@ -190,7 +190,7 @@ fi
 echo "Validating ApplicationSet files..."
 APPLICATIONSET_FILES=(
     "k8s/infrastructure/application-set.yaml"
-    "k8s/apps/application-set.yaml"
+    "k8s/applications/application-set.yaml"
     "k8s/sets/applications.yaml"
 )
 for appset_file in "${APPLICATIONSET_FILES[@]}"; do
