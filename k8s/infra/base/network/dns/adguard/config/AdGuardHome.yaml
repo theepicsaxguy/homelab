@@ -155,17 +155,17 @@ filtering:
       answer: *internal_gw # All internal services
     - domain: kube.pc-tips.se
       answer: *internal_gw # Base domain
-    
+
     # External Access Services
     - domain: '*.external.kube.pc-tips.se'
       answer: *external_gw # External services subdomain
     - domain: external.kube.pc-tips.se
       answer: *external_gw # External base domain
-    
+
     # Special Services
     - domain: hubble-ui.kube.pc-tips.se
       answer: *hubble_gw # Hubble UI
-    
+
     # TLS Passthrough Services
     - domain: proxmox.kube.pc-tips.se
       answer: *tls_gw

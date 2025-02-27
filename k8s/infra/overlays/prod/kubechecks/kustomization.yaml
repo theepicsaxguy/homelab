@@ -15,5 +15,5 @@ commonLabels:
   app.kubernetes.io/environment: prod
 
 commonAnnotations:
-  monitoring.kube.pc-tips.se/enabled: "true"
+  monitoring.kube.pc-tips.se/enabled: 'true'
   gateway-access: internal

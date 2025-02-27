@@ -8,18 +8,18 @@ spec:
     podDisruptionBudget:
       enabled: true
       minAvailable: 1
-    
+
     affinity:
       podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-            - key: app.kubernetes.io/name
-              operator: In
-              values:
-              - kubechecks
-          topologyKey: kubernetes.io/hostname
-    
+          - labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - kubechecks
+            topologyKey: kubernetes.io/hostname
+
     topologySpreadConstraints:
       - maxSkew: 1
         topologyKey: kubernetes.io/hostname
