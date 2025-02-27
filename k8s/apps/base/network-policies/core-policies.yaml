@@ -3,7 +3,7 @@ kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: default-deny
 spec:
-  description: "Default zero-trust policy with explicit allows only"
+  description: 'Default zero-trust policy with explicit allows only'
   endpointSelector: {}
   ingress: []
   egress:
@@ -13,11 +13,11 @@ spec:
             k8s:k8s-app: kube-dns
       toPorts:
         - ports:
-            - port: "53"
+            - port: '53'
               protocol: UDP
           rules:
             dns:
-              - matchPattern: "*"
+              - matchPattern: '*'
 
 ---
 apiVersion: cilium.io/v2
@@ -25,19 +25,19 @@ kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: allow-metrics
 spec:
-  description: "Allow standard metrics collection"
+  description: 'Allow standard metrics collection'
   endpointSelector:
     matchExpressions:
-      - {key: metrics-enabled, operator: Exists}
+      - { key: metrics-enabled, operator: Exists }
   ingress:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: monitoring
       toPorts:
         - ports:
-            - port: "9090"
+            - port: '9090'
               protocol: TCP
           rules:
             http:
-              - method: "GET"
-                path: "/metrics"
+              - method: 'GET'
+                path: '/metrics'
