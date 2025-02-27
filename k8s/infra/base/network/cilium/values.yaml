@@ -1,35 +1,32 @@
-# https://github.com/cilium/cilium/blob/main/install/kubernetes/cilium/values.yaml
 cluster:
   name: talos
   id: 1
 
-kubeProxyReplacement:
-  true
+kubeProxyReplacement: true
 
-  # Talos specific
+# Talos specific settings
 k8sServiceHost: localhost
 k8sServicePort: 7445
+
 securityContext:
+  privileged: false
   capabilities:
-    ciliumAgent:
-      [CHOWN, KILL, NET_ADMIN, NET_RAW, IPC_LOCK, SYS_ADMIN, SYS_RESOURCE, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
-    cleanCiliumState: [NET_ADMIN, SYS_ADMIN, SYS_RESOURCE]
+    ciliumAgent: [NET_ADMIN, NET_RAW, IPC_LOCK, SYS_RESOURCE]
+    cleanCiliumState: [NET_ADMIN, SYS_RESOURCE]
 
 cgroup:
   autoMount:
     enabled: false
   hostRoot: /sys/fs/cgroup
 
-# https://www.talos.dev/latest/talos-guides/network/host-dns/#forwarding-kube-dns-to-host-dns
-# https://docs.cilium.io/en/stable/operations/performance/tuning/#ebpf-host-routing
 bpf:
   hostLegacyRouting: true
 
-# https://docs.cilium.io/en/stable/network/concepts/ipam/
 ipam:
   mode: kubernetes
   operator:
-    clusterPoolIPv4PodCIDRList: ['10.25.0.0/16']
+    clusterPoolIPv4PodCIDRList:
+      - '${cluster_pod_cidr}' # This should be provided via helm values
     clusterPoolIPv4MaskSize: 24
   pool:
     healthChecking: true
@@ -45,7 +42,6 @@ operator:
       cpu: 50m
       memory: 128Mi
 
-# Roll out cilium agent pods automatically when ConfigMap is updated.
 rollOutCiliumPods: true
 resources:
   limits:
@@ -55,10 +51,6 @@ resources:
     cpu: 200m
     memory: 512Mi
 
-#debug:
-#  enabled: true
-
-# Increase rate limit when doing L2 announcements
 k8sClientRateLimit:
   qps: 20
   burst: 100
@@ -72,23 +64,32 @@ externalIPs:
 enableCiliumEndpointSlice: true
 
 loadBalancer:
-  # https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#maglev-consistent-hashing
   algorithm: maglev
+  l7:
+    backend: envoy
+    secureMode: true
 
 gatewayAPI:
   enabled: true
   secureMode: true
-  secretsNamespace: gateway
-  tls:
-    clientCertificate:
-      name: gateway-client-cert
-      namespace: gateway
+  secretsNamespace:
+    name: gateway
+    create: true
+    sync: true
+  enableProxyProtocol: false
+  enableAlpn: true
+  externalTrafficPolicy: Local
+  gatewayClass:
+    create: true
+
+l7Proxy: true
+enableK8sEndpointSlice: true
 
 envoy:
   securityContext:
+    privileged: false
     capabilities:
-      keepCapNetBindService: true
-      envoy: [NET_ADMIN, PERFMON, BPF]
+      envoy: [NET_ADMIN]
 
 hubble:
   enabled: true
@@ -98,29 +99,30 @@ hubble:
   ui:
     enabled: true
     service:
-      type: LoadBalancer
-      annotations:
-        io.cilium/lb-ipam-ips: 10.25.150.224
-        metallb.universe.tf/allow-shared-ip: 'true'
+      type: ClusterIP # Changed from LoadBalancer for security
       securityContext:
+        privileged: false
         capabilities:
-          envoy: [NET_ADMIN, NET_RAW]
+          envoy: [NET_ADMIN]
 
 ingressController:
   enabled: false
-  default: true
-  loadbalancerMode: shared
-  service:
-    annotations:
-      io.cilium/lb-ipam-ips: 10.25.150.223
 
-# mTLS
 authentication:
-  enabled: false
+  enabled: true # Enable mTLS
   mutual:
     spire:
-      enabled: false
+      enabled: true
       install:
         server:
           dataStorage:
-            storageClass: cilium-spire-sc
+            storageClass: longhorn # Changed from cilium-spire-sc
+
+# Removed duplicate securityContext
+
+tls:
+  secretsNamespace:
+    name: cilium-secrets
+    create: true
+  forceHTTPS: true
+  minTLSVersion: 'VersionTLS13'
