@@ -9,10 +9,37 @@ k8sServiceHost: localhost
 k8sServicePort: 7445
 
 securityContext:
-  privileged: false
   capabilities:
-    ciliumAgent: [NET_ADMIN, NET_RAW, IPC_LOCK, SYS_RESOURCE]
-    cleanCiliumState: [NET_ADMIN, SYS_RESOURCE]
+    ciliumAgent:
+      [
+        'CHOWN',
+        'KILL',
+        'NET_ADMIN',
+        'NET_RAW',
+        'IPC_LOCK',
+        'SYS_MODULE',
+        'SYS_ADMIN',
+        'SYS_RESOURCE',
+        'DAC_OVERRIDE',
+        'FOWNER',
+        'SETGID',
+        'SETUID',
+      ]
+    drop: ['ALL']
+  privileged: true # Required for Cilium functionality
+  seLinuxOptions:
+    level: 's0'
+    type: 'spc_t'
+  seccompProfile:
+    type: RuntimeDefault
+
+podSecurityContext:
+  fsGroup: 1337
+  runAsUser: 1337
+  runAsGroup: 1337
+  runAsNonRoot: false # Required for Cilium functionality
+  seccompProfile:
+    type: RuntimeDefault
 
 cgroup:
   autoMount:
@@ -41,6 +68,13 @@ operator:
     requests:
       cpu: 50m
       memory: 128Mi
+  securityContext:
+    capabilities:
+      drop: ['ALL']
+      add: ['NET_ADMIN', 'SYS_ADMIN'] # Required for operator functionality
+    privileged: true # Required for operator functionality
+    seccompProfile:
+      type: RuntimeDefault
 
 rollOutCiliumPods: true
 resources:
@@ -86,22 +120,42 @@ enableK8sEndpointSlice: true
 envoy:
   securityContext:
     privileged: false
+    allowPrivilegeEscalation: false
     capabilities:
-      envoy: [NET_ADMIN]
+      drop: ['ALL']
+      add: ['NET_ADMIN'] # Required for Envoy proxy functionality
+    seccompProfile:
+      type: RuntimeDefault
 
 hubble:
   enabled: true
   relay:
     enabled: true
     rollOutPods: true
+    securityContext:
+      capabilities:
+        drop: ['ALL']
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
   ui:
     enabled: true
     service:
       type: ClusterIP # Changed from LoadBalancer for security
       securityContext:
         privileged: false
+        allowPrivilegeEscalation: false
         capabilities:
-          envoy: [NET_ADMIN]
+          drop: ['ALL']
+          add: [NET_ADMIN]
+        seccompProfile:
+          type: RuntimeDefault
+    securityContext:
+      capabilities:
+        drop: ['ALL']
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
 
 ingressController:
   enabled: false
@@ -112,11 +166,36 @@ authentication:
     spire:
       enabled: true
       install:
+        agent:
+          podSecurityContext:
+            runAsNonRoot: false # Required for SPIRE agent functionality
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            capabilities:
+              drop: ['ALL']
+              add: ['NET_ADMIN', 'NET_RAW'] # Required for network operations
+            allowPrivilegeEscalation: false
         server:
           dataStorage:
             storageClass: longhorn # Changed from cilium-spire-sc
-
-# Removed duplicate securityContext
+          podSecurityContext:
+            runAsNonRoot: false # Required for SPIRE server functionality
+            seccompProfile:
+              type: RuntimeDefault
+          securityContext:
+            capabilities:
+              drop: ['ALL']
+              add: ['NET_BIND_SERVICE'] # Required for binding to privileged ports
+            allowPrivilegeEscalation: false
+        initImage:
+          # Init container security settings
+          securityContext:
+            capabilities:
+              drop: ['ALL']
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
 
 tls:
   secretsNamespace:
