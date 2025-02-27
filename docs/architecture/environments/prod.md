@@ -67,7 +67,7 @@ spec:
 
 ```bash
 # Run from repository root
-./scripts/validate_manifests.sh -d k8s/infra/overlays/prod
+./scripts/validate_manifests.sh -d k8s/infrastructure/overlays/prod
 ```
 
 ## Security Implementation

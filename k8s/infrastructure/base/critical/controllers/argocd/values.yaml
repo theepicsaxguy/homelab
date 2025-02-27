@@ -1,0 +1,48 @@
+global:
+  tls:
+    minVersion: "TLSv1.3"
+    maxVersion: "TLSv1.3"
+    ciphers: "TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256"
+  networkPolicy:
+    create: true
+
+configs:
+  cm:
+    resource.customizations: |
+      cilium.io/v2/CiliumNetworkPolicy:
+        health.lua: |
+          hs = {}
+          if obj.status ~= nil then
+            if obj.status.state == "Realized" then
+              hs.status = "Healthy"
+              hs.message = "Policy has been realized"
+              return hs
+            end
+            if obj.status.state == "Failure" then
+              hs.status = "Degraded"
+              hs.message = "Policy failed to apply"
+              return hs
+            end
+          end
+          hs.status = "Progressing"
+          hs.message = "Waiting for policy to be realized"
+          return hs
+      cilium.io/v2/CiliumClusterwideNetworkPolicy:
+        health.lua: |
+          hs = {}
+          if obj.status ~= nil then
+            if obj.status.state == "Realized" then
+              hs.status = "Healthy"
+              hs.message = "Policy has been realized"
+              return hs
+            end
+            if obj.status.state == "Failure" then
+              hs.status = "Degraded"
+              hs.message = "Policy failed to apply"
+              return hs
+            end
+          end
+          hs.status = "Progressing"
+          hs.message = "Waiting for policy to be realized"
+          return hs
+    timeout.reconciliation: 60s

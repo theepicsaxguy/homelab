@@ -33,7 +33,7 @@ This repository manages a GitOps-only homelab infrastructure with
 - Must use Kustomization overlays
 - No raw manifests
 
-#### Infrastructure Components (k8s/infra/)
+#### Infrastructure Components (k8s/infrastructure/)
 
 - Covers networking, DNS, storage, and other foundational services
 - Networking must use Cilium instead of Talos' default setup

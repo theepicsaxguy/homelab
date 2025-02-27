@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - auth-policies.yaml
+  - gateway-policies.yaml
+  - monitoring-policies.yaml
+
+commonLabels:
+  app.kubernetes.io/part-of: network-policies
+  app.kubernetes.io/component: app-policies
+
+configMapGenerator:
+  - name: policy-validators
+    files:
+      - validate-policies.sh=../../../scripts/validate_policies.sh

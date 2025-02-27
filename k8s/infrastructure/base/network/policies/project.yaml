@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: network-policies
+  namespace: argocd
+spec:
+  description: Network policies and security controls
+
+  sourceRepos:
+    - https://github.com/theepicsaxguy/homelab.git
+  
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+      name: in-cluster
+
+  clusterResourceWhitelist:
+    - group: cilium.io
+      kind: CiliumClusterwideNetworkPolicy
+
+  namespaceResourceWhitelist:
+    - group: cilium.io
+      kind: CiliumNetworkPolicy
+
+  syncWindows:
+    - kind: allow
+      schedule: '0 * * * *'
+      duration: 15m
+      applications:
+        - '*-policies'
+      manualSync: true
+
+  orphanedResources:
+    warn: true

@@ -1,0 +1,99 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-postgresql
+  namespace: database
+spec:
+  description: 'Secure database access with strict controls'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: database-client
+            io.kubernetes.pod.namespace: auth
+      toPorts:
+        - ports:
+            - port: '5432'
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: database-client
+            io.kubernetes.pod.namespace: argocd
+      toPorts:
+        - ports:
+            - port: '5432'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+            - port: '443'
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-redis
+  namespace: database
+spec:
+  description: 'Secure Redis access for caching and session management'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: cache-client
+            io.kubernetes.pod.namespace: auth
+      toPorts:
+        - ports:
+            - port: '6379'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: database-client-policy
+spec:
+  description: 'Define database client access permissions'
+  endpointSelector:
+    matchExpressions:
+      - { key: app.kubernetes.io/component, operator: In, values: [database-client, cache-client] }
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: postgresql
+            io.kubernetes.pod.namespace: database
+      toPorts:
+        - ports:
+            - port: '5432'
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: redis
+            io.kubernetes.pod.namespace: database
+      toPorts:
+        - ports:
+            - port: '6379'
+              protocol: TCP

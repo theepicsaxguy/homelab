@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+resources:
+  - applicationsets/applications.yaml
+  - applicationsets/infrastructure.yaml
+  - applicationsets/pr-preview-applicationset.yaml
+  - applicationsprojectsets/preview-project.yaml
+  - projects/infrastructure-project.yaml
+  - projects/project.yaml

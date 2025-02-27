@@ -24,7 +24,7 @@ Our infrastructure follows a strict GitOps approach with:
 │       ├── dev/
 │       ├── staging/
 │       └── prod/
-├── infra/                 # Core infrastructure
+├── infrastructure/                 # Core infrastructure
 │   ├── base/             # Base infrastructure components
 │   │   ├── network/      # Cilium, DNS, Gateway
 │   │   ├── storage/      # CSI drivers
@@ -48,12 +48,12 @@ Our infrastructure follows a strict GitOps approach with:
 
 ## Infrastructure Components
 
-| Component   | Purpose        | Configuration Path        | Health Check    |
-| ----------- | -------------- | ------------------------- | --------------- |
-| Cilium      | CNI & Security | infra/base/network/cilium | Pods & Services |
-| Authelia    | Authentication | infra/base/auth/authelia  | Deployment & DB |
-| Prometheus  | Monitoring     | infra/base/monitoring     | StatefulSet     |
-| CSI Drivers | Storage        | infra/base/storage        | DaemonSet       |
+| Component   | Purpose        | Configuration Path                 | Health Check    |
+| ----------- | -------------- | ---------------------------------- | --------------- |
+| Cilium      | CNI & Security | infrastructure/base/network/cilium | Pods & Services |
+| Authelia    | Authentication | infrastructure/base/auth/authelia  | Deployment & DB |
+| Prometheus  | Monitoring     | infrastructure/base/monitoring     | StatefulSet     |
+| CSI Drivers | Storage        | infrastructure/base/storage        | DaemonSet       |
 
 ## Getting Started
 

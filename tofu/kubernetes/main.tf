@@ -12,7 +12,7 @@ module "talos" {
   }
 
   cilium = {
-    values = file("${path.module}/../../k8s/infra/base/network/cilium/values.yaml")
+    values = file("${path.module}/../../k8s/infrastructure/base/network/cilium/values.yaml")
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
 

@@ -172,7 +172,7 @@ generators:
                 syncWave: '2'
         - git:
             directories:
-              - path: k8s/infra/overlays/{{environment}}
+              - path: k8s/infrastructure/overlays/{{environment}}
 ```
 
 ### Progressive Deployment

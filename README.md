@@ -119,7 +119,7 @@ Our infrastructure follows a strict GitOps-based organization:
 
 ```
 k8s/
-├── infra/          # Core Infrastructure
+├── infrastructure/          # Core Infrastructure
 │   ├── base/       # Base components
 │   └── overlays/   # Environment configs
 │       ├── dev/    # Development (Wave 0)

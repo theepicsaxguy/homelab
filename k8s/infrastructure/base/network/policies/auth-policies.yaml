@@ -1,0 +1,88 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-authelia
+  namespace: auth
+spec:
+  description: 'Allow Authelia authentication traffic with standardized ports'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: authelia
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '9091'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+                path: '/api/verify'
+              - method: 'POST'
+                path: '/api/verify'
+              - method: 'HEAD'
+                path: '/api/verify'
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: postgresql
+            io.kubernetes.pod.namespace: database
+      toPorts:
+        - ports:
+            - port: '5432'
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: redis
+            io.kubernetes.pod.namespace: database
+      toPorts:
+        - ports:
+            - port: '6379'
+              protocol: TCP
+    - toFQDNs:
+        - matchName: 'smtp.gmail.com'
+      toPorts:
+        - ports:
+            - port: '587'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-argocd
+  namespace: argocd
+spec:
+  description: 'Allow ArgoCD traffic and Git operations'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: argocd
+    terms: []
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+          rules: {}
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+            - port: '443'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
+    - toFQDNs:
+        - matchName: 'github.com'
+        - matchName: 'raw.githubusercontent.com'
+    - toCIDRSet:
+        - cidr: '10.43.0.0/16' # Service CIDR for inter-service communication

@@ -9,7 +9,7 @@ setup follows our GitOps principles with sm-operator for secret management.
 
 1. **ArgoCD Application**
 
-   - Located in `/k8s/infra/base/kubechecks`
+   - Located in `/k8s/infrastructure/base/kubechecks`
    - Uses Helm chart from zapier/kubechecks
    - Managed via GitOps after initial bootstrap
 

@@ -1,0 +1,52 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-longhorn
+  namespace: storage
+spec:
+  description: 'Allow Longhorn storage traffic with strict access controls'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: longhorn
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/component: storage-client
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+            - port: '443'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: '10250'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: storage-client-access
+spec:
+  description: 'Define storage client access permissions'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/component: storage-client
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: longhorn
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+            - port: '443'
+              protocol: TCP

@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infrastructure
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: infrastructure
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: dev
+            namespace: dev-infra
+            syncWave: '0'
+          - environment: staging
+            namespace: staging-infra
+            syncWave: '1'
+          - environment: prod
+            namespace: prod-infra
+            syncWave: '2'
+  template:
+    metadata:
+      name: infra-{{environment}}
+      labels:
+        app.kubernetes.io/part-of: infrastructure
+        environment: '{{environment}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{syncWave}}'
+        argocd.argoproj.io/sync-options: ServerSideApply=true
+        argocd.argoproj.io/compare-options: IgnoreExtraneous
+    spec:
+      project: infrastructure
+      source:
+        repoURL: https://github.com/theepicsaxguy/homelab
+        targetRevision: main
+        path: k8s/infrastructure/overlays/{{environment}}
+      destination:
+        name: in-cluster
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+          allowEmpty: true
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - ServerSideApply=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
+        retry:
+          limit: 5
+          backoff:
+            duration: '30s'
+            factor: 2
+            maxDuration: '10m'
+      ignoreDifferences:
+        - group: ''
+          kind: Secret
+          jsonPointers:
+            - /data
+        - group: ''
+          kind: ConfigMap
+          jsonPointers:
+            - /data

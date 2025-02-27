@@ -1,0 +1,164 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: media-common
+  namespace: media
+spec:
+  description: 'Common policy for media applications'
+  endpointSelector:
+    matchLabels:
+      io.kubernetes.pod.namespace: media
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '8096' # Jellyfin
+              protocol: TCP
+            - port: '7878' # Radarr
+              protocol: TCP
+            - port: '8989' # Sonarr
+              protocol: TCP
+            - port: '8686' # Lidarr
+              protocol: TCP
+            - port: '9696' # Prowlarr
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: media
+    - toFQDNs:
+        - matchPattern: '*.themoviedb.org'
+        - matchPattern: '*.thetvdb.com'
+        - matchPattern: '*.musicbrainz.org'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: jellyfin-policy
+  namespace: media
+spec:
+  description: 'Allow Jellyfin media server traffic'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: jellyfin
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '8096'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+    - toFQDNs:
+        - matchPattern: '*.jellyfin.org'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: arr-stack-policy
+  namespace: media
+spec:
+  description: 'Allow *arr applications traffic'
+  endpointSelector:
+    matchExpressions:
+      - { key: app.kubernetes.io/name, operator: In, values: [radarr, sonarr, lidarr, prowlarr] }
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '7878' # Radarr
+              protocol: TCP
+            - port: '8989' # Sonarr
+              protocol: TCP
+            - port: '8686' # Lidarr
+              protocol: TCP
+            - port: '9696' # Prowlarr
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: media
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+    - toFQDNs:
+        - matchPattern: '*.themoviedb.org'
+        - matchPattern: '*.thetvdb.com'
+        - matchPattern: '*.musicbrainz.org'
+        - matchPattern: 'api.github.com'
+        - matchPattern: '*.servarr.com'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: media-downloads-policy
+  namespace: media
+spec:
+  description: 'Allow download client traffic'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/component: downloader
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '9091'
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: prowlarr
+      toPorts:
+        - ports:
+            - port: '9091'
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+    - toFQDNs:
+        - matchPattern: '*.prowlarr.com'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
