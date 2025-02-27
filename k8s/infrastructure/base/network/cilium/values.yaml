@@ -80,7 +80,7 @@ gatewayAPI:
   enableAlpn: true
   externalTrafficPolicy: Local
   gatewayClass:
-    create: true
+    create: 'true' # Changed from boolean to string
 
 l7Proxy: true
 enableK8sEndpointSlice: true

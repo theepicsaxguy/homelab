@@ -8,8 +8,8 @@ resources:
   - gw-tls-passthrough.yaml
 
   # Certificates
-  - cert-internal.yaml
-  - cert-pctips.yaml
+  - certs/cert-internal.yaml
+  - certs/cert-pctips.yaml
 
   # Internal Routes
   - route-argocd.yaml
@@ -20,9 +20,6 @@ resources:
   - route-arr.yaml
   - route-home-assistant.yaml
 
-  - cert-pctips.yaml
+  # Gateway configuration
   - gateway-class.yaml
   - ns.yaml
-  - gw-external.yaml
-  - gw-internal.yaml
-  - gw-tls-passthrough.yaml
