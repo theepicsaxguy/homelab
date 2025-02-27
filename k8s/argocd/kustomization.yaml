@@ -1,11 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: argocd
 
 resources:
-  - applicationsets/applications.yaml
-  - applicationsets/infrastructure.yaml
-  - applicationsets/pr-preview-applicationset.yaml
-  - applicationsprojectsets/preview-project.yaml
-  - projects/infrastructure-project.yaml
-  - projects/project.yaml
+- ns.yaml
+- http-route.yaml
+- redis-secret.yaml
+
+helmCharts:
+- name: argo-cd
+  namespace: argocd
+  releaseName: argocd
+  repo: https://argoproj.github.io/argo-helm
+  valuesFile: values.yaml
+  version: 7.8.5
