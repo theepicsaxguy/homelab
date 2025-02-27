@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.0](https://github.com/theepicsaxguy/homelab/compare/v1.14.0...v1.15.0) (2025-02-27)
+
+
+### Features
+
+* **k8s:** enhance infrastructure configuration and security policies ([#150](https://github.com/theepicsaxguy/homelab/issues/150)) ([56198ed](https://github.com/theepicsaxguy/homelab/commit/56198eda05ded7ad6418d7a0cf83682e061fa3f7))
+* **k8s:** update AdGuardHome configuration and add new HTTP routes ([#143](https://github.com/theepicsaxguy/homelab/issues/143)) ([7b9c233](https://github.com/theepicsaxguy/homelab/commit/7b9c2335441c68f6525bf1a2958a78cc718e4d9a))
+
 ## [1.14.0](https://github.com/theepicsaxguy/homelab/compare/v1.13.0...v1.14.0) (2025-02-26)
 
 
