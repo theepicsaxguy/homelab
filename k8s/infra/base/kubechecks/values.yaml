@@ -26,3 +26,37 @@ config:
   showDebugInfo: false
   enableKubeconform: true
   enablePreupgrade: true
+
+server:
+  insecure: false
+  tls:
+    enabled: true
+    minVersion: '1.3'
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    readOnlyRootFilesystem: true
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+rbac:
+  clusterResourceWhitelist:
+    - group: apps
+      kinds: ['Deployment', 'StatefulSet']
+    - group: networking.k8s.io
+      kinds: ['Ingress']
+    - group: gateway.networking.k8s.io
+      kinds: ['Gateway', 'HTTPRoute']
+    - group: cilium.io
+      kinds: ['CiliumNetworkPolicy']
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
