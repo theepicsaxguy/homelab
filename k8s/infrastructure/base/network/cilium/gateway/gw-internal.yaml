@@ -1,0 +1,43 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: internal
+  namespace: gateway
+spec:
+  gatewayClassName: cilium
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: 10.25.150.220
+  listeners:
+    - protocol: HTTPS
+      port: 443
+      name: https-gateway
+      hostname: '*.kube.pc-tips.se'
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-internal
+        options:
+          minTLSVersion: TLSv1.3
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: internal
+    - protocol: HTTPS
+      port: 443
+      name: https-domain-gateway
+      hostname: kube.pc-tips.se
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-internal
+        options:
+          minTLSVersion: TLSv1.3
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: internal

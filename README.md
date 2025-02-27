@@ -119,7 +119,7 @@ Our infrastructure follows a strict GitOps-based organization:
 
 ```
 k8s/
-├── infra/          # Core Infrastructure
+├── infrastructure/          # Core Infrastructure
 │   ├── base/       # Base components
 │   └── overlays/   # Environment configs
 │       ├── dev/    # Development (Wave 0)
@@ -403,4 +403,4 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ### Credits
 
-This wouldnt be possible without [Vehagn's homelab](https://github.com/vehagn/homelab)
+This wouldnt be possible without [Vehagn's homelab](https://github.com/theepicsaxguy/homelab)

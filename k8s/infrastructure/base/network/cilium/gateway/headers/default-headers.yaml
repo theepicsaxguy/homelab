@@ -1,0 +1,24 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: default-headers
+  namespace: gateway
+spec:
+  parentRefs:
+    - name: gateway
+      kind: Gateway
+  rules:
+    - filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Frame-Options
+                value: DENY
+              - name: X-Content-Type-Options
+                value: nosniff
+              - name: X-XSS-Protection
+                value: "1; mode=block"
+              - name: Strict-Transport-Security
+                value: "max-age=31536000; includeSubDomains"
+              - name: Content-Security-Policy
+                value: "default-src 'self'"

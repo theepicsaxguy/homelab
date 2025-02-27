@@ -10,8 +10,8 @@
 First apply CRDs to avoid dependency issues:
 
 ```shell
-kubectl apply -k infra/base/crds
-kubectl apply -k infra/base/crossplane-crds
+kubectl apply -k infrastructure/base/crds
+kubectl apply -k infrastructure/base/crossplane-crds
 ```
 
 ## Core Infrastructure
@@ -19,7 +19,7 @@ kubectl apply -k infra/base/crossplane-crds
 Apply Cilium networking before other components:
 
 ```shell
-kubectl kustomize --enable-helm infra/base/network/cilium | kubectl apply -f -
+kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
 ```
 
 Wait for Cilium to be ready:
@@ -31,7 +31,7 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-
 ## Bitwarden Secrets
 
 ```shell
-kustomize build --enable-helm infra/base/controllers/bitwarden | kubectl apply -f -
+kustomize build --enable-helm infrastructure/base/controllers/bitwarden | kubectl apply -f -
 ```
 
 Create secrets token (required for sm-operator):
@@ -52,9 +52,9 @@ secret/argocd-redis created
 Install ArgoCD:
 
 ```shell
-kustomize build --enable-helm infra/base/controllers/argocd | kubectl apply -f -
+kustomize build --enable-helm infrastructure/base/controllers/argocd | kubectl apply -f -
 
-kubectl apply -k infra/base/controllers/argo-rollouts
+kubectl apply -k infrastructure/base/controllers/argo-rollouts
 ```
 
 Wait for ArgoCD to be ready:
@@ -82,8 +82,6 @@ This will trigger the following applications with sync-waves:
 1. infrastructure (-1): Core infrastructure components
 2. applications (0): User applications
 
-# Components Status
-
 ## Components Status
 
 ### Pre-installed via Talos
@@ -99,3 +97,13 @@ This will trigger the following applications with sync-waves:
 - [x] Hubble Network Monitoring
 - [x] Cert-manager
 - [x] CNPG - Cloud Native PostgreSQL
+
+---
+
+kubectl apply -k infrastructure/base/crds
+
+kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
+
+kubectl kustomize --enable-helm argocd | kubectl apply -f -
+
+kubectl apply -k sets

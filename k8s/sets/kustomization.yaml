@@ -3,9 +3,8 @@ kind: Kustomization
 namespace: argocd
 
 resources:
-  - applications.yaml
-  - infrastructure-project.yaml
-  - infrastructure.yaml
-  - pr-preview-applicationset.yaml
-  - preview-project.yaml
   - project.yaml
+  - infrastructure.yaml
+  - applications.yaml
+  - argocd.yaml
+  - pr-preview.yaml

@@ -71,7 +71,7 @@ production environments.
 
 ## Implementation Details
 
-### Base Configuration (`k8s/infra/base`)
+### Base Configuration (`k8s/infrastructure/base`)
 
 - Common configurations shared across environments
 - Core infrastructure components:
@@ -84,7 +84,7 @@ production environments.
 
 ### Environment-Specific Overlays
 
-Located in `k8s/infra/overlays/<environment>`:
+Located in `k8s/infrastructure/overlays/<environment>`:
 
 - Namespace definitions
 - Centralized patches directory containing:
@@ -96,7 +96,7 @@ Located in `k8s/infra/overlays/<environment>`:
 Directory structure:
 
 ```
-k8s/infra/overlays/<environment>/
+k8s/infrastructure/overlays/<environment>/
 ├── kustomization.yaml    # Environment overlay configuration
 └── patches/             # Centralized location for all patches
     ├── resource-limits.yaml    # Global resource limits

@@ -1,0 +1,156 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: monitoring-metrics-collection
+spec:
+  description: 'Allow metrics collection across all namespaces'
+  endpointSelector:
+    matchExpressions:
+      - { key: app.kubernetes.io/component, operator: In, values: [monitoring, metrics] }
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: prometheus
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+            - port: '9100'
+              protocol: TCP
+            - port: '8080'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+                path: '/metrics'
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-prometheus
+  namespace: monitoring
+spec:
+  description: 'Allow Prometheus to scrape metrics and be accessed by Grafana'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: grafana
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+  egress:
+    - toEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+            - port: '9100'
+              protocol: TCP
+            - port: '8080'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+                path: '/metrics'
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-grafana
+  namespace: monitoring
+spec:
+  description: 'Allow Grafana dashboard access with proper authentication'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: gateway
+      toPorts:
+        - ports:
+            - port: '3000'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+              - method: 'POST'
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: prometheus
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '9090'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: loki
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '3100'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+              - method: 'POST'
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-loki
+  namespace: monitoring
+spec:
+  description: 'Allow Loki log aggregation with proper access controls'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: grafana
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: '3100'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'GET'
+              - method: 'POST'
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: promtail
+      toPorts:
+        - ports:
+            - port: '3100'
+              protocol: TCP
+          rules:
+            http:
+              - method: 'POST'
+                path: '/loki/api/v1/push'
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: storage
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP
+            - port: '443'
+              protocol: TCP

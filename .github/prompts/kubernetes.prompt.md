@@ -9,7 +9,7 @@
 
 ## References
 
-[Kubernetes Apps](../../k8s/apps/README.md) [Infrastructure](../../k8s/infra/README.md)
+[Kubernetes Apps](../../k8s/applications/README.md) [Infrastructure](../../k8s/infrastructure/README.md)
 
 ## Provider Configuration
 

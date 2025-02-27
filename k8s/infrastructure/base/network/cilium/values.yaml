@@ -1,0 +1,126 @@
+cluster:
+  name: talos
+  id: 1
+
+kubeProxyReplacement: true
+
+# Talos specific settings
+k8sServiceHost: localhost
+k8sServicePort: 7445
+
+securityContext:
+  privileged: false
+  capabilities:
+    ciliumAgent: [NET_ADMIN, NET_RAW, IPC_LOCK, SYS_RESOURCE]
+    cleanCiliumState: [NET_ADMIN, SYS_RESOURCE]
+
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+
+bpf:
+  hostLegacyRouting: true
+
+ipam:
+  mode: kubernetes
+  operator:
+    clusterPoolIPv4PodCIDRList:
+      - '${cluster_pod_cidr}' # This should be provided via helm values
+    clusterPoolIPv4MaskSize: 24
+  pool:
+    healthChecking: true
+    preAllocation: true
+
+operator:
+  rollOutPods: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+rollOutCiliumPods: true
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi
+
+k8sClientRateLimit:
+  qps: 20
+  burst: 100
+
+l2announcements:
+  enabled: true
+
+externalIPs:
+  enabled: true
+
+enableCiliumEndpointSlice: true
+
+loadBalancer:
+  algorithm: maglev
+  l7:
+    backend: envoy
+    secureMode: true
+
+gatewayAPI:
+  enabled: true
+  secureMode: true
+  secretsNamespace:
+    name: gateway
+    create: true
+    sync: true
+  enableProxyProtocol: false
+  enableAlpn: true
+  externalTrafficPolicy: Local
+
+l7Proxy: true
+enableK8sEndpointSlice: true
+
+envoy:
+  securityContext:
+    privileged: false
+    capabilities:
+      envoy: [NET_ADMIN]
+
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+    rollOutPods: true
+  ui:
+    enabled: true
+    service:
+      type: ClusterIP # Changed from LoadBalancer for security
+      securityContext:
+        privileged: false
+        capabilities:
+          envoy: [NET_ADMIN]
+
+ingressController:
+  enabled: false
+
+authentication:
+  enabled: true # Enable mTLS
+  mutual:
+    spire:
+      enabled: true
+      install:
+        server:
+          dataStorage:
+            storageClass: longhorn # Changed from cilium-spire-sc
+
+# Removed duplicate securityContext
+
+tls:
+  secretsNamespace:
+    name: cilium-secrets
+    create: true
+  forceHTTPS: true
+  minTLSVersion: 'VersionTLS13'
