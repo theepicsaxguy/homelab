@@ -3,6 +3,8 @@ kind: HTTPRoute
 metadata:
   name: argocd
   namespace: argocd
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
@@ -14,6 +16,16 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
       backendRefs:
         - name: argocd-server
-          port: 80
+          port: 443
+          filters:
+            - type: RequestRedirect
+              requestRedirect:
+                scheme: https

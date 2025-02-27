@@ -3,6 +3,8 @@ kind: HTTPRoute
 metadata:
   name: grafana
   namespace: monitoring
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
@@ -14,6 +16,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Host
+                value: grafana.kube.pc-tips.se
       backendRefs:
         - name: grafana
-          port: 80
+          port: 3000

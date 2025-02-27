@@ -65,6 +65,12 @@ dns:
   use_http3_upstreams: false
   serve_plain_dns: true
   hostsfile_enabled: true
+  # Define gateway IPs as anchors for reuse
+  gateway_ips: &gateway_ips
+    internal: &internal_gw 10.25.150.220
+    tls_passthrough: &tls_gw 10.25.150.221
+    external: &external_gw 10.25.150.222
+    hubble: &hubble_gw 10.25.150.224
 tls:
   enabled: false
   server_name: ''
@@ -142,32 +148,29 @@ filtering:
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
-    # Core Access and Base Domain
+    # Core Services
     - domain: api.kube.pc-tips.se
-      answer: 10.25.150.10 # API Server VIP
+      answer: *internal_gw # Internal API access
     - domain: '*.kube.pc-tips.se'
-      answer: 10.25.150.220 # Internal gateway IP
+      answer: *internal_gw # All internal services
     - domain: kube.pc-tips.se
-      answer: 10.25.150.220 # Internal gateway IP
-
-    # TLS Passthrough Services (External)
-
-    - domain: proxmox.pc-tips.se
-      answer: 10.25.150.221 # TLS passthrough gateway IP
-    - domain: truenas.pc-tips.se
-      answer: 10.25.150.221 # TLS passthrough gateway IP
-
-    # External Domain Services
-
-    - domain: '*.external.pc-tips.se'
-      answer: 10.25.150.222 # External gateway IP
-    - domain: external.pc-tips.se
-      answer: 10.25.150.222 # External gateway IP
-
-    # Special Load Balanced Services
-
+      answer: *internal_gw # Base domain
+    
+    # External Access Services
+    - domain: '*.external.kube.pc-tips.se'
+      answer: *external_gw # External services subdomain
+    - domain: external.kube.pc-tips.se
+      answer: *external_gw # External base domain
+    
+    # Special Services
     - domain: hubble-ui.kube.pc-tips.se
-      answer: 10.25.150.224 # Dedicated Hubble UI IP
+      answer: *hubble_gw # Hubble UI
+    
+    # TLS Passthrough Services
+    - domain: proxmox.kube.pc-tips.se
+      answer: *tls_gw
+    - domain: truenas.kube.pc-tips.se
+      answer: *tls_gw
 
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576

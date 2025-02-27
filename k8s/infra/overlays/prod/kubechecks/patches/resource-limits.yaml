@@ -5,9 +5,27 @@ metadata:
 spec:
   values:
     resources:
-      limits:
-        cpu: 2000m
-        memory: 2Gi
       requests:
-        cpu: 500m
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 1000m
         memory: 512Mi
+
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+
+    podSecurityContext:
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault

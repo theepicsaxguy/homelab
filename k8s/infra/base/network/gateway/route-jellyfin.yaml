@@ -3,17 +3,33 @@ kind: HTTPRoute
 metadata:
   name: jellyfin
   namespace: media
+  labels:
+    gateway-access: external
 spec:
   parentRefs:
-    - name: internal
+    - name: external
       namespace: gateway
   hostnames:
-    - 'jellyfin.kube.pc-tips.se'
+    - 'jellyfin.external.kube.pc-tips.se'
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Real-IP
+                value: ${remote_addr}
       backendRefs:
         - name: jellyfin
           port: 8096
+          filters:
+            - type: URLRewrite
+              urlRewrite:
+                path:
+                  type: ReplaceFullPath
+                  replaceFullPath: /

@@ -4,11 +4,26 @@ metadata:
   name: kubechecks
 spec:
   values:
-    replicaCount: 3
+    replicas: 2
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
+    
     affinity:
       podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchLabels:
-                app.kubernetes.io/name: kubechecks
-            topologyKey: kubernetes.io/hostname
+        - labelSelector:
+            matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+              - kubechecks
+          topologyKey: kubernetes.io/hostname
+    
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: kubechecks

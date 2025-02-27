@@ -12,22 +12,32 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: '*.pc-tips.se'
+      hostname: "*.external.kube.pc-tips.se"
       tls:
         certificateRefs:
           - kind: Secret
             name: cert-pctips
+        options:
+          minTLSVersion: TLSv1.3
       allowedRoutes:
         namespaces:
-          from: All
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: external
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: pc-tips.se
+      hostname: external.kube.pc-tips.se
       tls:
         certificateRefs:
           - kind: Secret
             name: cert-pctips
+        options:
+          minTLSVersion: TLSv1.3
       allowedRoutes:
         namespaces:
-          from: All
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: external

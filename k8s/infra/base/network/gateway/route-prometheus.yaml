@@ -3,6 +3,8 @@ kind: HTTPRoute
 metadata:
   name: prometheus
   namespace: monitoring
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
@@ -14,6 +16,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Forwarded-Host
+                value: prometheus.kube.pc-tips.se
       backendRefs:
         - name: prometheus-operated
           port: 9090

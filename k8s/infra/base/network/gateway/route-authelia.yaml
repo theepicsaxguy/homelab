@@ -3,17 +3,31 @@ kind: HTTPRoute
 metadata:
   name: authelia
   namespace: auth
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'authelia.kube.pc-tips.se'
+    - 'auth.kube.pc-tips.se'
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Real-IP
+                value: ${remote_addr}
       backendRefs:
         - name: authelia
-          port: 80
+          port: 9091
+          filters:
+            - type: RequestRedirect
+              requestRedirect:
+                scheme: https

@@ -3,6 +3,8 @@ kind: HTTPRoute
 metadata:
   name: lidarr
   namespace: media
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
@@ -14,6 +16,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Real-IP
+                value: ${remote_addr}
       backendRefs:
         - name: lidarr
           port: 8686
@@ -23,6 +33,8 @@ kind: HTTPRoute
 metadata:
   name: prowlarr
   namespace: media
+  labels:
+    gateway-access: internal
 spec:
   parentRefs:
     - name: internal
@@ -34,6 +46,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+              - name: X-Forwarded-Proto
+                value: https
+              - name: X-Real-IP
+                value: ${remote_addr}
       backendRefs:
         - name: prowlarr
           port: 9696

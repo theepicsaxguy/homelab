@@ -13,14 +13,18 @@ spec:
       port: 443
       name: https-gateway
       hostname: "*.kube.pc-tips.se"
-
       tls:
         certificateRefs:
           - kind: Secret
             name: cert-internal
+        options:
+          minTLSVersion: TLSv1.3
       allowedRoutes:
         namespaces:
-          from: All
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: internal
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
@@ -29,6 +33,11 @@ spec:
         certificateRefs:
           - kind: Secret
             name: cert-internal
+        options:
+          minTLSVersion: TLSv1.3
       allowedRoutes:
         namespaces:
-          from: All
+          from: Selector
+          selector:
+            matchLabels:
+              gateway-access: internal
