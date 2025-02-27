@@ -56,33 +56,51 @@ module "talos" {
       ram_dedicated = 2096
       #update        = true
     }
-        "work-00" = {
-          host_node     = "host3"
-          machine_type  = "worker"
-          ip            = "10.25.150.21"
-          mac_address   = "bc:24:11:64:5b:cb"
-          vm_id         = 8201
-          cpu           = 4
-          ram_dedicated = 3096
+    "work-00" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.21"
+      mac_address   = "bc:24:11:64:5b:cb"
+      vm_id         = 8201
+      cpu           = 4
+      ram_dedicated = 3096
+      disks = {
+        longhorn = {
+          size = "100G"
+          type = "scsi"
         }
-        "work-01" = {
-          host_node     = "host3"
-          machine_type  = "worker"
-          ip            = "10.25.150.22"
-          mac_address   = "bc:24:11:c9:22:c3"
-          vm_id         = 8202
-          cpu           = 4
-          ram_dedicated = 2096
+      }
+    }
+    "work-01" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.22"
+      mac_address   = "bc:24:11:c9:22:c3"
+      vm_id         = 8202
+      cpu           = 4
+      ram_dedicated = 2096
+      disks = {
+        longhorn = {
+          size = "100G"
+          type = "scsi"
         }
-        "work-02" = {
-          host_node     = "host3"
-          machine_type  = "worker"
-          ip            = "10.25.150.23"
-          mac_address   = "bc:24:11:6f:20:03"
-          vm_id         = 8203
-          cpu           = 4
-          ram_dedicated = 2096
+      }
+    }
+    "work-02" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.23"
+      mac_address   = "bc:24:11:6f:20:03"
+      vm_id         = 8203
+      cpu           = 4
+      ram_dedicated = 2096
+      disks = {
+        longhorn = {
+          size = "100G"
+          type = "scsi"
         }
+      }
+    }
   }
 
 }
