@@ -10,4 +10,4 @@ commonLabels:
   app.kubernetes.io/component: infra-policies
 
 annotations:
-  argocd.argoproj.io/sync-wave: "-2"
+  argocd.argoproj.io/sync-wave: '-2'

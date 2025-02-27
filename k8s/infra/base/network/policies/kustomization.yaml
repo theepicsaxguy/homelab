@@ -7,8 +7,8 @@ resources:
   - apps/monitoring-policies.yaml
   - apps/media-policies.yaml
   - apps/home-automation-policies.yaml
-  - infrastructure/storage-policies.yaml # Infrastructure component policies
-  - infrastructure/database-policies.yaml
+  - infra/storage-policies.yaml # Infrastructure component policies
+  - infra/database-policies.yaml
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd

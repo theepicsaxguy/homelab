@@ -26,7 +26,7 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         targetRevision: HEAD
-        path: k8s/infrastructure/base/network/policies/{{path}}
+        path: k8s/infra/base/network/policies/{{path}}
       destination:
         server: https://kubernetes.default.svc
         namespace: network-policies

@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gateway-header-policy
+  namespace: gateway
+spec:
+  description: 'Ensure header modification for all gateway traffic'
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway: 'true'
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+          rules:
+            http:
+              - headers:
+                  - 'X-Frame-Options: DENY'
+                  - 'X-Content-Type-Options: nosniff'
+                  - 'X-XSS-Protection: 1; mode=block'
+                  - 'Strict-Transport-Security: max-age=31536000; includeSubDomains'
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: cert-manager
+      toPorts:
+        - ports:
+            - port: '9402'
+              protocol: TCP

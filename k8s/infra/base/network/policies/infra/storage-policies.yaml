@@ -11,19 +11,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: gateway
-      toPorts:
-        - ports:
-            - port: '8000'
-              protocol: TCP
-          rules:
-            http:
-              - method: 'GET'
-              - method: 'POST'
-              - method: 'PUT'
-              - method: 'DELETE'
-    - fromEndpoints:
-        - matchLabels:
             app.kubernetes.io/component: storage-client
       toPorts:
         - ports:
@@ -48,7 +35,7 @@ kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: storage-client-access
 spec:
-  description: 'Allow pods requiring storage to access Longhorn'
+  description: 'Define storage client access permissions'
   endpointSelector:
     matchLabels:
       app.kubernetes.io/component: storage-client
@@ -63,6 +50,3 @@ spec:
               protocol: TCP
             - port: '443'
               protocol: TCP
-          rules:
-            http:
-              - {} # Allow all HTTP methods for CSI operations

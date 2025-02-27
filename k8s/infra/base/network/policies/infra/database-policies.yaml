@@ -4,7 +4,7 @@ metadata:
   name: database-access
   namespace: database
 spec:
-  description: "Policy controlling database access patterns"
+  description: 'Policy controlling database access patterns'
   endpointSelector:
     matchLabels:
       app.kubernetes.io/component: database
@@ -13,12 +13,12 @@ spec:
         - matchExpressions:
             - key: app.kubernetes.io/name
               operator: In
-              values: ["authelia", "argocd", "prometheus"]
+              values: ['authelia', 'argocd', 'prometheus']
       toPorts:
         - ports:
-            - port: "5432"
+            - port: '5432'
               protocol: TCP
-            - port: "6379"
+            - port: '6379'
               protocol: TCP
           rules:
             http:
@@ -29,9 +29,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: monitoring
       toPorts:
         - ports:
-            - port: "9090"
+            - port: '9090'
               protocol: TCP
           rules:
             http:
-              - method: "GET"
-                path: "/metrics"
+              - method: 'GET'
+                path: '/metrics'
