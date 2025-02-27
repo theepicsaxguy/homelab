@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applications
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: applications
+spec:
+  generators:
+    - list:
+        elements:
+          - environment: dev
+            namespace: dev-apps
+            syncWave: '1'
+          - environment: staging
+            namespace: staging-apps
+            syncWave: '2'
+          - environment: prod
+            namespace: prod-apps
+            syncWave: '3'
+  template:
+    metadata:
+      name: 'apps-{{environment}}'
+      labels:
+        app.kubernetes.io/part-of: applications
+        environment: '{{environment}}'
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{syncWave}}'
+    spec:
+      project: applications
+      source:
+        repoURL: https://github.com/theepicsaxguy/homelab
+        targetRevision: main
+        path: k8s/applications/overlays/{{environment}}
+      destination:
+        name: in-cluster
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+          - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+          - ServerSideApply=true

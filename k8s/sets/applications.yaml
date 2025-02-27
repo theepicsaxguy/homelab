@@ -1,54 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
   name: applications
   namespace: argocd
 spec:
-  generators:
-    - list:
-        elements:
-          - values:
-              environment: dev
-              namespace: dev
-              minReplicas: '1'
-              healthTimeout: '30s'
-          - values:
-              environment: staging
-              namespace: staging
-              minReplicas: '2'
-              healthTimeout: '60s'
-          - values:
-              environment: prod
-              namespace: prod
-              minReplicas: '3'
-              healthTimeout: '300s'
-  template:
-    metadata:
-      name: 'apps-{{values.environment}}'
-      labels:
-        type: applications
-        environment: '{{values.environment}}'
-      annotations:
-        argocd.argoproj.io/sync-wave: '0'
-    spec:
-      project: app-of-apps
-      source:
-        repoURL: https://github.com/theepicsaxguy/homelab
-        targetRevision: main
-        path: k8s/apps/overlays/{{values.environment}}
-      destination:
-        name: in-cluster
-        namespace: '{{values.namespace}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
-          - ServerSideApply=true
-        retry:
-          limit: 5
-          backoff:
-            duration: '30s'
-            factor: 2
-            maxDuration: '10m'
+  project: app-of-apps
+  source:
+    path: k8s/applications
+    repoURL: https://github.com/theepicsaxguy/homelab
+    targetRevision: main
+  destination:
+    namespace: argocd
+    name: in-cluster
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

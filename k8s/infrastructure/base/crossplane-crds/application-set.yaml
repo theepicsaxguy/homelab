@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: crossplane-crds
+  namespace: argocd
+  labels:
+    dev.pc-tips: crossplane-crds
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/theepicsaxguy/homelab
+        revision: main
+        directories:
+          - path: k8s/infrastructure/crossplane-crds/*
+  template:
+    metadata:
+      name: 'crossplane-crds-{{ path.basename }}'
+      labels:
+        dev.pc-tips: crossplane-crds
+    spec:
+      project: crossplane-crds
+      source:
+        plugin:
+          name: kustomize-build-with-helm
+        repoURL: https://github.com/theepicsaxguy/homelab
+        targetRevision: main
+        path: '{{ path }}'
+      destination:
+        name: in-cluster
+        namespace: argocd
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true

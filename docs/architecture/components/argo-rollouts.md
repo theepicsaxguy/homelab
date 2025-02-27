@@ -7,7 +7,7 @@ This document describes the progressive deployment configuration using Argo Roll
 ## Configuration Structure
 
 ```bash
-infra/
+infrastructure/
 ├── base/
 │   └── controllers/
 │       └── argo-rollouts/

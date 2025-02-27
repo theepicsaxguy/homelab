@@ -189,8 +189,8 @@ fi
 # Validate all ApplicationSet files using kubeconform with the relevant CRDs only
 echo "Validating ApplicationSet files..."
 APPLICATIONSET_FILES=(
-    "k8s/infra/application-set.yaml"
-    "k8s/apps/application-set.yaml"
+    "k8s/infrastructure/application-set.yaml"
+    "k8s/applications/application-set.yaml"
     "k8s/sets/applications.yaml"
 )
 for appset_file in "${APPLICATIONSET_FILES[@]}"; do

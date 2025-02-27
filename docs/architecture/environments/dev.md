@@ -39,7 +39,7 @@ resources:
 
 ```bash
 # Run from repository root
-./scripts/validate_manifests.sh -d k8s/infra/overlays/dev
+./scripts/validate_manifests.sh -d k8s/infrastructure/overlays/dev
 ```
 
 ## Security Notes

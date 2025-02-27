@@ -50,4 +50,4 @@
 
 - [Main README](../README.md)
 - [Kubernetes Configuration](../k8s/README.md)
-- [Infrastructure Components](../k8s/infra/README.md)
+- [Infrastructure Components](../k8s/infrastructure/README.md)

@@ -27,13 +27,13 @@ This repository manages a GitOps-only homelab infrastructure with
 - Uses ApplicationSets for dynamic app management
 - All apps must be defined here
 
-#### Applications (k8s/apps/)
+#### Applications (k8s/applications/)
 
 - Functional workloads such as authentication and monitoring
 - Must use Kustomization overlays
 - No raw manifests
 
-#### Infrastructure Components (k8s/infra/)
+#### Infrastructure Components (k8s/infrastructure/)
 
 - Covers networking, DNS, storage, and other foundational services
 - Networking must use Cilium instead of Talos' default setup
@@ -51,7 +51,7 @@ This repository manages a GitOps-only homelab infrastructure with
 - Manages Talos cluster definitions
 - Control planes must remain immutable and be rebuilt via GitOps if necessary
 
-#### Stateful Apps (tofu/apps/)
+#### Stateful Apps (tofu/applications/)
 
 - Covers workloads requiring persistent storage
 - All persistent storage must be declared here

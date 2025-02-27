@@ -8,7 +8,7 @@ principles and using ArgoCD as the deployment mechanism.
 ## Structure
 
 ```
-k8s/apps/
+k8s/applications/
 ├── base/                 # Base configurations
 │   ├── external/        # External service integrations
 │   ├── media/          # Media applications

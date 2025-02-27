@@ -1,6 +1,7 @@
 .idea
 charts/example
-**/infra/**/charts
+**/infrastructure/**/charts
+**/applications/**/charts
 !*secret*.yaml
 
 .terraform
@@ -34,3 +35,4 @@ override.tf.json
 node_modules/
 package-lock.json
 validation_errors.json
+k8s/argocd/charts/

@@ -1,54 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
   name: infrastructure
   namespace: argocd
 spec:
-  generators:
-    - list:
-        elements:
-          - values:
-              environment: dev
-              namespace: dev-infra
-              minReplicas: '1'
-              healthTimeout: '30s'
-          - values:
-              environment: staging
-              namespace: staging-infra
-              minReplicas: '2'
-              healthTimeout: '60s'
-          - values:
-              environment: prod
-              namespace: prod-infra
-              minReplicas: '3'
-              healthTimeout: '300s'
-  template:
-    metadata:
-      name: 'infra-{{values.environment}}'
-      labels:
-        type: infrastructure
-        environment: '{{values.environment}}'
-      annotations:
-        argocd.argoproj.io/sync-wave: '-1'
-    spec:
-      project: infrastructure
-      source:
-        repoURL: https://github.com/theepicsaxguy/homelab
-        targetRevision: main
-        path: k8s/infra/overlays/{{values.environment}}
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: '{{values.namespace}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
-          - ServerSideApply=true
-        retry:
-          limit: 5
-          backoff:
-            duration: '30s'
-            factor: 2
-            maxDuration: '10m'
+  project: app-of-apps
+  source:
+    path: k8s/infrastructure
+    repoURL: https://github.com/theepicsaxguy/homelab
+    targetRevision: main
+  destination:
+    namespace: argocd
+    name: in-cluster
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
