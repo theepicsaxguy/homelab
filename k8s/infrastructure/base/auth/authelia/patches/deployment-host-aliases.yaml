@@ -8,4 +8,4 @@ spec:
       hostAliases:
         - ip: 10.96.0.15
           hostnames:
-            - lldap.pc-tips.se
+            - lldap.kube.pc-tips.se

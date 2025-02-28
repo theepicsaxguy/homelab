@@ -41,6 +41,13 @@ podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
+# Webhook Configuration
+webhooks:
+  enabled: true
+  timeoutSeconds: 30
+  failurePolicy: Ignore
+  retryCount: 3
+
 # Network Settings
 ipam:
   mode: kubernetes
@@ -102,6 +109,9 @@ gatewayAPI:
     sync: true
   enableAlpn: true
   externalTrafficPolicy: Local
+  webhooks:
+    timeoutSeconds: 30
+    failurePolicy: Ignore
 
 # Observability
 hubble:

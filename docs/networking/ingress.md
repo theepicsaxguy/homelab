@@ -21,8 +21,8 @@ annotations:
   cert-manager.io/cluster-issuer: 'letsencrypt-prod'
   nginx.ingress.kubernetes.io/ssl-redirect: 'true'
   nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
-  nginx.ingress.kubernetes.io/auth-url: 'https://authelia.pc-tips.se/api/verify'
-  nginx.ingress.kubernetes.io/auth-signin: 'https://authelia.pc-tips.se/'
+  nginx.ingress.kubernetes.io/auth-url: 'https://authelia.kube.pc-tips.se/api/verify'
+  nginx.ingress.kubernetes.io/auth-signin: 'https://authelia.kube.pc-tips.se/'
 ```
 
 ## SSL Management
@@ -98,7 +98,7 @@ metadata:
       more_set_headers "X-XSS-Protection: 1; mode=block";
 spec:
   rules:
-    - host: app.pc-tips.se
+    - host: app.kube.pc-tips.se
       http:
         paths:
           - path: /
@@ -110,6 +110,6 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - app.pc-tips.se
+        - app.kube.pc-tips.se
       secretName: app-tls
 ```

@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "haos.pc-tips.se"
+    - 'haos.kube.pc-tips.se'
   rules:
     - backendRefs:
         - name: home-assistant

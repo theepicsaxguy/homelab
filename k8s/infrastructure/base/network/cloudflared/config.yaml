@@ -7,20 +7,20 @@ warp-routing:
   enabled: true
 
 ingress:
-  - hostname: hello.pc-tips.se
+  - hostname: hello.kube.pc-tips.se
     service: hello_world
-#  - hostname: proxmox.pc-tips.se
-#    service: https://proxmox.proxmox.svc.cluster.local:443
-#    originRequest:
-#      originServerName: proxmox.pc-tips.se
-#  - hostname: truenas.pc-tips.se
-#    service: https://truenas.truenas.svc.cluster.local:443
-#    originRequest:
-#      originServerName: truenas.pc-tips.se
-  - hostname: "*.pc-tips.se"
+  #  - hostname: proxmox.kube.pc-tips.se
+  #    service: https://proxmox.proxmox.svc.cluster.local:443
+  #    originRequest:
+  #      originServerName: proxmox.kube.pc-tips.se
+  #  - hostname: truenas.kube.pc-tips.se
+  #    service: https://truenas.truenas.svc.cluster.local:443
+  #    originRequest:
+  #      originServerName: truenas.kube.pc-tips.se
+  - hostname: '*.kube.pc-tips.se'
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:
-      originServerName: "*.pc-tips.se"
+      originServerName: '*.kube.pc-tips.se'
   - hostname: pc-tips.se
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:

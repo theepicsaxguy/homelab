@@ -29,8 +29,8 @@ security issues that you can get when installing pip or npm packages).
 ## The Way forward
 
 So what is the way forward, we want to keep the awesome magic of Helm but at the same time, if we want to use
-methodologies like GitOps, we need a more declarative way. This is where we use a structured approach to convert Helm charts
-to Kustomize bases, keeping the configuration clear and maintainable.
+methodologies like GitOps, we need a more declarative way. This is where we use a structured approach to convert Helm
+charts to Kustomize bases, keeping the configuration clear and maintainable.
 
 ## Directory Structure
 
@@ -78,9 +78,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- configmap.yaml
-- deployment.yaml
-- service.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
 ```
 
 ## Step 3: Root Kustomization
@@ -92,7 +92,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- base/app/
+  - base/app/
 ```
 
 ## Real World Example: Cilium
@@ -112,11 +112,13 @@ cilium/
 ```
 
 The core Cilium manifests are organized in their own directory, with a clear separation of:
+
 - Configuration (cilium-configmap.yaml)
 - Security (cilium-ca-secret.yaml)
 - Namespace resources (ns.yaml, cilium-secrets-namespace.yaml)
 
 This structure makes it easy to:
+
 1. Track changes in version control
 2. Review security-sensitive components
 3. Maintain configuration separately from deployment logic
@@ -134,6 +136,7 @@ This structure makes it easy to:
 ## Conclusion
 
 Converting from Helm to Kustomize requires more initial setup, but provides:
+
 - Better visibility into deployed resources
 - Easier version control and review
 - More predictable deployments
@@ -141,6 +144,7 @@ Converting from Helm to Kustomize requires more initial setup, but provides:
 - Better GitOps compatibility
 
 Remember to validate your Kustomize configuration with:
+
 ```bash
 kubectl apply -k your-app --dry-run=server
 ```
