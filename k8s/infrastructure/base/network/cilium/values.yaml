@@ -4,11 +4,10 @@ cluster:
 
 kubeProxyReplacement: true
 
-# Essential Talos settings
 k8sServiceHost: localhost
 k8sServicePort: 7445
 
-# Security context settings consolidated
+# Security Settings
 securityContext:
   privileged: true
   capabilities:
@@ -34,14 +33,6 @@ securityContext:
     type: RuntimeDefault
   allowPrivilegeEscalation: false
 
-# BGP configuration
-bgp:
-  enabled: true
-  announce:
-    loadbalancerIP: true
-    podCIDR: true
-
-# Pod security settings
 podSecurityContext:
   fsGroup: 1337
   runAsUser: 1337
@@ -50,17 +41,7 @@ podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
-# Cgroup and BPF settings
-cgroup:
-  autoMount:
-    enabled: false
-  hostRoot: /sys/fs/cgroup
-
-bpf:
-  masquerade: true
-  hostLegacyRouting: false
-
-# IPAM configuration
+# Network Settings
 ipam:
   mode: kubernetes
   operator:
@@ -68,7 +49,7 @@ ipam:
       - '${cluster_pod_cidr}'
     clusterPoolIPv4MaskSize: 24
 
-# Operator configuration
+# Operator Settings
 operator:
   replicas: 2
   installIpam: true
@@ -83,7 +64,6 @@ operator:
       cpu: 50m
       memory: 128Mi
 
-# Resource settings
 resources:
   limits:
     cpu: 1000m
@@ -92,7 +72,11 @@ resources:
     cpu: 200m
     memory: 512Mi
 
-# Network and Gateway settings
+# Feature Flags
+bpf:
+  masquerade: true
+  hostLegacyRouting: false
+
 l2announcements:
   enabled: true
 
@@ -101,12 +85,14 @@ externalIPs:
 
 enableCiliumEndpointSlice: true
 
+# Load Balancer Configuration
 loadBalancer:
   algorithm: maglev
   l7:
     backend: envoy
     secureMode: true
 
+# Gateway API Configuration
 gatewayAPI:
   enabled: true
   secureMode: true
@@ -117,7 +103,7 @@ gatewayAPI:
   enableAlpn: true
   externalTrafficPolicy: Local
 
-# Hubble observability
+# Observability
 hubble:
   enabled: true
   relay:
@@ -127,7 +113,7 @@ hubble:
     service:
       type: ClusterIP
 
-# Authentication and TLS
+# Security
 authentication:
   enabled: true
   mutual:
@@ -145,21 +131,26 @@ tls:
   forceHTTPS: true
   minTLSVersion: 'VersionTLS13'
 
-# CNI configuration
+# CNI Settings
 cni:
   binPath: /opt/cni/bin
   confPath: /etc/cni/net.d
 
-# Host configuration
+# Host Configuration
 hostServices:
   enabled: true
 
 hostPorts:
   enabled: true
 
-# Daemon settings
+# Daemon Configuration
 daemon:
   runPath: /var/run/cilium
   mountCgroupFS: false
 
-mountCgroup: false
+# BGP Configuration
+bgp:
+  enabled: true
+  announce:
+    loadbalancerIP: true
+    podCIDR: true
