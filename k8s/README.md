@@ -98,6 +98,7 @@ Gateways:
    - Let ArgoCD handle deployment
 
 3. **Validation**:
+
    ```bash
    # From repository root
    ./scripts/validate_manifests.sh -d k8s/infra
