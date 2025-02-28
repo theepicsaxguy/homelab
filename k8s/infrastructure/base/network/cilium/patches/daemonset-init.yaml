@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  template:
+    spec:
+      # Replace all init containers with just the config container
+      initContainers:
+        - name: install-cni-binaries
+          image: quay.io/cilium/cilium:v1.17.1@sha256:8969bfd9c87cbea91e40665f8ebe327268c99d844ca26d7d12165de07f702866
+          command: ['/install-plugin.sh']
+          resources:
+            requests:
+              cpu: 100m
+              memory: 10Mi
+          volumeMounts:
+            - name: cni-path
+              mountPath: /host/opt/cni/bin
+        - name: config
+          image: quay.io/cilium/cilium:v1.17.1@sha256:8969bfd9c87cbea91e40665f8ebe327268c99d844ca26d7d12165de07f702866
+          command: ['cilium-dbg', 'build-config']
+          env:
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: CILIUM_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: KUBERNETES_SERVICE_HOST
+              value: 'localhost'
+            - name: KUBERNETES_SERVICE_PORT
+              value: '7445'
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
