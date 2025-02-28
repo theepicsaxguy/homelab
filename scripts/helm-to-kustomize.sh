@@ -27,34 +27,49 @@ if [ ! -d "$TARGET_DIR" ]; then
   exit 1
 fi
 
-# --- Read dynamic values from the directory's kustomization.yaml ---
-KUSTOMIZATION_FILE="${TARGET_DIR}/kustomization.yaml"
-if [ ! -f "$KUSTOMIZATION_FILE" ]; then
-  echo "Error: $KUSTOMIZATION_FILE not found." >&2
+# --- Archive old helm-related files ---
+ARCHIVE_DIR="${TARGET_DIR}/archive"
+mkdir -p "$ARCHIVE_DIR"
+
+# Archive the helmCharts-enabled kustomization.yaml and values.yaml if they exist.
+if [ -f "${TARGET_DIR}/kustomization.yaml" ]; then
+  echo "Archiving ${TARGET_DIR}/kustomization.yaml to ${ARCHIVE_DIR}/"
+  mv "${TARGET_DIR}/kustomization.yaml" "${ARCHIVE_DIR}/kustomization.yaml"
+fi
+
+if [ -f "${TARGET_DIR}/values.yaml" ]; then
+  echo "Archiving ${TARGET_DIR}/values.yaml to ${ARCHIVE_DIR}/"
+  mv "${TARGET_DIR}/values.yaml" "${ARCHIVE_DIR}/values.yaml"
+fi
+
+# --- Read dynamic values from the archived kustomization file ---
+ARCHIVED_KUSTOMIZATION="${ARCHIVE_DIR}/kustomization.yaml"
+if [ ! -f "$ARCHIVED_KUSTOMIZATION" ]; then
+  echo "Error: Archived kustomization file not found in ${ARCHIVE_DIR}" >&2
   exit 1
 fi
 
 # Use yq to extract the helm chart parameters (assuming first helmCharts entry)
-CHART_NAME=$(yq e '.helmCharts[0].name' "$KUSTOMIZATION_FILE")
-CHART_REPO=$(yq e '.helmCharts[0].repo' "$KUSTOMIZATION_FILE")
-CHART_VERSION=$(yq e '.helmCharts[0].version' "$KUSTOMIZATION_FILE")
-RELEASE_NAME=$(yq e '.helmCharts[0].releaseName' "$KUSTOMIZATION_FILE")
-CHART_NAMESPACE=$(yq e '.helmCharts[0].namespace' "$KUSTOMIZATION_FILE")
-VALUES_FILE=$(yq e '.helmCharts[0].valuesFile' "$KUSTOMIZATION_FILE")
+CHART_NAME=$(yq e '.helmCharts[0].name' "$ARCHIVED_KUSTOMIZATION")
+CHART_REPO=$(yq e '.helmCharts[0].repo' "$ARCHIVED_KUSTOMIZATION")
+CHART_VERSION=$(yq e '.helmCharts[0].version' "$ARCHIVED_KUSTOMIZATION")
+RELEASE_NAME=$(yq e '.helmCharts[0].releaseName' "$ARCHIVED_KUSTOMIZATION")
+CHART_NAMESPACE=$(yq e '.helmCharts[0].namespace' "$ARCHIVED_KUSTOMIZATION")
+VALUES_FILE=$(yq e '.helmCharts[0].valuesFile' "$ARCHIVED_KUSTOMIZATION")
 
 if [ -z "$CHART_NAME" ] || [ -z "$CHART_REPO" ] || [ -z "$CHART_VERSION" ] || [ -z "$RELEASE_NAME" ] || [ -z "$CHART_NAMESPACE" ] || [ -z "$VALUES_FILE" ]; then
-  echo "Error: One or more helm chart parameters are missing in $KUSTOMIZATION_FILE" >&2
+  echo "Error: One or more helm chart parameters are missing in the archived kustomization file" >&2
   exit 1
 fi
 
-# Make sure values file exists (relative to TARGET_DIR)
-VALUES_FILE_PATH="${TARGET_DIR}/${VALUES_FILE}"
+# Make sure values file exists (it was archived, so use the archive path)
+VALUES_FILE_PATH="${ARCHIVE_DIR}/${VALUES_FILE}"
 if [ ! -f "$VALUES_FILE_PATH" ]; then
-  echo "Error: Values file '$VALUES_FILE_PATH' not found." >&2
+  echo "Error: Values file '$VALUES_FILE_PATH' not found in archive." >&2
   exit 1
 fi
 
-echo "Using the following helm chart parameters:"
+echo "Using the following helm chart parameters (from archived file):"
 echo "  Chart Name:      $CHART_NAME"
 echo "  Chart Repo:      $CHART_REPO"
 echo "  Chart Version:   $CHART_VERSION"
@@ -64,11 +79,12 @@ echo "  Values File:     $VALUES_FILE_PATH"
 
 # --- Define directories for generated manifests ---
 BASE_DIR="${TARGET_DIR}/base"
+CRDS_DIR="${TARGET_DIR}/crds"
 OVERLAYS_DIR="${TARGET_DIR}/overlays"
 PROD_OVERLAY="${OVERLAYS_DIR}/production"
 DEV_OVERLAY="${OVERLAYS_DIR}/development"
 
-mkdir -p "$BASE_DIR" "$PROD_OVERLAY" "$DEV_OVERLAY"
+mkdir -p "$BASE_DIR" "$CRDS_DIR" "$PROD_OVERLAY" "$DEV_OVERLAY"
 
 # --- Function: Render Helm chart to a single YAML file ---
 render_helm_chart() {
@@ -93,7 +109,6 @@ split_manifests() {
 
   # Rename each file based on its kind and metadata.name (if available)
   for file in "${out_dir}/split_"*; do
-    # Extract "kind" and "metadata.name" using yq if possible
     local kind
     kind=$(yq e '.kind // ""' "$file" | tr '[:upper:]' '[:lower:]')
     local name
@@ -102,7 +117,6 @@ split_manifests() {
       local new_name="${kind}-${name}.yaml"
       mv "$file" "${out_dir}/${new_name}"
     else
-      # Remove file if it doesn't contain valid resource info
       rm "$file"
     fi
   done
@@ -118,13 +132,14 @@ create_base_kustomization() {
   local resources=""
   for f in "$out_dir"/*.yaml; do
     [[ $(basename "$f") == "kustomization.yaml" ]] && continue
-    # Use relative path (file name only)
     resources+="  - $(basename "$f")"$'\n'
   done
 
   # Append external resources (announce.yaml and ip-pool.yaml from TARGET_DIR)
   resources+="  - ../announce.yaml"$'\n'
   resources+="  - ../ip-pool.yaml"$'\n'
+  # Also reference the CRDs (which are in a separate folder)
+  resources+="  - ../../crds/crds.yaml"$'\n'
 
   cat <<EOF > "$kustomization_file"
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -135,7 +150,7 @@ $resources
 EOF
 }
 
-# --- Function: Fetch CRDs dynamically ---
+# --- Function: Fetch CRDs dynamically into the crds folder ---
 fetch_crds() {
   local out_file="$1"
   local url="https://raw.githubusercontent.com/cilium/cilium/v${CHART_VERSION}/install/kubernetes/cilium-crds.yaml"
@@ -179,10 +194,10 @@ main() {
   # Step 2: Split the rendered YAML into individual manifests
   split_manifests "$rendered_yaml" "$BASE_DIR"
 
-  # Step 3: Fetch CRDs into the base directory
-  fetch_crds "${BASE_DIR}/crds.yaml"
+  # Step 3: Fetch CRDs into the CRDS directory
+  fetch_crds "${CRDS_DIR}/crds.yaml"
 
-  # Step 4: Create a base kustomization.yaml that references all files
+  # Step 4: Create a base kustomization.yaml that references all files (including CRDs)
   create_base_kustomization "$BASE_DIR"
 
   # Step 5: Create overlay directories (production and development)
@@ -190,6 +205,8 @@ main() {
   create_overlay "$DEV_OVERLAY"
 
   echo "Conversion completed successfully."
+  echo "Archived helm files are in: ${ARCHIVE_DIR}"
+  echo "To deploy CRDs: kubectl apply -k ${CRDS_DIR}"
   echo "To deploy the base manifests: kubectl apply -k ${BASE_DIR}"
   echo "To deploy production overlay: kubectl apply -k ${PROD_OVERLAY}"
   echo "To deploy development overlay: kubectl apply -k ${DEV_OVERLAY}"
