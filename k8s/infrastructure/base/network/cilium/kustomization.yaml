@@ -6,6 +6,7 @@ resources:
   - ip-pool.yaml
   - gateway-policies.yaml
   - base-policies.yaml
+  - bgp-config.yaml
   - gateway/gw-external.yaml
   - gateway/gw-internal.yaml
   - gateway/gw-tls-passthrough.yaml

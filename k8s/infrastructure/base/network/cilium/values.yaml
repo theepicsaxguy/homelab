@@ -11,8 +11,45 @@ k8sServicePort: 7445
 securityContext:
   privileged: false
   capabilities:
-    ciliumAgent: [NET_ADMIN, NET_RAW, IPC_LOCK, SYS_RESOURCE]
-    cleanCiliumState: [NET_ADMIN, SYS_RESOURCE]
+    ciliumAgent:
+      [
+        'CHOWN',
+        'KILL',
+        'NET_ADMIN',
+        'NET_RAW',
+        'IPC_LOCK',
+        'SYS_MODULE',
+        'SYS_ADMIN',
+        'SYS_RESOURCE',
+        'DAC_OVERRIDE',
+        'FOWNER',
+        'SETGID',
+        'SETUID',
+      ]
+    drop: ['ALL']
+  seLinuxOptions:
+    level: 's0'
+    type: 'spc_t'
+  seccompProfile:
+    type: RuntimeDefault
+
+bgp:
+  enabled: true
+  announce:
+    loadbalancerIP: true
+    podCIDR: true
+  peers:
+    - peer: '10.25.150.1' # Assuming this is your upstream router IP
+      remoteASN: 65000 # Your upstream router's ASN
+      localASN: 65501 # Your cluster's ASN
+
+podSecurityContext:
+  fsGroup: 1337
+  runAsUser: 1337
+  runAsGroup: 1337
+  runAsNonRoot: false # Required for Cilium functionality
+  seccompProfile:
+    type: RuntimeDefault
 
 cgroup:
   autoMount:
