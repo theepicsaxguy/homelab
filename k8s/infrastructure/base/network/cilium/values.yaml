@@ -1,68 +1,37 @@
+# https://github.com/cilium/cilium/blob/main/install/kubernetes/cilium/values.yaml
 cluster:
   name: talos
   id: 1
 
-kubeProxyReplacement: true
+kubeProxyReplacement:
+  true
 
+  # Talos specific
 k8sServiceHost: localhost
 k8sServicePort: 7445
-
-# Security Settings
 securityContext:
-  privileged: true
   capabilities:
     ciliumAgent:
-      [
-        'CHOWN',
-        'KILL',
-        'NET_ADMIN',
-        'NET_RAW',
-        'IPC_LOCK',
-        'SYS_MODULE',
-        'SYS_ADMIN',
-        'SYS_RESOURCE',
-        'DAC_OVERRIDE',
-        'FOWNER',
-        'SETGID',
-        'SETUID',
-      ]
-  seLinuxOptions:
-    level: 's0'
-    type: 'spc_t'
-  seccompProfile:
-    type: RuntimeDefault
-  allowPrivilegeEscalation: false
+      [CHOWN, KILL, NET_ADMIN, NET_RAW, IPC_LOCK, SYS_ADMIN, SYS_RESOURCE, DAC_OVERRIDE, FOWNER, SETGID, SETUID]
+    cleanCiliumState: [NET_ADMIN, SYS_ADMIN, SYS_RESOURCE]
 
-podSecurityContext:
-  fsGroup: 1337
-  runAsUser: 1337
-  runAsGroup: 1337
-  runAsNonRoot: true
-  seccompProfile:
-    type: RuntimeDefault
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
 
-# Webhook Configuration
-webhooks:
-  enabled: true
-  timeoutSeconds: 30
-  failurePolicy: Ignore
-  retryCount: 3
+# https://www.talos.dev/latest/talos-guides/network/host-dns/#forwarding-kube-dns-to-host-dns
+# https://docs.cilium.io/en/stable/operations/performance/tuning/#ebpf-host-routing
+bpf:
+  hostLegacyRouting: true
 
-# Network Settings
+# https://docs.cilium.io/en/stable/network/concepts/ipam/
 ipam:
   mode: kubernetes
-  operator:
-    clusterPoolIPv4PodCIDRList:
-      - '${cluster_pod_cidr}'
-    clusterPoolIPv4MaskSize: 24
+  multiPoolPreAllocation: ''
 
-# Operator Settings
 operator:
-  replicas: 2
-  installIpam: true
-  installNodesWithoutCilium: true
-  removeNodeTaints: true
-  skipCRDCreation: false
+  rollOutPods: true
   resources:
     limits:
       cpu: 500m
@@ -71,6 +40,8 @@ operator:
       cpu: 50m
       memory: 128Mi
 
+# Roll out cilium agent pods automatically when ConfigMap is updated.
+rollOutCiliumPods: true
 resources:
   limits:
     cpu: 1000m
@@ -79,23 +50,13 @@ resources:
     cpu: 200m
     memory: 512Mi
 
-# Feature Flags
-bpf:
-  masquerade: true
-  hostLegacyRouting: false
-  autoMount:
-    enabled: true
+#debug:
+#  enabled: true
 
-# Skip sysctl setup since Talos handles this
-sysctls:
-  enabled: false
-
-# Talos specific settings
-hostSystem:
-  useTypeOS: talos
-
-initContainer:
-  disableSysctls: true
+# Increase rate limit when doing L2 announcements
+k8sClientRateLimit:
+  qps: 20
+  burst: 100
 
 l2announcements:
   enabled: true
@@ -105,76 +66,42 @@ externalIPs:
 
 enableCiliumEndpointSlice: true
 
-# Load Balancer Configuration
 loadBalancer:
+  # https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#maglev-consistent-hashing
   algorithm: maglev
-  l7:
-    backend: envoy
-    secureMode: true
 
-# Gateway API Configuration
 gatewayAPI:
   enabled: true
-  secureMode: true
-  secretsNamespace:
-    name: gateway
-    create: true
-    sync: true
-  enableAlpn: true
-  externalTrafficPolicy: Local
-  webhooks:
-    timeoutSeconds: 30
-    failurePolicy: Ignore
+envoy:
+  securityContext:
+    capabilities:
+      keepCapNetBindService: true
+      envoy: [NET_ADMIN, PERFMON, BPF]
 
-# Observability
 hubble:
   enabled: true
   relay:
     enabled: true
+    rollOutPods: true
   ui:
     enabled: true
-    service:
-      type: ClusterIP
+    rollOutPods: true
 
-# Security
+ingressController:
+  enabled: false
+  default: true
+  loadbalancerMode: shared
+  service:
+    annotations:
+      io.cilium/lb-ipam-ips: 10.25.150.223
+
+# mTLS
 authentication:
-  enabled: true
+  enabled: false
   mutual:
     spire:
-      enabled: true
+      enabled: false
       install:
         server:
           dataStorage:
-            storageClass: longhorn
-
-tls:
-  secretsNamespace:
-    name: cilium-secrets
-    create: true
-  forceHTTPS: true
-  minTLSVersion: 'VersionTLS13'
-
-# CNI Settings
-cni:
-  binPath: /opt/cni/bin
-  confPath: /etc/cni/net.d
-  customConf: false
-
-# Host Configuration
-hostServices:
-  enabled: true
-
-hostPorts:
-  enabled: true
-
-# Daemon Configuration
-daemon:
-  runPath: /var/run/cilium
-  mountCgroupFS: false
-
-# BGP Configuration
-bgp:
-  enabled: true
-  announce:
-    loadbalancerIP: true
-    podCIDR: true
+            storageClass: cilium-spire-sc

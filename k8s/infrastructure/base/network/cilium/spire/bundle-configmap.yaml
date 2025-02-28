@@ -1,7 +1,0 @@
----
-# Source: cilium/templates/spire/bundle-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: spire-bundle
-  namespace: cilium-spire

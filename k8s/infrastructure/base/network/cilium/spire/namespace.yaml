@@ -1,6 +1,0 @@
----
-# Source: cilium/templates/spire/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cilium-spire
