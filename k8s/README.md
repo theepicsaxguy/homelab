@@ -21,20 +21,22 @@ Our infrastructure follows a strict GitOps approach with:
 │   │   ├── media/        # Media applications
 │   │   └── tools/        # Development tools
 │   └── overlays/         # Environment-specific configs
-│       ├── dev/
-│       ├── staging/
-│       └── prod/
-├── infrastructure/                 # Core infrastructure
+│       ├── dev/          # Development (Wave 3)
+│       ├── staging/      # Staging (Wave 4)
+│       └── prod/         # Production (Wave 5)
+├── infrastructure/        # Core infrastructure
 │   ├── base/             # Base infrastructure components
-│   │   ├── network/      # Cilium, DNS, Gateway
-│   │   ├── storage/      # CSI drivers
-│   │   ├── auth/         # Authentication
+│   │   ├── network/      # Cilium, Gateway API, DNS
+│   │   │   ├── cilium/   # CNI and Service Mesh
+│   │   │   └── gateway/  # Gateway API configurations
+│   │   ├── storage/      # CSI drivers, Longhorn
+│   │   ├── auth/         # Authelia, LLDAP
 │   │   ├── controllers/  # Core controllers
-│   │   ├── monitoring/   # Observability stack
-│   │   └── vpn/         # VPN services
+│   │   ├── monitoring/   # Prometheus, Grafana
+│   │   └── vpn/          # VPN services
 │   └── overlays/         # Environment configurations
-│       ├── dev/
-│       ├── staging/
+│       ├── dev/          # Development (Wave 0)
+│       ├── staging/      # Staging (Wave 1)
 │       └── prod/
 └── sets/                  # ApplicationSet configurations
 
@@ -46,14 +48,41 @@ Our infrastructure follows a strict GitOps approach with:
 - **Staging**: Production-like with HA
 - **Production**: Full HA, strict limits
 
+## Network Architecture
+
+Our networking stack is built on:
+
+- **Cilium** (v1.17+) for CNI and service mesh capabilities
+- **Gateway API** for modern ingress management
+- Structured gateway classes:
+  - External (Internet-facing services)
+  - Internal (Cluster-local services)
+  - TLS Passthrough (Direct TLS termination)
+
+## Gateway Structure
+
+```yaml
+Gateways:
+  - gw-external: # Internet-facing services
+      - HTTP/HTTPS routes
+      - Load balancing
+  - gw-internal: # Cluster-local services
+      - Internal DNS
+      - Service mesh integration
+  - gw-tls-passthrough: # Direct TLS termination
+      - Secure services
+      - Certificate management
+```
+
 ## Infrastructure Components
 
-| Component   | Purpose        | Configuration Path                 | Health Check    |
-| ----------- | -------------- | ---------------------------------- | --------------- |
-| Cilium      | CNI & Security | infrastructure/base/network/cilium | Pods & Services |
-| Authelia    | Authentication | infrastructure/base/auth/authelia  | Deployment & DB |
-| Prometheus  | Monitoring     | infrastructure/base/monitoring     | StatefulSet     |
-| CSI Drivers | Storage        | infrastructure/base/storage        | DaemonSet       |
+| Component   | Purpose            | Configuration Path                  | Health Check    |
+| ----------- | ------------------ | ----------------------------------- | --------------- |
+| Cilium      | CNI & Service Mesh | infrastructure/base/network/cilium  | Pods & Services |
+| Gateway API | Ingress Management | infrastructure/base/network/gateway | Routes & Certs  |
+| Authelia    | Authentication     | infrastructure/base/auth/authelia   | Deployment & DB |
+| Prometheus  | Monitoring         | infrastructure/base/monitoring      | StatefulSet     |
+| CSI Drivers | Storage            | infrastructure/base/storage         | DaemonSet       |
 
 ## Getting Started
 
