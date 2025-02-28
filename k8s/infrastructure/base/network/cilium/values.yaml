@@ -4,12 +4,13 @@ cluster:
 
 kubeProxyReplacement: true
 
-# Talos specific settings
+# Essential Talos settings
 k8sServiceHost: localhost
 k8sServicePort: 7445
 
+# Security context settings consolidated
 securityContext:
-  privileged: false
+  privileged: true
   capabilities:
     ciliumAgent:
       [
@@ -26,51 +27,54 @@ securityContext:
         'SETGID',
         'SETUID',
       ]
-    drop: ['ALL']
   seLinuxOptions:
     level: 's0'
     type: 'spc_t'
   seccompProfile:
     type: RuntimeDefault
+  allowPrivilegeEscalation: false
 
+# BGP configuration
 bgp:
   enabled: true
   announce:
     loadbalancerIP: true
     podCIDR: true
-  peers:
-    - peer: '10.25.150.1' # Assuming this is your upstream router IP
-      remoteASN: 65000 # Your upstream router's ASN
-      localASN: 65501 # Your cluster's ASN
 
+# Pod security settings
 podSecurityContext:
   fsGroup: 1337
   runAsUser: 1337
   runAsGroup: 1337
-  runAsNonRoot: false # Required for Cilium functionality
+  runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
 
+# Cgroup and BPF settings
 cgroup:
   autoMount:
     enabled: false
   hostRoot: /sys/fs/cgroup
 
 bpf:
-  hostLegacyRouting: true
+  masquerade: true
+  hostLegacyRouting: false
 
+# IPAM configuration
 ipam:
   mode: kubernetes
   operator:
     clusterPoolIPv4PodCIDRList:
-      - '${cluster_pod_cidr}' # This should be provided via helm values
+      - '${cluster_pod_cidr}'
     clusterPoolIPv4MaskSize: 24
-  pool:
-    healthChecking: true
-    preAllocation: true
 
+# Operator configuration
 operator:
-  rollOutPods: true
+  replicas: 2
+  installIpam: true
+  installNodesWithoutCilium: true
+  removeNodeTaints: true
+  skipCRDCreation: false
   resources:
     limits:
       cpu: 500m
@@ -79,7 +83,7 @@ operator:
       cpu: 50m
       memory: 128Mi
 
-rollOutCiliumPods: true
+# Resource settings
 resources:
   limits:
     cpu: 1000m
@@ -88,10 +92,7 @@ resources:
     cpu: 200m
     memory: 512Mi
 
-k8sClientRateLimit:
-  qps: 20
-  burst: 100
-
+# Network and Gateway settings
 l2announcements:
   enabled: true
 
@@ -113,47 +114,29 @@ gatewayAPI:
     name: gateway
     create: true
     sync: true
-  enableProxyProtocol: false
   enableAlpn: true
   externalTrafficPolicy: Local
 
-l7Proxy: true
-enableK8sEndpointSlice: true
-
-envoy:
-  securityContext:
-    privileged: false
-    capabilities:
-      envoy: [NET_ADMIN]
-
+# Hubble observability
 hubble:
   enabled: true
   relay:
     enabled: true
-    rollOutPods: true
   ui:
     enabled: true
     service:
-      type: ClusterIP # Changed from LoadBalancer for security
-      securityContext:
-        privileged: false
-        capabilities:
-          envoy: [NET_ADMIN]
+      type: ClusterIP
 
-ingressController:
-  enabled: false
-
+# Authentication and TLS
 authentication:
-  enabled: true # Enable mTLS
+  enabled: true
   mutual:
     spire:
       enabled: true
       install:
         server:
           dataStorage:
-            storageClass: longhorn # Changed from cilium-spire-sc
-
-# Removed duplicate securityContext
+            storageClass: longhorn
 
 tls:
   secretsNamespace:
@@ -161,3 +144,22 @@ tls:
     create: true
   forceHTTPS: true
   minTLSVersion: 'VersionTLS13'
+
+# CNI configuration
+cni:
+  binPath: /opt/cni/bin
+  confPath: /etc/cni/net.d
+
+# Host configuration
+hostServices:
+  enabled: true
+
+hostPorts:
+  enabled: true
+
+# Daemon settings
+daemon:
+  runPath: /var/run/cilium
+  mountCgroupFS: false
+
+mountCgroup: false

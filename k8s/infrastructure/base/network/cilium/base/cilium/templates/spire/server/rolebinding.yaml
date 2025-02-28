@@ -1,0 +1,30 @@
+---
+# Source: cilium/templates/spire/server/rolebinding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server
+  namespace: cilium-spire
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spire-server
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: cilium-spire
+---
+# Source: cilium/templates/spire/server/rolebinding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-pod
+  namespace: cilium-spire
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spire-server-pod
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: cilium-spire

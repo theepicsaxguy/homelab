@@ -1,0 +1,12 @@
+---
+# Source: cilium/templates/spire/server/role.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server
+  namespace: cilium-spire
+rules:
+# Role (namespace scoped) to be able to push certificate bundles to a configmap
+- apiGroups: [ "" ]
+  resources: [ "configmaps" ]
+  verbs: [ "patch", "get", "list" ]

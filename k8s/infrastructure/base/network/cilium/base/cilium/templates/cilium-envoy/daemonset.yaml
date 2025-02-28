@@ -1,0 +1,171 @@
+---
+# Source: cilium/templates/cilium-envoy/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cilium-envoy
+  namespace: kube-system
+  labels:
+    k8s-app: cilium-envoy
+    app.kubernetes.io/part-of: cilium
+    app.kubernetes.io/name: cilium-envoy
+    name: cilium-envoy
+spec:
+  selector:
+    matchLabels:
+      k8s-app: cilium-envoy
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 2
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+      labels:
+        k8s-app: cilium-envoy
+        name: cilium-envoy
+        app.kubernetes.io/name: cilium-envoy
+        app.kubernetes.io/part-of: cilium
+    spec:
+      securityContext:
+        appArmorProfile:
+          type: Unconfined
+      containers:
+      - name: cilium-envoy
+        image: "quay.io/cilium/cilium-envoy:v1.31.5-1739264036-958bef243c6c66fcfd73ca319f2eb49fff1eb2ae@sha256:fc708bd36973d306412b2e50c924cd8333de67e0167802c9b48506f9d772f521"
+        imagePullPolicy: IfNotPresent
+        command:
+        - /usr/bin/cilium-envoy-starter
+        args:
+        - '--'
+        - '-c /var/run/cilium/envoy/bootstrap-config.json'
+        - '--base-id 0'
+        - '--log-level info'
+        startupProbe:
+          httpGet:
+            host: "127.0.0.1"
+            path: /healthz
+            port: 9878
+            scheme: HTTP
+          failureThreshold: 105
+          periodSeconds: 2
+          successThreshold: 1
+          initialDelaySeconds: 5
+        livenessProbe:
+          httpGet:
+            host: "127.0.0.1"
+            path: /healthz
+            port: 9878
+            scheme: HTTP
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            host: "127.0.0.1"
+            path: /healthz
+            port: 9878
+            scheme: HTTP
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+          timeoutSeconds: 5
+        env:
+        - name: K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: CILIUM_K8S_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_SERVICE_HOST
+          value: "localhost"
+        - name: KUBERNETES_SERVICE_PORT
+          value: "7445"
+        ports:
+        - name: envoy-metrics
+          containerPort: 9964
+          hostPort: 9964
+          protocol: TCP
+        securityContext:
+          seLinuxOptions:
+            level: s0
+            type: spc_t
+          capabilities:
+            add:
+              - NET_ADMIN
+              - SYS_ADMIN
+            drop:
+              - ALL
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - name: envoy-sockets
+          mountPath: /var/run/cilium/envoy/sockets
+          readOnly: false
+        - name: envoy-artifacts
+          mountPath: /var/run/cilium/envoy/artifacts
+          readOnly: true
+        - name: envoy-config
+          mountPath: /var/run/cilium/envoy/
+          readOnly: true
+        - name: bpf-maps
+          mountPath: /sys/fs/bpf
+          mountPropagation: HostToContainer
+      restartPolicy: Always
+      priorityClassName: system-node-critical
+      serviceAccountName: "cilium-envoy"
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: 1
+      hostNetwork: true
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cilium.io/no-schedule
+                operator: NotIn
+                values:
+                - "true"
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                k8s-app: cilium
+            topologyKey: kubernetes.io/hostname
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                k8s-app: cilium-envoy
+            topologyKey: kubernetes.io/hostname
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - operator: Exists
+      volumes:
+      - name: envoy-sockets
+        hostPath:
+          path: "/var/run/cilium/envoy/sockets"
+          type: DirectoryOrCreate
+      - name: envoy-artifacts
+        hostPath:
+          path: "/var/run/cilium/envoy/artifacts"
+          type: DirectoryOrCreate
+      - name: envoy-config
+        configMap:
+          name: "cilium-envoy-config"
+          # note: the leading zero means this number is in octal representation: do not remove it
+          defaultMode: 0400
+          items:
+            - key: bootstrap-config.json
+              path: bootstrap-config.json
+        # To keep state between restarts / upgrades
+        # To keep state between restarts / upgrades for bpf maps
+      - name: bpf-maps
+        hostPath:
+          path: /sys/fs/bpf
+          type: DirectoryOrCreate
