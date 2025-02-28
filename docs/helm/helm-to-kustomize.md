@@ -29,102 +29,118 @@ security issues that you can get when installing pip or npm packages).
 ## The Way forward
 
 So what is the way forward, we want to keep the awesome magic of Helm but at the same time, if we want to use
-methodologies like GitOps, we need a more declarative way. This is where I suggest using both Helm and Kustomize in
-conjunction with each other. Helm has a handy templating feature that allows you to template out all the resource that
-you can then easily specify in a Kustoomize base, the steps are straight forward
+methodologies like GitOps, we need a more declarative way. This is where we use a structured approach to convert Helm charts
+to Kustomize bases, keeping the configuration clear and maintainable.
 
-## Step 1: Helm Fetch
+## Directory Structure
 
-Add the stable repo
+When converting from Helm to Kustomize, maintain a clear directory structure:
+
+```
+your-app/
+├── base/
+│   └── app/              # Core application manifests
+│       ├── configmap.yaml
+│       ├── secrets.yaml
+│       ├── deployment.yaml
+│       └── kustomization.yaml
+└── kustomization.yaml    # Root kustomization that references base
+```
+
+## Step 1: Helm Template Generation
+
+First, generate the raw Kubernetes manifests from the Helm chart:
 
 ```bash
-helm repo add nginx-stable https://helm.nginx.com/stable
+# Add the helm repository if needed
+helm repo add repo-name https://charts.example.com
 helm repo update
+
+# Template out the manifests
+helm template my-release repo-name/chart-name \
+  --namespace my-namespace \
+  --values values.yaml \
+  --output-dir base/app
 ```
 
-Fetch the chart as helm template needs it locally to template out the yaml
+## Step 2: Organize Manifests
 
-```bash
-helm fetch \
---untar \
---untardir charts \
-nginx-stable/nginx-ingress
+Instead of keeping all files in one directory, organize them logically:
+
+1. Move generated files into appropriate subdirectories
+2. Separate core components from optional ones
+3. Create a base kustomization.yaml that references these files
+
+Example base kustomization.yaml:
+
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- configmap.yaml
+- deployment.yaml
+- service.yaml
 ```
 
-## Step 2: Helm Template
+## Step 3: Root Kustomization
 
-Template out the yaml into a file, this is the step where you add the values to the chart and also set the namespace
-(more on this later)
+Create a root kustomization.yaml that references your base:
 
-```bash
-helm template \
---output-dir base \
---namespace ingress \
---values values.yaml \
-ingress-controller \
-charts/nginx-ingress
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- base/app/
 ```
 
-This should give you a folder with a whole bunch of Kubernetes resources:
+## Real World Example: Cilium
 
-```bash
-ls -l base/nginx-ingress/templates/
-
--rw-r--r--  1 spazzy  staff   1.0K Sep 24 08:44 clusterrole.yaml
--rw-r--r--  1 spazzy  staff   510B Sep 24 08:44 clusterrolebinding.yaml
--rw-r--r--  1 spazzy  staff   2.5K Sep 24 08:44 controller-deployment.yaml
--rw-r--r--  1 spazzy  staff   690B Sep 24 08:44 controller-hpa.yaml
--rw-r--r--  1 spazzy  staff   1.4K Sep 24 08:44 controller-role.yaml
--rw-r--r--  1 spazzy  staff   500B Sep 24 08:44 controller-rolebinding.yaml
--rw-r--r--  1 spazzy  staff   602B Sep 24 08:44 controller-service.yaml
--rw-r--r--  1 spazzy  staff   273B Sep 24 08:44 controller-serviceaccount.yaml
--rw-r--r--  1 spazzy  staff   1.6K Sep 24 08:44 default-backend-deployment.yaml
--rw-r--r--  1 spazzy  staff   541B Sep 24 08:44 default-backend-service.yaml
--rw-r--r--  1 spazzy  staff   288B Sep 24 08:44 default-backend-serviceaccount.yaml
-```
-
-just to neaten things up lets move these up a dir and delete the template dir:
-
-```bash
-mv base/nginx-ingress/templates/* base/nginx-ingress && rm -rf base/nginx-ingress/templates
-```
-
-## Step 3: create the Kustomization config
-
-One thing that is not very well known is that helm does not handle namespaces very well, when you define `--namespace`
-while running `helm install` tiller does all the namespace work at runtime, it does not actually specify the namespace
-on any of the resources, meaning that in order to be more declarative you will need to create you namespace config
-manually:
-
-```bash
-cat <<EOF > base/nginx-ingress/namespace.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress
-EOF
-```
-
-You can now go into the directory where the configuration is found and use kustomize to generathe the config
-
-```bash
-cd base/nginx-ingress
-
-kustomize create --autodetect
-
-cd ../..
-```
-
-## Step 4: Apply your new base to a cluster
-
-as of Kubectl 1.14, Kustomize is integrated therefore you can simply run:
+Here's how we structured Cilium after converting from Helm:
 
 ```
-kubectl apply -k base/nginx-ingress
+cilium/
+├── base/
+│   └── cilium/              # Core Cilium manifests
+│       ├── cilium-ca-secret.yaml
+│       ├── cilium-configmap.yaml
+│       ├── cilium-secrets-namespace.yaml
+│       ├── ns.yaml
+│       └── kustomization.yaml
+└── kustomization.yaml       # Root kustomization
 ```
+
+The core Cilium manifests are organized in their own directory, with a clear separation of:
+- Configuration (cilium-configmap.yaml)
+- Security (cilium-ca-secret.yaml)
+- Namespace resources (ns.yaml, cilium-secrets-namespace.yaml)
+
+This structure makes it easy to:
+1. Track changes in version control
+2. Review security-sensitive components
+3. Maintain configuration separately from deployment logic
+4. Apply changes through GitOps tools like ArgoCD
+
+## Best Practices
+
+1. Keep sensitive data separate from configuration
+2. Use clear, descriptive filenames
+3. Maintain a logical directory structure
+4. Document any manual modifications needed after templating
+5. Version control all manifests
+6. Validate manifests before committing
 
 ## Conclusion
 
-Yes this is a lot more work than just running `helm install`, however the transparency you gain is worth it, as in any
-system you dont want any unknowns lurking in the dark. Once you have grasped this concept I would suggesting going to
-have a look at GitOps, this will change the way you handle operations.
+Converting from Helm to Kustomize requires more initial setup, but provides:
+- Better visibility into deployed resources
+- Easier version control and review
+- More predictable deployments
+- Improved security through transparency
+- Better GitOps compatibility
+
+Remember to validate your Kustomize configuration with:
+```bash
+kubectl apply -k your-app --dry-run=server
+```
