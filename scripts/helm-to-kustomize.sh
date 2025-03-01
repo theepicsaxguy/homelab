@@ -22,6 +22,14 @@ for cmd in kustomize yq helm jq kubectl; do
   fi
 done
 
+# Also ensure we have create_kustomization.sh available
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -x "${SCRIPT_DIR}/create_kustomization.sh" ]]; then
+  echo "[ERROR] Missing or non-executable create_kustomization.sh script in ${SCRIPT_DIR}." >&2
+  exit 1
+fi
+
+
 # Verify kustomization.yaml exists
 KUSTOMIZATION_FILE="${KUSTOMIZE_DIR}/kustomization.yaml"
 if [[ ! -f "${KUSTOMIZATION_FILE}" ]]; then
@@ -137,33 +145,19 @@ mv "${KUSTOMIZE_DIR}/kustomization.yaml" "${ARCHIVED_DIR}/kustomization.yaml" 2>
 mv "${KUSTOMIZE_DIR}/values.yaml" "${ARCHIVED_DIR}/values.yaml" 2>/dev/null || true
 mv "${KUSTOMIZE_DIR}/kustomization.yaml.bak" "${ARCHIVED_DIR}/kustomization.yaml.bak" 2>/dev/null || true
 
-# Generate new kustomization.yaml in BASE_DIR
-echo "[INFO] Generating ${BASE_DIR}/kustomization.yaml..."
-temp_file=$(mktemp)
-{
-  echo "apiVersion: kustomize.config.k8s.io/v1beta1"
-  echo "kind: Kustomization"
-  echo "resources:"
+#####################################################################
+# REPLACED the manual "Generate new kustomization.yaml in BASE_DIR" #
+# with calls to create_kustomization.sh                             #
+#####################################################################
 
-  # Reference YAML files in BASE_DIR
-  shopt -s nullglob
-  for f in "${BASE_DIR}"/*.yaml; do
-    [[ "$(basename "$f")" == "kustomization.yaml" ]] && continue
-    echo "  - $(basename "$f")"
-  done
-  shopt -u nullglob
+echo "[INFO] Generating kustomization.yaml in '${BASE_DIR}' using create_kustomization.sh..."
+"${SCRIPT_DIR}/create_kustomization.sh" -r -i overlay -i archived "${BASE_DIR}"
 
-  # Reference subdirectories with manifests
-  for d in "${BASE_DIR}"/*/; do
-    subdir="$(basename "$d")"
-    [[ "$subdir" == "overlay" || "$subdir" == "archived" ]] && continue
-    if [[ -n $(compgen -G "$d"/*.yaml) ]]; then
-      echo "  - ${subdir}"
-    fi
-  done
-} > "$temp_file" && mv "$temp_file" "${BASE_DIR}/kustomization.yaml"
 
-# Create top-level kustomization.yaml
+echo "[INFO] Generating kustomization.yaml in '${OVERLAY_DIR}' using create_kustomization.sh..."
+"${SCRIPT_DIR}/create_kustomization.sh" -r "${OVERLAY_DIR}"
+
+# Create top-level kustomization.yaml (kept as-is)
 echo "[INFO] Generating top-level kustomization.yaml in '${KUSTOMIZE_DIR}'..."
 cat <<EOF > "${KUSTOMIZE_DIR}/kustomization.yaml"
 apiVersion: kustomize.config.k8s.io/v1beta1
