@@ -130,33 +130,26 @@ process_helm_charts() {
 
 # Generate new kustomization.yaml files recursively.
 # Also ensure that the root directory gets a kustomization.yaml.
+# Generate new kustomization.yaml files recursively for the root.
 generate_base_kustomizations() {
     local script_dir
     script_dir="$(dirname "${BASH_SOURCE[0]}")"
 
-    # Use the provided flags or default to -r and -o.
+    # Use provided flags or default to -r and -o.
     local rec_flag="${RECURSIVE:-"-r"}"
     local override_flag="${OVERRIDE:-"-o"}"
 
-    # Recursively generate kustomizations for the root directory (ignoring overlay and archived)
-    "$script_dir/create_kustomization.sh" $rec_flag $override_flag -i overlay -i archived "$KUSTOMIZE_DIR"
+    # Run recursively from the root, processing all subdirectories (except those explicitly ignored)
+    "$script_dir/create_kustomization.sh" $rec_flag $override_flag -i archived "$KUSTOMIZE_DIR"
 
-    # Ensure root kustomization exists; if not, generate it without recursion
-    if [[ ! -f "$KUSTOMIZE_DIR/kustomization.yaml" ]]; then
-        echo "[INFO] Generating root kustomization.yaml..."
-        "$script_dir/create_kustomization.sh" $override_flag -i overlay -i archived "$KUSTOMIZE_DIR"
-    fi
-
-    # Generate kustomization for the overlay directory
-    if [[ -d "$OVERLAY_DIR" ]]; then
+    # If an overlay directory exists but wasn't processed (or has no kustomization), generate it.
+    if [[ -d "$OVERLAY_DIR" && ! -f "$OVERLAY_DIR/kustomization.yaml" ]]; then
         echo "[INFO] Generating overlay kustomization.yaml..."
-        "$script_dir/create_kustomization.sh" $override_flag -i overlay -i archived "$OVERLAY_DIR"
-    else
-        echo "[WARN] Overlay directory '$OVERLAY_DIR' not found. Skipping overlay kustomization generation."
+        "$script_dir/create_kustomization.sh" $override_flag -i archived "$OVERLAY_DIR"
     fi
 }
 
-# New function: add_base_resource_to_overlay
+# Add the base as a resource to the overlay kustomization.
 add_base_resource_to_overlay() {
     local overlay_kustomization="$OVERLAY_DIR/kustomization.yaml"
     if [[ -f "$overlay_kustomization" ]]; then
@@ -165,7 +158,6 @@ add_base_resource_to_overlay() {
             if grep -q "^resources:" "$overlay_kustomization"; then
                 sed -i '/^resources:/a\  - ../base' "$overlay_kustomization"
             else
-                # Create a resources section and add the base folder as a resource
                 echo -e "resources:\n  - ../base" >> "$overlay_kustomization"
             fi
         fi
