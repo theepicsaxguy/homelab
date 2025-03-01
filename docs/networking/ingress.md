@@ -1,18 +1,31 @@
-# Ingress Configuration
+# Gateway API Configuration
 
 ## Overview
 
-The cluster uses ingress-nginx as the primary ingress controller, with standardized configurations for SSL,
-authentication, and routing.
+The cluster uses Gateway API with Cilium as the gateway controller, providing a modern approach to service networking
+and ingress management.
 
-## Ingress Architecture
+## Gateway Architecture
 
 ### Components
 
-- ingress-nginx controller
+- Cilium Gateway Controller
+- Gateway API CRDs
 - Cert-manager for SSL
 - External-DNS for DNS management
 - Authelia for authentication
+
+### Gateway Classes
+
+The cluster uses a single GatewayClass `cilium` with three gateway types:
+
+- External Gateway (Internet-facing services)
+- Internal Gateway (Cluster-local services)
+- TLS Passthrough Gateway (Direct TLS termination)
+
+## Standard Configurations
+
+### External Gateway
 
 ### Standard Configuration
 
@@ -58,36 +71,8 @@ annotations:
 ## Rate Limiting
 
 ```yaml
-rate_limits:
-  default:
-    rate: 100r/s
-    burst: 200
-  authenticated:
-    rate: 200r/s
-    burst: 400
-```
-
-## Monitoring Integration
-
-### Metrics
-
-- Request rate
-- Error rate
-- Latency
-- SSL handshake timing
-
-### Alerts
-
-- High error rate
-- Certificate expiration
-- Authentication failures
-- Latency spikes
-
-## Example Configuration
-
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
 metadata:
   name: app-ingress
   annotations:
