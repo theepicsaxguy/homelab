@@ -3,12 +3,23 @@ cluster:
   name: talos
   id: 1
 
-kubeProxyReplacement:
-  true
+kubeProxyReplacement: strict
 
-  # Talos specific
+# Talos specific
 k8sServiceHost: localhost
 k8sServicePort: 7445
+
+# DNS settings
+dns:
+  enabled: true
+  enableServiceDNSRecords: true
+
+# Enhanced networking settings
+tunnel: vxlan
+routingMode: tunnel
+ipv4NativeRoutingCIDR: "10.0.0.0/8"
+enableIPv4Masquerade: true
+
 securityContext:
   capabilities:
     ciliumAgent:
