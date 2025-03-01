@@ -54,7 +54,7 @@ spec:
         envFrom:
         - configMapRef:
             name: sm-operator-config-map
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.1
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.4
         name: kube-rbac-proxy
         ports:
         - containerPort: 8443
