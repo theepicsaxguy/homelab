@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "sonarr.pc-tips.se"
+    - 'sonarr.kube.pc-tips.se'
   rules:
     - matches:
         - path:

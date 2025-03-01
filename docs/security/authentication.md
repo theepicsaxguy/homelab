@@ -9,7 +9,7 @@ services.
 
 ### Authelia
 
-- URL: authelia.pc-tips.se
+- URL: authelia.kube.pc-tips.se
 - Features:
   - Single Sign-On
   - Multi-factor authentication
@@ -23,8 +23,8 @@ services.
 ```yaml
 # Standard ingress annotations for authentication
 annotations:
-  nginx.ingress.kubernetes.io/auth-url: 'https://authelia.pc-tips.se/api/verify'
-  nginx.ingress.kubernetes.io/auth-signin: 'https://authelia.pc-tips.se'
+  nginx.ingress.kubernetes.io/auth-url: 'https://authelia.kube.pc-tips.se/api/verify'
+  nginx.ingress.kubernetes.io/auth-signin: 'https://authelia.kube.pc-tips.se'
   nginx.ingress.kubernetes.io/auth-response-headers: 'Remote-User,Remote-Groups,Remote-Name,Remote-Email'
 ```
 
@@ -34,11 +34,11 @@ annotations:
 access_control:
   default_policy: deny
   rules:
-    - domain: '*.pc-tips.se'
+    - domain: '*.kube.pc-tips.se'
       policy: two_factor
       subject:
         - ['group:admin']
-    - domain: 'grafana.pc-tips.se'
+    - domain: 'grafana.kube.pc-tips.se'
       policy: two_factor
       subject:
         - ['group:monitoring']

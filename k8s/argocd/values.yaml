@@ -4,11 +4,11 @@ configs:
     create: true
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
-    url: https://argocd.pc-tips.se
+    url: https://argocd.kube.pc-tips.se
     # https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets
     # oidc.config: |
     #   name: 'Authelia'
-    #   issuer: 'https://authelia.pc-tips.se'
+    #   issuer: 'https://authelia.kube.pc-tips.se'
     #   clientID: 'argocd'
     #   clientSecret: $oidc:authelia.clientSecret
     #   cliClientID: 'argocd-cli'
