@@ -4,12 +4,12 @@ kind: Kustomization
 namespace: sm-operator-system
 
 resources:
-- namespace.yaml
-- configMap.yaml
-- deployment.yaml
-- leader-election-rbac.yaml
-- manager-rbac.yaml
-- metrics-reader-rbac.yaml
-- metrics-service.yaml
-- proxy-rbac.yaml
-- serviceaccount.yaml
+  - namespace.yaml
+  - configMap.yaml
+  - deployment.yaml
+  - leader-election-rbac.yaml
+  - manager-rbac.yaml
+  - metrics-reader-rbac.yaml
+  - metrics-service.yaml
+  - proxy-rbac.yaml
+  - serviceaccount.yaml

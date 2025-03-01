@@ -4,10 +4,11 @@ kind: Kustomization
 namespace: sm-operator-system
 
 resources:
-- ../../base
+  - ../../base
+  - operator-secret.yaml
 
 patches:
-- path: configmap-patch.yaml
-  target:
-    kind: ConfigMap
-    name: sm-operator-config-map
+  - path: configmap-patch.yaml
+    target:
+      kind: ConfigMap
+      name: sm-operator-config-map

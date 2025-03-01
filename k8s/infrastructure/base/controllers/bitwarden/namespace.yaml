@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sm-operator-system
-  labels:
-    name: sm-operator-system
-    app.kubernetes.io/managed-by: argocd
