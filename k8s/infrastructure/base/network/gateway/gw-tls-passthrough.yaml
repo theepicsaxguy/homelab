@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: tls-passthrough
+  namespace: gateway
+spec:
+  gatewayClassName: cilium
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: 10.25.150.221
+  listeners:
+    - protocol: TLS
+      port: 443
+      name: proxmox
+      hostname: 'proxmox.kube.pc-tips.se'
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TLS
+      port: 443
+      name: truenas
+      hostname: 'truenas.kube.pc-tips.se'
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All

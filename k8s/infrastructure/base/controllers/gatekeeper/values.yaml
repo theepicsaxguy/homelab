@@ -1,3 +1,8 @@
+# Webhook Configuration
+webhookTimeout: 30
+validatingWebhookTimeoutSeconds: 30
+mutatingWebhookTimeoutSeconds: 30
+
 replicas: 2
 
 auditInterval: 300

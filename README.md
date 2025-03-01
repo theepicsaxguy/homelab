@@ -158,20 +158,20 @@ k8s/
 
 #### Services Exposed via Subdomains
 
-- AdGuard: `adguard.pc-tips.se`
-- Authelia: `authelia.pc-tips.se`
-- Grafana: `grafana.pc-tips.se`
-- Hubble: `hubble.pc-tips.se`
-- Jellyfin: `jellyfin.pc-tips.se`
-- Lidarr: `lidarr.pc-tips.se`
-- Prowlarr: `prowlarr.pc-tips.se`
-- Prometheus: `prometheus.pc-tips.se`
-- Radarr: `radarr.pc-tips.se`
-- Sonarr: `sonarr.pc-tips.se`
-- Home Assistant: `haos.pc-tips.se`
-- Proxmox: `proxmox.pc-tips.se`
-- TrueNAS: `truenas.pc-tips.se`
-- ArgoCD: `argocd.pc-tips.se`
+- AdGuard: `adguard.kube.pc-tips.se`
+- Authelia: `authelia.kube.pc-tips.se`
+- Grafana: `grafana.kube.pc-tips.se`
+- Hubble: `hubble.kube.pc-tips.se`
+- Jellyfin: `jellyfin.kube.pc-tips.se`
+- Lidarr: `lidarr.kube.pc-tips.se`
+- Prowlarr: `prowlarr.kube.pc-tips.se`
+- Prometheus: `prometheus.kube.pc-tips.se`
+- Radarr: `radarr.kube.pc-tips.se`
+- Sonarr: `sonarr.kube.pc-tips.se`
+- Home Assistant: `haos.kube.pc-tips.se`
+- Proxmox: `proxmox.kube.pc-tips.se`
+- TrueNAS: `truenas.kube.pc-tips.se`
+- ArgoCD: `argocd.kube.pc-tips.se`
 
 #### Services Exposed via IPs
 

@@ -73,7 +73,7 @@ external_services:
 
 ### Domain-based Access
 
-All services are exposed through `*.pc-tips.se` subdomains with authentication handled by Authelia.
+All services are exposed through `*.kube.pc-tips.se` subdomains with authentication handled by Authelia.
 
 Key service endpoints:
 
@@ -81,13 +81,21 @@ Key service endpoints:
   - `argocd.pc-tips.se` (Gateway: external)
   - `proxmox.pc-tips.se` (Gateway: tls-passthrough)
   - `truenas.pc-tips.se` (Gateway: tls-passthrough)
+  - `argocd.kube.pc-tips.se`
+  - `proxmox.kube.pc-tips.se`
+  - `truenas.kube.pc-tips.se`
 - Monitoring:
   - `grafana.pc-tips.se` (Gateway: external)
   - `prometheus.pc-tips.se` (Gateway: external)
   - `hubble.pc-tips.se` (Gateway: internal)
+  - `grafana.kube.pc-tips.se`
+  - `prometheus.kube.pc-tips.se`
+  - `hubble.kube.pc-tips.se`
 - Applications:
   - `haos.pc-tips.se` (Gateway: external)
   - Various media services (Gateway: external)
+  - `haos.kube.pc-tips.se`
+  - Various media services (Jellyfin, Radarr, etc.)
 
 ### IP-based Services
 

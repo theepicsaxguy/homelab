@@ -10,12 +10,12 @@ The Proxmox CSI Driver provides storage integration between Kubernetes and Proxm
 storage_classes:
   proxmox-standard:
     type: 'general purpose'
-    provisioner: 'proxmox.csi.pc-tips.se'
+    provisioner: 'proxmox.csi.kube.pc-tips.se'
     volumeBindingMode: WaitForFirstConsumer
 
   proxmox-fast:
     type: 'high performance'
-    provisioner: 'proxmox.csi.pc-tips.se'
+    provisioner: 'proxmox.csi.kube.pc-tips.se'
     volumeBindingMode: WaitForFirstConsumer
     parameters:
       type: 'ssd'

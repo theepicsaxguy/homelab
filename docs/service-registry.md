@@ -8,35 +8,35 @@ This document provides a central registry of all exposed services in the homelab
 
 ### Core Infrastructure
 
-- ArgoCD: `argocd.pc-tips.se`
-- Proxmox: `proxmox.pc-tips.se`
-- TrueNAS: `truenas.pc-tips.se`
+- ArgoCD: `argocd.kube.pc-tips.se`
+- Proxmox: `proxmox.kube.pc-tips.se`
+- TrueNAS: `truenas.kube.pc-tips.se`
 
 ### Security & Authentication
 
-- Authelia: `authelia.pc-tips.se`
-- Hubble: `hubble.pc-tips.se`
+- Authelia: `authelia.kube.pc-tips.se`
+- Hubble: `hubble.kube.pc-tips.se`
 
 ### Monitoring & Observability
 
-- Grafana: `grafana.pc-tips.se`
-- Prometheus: `prometheus.pc-tips.se`
+- Grafana: `grafana.kube.pc-tips.se`
+- Prometheus: `prometheus.kube.pc-tips.se`
 
 ### Media Services
 
-- Jellyfin: `jellyfin.pc-tips.se`
-- Lidarr: `lidarr.pc-tips.se`
-- Prowlarr: `prowlarr.pc-tips.se`
-- Radarr: `radarr.pc-tips.se`
-- Sonarr: `sonarr.pc-tips.se`
+- Jellyfin: `jellyfin.kube.pc-tips.se`
+- Lidarr: `lidarr.kube.pc-tips.se`
+- Prowlarr: `prowlarr.kube.pc-tips.se`
+- Radarr: `radarr.kube.pc-tips.se`
+- Sonarr: `sonarr.kube.pc-tips.se`
 
 ### Home Automation
 
-- Home Assistant: `haos.pc-tips.se`
+- Home Assistant: `haos.kube.pc-tips.se`
 
 ### Network Services
 
-- AdGuard: `adguard.pc-tips.se`
+- AdGuard: `adguard.kube.pc-tips.se`
 
 ## IP-Based Services
 
