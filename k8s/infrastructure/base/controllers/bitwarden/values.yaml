@@ -1,12 +1,12 @@
 settings:
   # Configure EU region endpoints
-  cloudRegion: "EU"
-  
+  cloudRegion: 'EU'
+
   # Default refresh interval
-  bwSecretsManagerRefreshInterval: "5m"
-  
+  bwSecretsManagerRefreshInterval: '5m'
+
   # Default k8s cluster domain
-  kubernetesClusterDomain: "cluster.local"
+  kubernetesClusterDomain: 'kube.pc-tips.se'
 
 # Security settings
 containers:

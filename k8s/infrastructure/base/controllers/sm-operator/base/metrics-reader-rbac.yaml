@@ -1,0 +1,20 @@
+---
+# Source: sm-operator/templates/metrics-reader-rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: sm-operator-metrics-reader
+  labels:
+    app.kubernetes.io/component: kube-rbac-proxy
+    helm.sh/chart: sm-operator-0.1.0-Beta
+    app.kubernetes.io/name: sm-operator
+    app.kubernetes.io/instance: sm-operator
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/created-by: sm-operator
+    app.kubernetes.io/part-of: sm-operator
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get

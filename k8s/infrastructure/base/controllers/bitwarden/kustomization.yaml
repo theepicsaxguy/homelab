@@ -4,19 +4,19 @@ kind: Kustomization
 namespace: sm-operator-system
 
 resources:
-- namespace.yaml
-- infrastructure-secrets.yaml
+  - namespace.yaml
+  - infrastructure-secrets.yaml
 
 helmCharts:
-- name: sm-operator
-  namespace: sm-operator-system
-  releaseName: sm-operator
-  repo: https://charts.bitwarden.com
-  valuesInline:
-    containers:
-      enableSeccompProfileRuntimeDefault: true
-    settings:
-      bwSecretsManagerRefreshInterval: 300
-      cloudRegion: EU
-      kubernetesClusterDomain: cluster.local
-  version: 0.1.0-Beta
+  - name: sm-operator
+    namespace: sm-operator-system
+    releaseName: sm-operator
+    repo: https://charts.bitwarden.com
+    valuesInline:
+      containers:
+        enableSeccompProfileRuntimeDefault: true
+      settings:
+        bwSecretsManagerRefreshInterval: 300
+        cloudRegion: EU
+        kubernetesClusterDomain: kube.pc-tips.se
+    version: 0.1.0-Beta

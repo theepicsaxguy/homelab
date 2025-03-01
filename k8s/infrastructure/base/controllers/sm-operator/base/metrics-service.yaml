@@ -1,0 +1,28 @@
+---
+# Source: sm-operator/templates/metrics-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sm-operator-controller-manager-metrics-service
+  labels:
+    app.kubernetes.io/component: kube-rbac-proxy
+    control-plane: controller-manager
+    helm.sh/chart: sm-operator-0.1.0-Beta
+    app.kubernetes.io/name: sm-operator
+    app.kubernetes.io/instance: sm-operator
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/created-by: sm-operator
+    app.kubernetes.io/part-of: sm-operator
+  namespace: sm-operator-system
+spec:
+  type: ClusterIP
+  selector:
+    control-plane: controller-manager
+    app.kubernetes.io/name: sm-operator
+    app.kubernetes.io/instance: sm-operator
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: https
