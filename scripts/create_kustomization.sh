@@ -2,21 +2,26 @@
 
 # Usage function to display help
 usage() {
-    echo "Usage: $0 [-r] [-i ignore_dir]... <directory>"
+    echo "Usage: $0 [-r] [-o] [-i ignore_dir]... <directory>"
     echo "  -r               Process directories recursively (default: non-recursive)"
+    echo "  -o               Override existing kustomization.yaml files (force regeneration)"
     echo "  -i ignore_dir    Ignore directory with name 'ignore_dir'. Can be specified multiple times."
     exit 1
 }
 
 # Initialize default values
 RECURSIVE=false
+OVERRIDE=false
 IGNORE_PATTERNS=()
 
 # Parse options
-while getopts ":ri:" opt; do
+while getopts ":roi:" opt; do
     case ${opt} in
         r )
             RECURSIVE=true
+            ;;
+        o )
+            OVERRIDE=true
             ;;
         i )
             IGNORE_PATTERNS+=("$OPTARG")
@@ -69,7 +74,13 @@ process_directory() {
         return
     fi
 
-    # Skip if kustomization.yaml already exists
+    # Remove existing kustomization.yaml if OVERRIDE is set
+    if [ "$OVERRIDE" = true ] && [ -f "$dir/kustomization.yaml" ]; then
+        echo "⚠️ Overriding: $dir (removing existing kustomization.yaml)"
+        rm -f "$dir/kustomization.yaml"
+    fi
+
+    # Skip if kustomization.yaml already exists (and OVERRIDE not set)
     if [ -f "$dir/kustomization.yaml" ]; then
         echo "⚠️ Skipping: $dir (kustomization.yaml already exists)"
         return
@@ -85,24 +96,15 @@ process_directory() {
 }
 
 if [ "$RECURSIVE" = true ]; then
-    # Build find command with ignore patterns using -prune
-    # If any ignore patterns are set, build the corresponding predicate.
-    if [ ${#IGNORE_PATTERNS[@]} -gt 0 ]; then
-        # Start with an empty expression
-        PRUNE_EXPR=""
-        for pattern in "${IGNORE_PATTERNS[@]}"; do
-            PRUNE_EXPR="$PRUNE_EXPR -name \"$pattern\" -prune -o"
-        done
-        # Remove trailing -o if necessary
-        # Execute find command with the dynamic expression
-        eval find "\"$TARGET_DIR\"" -type d $PRUNE_EXPR -print | while read -r dir; do
-            process_directory "$dir"
-        done
-    else
-        find "$TARGET_DIR" -type d | while read -r dir; do
-            process_directory "$dir"
-        done
-    fi
+    # Build ignore arguments for find: for each ignore pattern, add '-not -name <pattern>'
+    IGNORE_ARGS=()
+    for pattern in "${IGNORE_PATTERNS[@]}"; do
+        IGNORE_ARGS+=("-not" "-name" "$pattern")
+    done
+    # Find only directories (with -type d) applying ignore patterns
+    find "$TARGET_DIR" -type d "${IGNORE_ARGS[@]}" | while read -r dir; do
+        process_directory "$dir"
+    done
 else
     # Non-recursive: only process the TARGET_DIR
     process_directory "$TARGET_DIR"

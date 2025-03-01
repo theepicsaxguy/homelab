@@ -7,6 +7,8 @@ set -euo pipefail
 # Converts Helm charts in kustomization.yaml into static manifests for Kustomize.
 # Instead of baking values into the manifests, this version copies the values file
 # as a patch in the overlay, so values can be updated dynamically.
+# It then recursively generates kustomization.yaml files in every folder (except ignored ones)
+# so that the resulting folder structure adheres to kustomize best practices and is fully deployable.
 
 KUSTOMIZE_DIR="${1:-.}"
 
@@ -29,15 +31,14 @@ if [[ ! -x "${SCRIPT_DIR}/create_kustomization.sh" ]]; then
   exit 1
 fi
 
-
-# Verify kustomization.yaml exists
+# Verify kustomization.yaml exists in root directory
 KUSTOMIZATION_FILE="${KUSTOMIZE_DIR}/kustomization.yaml"
 if [[ ! -f "${KUSTOMIZATION_FILE}" ]]; then
   echo "[ERROR] No 'kustomization.yaml' found in '${KUSTOMIZE_DIR}'." >&2
   exit 1
 fi
 
-# Check .helmCharts
+# Check .helmCharts in the root kustomization.yaml
 HELM_CHARTS_YAML="$(yq eval '.helmCharts' "${KUSTOMIZATION_FILE}")"
 if [[ "${HELM_CHARTS_YAML}" == "null" ]]; then
   echo "[INFO] No .helmCharts found in ${KUSTOMIZATION_FILE}. Nothing to expand."
@@ -57,13 +58,13 @@ resources: []
 EOF
 fi
 
-# Backup original kustomization.yaml
+# Backup original root kustomization.yaml
 cp "${KUSTOMIZATION_FILE}" "${KUSTOMIZATION_FILE}.bak"
 
-# Initialize an array to collect patch files
+# Initialize an array to collect patch files for overlays
 patch_files=()
 
-# Process Helm charts
+# Process Helm charts defined in the root kustomization.yaml
 yq eval -o=json '.helmCharts' "${KUSTOMIZATION_FILE}" | jq -c '.[]' | while read -r chart; do
   CHART_NAME=$(echo "${chart}" | jq -r '.name')
   CHART_REPO=$(echo "${chart}" | jq -r '.repo')
@@ -100,7 +101,7 @@ yq eval -o=json '.helmCharts' "${KUSTOMIZATION_FILE}" | jq -c '.[]' | while read
     exit 1
   fi
 
-  # Flatten nested Helm folders
+  # Flatten nested Helm folders if present
   NESTED_CHART_DIR="${BASE_DIR}/${CHART_NAME}"
   if [[ -d "${NESTED_CHART_DIR}" ]]; then
     echo "[INFO] Removing extra nested '${CHART_NAME}' folder..."
@@ -129,7 +130,7 @@ yq eval -o=json '.helmCharts' "${KUSTOMIZATION_FILE}" | jq -c '.[]' | while read
 
 done
 
-# After processing charts, update the overlay/kustomization.yaml with patches if any were created.
+# After processing charts, update the overlay kustomization.yaml with patches if any were created.
 if [ ${#patch_files[@]} -gt 0 ]; then
   echo "[INFO] Updating overlay/kustomization.yaml with patchesStrategicMerge..."
   {
@@ -140,24 +141,25 @@ if [ ${#patch_files[@]} -gt 0 ]; then
   } >> "${OVERLAY_DIR}/kustomization.yaml"
 fi
 
-# Archive old files
+# Archive old files from the root
 mv "${KUSTOMIZE_DIR}/kustomization.yaml" "${ARCHIVED_DIR}/kustomization.yaml" 2>/dev/null || true
 mv "${KUSTOMIZE_DIR}/values.yaml" "${ARCHIVED_DIR}/values.yaml" 2>/dev/null || true
 mv "${KUSTOMIZE_DIR}/kustomization.yaml.bak" "${ARCHIVED_DIR}/kustomization.yaml.bak" 2>/dev/null || true
 
-#####################################################################
-# REPLACED the manual "Generate new kustomization.yaml in BASE_DIR" #
-# with calls to create_kustomization.sh                             #
-#####################################################################
+########################################################################
+# Generate kustomization.yaml files recursively in the base directory.
+# The create_kustomization.sh script is assumed to scan subdirectories,
+# generate a kustomization.yaml in every folder with YAML resources,
+# and link them properly, ignoring the overlay and archived folders.
+########################################################################
 
-echo "[INFO] Generating kustomization.yaml in '${BASE_DIR}' using create_kustomization.sh..."
-"${SCRIPT_DIR}/create_kustomization.sh" -r -i overlay -i archived "${BASE_DIR}"
-
+echo "[INFO] Generating kustomization.yaml files in '${BASE_DIR}' using create_kustomization.sh..."
+"${SCRIPT_DIR}/create_kustomization.sh" -r -o -i overlay -i archived "${BASE_DIR}"
 
 echo "[INFO] Generating kustomization.yaml in '${OVERLAY_DIR}' using create_kustomization.sh..."
-"${SCRIPT_DIR}/create_kustomization.sh" -r "${OVERLAY_DIR}"
+"${SCRIPT_DIR}/create_kustomization.sh" -r -o "${OVERLAY_DIR}"
 
-# Create top-level kustomization.yaml (kept as-is)
+# Create top-level kustomization.yaml referencing base and overlay
 echo "[INFO] Generating top-level kustomization.yaml in '${KUSTOMIZE_DIR}'..."
 cat <<EOF > "${KUSTOMIZE_DIR}/kustomization.yaml"
 apiVersion: kustomize.config.k8s.io/v1beta1
