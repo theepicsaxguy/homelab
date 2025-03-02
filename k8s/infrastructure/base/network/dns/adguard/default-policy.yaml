@@ -24,5 +24,11 @@ spec:
               protocol: UDP
             - port: '53'
               protocol: TCP
+            - port: '6443' # Allow API server access
+              protocol: TCP
+    - toServices:
+        - k8sService:
+            serviceName: kubernetes
+            namespace: default
     - toFQDNs:
         - matchPattern: '*.kube.pc-tips.se'

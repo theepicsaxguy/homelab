@@ -13,18 +13,20 @@ dns:
   bind_hosts:
     - 0.0.0.0
   port: 53
-  anonymize_client_ip: true
+  anonymize_client_ip: false
   ratelimit: 500
   ratelimit_subnet_len_ipv4: 24
   ratelimit_subnet_len_ipv6: 56
   ratelimit_whitelist: []
   refuse_any: true
   upstream_dns:
-    - tcp://10.25.150.252 # Unbound DNS
+    - 10.96.0.11
   upstream_dns_file: ''
   bootstrap_dns:
-    - 10.25.150.252 # Unbound DNS
-  fallback_dns: [] # Remove public DNS to ensure internal resolution only
+    - 10.96.0.11
+  fallback_dns:
+    - 1.1.1.1
+    - 9.9.9.9
   upstream_mode: parallel
   fastest_timeout: 1s
   allowed_clients: []
@@ -34,19 +36,18 @@ dns:
     - id.server
     - hostname.bind
   trusted_proxies:
-    - 10.25.0.0/16 # Trust Cilium network
     - 127.0.0.0/8
     - ::1/128
   cache_size: 4194304
-  cache_ttl_min: 60 # Set minimum TTL
-  cache_ttl_max: 86400 # Set maximum TTL
-  cache_optimistic: true
+  cache_ttl_min: 0
+  cache_ttl_max: 0
+  cache_optimistic: false
   bogus_nxdomain: []
   aaaa_disabled: false
-  enable_dnssec: true
+  enable_dnssec: false
   edns_client_subnet:
     custom_ip: ''
-    enabled: true
+    enabled: false
     use_custom: false
   max_goroutines: 300
   handle_ddr: true
@@ -54,9 +55,7 @@ dns:
   ipset_file: ''
   bootstrap_prefer_ipv6: false
   upstream_timeout: 10s
-  private_networks:
-    - 10.25.0.0/16 # Cilium network
-    - 10.0.0.0/8
+  private_networks: []
   use_private_ptr_resolvers: true
   local_ptr_upstreams: []
   use_dns64: false
@@ -65,12 +64,6 @@ dns:
   use_http3_upstreams: false
   serve_plain_dns: true
   hostsfile_enabled: true
-  # Define gateway IPs as anchors for reuse
-  gateway_ips: &gateway_ips
-    internal: &internal_gw 10.25.150.220
-    tls_passthrough: &tls_gw 10.25.150.221
-    external: &external_gw 10.25.150.222
-    hubble: &hubble_gw 10.25.150.224
 tls:
   enabled: false
   server_name: ''
@@ -150,27 +143,27 @@ filtering:
   rewrites:
     # Core Services
     - domain: api.kube.pc-tips.se
-      answer: *internal_gw # Internal API access
+      answer: '10.25.150.220'
     - domain: '*.kube.pc-tips.se'
-      answer: *internal_gw # All internal services
+      answer: '10.25.150.220'
     - domain: kube.pc-tips.se
-      answer: *internal_gw # Base domain
+      answer: '10.25.150.220'
 
     # External Access Services
     - domain: '*.external.kube.pc-tips.se'
-      answer: *external_gw # External services subdomain
+      answer: '10.25.150.222'
     - domain: external.kube.pc-tips.se
-      answer: *external_gw # External base domain
+      answer: '10.25.150.222'
 
     # Special Services
     - domain: hubble-ui.kube.pc-tips.se
-      answer: *hubble_gw # Hubble UI
+      answer: '10.25.150.220'
 
     # TLS Passthrough Services
     - domain: proxmox.kube.pc-tips.se
-      answer: *tls_gw
+      answer: '10.25.150.221'
     - domain: truenas.kube.pc-tips.se
-      answer: *tls_gw
+      answer: '10.25.150.221'
 
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576

@@ -38,3 +38,11 @@ spec:
               protocol: UDP
             - port: '53'
               protocol: TCP
+    - toServices:
+        - k8sService:
+            serviceName: kubernetes
+            namespace: default
+      toPorts:
+        - ports:
+            - port: '6443'
+              protocol: TCP
