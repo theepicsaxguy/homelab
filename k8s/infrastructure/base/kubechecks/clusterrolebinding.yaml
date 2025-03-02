@@ -1,0 +1,14 @@
+---
+# Source: kubechecks/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubechecks
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubechecks
+subjects:
+  - kind: ServiceAccount
+    name: kubechecks
+    namespace: kubechecks

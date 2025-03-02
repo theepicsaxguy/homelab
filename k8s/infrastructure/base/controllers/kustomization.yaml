@@ -2,10 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- project.yaml
-- application-set.yaml
+  - project.yaml
+  - application-set.yaml
 labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: controllers
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/managed-by: argocd
+      dev.pc-tips: controllers

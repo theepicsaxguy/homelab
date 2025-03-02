@@ -1,14 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: sm-operator-system
 
 resources:
-  - ../../base
+  - base
+  - auth-token.yaml
+  - bitwarden-secret.yaml
+  - clustersecretstore.yaml
+  - infrastructure-secrets.yaml
   - operator-secret.yaml
 
 patches:
-  - path: configmap-patch.yaml
+  - path: patches/configmap-patch.yaml
     target:
       kind: ConfigMap
       name: sm-operator-config-map

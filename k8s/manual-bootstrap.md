@@ -31,7 +31,7 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-
 ## Bitwarden Secrets
 
 ```shell
-kustomize build --enable-helm infrastructure/base/controllers/bitwarden | kubectl apply -f -
+kubectl apply -k infrastructure/base/controllers/sm-operator
 ```
 
 Create secrets token (required for sm-operator):

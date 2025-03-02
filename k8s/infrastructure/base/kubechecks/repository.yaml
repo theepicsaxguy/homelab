@@ -1,8 +1,0 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: kubechecks
-  namespace: kubechecks
-spec:
-  interval: 1h
-  url: https://zapier.github.io/kubechecks/
