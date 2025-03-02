@@ -62,7 +62,7 @@ spec:
             - name: dns-udp
               containerPort: 53
               protocol: UDP
-            - name: dchp
+            - name: dhcp
               containerPort: 67
               protocol: UDP
             - name: http

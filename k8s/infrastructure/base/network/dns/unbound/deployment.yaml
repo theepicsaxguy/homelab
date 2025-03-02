@@ -12,21 +12,22 @@ spec:
       labels:
         app: unbound
     spec:
-      #securityContext:
-      #  seccompProfile:
-      #    type: RuntimeDefault
       containers:
         - name: unbound
-          image: docker.io/mvance/unbound:1.22.0 # renovate: docker=docker.io/mvance/unbound
-          #securityContext:
-          #  allowPrivilegeEscalation: false
-          #  readOnlyRootFilesystem: false
+          image: docker.io/mvance/unbound:1.22.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop: ['ALL']
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - name: unbound-dns-tcp
-              containerPort: 5335
+              containerPort: 53
               protocol: TCP
             - name: unbound-dns-udp
-              containerPort: 5335
+              containerPort: 53
               protocol: UDP
           resources:
             requests:
