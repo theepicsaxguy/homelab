@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unbound-config
+  namespace: kube-system
+data:
+  unbound.conf: |
+    server:
+      verbosity: 1
+      interface: 0.0.0.0
+      port: 53
+      do-ip4: yes
+      do-udp: yes
+      do-tcp: yes
+      access-control: 0.0.0.0/0 allow
+      cache-max-ttl: 86400
+      cache-min-ttl: 3600
+      num-threads: 4
+      rrset-roundrobin: yes
+    forward-zone:
+      name: "."
+      forward-addr: 1.1.1.1
+      forward-addr: 8.8.8.8

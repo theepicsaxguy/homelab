@@ -2,8 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: unbound
-  namespace: dns
+  namespace: kube-system
+  labels:
+    app: unbound
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: unbound
@@ -14,39 +17,17 @@ spec:
     spec:
       containers:
         - name: unbound
-          image: docker.io/mvance/unbound:1.22.0
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop: ['ALL']
-            seccompProfile:
-              type: RuntimeDefault
+          image: mvance/unbound:latest
           ports:
-            - name: unbound-dns-tcp
-              containerPort: 53
-              protocol: TCP
-            - name: unbound-dns-udp
-              containerPort: 53
+            - containerPort: 53
               protocol: UDP
-          resources:
-            requests:
-              cpu: 10m
-              memory: 64Mi
-            limits:
-              cpu: 500m
-              memory: 128Mi
-          startupProbe:
-            exec:
-              command: ['drill', '@127.0.0.1', '-p', '53', 'nrk.no']
-            initialDelaySeconds: 10
-            failureThreshold: 3
-            timeoutSeconds: 5
+            - containerPort: 53
+              protocol: TCP
           volumeMounts:
-            - name: config
-              mountPath: /opt/unbound/etc/unbound/unbound.conf
+            - name: config-volume
+              mountPath: /etc/unbound/unbound.conf
               subPath: unbound.conf
       volumes:
-        - name: config
+        - name: config-volume
           configMap:
             name: unbound-config
