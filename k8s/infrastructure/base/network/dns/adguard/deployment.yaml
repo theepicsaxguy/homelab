@@ -18,38 +18,13 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
       initContainers:
-        - name: init-work-dir
-          image: busybox
-          command:
-            - sh
-            - -c
-            - |
-              mkdir -p /opt/adguardhome/work/data/filters || true
-              chmod -f 700 /opt/adguardhome/work || true
-              chmod -f 755 /opt/adguardhome/work/data || true
-              chmod -f 755 /opt/adguardhome/work/data/filters || true
-              exit 0
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
-            capabilities:
-              drop: ['ALL']
-          volumeMounts:
-            - name: work-folder
-              mountPath: /opt/adguardhome/work
         - name: copy-base-config
           image: busybox
           command: ['cp', '/tmp/AdGuardHome.yaml', '/opt/adguardhome/conf/AdGuardHome.yaml']
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           volumeMounts:
@@ -60,19 +35,10 @@ spec:
               mountPath: /opt/adguardhome/conf
         - name: append-users
           image: busybox
-          command:
-            - sh
-            - -c
-            - |
-              awk -v r="$(cat /tmp/users.yaml)" '
-              /^users: \[\]/ { print r; next }
-              { print }
-              ' /opt/adguardhome/conf/AdGuardHome.yaml > /tmp/newconfig &&
-              cat /tmp/newconfig > /opt/adguardhome/conf/AdGuardHome.yaml
+          command: ['sh', '-c', 'cat /tmp/users.yaml >> /opt/adguardhome/conf/AdGuardHome.yaml']
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           volumeMounts:
@@ -86,11 +52,9 @@ spec:
           image: docker.io/adguard/adguardhome:v0.107.56 # renovate: docker=docker.io/adguard/adguardhome
           securityContext:
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
-            capabilities:
-              drop: ['ALL']
-              add: ['NET_BIND_SERVICE']
+            readOnlyRootFilesystem: true
+          # capabilities:
+          #   drop: [ "ALL" ]
           ports:
             - name: dns-tcp
               containerPort: 53
@@ -98,7 +62,7 @@ spec:
             - name: dns-udp
               containerPort: 53
               protocol: UDP
-            - name: dhcp
+            - name: dchp
               containerPort: 67
               protocol: UDP
             - name: http
@@ -116,7 +80,6 @@ spec:
               mountPath: /opt/adguardhome/conf
             - name: work-folder
               mountPath: /opt/adguardhome/work
-      dnsPolicy: ClusterFirst
       volumes:
         - name: config
           configMap:
