@@ -4,3 +4,7 @@ resources:
 - cilium-ca-secret.yaml
 - cilium-configmap.yaml
 - cilium-secrets-namespace.yaml
+- cilium-agent
+- cilium-operator
+- cilium-envoy
+- hubble
