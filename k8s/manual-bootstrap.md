@@ -40,6 +40,12 @@ Create secrets token (required for sm-operator):
 kubectl create secret generic bw-auth-token -n sm-operator-system --from-literal=token="Auth-Token-Here"
 ```
 
+## Kubechecks
+
+```shell
+kubectl apply -k infrastructure/base/kubechecks
+```
+
 ## ArgoCD Bootstrap
 
 temporary set redis password.
@@ -52,7 +58,7 @@ secret/argocd-redis created
 Install ArgoCD:
 
 ```shell
-kustomize build --enable-helm infrastructure/base/controllers/argocd | kubectl apply -f -
+kustomize build --enable-helm argocd | kubectl apply -f -
 
 kubectl apply -k infrastructure/base/controllers/argo-rollouts
 ```

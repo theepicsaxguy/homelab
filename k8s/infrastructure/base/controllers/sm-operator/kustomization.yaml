@@ -6,7 +6,6 @@ resources:
   - base
   - auth-token.yaml
   - bitwarden-secret.yaml
-  - clustersecretstore.yaml
   - infrastructure-secrets.yaml
   - operator-secret.yaml
 

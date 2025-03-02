@@ -18,14 +18,43 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      containers:
-        - name: adguard-home
-          image: docker.io/adguard/adguardhome:v0.107.57
+      initContainers:
+        - name: copy-base-config
+          image: busybox
+          command: ['cp', '/tmp/AdGuardHome.yaml', '/opt/adguardhome/conf/AdGuardHome.yaml']
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
+          volumeMounts:
+            - name: config
+              mountPath: /tmp/AdGuardHome.yaml
+              subPath: AdGuardHome.yaml
+            - name: config-folder
+              mountPath: /opt/adguardhome/conf
+        - name: append-users
+          image: busybox
+          command: ['sh', '-c', 'cat /tmp/users.yaml >> /opt/adguardhome/conf/AdGuardHome.yaml']
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          volumeMounts:
+            - name: users
+              mountPath: /tmp/users.yaml
+              subPath: users.yaml
+            - name: config-folder
+              mountPath: /opt/adguardhome/conf
+      containers:
+        - name: adguard
+          image: docker.io/adguard/adguardhome:v0.107.56 # renovate: docker=docker.io/adguard/adguardhome
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          # capabilities:
+          #   drop: [ "ALL" ]
           ports:
             - name: dns-tcp
               containerPort: 53
@@ -33,7 +62,7 @@ spec:
             - name: dns-udp
               containerPort: 53
               protocol: UDP
-            - name: dhcp
+            - name: dchp
               containerPort: 67
               protocol: UDP
             - name: http
@@ -51,13 +80,13 @@ spec:
               mountPath: /opt/adguardhome/conf
             - name: work-folder
               mountPath: /opt/adguardhome/work
-          envFrom:
-            - secretRef:
-                name: adguard-users
       volumes:
         - name: config
           configMap:
             name: adguard-config
+        - name: users
+          secret:
+            secretName: users
         - name: config-folder
           emptyDir: {}
         - name: work-folder
