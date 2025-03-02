@@ -18,9 +18,7 @@ spec:
       containers:
         - name: unbound
           image: docker.io/mvance/unbound:1.22.0 # renovate: docker=docker.io/mvance/unbound
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
+          #securityContext:
           #  allowPrivilegeEscalation: false
           #  readOnlyRootFilesystem: false
           ports:
