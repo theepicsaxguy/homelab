@@ -7,7 +7,6 @@ metadata:
     io.cilium/lb-ipam-ips: 10.25.150.252
 spec:
   type: LoadBalancer
-  # https://kubernetes.io/docs/concepts/services-networking/cluster-ip-allocation/
   clusterIP: 10.96.0.11
   ports:
     - name: dns

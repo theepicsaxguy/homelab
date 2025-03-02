@@ -20,10 +20,10 @@ dns:
   ratelimit_whitelist: []
   refuse_any: true
   upstream_dns:
-    - '10.96.0.11:5353'  # Unbound's correct ClusterIP and port
+    - '10.96.0.11:53' # Unbound's ClusterIP and port
   upstream_dns_file: ''
   bootstrap_dns:
-    - '10.96.0.11:5353'  # Unbound's correct ClusterIP and port
+    - '10.96.0.11:53' # Unbound's ClusterIP and port
   fallback_dns:
     - 1.1.1.1
     - 9.9.9.9
