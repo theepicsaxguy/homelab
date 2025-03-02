@@ -20,9 +20,10 @@ dns:
   ratelimit_whitelist: []
   refuse_any: true
   upstream_dns:
-    - 'unbound.kube-system.svc.cluster.local:53'
+    - '10.99.162.170'
   bootstrap_dns:
-    - 'unbound.kube-system.svc.cluster.local:53'
+    - '10.99.162.170'
+
   fallback_dns:
     - 1.1.1.1
     - 9.9.9.9
