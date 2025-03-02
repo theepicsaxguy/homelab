@@ -52,7 +52,6 @@ temporary set redis password.
 
 ```shell
 openssl rand -base64 32 | kubectl create secret generic argocd-redis --namespace argocd --from-file=auth=/dev/stdin
-secret/argocd-redis created
 ```
 
 Install ArgoCD:
