@@ -13,6 +13,7 @@ Bitwarden Secrets Manager Operator.
 ### Bitwarden SM Operator
 
 The sm-operator provides:
+
 - GitOps integration for secret management
 - Automatic secret synchronization
 - Version control safety
@@ -21,6 +22,7 @@ The sm-operator provides:
 ### Secret Types
 
 1. **Infrastructure Secrets**
+
    - Cluster certificates
    - API tokens
    - Service account keys
@@ -47,6 +49,7 @@ The following secret management practices are explicitly forbidden:
 ### Secret Management Process
 
 1. **Initial Setup**
+
    - Create bw-auth-token secret in each namespace that needs secrets
    - Token must be created manually using kubectl create secret
    - Each namespace requires its own auth token
@@ -73,11 +76,11 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: sm-operator
 spec:
-  organizationId: "4a014e57-f197-4852-9831-b287013e47b6"  # Your Bitwarden org ID
+  organizationId: '4a014e57-f197-4852-9831-b287013e47b6' # Your Bitwarden org ID
   secretName: app-generated-secret
   map:
-    - bwSecretId: "your-secret-uuid"
-      secretKeyName: "friendly-name"
+    - bwSecretId: 'your-secret-uuid'
+      secretKeyName: 'friendly-name'
   authToken:
     secretName: bw-auth-token
     secretKey: token
@@ -99,6 +102,7 @@ spec:
 ### Secret Storage
 
 1. **Encryption**
+
    - At-rest encryption
    - In-transit encryption
    - Key rotation
@@ -115,6 +119,7 @@ spec:
 ### Secret Management
 
 1. **Naming Convention**
+
    ```yaml
    secret_naming:
      format: '{app}-{environment}-{type}'
@@ -130,6 +135,7 @@ spec:
 ### Security Controls
 
 1. **Network Security**
+
    - Internal network only
    - mTLS enforcement
    - Network policies
