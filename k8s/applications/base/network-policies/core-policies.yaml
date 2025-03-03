@@ -7,6 +7,9 @@ spec:
   endpointSelector: {}
   ingress: []
   egress:
+    - toEntities:
+        - kube-apiserver
+        - cluster
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kube-system

@@ -5,7 +5,6 @@ namespace: sm-operator-system
 resources:
   - base
   - bitwarden-secret.yaml
-  - infrastructure-secrets.yaml
   - operator-secret.yaml
 
 patches:
