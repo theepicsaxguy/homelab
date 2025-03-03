@@ -13,3 +13,4 @@ resources:
   - metrics-service.yaml
   - proxy-rbac.yaml
   - serviceaccount.yaml
+  - sm-operator-policy.yaml
