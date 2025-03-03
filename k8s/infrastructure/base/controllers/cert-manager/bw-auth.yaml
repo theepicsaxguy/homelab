@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bw-auth-token
+  namespace: cert-manager
+  annotations:
+    bitwarden.com/sync: 'true'
+    bitwarden.com/source-secret: infrastructure-secrets
+type: Opaque
+stringData:
+  token: '{{ .token }}'

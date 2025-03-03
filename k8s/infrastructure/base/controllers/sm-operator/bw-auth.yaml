@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bw-auth-token
+  namespace: sm-operator-system
+  labels:
+    app.kubernetes.io/part-of: sm-operator
+    app.kubernetes.io/component: auth
+stringData:
+  token: ${NEW_TOKEN} # This will be replaced during bootstrap

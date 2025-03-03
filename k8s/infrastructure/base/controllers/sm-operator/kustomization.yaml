@@ -7,6 +7,7 @@ resources:
   - bitwarden-secret.yaml
   - infrastructure-secrets.yaml
   - operator-secret.yaml
+  - bw-auth.yaml
 
 patches:
   - path: patches/configmap-patch.yaml

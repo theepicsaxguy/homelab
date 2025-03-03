@@ -21,64 +21,105 @@ In Progress
 - Applications depending on Bitwarden secrets potentially affected
 - BitwardenSecret resources not reconciling
 
-## Root Cause
+## Root Cause Investigation
 
-1. Circular dependency in auth token configuration:
+Current findings:
 
-   - BitwardenSecret CRD attempting to use itself for bootstrapping
-   - Auth token secret being managed by the operator that needs it
-   - Configuration trying to pull auth token using the auth token itself
+1. Initial network connectivity issues resolved:
 
-2. Network connectivity issues:
-   - Unable to reach Bitwarden API endpoints (api.bitwarden.eu)
-   - TLS handshake failures with identity service
-   - DNS resolution problems for Bitwarden domains
+   - Leader election now working after fixing Cilium policies
+   - sm-operator successfully acquires lease
+   - Internal cluster communication restored
+
+2. Bitwarden API connectivity still failing:
+
+   - Successfully connects to identity.bitwarden.eu
+   - TLS handshake succeeding
+   - Authentication request fails with connection error
+
+3. Token distribution verified:
+   - bw-auth-token present in necessary namespaces
+   - RBAC permissions configured correctly
+   - Operator can access tokens across namespaces
 
 ## Detection
 
-Error logs from sm-operator showed:
+Latest error logs from sm-operator show:
 
 ```
-Error pulling Secret Manager secrets from API => API: https://api.bitwarden.eu -- Identity: https://identity.bitwarden.eu
-API error: error sending request for url (https://identity.bitwarden.eu/connect/token)
+ERROR Failed to authenticate {"error": "API error: error sending request for url (https://identity.bitwarden.eu/connect/token)"}
+ERROR Error pulling Secret Manager secrets from API => API: https://api.bitwarden.eu -- Identity: https://identity.bitwarden.eu
 ```
 
-## Resolution
+## Investigation Steps Taken
 
-In Progress:
+1. Network Policy Resolution:
 
-1. Current approach:
+   - Removed default deny policy that was blocking API access
+   - Added explicit allow rules for Bitwarden endpoints
+   - Confirmed DNS resolution and TLS handshake working
+   - Leader election and internal communication restored
 
-   - Removed circular dependency in auth token configuration
-   - Configured direct CIDR access to Bitwarden API endpoints
-   - Updated network policies to allow external connectivity
+2. Token Distribution:
 
-2. Remaining issues:
-   - Need to verify proper auth token bootstrapping process
-   - Validate TLS configuration for API endpoints
-   - Ensure proper secret management hierarchy
+   - Verified token presence in sm-operator-system
+   - Extended token access to needed namespaces (argocd, dns)
+   - Confirmed operator can access tokens
 
-## Prevention
+3. Current State:
+   - Operator successfully starts and acquires leadership
+   - Can connect to Bitwarden endpoints (DNS resolves, TLS works)
+   - Authentication request fails despite token access
 
-1. Configuration Management:
+## Next Steps
 
-   - Create validation checks for circular dependencies
-   - Implement secret hierarchy guidelines
+1. API Connectivity:
 
-2. Network Access:
-   - Maintain documentation of required API endpoints
-   - Regular connectivity testing
-   - Monitoring of API access patterns
+   - Validate token format and content
+   - Check for any proxy requirements in API request
+   - Monitor full network path of API requests
+   - Test direct API access from operator pod
 
-## Related Issues
+2. Token Verification:
 
-- Leader election timeout
-- Cilium policy validation
-- Network policy enforcement
+   - Verify token permissions in Bitwarden
+   - Test token directly against API endpoints
+   - Check token format matches API requirements
+
+3. Debug Enhancement:
+   - Enable verbose logging if available
+   - Add network path monitoring
+   - Consider packet capture for API requests
+
+## Current Understanding
+
+1. Network Layer:
+
+   - Basic connectivity working (DNS, TLS)
+   - No obvious network policy blocks
+   - Possible deeper network path issue
+
+2. Authentication Layer:
+
+   - Token physically accessible
+   - Format or permission issue possible
+   - API request failing during auth step
+
+3. Infrastructure State:
+   - Cluster networking functional
+   - Cross-namespace access working
+   - External connectivity partial
+
+## Questions to Investigate
+
+1. Is the token content valid and properly formatted?
+2. Are there hidden API dependencies beyond the main endpoints?
+3. Could there be TLS/cert issues not visible in basic testing?
+4. Are there required headers or parameters missing in the API request?
 
 ## Notes
 
-- Bootstrap process needs careful consideration
-- Avoid circular dependencies in operator configurations
-- Consider implementing API connectivity monitoring
-- Document proper secret management hierarchy
+- Leader election and internal communication now working
+- API connectivity issue isolated from network policy problems
+- Token distribution working but possible content/format issues
+- Need to focus on API request specifics
