@@ -12,16 +12,12 @@ Bitwarden Secrets Manager Operator.
 
 ### Bitwarden SM Operator
 
-```yaml
-components:
-  sm_operator:
-    version: latest
-    features:
-      - GitOps integration
-      - Automatic secret rotation
-      - Version control safety
-      - Audit logging
-```
+The sm-operator provides:
+
+- GitOps integration for secret management
+- Automatic secret synchronization
+- Version control safety
+- Audit logging capabilities
 
 ### Secret Types
 
@@ -38,23 +34,70 @@ components:
    - OAuth credentials
    - Service tokens
 
+## Implementation Details
+
+### Prohibited Practices
+
+The following secret management practices are explicitly forbidden:
+
+- Direct volume mounting of secrets in pods
+- Using local secret volumes
+- Manual secret creation via kubectl
+- Using legacy SealedSecrets
+- Storing unencrypted secrets in Git
+
+### Secret Management Process
+
+1. **Initial Setup**
+
+   - Create bw-auth-token secret in each namespace that needs secrets
+   - Token must be created manually using kubectl create secret
+   - Each namespace requires its own auth token
+
+2. **Secret Configuration**
+   - Create BitwardenSecret resources in each namespace
+   - Use UUID mapping to create friendly secret names
+   - Follow least privilege principle for token access
+
+### BitwardenSecret Configuration
+
+Example BitwardenSecret configuration:
+
+```yaml
+apiVersion: k8s.bitwarden.com/v1
+kind: BitwardenSecret
+metadata:
+  name: app-secrets
+  namespace: app-namespace
+  labels:
+    app.kubernetes.io/name: bitwardensecret
+    app.kubernetes.io/instance: app-secrets
+    app.kubernetes.io/part-of: sm-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: sm-operator
+spec:
+  organizationId: '4a014e57-f197-4852-9831-b287013e47b6' # Your Bitwarden org ID
+  secretName: app-generated-secret
+  map:
+    - bwSecretId: 'your-secret-uuid'
+      secretKeyName: 'friendly-name'
+  authToken:
+    secretName: bw-auth-token
+    secretKey: token
+```
+
 ## Security Model
 
 ### Access Control
 
-```yaml
-access_control:
-  authentication:
-    - Service account based
-    - Token authentication
-    - Time-limited access
-    - Audit logging
-  authorization:
-    - RBAC integration
-    - Namespace isolation
-    - Minimal permissions
-    - Regular review
-```
+- Service account based authentication
+- Token-based access
+- Time-limited access tokens
+- Audit logging enabled
+- RBAC integration
+- Namespace isolation
+- Minimal permissions
+- Regular access review
 
 ### Secret Storage
 
@@ -71,23 +114,6 @@ access_control:
    - Version history
    - Recovery testing
 
-## GitOps Integration
-
-### Workflow
-
-1. **Secret Creation**
-
-   - Secret defined in Git (encrypted)
-   - ArgoCD syncs configuration
-   - Operator fetches from Bitwarden
-   - Secret created in cluster
-
-2. **Secret Updates**
-   - Update in Bitwarden
-   - Operator detects change
-   - Automatic rotation
-   - Version control
-
 ## Best Practices
 
 ### Secret Management
@@ -102,9 +128,9 @@ access_control:
 
 2. **Access Patterns**
    - Least privilege access
-   - Temporary permissions
-   - Regular rotation
+   - Regular token rotation
    - Access logging
+   - Namespace isolation
 
 ### Security Controls
 
@@ -120,108 +146,3 @@ access_control:
    - Usage tracking
    - Error monitoring
    - Rotation status
-
-## Zero Trust Integration
-
-### Authentication Chain
-
-1. **Service Authentication**
-
-   - Service account tokens
-   - mTLS certificates
-   - Limited scope access
-   - Regular rotation
-
-2. **User Authentication**
-   - Multi-factor auth
-   - SSO integration
-   - Session management
-   - Access auditing
-
-### Security Controls
-
-1. **Infrastructure**
-
-   - Encrypted storage
-   - Network isolation
-   - Access logging
-   - Change tracking
-
-2. **Application**
-   - Secret injection
-   - Environment isolation
-   - Version control
-   - Rotation policies
-
-## Implementation Details
-
-### Prohibited Practices
-
-The following secret management practices are explicitly forbidden:
-
-- Direct volume mounting of secrets in pods
-- Using local secret volumes
-- Manual secret creation via kubectl
-- Using legacy SealedSecrets
-- Storing unencrypted secrets in Git
-
-### Setup Process
-
-```yaml
-installation:
-  namespace: sm-operator-system
-  components:
-    - SM operator deployment
-    - BitwardenSecret CRD
-    - RBAC configuration
-```
-
-### Central Secret Configuration
-
-1. **Main BitwardenSecret Resource**
-
-   - Located in `sm-operator-system` namespace
-   - Maps all secrets across the infrastructure
-
-2. **Secret Distribution**
-   - Applications reference secrets using the `bitwarden.com/source-secret: infrastructure-secrets` annotation
-   - SM Operator automatically syncs secrets to appropriate namespaces
-   - No need for manual secret copying between namespaces
-
-### Application Integration
-
-Example application secret configuration:
-
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: app-secret
-  namespace: app-namespace
-  annotations:
-    bitwarden.com/sync: 'true'
-    bitwarden.com/source-secret: infrastructure-secrets # References the central secret
-type: Opaque
-stringData:
-  # Uses the secretKeyName from the central BitwardenSecret mapping
-  config.yaml: '{{ .app_config }}'
-```
-
-### Implementation Benefits
-
-1. **Simplified Management**
-
-   - Single point of configuration in BitwardenSecret
-   - Clear mapping between Bitwarden and Kubernetes secrets
-   - Easier secret rotation and auditing
-
-2. **GitOps Friendly**
-
-   - Secret templates can be version controlled
-   - No sensitive data in Git
-   - Automated secret distribution
-
-3. **Scalability**
-   - Easy to add new applications
-   - Centralized management
-   - Automated synchronization

@@ -1,9 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: argocd
 
 resources:
-  - http-route.yaml
   - ns.yaml
+  - bw-auth.yaml
+  - http-route.yaml
   - redis-secret.yaml
   - applicationsets/applications.yaml
   - projects/preview-project.yaml

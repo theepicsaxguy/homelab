@@ -1,11 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- clusterrole.yaml
-- clusterrolebinding.yaml
-- deployment.yaml
-- role.yaml
-- rolebinding.yaml
-- service.yaml
-- serviceaccount.yaml
-- ns.yaml
+  - clusterrole.yaml
+  - clusterrolebinding.yaml
+  - deployment.yaml
+  - role.yaml
+  - rolebinding.yaml
+  - service.yaml
+  - serviceaccount.yaml
+  - ns.yaml
+  - kubechecks-secret.yaml

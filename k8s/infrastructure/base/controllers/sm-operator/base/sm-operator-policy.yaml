@@ -10,6 +10,53 @@ spec:
       app.kubernetes.io/name: sm-operator
       app.kubernetes.io/instance: sm-operator
   egress:
+    # Allow DNS resolution first
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+            k8s:io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: '53'
+              protocol: UDP
+            - port: '53'
+              protocol: TCP
+    # Allow access to kube-apiserver
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-apiserver
+            k8s:io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+    # Allow Bitwarden API access via both FQDN and CIDR
+    - toFQDNs:
+        - matchName: 'api.bitwarden.eu'
+        - matchName: 'identity.bitwarden.eu'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+    - toCIDRSet:
+        - cidr: '199.232.193.91/32' # Bitwarden API endpoint
+        - cidr: '199.232.197.91/32' # Bitwarden Identity endpoint
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-sm-operator-cross-namespace
+spec:
+  description: 'Allow sm-operator to manage secrets across namespaces and access Bitwarden APIs'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sm-operator
+  egress:
     - toEntities:
         - kube-apiserver
     - toEndpoints:
@@ -19,10 +66,33 @@ spec:
         - ports:
             - port: '53'
               protocol: UDP
-    - toCIDRSet:
-        - cidr: '199.232.193.91/32'
-        - cidr: '199.232.197.91/32'
+    - toFQDNs:
+        - matchName: 'api.bitwarden.eu'
+        - matchName: 'identity.bitwarden.eu'
       toPorts:
         - ports:
             - port: '443'
               protocol: TCP
+  ingress:
+    - fromEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
+
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-secrets-access
+  namespace: sm-operator-system
+spec:
+  description: 'Allow services to access their secrets managed by sm-operator'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sm-operator
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s-app: secrets-consumer
