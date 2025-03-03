@@ -9,7 +9,7 @@ resources:
   - http-route.yaml
   - cnpg-db.yaml
   - secret.yaml
-  - bw-auth.yaml
+  - authelia-secrets.yaml
 
 helmCharts:
   - name: authelia

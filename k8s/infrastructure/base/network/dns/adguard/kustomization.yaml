@@ -11,9 +11,6 @@ configMapGenerator:
       disableNameSuffixHash: true
 
 resources:
-  - ns.yaml
-  - bw-auth.yaml
-  - config
   - deployment.yaml
   - service.yaml
   - http-route.yaml
