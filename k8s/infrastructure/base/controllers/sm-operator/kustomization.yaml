@@ -4,7 +4,6 @@ namespace: sm-operator-system
 
 resources:
   - base
-  - auth-token.yaml
   - bitwarden-secret.yaml
   - infrastructure-secrets.yaml
   - operator-secret.yaml

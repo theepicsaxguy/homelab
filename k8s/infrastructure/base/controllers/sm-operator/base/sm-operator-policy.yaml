@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-sm-operator-api-access
+  namespace: sm-operator-system
+spec:
+  description: 'Allow sm-operator to access the Kubernetes API server and Bitwarden APIs'
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sm-operator
+      app.kubernetes.io/instance: sm-operator
+  egress:
+    - toEntities:
+        - kube-apiserver
+    - toEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: '53'
+              protocol: UDP
+    - toCIDRSet:
+        - cidr: '199.232.193.91/32'
+        - cidr: '199.232.197.91/32'
+      toPorts:
+        - ports:
+            - port: '443'
+              protocol: TCP
