@@ -112,3 +112,5 @@ kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl app
 kubectl kustomize --enable-helm argocd | kubectl apply -f -
 
 kubectl apply -k sets
+
+kubectl kustomize --enable-helm infrastructure/base/storage/longhorn | kubectl apply -f -
