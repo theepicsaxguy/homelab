@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.15.0](https://github.com/theepicsaxguy/homelab/compare/v1.14.0...v1.15.0) (2025-03-04)
+
+
+### Features
+
+* **k8s:** add sm-operator network policy and update RBAC rules ([#173](https://github.com/theepicsaxguy/homelab/issues/173)) ([a5ea082](https://github.com/theepicsaxguy/homelab/commit/a5ea08216213942fe26a6bd2d5817faa068756b6))
+* **k8s:** enhance Cilium configuration and add DNS policy ([#175](https://github.com/theepicsaxguy/homelab/issues/175)) ([71b5f5b](https://github.com/theepicsaxguy/homelab/commit/71b5f5b8b407c18d7dc0153d649b11256cc73d10))
+* **k8s:** enhance Cilium configuration and management ([#156](https://github.com/theepicsaxguy/homelab/issues/156)) ([67cc113](https://github.com/theepicsaxguy/homelab/commit/67cc113a0a7bed1b0fa7598000a421b330fbd899))
+* **k8s:** enhance infrastructure configuration and security policies ([#150](https://github.com/theepicsaxguy/homelab/issues/150)) ([56198ed](https://github.com/theepicsaxguy/homelab/commit/56198eda05ded7ad6418d7a0cf83682e061fa3f7))
+* **k8s:** implement sm-operator resources and remove kubechecks ([#160](https://github.com/theepicsaxguy/homelab/issues/160)) ([c46cafa](https://github.com/theepicsaxguy/homelab/commit/c46cafa6619888e75a551255baed5f44528cf457))
+* **k8s:** implement Unbound DNS configuration with new deployment ([#164](https://github.com/theepicsaxguy/homelab/issues/164)) ([37abf5b](https://github.com/theepicsaxguy/homelab/commit/37abf5bde107e31caf35c1e916c62b1e64118f71))
+* **k8s:** integrate external secrets management for multiple components ([#178](https://github.com/theepicsaxguy/homelab/issues/178)) ([566fe21](https://github.com/theepicsaxguy/homelab/commit/566fe21d9927732bd39f8c4e3035e725096014be))
+* **k8s:** update AdGuardHome configuration and add new HTTP routes ([#143](https://github.com/theepicsaxguy/homelab/issues/143)) ([7b9c233](https://github.com/theepicsaxguy/homelab/commit/7b9c2335441c68f6525bf1a2958a78cc718e4d9a))
+* **security, networking:** enhance Cilium security and update Gateway API documentation ([#152](https://github.com/theepicsaxguy/homelab/issues/152)) ([7297ed8](https://github.com/theepicsaxguy/homelab/commit/7297ed8d40d09f275e780517ee930230a8dc8ce2))
+
+
+### Bug Fixes
+
+* **k8s:** correct DNS configuration and improve deployment security ([#163](https://github.com/theepicsaxguy/homelab/issues/163)) ([4c6987e](https://github.com/theepicsaxguy/homelab/commit/4c6987ee583de8abeac22583e0a36aaa936e08f6))
+* **k8s:** update bootstrap DNS configuration for AdGuardHome ([#166](https://github.com/theepicsaxguy/homelab/issues/166)) ([74a5f87](https://github.com/theepicsaxguy/homelab/commit/74a5f8767d296b79c7219550266bed40eb4a22e0))
+
 ## [1.14.0](https://github.com/theepicsaxguy/homelab/compare/v1.13.0...v1.14.0) (2025-02-26)
 
 
