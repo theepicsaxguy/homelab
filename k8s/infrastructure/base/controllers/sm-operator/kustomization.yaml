@@ -3,9 +3,10 @@ kind: Kustomization
 namespace: sm-operator-system
 
 resources:
-  - base
-  - bitwarden-secret.yaml
-  - operator-secret.yaml
+  - ns.yaml
+  - bitwarden-secret-external.yaml
+  - auth-token-external.yaml
+  - infrastructure-secrets-external.yaml
 
 patches:
   - path: patches/configmap-patch.yaml
