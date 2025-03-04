@@ -4,12 +4,13 @@ namespace: authelia
 
 resources:
   - ns.yaml
-  - cert-rsa-jwk.yaml
-  - cert-ecdsa-jwk.yaml
   - http-route.yaml
-  - cnpg-db.yaml
-  - secret.yaml
-  - authelia-secrets.yaml
+  - authelia-secrets-external.yaml
+
+configMapGenerator:
+  - name: authelia-configuration
+    files:
+      - configuration.yaml
 
 helmCharts:
   - name: authelia
@@ -17,7 +18,4 @@ helmCharts:
     releaseName: authelia
     repo: https://charts.authelia.com
     valuesFile: values.yaml
-    version: 0.9.16
-
-patches:
-  - path: patches/deployment-host-aliases.yaml
+    version: 0.8.56
