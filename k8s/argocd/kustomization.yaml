@@ -4,7 +4,6 @@ namespace: argocd
 
 resources:
   - ns.yaml
-  - bw-auth.yaml
   - http-route.yaml
   - redis-secret.yaml
   - applicationsets/applications.yaml
