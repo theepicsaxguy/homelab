@@ -16,15 +16,7 @@ worker_ips       = ["10.25.150.20", "10.25.150.21"]
 2. Launch:
 
 ```bash
-eval $(ssh-agent)
-```
-
-```bash
-ssh-add ~/.ssh/id_rsa
-```
-
-```bash
-ssh-add -L
+eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa && ssh-add -L
 ```
 
 ```bash

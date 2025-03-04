@@ -4,13 +4,12 @@ kind: Kustomization
 resources:
   - announce.yaml
   - ip-pool.yaml
-  - allow-dns.yaml
 
 helmCharts:
   - name: cilium
     repo: https://helm.cilium.io
     version: 1.17.1 # renovate: github-releases=cilium/cilium
-    releaseName: "cilium"
+    releaseName: 'cilium'
     includeCRDs: true
     namespace: kube-system
     valuesFile: values.yaml
