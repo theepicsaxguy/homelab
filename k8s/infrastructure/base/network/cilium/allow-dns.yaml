@@ -1,0 +1,40 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-dns-global
+spec:
+  nodeSelector: {}  # Apply this policy cluster-wide
+
+  ingress:  # Allow pods to query CoreDNS
+  - fromEntities:
+    - cluster  # Allow all pods in the cluster to send DNS queries
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+
+  egress:  # Allow DNS requests to internal CoreDNS & external resolvers
+  - toEndpoints:  # Internal CoreDNS
+    - matchLabels:
+        k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+
+  - toFQDNs:  # External DNS resolvers (Google, Cloudflare, etc.)
+    - matchName: "8.8.8.8"
+    - matchName: "1.1.1.1"
+    - matchPattern: "*.google.com"
+    - matchPattern: "*.cloudflare.com"
+    - matchPattern: "*"
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP

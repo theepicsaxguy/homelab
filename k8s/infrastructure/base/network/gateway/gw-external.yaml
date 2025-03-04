@@ -16,18 +16,18 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-stonegarden
+            name: cert-pctips
       allowedRoutes:
         namespaces:
           from: All
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: stonegarden.dev
+      hostname: pc-tips.se
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-stonegarden
+            name: cert-pctips
       allowedRoutes:
         namespaces:
           from: All
