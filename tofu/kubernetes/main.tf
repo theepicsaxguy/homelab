@@ -19,7 +19,8 @@ module "talos" {
   cluster = {
     name            = "talos"
     endpoint        = "api.kube.pc-tips.se"
-    gateway         = "10.25.150.1"
+    gateway         = "10.25.150.1"     # Network gateway
+    vip             = "10.25.150.10"    # Control plane VIP
     talos_version   = "v1.9.4"
     proxmox_cluster = "kube"
   }

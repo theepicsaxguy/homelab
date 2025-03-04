@@ -18,6 +18,7 @@ variable "cluster" {
     name            = string
     endpoint        = string
     gateway         = string
+    vip             = string
     talos_version   = string
     proxmox_cluster = string
   })

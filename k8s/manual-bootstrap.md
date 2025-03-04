@@ -19,7 +19,7 @@ kubectl apply -k infrastructure/base/crossplane-crds
 Apply Cilium networking before other components:
 
 ```shell
-kubectl apply -k infrastructure/base/network/cilium
+kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
 ```
 
 Wait for Cilium to be ready:
