@@ -6,6 +6,7 @@ namespace: external-secrets
 resources:
 - bitwarden-store.yaml
 - auth-secret.yaml
+- bitwarden-cert.yaml
 
 helmCharts:
   - name: external-secrets
