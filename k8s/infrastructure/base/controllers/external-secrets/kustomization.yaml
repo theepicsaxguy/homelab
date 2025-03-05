@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: external-secrets
+
+resources:
+- namespace.yaml
+- bitwarden-store.yaml
+- auth-secret.yaml
+
+helmCharts:
+  - name: external-secrets
+    repo: https://charts.external-secrets.io
+    version: 0.14.3
+    releaseName: external-secrets
+    valuesInline:
+      bitwarden-sdk-server:
+        enabled: true
+
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: controller
+    app.kubernetes.io/instance: external-secrets
+    app.kubernetes.io/name: external-secrets
+
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-1"
