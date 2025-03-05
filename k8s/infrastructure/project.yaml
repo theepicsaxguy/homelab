@@ -15,7 +15,9 @@ spec:
     - https://prometheus-community.github.io/helm-charts
 
   destinations:
-    - namespace: '*-infra'
+    - namespace: '*-infrastructure'
+      server: https://kubernetes.default.svc
+    - namespace: 'infra-*'
       server: https://kubernetes.default.svc
     - namespace: kube-system
       server: https://kubernetes.default.svc
