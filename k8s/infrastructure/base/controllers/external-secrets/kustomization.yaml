@@ -17,11 +17,11 @@ helmCharts:
       installCRDs: true
       webhook:
         create: true
-        port: 10250  # Default webhook port
+        port: 443  # Changed to match values.yaml
         hostNetwork: false
         service:
           type: ClusterIP
-          port: 10250
+          port: 443  # Changed to match values.yaml
         certManager:
           enabled: true
           addInjectorAnnotations: true
