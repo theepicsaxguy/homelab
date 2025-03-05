@@ -21,4 +21,4 @@ helmCharts:
       - pg_stat_statements
     monitoring:
       enablePodMonitor: true
-  version: 0.23.1
+  version: 0.23.2
