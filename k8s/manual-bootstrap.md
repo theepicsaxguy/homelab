@@ -28,18 +28,6 @@ Wait for Cilium to be ready:
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
 ```
 
-## Bitwarden Secrets
-
-```shell
-kubectl apply -k infrastructure/base/controllers/sm-operator
-```
-
-Create secrets token (required for sm-operator):
-
-```shell
-kubectl create secret generic bw-auth-token -n sm-operator-system --from-literal=token="Auth-Token-Here"
-```
-
 ## Kubechecks
 
 ```shell

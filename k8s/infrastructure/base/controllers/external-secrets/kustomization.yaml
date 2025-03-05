@@ -4,7 +4,6 @@ kind: Kustomization
 namespace: external-secrets
 
 resources:
-- namespace.yaml
 - bitwarden-store.yaml
 - auth-secret.yaml
 

@@ -16,4 +16,3 @@ spec:
             apiTokenSecretRef:
               name: infrastructure-secrets
               key: cloudflare_api_token
-              namespace: sm-operator-system

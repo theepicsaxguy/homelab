@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sm-operator-system
-  labels:
-    app.kubernetes.io/name: sm-operator
-    app.kubernetes.io/part-of: sm-operator
