@@ -17,3 +17,15 @@ helmCharts:
     repo: https://charts.jetstack.io
     valuesFile: values.yaml
     version: v1.17.1
+
+replacements:
+  - source:
+      kind: Secret
+      name: infrastructure-secrets
+      fieldPath: data.email
+    targets:
+      - select:
+          kind: ClusterIssuer
+          name: cloudflare-issuer
+        fieldPaths:
+          - spec.acme.email
