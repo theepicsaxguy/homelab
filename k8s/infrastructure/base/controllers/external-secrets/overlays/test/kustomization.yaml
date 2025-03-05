@@ -7,12 +7,14 @@ resources:
 - ../../base
 
 patches:
-- patch: |-
+- patch: |
     - op: replace
       path: /spec/values/bitwarden-sdk-server/extraEnv
       value:
-        - name: BW_HOST
-          value: "http://localhost:8087"
+      - name: BW_HOST
+        value: "http://localhost:8087"
+      - name: BW_PORT
+        value: "8087"
   target:
     kind: HelmRelease
     name: external-secrets
