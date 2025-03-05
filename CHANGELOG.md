@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/theepicsaxguy/homelab/compare/v1.15.0...v1.16.0) (2025-03-05)
+
+
+### Features
+
+* **k8s:** add kustomization for external secrets management ([#183](https://github.com/theepicsaxguy/homelab/issues/183)) ([723533e](https://github.com/theepicsaxguy/homelab/commit/723533e5037b99dfded168728a71d31eaa0fc582))
+
 ## [1.15.0](https://github.com/theepicsaxguy/homelab/compare/v1.14.0...v1.15.0) (2025-03-04)
 
 
