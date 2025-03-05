@@ -9,12 +9,8 @@ spec:
   destinations:
     - namespace: 'argocd'
       server: '*'
-    - namespace: 'dev-apps'
-      server: '*'
-    - namespace: 'staging-apps'
-      server: '*'
-    - namespace: 'prod-apps'
-      server: '*'
+    - namespace: '*-apps'
+      server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
