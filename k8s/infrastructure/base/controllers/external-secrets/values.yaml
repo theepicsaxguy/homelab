@@ -10,7 +10,7 @@ bitwarden-sdk-server:
   enabled: true
   image:
     repository: ghcr.io/external-secrets/bitwarden-sdk-server
-    tag: "0.1.0"
+    tag: "0.1.4"
   extraEnv:
     - name: BW_HOST
       value: "https://vault.bitwarden.com"
