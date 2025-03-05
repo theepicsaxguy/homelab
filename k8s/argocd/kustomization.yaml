@@ -9,7 +9,6 @@ resources:
   - applicationsets/applications.yaml
   - projects/preview-project.yaml
   - projects/project.yaml
-  - applicationsets/external-secrets.yaml
 
 helmCharts:
   - name: argo-cd

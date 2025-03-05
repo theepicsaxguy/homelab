@@ -17,6 +17,8 @@ spec:
   destinations:
     - namespace: '*-pr-preview'
       server: https://kubernetes.default.svc
+    - namespace: 'pr-*'  # Allow PR-specific namespaces
+      server: https://kubernetes.default.svc
     - namespace: kube-system
       server: https://kubernetes.default.svc
 

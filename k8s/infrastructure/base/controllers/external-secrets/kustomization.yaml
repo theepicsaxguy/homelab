@@ -9,13 +9,13 @@ resources:
 - auth-secret.yaml
 
 helmCharts:
-- name: external-secrets
-  repo: https://charts.external-secrets.io
-  version: 0.9.9
-  releaseName: external-secrets
-  namespace: external-secrets
-  valuesFile: values.yaml
-  includeCRDs: true
+  - name: external-secrets
+    repo: https://charts.external-secrets.io
+    version: 0.14.3
+    releaseName: external-secrets
+    valuesInline:
+      bitwarden-sdk-server:
+        enabled: true
 
 labels:
 - includeSelectors: true
@@ -26,8 +26,3 @@ labels:
 
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-1"
-
-configMapGenerator:
-- name: external-secrets-config
-  literals:
-    - environment=production
