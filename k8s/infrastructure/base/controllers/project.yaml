@@ -14,8 +14,6 @@ spec:
       server: '*'
     - namespace: 'kube-system'
       server: '*'
-    - namespace: 'sm-operator-system'
-      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

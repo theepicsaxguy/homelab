@@ -2,12 +2,11 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: cloudflare-issuer
+  namespace: cert-manager
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    emailSecretRef:
-      name: cert-manager-email
-      key: email
+    email: "REPLACE_ME"  # Kustomize will replace this
     privateKeySecretRef:
       name: cloudflare-key
     solvers:

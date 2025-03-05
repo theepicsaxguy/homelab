@@ -4,9 +4,9 @@ kind: Kustomization
 namespace: external-secrets
 
 resources:
-- namespace.yaml
 - bitwarden-store.yaml
-- auth-secret.yaml
+- bitwarden-cert.yaml
+- internal-issuer.yaml
 
 helmCharts:
   - name: external-secrets
@@ -14,8 +14,82 @@ helmCharts:
     version: 0.14.3
     releaseName: external-secrets
     valuesInline:
+      installCRDs: true
+      webhook:
+        create: true
+        port: 10250  # Default webhook port
+        hostNetwork: false
+        service:
+          type: ClusterIP
+          port: 10250
+        certManager:
+          enabled: true
+          addInjectorAnnotations: true
+          cert:
+            create: true
+            issuerRef:
+              kind: Issuer
+              name: selfsigned-issuer
+      certController:
+        create: true
       bitwarden-sdk-server:
         enabled: true
+        image:
+          repository: ghcr.io/external-secrets/bitwarden-sdk-server
+          tag: "v0.3.2"
+          pullPolicy: IfNotPresent
+        service:
+          type: ClusterIP
+          port: 9998
+        extraEnv:
+          - name: BW_HOST
+            value: "https://vault.bitwarden.com"
+          - name: BW_PORT
+            value: "9998"
+          - name: BITWARDEN_SDK_SERVER_ADDRESS
+            value: ":9998"
+          - name: BITWARDEN_SDK_SERVER_TLS_CERT
+            value: "/certs/cert.pem"
+          - name: BITWARDEN_SDK_SERVER_TLS_KEY
+            value: "/certs/key.pem"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        livenessProbe:
+          httpGet:
+            path: /live
+            port: 9998
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 9998
+            scheme: HTTPS
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        tls:
+          enabled: true
+          volumeMounts:
+            - mountPath: "/certs"
+              name: "bitwarden-tls-certs"
+          volumes:
+            - name: "bitwarden-tls-certs"
+              secret:
+                secretName: "bitwarden-tls-certs"
+                items:
+                  - key: "tls.crt"
+                    path: "cert.pem"
+                  - key: "tls.key"
+                    path: "key.pem"
+                  - key: "ca.crt"
+                    path: "ca.pem"
 
 labels:
 - includeSelectors: true
