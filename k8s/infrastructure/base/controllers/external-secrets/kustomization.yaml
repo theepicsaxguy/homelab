@@ -17,16 +17,19 @@ helmCharts:
       installCRDs: true
       webhook:
         create: true
-        port: 443  # Changed to match values.yaml
+        port: 10250  # Changed to match values.yaml
         hostNetwork: false
         service:
           type: ClusterIP
-          port: 443  # Changed to match values.yaml
+          port: 10250  # Changed to match values.yaml
         certManager:
           enabled: true
           addInjectorAnnotations: true
           cert:
             create: true
+            dnsNames:
+              - external-secrets-webhook.external-secrets.svc
+              - external-secrets-webhook.external-secrets.svc.cluster.local
             issuerRef:
               kind: Issuer
               name: selfsigned-issuer
