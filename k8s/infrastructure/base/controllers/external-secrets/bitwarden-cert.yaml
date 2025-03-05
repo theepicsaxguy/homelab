@@ -1,23 +1,12 @@
 apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: selfsigned-issuer
-spec:
-  selfSigned: {}
----
-apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: bitwarden-sdk-server
+  name: bitwarden-sdk-cert
   namespace: external-secrets
 spec:
+  secretName: bitwarden-tls-certs
   dnsNames:
     - bitwarden-sdk-server.external-secrets.svc.cluster.local
   issuerRef:
-    group: cert-manager.io
-    kind: ClusterIssuer
     name: selfsigned-issuer
-  secretName: bitwarden-tls-certs
-  usages:
-    - server auth
-    - client auth
+    kind: Issuer
