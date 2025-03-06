@@ -10,6 +10,9 @@ resources:
   - projects/preview-project.yaml
   - projects/project.yaml
 
+patches:
+  - path: argocd-cm-patch.yaml
+
 helmCharts:
   - name: argo-cd
     namespace: argocd
