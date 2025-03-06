@@ -13,14 +13,6 @@ helmCharts:
     repo: https://charts.external-secrets.io
     version: 0.14.3
     releaseName: external-secrets
-    valuesFile: values.yaml
-
-labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/component: controller
-    app.kubernetes.io/instance: external-secrets
-    app.kubernetes.io/name: external-secrets
-
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "-1"
+    valuesInline:
+      bitwarden-sdk-server:
+        enabled: true
