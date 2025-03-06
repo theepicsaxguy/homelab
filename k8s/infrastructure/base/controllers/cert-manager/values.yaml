@@ -1,7 +1,7 @@
-#installCRDs: true
 crds:
   enabled: true
   keep: true
+
 extraArgs:
   - "--enable-gateway-api"
 
@@ -12,7 +12,11 @@ resources:
   requests:
     cpu: 10m
     memory: 64Mi
+
 webhook:
+  securePort: 10250
+  extraArgs:
+    - --secure-port=10250
   resources:
     limits:
       cpu: 100m
@@ -20,6 +24,7 @@ webhook:
     requests:
       cpu: 10m
       memory: 32Mi
+
 cainjector:
   resources:
     limits:

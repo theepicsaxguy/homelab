@@ -17,9 +17,7 @@ helmCharts:
     valuesFile: values.yaml
     version: v1.17.1
 
-# Using hardcoded email as a temporary default value since the external-secrets operator
-# may not have created the actual secret during initial application
-patchesJson6902:
+patches:
   - target:
       group: cert-manager.io
       version: v1
@@ -28,4 +26,4 @@ patchesJson6902:
     patch: |
       - op: replace
         path: /spec/acme/email
-        value: "admin@example.com"  # Replace with a default temporary email
+        value: "admin@example.com"  # Temporary default email
