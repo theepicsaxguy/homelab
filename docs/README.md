@@ -11,6 +11,7 @@
 
 ### Core Components
 
+- [ApplicationSets Hierarchy](architecture/applicationsets.md)
 - [Network Architecture](architecture/network-architecture.md)
 - [Security Architecture](security/overview.md)
 - [Storage Architecture](storage-architecture.md)

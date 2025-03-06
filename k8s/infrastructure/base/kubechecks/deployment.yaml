@@ -32,8 +32,7 @@ spec:
         - name: kubechecks
           image: "ghcr.io/zapier/kubechecks:latest"
           imagePullPolicy: Always
-          envFrom:
-          env: 
+          env:
             - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
               value: argocd-server.argocd.svc
             - name: KUBECHECKS_ARGOCD_API_NAMESPACE
@@ -43,11 +42,18 @@ spec:
             - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
               value: "true"
             - name: KUBECHECKS_ARGOCD_API_TOKEN
-              value: ${ARGOCD_API_SECRET}
+              valueFrom:
+                secretKeyRef:
+                  name: argocd-initial-admin-secret
+                  key: password
+                  optional: false
             - name: KUBECHECKS_VCS_TYPE
               value: github
             - name: KUBECHECKS_VCS_TOKEN
-              value: ${kubechecks-vcs-token}
+              valueFrom:
+                secretKeyRef:
+                  name: kubechecks-token
+                  key: github_token
             - name: KUBECHECKS_KUBERNETES_TYPE
               value: local
             - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
