@@ -2,7 +2,9 @@
 
 ## Overview
 
-This document describes the bootstrap process for External Secrets Operator (ESO) with Bitwarden Secrets Manager integration. ESO is deployed via ArgoCD following GitOps principles, but the initial bootstrap requires some specific steps to handle certificate dependencies correctly.
+This document describes the bootstrap process for External Secrets Operator (ESO) with Bitwarden Secrets Manager
+integration. ESO is deployed via ArgoCD following GitOps principles, but the initial bootstrap requires some specific
+steps to handle certificate dependencies correctly.
 
 ## Prerequisites
 
@@ -14,7 +16,8 @@ This document describes the bootstrap process for External Secrets Operator (ESO
 
 ### 1. Setting up the Certificate Resources
 
-The Bitwarden SDK Server requires TLS certificates to operate securely. These certificates must be provided in a specific format with three components:
+The Bitwarden SDK Server requires TLS certificates to operate securely. These certificates must be provided in a
+specific format with three components:
 
 - `tls.crt` - The server certificate
 - `tls.key` - The private key
@@ -78,21 +81,25 @@ To avoid the "chicken and egg" problem with certificates, ensure components are 
 If the bootstrap fails with error `MountVolume.SetUp failed for volume "bitwarden-tls-certs"`, check:
 
 1. Verify the cert-manager components are running correctly:
+
    ```bash
    kubectl get pods -n cert-manager
    ```
 
 2. Check if the Certificate resource is properly configured:
+
    ```bash
    kubectl describe certificate bitwarden-sdk-cert -n external-secrets
    ```
 
 3. Verify if the certificate issuer is ready:
+
    ```bash
    kubectl get issuer -n external-secrets selfsigned-issuer -o yaml
    ```
 
 4. Check certificate requests status:
+
    ```bash
    kubectl get certificaterequests -n external-secrets
    ```

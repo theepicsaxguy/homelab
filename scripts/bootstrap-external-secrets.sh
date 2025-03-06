@@ -88,7 +88,7 @@ if ! kubectl get secret -n external-secrets bitwarden-tls-certs &>/dev/null; the
     log_info "If this persists after ArgoCD reconciliation, check cert-manager logs."
 else
     log_success "Certificate secret exists."
-    
+
     # Check for required keys in secret
     SECRET_KEYS=$(kubectl get secret -n external-secrets bitwarden-tls-certs -o jsonpath='{.data}' | jq 'keys')
     if [[ $SECRET_KEYS != *"tls.crt"* || $SECRET_KEYS != *"tls.key"* || $SECRET_KEYS != *"ca.crt"* ]]; then
