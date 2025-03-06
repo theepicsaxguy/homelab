@@ -44,9 +44,8 @@ spec:
             - name: KUBECHECKS_ARGOCD_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: argocd-initial-admin-secret
-                  key: password
-                  optional: false
+                  name: kubechecks-argocd-token
+                  key: argocd-api-token
             - name: KUBECHECKS_VCS_TYPE
               value: github
             - name: KUBECHECKS_VCS_TOKEN

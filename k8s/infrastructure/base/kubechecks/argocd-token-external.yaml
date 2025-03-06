@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: kubechecks-argocd-secrets
+  namespace: kubechecks
+  labels:
+    app.kubernetes.io/name: bitwardensecret
+    app.kubernetes.io/instance: kubechecks-argocd-secrets
+    app.kubernetes.io/managed-by: kustomize
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: kubechecks-argocd-token
+    creationPolicy: Owner
+  data:
+    - secretKey: argocd-api-token
+      remoteRef:
+        key: 0d2a2732-db70-49b7-b64a-b29400a92230 # This should be updated to the correct Bitwarden secret UUID
