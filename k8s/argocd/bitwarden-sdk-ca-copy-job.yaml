@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bitwarden-sdk-ca-copy
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0" # Run this job first
+spec:
+  ttlSecondsAfterFinished: 3600 # Auto-delete after 1 hour
+  template:
+    spec:
+      serviceAccountName: argocd-server # Using ArgoCD's service account which already has needed permissions
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Wait for the certificate to be available
+          until kubectl get secret -n external-secrets bitwarden-sdk-server-tls; do
+            echo "Waiting for bitwarden-sdk-server-tls secret to be available..."
+            sleep 10
+          done
+
+          # Get the CA certificate from the external-secrets namespace
+          CA_CERT=$(kubectl get secret -n external-secrets bitwarden-sdk-server-tls -o jsonpath='{.data.ca\.crt}')
+
+          # Create the secret in ArgoCD namespace
+          kubectl create secret generic bitwarden-sdk-ca \
+            -n argocd \
+            --from-literal=tls.crt="$(echo $CA_CERT | base64 -d)" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          echo "Bitwarden SDK CA certificate successfully copied to ArgoCD namespace"
+      restartPolicy: OnFailure
+  backoffLimit: 10
