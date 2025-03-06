@@ -10,5 +10,7 @@ resources:
 - vpn
 
 labels:
-- pairs:
+- includeSelectors: true
+  pairs:
     app.kubernetes.io/part-of: infrastructure
+    app.kubernetes.io/managed-by: argocd
