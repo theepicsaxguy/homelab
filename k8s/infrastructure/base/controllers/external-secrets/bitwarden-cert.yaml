@@ -19,7 +19,9 @@ spec:
     - server auth
     - client auth
   dnsNames:
+    - bitwarden-sdk-server.external-secrets.svc
     - bitwarden-sdk-server.external-secrets.svc.cluster.local
+    - bitwarden-sdk-server
   issuerRef:
     name: selfsigned-issuer
     kind: Issuer
