@@ -1,0 +1,22 @@
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: bitwarden-backend
+  namespace: argocd
+spec:
+  provider:
+    bitwardensecretsmanager:
+      apiURL: https://api.bitwarden.com
+      identityURL: https://identity.bitwarden.com
+      auth:
+        secretRef:
+          credentials:
+            key: token
+            name: bitwarden-access-token
+      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.cluster.local:9998
+      caProvider:
+        type: Secret
+        name: bitwarden-sdk-ca
+        key: tls.crt
+      organizationID: 4a014e57-f197-4852-9831-b287013e47b6
+      projectID: d22d5a96-5177-43a4-bdc5-b287015de957
