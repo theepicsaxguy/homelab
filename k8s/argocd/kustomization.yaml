@@ -6,8 +6,6 @@ resources:
   - ns.yaml
   - http-route.yaml
   - redis-secret-external.yaml
-  - bitwarden-access-token.yaml
-  - bitwarden-store.yaml
   - applicationsets/applications.yaml
   - projects/preview-project.yaml
   - projects/project.yaml
