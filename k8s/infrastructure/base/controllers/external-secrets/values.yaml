@@ -5,9 +5,13 @@ webhook:
   hostNetwork: false
   certManager:
     enabled: true
+    extraDnsNames:
+      - external-secrets-webhook.external-secrets.svc
+      - external-secrets-webhook.external-secrets.svc.cluster.local
   serviceAccount:
     create: true
     name: external-secrets-webhook
+    namespace: external-secrets
 certController:
   create: true
 serviceAccount:
