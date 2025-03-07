@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-template
+  name: infra-rollout-dev
 spec:
   replicas: 1 # Dev uses minimum replicas
   strategy:

@@ -1,9 +1,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-template
+  name: infra-rollout-prod
 spec:
-  replicas: 2 # Production requires 3 replicas
+  replicas: 3 # Production requires 3 replicas
   strategy:
     canary:
       steps:
@@ -24,11 +24,11 @@ spec:
         - name: infra
           resources:
             requests:
-              cpu: 1
-              memory: 512Mi
-            limits:
-              cpu: 4
+              cpu: 1000m
               memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

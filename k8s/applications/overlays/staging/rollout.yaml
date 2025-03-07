@@ -15,23 +15,19 @@ spec:
         - setWeight: 25
         - pause: { duration: 30s }
         - analysis:
-            templates:
-              - templateName: basic-status
             args:
               - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
+                value: staging
+            templates:
+              - templateName: basic-status
         - setWeight: 50
         - pause: { duration: 60s }
         - analysis:
-            templates:
-              - templateName: basic-status
             args:
               - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
+                value: staging
+            templates:
+              - templateName: basic-status
         - setWeight: 100
   template:
     metadata:
