@@ -13,10 +13,10 @@ spec:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 300s } # Longer observation period
+        - pause: {}  # Manual verification required
         - analysis:
             templates:
-              - templateName: success-rate
+              - templateName: basic-status
             args:
               - name: namespace
                 valueFrom:
@@ -26,7 +26,17 @@ spec:
         - pause: { duration: 300s }
         - analysis:
             templates:
-              - templateName: success-rate
+              - templateName: basic-status
+            args:
+              - name: namespace
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+        - setWeight: 60
+        - pause: {}  # Manual verification required
+        - analysis:
+            templates:
+              - templateName: basic-status
             args:
               - name: namespace
                 valueFrom:
@@ -51,11 +61,9 @@ spec:
               memory: 2Gi
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/part-of: applications
-                    app.kubernetes.io/instance: app-service
-                topologyKey: kubernetes.io/hostname
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: applications
+                  app.kubernetes.io/instance: app-service
+              topologyKey: kubernetes.io/hostname

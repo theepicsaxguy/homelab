@@ -7,27 +7,24 @@ spec:
   generators:
     - list:
         elements:
-          - values:
-              environment: dev
-              namespace: dev
-              minReplicas: '1'
-              healthTimeout: '30s'
-          - values:
-              environment: staging
-              namespace: staging
-              minReplicas: '2'
-              healthTimeout: '60s'
-          - values:
-              environment: prod
-              namespace: prod
-              minReplicas: '3'
-              healthTimeout: '300s'
+          - environment: dev
+            namespace: dev
+            minReplicas: '1'
+            healthTimeout: '30s'
+          - environment: staging
+            namespace: staging
+            minReplicas: '2'
+            healthTimeout: '60s'
+          - environment: prod
+            namespace: prod
+            minReplicas: '3'
+            healthTimeout: '300s'
   template:
     metadata:
-      name: 'apps-{{values.environment}}'
+      name: 'apps-{{environment}}'
       labels:
         type: applications
-        environment: '{{values.environment}}'
+        environment: '{{environment}}'
       annotations:
         argocd.argoproj.io/sync-wave: '0'
     spec:
@@ -35,10 +32,10 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: k8s/applications/overlays/{{values.environment}}
+        path: k8s/applications/overlays/{{environment}}
       destination:
-        name: in-cluster
-        namespace: '{{values.namespace}}'
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           prune: true

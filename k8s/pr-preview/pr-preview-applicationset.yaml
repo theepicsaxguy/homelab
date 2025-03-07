@@ -4,7 +4,7 @@ metadata:
   name: pr-preview-environments
   namespace: argocd
   labels:
-    dev.pc-tips: preview
+    app.kubernetes.io/part-of: pr-preview
 spec:
   generators:
     - pullRequest:
@@ -15,21 +15,24 @@ spec:
             secretName: github-token
             key: token
           labels:
-            - DeployPR
-        #requeueAfterSeconds: 600
+            - preview
+        requeueAfterSeconds: 180
   template:
     metadata:
       name: 'pr-{{ number }}'
       labels:
+        app.kubernetes.io/part-of: pr-preview
         preview: 'true'
         pr-number: '{{ number }}'
         branch: '{{ head_branch }}'
+      annotations:
+        argocd.argoproj.io/sync-options: Validate=true,PruneLast=true
     spec:
-      project: default
+      project: preview
       source:
-        repoURL: 'https://github.com/theepicsaxguy/homelab.git'
+        repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: '{{ head_sha }}'
-        path: k8s
+        path: k8s/applications/overlays/preview
       destination:
         server: https://kubernetes.default.svc
         namespace: 'pr-{{ number }}'
@@ -39,10 +42,17 @@ spec:
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - PrunePropagationPolicy=background
+          - PruneLast=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
         retry:
-          limit: 3
+          limit: 5
           backoff:
-            duration: '5s'
+            duration: '30s'
             factor: 2
-            maxDuration: '1m'
+            maxDuration: '3m'
+      ignoreDifferences:
+        - group: argoproj.io
+          kind: Rollout
+          jsonPointers:
+            - /status

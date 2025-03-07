@@ -12,10 +12,15 @@ spec:
   strategy:
     canary:
       steps:
-        - setWeight: 20
-        - pause: { duration: 30s } # Shorter pause for fast iteration
         - setWeight: 50
-        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: basic-status
+            args:
+              - name: namespace
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
         - setWeight: 100
   template:
     metadata:
