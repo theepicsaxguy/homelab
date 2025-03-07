@@ -5,7 +5,7 @@ resources:
 - ../../base
 - rollout.yaml
 - analysis-template.yaml
-- kubechecks
+- ../../base/kubechecks
 
 namespace: prod-infra
 
