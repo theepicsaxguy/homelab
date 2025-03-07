@@ -3,12 +3,12 @@ kind: Rollout
 metadata:
   name: infra-rollout-dev
 spec:
-  replicas: 1 # Dev uses minimum replicas
+  replicas: 1
   strategy:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 30s } # Dev timeout
+        - pause: { duration: 30s }
         - analysis:
             templates:
               - templateName: infra-health

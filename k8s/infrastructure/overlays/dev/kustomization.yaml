@@ -18,7 +18,10 @@ patches:
   target:
     kind: Deployment
     name: argo-rollouts
-- path: patches/resources-patch.yaml
+- target:
+    kind: Rollout
+    name: infra-rollout-dev
+  path: patches/resources-patch.yaml
 
 labels:
 - pairs:
