@@ -9,6 +9,9 @@ spec:
     path: k8s/pr-preview
     repoURL: https://github.com/theepicsaxguy/homelab
     targetRevision: main
+    kustomize:
+      commonLabels:
+        app.kubernetes.io/part-of: pr-preview
   destination:
     namespace: argocd
     server: https://kubernetes.default.svc
@@ -16,3 +19,12 @@ spec:
     automated:
       selfHeal: true
       prune: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: '30s'
+        factor: 2
+        maxDuration: '3m'
