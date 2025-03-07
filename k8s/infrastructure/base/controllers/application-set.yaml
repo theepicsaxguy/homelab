@@ -11,7 +11,7 @@ spec:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/infrastructure/controllers/*
+          - path: k8s/infrastructure/base/controllers/*
   template:
     metadata:
       name: '{{ path.basename }}'

@@ -40,7 +40,7 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: '{{path}}/overlays/{{environment}}'
+        path: 'k8s/infrastructure/overlays/{{environment}}'
         plugin:
           name: kustomize-build-with-helm
       destination:
