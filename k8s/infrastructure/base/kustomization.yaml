@@ -8,6 +8,7 @@ resources:
 - controllers
 - monitoring
 - vpn
+- cluster-components
 
 labels:
 - includeSelectors: true
