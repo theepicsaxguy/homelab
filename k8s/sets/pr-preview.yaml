@@ -6,12 +6,12 @@ metadata:
 spec:
   project: app-of-apps
   source:
-    path: k8s/pr-preview.yaml
+    path: k8s/pr-preview
     repoURL: https://github.com/theepicsaxguy/homelab
     targetRevision: main
   destination:
     namespace: argocd
-    name: in-cluster
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       selfHeal: true

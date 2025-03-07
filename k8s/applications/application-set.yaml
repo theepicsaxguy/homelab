@@ -33,7 +33,7 @@ spec:
         targetRevision: main
         path: k8s/applications/overlays/{{environment}}
       destination:
-        name: in-cluster  # If multi-cluster, change this to 'server: {{server}}'
+        server: https://kubernetes.default.svc
         namespace: '{{namespace}}'
       syncPolicy:
         automated:
