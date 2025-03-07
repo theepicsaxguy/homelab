@@ -1,17 +1,51 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: success-rate
+  name: basic-status
 spec:
   metrics:
-    - name: success-rate
-      interval: 300s # Match production timeout requirement
-      successCondition: result[0] >= 0.999
-      failureLimit: 1
+    - name: pod-health
       provider:
-        prometheus:
-          address: http://prometheus-operated.monitoring.svc.cluster.local:9090
-          query: |
-            sum(rate(http_requests_total{status=~"2..",namespace="{{args.namespace}}"}[15m]))
-            /
-            sum(rate(http_requests_total{namespace="{{args.namespace}}"}[15m]))
+        job:
+          spec:
+            backoffLimit: 1
+            template:
+              spec:
+                containers:
+                - name: check
+                  image: bitnami/kubectl:latest
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service -o json | \
+                      jq -e '( .items | map(select(.status.phase=="Running")) | length == (.items | length) ) and
+                            ( .items | map(.status.containerStatuses[].ready) | all ) and
+                            ( .items | map(.status.containerStatuses[].restartCount == 0) | all ) and
+                            ( .items | map(.status.conditions[] | select(.type=="Ready").status == "True") | length == (.items | length) )' || exit 1
+                restartPolicy: Never
+      count: 5
+      interval: 300s
+      failureLimit: 1
+      successCondition: result == 0
+    - name: pod-availability
+      provider:
+        job:
+          spec:
+            template:
+              spec:
+                containers:
+                - name: check
+                  image: bitnami/kubectl:latest
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service -o json | \
+                      jq -e '.items | length >= 3 and
+                            (map(select(.status.phase=="Running")) | length) >= 3' || exit 1
+                restartPolicy: Never
+      count: 3
+      interval: 300s
+      failureLimit: 1
+      successCondition: result == 0

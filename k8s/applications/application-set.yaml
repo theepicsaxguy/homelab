@@ -12,12 +12,36 @@ spec:
           - environment: dev
             namespace: dev
             syncWave: '1'
+            maxSurge: '1'
+            healthTimeout: '30s'
           - environment: staging
             namespace: staging
             syncWave: '2'
+            maxSurge: '2'
+            healthTimeout: '60s'
           - environment: prod
             namespace: prod
             syncWave: '3'
+            maxSurge: '1'
+            healthTimeout: '300s'
+  strategy:
+    rollingSync:
+      steps:
+        - matchExpressions:
+            - key: environment
+              operator: In
+              values: [dev]
+          maxUpdate: 1
+        - matchExpressions:
+            - key: environment
+              operator: In
+              values: [staging]
+          maxUpdate: 1
+        - matchExpressions:
+            - key: environment
+              operator: In
+              values: [prod]
+          maxUpdate: 1
   template:
     metadata:
       name: 'apps-{{environment}}'
@@ -26,6 +50,8 @@ spec:
         environment: '{{environment}}'
       annotations:
         argocd.argoproj.io/sync-wave: '{{syncWave}}'
+        argocd.argoproj.io/sync-options: Validate=true,PruneLast=true
+        argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       project: applications
       source:
@@ -37,12 +63,18 @@ spec:
         namespace: '{{namespace}}'
       syncPolicy:
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - RespectIgnoreDifferences=true
           - ServerSideApply=true
+          - RespectIgnoreDifferences=true
+        retry:
+          limit: 5
+          backoff:
+            duration: '30s'
+            factor: 2
+            maxDuration: '10m'
       ignoreDifferences:
         - group: argoproj.io
           kind: Rollout

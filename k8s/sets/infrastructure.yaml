@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: infrastructure
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: Validate=true,CreateNamespace=true,PruneLast=true
 spec:
   project: app-of-apps
   source:
@@ -16,3 +19,27 @@ spec:
     automated:
       selfHeal: true
       prune: true
+    retry:
+      limit: 5
+      backoff:
+        duration: '30s'
+        factor: 2
+        maxDuration: '10m'
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PruneLast=true
+      - RespectIgnoreDifferences=true
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      jsonPointers:
+        - /status
+    - group: networking.k8s.io
+      kind: Ingress
+      jsonPointers:
+        - /status
+    - group: cert-manager.io
+      kind: Certificate
+      jsonPointers:
+        - /status

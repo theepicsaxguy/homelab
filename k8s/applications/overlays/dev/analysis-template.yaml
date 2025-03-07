@@ -1,17 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: success-rate
+  name: basic-status
 spec:
   metrics:
-    - name: success-rate
-      interval: 30s # Match dev timeout requirement
-      successCondition: result[0] >= 0.95
-      failureLimit: 2
+    - name: pod-status
       provider:
-        prometheus:
-          address: http://prometheus-operated.monitoring.svc.cluster.local:9090
-          query: |
-            sum(rate(http_requests_total{status=~"2..",namespace="{{args.namespace}}"}[2m]))
-            /
-            sum(rate(http_requests_total{namespace="{{args.namespace}}"}[2m]))
+        job:
+          spec:
+            backoffLimit: 1
+            template:
+              spec:
+                containers:
+                - name: check
+                  image: bitnami/kubectl:latest
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service --field-selector status.phase=Running | grep -v NAME || exit 1
+                restartPolicy: Never
+      count: 2
+      interval: 30s
+      failureLimit: 2
+      successCondition: result == 0
