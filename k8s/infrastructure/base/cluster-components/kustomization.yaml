@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- application-set.yaml
+- kubechecks
+
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/part-of: infrastructure
+    app.kubernetes.io/managed-by: argocd
+    dev.pc-tips: cluster-components
