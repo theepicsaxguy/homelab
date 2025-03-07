@@ -33,7 +33,7 @@ spec:
         targetRevision: main
         path: k8s/applications/overlays/{{environment}}
       destination:
-        name: in-cluster
+        name: in-cluster  # If multi-cluster, change this to 'server: {{server}}'
         namespace: '{{namespace}}'
       syncPolicy:
         automated:
@@ -43,3 +43,8 @@ spec:
           - CreateNamespace=true
           - RespectIgnoreDifferences=true
           - ServerSideApply=true
+      ignoreDifferences:
+        - group: argoproj.io
+          kind: Rollout
+          jsonPointers:
+            - /status
