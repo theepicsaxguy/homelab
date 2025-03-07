@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: infra
+          image: infra-service:v1.0.0
           resources:
             requests:
               cpu: 100m
