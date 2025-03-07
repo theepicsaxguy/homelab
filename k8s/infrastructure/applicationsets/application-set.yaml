@@ -7,20 +7,27 @@ metadata:
     app.kubernetes.io/part-of: infrastructure
 spec:
   generators:
-    - list:
-        elements:
-          - environment: dev
-            namespace: dev-infra
-            syncWave: '0'
-          - environment: staging
-            namespace: staging-infra
-            syncWave: '1'
-          - environment: prod
-            namespace: prod-infra
-            syncWave: '2'
+    - matrix:
+        generators:
+          - list:
+              elements:
+                - environment: dev
+                  namespace: dev-infra
+                  syncWave: '0'
+                - environment: staging
+                  namespace: staging-infra
+                  syncWave: '1'
+                - environment: prod
+                  namespace: prod-infra
+                  syncWave: '2'
+          - git:
+              repoURL: https://github.com/theepicsaxguy/homelab
+              revision: main
+              directories:
+                - path: k8s/infrastructure/base/*
   template:
     metadata:
-      name: infra-{{environment}}
+      name: '{{path.basename}}-{{environment}}'
       labels:
         app.kubernetes.io/part-of: infrastructure
         environment: '{{environment}}'
@@ -33,9 +40,11 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
         targetRevision: main
-        path: k8s/infrastructure/overlays/{{environment}}
+        path: '{{path}}/overlays/{{environment}}'
+        plugin:
+          name: kustomize-build-with-helm
       destination:
-        name: in-cluster  # Ensure this is correct, change to 'server: <cluster-api>' if multi-cluster
+        name: in-cluster
         namespace: '{{namespace}}'
       syncPolicy:
         automated:

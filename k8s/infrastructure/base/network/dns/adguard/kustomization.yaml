@@ -7,7 +7,6 @@ resources:
   - ns.yaml
   - http-route.yaml
   - secret-external.yaml
-  - config-pvc.yaml
 
 configMapGenerator:
   - name: adguardhome-config
