@@ -13,7 +13,7 @@ spec:
     canary:
       steps:
         - setWeight: 10
-        - pause: {}  # Manual verification required
+        - pause: { duration: 300s }
         - analysis:
             args:
               - name: namespace
@@ -29,7 +29,7 @@ spec:
             templates:
               - templateName: basic-status
         - setWeight: 60
-        - pause: {}  # Manual verification required
+        - pause: { duration: 300s }
         - analysis:
             args:
               - name: namespace
