@@ -1,13 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-template
+  name: infra-rollout-staging
 spec:
-  replicas: 1 # Staging requires 2 replicas
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/part-of: infrastructure
+      app.kubernetes.io/instance: infra-service
   strategy:
     canary:
       steps:
@@ -23,6 +24,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/part-of: infrastructure
+        app.kubernetes.io/instance: infra-service
     spec:
       containers:
         - name: infra
@@ -42,4 +44,5 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/part-of: infrastructure
+                    app.kubernetes.io/instance: infra-service
                 topologyKey: kubernetes.io/hostname

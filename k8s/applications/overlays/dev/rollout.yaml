@@ -1,42 +1,35 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: app-rollout-template
+  name: app-rollout-dev
 spec:
   replicas: 1
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app.kubernetes.io/part-of: applications
+      app.kubernetes.io/instance: app-service
   strategy:
     canary:
       steps:
         - setWeight: 20
+        - pause: { duration: 30s } # Shorter pause for fast iteration
+        - setWeight: 50
         - pause: { duration: 30s }
-        - setWeight: 40
-        - pause: { duration: 30s }
-        - setWeight: 60
-        - pause: { duration: 30s }
-        - setWeight: 80
-        - pause: { duration: 30s }
-      analysis:
-        templates:
-          - templateName: success-rate
-        args:
-          - name: namespace
-            value: '{{metadata.namespace}}'
-        startingStep: 1
+        - setWeight: 100
   template:
     metadata:
       labels:
         app.kubernetes.io/part-of: applications
+        app.kubernetes.io/instance: app-service
     spec:
       containers:
         - name: app
+          image: app-service:v1.0.0
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 250m
+              memory: 512Mi
             limits:
               cpu: 500m
-              memory: 256Mi
+              memory: 1Gi
