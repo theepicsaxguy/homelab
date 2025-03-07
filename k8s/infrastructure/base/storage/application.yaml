@@ -7,7 +7,7 @@ spec:
   project: infrastructure
   source:
     path: k8s/infrastructure/base/storage/longhorn
-    repoURL: https://github.com/user/homelab.git
+    repoURL: https://github.com/theepicsaxguy/homelab.git
     targetRevision: HEAD
   destination:
     namespace: longhorn-system
