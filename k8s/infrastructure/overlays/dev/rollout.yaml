@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
   name: infra-rollout-dev
+  namespace: dev-infra
 spec:
   replicas: 1
   revisionHistoryLimit: 2
