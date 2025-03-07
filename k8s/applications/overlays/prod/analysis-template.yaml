@@ -14,7 +14,7 @@ spec:
                 containers:
                 - name: check
                   image: bitnami/kubectl:latest
-                  command: 
+                  command:
                     - sh
                     - -c
                     - |
@@ -42,7 +42,7 @@ spec:
                     - -c
                     - |
                       kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service -o json | \
-                      jq -e '.items | length >= 3 and 
+                      jq -e '.items | length >= 3 and
                             (map(select(.status.phase=="Running")) | length) >= 3' || exit 1
                 restartPolicy: Never
       count: 3

@@ -14,7 +14,7 @@ spec:
                 containers:
                 - name: check
                   image: bitnami/kubectl:latest
-                  command: 
+                  command:
                     - sh
                     - -c
                     - |
