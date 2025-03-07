@@ -22,6 +22,9 @@ spec:
       analysis:
         templates:
           - templateName: success-rate
+        args:
+          - name: namespace
+            value: '{{metadata.namespace}}'
         startingStep: 1
   template:
     metadata:
