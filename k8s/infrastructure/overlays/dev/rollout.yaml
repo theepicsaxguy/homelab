@@ -1,18 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-template
+  name: infra-rollout-dev
 spec:
-  replicas: 1 # Dev environment requires 1 replica
-  revisionHistoryLimit: 3
+  replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app.kubernetes.io/part-of: infrastructure
+      app.kubernetes.io/instance: infra-service
   strategy:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 30s } # Dev environment timeout of 30s
+        - pause: { duration: 30s } # Shorter timeout for Dev
         - analysis:
             templates:
               - templateName: infra-health
@@ -26,6 +27,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/part-of: infrastructure
+        app.kubernetes.io/instance: infra-service
     spec:
       containers:
         - name: infra
