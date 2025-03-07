@@ -51,11 +51,9 @@ spec:
               memory: 2Gi
       affinity:
         podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/part-of: applications
-                    app.kubernetes.io/instance: app-service
-                topologyKey: kubernetes.io/hostname
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/part-of: applications
+                  app.kubernetes.io/instance: app-service
+              topologyKey: kubernetes.io/hostname

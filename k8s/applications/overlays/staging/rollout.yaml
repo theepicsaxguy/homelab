@@ -13,7 +13,7 @@ spec:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 60s } # Moderate testing period
+        - pause: { duration: 60s }
         - analysis:
             templates:
               - templateName: success-rate
@@ -37,7 +37,17 @@ spec:
           resources:
             requests:
               cpu: 500m
-              memory: 1Gi
+              memory: 256Mi
             limits:
-              cpu: 1500m
-              memory: 2Gi
+              cpu: 2000m
+              memory: 512Mi
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/part-of: applications
+                    app.kubernetes.io/instance: app-service
+                topologyKey: kubernetes.io/hostname
