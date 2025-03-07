@@ -10,13 +10,13 @@ spec:
     - list:
         elements:
           - environment: dev
-            namespace: dev-apps
+            namespace: dev
             syncWave: '1'
           - environment: staging
-            namespace: staging-apps
+            namespace: staging
             syncWave: '2'
           - environment: prod
-            namespace: prod-apps
+            namespace: prod
             syncWave: '3'
   template:
     metadata:

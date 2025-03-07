@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: $(APP_NAME)
+      app: null
   replicas: 2
   template:
     spec:
@@ -14,10 +14,8 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                  - key: app.kubernetes.io/name
-                    operator: In
-                    values:
-                      - $(APP_NAME)
+                  - key: app
+                    operator: Exists
               topologyKey: kubernetes.io/hostname
       securityContext:
         runAsNonRoot: true
@@ -36,5 +34,6 @@ spec:
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
           labelSelector:
-            matchLabels:
-              app.kubernetes.io/name: $(APP_NAME)
+            matchExpressions:
+              - key: app
+                operator: Exists
