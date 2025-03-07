@@ -35,7 +35,7 @@ spec:
         targetRevision: main
         path: k8s/infrastructure/overlays/{{environment}}
       destination:
-        name: in-cluster
+        name: in-cluster  # Ensure this is correct, change to 'server: <cluster-api>' if multi-cluster
         namespace: '{{namespace}}'
       syncPolicy:
         automated:
@@ -55,11 +55,11 @@ spec:
             factor: 2
             maxDuration: '10m'
       ignoreDifferences:
-        - group: ''
+        - group: v1
           kind: Secret
           jsonPointers:
             - /data
-        - group: ''
+        - group: v1
           kind: ConfigMap
           jsonPointers:
             - /data
