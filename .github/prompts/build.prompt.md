@@ -16,7 +16,7 @@
 
 ## References
 
-#file:../../../k8s/applications/dev/kustomization.yaml #file:../../../renovate.json
+#file:../../../k8s/applications/base/tools/kustomization.yaml #file:../../../renovate.json
 
 ## Testing Requirements
 
