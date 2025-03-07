@@ -17,3 +17,11 @@ spec:
             /
             on(pod) kube_pod_container_resource_requests{resource="cpu",namespace="{{args.namespace}}"}
           )
+  - name: web-ping
+    interval: 5s
+    count: 2
+    successCondition: result == true
+    provider:
+      web:
+        url: http://{{ args.service }}.{{ args.namespace }}.svc/health
+        timeoutSeconds: 10
