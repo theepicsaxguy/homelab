@@ -1,24 +1,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: app-rollout-template
+  name: app-rollout-staging
 spec:
-  replicas: 1 # Staging requires 2 replicas
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/part-of: applications
+      app.kubernetes.io/instance: app-service
   strategy:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 60s } # Staging timeout
+        - pause: { duration: 60s } # Moderate testing period
         - analysis:
             templates:
               - templateName: success-rate
             args:
               - name: namespace
-                value: '{{metadata.namespace}}'
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
         - setWeight: 50
         - pause: { duration: 60s }
         - setWeight: 100
@@ -26,6 +29,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/part-of: applications
+        app.kubernetes.io/instance: app-service
     spec:
       containers:
         - name: app
@@ -33,16 +37,7 @@ spec:
           resources:
             requests:
               cpu: 500m
-              memory: 256Mi
+              memory: 1Gi
             limits:
-              cpu: 2000m
-              memory: 512Mi
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/part-of: applications
-                topologyKey: kubernetes.io/hostname
+              cpu: 1500m
+              memory: 2Gi

@@ -1,18 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-template
+  name: infra-rollout-prod
 spec:
-  replicas: 2 # Prod requires 3 replicas
-  revisionHistoryLimit: 3
+  replicas: 3
+  revisionHistoryLimit: 5
   selector:
     matchLabels:
       app.kubernetes.io/part-of: infrastructure
+      app.kubernetes.io/instance: infra-service
   strategy:
     canary:
       steps:
         - setWeight: 10
-        - pause: { duration: 300s } # Prod timeout
+        - pause: { duration: 300s } # Longer observation period
         - analysis:
             templates:
               - templateName: infra-health
@@ -26,6 +27,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/part-of: infrastructure
+        app.kubernetes.io/instance: infra-service
     spec:
       containers:
         - name: infra
@@ -43,4 +45,5 @@ spec:
             - labelSelector:
                 matchLabels:
                   app.kubernetes.io/part-of: infrastructure
+                  app.kubernetes.io/instance: infra-service
               topologyKey: kubernetes.io/hostname
