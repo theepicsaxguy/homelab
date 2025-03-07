@@ -12,11 +12,10 @@ spec:
   strategy:
     canary:
       steps:
-        - setWeight: 20
-        - pause: { duration: 30s }
+        - setWeight: 50
         - analysis:
             templates:
-              - templateName: success-rate
+              - templateName: basic-status
             args:
               - name: namespace
                 valueFrom:
