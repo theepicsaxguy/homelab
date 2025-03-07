@@ -13,7 +13,7 @@ spec:
     canary:
       steps:
         - setWeight: 25
-        - pause: { duration: 30s }
+        - pause: { duration: 60s }
         - analysis:
             args:
               - name: namespace
