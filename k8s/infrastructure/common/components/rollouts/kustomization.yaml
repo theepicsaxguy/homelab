@@ -9,7 +9,6 @@ configMapGenerator:
   behavior: merge
   literals:
     - ROLLOUT_TIMEOUT=60s
-    - ANALYSIS_DURATION=5m
 
 replacements:
 - source:
@@ -21,15 +20,6 @@ replacements:
       kind: Rollout
     fieldPaths:
     - spec.strategy.canary.steps.0.pause.duration
-- source:
-    kind: ConfigMap
-    name: base-env-config
-    fieldPath: data.ANALYSIS_DURATION
-  targets:
-  - select:
-      kind: Rollout
-    fieldPaths:
-    - spec.strategy.canary.analysis.interval
 
 patches:
 - path: rollout-pattern.yaml

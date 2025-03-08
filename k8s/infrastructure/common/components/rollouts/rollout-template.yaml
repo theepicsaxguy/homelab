@@ -7,11 +7,17 @@ spec:
   strategy:
     canary:
       steps:
-      - name: pause
+      - setWeight: 20
         pause:
           duration: "60s"  # Will be replaced by ROLLOUT_TIMEOUT
       analysis:
-        interval: "5m"    # Will be replaced by ANALYSIS_DURATION
+        templates:
+        - templateName: success-rate
+          clusterScope: true
+        startingStep: 1
+        args:
+        - name: service-name
+          value: "{{.Service}}"
   template:
     metadata:
       annotations:

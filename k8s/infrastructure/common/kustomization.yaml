@@ -5,6 +5,9 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: Prune=true
   argocd.argoproj.io/sync-wave: "0"
 
+resources:
+- namespaces.yaml
+
 components:
 - components/env-vars
 - components/ha-settings

@@ -14,7 +14,6 @@ configMapGenerator:
 patches:
 - target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
   patch: |
     apiVersion: apps/v1
     kind: Deployment
