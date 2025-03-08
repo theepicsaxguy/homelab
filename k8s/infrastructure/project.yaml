@@ -9,28 +9,19 @@ spec:
   description: Core infrastructure components managed through GitOps
 
   sourceRepos:
-    - https://github.com/theepicsaxguy/homelab
-    - https://charts.cilium.io
-    - https://grafana.github.io/helm-charts
-    - https://prometheus-community.github.io/helm-charts
+    - '*'  # <=== Allows all repositories
 
   destinations:
-    - namespace: '*-infra'
-      server: https://kubernetes.default.svc
-    - namespace: 'infra-*'
-      server: https://kubernetes.default.svc
-    - namespace: kube-system
-      server: https://kubernetes.default.svc
-    - namespace: longhorn-system
-      server: https://kubernetes.default.svc
+    - namespace: '*'  # <=== Allows deployment to ANY namespace
+      server: '*'  # <=== Allows deployment to ANY cluster
 
   clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
+    - group: '*'  # <=== Allows ALL cluster-wide resources
+      kind: '*'  
 
   namespaceResourceWhitelist:
-    - group: '*'
-      kind: '*'
+    - group: '*'  # <=== Allows ALL namespaced resources
+      kind: '*'  
 
   syncWindows:
     - kind: allow
