@@ -8,19 +8,29 @@ resources:
 
 namespace: staging-infra
 
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - ENVIRONMENT_TYPE=staging
+    - LOG_LEVEL=info
+    - ENABLE_METRICS=true
+    - ENABLE_TRACING=true
+    - ROLLOUT_TIMEOUT=60s
+    - ANALYSIS_DURATION=5m
+
 patches:
 - path: patches/resource-limits.yaml
   target:
     kind: Deployment
     labelSelector: app.kubernetes.io/part-of=infrastructure
+- path: patches/high-availability.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
 
-configMapGenerator:
-- behavior: merge
-  literals:
-  - ENVIRONMENT_TYPE=staging
-  - LOG_LEVEL=info
-  - ENABLE_METRICS=true
-  - ENABLE_TRACING=true
-  - ROLLOUT_TIMEOUT=60s
-  - ANALYSIS_DURATION=5m
-  name: base-env-config
+configurations:
+- varreference.yaml
+
+commonLabels:
+  environment: staging
