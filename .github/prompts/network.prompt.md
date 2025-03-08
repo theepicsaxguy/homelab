@@ -16,9 +16,9 @@
 
 ## References
 
-- file:../../../k8s/infrastructure/base/network/cilium/kustomization.yaml
+- file:../../../k8s/infrastructure/network/cilium/kustomization.yaml
 
-- file:../../../k8s/infrastructure/base/network/dns/kustomization.yaml
+- file:../../../k8s/infrastructure/network/dns/kustomization.yaml
 
 ## Security Requirements
 

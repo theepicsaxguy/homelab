@@ -23,7 +23,7 @@ specific format with three components:
 - `tls.key` - The private key
 - `ca.crt` - The CA certificate
 
-The certificate is defined in `k8s/infrastructure/base/controllers/external-secrets/bitwarden-cert.yaml`:
+The certificate is defined in `k8s/infrastructure/controllers/external-secrets/bitwarden-cert.yaml`:
 
 ```yaml
 apiVersion: cert-manager.io/v1
@@ -55,7 +55,7 @@ spec:
 
 ### 2. Setting up the Self-Signed Issuer
 
-The `selfsigned-issuer` is defined in `k8s/infrastructure/base/controllers/external-secrets/internal-issuer.yaml`:
+The `selfsigned-issuer` is defined in `k8s/infrastructure/controllers/external-secrets/internal-issuer.yaml`:
 
 ```yaml
 apiVersion: cert-manager.io/v1

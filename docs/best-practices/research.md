@@ -333,8 +333,8 @@ over what should move (like image tags or dynamic tuning parameters).
   like `app1-dev`, `app1-staging`, etc.). Each namespace has roles scoped to just that app’s resources. For example,
   app1’s microservice might have a Kubernetes `Role` allowing it to read its own ConfigMaps or write to its own
   resources if needed, but it won’t have access to other namespaces. These Roles and RoleBindings are defined in our
-  manifests (could be part of `infrastructure/base/rbac.yaml` or within each app’s base if app-specific). By defining
-  them in Git, we ensure consistent permissions across environments and clusters.
+  manifests (could be part of `infrastructure/rbac.yaml` or within each app’s base if app-specific). By defining them in
+  Git, we ensure consistent permissions across environments and clusters.
 - ArgoCD Projects (configured in `argocd/projects/`) add another RBAC layer for deployment. We can restrict an ArgoCD
   Project to only sync applications in certain namespaces or to certain clusters. For instance, a “prod” project might
   only allow ArgoCD to deploy to the production cluster namespaces, and perhaps locked down so only certain people can
