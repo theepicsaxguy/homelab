@@ -5,7 +5,7 @@ varReference:
   kind: Service
 - path: metadata/namespace
   kind: ConfigMap
-- path: spec/template/spec/containers/*/env/*/value
+- path: spec/template/spec/containers/0/env/value
   kind: Deployment
 - path: spec/virtualService/name
   kind: Rollout
@@ -15,19 +15,15 @@ varReference:
   kind: ServiceMonitor
 - path: spec/endpoints/*/metricRelabelings/*/replacement
   kind: ServiceMonitor
-- kind: Deployment
-  path: spec/replicas
-- kind: Deployment
-  path: spec/template/spec/containers/env/value
-- kind: Deployment
-  path: spec/template/spec/containers/resources/limits/cpu
-- kind: Deployment
-  path: spec/template/spec/containers/resources/limits/memory
-- kind: Deployment
-  path: spec/template/spec/containers/resources/requests/cpu
-- kind: Deployment
-  path: spec/template/spec/containers/resources/requests/memory
-- path: spec/template/spec/containers/env/value
+- path: spec/template/spec/containers/0/resources/requests/memory
+  kind: Deployment
+- path: spec/template/spec/containers/0/resources/requests/cpu
+  kind: Deployment
+- path: spec/template/spec/containers/0/resources/limits/memory
+  kind: Deployment
+- path: spec/template/spec/containers/0/resources/limits/cpu
+  kind: Deployment
+- path: spec/replicas
   kind: Deployment
 - path: spec/strategy/canary/steps/pause/duration
   kind: Rollout

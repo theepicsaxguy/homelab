@@ -1,50 +1,43 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
-generatorOptions:
-  disableNameSuffixHash: true
-
 configMapGenerator:
-- behavior: merge
-  envs:
-  - base-config.yaml
-  name: base-env-config
+- name: base-env-config
+  behavior: create
+  literals:
+  - ENVIRONMENT_TYPE=base
+  - DEBUG_ENABLED=false
+  - LOG_LEVEL=info
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=false
 
 patches:
-- path: resource-patch.yaml
-  target:
+- target:
     kind: Deployment
     labelSelector: app.kubernetes.io/part-of=infrastructure
-
-configurations:
-- varreference.yaml
-
-# Convert vars to replacements
-replacements:
-- source:
-    fieldPath: data.ENVIRONMENT_TYPE
-    kind: ConfigMap
-    name: base-env-config
-  targets:
-  - fieldPaths:
-    - spec.template.spec.containers.[name=*].env.[name=ENVIRONMENT].value
-    select:
-      kind: Deployment
-- source:
-    fieldPath: data.LOG_LEVEL
-    kind: ConfigMap
-    name: base-env-config
-  targets:
-  - fieldPaths:
-    - spec.template.spec.containers.[name=*].env.[name=LOG_LEVEL].value
-    select:
-      kind: Deployment
-- source:
-    fieldPath: data.ENABLE_METRICS
-    kind: ConfigMap
-    name: base-env-config
-  targets:
-  - fieldPaths:
-    - spec.template.spec.containers.[name=*].env.[name=METRICS_ENABLED].value
-    select:
-      kind: Deployment
+  patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: not-important
+    spec:
+      template:
+        spec:
+          containers:
+          - name: app
+            env:
+            - name: ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: base-env-config
+                  key: ENVIRONMENT_TYPE
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: base-env-config
+                  key: LOG_LEVEL
+            - name: METRICS_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: base-env-config
+                  key: ENABLE_METRICS

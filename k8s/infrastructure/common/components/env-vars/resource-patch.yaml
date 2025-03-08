@@ -3,11 +3,17 @@ kind: Deployment
 metadata:
   name: all-deployments
 spec:
-  replicas: $(DEFAULT_REPLICA_COUNT)
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
   template:
+    metadata:
+      labels:
+        app: my-app
     spec:
       containers:
-      - name: all-containers
+      - name: app
         resources:
           requests:
             memory: $(DEFAULT_MEMORY_REQUEST)
@@ -20,7 +26,5 @@ spec:
           value: $(ENVIRONMENT_TYPE)
         - name: LOG_LEVEL
           value: $(LOG_LEVEL)
-        - name: DEBUG_ENABLED
-          value: $(DEBUG_ENABLED)
-        - name: METRICS_PORT
-          value: $(METRICS_PORT)
+        - name: METRICS_ENABLED
+          value: $(ENABLE_METRICS)

@@ -1,12 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
-namespace: argo-rollouts
-
 resources:
 - rollout-template.yaml
 
-# Define base ConfigMap that will be merged with environment overrides
 configMapGenerator:
 - name: base-env-config
   behavior: merge
@@ -23,8 +20,7 @@ replacements:
   - select:
       kind: Rollout
     fieldPaths:
-    - spec.strategy.canary.steps.[name=pause].pause.duration
-    - spec.strategy.canary.steps.[name=wait].pause.duration
+    - spec.strategy.canary.steps.0.pause.duration
 - source:
     kind: ConfigMap
     name: base-env-config
@@ -34,7 +30,6 @@ replacements:
       kind: Rollout
     fieldPaths:
     - spec.strategy.canary.analysis.interval
-    - spec.strategy.canary.analysis.templates[name=*].duration
 
 patches:
 - path: rollout-pattern.yaml

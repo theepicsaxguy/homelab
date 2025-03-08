@@ -1,25 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-
 commonAnnotations:
   argocd.argoproj.io/sync-options: Prune=true
   argocd.argoproj.io/sync-wave: "0"
-
-configMapGenerator:
-- behavior: create
-  literals:
-  - ENVIRONMENT_TYPE=base
-  - DEBUG_ENABLED=false
-  - LOG_LEVEL=info
-  - ENABLE_METRICS=true
-  - ENABLE_TRACING=false
-  name: base-env-config
 
 components:
 - components/env-vars
 - components/ha-settings
 - components/rollouts
+
 labels:
 - includeSelectors: true
   pairs:
