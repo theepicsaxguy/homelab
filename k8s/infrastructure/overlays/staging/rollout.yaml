@@ -13,7 +13,7 @@ spec:
     canary:
       steps:
         - setWeight: 20
-        - pause: { duration: 60s } # Staging timeout
+        - pause: { duration: $(ROLLOUT_TIMEOUT) }
         - analysis:
             templates:
               - templateName: infra-health
@@ -25,7 +25,7 @@ spec:
               - name: service
                 value: "infra-service"
         - setWeight: 50
-        - pause: { duration: 60s }
+        - pause: { duration: $(ROLLOUT_TIMEOUT) }
         - analysis:
             templates:
               - templateName: infra-health
@@ -42,6 +42,8 @@ spec:
       labels:
         app.kubernetes.io/part-of: infrastructure
         app.kubernetes.io/instance: infra-service
+      annotations:
+        environment.type: staging
     spec:
       containers:
         - name: infra
@@ -53,6 +55,13 @@ spec:
             limits:
               cpu: 2000m
               memory: 512Mi
+          env:
+            - name: ENVIRONMENT
+              value: staging
+            - name: METRICS_ENABLED
+              value: "true"
+            - name: TRACING_ENABLED
+              value: "true"
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

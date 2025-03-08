@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-template
+spec:
+  strategy:
+    canary:
+      analysis:
+        templates:
+        - templateName: infra-health
+        startingStep: 1
+      steps:
+      - setWeight: 20
+      - pause: {duration: $(ROLLOUT_TIMEOUT)}
+      - setWeight: 40
+      - pause: {duration: $(ROLLOUT_TIMEOUT)}
+      - setWeight: 60
+      - pause: {duration: $(ROLLOUT_TIMEOUT)}
+      - setWeight: 80
+      - pause: {duration: $(ROLLOUT_TIMEOUT)}
+  template:
+    metadata:
+      annotations:
+        rollouts-pod-template-hash: ""

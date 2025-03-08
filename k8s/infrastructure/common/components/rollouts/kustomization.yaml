@@ -2,7 +2,24 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 resources:
+- rollout-template.yaml
 - analysis-template.yaml
+
+vars:
+- name: ROLLOUT_TIMEOUT
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ROLLOUT_TIMEOUT
+- name: ANALYSIS_DURATION
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.ANALYSIS_DURATION
 
 patches:
 - path: rollout-pattern.yaml

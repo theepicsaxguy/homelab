@@ -27,3 +27,9 @@ varReference:
   path: spec/template/spec/containers/resources/requests/cpu
 - kind: Deployment
   path: spec/template/spec/containers/resources/requests/memory
+- path: spec/template/spec/containers/env/value
+  kind: Deployment
+- path: spec/strategy/canary/steps/pause/duration
+  kind: Rollout
+- path: spec/metrics/interval
+  kind: AnalysisTemplate

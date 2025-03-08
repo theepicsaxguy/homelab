@@ -5,18 +5,22 @@ resources:
 - ../../common
 - ns.yaml
 - rollout.yaml
-- analysis-template.yaml
-
-components:
-- ../../common/components/env-vars
-- ../../common/components/rollouts
-
 
 namespace: staging-infra
 
-# Environment-specific labels
-labels:
-- pairs:
-    environment: staging
 patches:
-- path: env-overrides.yaml
+- path: patches/resource-limits.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - ENVIRONMENT_TYPE=staging
+    - LOG_LEVEL=info
+    - ENABLE_METRICS=true
+    - ENABLE_TRACING=true
+    - ROLLOUT_TIMEOUT=60s
+    - ANALYSIS_DURATION=5m
