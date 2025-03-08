@@ -2,16 +2,41 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: infrastructure
+  labels:
+    app.kubernetes.io/part-of: infrastructure
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    homelab.gitops/managed: "true"
 spec:
   generators:
+    # Infrastructure core components
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         revision: main
         directories:
           - path: k8s/infrastructure/controllers/*
+          - path: k8s/infrastructure/network/*
+          - path: k8s/infrastructure/storage/*
+          - path: k8s/infrastructure/auth/*
+          - path: k8s/infrastructure/cluster-components/*
+          - path: k8s/infrastructure/vpn/*
+        exclude:
+          - path: "**/kustomization.yaml"
+    # CRDs must be deployed first
+    - git:
+        repoURL: https://github.com/theepicsaxguy/homelab.git
+        revision: main
+        directories:
+          - path: k8s/infrastructure/crds/*
+        exclude:
+          - path: "**/kustomization.yaml"
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: 'infra-{{path.basename}}'
+      labels:
+        app.kubernetes.io/component: '{{path.basename}}'
+        app.kubernetes.io/part-of: infrastructure
     spec:
       project: infrastructure
       source:
@@ -21,9 +46,14 @@ spec:
         kustomize:
           namePrefix: '{{path.basename}}-'
       destination:
-        namespace: '{{path.basename}}'
+        namespace: '{{path.basename}}-system'
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
+          - RespectIgnoreDifferences=true
