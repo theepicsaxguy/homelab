@@ -1,7 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# Reference the common directory for shared metadata
 resources:
+- ../../common
 - rollout.yaml
 - analysis-template.yaml
 
@@ -21,7 +23,7 @@ patches:
     kind: Deployment
 - path: patches/resources-patch.yaml
 
+# Environment-specific labels only (common labels are inherited)
 labels:
 - pairs:
-    app.kubernetes.io/part-of: infrastructure
     environment: prod
