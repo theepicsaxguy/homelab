@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - project.yaml
-  - application-set.yaml
 labels:
   - includeSelectors: true
     pairs:

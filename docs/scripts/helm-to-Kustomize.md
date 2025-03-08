@@ -145,7 +145,7 @@ chmod +x helm-to-kustomize.sh
 Example:
 
 ```bash
-./helm-to-kustomize.sh k8s/infrastructure/base/network/cilium2
+./helm-to-kustomize.sh k8s/infrastructure/network/cilium2
 ```
 
 ---

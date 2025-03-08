@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: adguard
 
 resources:
+  - ns.yaml
   - http-route.yaml
   - secret-external.yaml
   - service.yaml

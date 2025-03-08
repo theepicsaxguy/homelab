@@ -10,8 +10,8 @@
 First apply CRDs to avoid dependency issues:
 
 ```shell
-kubectl apply -k infrastructure/base/crds
-kubectl apply -k infrastructure/base/crossplane-crds
+kubectl apply -k infrastructure/crds
+kubectl apply -k infrastructure/crossplane-crds
 ```
 
 ## Core Infrastructure
@@ -19,7 +19,7 @@ kubectl apply -k infrastructure/base/crossplane-crds
 Apply Cilium networking before other components:
 
 ```shell
-kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
+kubectl kustomize --enable-helm infrastructure/network/cilium | kubectl apply -f -
 ```
 
 Wait for Cilium to be ready:
@@ -31,7 +31,7 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-
 ## Kubechecks
 
 ```shell
-kubectl apply -k infrastructure/base/kubechecks
+kubectl apply -k infrastructure/kubechecks
 ```
 
 ## ArgoCD Bootstrap
@@ -47,7 +47,7 @@ Install ArgoCD:
 ```shell
 kustomize build --enable-helm argocd | kubectl apply -f -
 
-kubectl apply -k infrastructure/base/controllers/argo-rollouts
+kubectl apply -k infrastructure/controllers/argo-rollouts
 ```
 
 Wait for ArgoCD to be ready:
@@ -93,12 +93,12 @@ This will trigger the following applications with sync-waves:
 
 ---
 
-kubectl apply -k infrastructure/base/crds
+kubectl apply -k infrastructure/crds
 
-kubectl kustomize --enable-helm infrastructure/base/network/cilium | kubectl apply -f -
+kubectl kustomize --enable-helm infrastructure/network/cilium | kubectl apply -f -
 
 kubectl kustomize --enable-helm argocd | kubectl apply -f -
 
 kubectl apply -k sets
 
-kubectl kustomize --enable-helm infrastructure/base/storage/longhorn | kubectl apply -f -
+kubectl kustomize --enable-helm infrastructure/storage/longhorn | kubectl apply -f -

@@ -9,7 +9,6 @@ resources:
 - storage
 - auth
 - controllers
-- monitoring
 - vpn
 - cluster-components
 

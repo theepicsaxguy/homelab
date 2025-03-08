@@ -37,7 +37,7 @@ validate_policy() {
 }
 
 # Find all policy files
-find k8s/infrastructure/base/network/policies -type f -name "*.yaml" | while read -r file; do
+find k8s/infrastructure/network/policies -type f -name "*.yaml" | while read -r file; do
     echo "Validating $file..."
     if ! validate_policy "$file"; then
         exit 1
