@@ -2,16 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- network
-- storage
-- auth
-- controllers
-- monitoring
-- vpn
-- cluster-components
-
+- project.yaml
+- ns.yaml
+- gateway
+- dns
+- cilium
 labels:
 - includeSelectors: true
   pairs:
-    app.kubernetes.io/part-of: infrastructure
     app.kubernetes.io/managed-by: argocd
+    dev.pc-tips: network
