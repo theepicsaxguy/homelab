@@ -11,3 +11,7 @@ varReference:
   kind: Rollout
 - path: metadata/annotations
   kind: "*"
+- path: spec/namespaceSelector/matchNames
+  kind: ServiceMonitor
+- path: spec/endpoints/*/metricRelabelings/*/replacement
+  kind: ServiceMonitor

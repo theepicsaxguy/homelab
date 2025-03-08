@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
 - base-config.yaml
+- service-monitor.yaml
+- prometheus-rules.yaml
 
 components:
 - resource-patch.yaml
@@ -74,6 +76,13 @@ vars:
     name: base-env-config
   fieldref:
     fieldpath: data.METRICS_PORT
+- name: SERVICE_MONITOR_NAMESPACE
+  objref:
+    kind: ServiceMonitor
+    name: env-config-monitor
+    apiVersion: monitoring.coreos.com/v1
+  fieldref:
+    fieldpath: metadata.namespace
 
 configurations:
 - varreference.yaml
