@@ -4,6 +4,6 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - deployment.yaml
-  - service.yaml
-  - configmap.yaml
+- deployment.yaml
+- service.yaml
+- configmap.yaml

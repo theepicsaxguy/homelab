@@ -11,13 +11,18 @@ spec:
     spec:
       containers:
         - name: argo-rollouts
+          env:
+            - name: ROLLOUT_REF_RESOLVE_TIMEOUT
+              value: "2m"
+            - name: ROLLOUT_EXPERIMENT_RETIRE_AFTER
+              value: "30m"
           resources:
             requests:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 200m
+              memory: 256Mi
             limits:
-              cpu: 2000m
-              memory: 1Gi
+              cpu: 1000m
+              memory: 512Mi
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

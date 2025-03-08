@@ -5,6 +5,8 @@ metadata:
   namespace: kube-system
   labels:
     app: unbound
+    app.kubernetes.io/part-of: infrastructure
+    dev.pc-tips: network
 spec:
   replicas: 2
   selector:
@@ -15,14 +17,31 @@ spec:
       labels:
         app: unbound
     spec:
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: unbound
           image: mvance/unbound:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 53
               protocol: UDP
             - containerPort: 53
               protocol: TCP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
           volumeMounts:
             - name: config-volume
               mountPath: /etc/unbound/unbound.conf

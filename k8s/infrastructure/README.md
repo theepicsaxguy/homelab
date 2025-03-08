@@ -1,165 +1,111 @@
 # Infrastructure Components
 
-This directory contains the core infrastructure components managed through GitOps. All changes are deployed via ArgoCD
-ApplicationSets with environment-specific configurations.
+This directory contains all the core infrastructure components for our homelab Kubernetes cluster managed using GitOps
+principles through ArgoCD.
 
-## Directory Structure
-
-```
-.
-├── base/               # Base infrastructure components
-│   ├── network/       # Networking components
-│   │   ├── cilium/    # CNI configuration
-│   │   ├── dns/       # DNS services
-│   │   └── gateway/   # Gateway API controllers
-│   ├── storage/       # Storage components
-│   │   ├── proxmox-csi/
-│   │   └── longhorn/
-│   ├── auth/         # Authentication services
-│   ├── controllers/  # Core controllers
-│   ├── monitoring/   # Observability stack
-│   └── vpn/         # VPN services
-├── overlays/          # Environment-specific configurations
-│   ├── dev/         # Development environment
-│   │   ├── kustomization.yaml
-│   │   └── patches/  # All environment patches
-│   ├── staging/     # Staging environment
-│   │   ├── kustomization.yaml
-│   │   └── patches/  # All environment patches
-│   └── prod/        # Production environment
-│       ├── kustomization.yaml
-│       └── patches/  # All environment patches
-└── application-set.yaml  # Infrastructure ApplicationSet
+## 🏗 Directory Structure
 
 ```
-
-## Component Architecture
-
-Each infrastructure component follows a standardized structure:
-
-- Base configuration in `base/<component>`
-- All environment-specific patches are centralized in `overlays/<env>/patches/`
-- Graduated resource limits across environments
-- High availability in staging/production
-
-## Deployment Strategy
-
-Components are deployed through ArgoCD ApplicationSets with:
-
-- Progressive sync waves (0 → 1 → 2)
-- Environment-specific configurations
-- Automated pruning and self-healing
-- Strict resource management
-
-## Adding New Components
-
-1. Add base configuration in `base/<component>`
-2. Add patches in each environment's centralized patches directory:
-
-   ```
-   overlays/<env>/patches/<component>.yaml
-   ```
-
-3. Update the environment's kustomization.yaml to reference the new patch
-4. Validate with:
-
-   ```bash
-   ./scripts/validate_manifests.sh -d k8s/infra
-   ```
-
-## Component Overview
-
-### Authentication (auth/)
-
-- Authelia for SSO/2FA
-- LLDAP for user management
-- Zero-trust implementation
-
-### Network (network/)
-
-```yaml
-components:
-  cilium:
-    mode: 'Direct routing'
-    encryption: 'Wireguard'
-    features: ['BGP', 'L7 Policy', 'Hubble']
-
-  gateway:
-    type: 'Cilium Gateway API'
-    features: ['TLS', 'Rate Limiting']
-
-  dns:
-    providers: ['CoreDNS', 'External DNS']
-    features: ['Split Horizon', 'DoH']
+infrastructure/
+├── application-set.yaml   # ArgoCD ApplicationSet for automated deployment
+├── project.yaml          # ArgoCD Project definition with proper RBAC
+├── kustomization.yaml    # Main kustomization file
+├── common/               # Common components and metadata
+│   ├── kustomization.yaml
+│   └── components/       # Reusable Kustomize components
+│       ├── resource-limits.yaml
+│       ├── high-availability.yaml
+│       └── pod-disruption-budget.yaml
+├── overlays/             # Environment-specific configurations
+│   ├── dev/
+│   ├── staging/
+│   └── prod/
+├── auth/                 # Authentication components
+├── cluster-components/   # Cluster-wide resources
+├── controllers/          # Core controllers
+├── crds/                 # Custom Resource Definitions
+├── network/              # Networking components (Cilium, etc.)
+├── storage/              # Storage provisioners and configurations
+└── vpn/                  # VPN configurations
 ```
 
-### Monitoring (monitoring/)
+## 🚀 Core Components
 
-- Prometheus + Grafana stack
-- Hubble network observability
-- Alert manager integration
+### Common Resources
 
-### Storage (storage/)
+The `common/` directory contains shared metadata, labels, annotations, and reusable Kustomize components. These are used
+across all environments to ensure consistency and reduce duplication.
 
-- Proxmox CSI driver
-- Dynamic provisioning
-- Multiple storage classes
+### Overlays
 
-## Performance Features
+The `overlays/` directory contains environment-specific configurations:
 
-- Traffic optimization through Cilium
-- Efficient resource utilization
-- Load balancing and auto-scaling
+- **dev**: Development environment with minimal resource requirements
+- **staging**: Pre-production environment with high availability
+- **prod**: Production environment with high availability and additional safeguards
 
-## Resource Requirements
+Each overlay inherits common metadata and can include specific components and patches.
 
-Graduated across environments:
+### Infrastructure Components
 
-- Development: Basic resources
-- Staging: Moderate HA setup
-- Production: Full HA with anti-affinity
+- **auth/**: Authentication services (OIDC, OAuth2 proxies, etc.)
+- **cluster-components/**: Essential cluster services
+- **controllers/**: Core controllers like cert-manager
+- **crds/**: Custom Resource Definitions for all components
+- **network/**: Cilium network policies and configurations
+- **storage/**: Storage classes and provisioners
+- **vpn/**: VPN configurations for secure access
 
-## Security Implementation
+## 📝 Using These Components
 
-- Zero-trust network policies
-- Strict pod security standards
-- Automated secret management
+### Adding a New Component
 
-## High Availability
+1. Create a directory in the appropriate section (e.g., `network/my-component/`)
+2. Add Kustomization files and resources
+3. Update the ApplicationSet if needed
+4. Push changes to Git, ArgoCD will automatically deploy
 
-- Component replication (staging/prod)
-- Pod anti-affinity rules
-- Topology spread constraints
+### Environment-Specific Configurations
 
-## Monitoring Integration
+To add environment-specific configurations:
 
-- Prometheus metrics
-- Grafana dashboards
-- Alert manager rules
+1. Add resources or patches to the appropriate overlay
+2. Reference common components to ensure consistency
+3. Use the component naming pattern to ensure proper loading
 
-## Best Practices
+## 🔒 Security Considerations
 
-1. Follow GitOps principles
-2. Use declarative configurations
-3. Implement proper resource limits
-4. Enable security policies
-5. Configure monitoring/alerts
+- The infrastructure project has restricted RBAC permissions
+- CRDs are deployed first (sync-wave -1)
+- Components follow least-privilege principles
+- Resources are namespaced to avoid conflicts
 
-## Known Limitations
+## 🛠 Maintenance and Operations
 
-- Single cluster deployment
-- Manual secret rotation
-- Limited multi-region support
+### Updating Components
 
-## Troubleshooting
+1. Make changes in Git repository
+2. Push changes to the main branch
+3. ArgoCD will automatically sync the changes
 
-1. Check ArgoCD sync status
-2. Validate Kustomize builds
-3. Review component logs
-4. Check resource constraints
+### Troubleshooting
 
-## Future Enhancements
+If you encounter issues:
 
-- Multi-cluster federation
-- Automated secret rotation
-- Enhanced disaster recovery
+1. Check ArgoCD UI for sync status and errors
+2. Verify that resources match GitOps definitions
+3. Check logs in respective namespaces
+4. Never make manual changes - always update via Git
+
+## 🔗 Related Components
+
+- [ArgoCD Setup](/k8s/argocd/)
+- [Application Workloads](/k8s/applications/)
+- [Monitoring Stack](/k8s/monitoring/)
+
+## ⚠️ Important Notes
+
+- All infrastructure changes must follow GitOps principles
+- Manual changes will be overwritten by ArgoCD
+- Use appropriately sized resource requests/limits
+- Follow the DRY principles using common components

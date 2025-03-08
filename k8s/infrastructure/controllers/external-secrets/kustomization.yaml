@@ -10,10 +10,10 @@ resources:
 - ClusterSecretStore.yaml
 
 helmCharts:
-  - name: external-secrets
-    repo: https://charts.external-secrets.io
-    version: 0.14.3
-    releaseName: external-secrets
-    valuesInline:
-      bitwarden-sdk-server:
-        enabled: true
+- name: external-secrets
+  releaseName: external-secrets
+  repo: https://charts.external-secrets.io
+  valuesInline:
+    bitwarden-sdk-server:
+      enabled: true
+  version: 0.14.3

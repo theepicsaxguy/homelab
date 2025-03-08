@@ -1,0 +1,15 @@
+varReference:
+- path: spec/template/spec/containers/env/value
+  kind: Deployment
+- path: spec/template/spec/containers/args
+  kind: Deployment
+- path: spec/duration
+  kind: AnalysisTemplate
+- path: spec/strategy/canary/steps/pause/duration
+  kind: Rollout
+- path: spec/strategy/canary/analysis/interval
+  kind: Rollout
+- path: spec/template/spec/containers/env/value
+  kind: Job
+- path: data
+  kind: ConfigMap

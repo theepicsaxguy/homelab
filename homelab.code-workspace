@@ -98,10 +98,7 @@
     "terminal.integrated.defaultProfile.linux": "bash",
     "terminal.integrated.persistentSessionReviveProcess": "never",
 
-    // Chat settings
-    "chat.promptFiles": {
-      ".github/prompts": true
-    },
+
     "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
     "github.copilot.chat.followUps": true,
     "github.copilot.chat.edits.codesearch.enabled": true,

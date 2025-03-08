@@ -16,6 +16,9 @@ spec:
         - pause: { duration: 60s }
         - setWeight: 100
   template:
+    metadata:
+      annotations:
+        environment.type: staging
     spec:
       containers:
         - name: infra
@@ -26,3 +29,14 @@ spec:
             limits:
               cpu: 2000m
               memory: 512Mi
+          env:
+            - name: DEFAULT_REPLICA_COUNT
+              value: "2"
+            - name: DEFAULT_MEMORY_REQUEST
+              value: "128Mi"
+            - name: DEFAULT_CPU_REQUEST
+              value: "100m"
+            - name: DEFAULT_MEMORY_LIMIT
+              value: "256Mi"
+            - name: DEFAULT_CPU_LIMIT
+              value: "200m"

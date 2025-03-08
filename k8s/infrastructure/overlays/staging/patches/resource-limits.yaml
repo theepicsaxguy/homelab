@@ -17,8 +17,8 @@ spec:
         - name: all-containers
           resources:
             requests:
+              cpu: '128m'
+              memory: '256Mi'
+            limits:
               cpu: '500m'
               memory: '512Mi'
-            limits:
-              cpu: '1000m'
-              memory: '1Gi'

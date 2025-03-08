@@ -4,26 +4,26 @@ kind: Kustomization
 namespace: cert-manager
 
 resources:
-  - ns.yaml
-  - cloudflare-issuer.yaml
-  - cert-manager-secrets-external.yaml
-  - cert-manager-email-external.yaml
+- ns.yaml
+- cloudflare-issuer.yaml
+- cert-manager-secrets-external.yaml
+- cert-manager-email-external.yaml
 
 helmCharts:
-  - name: cert-manager
-    namespace: cert-manager
-    releaseName: cert-manager
-    repo: https://charts.jetstack.io
-    valuesFile: values.yaml
-    version: v1.17.1
+- name: cert-manager
+  namespace: cert-manager
+  releaseName: cert-manager
+  repo: https://charts.jetstack.io
+  valuesFile: values.yaml
+  version: v1.17.1
 
 patches:
-  - target:
-      group: cert-manager.io
-      version: v1
-      kind: ClusterIssuer
-      name: cloudflare-issuer
-    patch: |
-      - op: replace
-        path: /spec/acme/email
-        value: "admin@example.com"  # Temporary default email
+- patch: |
+    - op: replace
+      path: /spec/acme/email
+      value: "admin@example.com"  # Temporary default email
+  target:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: cloudflare-issuer
+    version: v1

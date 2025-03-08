@@ -4,12 +4,12 @@ kind: Kustomization
 namespace: longhorn-system
 
 helmCharts:
-  - name: longhorn
-    releaseName: longhorn
-    namespace: longhorn-system
-    repo: https://charts.longhorn.io
-    version: 1.8.1
-    valuesFile: values.yaml
+- name: longhorn
+  namespace: longhorn-system
+  releaseName: longhorn
+  repo: https://charts.longhorn.io
+  valuesFile: values.yaml
+  version: 1.8.1
 
 resources:
-  - ns.yaml
+- ns.yaml

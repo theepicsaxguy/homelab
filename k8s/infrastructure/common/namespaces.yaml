@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gateway
+  labels:
+    dev.pc-tips: network
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: adguard
+  labels:
+    dev.pc-tips: network
