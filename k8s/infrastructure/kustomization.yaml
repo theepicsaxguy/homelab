@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- overlays
 - network
 - storage
 - auth

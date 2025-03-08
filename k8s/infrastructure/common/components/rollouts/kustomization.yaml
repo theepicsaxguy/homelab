@@ -5,23 +5,36 @@ namespace: argo-rollouts
 
 resources:
 - rollout-template.yaml
-- analysis-template.yaml
 
-vars:
-- fieldref:
-    fieldpath: data.ROLLOUT_TIMEOUT
-  name: ROLLOUT_TIMEOUT
-  objref:
-    apiVersion: v1
+# Define base ConfigMap that will be merged with environment overrides
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - ROLLOUT_TIMEOUT=60s
+    - ANALYSIS_DURATION=5m
+
+replacements:
+- source:
     kind: ConfigMap
     name: base-env-config
-- fieldref:
-    fieldpath: data.ANALYSIS_DURATION
-  name: ANALYSIS_DURATION
-  objref:
-    apiVersion: v1
+    fieldPath: data.ROLLOUT_TIMEOUT
+  targets:
+  - select:
+      kind: Rollout
+    fieldPaths:
+    - spec.strategy.canary.steps.[name=pause].pause.duration
+    - spec.strategy.canary.steps.[name=wait].pause.duration
+- source:
     kind: ConfigMap
     name: base-env-config
+    fieldPath: data.ANALYSIS_DURATION
+  targets:
+  - select:
+      kind: Rollout
+    fieldPaths:
+    - spec.strategy.canary.analysis.interval
+    - spec.strategy.canary.analysis.templates[name=*].duration
 
 patches:
 - path: rollout-pattern.yaml

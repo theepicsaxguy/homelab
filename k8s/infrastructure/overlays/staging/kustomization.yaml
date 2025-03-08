@@ -8,11 +8,14 @@ resources:
 
 namespace: staging-infra
 
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+
 configMapGenerator:
 - name: base-env-config
   behavior: merge
   literals:
-    - ENVIRONMENT_TYPE=staging
     - LOG_LEVEL=info
     - ENABLE_METRICS=true
     - ENABLE_TRACING=true

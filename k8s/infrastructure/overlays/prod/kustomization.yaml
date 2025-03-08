@@ -10,12 +10,33 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 
-
 namespace: prod-infra
 
-# Environment-specific labels
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - LOG_LEVEL=warn
+    - DEBUG_ENABLED=false
+    - ENABLE_METRICS=true
+    - ENABLE_TRACING=true
+    - ENABLE_AUDIT_LOGGING=true
+    - ROLLOUT_TIMEOUT=120s
+    - ANALYSIS_DURATION=10m
+
+patches:
+- path: patches/resource-limits.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+- path: patches/high-availability.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+
+configurations:
+- varreference.yaml
+
 labels:
 - pairs:
     environment: prod
-patches:
-- path: env-overrides.yaml

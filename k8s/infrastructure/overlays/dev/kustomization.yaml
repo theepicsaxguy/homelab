@@ -11,12 +11,21 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 
-
 namespace: dev-infra
 
-# Environment-specific labels
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - LOG_LEVEL=debug
+    - DEBUG_ENABLED=true
+    - ENABLE_METRICS=false
+    - ROLLOUT_TIMEOUT=30s
+    - ANALYSIS_DURATION=1m
+
+patches:
+- path: env-overrides.yaml
+
 labels:
 - pairs:
     environment: dev
-patches:
-- path: env-overrides.yaml

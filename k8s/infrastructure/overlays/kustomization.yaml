@@ -3,9 +3,6 @@ kind: Kustomization
 
 resources:
 - ../common
-- dev
-- staging
-- prod
 
 commonLabels:
   app.kubernetes.io/managed-by: argocd
