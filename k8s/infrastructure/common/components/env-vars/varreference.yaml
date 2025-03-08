@@ -1,0 +1,13 @@
+varReference:
+- path: metadata/namespace
+  kind: Deployment
+- path: metadata/namespace
+  kind: Service
+- path: metadata/namespace
+  kind: ConfigMap
+- path: spec/template/spec/containers/*/env/*/value
+  kind: Deployment
+- path: spec/virtualService/name
+  kind: Rollout
+- path: metadata/annotations
+  kind: "*"
