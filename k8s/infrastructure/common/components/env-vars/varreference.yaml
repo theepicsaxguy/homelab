@@ -15,3 +15,15 @@ varReference:
   kind: ServiceMonitor
 - path: spec/endpoints/*/metricRelabelings/*/replacement
   kind: ServiceMonitor
+- kind: Deployment
+  path: spec/replicas
+- kind: Deployment
+  path: spec/template/spec/containers/env/value
+- kind: Deployment
+  path: spec/template/spec/containers/resources/limits/cpu
+- kind: Deployment
+  path: spec/template/spec/containers/resources/limits/memory
+- kind: Deployment
+  path: spec/template/spec/containers/resources/requests/cpu
+- kind: Deployment
+  path: spec/template/spec/containers/resources/requests/memory

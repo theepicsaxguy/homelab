@@ -1,15 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Common metadata that should be shared across all infrastructure components
-commonLabels:
-  app.kubernetes.io/part-of: infrastructure
-  app.kubernetes.io/managed-by: argocd
+resources: []
 
-commonAnnotations:
-  argocd.argoproj.io/sync-wave: "0"
-  homelab.gitops/managed: "true"
-
-# Common resources that should be included in all overlays
-resources:
-- components
+components:
+- components/env-vars
+- components/rollouts

@@ -1,88 +1,20 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
 
-resources:
-- base-config.yaml
-- service-monitor.yaml
-- prometheus-rules.yaml
+generatorOptions:
+  disableNameSuffixHash: true
 
-components:
-- resource-patch.yaml
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  envs:
+  - base-config.yaml
 
-vars:
-- name: MONITORING_NAMESPACE
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.MONITORING_NAMESPACE
-- name: INGRESS_CLASS
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.INGRESS_CLASS
-- name: ENVIRONMENT_TYPE
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.ENVIRONMENT_TYPE
-- name: DEFAULT_REPLICA_COUNT
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEFAULT_REPLICA_COUNT
-- name: DEFAULT_MEMORY_REQUEST
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEFAULT_MEMORY_REQUEST
-- name: DEFAULT_CPU_REQUEST
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEFAULT_CPU_REQUEST
-- name: DEFAULT_MEMORY_LIMIT
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEFAULT_MEMORY_LIMIT
-- name: DEFAULT_CPU_LIMIT
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEFAULT_CPU_LIMIT
-- name: LOG_LEVEL
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.LOG_LEVEL
-- name: DEBUG_ENABLED
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.DEBUG_ENABLED
-- name: METRICS_PORT
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-  fieldref:
-    fieldpath: data.METRICS_PORT
-- name: SERVICE_MONITOR_NAMESPACE
-  objref:
-    kind: ServiceMonitor
-    name: env-config-monitor
-    apiVersion: monitoring.coreos.com/v1
-  fieldref:
-    fieldpath: metadata.namespace
+patches:
+- path: resource-patch.yaml
+  target:
+    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
 
 configurations:
 - varreference.yaml

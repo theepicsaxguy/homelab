@@ -1,0 +1,9 @@
+varReference:
+- kind: Rollout
+  path: spec/strategy/canary/analysis/args/value
+- kind: Rollout
+  path: spec/strategy/canary/steps/analysis/args/value
+- kind: Rollout
+  path: spec/strategy/canary/trafficRouting/istio/virtualService/name
+- kind: AnalysisTemplate
+  path: spec/metrics/provider/prometheus/query
