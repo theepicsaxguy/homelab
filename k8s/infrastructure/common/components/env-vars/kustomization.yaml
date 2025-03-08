@@ -4,6 +4,9 @@ kind: Kustomization
 resources:
 - base-config.yaml
 
+components:
+- resource-patch.yaml
+
 vars:
 - name: MONITORING_NAMESPACE
   objref:
@@ -23,6 +26,54 @@ vars:
     name: base-env-config
   fieldref:
     fieldpath: data.ENVIRONMENT_TYPE
+- name: DEFAULT_REPLICA_COUNT
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEFAULT_REPLICA_COUNT
+- name: DEFAULT_MEMORY_REQUEST
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEFAULT_MEMORY_REQUEST
+- name: DEFAULT_CPU_REQUEST
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEFAULT_CPU_REQUEST
+- name: DEFAULT_MEMORY_LIMIT
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEFAULT_MEMORY_LIMIT
+- name: DEFAULT_CPU_LIMIT
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEFAULT_CPU_LIMIT
+- name: LOG_LEVEL
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.LOG_LEVEL
+- name: DEBUG_ENABLED
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.DEBUG_ENABLED
+- name: METRICS_PORT
+  objref:
+    kind: ConfigMap
+    name: base-env-config
+  fieldref:
+    fieldpath: data.METRICS_PORT
 
 configurations:
 - varreference.yaml

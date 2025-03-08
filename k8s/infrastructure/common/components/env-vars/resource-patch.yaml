@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-deployments
+spec:
+  replicas: $(DEFAULT_REPLICA_COUNT)
+  template:
+    spec:
+      containers:
+      - name: all-containers
+        resources:
+          requests:
+            memory: $(DEFAULT_MEMORY_REQUEST)
+            cpu: $(DEFAULT_CPU_REQUEST)
+          limits:
+            memory: $(DEFAULT_MEMORY_LIMIT)
+            cpu: $(DEFAULT_CPU_LIMIT)
+        env:
+        - name: ENVIRONMENT
+          value: $(ENVIRONMENT_TYPE)
+        - name: LOG_LEVEL
+          value: $(LOG_LEVEL)
+        - name: DEBUG_ENABLED
+          value: $(DEBUG_ENABLED)
+        - name: METRICS_PORT
+          value: $(METRICS_PORT)
