@@ -5,8 +5,23 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: Prune=true
   argocd.argoproj.io/sync-wave: "0"
 
+commonLabels:
+  app.kubernetes.io/managed-by: argocd
+  app.kubernetes.io/part-of: infrastructure
+
 resources:
-- namespaces.yaml
+- ns.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+  - ENVIRONMENT_TYPE=prod
+  - LOG_LEVEL=info
+  - ENABLE_METRICS=true
 
 components:
 - components/env-vars

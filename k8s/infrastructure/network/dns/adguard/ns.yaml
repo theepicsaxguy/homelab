@@ -4,5 +4,4 @@ metadata:
   name: adguard
   labels:
     app.kubernetes.io/part-of: infrastructure
-    app.kubernetes.io/managed-by: argocd
     dev.pc-tips: network
