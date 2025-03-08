@@ -2,11 +2,25 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+- ../../common
 - ns.yaml
 - rollout.yaml
-- analysis-template.yaml
 
 namespace: staging-infra
+
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - LOG_LEVEL=info
+    - ENABLE_METRICS=true
+    - ENABLE_TRACING=true
+    - ROLLOUT_TIMEOUT=60s
+    - ANALYSIS_DURATION=5m
 
 patches:
 - path: patches/resource-limits.yaml
@@ -17,13 +31,9 @@ patches:
   target:
     kind: Deployment
     labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/argo-rollouts.yaml
-  target:
-    kind: Deployment
-    name: argo-rollouts
-- path: patches/resources-patch.yaml
 
-labels:
-- pairs:
-    app.kubernetes.io/part-of: infrastructure
-    environment: staging
+configurations:
+- varreference.yaml
+
+commonLabels:
+  environment: staging

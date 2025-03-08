@@ -5,7 +5,7 @@ cluster:
 
 kubeProxyReplacement: true
 
-  # Talos specific
+# Talos specific
 k8sServiceHost: localhost
 k8sServicePort: 7445
 securityContext:
@@ -38,6 +38,8 @@ operator:
     requests:
       cpu: 50m
       memory: 128Mi
+  # Remove redundant app container and use default operator container
+  extraContainers: []
 
 # Roll out cilium agent pods automatically when ConfigMap is updated.
 rollOutCiliumPods: true
@@ -49,10 +51,6 @@ resources:
     cpu: 200m
     memory: 512Mi
 
-#debug:
-#  enabled: true
-
-# Increase rate limit when doing L2 announcements
 k8sClientRateLimit:
   qps: 20
   burst: 100
@@ -66,12 +64,12 @@ externalIPs:
 enableCiliumEndpointSlice: true
 
 loadBalancer:
-  # https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#maglev-consistent-hashing
   algorithm: maglev
 
 gatewayAPI:
   enabled: true
 envoy:
+  enabled: true
   securityContext:
     capabilities:
       keepCapNetBindService: true
@@ -82,9 +80,13 @@ hubble:
   relay:
     enabled: true
     rollOutPods: true
+    # Remove redundant app container configuration
+    extraContainers: []
   ui:
     enabled: true
     rollOutPods: true
+    # Remove redundant app container configuration
+    extraContainers: []
 
 ingressController:
   enabled: false

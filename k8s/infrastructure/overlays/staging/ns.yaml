@@ -3,6 +3,8 @@ kind: Namespace
 metadata:
   name: staging-infra
   labels:
-    app.kubernetes.io/part-of: infrastructure
-    app.kubernetes.io/managed-by: argocd
+    name: staging-infra
     environment: staging
+    app.kubernetes.io/part-of: infrastructure
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"

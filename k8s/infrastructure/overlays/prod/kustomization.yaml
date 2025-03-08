@@ -2,10 +2,27 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+- ../../common
 - rollout.yaml
 - analysis-template.yaml
 
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+
 namespace: prod-infra
+
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - LOG_LEVEL=warn
+    - DEBUG_ENABLED=false
+    - ENABLE_METRICS=true
+    - ENABLE_TRACING=true
+    - ENABLE_AUDIT_LOGGING=true
+    - ROLLOUT_TIMEOUT=120s
+    - ANALYSIS_DURATION=10m
 
 patches:
 - path: patches/resource-limits.yaml
@@ -16,12 +33,10 @@ patches:
   target:
     kind: Deployment
     labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/pod-disruption-budget.yaml
-  target:
-    kind: Deployment
-- path: patches/resources-patch.yaml
+
+configurations:
+- varreference.yaml
 
 labels:
 - pairs:
-    app.kubernetes.io/part-of: infrastructure
     environment: prod

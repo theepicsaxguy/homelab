@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+- rollout-template.yaml
+
+configMapGenerator:
+- name: base-env-config
+  behavior: merge
+  literals:
+    - ROLLOUT_TIMEOUT=60s
+
+replacements:
+- source:
+    kind: ConfigMap
+    name: base-env-config
+    fieldPath: data.ROLLOUT_TIMEOUT
+  targets:
+  - select:
+      kind: Rollout
+    fieldPaths:
+    - spec.strategy.canary.steps.0.pause.duration
+
+patches:
+- path: rollout-pattern.yaml
+  target:
+    kind: Rollout
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+
+configurations:
+- varreference.yaml

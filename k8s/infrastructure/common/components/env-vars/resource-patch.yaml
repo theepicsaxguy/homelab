@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all-deployments
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: app
+        resources:
+          requests:
+            memory: $(DEFAULT_MEMORY_REQUEST)
+            cpu: $(DEFAULT_CPU_REQUEST)
+          limits:
+            memory: $(DEFAULT_MEMORY_LIMIT)
+            cpu: $(DEFAULT_CPU_LIMIT)
+        env:
+        - name: ENVIRONMENT
+          value: $(ENVIRONMENT_TYPE)
+        - name: LOG_LEVEL
+          value: $(LOG_LEVEL)
+        - name: METRICS_ENABLED
+          value: $(ENABLE_METRICS)
