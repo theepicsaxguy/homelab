@@ -5,10 +5,10 @@ generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-- name: base-env-config
-  behavior: merge
+- behavior: merge
   envs:
   - base-config.yaml
+  name: base-env-config
 
 patches:
 - path: resource-patch.yaml

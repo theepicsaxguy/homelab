@@ -11,8 +11,6 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 
-patchesStrategicMerge:
-- env-overrides.yaml
 
 namespace: dev-infra
 
@@ -20,3 +18,5 @@ namespace: dev-infra
 labels:
 - pairs:
     environment: dev
+patches:
+- path: env-overrides.yaml

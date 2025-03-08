@@ -16,6 +16,3 @@ resources:
 components:
 - common/components/env-vars
 - common/components/rollouts
-
-# Note: Common labels are now managed in common/kustomization.yaml
-# This prevents duplication and makes the configuration more maintainable

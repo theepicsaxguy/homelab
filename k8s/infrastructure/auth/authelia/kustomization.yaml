@@ -3,19 +3,19 @@ kind: Kustomization
 namespace: authelia
 
 resources:
-  - ns.yaml
-  - http-route.yaml
-  - authelia-secrets-external.yaml
+- ns.yaml
+- http-route.yaml
+- authelia-secrets-external.yaml
 
 configMapGenerator:
-  - name: authelia-configuration
-    files:
-      - configuration.yaml
+- files:
+  - configuration.yaml
+  name: authelia-configuration
 
 helmCharts:
-  - name: authelia
-    namespace: authelia
-    releaseName: authelia
-    repo: https://charts.authelia.com
-    valuesFile: values.yaml
-    version: 0.9.16
+- name: authelia
+  namespace: authelia
+  releaseName: authelia
+  repo: https://charts.authelia.com
+  valuesFile: values.yaml
+  version: 0.9.16

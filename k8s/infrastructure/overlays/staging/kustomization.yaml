@@ -11,8 +11,6 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 
-patchesStrategicMerge:
-- env-overrides.yaml
 
 namespace: staging-infra
 
@@ -20,3 +18,5 @@ namespace: staging-infra
 labels:
 - pairs:
     environment: staging
+patches:
+- path: env-overrides.yaml

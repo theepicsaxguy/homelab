@@ -3,17 +3,17 @@ kind: Kustomization
 namespace: argocd
 
 resources:
-  - ns.yaml
-  - http-route.yaml
-  - redis-secret-external.yaml
+- ns.yaml
+- http-route.yaml
+- redis-secret-external.yaml
   
 patches:
-  - path: argocd-cm-patch.yaml
+- path: argocd-cm-patch.yaml
 
 helmCharts:
-  - name: argo-cd
-    namespace: argocd
-    releaseName: argocd
-    repo: https://argoproj.github.io/argo-helm
-    valuesFile: values.yaml
-    version: 7.8.9
+- name: argo-cd
+  namespace: argocd
+  releaseName: argocd
+  repo: https://argoproj.github.io/argo-helm
+  valuesFile: values.yaml
+  version: 7.8.9

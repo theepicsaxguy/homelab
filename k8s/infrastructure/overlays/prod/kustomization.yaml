@@ -10,8 +10,6 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 
-patchesStrategicMerge:
-- env-overrides.yaml
 
 namespace: prod-infra
 
@@ -19,3 +17,5 @@ namespace: prod-infra
 labels:
 - pairs:
     environment: prod
+patches:
+- path: env-overrides.yaml
