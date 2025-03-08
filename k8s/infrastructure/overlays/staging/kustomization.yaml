@@ -15,12 +15,12 @@ patches:
     labelSelector: app.kubernetes.io/part-of=infrastructure
 
 configMapGenerator:
-- name: base-env-config
-  behavior: merge
+- behavior: merge
   literals:
-    - ENVIRONMENT_TYPE=staging
-    - LOG_LEVEL=info
-    - ENABLE_METRICS=true
-    - ENABLE_TRACING=true
-    - ROLLOUT_TIMEOUT=60s
-    - ANALYSIS_DURATION=5m
+  - ENVIRONMENT_TYPE=staging
+  - LOG_LEVEL=info
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+  - ROLLOUT_TIMEOUT=60s
+  - ANALYSIS_DURATION=5m
+  name: base-env-config

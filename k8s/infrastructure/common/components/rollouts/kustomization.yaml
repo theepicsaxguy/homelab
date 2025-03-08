@@ -6,20 +6,20 @@ resources:
 - analysis-template.yaml
 
 vars:
-- name: ROLLOUT_TIMEOUT
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-    apiVersion: v1
-  fieldref:
+- fieldref:
     fieldpath: data.ROLLOUT_TIMEOUT
-- name: ANALYSIS_DURATION
+  name: ROLLOUT_TIMEOUT
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: base-env-config
-    apiVersion: v1
-  fieldref:
+- fieldref:
     fieldpath: data.ANALYSIS_DURATION
+  name: ANALYSIS_DURATION
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: base-env-config
 
 patches:
 - path: rollout-pattern.yaml

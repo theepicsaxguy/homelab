@@ -20,37 +20,37 @@ configurations:
 - varreference.yaml
 
 vars:
-- name: ENVIRONMENT_TYPE
-  objref:
-    kind: ConfigMap
-    name: base-env-config
-    apiVersion: v1
-  fieldref:
+- fieldref:
     fieldpath: data.ENVIRONMENT_TYPE
-- name: LOG_LEVEL
+  name: ENVIRONMENT_TYPE
   objref:
+    apiVersion: v1
     kind: ConfigMap
     name: base-env-config
-    apiVersion: v1
-  fieldref:
+- fieldref:
     fieldpath: data.LOG_LEVEL
+  name: LOG_LEVEL
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: base-env-config
 
 replacements:
 - source:
-    kind: ConfigMap
-    name: base-env-config
     fieldPath: data.ENABLE_METRICS
-  targets:
-  - select:
-      kind: Deployment
-    fieldPaths:
-    - spec.template.spec.containers.[name=*].env.[name=METRICS_ENABLED].value
-- source:
     kind: ConfigMap
     name: base-env-config
-    fieldPath: data.ENABLE_TRACING
   targets:
-  - select:
+  - fieldPaths:
+    - spec.template.spec.containers.[name=*].env.[name=METRICS_ENABLED].value
+    select:
       kind: Deployment
-    fieldPaths:
+- source:
+    fieldPath: data.ENABLE_TRACING
+    kind: ConfigMap
+    name: base-env-config
+  targets:
+  - fieldPaths:
     - spec.template.spec.containers.[name=*].env.[name=TRACING_ENABLED].value
+    select:
+      kind: Deployment
