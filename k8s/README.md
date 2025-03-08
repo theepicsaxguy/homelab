@@ -76,13 +76,13 @@ Gateways:
 
 ## Infrastructure Components
 
-| Component   | Purpose            | Configuration Path                  | Health Check    |
-| ----------- | ------------------ | ----------------------------------- | --------------- |
-| Cilium      | CNI & Service Mesh | infrastructure/base/network/cilium  | Pods & Services |
-| Gateway API | Ingress Management | infrastructure/base/network/gateway | Routes & Certs  |
-| Authelia    | Authentication     | infrastructure/base/auth/authelia   | Deployment & DB |
-| Prometheus  | Monitoring         | infrastructure/base/monitoring      | StatefulSet     |
-| CSI Drivers | Storage            | infrastructure/base/storage         | DaemonSet       |
+| Component   | Purpose            | Configuration Path             | Health Check    |
+| ----------- | ------------------ | ------------------------------ | --------------- |
+| Cilium      | CNI & Service Mesh | infrastructure/network/cilium  | Pods & Services |
+| Gateway API | Ingress Management | infrastructure/network/gateway | Routes & Certs  |
+| Authelia    | Authentication     | infrastructure/auth/authelia   | Deployment & DB |
+| Prometheus  | Monitoring         | infrastructure/monitoring      | StatefulSet     |
+| CSI Drivers | Storage            | infrastructure/storage         | DaemonSet       |
 
 ## Getting Started
 
