@@ -9,18 +9,14 @@ resources:
 
 namespace: prod-infra
 
+# Use common components instead of individual patches
+components:
+- ../../common/components/resource-limits.yaml
+- ../../common/components/high-availability.yaml
+- ../../common/components/pod-disruption-budget.yaml
+
+# Prod-specific patches
 patches:
-- path: patches/resource-limits.yaml
-  target:
-    kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/high-availability.yaml
-  target:
-    kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/pod-disruption-budget.yaml
-  target:
-    kind: Deployment
 - path: patches/resources-patch.yaml
 
 # Environment-specific labels only (common labels are inherited)

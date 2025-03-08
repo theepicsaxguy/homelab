@@ -10,11 +10,12 @@ resources:
 
 namespace: dev-infra
 
+# Use common components
+components:
+- ../../common/components/resource-limits.yaml
+
+# Dev-specific patches
 patches:
-- path: patches/resource-limits.yaml
-  target:
-    kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
 - path: patches/argo-rollouts.yaml
   target:
     kind: Deployment
