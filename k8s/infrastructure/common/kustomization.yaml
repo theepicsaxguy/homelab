@@ -11,4 +11,5 @@ commonAnnotations:
   homelab.gitops/managed: "true"
 
 # Common resources that should be included in all overlays
-resources: []
+resources:
+- components
