@@ -49,6 +49,13 @@ spec:
       kind: '*'
     - group: ''
       kind: 'Namespace'
+    # Add new permissions for Cilium and Gateway API resources
+    - group: 'cilium.io'
+      kind: 'CiliumLoadBalancerIPPool'
+    - group: 'cilium.io'
+      kind: 'CiliumL2AnnouncementPolicy'
+    - group: 'gateway.networking.k8s.io'
+      kind: 'GatewayClass'
 
   # Define namespaced resources that can be managed
   namespaceResourceWhitelist:
