@@ -9,7 +9,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
     homelab.gitops/managed: "true"
-    # This annotation enables dynamic namespace discovery based on labels
+    # Allowlisted namespace creation
     argocd.argoproj.io/namespace-resource-allowlist: "[{\"group\":\"\", \"kind\":\"Namespace\"}]"
 spec:
   description: Core infrastructure components managed through GitOps
@@ -18,16 +18,20 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab.git'
 
-  # Define allowed destinations with both wildcard patterns and dynamic label selectors
+  # Explicitly allow specific namespaces
   destinations:
-    # Dynamic namespace discovery using label selectors
     - server: https://kubernetes.default.svc
-      namespace: '*'
-      selector:
-        matchLabels:
-          homelab.gitops/managed: "true"
-          homelab.gitops/namespace-type: "infrastructure"
-    # Allow creation of namespaces themselves
+      namespace: network
+    - server: https://kubernetes.default.svc
+      namespace: storage
+    - server: https://kubernetes.default.svc
+      namespace: auth
+    - server: https://kubernetes.default.svc
+      namespace: controllers
+    - server: https://kubernetes.default.svc
+      namespace: argocd
+    - server: https://kubernetes.default.svc
+      namespace: infrastructure-system
     - server: https://kubernetes.default.svc
       namespace: '*'
 
