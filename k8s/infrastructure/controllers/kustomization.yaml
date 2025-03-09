@@ -3,6 +3,14 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- argo-rollouts
+- argocd
+- cert-manager
+- cnpg
+- crossplane
+- external-secrets
+- kubechecks
+- node-feature-discovery
 labels:
 - includeSelectors: true
   pairs:
