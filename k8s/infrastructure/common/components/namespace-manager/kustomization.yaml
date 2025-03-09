@@ -1,16 +1,25 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
-# Add sync-wave annotations to existing namespaces to ensure they're created first
-patches:
-- target:
-    kind: Namespace
-  patch: |
-    - op: add
-      path: /metadata/annotations
-      value:
-        argocd.argoproj.io/sync-wave: "-10"
+# This component adds standard metadata to namespaces referenced in parent kustomization files
+# The parent file must set the "namespace" field which will be used to create the namespace
+# Example usage in a kustomization.yaml file:
+# components:
+#  - ../../common/components/namespace-manager
+# namespace: example-system
 
-# Create namespaces that are required for deployments
+# Generate a namespace resource based on the namespace field in the parent kustomization
 resources:
 - namespace.yaml
+
+# Add common labels and annotations to all namespaces
+
+# Add sync-wave annotations to ensure namespaces are created first
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "-10"
+  homelab.gitops/generated-by: namespace-manager
+labels:
+- includeSelectors: true
+  pairs:
+    homelab.gitops/managed: "true"
+    homelab.gitops/namespace-type: infrastructure

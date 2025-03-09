@@ -1,6 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
+  namespace: argocd
   name: infrastructure
   labels:
     app.kubernetes.io/part-of: infrastructure
@@ -10,37 +11,31 @@ metadata:
     homelab.gitops/managed: "true"
 spec:
   generators:
-    # Infrastructure core components
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         revision: main
         directories:
-          - path: k8s/infrastructure/controllers/*
-          - path: k8s/infrastructure/network/*
-          - path: k8s/infrastructure/storage/*
-          - path: k8s/infrastructure/auth/*
-    # CRDs must be deployed first
-    - git:
-        repoURL: https://github.com/theepicsaxguy/homelab.git
-        revision: main
-        directories:
-          - path: k8s/infrastructure/crds/*
+          - path: k8s/infrastructure/controllers
+          - path: k8s/infrastructure/network
+          - path: k8s/infrastructure/storage
+          - path: k8s/infrastructure/auth
+          - path: k8s/infrastructure/crds
   template:
     metadata:
-      name: 'infra-{{path.basename}}'
+      name: 'infra-{{ path.basename }}'
+      namespace: argocd
       labels:
-        app.kubernetes.io/component: '{{path.basename}}'
+        app.kubernetes.io/component: 'static-infrastructure'
         app.kubernetes.io/part-of: infrastructure
     spec:
       project: infrastructure
       source:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         targetRevision: main
-        path: '{{path}}'
-        kustomize:
-          namePrefix: '{{path.basename}}-'
+        path: k8s/infrastructure
+        kustomize: {}  # Let Kustomize handle naming
       destination:
-        namespace: '{{path.basename}}-system'
+        namespace: infrastructure-system
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:

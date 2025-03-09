@@ -13,14 +13,14 @@ components:
 - ../../common/components/rollouts
 - ../../common/components/namespace-manager
 configMapGenerator:
-- name: base-env-config
-  behavior: merge
+- behavior: merge
   literals:
-    - LOG_LEVEL=info
-    - ENABLE_METRICS=true
-    - ENABLE_TRACING=true
-    - ROLLOUT_TIMEOUT=60s
-    - ANALYSIS_DURATION=5m
+  - LOG_LEVEL=info
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+  - ROLLOUT_TIMEOUT=60s
+  - ANALYSIS_DURATION=5m
+  name: base-env-config
 
 patches:
 - path: patches/resource-limits.yaml
@@ -35,5 +35,7 @@ patches:
 configurations:
 - varreference.yaml
 
-commonLabels:
-  environment: staging
+labels:
+- includeSelectors: true
+  pairs:
+    environment: staging

@@ -6,7 +6,7 @@ resources:
 - redis-secret-external.yaml
 
 components:
-  - ../../common/components/namespace-manager
+- ../../common/components/namespace-manager
 namespace: argocd
 
 

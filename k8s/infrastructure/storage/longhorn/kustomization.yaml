@@ -5,7 +5,7 @@ namespace: longhorn-system
 
 
 components:
-  - ../../common/components/namespace-manager
+- ../../common/components/namespace-manager
 
 helmCharts:
 - name: longhorn
@@ -14,4 +14,3 @@ helmCharts:
   repo: https://charts.longhorn.io
   valuesFile: values.yaml
   version: 1.8.1
-
