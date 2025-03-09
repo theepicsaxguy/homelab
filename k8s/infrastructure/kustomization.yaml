@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- common/namespaces.yaml
 - network
 - storage
 - auth
@@ -25,3 +26,6 @@ labels:
 components:
 - common/components/env-vars
 - common/components/rollouts
+- common/components/immutable-resources
+- common/components/container-images
+- common/components/configmap-validation
