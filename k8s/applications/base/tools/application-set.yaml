@@ -11,7 +11,7 @@ spec:
         repoURL: https://github.com/theepicsaxguy/homelab
         revision: main
         directories:
-          - path: k8s/applications/base/tools/*
+          - path: k8s/applications/tools/*
   template:
     metadata:
       name: '{{ path.basename }}'
