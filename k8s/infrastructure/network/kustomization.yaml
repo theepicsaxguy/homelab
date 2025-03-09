@@ -4,13 +4,10 @@ kind: Kustomization
 resources:
 - project.yaml
 - gateway
-- dns
+- adguard
+- unbound
 - cilium
 
-components:
-  - ../../../common/components/namespace-manager
-
-namespace: network
 
 labels:
 - includeSelectors: true
