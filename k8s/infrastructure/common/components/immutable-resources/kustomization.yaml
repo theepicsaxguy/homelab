@@ -2,52 +2,52 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 patches:
-- target:
+- patch: |-
+    - op: add
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
+  target:
     kind: Deployment
     name: cilium-operator
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: Deployment
     name: hubble-relay
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: Deployment
     name: hubble-ui
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: Deployment
     name: unbound
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: Deployment
     name: kubechecks
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: DaemonSet
     name: cilium
-  patch: |-
+- patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
       value: "0"
-- target:
+  target:
     kind: DaemonSet
     name: cilium-envoy
-  patch: |-
-    - op: add
-      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-      value: "0"

@@ -2,10 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
 # Ensure all containers that reference the ConfigMap have optional set to true to prevent startup failures
+
+# Add a sync-wave annotation to ensure the ConfigMap is created before resources that use it
 patches:
-- target:
-    kind: Deployment
-  patch: |
+- patch: |
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -34,13 +34,13 @@ patches:
                   name: base-env-config
                   key: ENABLE_METRICS
                   optional: true
-
-# Add a sync-wave annotation to ensure the ConfigMap is created before resources that use it
-- target:
-    kind: ConfigMap
-    name: base-env-config
-  patch: |
+  target:
+    kind: Deployment
+- patch: |
     - op: add
       path: /metadata/annotations
       value:
         argocd.argoproj.io/sync-wave: "-5"
+  target:
+    kind: ConfigMap
+    name: base-env-config

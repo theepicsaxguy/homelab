@@ -5,21 +5,21 @@ resources:
 - rollout-template.yaml
 
 configMapGenerator:
-- name: base-env-config
-  behavior: merge
+- behavior: merge
   literals:
-    - ROLLOUT_TIMEOUT=60s
+  - ROLLOUT_TIMEOUT=60s
+  name: base-env-config
 
 replacements:
 - source:
+    fieldPath: data.ROLLOUT_TIMEOUT
     kind: ConfigMap
     name: base-env-config
-    fieldPath: data.ROLLOUT_TIMEOUT
   targets:
-  - select:
-      kind: Rollout
-    fieldPaths:
+  - fieldPaths:
     - spec.strategy.canary.steps.0.pause.duration
+    select:
+      kind: Rollout
 
 patches:
 - path: rollout-pattern.yaml

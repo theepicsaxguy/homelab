@@ -1,0 +1,8 @@
+apiVersion: builtin
+kind: NamespaceTransformer
+metadata:
+  name: namespace-generator
+  annotations:
+    config.kubernetes.io/function: |
+      container:
+        image: quay.io/argoproj/argocd-kustomize-tools:latest
