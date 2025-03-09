@@ -1,0 +1,11 @@
+varReference:
+- path: spec/strategy/canary/steps/*/pause/duration
+  kind: Rollout
+- path: spec/strategy/canary/analysis/templates/*/templateName
+  kind: Rollout
+- path: spec/template/metadata/annotations/environment.type
+  kind: Rollout
+- path: spec/template/spec/containers/*/env/*/value
+  kind: Deployment
+- path: spec/template/spec/containers/*/env/*/value
+  kind: Rollout

@@ -1,43 +1,40 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: app-rollout-staging
+  name: apps-rollout-staging
+  namespace: staging-apps
 spec:
   replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/part-of: applications
-      app.kubernetes.io/instance: app-service
+      app.kubernetes.io/instance: apps-service
   strategy:
     canary:
+      analysis:
+        templates:
+          - templateName: apps-health
       steps:
-        - setWeight: 25
-        - pause: { duration: 60s }
+        - setWeight: 20
+        - pause: { duration: $(ROLLOUT_TIMEOUT) }
         - analysis:
-            args:
-              - name: namespace
-                value: staging
             templates:
-              - templateName: basic-status
+              - templateName: success-rate
         - setWeight: 50
-        - pause: { duration: 60s }
-        - analysis:
-            args:
-              - name: namespace
-                value: staging
-            templates:
-              - templateName: basic-status
+        - pause: { duration: $(ROLLOUT_TIMEOUT) }
         - setWeight: 100
   template:
     metadata:
       labels:
         app.kubernetes.io/part-of: applications
-        app.kubernetes.io/instance: app-service
+        app.kubernetes.io/instance: apps-service
+      annotations:
+        environment.type: staging
     spec:
       containers:
-        - name: app
-          image: app-service:v1.0.0
+        - name: apps
+          image: apps-service:v1.0.0
           resources:
             requests:
               cpu: 500m
@@ -45,6 +42,13 @@ spec:
             limits:
               cpu: 2000m
               memory: 512Mi
+          env:
+            - name: ENVIRONMENT
+              value: staging
+            - name: METRICS_ENABLED
+              value: "true"
+            - name: TRACING_ENABLED
+              value: "true"
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -53,5 +57,5 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/part-of: applications
-                    app.kubernetes.io/instance: app-service
+                    app.kubernetes.io/instance: apps-service
                 topologyKey: kubernetes.io/hostname

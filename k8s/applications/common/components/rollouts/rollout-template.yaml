@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-template
+spec:
+  replicas: 1
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+        pause:
+          duration: "60s"  # Will be replaced by ROLLOUT_TIMEOUT
+      analysis:
+        templates:
+        - templateName: success-rate
+          clusterScope: true
+        startingStep: 1
+        args:
+        - name: service-name
+          value: "{{.Service}}"
+  template:
+    metadata:
+      annotations:
+        rollouts-pod-template-hash: ""

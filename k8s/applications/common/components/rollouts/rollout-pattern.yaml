@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: base-rollout
+spec:
+  replicas: 2
+  strategy:
+    canary:
+      analysis:
+        templates:
+        - templateName: success-rate
+        args:
+        - name: service_name
+          value: "$(SERVICE_NAME)"
+      steps:
+      - setWeight: 20
+      - pause: {duration: 30s}
+      - setWeight: 40
+      - pause: {duration: 30s}
+      - setWeight: 60
+        analysis:
+          args:
+          - name: service_name
+            value: "$(SERVICE_NAME)"
+          templates:
+          - templateName: success-rate
+      - pause: {duration: 30s}
+      - setWeight: 80
+      - pause: {duration: 30s}
+      - setWeight: 100
+      trafficRouting:
+        managedBy: istio
+        istio:
+          virtualService:
+            name: "$(VS_NAME)"
+            routes:
+            - primary
+  revisionHistoryLimit: 3

@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- literals:
+  - TZ="Europe/Oslo"
+  name: common-env
+
+
+components:
+  - ../../common/components/namespace-manager
+namespace: arr
+
+resources:
+- lidarr
+- prowlarr
+- radarr
+- sonarr
+- torrent
