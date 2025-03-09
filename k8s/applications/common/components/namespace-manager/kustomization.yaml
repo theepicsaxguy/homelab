@@ -11,6 +11,7 @@ kind: Component
 # Generate a namespace resource based on the namespace field in the parent kustomization
 resources:
 - namespace.yaml
+- namespace-generator.yaml
 
 # Add common labels and annotations to all namespaces
 
