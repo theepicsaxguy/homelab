@@ -13,11 +13,13 @@ resources:
 - namespace.yaml
 
 # Add common labels and annotations to all namespaces
-commonLabels:
-  homelab.gitops/managed: "true"
-  homelab.gitops/namespace-type: "infrastructure"
 
 # Add sync-wave annotations to ensure namespaces are created first
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "-10"
-  homelab.gitops/generated-by: "namespace-manager"
+  homelab.gitops/generated-by: namespace-manager
+labels:
+- includeSelectors: true
+  pairs:
+    homelab.gitops/managed: "true"
+    homelab.gitops/namespace-type: infrastructure

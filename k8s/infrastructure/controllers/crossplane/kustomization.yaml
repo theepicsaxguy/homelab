@@ -3,7 +3,7 @@ kind: Kustomization
 
 
 components:
-  - ../../common/components/namespace-manager
+- ../../common/components/namespace-manager
 namespace: crossplane
 
 helmCharts:

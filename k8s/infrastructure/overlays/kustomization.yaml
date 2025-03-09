@@ -4,8 +4,10 @@ kind: Kustomization
 resources:
 - ../common
 
-commonLabels:
-  app.kubernetes.io/managed-by: argocd
 
 configurations:
 - varreference.yaml
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/managed-by: argocd

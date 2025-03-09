@@ -2,31 +2,31 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../common
-  - ns.yaml
-  - rollout.yaml
-  - analysis-template.yaml
+- ../../common
+- ns.yaml
+- rollout.yaml
+- analysis-template.yaml
 
 components:
-  - ../../common/components/env-vars
-  - ../../common/components/rollouts
-  - ../../common/components/namespace-manager
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+- ../../common/components/namespace-manager
 
 namespace: dev-infra
 
 configMapGenerator:
-  - name: base-env-config
-    behavior: merge
-    literals:
-      - LOG_LEVEL=debug
-      - DEBUG_ENABLED=true
-      - ENABLE_METRICS=false
-      - ROLLOUT_TIMEOUT=30s
-      - ANALYSIS_DURATION=1m
+- behavior: merge
+  literals:
+  - LOG_LEVEL=debug
+  - DEBUG_ENABLED=true
+  - ENABLE_METRICS=false
+  - ROLLOUT_TIMEOUT=30s
+  - ANALYSIS_DURATION=1m
+  name: base-env-config
 
 patches:
-  - path: env-overrides.yaml
+- path: env-overrides.yaml
 
 labels:
-  - pairs:
-      environment: dev
+- pairs:
+    environment: dev

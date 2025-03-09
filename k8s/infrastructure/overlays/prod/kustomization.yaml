@@ -13,16 +13,16 @@ components:
 namespace: prod-infra
 
 configMapGenerator:
-- name: base-env-config
-  behavior: merge
+- behavior: merge
   literals:
-    - LOG_LEVEL=warn
-    - DEBUG_ENABLED=false
-    - ENABLE_METRICS=true
-    - ENABLE_TRACING=true
-    - ENABLE_AUDIT_LOGGING=true
-    - ROLLOUT_TIMEOUT=120s
-    - ANALYSIS_DURATION=10m
+  - LOG_LEVEL=warn
+  - DEBUG_ENABLED=false
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+  - ENABLE_AUDIT_LOGGING=true
+  - ROLLOUT_TIMEOUT=120s
+  - ANALYSIS_DURATION=10m
+  name: base-env-config
 
 patches:
 - path: patches/resource-limits.yaml
