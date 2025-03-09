@@ -2,28 +2,41 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+- ../../common
 - rollout.yaml
 - analysis-template.yaml
+
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+- ../../common/components/namespace-manager
+namespace: prod-apps
+
+configMapGenerator:
+- behavior: merge
+  literals:
+  - LOG_LEVEL=warn
+  - DEBUG_ENABLED=false
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+  - ENABLE_AUDIT_LOGGING=true
+  - ROLLOUT_TIMEOUT=120s
+  - ANALYSIS_DURATION=10m
+  name: base-env-config
 
 patches:
 - path: patches/resource-limits.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 - path: patches/high-availability.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
-- path: patches/replicas.yaml
-  target:
-    kind: Deployment
-- path: patches/pod-disruption-budget.yaml
-  target:
-    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=applications
+
+configurations:
+- varreference.yaml
 
 labels:
 - pairs:
-    app.kubernetes.io/part-of: applications
     environment: prod
-
-namespace: prod-apps

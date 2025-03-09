@@ -1,48 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: basic-status
+  name: apps-health
 spec:
   metrics:
-    - name: pod-status
-      provider:
-        job:
-          spec:
-            backoffLimit: 2
-            template:
-              spec:
-                containers:
-                - name: check
-                  image: bitnami/kubectl:latest
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service \
-                        --field-selector status.phase=Running \
-                        -o json | jq -e '.items | map(.status.conditions[] | select(.type=="Ready" and .status=="True")) | length > 0' || exit 1
-                restartPolicy: Never
-      count: 3
-      interval: 60s
-      failureLimit: 2
-      successCondition: result == 0
-    - name: pod-restarts
-      provider:
-        job:
-          spec:
-            template:
-              spec:
-                containers:
-                - name: check
-                  image: bitnami/kubectl:latest
-                  command:
-                    - sh
-                    - -c
-                    - |
-                      kubectl get pods -n {{args.namespace}} -l app.kubernetes.io/instance=app-service -o json | \
-                      jq -e '.items | map(.status.containerStatuses[].restartCount) | add == 0' || exit 1
-                restartPolicy: Never
-      count: 2
-      interval: 60s
-      failureLimit: 1
-      successCondition: result == 0
+  - name: success-rate
+    interval: 120s
+    successCondition: result[0] >= 0.99
+    failureLimit: 1
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        query: |
+          min(
+            avg_over_time(
+              rate(container_cpu_usage_seconds_total{namespace="{{args.namespace}}"}[5m])[10m:]
+              /
+              on(pod) kube_pod_container_resource_requests{resource="cpu",namespace="{{args.namespace}}"}[10m:]
+            )
+          )

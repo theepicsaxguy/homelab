@@ -1,82 +1,46 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: applications
   namespace: argocd
+  name: applications
   labels:
     app.kubernetes.io/part-of: applications
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    homelab.gitops/managed: "true"
 spec:
   generators:
-    - list:
-        elements:
-          - environment: dev
-            namespace: dev
-            syncWave: '1'
-            maxSurge: '1'
-            healthTimeout: '30s'
-          - environment: staging
-            namespace: staging
-            syncWave: '2'
-            maxSurge: '2'
-            healthTimeout: '60s'
-          - environment: prod
-            namespace: prod
-            syncWave: '3'
-            maxSurge: '1'
-            healthTimeout: '300s'
-  strategy:
-    rollingSync:
-      steps:
-        - matchExpressions:
-            - key: environment
-              operator: In
-              values: [dev]
-          maxUpdate: 1
-        - matchExpressions:
-            - key: environment
-              operator: In
-              values: [staging]
-          maxUpdate: 1
-        - matchExpressions:
-            - key: environment
-              operator: In
-              values: [prod]
-          maxUpdate: 1
+    - git:
+        repoURL: https://github.com/theepicsaxguy/homelab.git
+        revision: main
+        directories:
+          - path: k8s/applications/external
+          - path: k8s/applications/media
+          - path: k8s/applications/tools
   template:
     metadata:
-      name: 'apps-{{environment}}'
+      name: 'apps-{{ path.basename }}'
+      namespace: argocd
       labels:
+        app.kubernetes.io/component: 'static-applications'
         app.kubernetes.io/part-of: applications
-        environment: '{{environment}}'
-      annotations:
-        argocd.argoproj.io/sync-wave: '{{syncWave}}'
-        argocd.argoproj.io/sync-options: Validate=true,PruneLast=true
-        argocd.argoproj.io/compare-options: IgnoreExtraneous
     spec:
       project: applications
       source:
-        repoURL: https://github.com/theepicsaxguy/homelab
+        repoURL: https://github.com/theepicsaxguy/homelab.git
         targetRevision: main
-        path: k8s/applications/overlays/{{environment}}
+        path: '{{ path }}'
+        kustomize: {}  # Let Kustomize handle naming
       destination:
+        namespace: applications-system
         server: https://kubernetes.default.svc
-        namespace: '{{namespace}}'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
         syncOptions:
           - CreateNamespace=true
-          - ServerSideApply=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
           - RespectIgnoreDifferences=true
-        retry:
-          limit: 5
-          backoff:
-            duration: '30s'
-            factor: 2
-            maxDuration: '10m'
-      ignoreDifferences:
-        - group: argoproj.io
-          kind: Rollout
-          jsonPointers:
-            - /status

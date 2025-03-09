@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- literals:
+  - TZ="Europe/Oslo"
+  name: jellyfin-env
+
+components:
+  - ../../common/components/namespace-manager
+namespace: jellyfin
+
+resources:
+- svc.yaml
+- pvc.yaml
+- http-route.yaml
+- deployment.yaml
+
+labels:
+- includeSelectors: true
+  pairs:
+    app: jellyfin
