@@ -7,8 +7,6 @@ resources:
 - storage
 - auth
 - controllers
-- vpn
-- cluster-components
 
 configurations:
 - common/varreference.yaml

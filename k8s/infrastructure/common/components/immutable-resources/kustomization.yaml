@@ -1,58 +1,53 @@
 apiVersion: kustomize.config.k8s.io/v1alpha1
 kind: Component
 
-annotations:
-  # This ensures we annotate the resources with delete-first policy
-  # for resources with immutable fields like selectors
-  config.kubernetes.io/local-config: "true"
-
 patches:
 - target:
     kind: Deployment
     name: cilium-operator
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: Deployment
     name: hubble-relay
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: Deployment
     name: hubble-ui
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: Deployment
     name: unbound
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: Deployment
     name: kubechecks
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: DaemonSet
     name: cilium
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
 - target:
     kind: DaemonSet
     name: cilium-envoy
-  patch: |
+  patch: |-
     - op: add
-      path: /metadata/annotations/kustomize.toolkit.fluxcd.io~1reconcile
-      value: replace
+      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+      value: "0"
