@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.16.0](https://github.com/theepicsaxguy/homelab/compare/v1.15.0...v1.16.0) (2025-03-09)
+
+
+### Features
+
+* **k8s:** add ApplicationSet and kubechecks for cluster management ([#208](https://github.com/theepicsaxguy/homelab/issues/208)) ([2004ae4](https://github.com/theepicsaxguy/homelab/commit/2004ae46da22d116ddfb52065c1f43427bec713f))
+* **k8s:** add kustomization for external secrets management ([#183](https://github.com/theepicsaxguy/homelab/issues/183)) ([723533e](https://github.com/theepicsaxguy/homelab/commit/723533e5037b99dfded168728a71d31eaa0fc582))
+* **k8s:** add new namespaces and configuration files ([#212](https://github.com/theepicsaxguy/homelab/issues/212)) ([eb7de23](https://github.com/theepicsaxguy/homelab/commit/eb7de23f201ac2b9ce2cbb049f87d57ae9d266df))
+* **k8s:** implement dynamic namespace management in ArgoCD ([#220](https://github.com/theepicsaxguy/homelab/issues/220)) ([e9c0df8](https://github.com/theepicsaxguy/homelab/commit/e9c0df82ad607b015a1dd0160817ecedd2cb1bb2))
+* **k8s:** integrate Bitwarden Secrets Manager with External Secrets Operator ([#193](https://github.com/theepicsaxguy/homelab/issues/193)) ([364105b](https://github.com/theepicsaxguy/homelab/commit/364105bf0da8300df86329cabc264879d014a456))
+* **k8s:** modularize Kustomize overlays and enhance namespace management ([#216](https://github.com/theepicsaxguy/homelab/issues/216)) ([c8a28d3](https://github.com/theepicsaxguy/homelab/commit/c8a28d3de36ea1718eb5b5439b8d81fedd418205))
+
 ## [1.15.0](https://github.com/theepicsaxguy/homelab/compare/v1.14.0...v1.15.0) (2025-03-04)
 
 
