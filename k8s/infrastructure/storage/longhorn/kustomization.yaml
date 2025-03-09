@@ -3,6 +3,10 @@ kind: Kustomization
 
 namespace: longhorn-system
 
+
+components:
+  - ../../common/components/namespace-manager
+
 helmCharts:
 - name: longhorn
   namespace: longhorn-system
@@ -11,5 +15,3 @@ helmCharts:
   valuesFile: values.yaml
   version: 1.8.1
 
-resources:
-- ns.yaml

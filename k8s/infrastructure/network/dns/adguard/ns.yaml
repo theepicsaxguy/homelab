@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: adguard
-  labels:
-    app.kubernetes.io/part-of: infrastructure
-    dev.pc-tips: network

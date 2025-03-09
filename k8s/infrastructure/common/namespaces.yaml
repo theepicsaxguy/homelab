@@ -1,13 +1,28 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: gateway
-  labels:
-    dev.pc-tips: network
+  name: adguard
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: adguard
+  name: gateway
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dns
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cilium-secrets
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubechecks
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
   labels:
-    dev.pc-tips: network
+    app.kubernetes.io/part-of: infrastructure

@@ -3,11 +3,13 @@ kind: Kustomization
 
 namespace: external-secrets
 
+components:
+  - ../../common/components/namespace-manager
+
 resources:
 - bitwarden-store.yaml
 - bitwarden-cert.yaml
 - internal-issuer.yaml
-- ClusterSecretStore.yaml
 
 helmCharts:
 - name: external-secrets

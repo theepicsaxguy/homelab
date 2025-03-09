@@ -3,10 +3,12 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- ns.yaml
 - gateway
-- dns
+- adguard
+- unbound
 - cilium
+
+
 labels:
 - includeSelectors: true
   pairs:

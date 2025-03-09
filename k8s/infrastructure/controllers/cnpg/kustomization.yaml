@@ -3,8 +3,9 @@ kind: Kustomization
 
 namespace: cnpg-system
 
-resources:
-- ns.yaml
+
+components:
+  - ../../common/components/namespace-manager
 
 helmCharts:
 - includeCRDs: true

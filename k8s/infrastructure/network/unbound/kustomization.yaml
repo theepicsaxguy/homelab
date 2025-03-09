@@ -1,7 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: kube-system
+
+components:
+  - ../../common/components/namespace-manager
+namespace: network
 
 resources:
 - deployment.yaml

@@ -13,3 +13,15 @@ varReference:
   kind: Job
 - path: data
   kind: ConfigMap
+- path: spec/template/spec/containers/image
+  kind: Deployment
+- path: spec/template/spec/containers/image
+  kind: DaemonSet
+- path: spec/template/spec/initContainers/image
+  kind: Deployment
+- path: spec/template/spec/initContainers/image
+  kind: DaemonSet
+- path: spec/template/spec/containers/env/valueFrom/configMapKeyRef/name
+  kind: Deployment
+- path: spec/template/spec/containers/env/valueFrom/configMapKeyRef/name
+  kind: DaemonSet
