@@ -4,7 +4,7 @@ kind: Kustomization
 
 components:
   - ../../common/components/namespace-manager
-namespace: netowrk
+namespace: network
 
 resources:
 - deployment.yaml
