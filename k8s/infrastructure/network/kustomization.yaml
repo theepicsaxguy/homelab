@@ -3,10 +3,15 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- ns.yaml
 - gateway
 - dns
 - cilium
+
+components:
+  - ../../../common/components/namespace-manager
+
+namespace: network
+
 labels:
 - includeSelectors: true
   pairs:

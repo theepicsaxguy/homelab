@@ -4,7 +4,7 @@ kind: Kustomization
 
 components:
   - ../../common/components/namespace-manager
-namespace: kube-system
+namespace: netowrk
 
 resources:
 - deployment.yaml
