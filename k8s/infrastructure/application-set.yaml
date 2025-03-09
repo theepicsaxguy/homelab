@@ -32,7 +32,7 @@ spec:
       source:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         targetRevision: main
-        path: k8s/infrastructure
+        path: '{{ path }}'
         kustomize: {}  # Let Kustomize handle naming
       destination:
         namespace: infrastructure-system
