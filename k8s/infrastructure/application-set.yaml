@@ -19,18 +19,12 @@ spec:
           - path: k8s/infrastructure/network/*
           - path: k8s/infrastructure/storage/*
           - path: k8s/infrastructure/auth/*
-          - path: k8s/infrastructure/cluster-components/*
-          - path: k8s/infrastructure/vpn/*
-        exclude:
-          - path: "**/kustomization.yaml"
     # CRDs must be deployed first
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         revision: main
         directories:
           - path: k8s/infrastructure/crds/*
-        exclude:
-          - path: "**/kustomization.yaml"
   template:
     metadata:
       name: 'infra-{{path.basename}}'
