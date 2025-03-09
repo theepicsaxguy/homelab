@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- longhorn
 
 labels:
 - includeSelectors: true
