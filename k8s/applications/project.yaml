@@ -10,7 +10,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
     homelab.gitops/managed: "true"
     # This annotation enables dynamic namespace discovery based on labels
-    argocd.argoproj.io/namespace-resource-allowlist: "[{\"group\":\"\", \"kind\":\"Namespace\", \"labelSelector\":\"homelab.gitops/managed=true,homelab.gitops/namespace-type=applications\"}]"
+    argocd.argoproj.io/namespace-resource-allowlist: "[{\"group\":\"\", \"kind\":\"Namespace\"}]"
 spec:
   description: Core applications components managed through GitOps
 
@@ -27,6 +27,9 @@ spec:
         matchLabels:
           homelab.gitops/managed: "true"
           homelab.gitops/namespace-type: "applications"
+    # Allow creation of namespaces themselves
+    - server: https://kubernetes.default.svc
+      namespace: '*'
 
   # Define specific cluster-wide resources that can be managed
   clusterResourceWhitelist:
@@ -40,6 +43,8 @@ spec:
       kind: 'StorageClass'
     - group: 'admissionregistration.k8s.io'
       kind: '*'
+    - group: ''
+      kind: 'Namespace'
 
   # Define namespaced resources that can be managed
   namespaceResourceWhitelist:
