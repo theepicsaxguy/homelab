@@ -5,3 +5,4 @@ metadata:
   namespace: argocd
 data:
   accounts.kubechecks: "apiKey,login"
+  kustomize.buildOptions: --enable-helm
