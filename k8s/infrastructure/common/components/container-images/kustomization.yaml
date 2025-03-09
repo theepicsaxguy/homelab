@@ -32,7 +32,7 @@ patches:
         spec:
           containers:
           - name: unbound
-            image: mvance/unbound:1.17.1
+            image: mvance/unbound:1.22.0
 
 - target:
     kind: Deployment
