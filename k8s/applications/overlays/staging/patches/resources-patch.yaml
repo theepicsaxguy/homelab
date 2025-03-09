@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: infra-rollout-staging
+spec:
+  replicas: 2 # Staging uses 2 replicas
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 60s } # Staging timeout
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 50
+        - pause: { duration: 60s }
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        environment.type: staging
+    spec:
+      containers:
+        - name: infra
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+            limits:
+              cpu: 2000m
+              memory: 512Mi
+          env:
+            - name: DEFAULT_REPLICA_COUNT
+              value: "2"
+            - name: DEFAULT_MEMORY_REQUEST
+              value: "128Mi"
+            - name: DEFAULT_CPU_REQUEST
+              value: "100m"
+            - name: DEFAULT_MEMORY_LIMIT
+              value: "256Mi"
+            - name: DEFAULT_CPU_LIMIT
+              value: "200m"

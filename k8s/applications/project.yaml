@@ -1,0 +1,71 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: applications
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: applications
+    app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    homelab.gitops/managed: "true"
+    # This annotation enables dynamic namespace discovery based on labels
+    argocd.argoproj.io/namespace-resource-allowlist: "[{\"group\":\"\", \"kind\":\"Namespace\", \"labelSelector\":\"homelab.gitops/managed=true,homelab.gitops/namespace-type=applications\"}]"
+spec:
+  description: Core applications components managed through GitOps
+
+  # Restrict to specific repositories to enhance security
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab.git'
+
+  # Define allowed destinations with both wildcard patterns and dynamic label selectors
+  destinations:
+    # applications-specific namespaces using patterns
+    - server: https://kubernetes.default.svc
+      namespace: '*'
+      selector:
+        matchLabels:
+          homelab.gitops/managed: "true"
+          homelab.gitops/namespace-type: "applications"
+
+  # Define specific cluster-wide resources that can be managed
+  clusterResourceWhitelist:
+    - group: 'apiextensions.k8s.io'
+      kind: 'CustomResourceDefinition'
+    - group: 'rbac.authorization.k8s.io'
+      kind: 'ClusterRole'
+    - group: 'rbac.authorization.k8s.io'
+      kind: 'ClusterRoleBinding'
+    - group: 'storage.k8s.io'
+      kind: 'StorageClass'
+    - group: 'admissionregistration.k8s.io'
+      kind: '*'
+
+  # Define namespaced resources that can be managed
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  # Define RBAC roles for project access
+  roles:
+    - name: admin
+      description: Admin role with full permissions
+      policies:
+        - p, proj:applications:admin, applications, *, applications/*, allow
+    - name: readonly
+      description: Read-only role for viewing applications
+      policies:
+        - p, proj:applications:readonly, applications, get, applications/*, allow
+
+  # Define maintenance windows
+  syncWindows:
+    - kind: allow
+      schedule: '* * * * *'
+      duration: 24h
+      applications:
+        - '*'
+      manualSync: true
+
+  # Detect orphaned resources
+  orphanedResources:
+    warn: true

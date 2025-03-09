@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: infra-rollout-dev
+spec:
+  replicas: 1
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 30s }
+        - analysis:
+            templates:
+              - templateName: infra-health
+        - setWeight: 100
+  template:
+    spec:
+      containers:
+        - name: infra
+          image: infra-service:v1.0.0
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

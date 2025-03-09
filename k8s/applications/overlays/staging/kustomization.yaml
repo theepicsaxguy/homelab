@@ -2,24 +2,40 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base
+- ../../common
+- ns.yaml
 - rollout.yaml
-- analysis-template.yaml
+
+namespace: staging-infra
+
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+- ../../common/components/namespace-manager
+configMapGenerator:
+- behavior: merge
+  literals:
+  - LOG_LEVEL=info
+  - ENABLE_METRICS=true
+  - ENABLE_TRACING=true
+  - ROLLOUT_TIMEOUT=60s
+  - ANALYSIS_DURATION=5m
+  name: base-env-config
 
 patches:
 - path: patches/resource-limits.yaml
   target:
     kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
 - path: patches/high-availability.yaml
   target:
     kind: Deployment
-- path: patches/replicas.yaml
-  target:
-    kind: Deployment
+    labelSelector: app.kubernetes.io/part-of=infrastructure
+
+configurations:
+- varreference.yaml
 
 labels:
-- pairs:
-    app.kubernetes.io/part-of: applications
+- includeSelectors: true
+  pairs:
     environment: staging
-
-namespace: staging-apps

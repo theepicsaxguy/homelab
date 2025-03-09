@@ -2,19 +2,31 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+- ../../common
+- ns.yaml
 - rollout.yaml
 - analysis-template.yaml
 
-labels:
-- pairs:
-    app.kubernetes.io/part-of: applications
-    environment: dev
-
-# Dev-specific patches and configurations
-patches:
-- path: patches/resource-limits.yaml
-  target:
-    kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+components:
+- ../../common/components/env-vars
+- ../../common/components/rollouts
+- ../../common/components/namespace-manager
 
 namespace: dev-infra
+
+configMapGenerator:
+- behavior: merge
+  literals:
+  - LOG_LEVEL=debug
+  - DEBUG_ENABLED=true
+  - ENABLE_METRICS=false
+  - ROLLOUT_TIMEOUT=30s
+  - ANALYSIS_DURATION=1m
+  name: base-env-config
+
+patches:
+- path: env-overrides.yaml
+
+labels:
+- pairs:
+    environment: dev

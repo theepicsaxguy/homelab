@@ -1,20 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: all-deployments
-  labels:
-    app.kubernetes.io/part-of: apps
+  name: argo-rollouts
 spec:
   selector:
     matchLabels:
-      app: all-deployments
+      app.kubernetes.io/name: argo-rollouts
   template:
-    metadata:
-      labels:
-        app: all-deployments
     spec:
       containers:
-        - name: all-containers
+        - name: argo-rollouts
           resources:
             requests:
               cpu: 100m

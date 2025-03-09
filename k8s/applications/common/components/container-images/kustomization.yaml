@@ -1,0 +1,82 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+# Fix app container image in deployments without testing container name
+
+# Fix specific deployments with missing images
+
+
+
+patches:
+- patch: |
+    - op: add
+      path: /spec/template/spec/containers/0/image
+      value: busybox:1.36.1
+  target:
+    kind: Deployment
+    name: (.+)
+- patch: |
+    - op: add
+      path: /spec/template/spec/containers/0/image
+      value: busybox:1.36.1
+  target:
+    kind: DaemonSet
+    name: (.+)
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: unbound
+    spec:
+      template:
+        spec:
+          containers:
+          - name: unbound
+            image: mvance/unbound:1.22.0
+  target:
+    kind: Deployment
+    name: unbound
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cilium-operator
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cilium-operator
+            image: quay.io/cilium/operator-generic:v1.17.1@sha256:628becaeb3e4742a1c36c4897721092375891b58bae2bfcae48bbf4420aaee97
+  target:
+    kind: Deployment
+    name: cilium-operator
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: hubble-relay
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hubble-relay
+            image: quay.io/cilium/hubble-relay:v1.17.1@sha256:397e8fbb188157f744390a7b272a1dec31234e605bcbe22d8919a166d202a3dc
+  target:
+    kind: Deployment
+    name: hubble-relay
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: hubble-ui
+    spec:
+      template:
+        spec:
+          containers:
+          - name: frontend
+            image: quay.io/cilium/hubble-ui:v0.13.2@sha256:9e37c1296b802830834cc87342a9182ccbb71ffebb711971e849221bd9d59392
+          - name: backend
+            image: quay.io/cilium/hubble-ui-backend:v0.13.2@sha256:a034b7e98e6ea796ed26df8f4e71f83fc16465a19d166eff67a03b822c0bfa15
+  target:
+    kind: Deployment
+    name: hubble-ui
