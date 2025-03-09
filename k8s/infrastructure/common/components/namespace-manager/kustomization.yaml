@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+# Add sync-wave annotations to existing namespaces to ensure they're created first
+patches:
+- target:
+    kind: Namespace
+  patch: |
+    - op: add
+      path: /metadata/annotations
+      value:
+        argocd.argoproj.io/sync-wave: "-10"
+
+# Create namespaces that are required for deployments
+resources:
+- namespace.yaml

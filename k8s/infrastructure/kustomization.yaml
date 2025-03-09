@@ -7,8 +7,6 @@ resources:
 - storage
 - auth
 - controllers
-- vpn
-- cluster-components
 
 configurations:
 - common/varreference.yaml
@@ -19,9 +17,13 @@ generatorOptions:
 labels:
 - includeSelectors: true
   pairs:
-    app.kubernetes.io/part-of: infrastructure
     app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: infrastructure
 
 components:
 - common/components/env-vars
 - common/components/rollouts
+- common/components/immutable-resources
+- common/components/container-images
+- common/components/configmap-validation
+- common/components/namespace-manager

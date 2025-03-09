@@ -11,7 +11,7 @@ namespace: staging-infra
 components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
-
+- ../../common/components/namespace-manager
 configMapGenerator:
 - name: base-env-config
   behavior: merge

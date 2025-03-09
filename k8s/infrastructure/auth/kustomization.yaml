@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
-
+- authelia
 labels:
 - includeSelectors: true
   pairs:
