@@ -14,6 +14,6 @@ data:
   METRICS_PORT: "9090"
   HEALTH_CHECK_PATH: "/health"
   ENVIRONMENT_TYPE: "base"
-  COMPONENT_TYPE: "infrastructure"
+  COMPONENT_TYPE: "applications"
   LOG_LEVEL: "info"
   ENABLE_METRICS: "true"

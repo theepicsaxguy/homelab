@@ -5,4 +5,4 @@ patches:
 - path: ha-patch.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications

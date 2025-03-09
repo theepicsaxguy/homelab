@@ -22,4 +22,4 @@ labels:
 - includeSelectors: true
   pairs:
     homelab.gitops/managed: "true"
-    homelab.gitops/namespace-type: infrastructure
+    homelab.gitops/namespace-type: applications

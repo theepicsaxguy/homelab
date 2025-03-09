@@ -12,7 +12,7 @@ spec:
           whenUnsatisfied: DoNotSchedule
           labelSelector:
             matchLabels:
-              app.kubernetes.io/part-of: infrastructure
+              app.kubernetes.io/part-of: applications
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -20,5 +20,5 @@ spec:
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app.kubernetes.io/part-of: infrastructure
+                    app.kubernetes.io/part-of: applications
                 topologyKey: kubernetes.io/hostname

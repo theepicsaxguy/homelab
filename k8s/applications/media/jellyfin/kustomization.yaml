@@ -5,10 +5,12 @@ configMapGenerator:
 - literals:
   - TZ="Europe/Oslo"
   name: jellyfin-env
-  namespace: jellyfin
+
+components:
+  - ../../common/components/namespace-manager
+namespace: jellyfin
 
 resources:
-- ns.yaml
 - svc.yaml
 - pvc.yaml
 - http-route.yaml

@@ -5,10 +5,13 @@ configMapGenerator:
 - literals:
   - TZ="Europe/Oslo"
   name: common-env
-  namespace: arr
+
+
+components:
+  - ../../common/components/namespace-manager
+namespace: arr
 
 resources:
-- ns.yaml
 - lidarr
 - prowlarr
 - radarr

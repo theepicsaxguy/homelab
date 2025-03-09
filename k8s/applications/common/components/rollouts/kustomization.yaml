@@ -25,7 +25,7 @@ patches:
 - path: rollout-pattern.yaml
   target:
     kind: Rollout
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 
 configurations:
 - varreference.yaml
