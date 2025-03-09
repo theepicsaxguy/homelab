@@ -10,7 +10,7 @@ components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
 - ../../common/components/namespace-manager
-namespace: prod-infra
+namespace: prod-apps
 
 configMapGenerator:
 - behavior: merge
@@ -28,11 +28,11 @@ patches:
 - path: patches/resource-limits.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 - path: patches/high-availability.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 
 configurations:
 - varreference.yaml

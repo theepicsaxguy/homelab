@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-prod
+  name: apps-rollout-prod
 spec:
   replicas: 3 # Production requires 3 replicas
   strategy:
@@ -11,17 +11,17 @@ spec:
         - pause: { duration: 300s } # Production timeout
         - analysis:
             templates:
-              - templateName: infra-health
+              - templateName: apps-health
         - setWeight: 30
         - pause: { duration: 300s }
         - analysis:
             templates:
-              - templateName: infra-health
+              - templateName: apps-health
         - setWeight: 100
   template:
     spec:
       containers:
-        - name: infra
+        - name: apps
           resources:
             requests:
               cpu: 1000m
@@ -34,5 +34,5 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchLabels:
-                  app.kubernetes.io/part-of: infrastructure
+                  app.kubernetes.io/part-of: applications
               topologyKey: kubernetes.io/hostname

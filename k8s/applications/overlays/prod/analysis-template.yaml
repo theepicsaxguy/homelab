@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: infra-health
+  name: apps-health
 spec:
   metrics:
   - name: resource-health

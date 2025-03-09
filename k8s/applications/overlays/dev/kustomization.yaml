@@ -12,7 +12,7 @@ components:
 - ../../common/components/rollouts
 - ../../common/components/namespace-manager
 
-namespace: dev-infra
+namespace: dev-apps
 
 configMapGenerator:
 - behavior: merge

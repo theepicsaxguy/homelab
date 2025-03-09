@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-dev
+  name: apps-rollout-dev
 spec:
   replicas: 1
   strategy:
@@ -11,13 +11,13 @@ spec:
         - pause: { duration: 30s }
         - analysis:
             templates:
-              - templateName: infra-health
+              - templateName: apps-health
         - setWeight: 100
   template:
     spec:
       containers:
-        - name: infra
-          image: infra-service:v1.0.0
+        - name: apps
+          image: apps-service:v1.0.0
           resources:
             requests:
               cpu: 100m

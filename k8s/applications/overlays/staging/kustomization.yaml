@@ -6,7 +6,7 @@ resources:
 - ns.yaml
 - rollout.yaml
 
-namespace: staging-infra
+namespace: staging-apps
 
 components:
 - ../../common/components/env-vars
@@ -26,11 +26,11 @@ patches:
 - path: patches/resource-limits.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 - path: patches/high-availability.yaml
   target:
     kind: Deployment
-    labelSelector: app.kubernetes.io/part-of=infrastructure
+    labelSelector: app.kubernetes.io/part-of=applications
 
 configurations:
 - varreference.yaml

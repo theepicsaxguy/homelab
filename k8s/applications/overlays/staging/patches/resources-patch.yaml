@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: infra-rollout-staging
+  name: apps-rollout-staging
 spec:
   replicas: 2 # Staging uses 2 replicas
   strategy:
@@ -11,7 +11,7 @@ spec:
         - pause: { duration: 60s } # Staging timeout
         - analysis:
             templates:
-              - templateName: infra-health
+              - templateName: apps-health
         - setWeight: 50
         - pause: { duration: 60s }
         - setWeight: 100
@@ -21,7 +21,7 @@ spec:
         environment.type: staging
     spec:
       containers:
-        - name: infra
+        - name: apps
           resources:
             requests:
               cpu: 500m

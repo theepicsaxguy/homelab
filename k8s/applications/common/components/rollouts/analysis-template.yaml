@@ -32,7 +32,7 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: infra-health
+  name: apps-health
   namespace: argo-rollouts
 spec:
   metrics:
