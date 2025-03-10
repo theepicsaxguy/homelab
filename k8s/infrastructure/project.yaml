@@ -16,7 +16,7 @@ spec:
 
   # Restrict to specific repositories to enhance security
   sourceRepos:
-    - 'https://github.com/theepicsaxguy/homelab.git'
+    - 'https://github.com/theepicsaxguy/homelab'
 
   # Explicitly allow specific namespaces
   destinations:
@@ -56,6 +56,14 @@ spec:
       kind: 'CiliumL2AnnouncementPolicy'
     - group: 'gateway.networking.k8s.io'
       kind: 'GatewayClass'
+    - group: 'gateway.networking.k8s.io'
+      kind: 'TLSRoute'
+    - group: 'cert-manager.io'
+      kind: 'ClusterIssuer'
+    - group: 'external-secrets.io'
+      kind: 'ClusterSecretStore'
+    - group: 'scheduling.k8s.io'
+      kind: 'PriorityClass'
 
   # Define namespaced resources that can be managed
   namespaceResourceWhitelist:
