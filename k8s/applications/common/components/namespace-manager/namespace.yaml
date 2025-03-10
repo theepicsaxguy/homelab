@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: $(NAMESPACE)
+  name: ${namespace}
   labels:
-    kubernetes.io/metadata.name: $(NAMESPACE)
+    kubernetes.io/metadata.name: ${namespace}
+    app.kubernetes.io/managed-by: argocd
