@@ -3,8 +3,7 @@ kind: Kustomization
 
 namespace: external-secrets
 
-components:
-- ../../common/components/namespace-manager
+
 
 resources:
 - bitwarden-store.yaml
