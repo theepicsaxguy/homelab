@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.17.0](https://github.com/theepicsaxguy/homelab/compare/v1.16.0...v1.17.0) (2025-03-10)
+
+
+### Features
+
+* **k8s:** allowlist specific namespaces for resource management ([#225](https://github.com/theepicsaxguy/homelab/issues/225)) ([b80662f](https://github.com/theepicsaxguy/homelab/commit/b80662f17c8f22f611b7e0eabc112497e8f7f9b1))
+* **k8s:** enhance namespace management with dynamic allowlist updates ([#224](https://github.com/theepicsaxguy/homelab/issues/224)) ([c0e4ce9](https://github.com/theepicsaxguy/homelab/commit/c0e4ce919ec72cc425c13ade07bbb7959ea95804))
+* **k8s:** implement dynamic resource scaling for improved efficiency ([#227](https://github.com/theepicsaxguy/homelab/issues/227)) ([f10a63a](https://github.com/theepicsaxguy/homelab/commit/f10a63a0edf4d3a16c6c89ce798603e0e90576f3))
+* **k8s:** reorganize application configurations and add new resources ([#222](https://github.com/theepicsaxguy/homelab/issues/222)) ([ddd6148](https://github.com/theepicsaxguy/homelab/commit/ddd61488413b3fc4f1d507f7a5c7a9b7af919d28))
+* **k8s:** update kustomization files to include additional resources ([#226](https://github.com/theepicsaxguy/homelab/issues/226)) ([cc50dd2](https://github.com/theepicsaxguy/homelab/commit/cc50dd2a6cd71729e4623578e15825641b7f1bb7))
+
 ## [1.16.0](https://github.com/theepicsaxguy/homelab/compare/v1.15.0...v1.16.0) (2025-03-09)
 
 
