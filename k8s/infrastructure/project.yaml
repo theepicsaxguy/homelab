@@ -16,7 +16,7 @@ spec:
 
   # Restrict to specific repositories to enhance security
   sourceRepos:
-    - 'https://github.com/theepicsaxguy/homelab'
+    - 'https://github.com/theepicsaxguy/homelab.git'
 
   # Explicitly allow specific namespaces
   destinations:
@@ -40,23 +40,30 @@ spec:
     - group: 'apiextensions.k8s.io'
       kind: 'CustomResourceDefinition'
     - group: 'rbac.authorization.k8s.io'
-      kind: '*'
+      kind: 'ClusterRole'
+    - group: 'rbac.authorization.k8s.io'
+      kind: 'ClusterRoleBinding'
     - group: 'storage.k8s.io'
       kind: 'StorageClass'
     - group: 'admissionregistration.k8s.io'
       kind: '*'
     - group: ''
       kind: 'Namespace'
+    # Add new permissions for Cilium and Gateway API resources
     - group: 'cilium.io'
-      kind: '*'
+      kind: 'CiliumLoadBalancerIPPool'
+    - group: 'cilium.io'
+      kind: 'CiliumL2AnnouncementPolicy'
     - group: 'gateway.networking.k8s.io'
-      kind: '*'
+      kind: 'GatewayClass'
+    - group: 'gateway.networking.k8s.io'
+      kind: 'TLSRoute'
     - group: 'cert-manager.io'
       kind: 'ClusterIssuer'
     - group: 'external-secrets.io'
       kind: 'ClusterSecretStore'
     - group: 'scheduling.k8s.io'
-      kind: '*'
+      kind: 'PriorityClass'
 
   # Define namespaced resources that can be managed
   namespaceResourceWhitelist:
