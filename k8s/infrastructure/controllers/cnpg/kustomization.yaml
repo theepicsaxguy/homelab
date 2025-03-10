@@ -4,9 +4,6 @@ kind: Kustomization
 namespace: cnpg-system
 
 
-components:
-- ../../common/components/namespace-manager
-
 helmCharts:
 - includeCRDs: true
   name: cloudnative-pg

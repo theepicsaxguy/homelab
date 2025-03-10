@@ -45,7 +45,7 @@ openssl rand -base64 32 | kubectl create secret generic argocd-redis --namespace
 Install ArgoCD:
 
 ```shell
-kustomize build --enable-helm argocd | kubectl apply -f -
+kustomize build --enable-helm infrastructure/controllers/argocd | kubectl apply -f -
 
 kubectl apply -k infrastructure/controllers/argo-rollouts
 ```
