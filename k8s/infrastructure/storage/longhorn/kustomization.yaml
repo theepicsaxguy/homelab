@@ -4,8 +4,6 @@ kind: Kustomization
 namespace: longhorn-system
 
 
-components:
-- ../../common/components/namespace-manager
 
 helmCharts:
 - name: longhorn

@@ -6,8 +6,7 @@ resources:
 - authelia-secrets-external.yaml
 
 
-components:
-  - ../../common/components/namespace-manager
+
 namespace: authelia
 
 # configMapGenerator:
