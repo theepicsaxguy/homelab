@@ -135,6 +135,10 @@
     "git.enableSmartCommit": true,
     "yaml.schemas": {
       "https://json.schemastore.org/yamllint.json": "file:///root/homelab/k8s/infrastructure/controllers/argocd/charts/argo-cd-7.8.2/argo-cd/templates/aggregate-roles.yaml"
+    },
+    "github.copilot.chat.codesearch.enabled": true,
+    "chat.promptFilesLocations": {
+      ".github/prompts/kustomize": true
     }
   },
   "extensions": {
