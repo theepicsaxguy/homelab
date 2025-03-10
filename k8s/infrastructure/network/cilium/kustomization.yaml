@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - announce.yaml
 - ip-pool.yaml
+- allow-external-secrets-webhook.yaml
 
 helmCharts:
 - includeCRDs: true

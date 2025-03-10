@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: generated-namespace
+  name: ${namespace}
   labels:
-    kubernetes.io/metadata.name: generated-namespace
+    kubernetes.io/metadata.name: ${namespace}
     app.kubernetes.io/managed-by: argocd
