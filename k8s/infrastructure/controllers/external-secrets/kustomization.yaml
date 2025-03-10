@@ -10,6 +10,7 @@ resources:
 - bitwarden-store.yaml
 - bitwarden-cert.yaml
 - internal-issuer.yaml
+- network-policy.yaml
 
 helmCharts:
 - name: external-secrets
