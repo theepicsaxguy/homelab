@@ -73,6 +73,12 @@ kubectl apply -f infrastructure/project.yaml
 kubectl apply -f infrastructure/application-set.yaml
 ```
 
+## Secrets
+
+Add bitwarden token then apply it.
+
+kubectl apply -f infrastructure/controllers/external-secrets/bitwarden-access-token.yaml
+
 This will trigger the following applications with sync-waves:
 
 1. infrastructure (-1): Core infrastructure components

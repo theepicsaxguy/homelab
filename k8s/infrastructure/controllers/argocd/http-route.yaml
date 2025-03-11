@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: internal
+    - name: external  # Ensure using external gateway
       namespace: gateway
   hostnames:
     - 'argocd.kube.pc-tips.se'
@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: argocd-server
-          port: 80
+          port: 443
