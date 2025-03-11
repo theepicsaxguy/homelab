@@ -32,9 +32,22 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-
 Install ArgoCD:
 
 ```shell
+# Apply ArgoCD network policy first to ensure connectivity
+kubectl apply -f infrastructure/controllers/argocd/network-policy.yaml
+
+# Create namespace if it doesn't exist
+kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
+
+# Install ArgoCD components
 kustomize build --enable-helm infrastructure/controllers/argocd | kubectl apply -f -
 
 kubectl apply -k infrastructure/controllers/argo-rollouts
+
+# Check if network policy is correctly applied
+kubectl get ciliumnetworkpolicies -n argocd
+
+# If controller pod is stuck, try restarting it
+kubectl rollout restart statefulset/argocd-application-controller -n argocd
 
 argocd admin redis-initial-password -n argocd
 ```
