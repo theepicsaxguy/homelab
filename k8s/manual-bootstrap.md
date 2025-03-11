@@ -35,6 +35,8 @@ Install ArgoCD:
 kustomize build --enable-helm infrastructure/controllers/argocd | kubectl apply -f -
 
 kubectl apply -k infrastructure/controllers/argo-rollouts
+
+argocd admin redis-initial-password -n argocd
 ```
 
 Wait for ArgoCD to be ready:
@@ -54,8 +56,8 @@ kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.p
 Apply root applications in order:
 
 ```shell
-kubectl apply -k infrastructure/project.yaml
-kubectl apply -k infrastructure/application-set.yaml
+kubectl apply -f infrastructure/project.yaml
+kubectl apply -f infrastructure/application-set.yaml
 ```
 
 This will trigger the following applications with sync-waves:
