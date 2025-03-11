@@ -3,12 +3,10 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- gateway
 - cilium
 
-
 labels:
-- includeSelectors: true
+- includeSelectors: false
   pairs:
     app.kubernetes.io/managed-by: argocd
     dev.pc-tips: network

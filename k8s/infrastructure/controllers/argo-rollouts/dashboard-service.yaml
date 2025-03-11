@@ -3,11 +3,12 @@ kind: Service
 metadata:
   name: argo-rollouts-dashboard
   namespace: argo-rollouts
+  annotations:
+    io.cilium/lb-ipam-ips: "10.25.150.224" # Changed from .220 to avoid conflict with internal gateway
 spec:
-  type: LoadBalancer
   ports:
-    - name: dashboard
-      port: 80
-      targetPort: 3100
+  - port: 80
+    targetPort: 3100
   selector:
     app.kubernetes.io/name: argo-rollouts
+  type: LoadBalancer
