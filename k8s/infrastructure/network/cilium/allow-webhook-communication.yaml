@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-webhook-communication
+spec:
+  description: "Allow communication between API server and admission webhooks"
+  nodeSelector:
+    matchLabels:
+      kubernetes.io/os: linux
+  ingress:
+    - fromEntities:
+      - host
+      - remote-node
+      - kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+          - port: "10250"  # webhook port
+            protocol: TCP
+  egress:
+    - toEntities:
+      - kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+          - port: "10250"
+            protocol: TCP

@@ -5,6 +5,8 @@ resources:
 - announce.yaml
 - ip-pool.yaml
 - allow-external-secrets-webhook.yaml
+- allow-cert-manager-webhook.yaml
+- allow-webhook-communication.yaml
 
 helmCharts:
 - includeCRDs: true

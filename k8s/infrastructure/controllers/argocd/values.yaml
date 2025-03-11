@@ -100,19 +100,20 @@ global:
 
 server:
   service:
-    type: LoadBalancer
+    type: ClusterIP
   resources:
     requests:
       cpu: 50m
-      memory: 64Mi
+      memory: 128Mi
     limits:
-      memory: 1Gi
-  env:
-    - name: REDISCLI_AUTH
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
+      memory: 256Mi
+  certificate:
+    enabled: true
+    domain: argocd.kube.pc-tips.se
+    issuer:
+      group: cert-manager.io
+      kind: ClusterIssuer
+      name: cloudflare-cluster-issuer
 
 repoServer:
   containerSecurityContext:
