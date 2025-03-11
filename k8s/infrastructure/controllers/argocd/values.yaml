@@ -5,6 +5,7 @@ configs:
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
     url: https://argocd.kube.pc-tips.se
+    # https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets
     # oidc.config: |
     #   name: 'Authelia'
     #   issuer: 'https://authelia.kube.pc-tips.se'
@@ -73,7 +74,9 @@ redis:
     limits:
       memory: 1Gi
   auth:
-    enabled: true
+    enabled: false
+    existingSecret: argocd-redis
+    existingSecretPasswordKey: auth
   config:
     save: '""' # Disable persistence
   containerSecurityContext:
@@ -90,6 +93,10 @@ redis:
 global:
   image:
     tag: 'v2.9.3'
+  redis:
+    password:
+      existingSecret: argocd-redis
+      key: auth
 
 server:
   service:
@@ -122,13 +129,24 @@ repoServer:
       memory: 256Mi
     limits:
       memory: 2Gi
-  # Removed extraEnv to avoid duplicate REDIS_PASSWORD and REDISCLI_AUTH
-
+  extraEnv:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
+    - name: REDISCLI_AUTH
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
   extraContainers:
     - name: kustomize-build-with-helm
       command:
         - argocd-cmp-server
-      image: '{{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}'
+      image:
+        '{{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include
+        "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}'
       securityContext:
         runAsNonRoot: true
         runAsUser: 999
@@ -154,7 +172,17 @@ applicationSet:
       memory: 64Mi
     limits:
       memory: 1Gi
-  # Removed env to avoid duplicate REDIS_PASSWORD and REDISCLI_AUTH
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
+    - name: REDISCLI_AUTH
+      valueFrom:
+        secretKeyRef:
+          name: argocd-redis
+          key: auth
 
 notifications:
   enabled: false

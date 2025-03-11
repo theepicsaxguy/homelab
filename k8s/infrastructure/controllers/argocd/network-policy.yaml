@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-argocd-apiserver
+  namespace: argocd
+spec:
+  description: "Allow ArgoCD components to communicate with Kubernetes API server and DNS"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: argocd
+  egress:
+    # Allow all egress traffic
+    - {}
+  ingress:
+    # Allow all ingress traffic
+    - {}
