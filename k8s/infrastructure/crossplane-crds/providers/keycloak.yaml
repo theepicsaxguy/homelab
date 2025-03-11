@@ -1,6 +1,0 @@
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: provider-keycloak
-spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-keycloak:v1.12.0 # renovate: github-releases=crossplane-contrib/provider-keycloak

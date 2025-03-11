@@ -83,29 +83,29 @@ resource "talos_cluster_kubeconfig" "this" {
   }
 }
 
-# data "talos_cluster_health" "this" {
-#   depends_on = [
-#     talos_cluster_kubeconfig.this,
-#     time_sleep.wait_60_seconds,
-#     talos_machine_configuration_apply.this
-#   ]
-#   client_configuration = data.talos_client_configuration.this.client_configuration
-#   control_plane_nodes  = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
-#   worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
-#   endpoints            = data.talos_client_configuration.this.endpoints
-#   timeouts = {
-#     read = "5m"
-#   }
-# }
-
-resource "null_resource" "talos_health_check" {
+data "talos_cluster_health" "this" {
   depends_on = [
     talos_cluster_kubeconfig.this,
     time_sleep.wait_60_seconds,
     talos_machine_configuration_apply.this
   ]
-
-  provisioner "local-exec" {
-    command = "talosctl health -n api.kube.pc-tips.se --talosconfig=/root/homelab/tofu/kubernetes/output/talos-config.yaml"
+  client_configuration = data.talos_client_configuration.this.client_configuration
+  control_plane_nodes  = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
+  worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
+  endpoints            = data.talos_client_configuration.this.endpoints
+  timeouts = {
+    read = "5m"
   }
 }
+
+# resource "null_resource" "talos_health_check" {
+#   depends_on = [
+#     talos_cluster_kubeconfig.this,
+#     time_sleep.wait_60_seconds,
+#     talos_machine_configuration_apply.this
+#   ]
+
+#   provisioner "local-exec" {
+#     command = "talosctl health -n api.kube.pc-tips.se --talosconfig=/root/homelab/tofu/output/talos-config.yaml"
+#   }
+# }

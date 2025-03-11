@@ -12,7 +12,7 @@ module "talos" {
   }
 
   cilium = {
-    values = file("${path.module}/../../k8s/infrastructure/network/cilium/values.yaml")
+    values = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
 
@@ -103,69 +103,3 @@ module "talos" {
 }
 }
 
-// Removing Proxmox CSI Module
-// module "proxmox_csi_plugin" {
-//   depends_on = [module.talos]
-//   source = "./bootstrap/proxmox-csi-plugin"
-//
-//   providers = {
-//     proxmox    = proxmox
-//     kubernetes = kubernetes
-//   }
-//
-//   proxmox = var.proxmox
-// }
-
-module "volumes" {
-  depends_on = [module.talos]  // Only depends on talos now
-  source = "./bootstrap/volumes"
-
-  providers = {
-    kubernetes = kubernetes
-  }
-
-  volumes = {
-    pv-sonarr = {
-      size = "4G"
-    }
-    pv-radarr = {
-      size = "4G"
-    }
-    pv-lidarr = {
-      size = "4G"
-    }
-    pv-prowlarr = {
-      size = "1G"
-    }
-    pv-torrent = {
-      size = "1G"
-    }
-    pv-remark42 = {
-      size = "1G"
-    }
-    pv-authelia-postgres = {
-      size = "2G"
-    }
-    pv-lldap-postgres = {
-      size = "2G"
-    }
-    pv-keycloak-postgres = {
-      size = "2G"
-    }
-    pv-jellyfin = {
-      size = "12G"
-    }
-    pv-netbird-signal = {
-      size = "512M"
-    }
-    pv-netbird-management = {
-      size = "512M"
-    }
-    pv-plex = {
-      size = "12G"
-    }
-    pv-prometheus = {
-      size = "10G"
-    }
-  }
-}
