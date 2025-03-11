@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: external
+  namespace: gateway
+spec:
+  gatewayClassName: cilium
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: 10.25.150.240  # Changed from .222 to match network design (.240/29 range)
+  listeners:
+    - protocol: HTTPS
+      port: 443
+      name: https-gateway
+      hostname: '*.kube.pc-tips.se'
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-pctips
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: HTTPS
+      port: 443
+      name: https-domain-gateway
+      hostname: pc-tips.se
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-pctips
+      allowedRoutes:
+        namespaces:
+          from: All
