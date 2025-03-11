@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kubechecks
 
 resources:
+- namespace.yaml
 - clusterrole.yaml
 - clusterrolebinding.yaml
 - deployment.yaml

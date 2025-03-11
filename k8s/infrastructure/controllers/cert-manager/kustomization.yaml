@@ -6,6 +6,7 @@ kind: Kustomization
 namespace: cert-manager
 
 resources:
+- namespace.yaml
 - cloudflare-issuer.yaml
 - cert-manager-secrets-external.yaml
 - cert-manager-email-external.yaml
