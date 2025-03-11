@@ -3,7 +3,8 @@ kind: Kustomization
 
 namespace: longhorn-system
 
-
+resources:
+  - namespace.yaml
 
 helmCharts:
 - name: longhorn
