@@ -5,5 +5,6 @@ kind: Kustomization
 namespace: argo-rollouts
 
 resources:
+- namespace.yaml
 - https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 - dashboard-service.yaml

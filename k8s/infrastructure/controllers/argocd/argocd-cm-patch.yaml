@@ -1,8 +1,15 @@
-apiVersion: v1
-kind: ConfigMap
+apiVersion: builtin
+kind: PatchTransformer
 metadata:
+  name: patch-argocd-cm
+target:
+  kind: ConfigMap
   name: argocd-cm
-  namespace: argocd
-data:
-  accounts.kubechecks: "apiKey,login"
-  kustomize.buildOptions: --enable-helm
+patch: |-
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: argocd-cm
+  data:
+    accounts.kubechecks: "apiKey,login"
+    kustomize.buildOptions: "--enable-helm"

@@ -4,8 +4,6 @@ kind: Kustomization
 resources:
 - project.yaml
 - gateway
-- adguard
-- unbound
 - cilium
 
 

@@ -1,127 +1,143 @@
-# Infrastructure Provisioning Layer
+# Kubernetes Cluster Bootstrap
 
-Where the magic begins - OpenTofu configurations for bootstrapping our overengineered homelab! 🏗️
-
-## Directory Structure
-
-```
-.
-├── kubernetes/           # Main cluster provisioning
-│   ├── bootstrap/       # Initial configuration
-│   ├── talos/          # Talos OS configs
-│   └── output/         # Generated configs
-└── home-assistant/      # Home automation VM
-```
+The genesis point of our overengineered homelab! 🚀
 
 ## Quick Start
 
-```bash
-cd kubernetes
-cp terraform.tfvars.example terraform.tfvars
-# Edit your variables
-tofu init && tofu apply
+1. Configure variables:
 
-kubectl create secret generic bweso-credentials \
-   --from-literal=BW_CLIENTSECRET='your-client-secret' \
-   --from-literal=BW_CLIENTID='your-client-id' \
-   --from-literal=BW_HOST='your-bitwarden-host' \
-   -n external-secrets --dry-run=client -o yaml | kubectl apply -f -
+```hcl
+# terraform.tfvars
+cluster_name     = "homelab"
+controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
+worker_ips       = ["10.25.150.20", "10.25.150.21"]
 ```
 
-## Performance Tweaks
+2. Launch:
 
-- Uses local.kubeconfig_data from Talos (faster than external sources)
-- Optimized provider configs (load_config_file = false)
-- Retry logic for reliability (apply_retry_count = 3)
-- Parallel resource creation where safe
+```bash
+eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa && ssh-add -L
+```
 
-## Resource Specs
+```bash
+ cd kubernetes
+```
 
-### Kubernetes Cluster
+```bash
+tofu init
+```
+
+```bash
+tofu apply
+```
+
+## Infrastructure Design
+
+### Node Layout
 
 ```yaml
 control_plane:
-  cpu: 2
-  memory: 4096
-  disk: 100G
-  count: 3 # HA setup
+  count: 3
+  type: 'talos'
+  features:
+    - API server
+    - etcd
+    - controller-manager
+    - scheduler
 
 workers:
-  cpu: 4
-  memory: 8192
-  disk: 200G
-  count: 2 # Scalable
+  count: 2 # Expandable
+  type: 'talos'
+  features:
+    - container runtime
+    - cilium networking
+    - CSI support
 ```
 
-### Network Configuration
+## Performance Optimizations
 
-- VLAN support
-- BGP for Cilium
-- Dedicated storage network
+- Local kubeconfig generation
+- Optimized provider settings
+- Parallel VM provisioning
+- Direct Talos bootstrapping
 
-## Talos Configuration
+## Network Configuration
 
-- Minimal OS footprint
-- Cilium CNI pre-configured
-- API-driven management
-- Automated updates
+| Network | CIDR           | Purpose              |
+| ------- | -------------- | -------------------- |
+| Node    | 10.25.150.0/24 | Kubernetes nodes     |
+| Pod     | 10.25.0.0/16   | Container networking |
+| Service | 10.26.0.0/16   | Kubernetes services  |
 
-## State Management
+## Security Features
 
-- State stored in local files
-- Backup state files regularly!
-- Use -refresh-only for state checks
+- API server endpoint protection
+- etcd encryption enabled
+- Node authentication
+- Network isolation
 
-## Security Notes
+## Critical Files
 
-- API tokens generated automatically
-- Secrets handled via variables
-- No password authentication
-- SSH via authorized keys only
+```yaml
+outputs:
+  - kubeconfig: Cluster access
+  - talosconfig: OS management
+  secrets:
+  - admin.yaml: Initial credentials
+  - worker.yaml: Join tokens
+```
 
-## Common Tasks
+## Recovery Procedures
 
-1. Add worker node:
+### State Loss
 
-   ```hcl
-   workers_count = 3  # Increase count
+1. Extract node configs
+2. Import into state
+3. Reconcile differences
+
+### Node Failure
+
+1. Remove from load balancer
+2. Rebuild via Talos
+3. Rejoin cluster
+
+## Troubleshooting
+
+Common first-boot issues:
+
+1. API Server Unavailable
+
+   ```bash
+   # Check Talos status
+   talosctl health --talosconfig=talosconfig
    ```
 
-2. Upgrade Kubernetes:
-   ```hcl
-   kubernetes_version = "v1.28.0"  # Update version
+2. etcd Cluster
+
+   ```bash
+   # Verify quorum
+   talosctl etcd members
    ```
 
-## Debugging
+## Pro Tips
 
-- Check Talos logs via talosctl
-- Proxmox tasks show provisioning status
-- OpenTofu state list for resource view
+- Keep terraform.tfvars in 1Password/Bitwarden
+- Backup Talos configs immediately
+- Document your network layout
+- Test recovery procedures
 
-## Recovery Procedure
+Remember: You only bootstrap once (hopefully)! 🤞
 
-1. State exists: `tofu refresh`
-2. State lost:
-   - Rename old resources
-   - Import into new state
-   - Pray 🙏
+## Configuration Setup
 
-## Known Issues
+After running terraform/tofu, set up your configs:
 
-1. Proxmox API timeouts
+```shell
+# Get the configs
+tofu output -raw talos_config > ~/.talos/config
+tofu output -raw kube_config > ~/.kube/config
 
-   - Solution: Increase timeout values
-   - Status: Working around it
-
-2. Talos bootstrap race conditions
-   - Solution: Retry logic implemented
-   - Status: Handled automatically
-
-## Future Plans
-
-- [ ] Multi-cluster support
-- [ ] Dynamic worker scaling
-- [ ] Improved state backup
-- [ ] Automated testing
-
-Remember: If it's not in code, it doesn't exist! 🤖
+# Set proper permissions
+chmod 600 ~/.talos/config
+chmod 600 ~/.kube/config
+```
