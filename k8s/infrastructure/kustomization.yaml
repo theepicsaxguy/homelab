@@ -15,7 +15,7 @@ generatorOptions:
   disableNameSuffixHash: true
 
 labels:
-- includeSelectors: true
+- includeSelectors: false
   pairs:
     app.kubernetes.io/managed-by: argocd
     app.kubernetes.io/part-of: infrastructure

@@ -5,9 +5,8 @@ resources:
 - project.yaml
 - cilium
 
-
 labels:
-- includeSelectors: true
+- includeSelectors: false
   pairs:
     app.kubernetes.io/managed-by: argocd
     dev.pc-tips: network
