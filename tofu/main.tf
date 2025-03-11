@@ -103,16 +103,3 @@ module "talos" {
 }
 }
 
-// Removing Proxmox CSI Module
-// module "proxmox_csi_plugin" {
-//   depends_on = [module.talos]
-//   source = "./bootstrap/proxmox-csi-plugin"
-//
-//   providers = {
-//     proxmox    = proxmox
-//     kubernetes = kubernetes
-//   }
-//
-//   proxmox = var.proxmox
-// }
-

@@ -11,7 +11,6 @@ First apply CRDs to avoid dependency issues:
 
 ```shell
 kubectl apply -k infrastructure/crds
-kubectl apply -k infrastructure/crossplane-crds
 ```
 
 ## Core Infrastructure
@@ -28,19 +27,7 @@ Wait for Cilium to be ready:
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
 ```
 
-## Kubechecks
-
-```shell
-kubectl apply -k infrastructure/kubechecks
-```
-
 ## ArgoCD Bootstrap
-
-temporary set redis password.
-
-```shell
-openssl rand -base64 32 | kubectl create secret generic argocd-redis --namespace argocd --from-file=auth=/dev/stdin
-```
 
 Install ArgoCD:
 
@@ -67,7 +54,8 @@ kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.p
 Apply root applications in order:
 
 ```shell
-kubectl apply -k sets
+kubectl apply -k infrastructure/project.yaml
+kubectl apply -k infrastructure/application-set.yaml
 ```
 
 This will trigger the following applications with sync-waves:
