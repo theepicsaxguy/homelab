@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: external-secrets-intermediate
+spec:
+  ca:
+    secretName: external-secrets-root-ca

@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: external-secrets-root-ca
+  namespace: external-secrets
+spec:
+  isCA: true
+  commonName: external-secrets-root-ca
+  secretName: external-secrets-root-ca
+  duration: 87600h # 10 years
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: external-secrets-root-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  usages:
+    - cert sign
+    - crl sign
+    - server auth
+    - client auth
