@@ -73,6 +73,14 @@ kubectl apply -f infrastructure/project.yaml
 kubectl apply -f infrastructure/application-set.yaml
 ```
 
+## External Secrets Bootstrap
+
+The external-secrets operator requires certificates to be trusted before it can function. Follow these steps:
+
+```shell
+ ./scripts/bootstrap-external-secrets.sh
+```
+
 ## Secrets
 
 Add bitwarden token then apply it.

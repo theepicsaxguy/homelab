@@ -2,18 +2,24 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: external-secrets
 resources:
-- internal-issuer.yaml
+- bitwarden-cert.yaml
 - namespace.yaml
 - bitwarden-store.yaml
-- bitwarden-cert.yaml
 - network-policy.yaml
+- webhook-config.yaml
+
 helmCharts:
 - name: external-secrets
   releaseName: external-secrets
   repo: https://charts.external-secrets.io
   valuesInline:
+    certController:
+      enabled: true
     webhook:
       create: true
+      port: 443
+      hostNetwork: false
+      certDir: /tmp/certs
       lookaheadInterval: 210h
       certManager:
         enabled: true
@@ -21,11 +27,32 @@ helmCharts:
           create: true
           issuerRef:
             kind: "ClusterIssuer"
-            name: "external-secrets-selfsigned"
+            name: "bootstrap-ca-issuer"
           duration: "8760h"
           renewBefore: "168h"
+      timeoutSeconds: 30
       caBundleInjection: true
+      volumeMounts:
+        - name: cert
+          mountPath: /tmp/certs
+          readOnly: true
+      volumes:
+        - name: cert
+          secret:
+            secretName: webhook-bootstrap-cert
 
     bitwarden-sdk-server:
       enabled: true
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
   version: 0.14.4
