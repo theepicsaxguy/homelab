@@ -112,7 +112,7 @@ repoServer:
       memory: 2Gi
   initContainers:
     - name: plugin-installer
-      image: alpine:3.19
+      image: alpine:3.21
       command: [sh, -c]
       args:
         - |
