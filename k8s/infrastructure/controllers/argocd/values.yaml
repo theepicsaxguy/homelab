@@ -1,25 +1,17 @@
-# https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/values.yaml
 configs:
   cm:
     create: true
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
     url: https://argocd.kube.pc-tips.se
-    # https://argo-cd.readthedocs.io/en/stable/operator-manual/user-management/#sensitive-data-and-sso-client-secrets
-    # oidc.config: |
-    #   name: 'Authelia'
-    #   issuer: 'https://authelia.kube.pc-tips.se'
-    #   clientID: 'argocd'
-    #   clientSecret: $oidc:authelia.clientSecret
-    #   cliClientID: 'argocd-cli'
-    #   requestedScopes: [ 'openid', 'profile', 'email', 'groups', 'offline_access' ]
+    kustomize.buildOptions: "--enable-helm"
   cmp:
     create: true
     plugins:
       kustomize-build-with-helm:
         generate:
           command: [sh, -c]
-          args: [kustomize build --enable-helm]
+          args: ["kustomize build --enable-helm"]
   params:
     controller.diff.server.side: true
     server.insecure: true
@@ -30,7 +22,6 @@ configs:
 
 crds:
   install: true
-  # -- Keep CRDs on chart uninstall
   keep: false
 
 controller:
@@ -40,17 +31,6 @@ controller:
       memory: 700Mi
     limits:
       memory: 4Gi
-  env:
-    - name: REDIS_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
-    - name: REDISCLI_AUTH
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
 
 dex:
   enabled: false
@@ -75,10 +55,8 @@ redis:
       memory: 1Gi
   auth:
     enabled: false
-    existingSecret: argocd-redis
-    existingSecretPasswordKey: auth
   config:
-    save: '""' # Disable persistence
+    save: '""'
   containerSecurityContext:
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
@@ -89,20 +67,15 @@ redis:
     port: 6379
   servicePort: 6379
 
-# Global settings that affect all components
 global:
   image:
     tag: 'v2.9.3'
-  redis:
-    password:
-      existingSecret: argocd-redis
-      key: auth
 
 server:
   service:
     type: LoadBalancer
     annotations:
-      io.cilium/lb-ipam-ips: "10.25.150.225"  # Assigning a specific IP from the pool
+      io.cilium/lb-ipam-ips: "10.25.150.225"
   resources:
     requests:
       cpu: 50m
@@ -120,79 +93,39 @@ server:
 repoServer:
   containerSecurityContext:
     readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    runAsNonRoot: true
+    runAsUser: 999
   volumes:
-    - name: cmp-kustomize-build-with-helm
-      configMap:
-        name: argocd-cmp-cm
-    - name: cmp-tmp
+    - name: custom-tools
       emptyDir: {}
+  volumeMounts:
+    - mountPath: /usr/local/bin
+      name: custom-tools
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       memory: 2Gi
-  extraEnv:
-    - name: REDIS_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
-    - name: REDISCLI_AUTH
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
-  extraContainers:
-    - name: kustomize-build-with-helm
-      command:
-        - argocd-cmp-server
-      image:
-        '{{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include
-        "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}'
+  initContainers:
+    - name: plugin-installer
+      image: alpine:3.19
+      command: [sh, -c]
+      args:
+        - |
+          cp /usr/local/bin/kustomize /usr/local/bin/
+          chmod +x /usr/local/bin/kustomize
       securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
         runAsNonRoot: true
         runAsUser: 999
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
         seccompProfile:
           type: RuntimeDefault
-        capabilities:
-          drop: [ALL]
       volumeMounts:
-        - name: plugins
-          mountPath: /home/argocd/cmp-server/plugins
-        - name: cmp-kustomize-build-with-helm
-          mountPath: /home/argocd/cmp-server/config/plugin.yaml
-          subPath: kustomize-build-with-helm.yaml
-        - mountPath: /tmp
-          name: cmp-tmp
-
-applicationSet:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      memory: 1Gi
-  env:
-    - name: REDIS_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
-    - name: REDISCLI_AUTH
-      valueFrom:
-        secretKeyRef:
-          name: argocd-redis
-          key: auth
-
-notifications:
-  enabled: false
-  resources:
-    requests:
-      cpu: 100m
-      memory: 64Mi
-    limits:
-      cpu: 1000m
-      memory: 128Mi
+        - mountPath: /usr/local/bin
+          name: custom-tools
