@@ -1,11 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-# Bootstrap External Secrets Operator with Bitwarden Integration
-# This script follows GitOps principles and only performs validation and checking steps
-# Any actual changes to resources should be committed to Git and applied via ArgoCD
+# Bootstrap External Secrets Operator with Bitwarden Integration using an internal issuer.
+# After bootstrap, all changes should be managed via ArgoCD.
 
-# Color setup
+# Color setup for logs
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -28,10 +27,19 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if running as root - we need kubectl access
-if [[ $EUID -ne 0 ]]; then
-   log_error "This script must be run as root or with sudo"
-   exit 1
+##############################
+# Pre-checks
+##############################
+
+# Check for required tools: kubectl and jq
+if ! command -v kubectl &>/dev/null; then
+    log_error "kubectl is required but not installed. Exiting."
+    exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+    log_error "jq is required but not installed. Please install jq and try again."
+    exit 1
 fi
 
 # Verify kubectl access
@@ -41,105 +49,191 @@ if ! kubectl get nodes &>/dev/null; then
     exit 1
 fi
 
-# Check for cert-manager installation
-log_info "Checking for cert-manager..."
+# Check that cert-manager is installed by verifying the namespace and pod readiness
+log_info "Checking for cert-manager namespace..."
 if ! kubectl get namespace cert-manager &>/dev/null; then
-    log_error "cert-manager namespace not found. Please deploy cert-manager first."
-    log_info "cert-manager should be deployed through ArgoCD as part of infrastructure components."
+    log_error "cert-manager namespace not found. Please deploy cert-manager first via ArgoCD."
     exit 1
 fi
 
-if ! kubectl get pods -n cert-manager -l app=cert-manager &>/dev/null; then
-    log_error "cert-manager pods not found. Check cert-manager deployment."
+log_info "Waiting for cert-manager pods to be ready..."
+kubectl wait --for=condition=Ready --timeout=120s pod -l app=cert-manager -n cert-manager || {
+    log_error "cert-manager pods did not become ready in time."
+    exit 1
+}
+log_success "cert-manager is installed and ready."
+
+##############################
+# Patch cert-manager webhook CA bundles
+##############################
+
+log_info "Patching cert-manager webhook configurations with proper CA bundle..."
+WEBHOOK_CA=$(kubectl get secret -n cert-manager cert-manager-webhook-ca -o jsonpath='{.data.ca\.crt}' || true)
+if [ -z "$WEBHOOK_CA" ]; then
+    log_error "Failed to retrieve CA bundle from secret 'cert-manager-webhook-ca'."
     exit 1
 fi
-log_success "cert-manager appears to be installed correctly."
 
-# Check for external-secrets namespace
-log_info "Checking for external-secrets namespace..."
+# Patch all validating webhook configurations containing 'cert-manager'
+VALIDATING_WEBHOOKS=$(kubectl get validatingwebhookconfigurations -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep cert-manager || true)
+if [ -n "$VALIDATING_WEBHOOKS" ]; then
+    for wh in $VALIDATING_WEBHOOKS; do
+        log_info "Patching validating webhook configuration: $wh"
+        kubectl patch validatingwebhookconfiguration "$wh" --type='json' \
+            -p='[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value": "'"$WEBHOOK_CA"'"}]' \
+            || log_warn "Failed to patch validating webhook configuration $wh."
+    done
+else
+    log_warn "No validating webhook configurations containing 'cert-manager' found."
+fi
+
+# Patch all mutating webhook configurations containing 'cert-manager'
+MUTATING_WEBHOOKS=$(kubectl get mutatingwebhookconfigurations -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep cert-manager || true)
+if [ -n "$MUTATING_WEBHOOKS" ]; then
+    for wh in $MUTATING_WEBHOOKS; do
+        log_info "Patching mutating webhook configuration: $wh"
+        kubectl patch mutatingwebhookconfiguration "$wh" --type='json' \
+            -p='[{"op": "replace", "path": "/webhooks/0/clientConfig/caBundle", "value": "'"$WEBHOOK_CA"'"}]' \
+            || log_warn "Failed to patch mutating webhook configuration $wh."
+    done
+else
+    log_warn "No mutating webhook configurations containing 'cert-manager' found."
+fi
+
+log_success "Cert-manager webhook configurations patched."
+
+##############################
+# Setup certificate chain
+##############################
+
+# 1. Create bootstrap issuer (ClusterIssuer)
+log_info "Creating bootstrap issuer..."
+kubectl apply -f k8s/infrastructure/controllers/cert-manager/bootstrap-issuer.yaml
+
+log_info "Waiting for bootstrap issuer to be registered..."
+for i in {1..12}; do
+    if kubectl get clusterissuer bootstrap-issuer &>/dev/null; then
+        log_success "Bootstrap issuer is registered."
+        break
+    else
+        log_info "Waiting for bootstrap issuer (attempt $i)..."
+        sleep 5
+    fi
+    if [ $i -eq 12 ]; then
+        log_error "Timeout waiting for bootstrap issuer."
+        exit 1
+    fi
+done
+
+# Debug: print details of the bootstrap issuer
+log_info "Bootstrap issuer details:"
+kubectl describe clusterissuer bootstrap-issuer
+
+# 2. Create bootstrap CA certificate
+log_info "Creating bootstrap CA certificate..."
+kubectl apply -f k8s/infrastructure/controllers/cert-manager/bootstrap-ca.yaml
+
+log_info "Waiting for CA secret 'bootstrap-ca' in cert-manager namespace..."
+for i in {1..12}; do
+    if kubectl get secret -n cert-manager bootstrap-ca &>/dev/null; then
+        log_success "CA secret 'bootstrap-ca' is available."
+        break
+    else
+        log_info "Attempt $i: CA secret not found. Showing certificate status:"
+        kubectl describe certificate bootstrap-ca -n cert-manager || log_warn "Certificate bootstrap-ca not found yet."
+        sleep 5
+    fi
+    if [ $i -eq 12 ]; then
+        log_error "Timeout waiting for CA secret to be created."
+        exit 1
+    fi
+done
+
+# 3. Create CA issuer (ClusterIssuer)
+log_info "Creating CA issuer..."
+kubectl apply -f k8s/infrastructure/controllers/cert-manager/bootstrap-ca-issuer.yaml
+
+log_info "Waiting for CA issuer to be registered..."
+for i in {1..12}; do
+    if kubectl get clusterissuer ca-issuer &>/dev/null; then
+        log_success "CA issuer is registered."
+        break
+    else
+        log_info "Waiting for CA issuer (attempt $i)..."
+        sleep 5
+    fi
+    if [ $i -eq 12 ]; then
+        log_error "Timeout waiting for CA issuer."
+        exit 1
+    fi
+done
+
+# Debug: print details of the CA issuer
+log_info "CA issuer details:"
+kubectl describe clusterissuer ca-issuer
+
+##############################
+# Setup External Secrets
+##############################
+
+# 4. Ensure external-secrets namespace exists
+log_info "Ensuring 'external-secrets' namespace exists..."
 if ! kubectl get namespace external-secrets &>/dev/null; then
-    log_warn "external-secrets namespace not found. Creating it for ArgoCD to manage..."
     kubectl create namespace external-secrets
-    log_info "Namespace created, but remember all further resources should be deployed by ArgoCD."
+    log_success "Namespace 'external-secrets' created."
+else
+    log_info "Namespace 'external-secrets' already exists."
 fi
 
-# Verify issuer resources
-log_info "Checking for self-signed issuer in external-secrets namespace..."
-if ! kubectl get issuer -n external-secrets selfsigned-issuer &>/dev/null; then
-    log_warn "Self-signed issuer not found in external-secrets namespace."
-    log_info "Make sure the issuer is defined in Git and will be applied by ArgoCD."
-else
-    log_success "Self-signed issuer found."
-fi
+# 5. Create Bitwarden certificate
+log_info "Creating Bitwarden certificate..."
+kubectl apply -f k8s/infrastructure/controllers/external-secrets/bitwarden-cert.yaml
 
-# Check for certificate resource
-log_info "Checking for bitwarden-sdk-cert certificate..."
-if ! kubectl get certificate -n external-secrets bitwarden-sdk-cert &>/dev/null; then
-    log_warn "bitwarden-sdk-cert certificate not found."
-    log_info "Make sure the certificate is defined in Git and will be applied by ArgoCD."
-else
-    log_success "Certificate resource found."
-fi
-
-# Check for certificate secret
-log_info "Checking for bitwarden-tls-certs secret..."
-if ! kubectl get secret -n external-secrets bitwarden-tls-certs &>/dev/null; then
-    log_warn "bitwarden-tls-certs secret not found. This should be created by cert-manager."
-    log_info "If this persists after ArgoCD reconciliation, check cert-manager logs."
-else
-    log_success "Certificate secret exists."
-
-    # Check for required keys in secret
-    SECRET_KEYS=$(kubectl get secret -n external-secrets bitwarden-tls-certs -o jsonpath='{.data}' | jq 'keys')
-    if [[ $SECRET_KEYS != *"tls.crt"* || $SECRET_KEYS != *"tls.key"* || $SECRET_KEYS != *"ca.crt"* ]]; then
-        log_warn "bitwarden-tls-certs secret is missing required keys (tls.crt, tls.key, ca.crt)."
-        log_info "Check cert-manager logs and certificate definition in Git."
+log_info "Waiting for Bitwarden certificate secret 'bitwarden-tls-certs' in external-secrets namespace..."
+for i in {1..12}; do
+    if kubectl get secret -n external-secrets bitwarden-tls-certs &>/dev/null; then
+        log_success "Bitwarden certificate secret is available."
+        break
     else
-        log_success "Certificate secret has all required keys."
+        log_info "Waiting for Bitwarden certificate secret (attempt $i)..."
+        sleep 5
     fi
-fi
-
-# Check for Bitwarden SDK server pods
-log_info "Checking for bitwarden-sdk-server pods..."
-if ! kubectl get pods -n external-secrets -l app.kubernetes.io/name=bitwarden-sdk-server &>/dev/null; then
-    log_warn "No bitwarden-sdk-server pods found."
-    log_info "Make sure the Bitwarden SDK Server is defined in Git and will be applied by ArgoCD."
-else
-    SDK_PODS=$(kubectl get pods -n external-secrets -l app.kubernetes.io/name=bitwarden-sdk-server -o jsonpath='{.items[*].status.phase}')
-    if [[ $SDK_PODS == *"Running"* ]]; then
-        log_success "Bitwarden SDK Server is running."
-    else
-        log_warn "Bitwarden SDK Server pods exist but are not in Running state."
-        log_info "Check pod status with: kubectl describe pods -n external-secrets -l app.kubernetes.io/name=bitwarden-sdk-server"
+    if [ $i -eq 12 ]; then
+        log_error "Timeout waiting for Bitwarden certificate secret."
+        exit 1
     fi
-fi
+done
 
-# Check for SecretStore resource
-log_info "Checking for Bitwarden SecretStore..."
-if ! kubectl get secretstore -n external-secrets bitwarden-secretsmanager &>/dev/null; then
-    log_warn "bitwarden-secretsmanager SecretStore not found."
-    log_info "Make sure the SecretStore is defined in Git and will be applied by ArgoCD."
+# 6. Verify certificate secret contains required keys
+log_info "Verifying Bitwarden certificate secret contents..."
+SECRET_KEYS=$(kubectl get secret -n external-secrets bitwarden-tls-certs -o jsonpath='{.data}' | jq -r 'keys | .[]')
+REQUIRED_KEYS=("tls.crt" "tls.key" "ca.crt")
+for key in "${REQUIRED_KEYS[@]}"; do
+    if ! echo "$SECRET_KEYS" | grep -q "$key"; then
+        log_error "Certificate secret is missing required key: $key"
+        exit 1
+    fi
+done
+log_success "Bitwarden certificate secret contains all required keys."
+
+# 7. Ensure Bitwarden access token secret exists
+log_info "Ensuring Bitwarden access token secret exists..."
+if ! kubectl get secret -n external-secrets bitwarden-access-token &>/dev/null; then
+    if [ -z "${BW_ACCESS_TOKEN:-}" ]; then
+        log_error "BW_ACCESS_TOKEN environment variable not set. Please export BW_ACCESS_TOKEN."
+        exit 1
+    fi
+    kubectl create secret generic bitwarden-access-token \
+        --namespace external-secrets \
+        --from-literal=token="$BW_ACCESS_TOKEN"
+    log_success "Bitwarden access token secret created."
 else
-    log_success "SecretStore resource exists."
+    log_info "Bitwarden access token secret already exists."
 fi
 
-# Summary
-echo ""
-echo "=============================="
-echo "External Secrets Bootstrap Check"
-echo "=============================="
-echo ""
-log_info "Bootstrap validation complete. Remember these key points:"
-echo ""
-echo "1. All resources should be managed by ArgoCD"
-echo "2. No manual changes should be applied to the cluster"
-echo "3. If issues persist, check the documentation at docs/security/external-secrets-bootstrap.md"
-echo ""
-log_info "For detailed troubleshooting of cert-manager issues:"
-echo "kubectl logs -n cert-manager deployment/cert-manager"
-echo ""
-log_info "For detailed troubleshooting of external-secrets issues:"
-echo "kubectl logs -n external-secrets deployment/external-secrets"
-echo ""
+# 8. Apply the Bitwarden SecretStore configuration
+log_info "Applying Bitwarden SecretStore configuration..."
+kubectl apply -f k8s/infrastructure/controllers/external-secrets/bitwarden-store.yaml
 
-exit 0
+log_success "Bootstrap process complete. ArgoCD will now manage the External Secrets deployment."
+log_info "Verify the deployment with: kubectl get pods -n external-secrets"

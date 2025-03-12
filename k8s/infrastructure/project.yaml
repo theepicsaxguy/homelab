@@ -8,7 +8,6 @@ metadata:
     app.kubernetes.io/managed-by: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-    homelab.gitops/managed: "true"
     # Allow namespace creation for all kinds of namespaces
     argocd.argoproj.io/namespace-resource-allowlist: '[{"group": "", "kind": "Namespace"}]'
 spec:
