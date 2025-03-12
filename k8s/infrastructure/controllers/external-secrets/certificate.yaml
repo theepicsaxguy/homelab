@@ -1,0 +1,26 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: external-secrets-webhook
+  namespace: external-secrets
+spec:
+  secretName: external-secrets-webhook
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+  duration: 8760h # 1 year
+  renewBefore: 360h # 15 days
+  subject:
+    organizations:
+      - external-secrets
+  dnsNames:
+    - external-secrets-webhook
+    - external-secrets-webhook.external-secrets.svc
+    - external-secrets-webhook.external-secrets.svc.cluster.local
+  usages:
+    - server auth
+    - client auth
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048

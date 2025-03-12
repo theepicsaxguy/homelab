@@ -6,10 +6,11 @@ namespace: external-secrets
 
 
 resources:
+- certificate.yaml
+- internal-issuer.yaml
 - namespace.yaml
 - bitwarden-store.yaml
 - bitwarden-cert.yaml
-- internal-issuer.yaml
 - network-policy.yaml
 
 helmCharts:
