@@ -100,7 +100,9 @@ global:
 
 server:
   service:
-    type: ClusterIP
+    type: LoadBalancer
+    annotations:
+      io.cilium/lb-ipam-ips: "10.25.150.225"  # Assigning a specific IP from the pool
   resources:
     requests:
       cpu: 50m
