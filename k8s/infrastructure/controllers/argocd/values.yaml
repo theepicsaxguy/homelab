@@ -4,14 +4,13 @@ configs:
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
     url: https://argocd.kube.pc-tips.se
-    kustomize.buildOptions: "--enable-helm"
   cmp:
     create: true
     plugins:
       kustomize-build-with-helm:
         generate:
-          command: [sh, -c]
-          args: ["kustomize build --enable-helm"]
+          command: [ sh, -c ]
+          args: [ kustomize build --enable-helm ]
   params:
     controller.diff.server.side: true
     server.insecure: true
@@ -98,34 +97,9 @@ repoServer:
       drop: ["ALL"]
     runAsNonRoot: true
     runAsUser: 999
-  volumes:
-    - name: custom-tools
-      emptyDir: {}
-  volumeMounts:
-    - mountPath: /usr/local/bin
-      name: custom-tools
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       memory: 2Gi
-  initContainers:
-    - name: plugin-installer
-      image: alpine:3.21
-      command: [sh, -c]
-      args:
-        - |
-          cp /usr/local/bin/kustomize /usr/local/bin/
-          chmod +x /usr/local/bin/kustomize
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: ["ALL"]
-        runAsNonRoot: true
-        runAsUser: 999
-        seccompProfile:
-          type: RuntimeDefault
-      volumeMounts:
-        - mountPath: /usr/local/bin
-          name: custom-tools
