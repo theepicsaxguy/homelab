@@ -15,8 +15,13 @@ resources:
 
 webhook:
   securePort: 10250
+  hostNetwork: false
+  serviceType: ClusterIP
   extraArgs:
     - --secure-port=10250
+    - --dynamic-serving-ca-secret-namespace=cert-manager
+    - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
+    - --dynamic-serving-dns-names=cert-manager-webhook,cert-manager-webhook.cert-manager,cert-manager-webhook.cert-manager.svc
   resources:
     limits:
       cpu: 100m
@@ -24,6 +29,8 @@ webhook:
     requests:
       cpu: 10m
       memory: 32Mi
+  securityContext:
+    runAsNonRoot: true
 
 cainjector:
   resources:
