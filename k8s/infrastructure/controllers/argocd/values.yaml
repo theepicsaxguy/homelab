@@ -101,23 +101,29 @@ repoServer:
   volumes:
     - name: custom-tools
       emptyDir: {}
+    - name: tmp
+      emptyDir: {}
   volumeMounts:
-    - mountPath: /usr/local/bin
+    - mountPath: /custom-tools
       name: custom-tools
+    - mountPath: /tmp
+      name: tmp
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       memory: 2Gi
+  extraContainers: []
   initContainers:
     - name: plugin-installer
-      image: alpine:3.21
+      image: quay.io/argoproj/argocd:v2.9.3
       command: [sh, -c]
       args:
         - |
-          cp /usr/local/bin/kustomize /usr/local/bin/
-          chmod +x /usr/local/bin/kustomize
+          echo "Installing kustomize..."
+          cp $(which kustomize) /custom-tools/
+          chmod +x /custom-tools/kustomize
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:
@@ -127,5 +133,5 @@ repoServer:
         seccompProfile:
           type: RuntimeDefault
       volumeMounts:
-        - mountPath: /usr/local/bin
+        - mountPath: /custom-tools
           name: custom-tools
