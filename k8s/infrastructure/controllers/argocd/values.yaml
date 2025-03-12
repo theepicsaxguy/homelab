@@ -4,13 +4,14 @@ configs:
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
     url: https://argocd.kube.pc-tips.se
+    kustomize.buildOptions: "--enable-helm"
   cmp:
     create: true
     plugins:
       kustomize-build-with-helm:
         generate:
-          command: [ sh, -c ]
-          args: [ kustomize build --enable-helm ]
+          command: [sh, -c]
+          args: ["kustomize build --enable-helm"]
   params:
     controller.diff.server.side: true
     server.insecure: true
@@ -92,14 +93,55 @@ server:
 repoServer:
   containerSecurityContext:
     readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop: ["ALL"]
-    runAsNonRoot: true
-    runAsUser: 999
+  volumes:
+    - name: cmp-kustomize-build-with-helm
+      configMap:
+        name: argocd-cmp-cm
+    - name: cmp-tmp
+      emptyDir: { }
   resources:
     requests:
       cpu: 100m
       memory: 256Mi
     limits:
       memory: 2Gi
+  extraContainers:
+    - name: kustomize-build-with-helm
+      command:
+        - argocd-cmp-server
+      image: '{{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}'
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+        capabilities:
+          drop: [ ALL ]
+      volumeMounts:
+        - name: plugins
+          mountPath: /home/argocd/cmp-server/plugins
+        - name: cmp-kustomize-build-with-helm
+          mountPath: /home/argocd/cmp-server/config/plugin.yaml
+          subPath: kustomize-build-with-helm.yaml
+        - mountPath: /tmp
+          name: cmp-tmp
+
+applicationSet:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 1Gi
+
+notifications:
+  enabled: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 1000m
+      memory: 128Mi
