@@ -1,23 +1,31 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: external-secrets
-
-
-
 resources:
-- certificate.yaml
 - internal-issuer.yaml
 - namespace.yaml
 - bitwarden-store.yaml
 - bitwarden-cert.yaml
 - network-policy.yaml
-
 helmCharts:
 - name: external-secrets
   releaseName: external-secrets
   repo: https://charts.external-secrets.io
   valuesInline:
+    webhook:
+      create: true
+      lookaheadInterval: 210h
+      certManager:
+        enabled: true
+        cert:
+          create: true
+          issuerRef:
+            kind: "ClusterIssuer"
+            name: "external-secrets-selfsigned"
+          duration: "8760h"
+          renewBefore: "168h"
+      caBundleInjection: true
+
     bitwarden-sdk-server:
       enabled: true
   version: 0.14.4

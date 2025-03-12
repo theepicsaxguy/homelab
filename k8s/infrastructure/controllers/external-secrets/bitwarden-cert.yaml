@@ -25,5 +25,5 @@ spec:
   ipAddresses:
     - 127.0.0.1
   issuerRef:
-    name: selfsigned-issuer
+    name: external-secrets-selfsigned
     kind: Issuer
