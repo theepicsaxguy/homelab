@@ -68,6 +68,9 @@ kubectl delete mutatingwebhookconfiguration cert-manager-webhook --ignore-not-fo
 kubectl delete secret -n cert-manager cert-manager-webhook-tls --ignore-not-found=true
 kubectl rollout restart deployment cert-manager-webhook -n cert-manager
 kubectl rollout status deployment cert-manager-webhook -n cert-manager --timeout=180s
+kubectl delete secret cert-manager-webhook-tls cert-manager-webhook-ca -n cert-manager --ignore-not-found=true
+kubectl rollout restart deployment cert-manager-cainjector -n cert-manager
+kubectl rollout status deployment cert-manager-cainjector -n cert-manager --timeout=180s
 
 
 log_success "Webhook configurations removed."
