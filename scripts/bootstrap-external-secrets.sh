@@ -109,14 +109,6 @@ CRDS=(
   issuers.cert-manager.io
   orders.acme.cert-manager.io
 )
-log_info "Waiting for cert-manager CRDs to establish..."
-for crd in "${CRDS[@]}"; do
-  kubectl wait crd "$crd" --for condition=Established --timeout=180s || {
-    log_error "CRD $crd failed to establish"
-    exit 1
-  }
-done
-log_success "cert-manager CRDs installed and established."
 
 # Re-apply cert-manager components via kustomize/helm
 kustomize build infrastructure/controllers/cert-manager --enable-helm | kubectl apply -f -
@@ -158,26 +150,7 @@ REQUIRED_CRDS=(
   issuers.cert-manager.io
   orders.acme.cert-manager.io
 )
-for crd in "${REQUIRED_CRDS[@]}"; do
-  attempt=1
-  max_attempts=10
-  while [ $attempt -le $max_attempts ]; do
-    phase=$(kubectl get crd "$crd" -o jsonpath='{.status.conditions[?(@.type=="Established")].status}' 2>/dev/null || echo "NotFound")
-    if [ "$phase" = "True" ]; then
-      log_success "CRD $crd is Established."
-      break
-    else
-      log_info "Waiting for CRD $crd to become Established (attempt $attempt/$max_attempts)..."
-      sleep 3
-      attempt=$((attempt + 1))
-    fi
-    if [ $attempt -gt $max_attempts ]; then
-      log_error "CRD $crd failed to become Established in time."
-      exit 1
-    fi
-  done
-done
-log_info "All cert-manager CRDs are Established."
+
 
 CERT_NS="cert-manager"
 check_namespace "$CERT_NS"
