@@ -27,6 +27,8 @@ if ! kubectl get nodes &>/dev/null; then
     log_error "Cannot access Kubernetes cluster. Check your kubeconfig."
     exit 1
 fi
+
+
 log_success "Tools and cluster connectivity verified."
 
 ################################################################################
@@ -63,6 +65,10 @@ log_info "Installing cert-manager..."
 log_info "Cleaning up previous webhook configurations (if exist)..."
 kubectl delete validatingwebhookconfiguration cert-manager-webhook --ignore-not-found=true
 kubectl delete mutatingwebhookconfiguration cert-manager-webhook --ignore-not-found=true
+kubectl delete secret -n cert-manager cert-manager-webhook-tls --ignore-not-found=true
+kubectl rollout restart deployment cert-manager-webhook -n cert-manager
+kubectl rollout status deployment cert-manager-webhook -n cert-manager --timeout=180s
+
 
 log_success "Webhook configurations removed."
 
