@@ -101,8 +101,7 @@ for crd in "${CRDS[@]}"; do
 done
 log_success "cert-manager CRDs installed and established."
 
-# Now apply remaining cert-manager components (Helm)
-kustomize build infrastructure/controllers/cert-manager --enable-helm | kubectl apply -f -
+
 
 # Wait explicitly for webhook deployment
 kubectl rollout status deployment cert-manager-webhook -n cert-manager --timeout=300s
@@ -122,6 +121,11 @@ kubectl apply -f infrastructure/controllers/cert-manager/cloudflare-issuer.yaml
 kubectl wait --for=condition=Ready clusterissuer/cloudflare-issuer --timeout=180s || {
     log_error "Cloudflare issuer failed to become ready"; exit 1;
 }
+
+
+# Now apply remaining cert-manager components (Helm)
+kustomize build infrastructure/controllers/cert-manager --enable-helm | kubectl apply -f -
+
 
 log_success "Cloudflare issuer ready."
 
@@ -205,6 +209,7 @@ fi
 # Phase 3: Deploy Bitwarden certificate & verify
 ################################################################################
 log_info "Deploying Bitwarden certificate..."
+kubectl apply -f infrastructure/controllers/external-secrets/namespace.yaml
 kubectl apply -f infrastructure/controllers/external-secrets/bitwarden-cert.yaml
 
 log_info "Waiting for bitwarden-tls-certs secret in namespace external-secrets..."

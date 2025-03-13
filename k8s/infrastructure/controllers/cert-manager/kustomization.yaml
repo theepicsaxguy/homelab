@@ -21,7 +21,7 @@ patches:
 - patch: |
     - op: replace
       path: /spec/acme/email
-      value: "admin@example.com"  # Temporary default email
+      value: "admin@pc-tips.se"  # Temporary default email
   target:
     group: cert-manager.io
     kind: ClusterIssuer
