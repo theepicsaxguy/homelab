@@ -6,12 +6,13 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: "REPLACE_ME"  # Kustomize will replace this
+    email: admin@pc-tips.se  # Kustomize will replace this
     privateKeySecretRef:
-      name: cloudflare-key
+      name: cloudflare-api-token
     solvers:
       - dns01:
           cloudflare:
             apiTokenSecretRef:
-              name: infrastructure-secrets
+              name: cloudflare-api-token
               key: cloudflare_api_token
+

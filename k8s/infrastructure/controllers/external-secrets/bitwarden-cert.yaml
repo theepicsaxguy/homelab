@@ -29,6 +29,6 @@ spec:
   ipAddresses:
     - 127.0.0.1
   issuerRef:
-    name: bootstrap-ca-issuer
+    name: cloudflare-issuer
     kind: ClusterIssuer
-    group: cert-manager.io
+
