@@ -60,10 +60,25 @@ check_namespace() {
 ################################################################################
 log_info "Installing cert-manager..."
 
-# Insert this BEFORE installing cert-manager (CRDs and manifests)
 log_info "Cleaning up previous webhook configurations (if exist)..."
 kubectl delete validatingwebhookconfiguration cert-manager-webhook --ignore-not-found=true
 kubectl delete mutatingwebhookconfiguration cert-manager-webhook --ignore-not-found=true
+
+log_success "Webhook configurations removed."
+
+log_info "Verifying webhook configurations removed..."
+
+if kubectl get validatingwebhookconfiguration cert-manager-webhook >/dev/null 2>&1; then
+    log_error "ValidatingWebhook still exists after deletion attempt."; exit 1;
+fi
+
+if kubectl get mutatingwebhookconfiguration cert-manager-webhook >/dev/null 2>&1; then
+    log_error "MutatingWebhook still exists after deletion attempt."; exit 1;
+fi
+
+log_success "Webhook configurations successfully verified as removed."
+
+
 
 
 log_info "Installing cert-manager CRDs explicitly first..."
