@@ -46,7 +46,7 @@ patches:
         spec:
           containers:
           - name: cilium-operator
-            image: quay.io/cilium/operator-generic:v1.17.1@sha256:628becaeb3e4742a1c36c4897721092375891b58bae2bfcae48bbf4420aaee97
+            image: quay.io/cilium/operator-generic:v1.17.2@sha256:81f2d7198366e8dec2903a3a8361e4c68d47d19c68a0d42f0b7b6e3f0523f249
   target:
     kind: Deployment
     name: cilium-operator
@@ -60,7 +60,7 @@ patches:
         spec:
           containers:
           - name: hubble-relay
-            image: quay.io/cilium/hubble-relay:v1.17.1@sha256:397e8fbb188157f744390a7b272a1dec31234e605bcbe22d8919a166d202a3dc
+            image: quay.io/cilium/hubble-relay:v1.17.2@sha256:42a8db5c256c516cacb5b8937c321b2373ad7a6b0a1e5a5120d5028433d586cc
   target:
     kind: Deployment
     name: hubble-relay
