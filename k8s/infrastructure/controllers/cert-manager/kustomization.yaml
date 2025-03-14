@@ -5,12 +5,9 @@ namespace: cert-manager
 
 resources:
 - namespace.yaml
-- bootstrap-issuer.yaml
-- bootstrap-ca.yaml
-- bootstrap-ca-issuer.yaml
 - cloudflare-issuer.yaml
-- cert-manager-secrets-external.yaml
-- cert-manager-email-external.yaml
+#- cert-manager-secrets-external.yaml
+#- cert-manager-email-external.yaml
 
 helmCharts:
 - name: cert-manager
@@ -24,7 +21,7 @@ patches:
 - patch: |
     - op: replace
       path: /spec/acme/email
-      value: "admin@example.com"  # Temporary default email
+      value: "admin@pc-tips.se"  # Temporary default email
   target:
     group: cert-manager.io
     kind: ClusterIssuer
