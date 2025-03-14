@@ -10,7 +10,7 @@ spec:
     failureLimit: 1
     provider:
       prometheus:
-        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
         query: |
           min(
             avg_over_time(
@@ -25,7 +25,7 @@ spec:
     failureLimit: 1
     provider:
       prometheus:
-        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
         query: |
           sum(rate(container_last_seen{namespace="{{args.namespace}}",container!=""}[15m])) by (container)
           /

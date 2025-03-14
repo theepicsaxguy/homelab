@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bitwarden-sdk-cert
+  namespace: external-secrets
+spec:
+  secretName: bitwarden-sdk-tls
+  issuerRef:
+    name: cloudflare-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - bitwarden-sdk-server.default.svc.kube.pc-tips.se

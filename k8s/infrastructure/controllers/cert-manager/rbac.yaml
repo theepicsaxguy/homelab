@@ -88,7 +88,7 @@ metadata:
 rules:
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
-    verbs: ["get", "create", "update", "patch"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
 ---
 # This binds the cert-manager-cainjector service account to the kube-system lease role

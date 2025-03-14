@@ -157,6 +157,6 @@ dns:
 3. Service Discovery
    ```bash
    # Test internal resolution
-   dig @10.25.150.252 service.namespace.svc.cluster.local
+   dig @10.25.150.252 service.namespace.svc.kube.pc-tips.se
    dig @10.25.150.252 gateway.internal
    ```

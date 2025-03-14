@@ -23,9 +23,9 @@ spec:
   dnsNames:
     - bitwarden-sdk-server
     - bitwarden-sdk-server.external-secrets.svc
-    - bitwarden-sdk-server.external-secrets.svc.cluster.local
+    - bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se
     - external-secrets-webhook.external-secrets.svc
-    - external-secrets-webhook.external-secrets.svc.cluster.local
+    - external-secrets-webhook.external-secrets.svc.kube.pc-tips.se
   ipAddresses:
     - 127.0.0.1
   issuerRef:

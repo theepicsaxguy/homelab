@@ -1073,18 +1073,18 @@ spec:
       previewMetadata: # (Optional) Metadata for pods on PREVIEW replicaset (removed after promotion) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,optional%20previewMetadata%3A%20labels%3A%20role%3A%20preview)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=their%20preview%20phase.%20,previewMetadata%3A%20labels%3A%20role%3A%20preview))
         labels:
           role: preview
-      prePromotionAnalysis: # (Optional) Analysis run to execute before switching active service (i.e., while new RS is preview) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=activeService%3A%20active)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Pre,svc.default.svc.cluster.local))
+      prePromotionAnalysis: # (Optional) Analysis run to execute before switching active service (i.e., while new RS is preview) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=activeService%3A%20active)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Pre,svc.default.svc.kube.pc-tips.se))
         templates:
           - templateName: success-rate # Refers to an AnalysisTemplate name
         args:
           - name: service-name
-            value: myapp-preview.default.svc.cluster.local
-      postPromotionAnalysis: # (Optional) Analysis to run after promotion (after traffic switched) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=value%3A%20guestbook)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.cluster.local))
+            value: myapp-preview.default.svc.kube.pc-tips.se
+      postPromotionAnalysis: # (Optional) Analysis to run after promotion (after traffic switched) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=value%3A%20guestbook)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.kube.pc-tips.se))
         templates:
           - templateName: success-rate
         args:
           - name: service-name
-            value: myapp-active.default.svc.cluster.local
+            value: myapp-active.default.svc.kube.pc-tips.se
 
     # CANARY strategy configuration
     canary:
@@ -1105,7 +1105,7 @@ spec:
       maxSurge: '20%' # Max extra pods above desired during update (like Deployment maxSurge) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=maxUnavailable%3A%201)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,of))
       pause: # (Optional) Global rollout pause settings if needed (can define default duration, etc.)
         duration: 5m
-      analysis: # (Optional) Background analysis to run during the rollout (parallel to traffic shifting) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.cluster.local)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=analysis%3A%20templates%3A%20,svc.default.svc.cluster.local))
+      analysis: # (Optional) Background analysis to run during the rollout (parallel to traffic shifting) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.kube.pc-tips.se)) ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=analysis%3A%20templates%3A%20,svc.default.svc.kube.pc-tips.se))
         templates:
           - templateName: check-errors
         args:
@@ -1244,7 +1244,7 @@ Key fields for BlueGreen in a Rollout spec:
   prePromotion analysis fails, the rollout will not proceed to switch the active service.
 - **postPromotionAnalysis**: Similarly, an analysis to run after traffic has been switched to the new pods (but before
   scaling down the old pods)
-  ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.cluster.local)).
+  ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.kube.pc-tips.se)).
   This could double-check things like latency under real load, or other business metrics. If this fails, the rollout can
   be aborted/rolled back even after switching (Argo Rollouts can roll back by swapping activeService back to old RS if
   needed).
@@ -1381,7 +1381,7 @@ Key fields for Canary in Rollout spec:
   if needed. Often each pause step defines its own behavior, so this is less used.
 - **analysis (background analysis)**: Under canary.strategy, `analysis` specifies a continuous or background analysis
   run that starts when update begins and possibly runs alongside the steps
-  ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.cluster.local)).
+  ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.kube.pc-tips.se)).
   This is different from an analysis step: a background analysis doesn’t block the rollout unless configured to (it can
   be configured to abort rollout on failure or not). It’s more like a continuous monitor while canary progresses. In the
   example, it runs a template `check-errors` with some args referencing stable and latest hashes
@@ -2598,7 +2598,7 @@ Key fields in `spec`:
     - **previewMetadata** (object): Metadata for pods in the preview ReplicaSet
       ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,optional%20previewMetadata%3A%20labels%3A%20role%3A%20preview)).
     - **prePromotionAnalysis** (object): Analysis to run before switching activeService to new RS
-      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Pre,svc.default.svc.cluster.local)).
+      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Pre,svc.default.svc.kube.pc-tips.se)).
       - **templates** (list): Each item references an AnalysisTemplate or ClusterAnalysisTemplate by name (use
         `templateName` or `clusterScope: true` and `templateName`). Multiple templates can be listed (they will run in
         parallel).
@@ -2606,7 +2606,7 @@ Key fields in `spec`:
         has `name` and either `value` or `valueFrom`.
       - If analysis fails or is inconclusive, the rollout will pause or abort depending on configuration.
     - **postPromotionAnalysis** (object): Analysis to run after traffic cutover to new pods
-      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.cluster.local)).
+      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=%23%20Post,svc.default.svc.kube.pc-tips.se)).
       Same schema as prePromotionAnalysis.
     - Note: BlueGreen does **not** use a steps list. It’s basically: if autoPromotionEnabled=false, it will pause after
       new up, wait for `promote` or until autoPromotionSeconds triggers.
@@ -2693,7 +2693,7 @@ Key fields in `spec`:
     - **maxSurge** (int or string): Max excess pods during update (default 1)
       ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=maxUnavailable%3A%201)).
     - **analysis** (object): Background analysis to run during rollout (non-blocking step)
-      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.cluster.local)).
+      ([Rollout Spec - Argo Rollouts - Kubernetes Progressive Delivery Controller](https://argo-rollouts.readthedocs.io/en/stable/features/specification/#:~:text=,svc.default.svc.kube.pc-tips.se)).
       - **templates** and **args** similar to analysis step. This starts when update begins and can continuously run
         checks. If a metric fails, by default it might mark the rollout as degraded or pause it (depending on
         configuration of the analysis template’s failure policy).

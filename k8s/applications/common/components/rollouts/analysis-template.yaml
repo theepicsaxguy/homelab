@@ -12,7 +12,7 @@ spec:
     failureLimit: 2
     provider:
       prometheus:
-        address: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
         query: |
           sum(rate(
             istio_requests_total{

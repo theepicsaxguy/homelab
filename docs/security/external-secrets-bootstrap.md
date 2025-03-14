@@ -47,7 +47,7 @@ spec:
     - server auth
     - client auth
   dnsNames:
-    - bitwarden-sdk-server.external-secrets.svc.cluster.local
+    - bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se
   issuerRef:
     name: selfsigned-issuer
     kind: Issuer
@@ -129,7 +129,7 @@ spec:
           credentials:
             key: token
             name: bitwarden-access-token
-      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.cluster.local:9998
+      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se:9998
       caProvider:
         type: Secret
         name: bitwarden-sdk-ca
