@@ -15,11 +15,6 @@ configs:
   params:
     controller.diff.server.side: true
     server.insecure: true
-  rbac:
-    policy.csv: |
-      g, argocd:admin, role:admin
-      g, argocd:read_all, role:readonly
-
 crds:
   install: true
   keep: false
@@ -40,32 +35,6 @@ dex:
       memory: 32Mi
     limits:
       memory: 128Mi
-
-redis:
-  enabled: true
-  name: redis
-  image:
-    repository: public.ecr.aws/docker/library/redis
-    tag: 7.4.2-alpine
-  resources:
-    requests:
-      cpu: 100m
-      memory: 64Mi
-    limits:
-      memory: 1Gi
-  auth:
-    enabled: false
-  config:
-    save: '""'
-  containerSecurityContext:
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-  service:
-    port: 6379
-  servicePort: 6379
 
 global:
   image:

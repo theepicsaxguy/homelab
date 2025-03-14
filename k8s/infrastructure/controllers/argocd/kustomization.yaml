@@ -15,5 +15,5 @@ helmCharts:
     valuesFile: values.yaml
     version: 7.8.10
 
-transformers:
-  - argocd-cm-patch.yaml
+# transformers:
+#   - argocd-cm-patch.yaml
