@@ -12,6 +12,10 @@ machine:
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   network:
     hostname: ${hostname}
+    searchDomains:
+      - default.svc.kube.pc-tips.se
+      - svc.kube.pc-tips.se
+      - kube.pc-tips.se
     interfaces:
       - interface: eth0
         dhcp: true
