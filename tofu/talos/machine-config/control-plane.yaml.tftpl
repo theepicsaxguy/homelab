@@ -24,7 +24,7 @@ machine:
 
 cluster:
   coreDNS:
-    disabled: true
+    disabled: false
   allowSchedulingOnControlPlanes: false
   apiServer:
     extraArgs:
@@ -58,6 +58,3 @@ cluster:
   - name: cilium-bootstrap
     contents: |
       ${indent(6, cilium_install)}
-  - name: coredns-bootstrap
-    contents: |
-      ${indent(6, coredns_install)}
