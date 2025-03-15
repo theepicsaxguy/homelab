@@ -1,18 +1,26 @@
 isClusterService: true
 serviceType: ClusterIP
-clusterIP: 10.96.0.10  # Preserve existing IP
+service:
+  clusterIP: 10.96.0.10
 
 servers:
 - zones:
   - zone: .
   port: 53
+  # -- expose the service on a different port
+  # servicePort: 5353
+  # If serviceType is nodePort you can specify nodePort here
+  # nodePort: 30053
+  # hostPort: 53
   plugins:
   - name: errors
 
+  # Serves a /health endpoint on :8080, required for livenessProbe
   - name: health
     configBlock: |-
       lameduck 5s
 
+  # Serves a /ready endpoint on :8181, required for readinessProbe
   - name: ready
 
   - name: log
@@ -20,9 +28,11 @@ servers:
     configBlock: |-
       class error
 
+  # Serves a /metrics endpoint on :9153, required for serviceMonitor
   - name: prometheus
     parameters: :9153
 
+  # Required to query kubernetes API for data
   - name: kubernetes
     parameters: kube.pc-tips.se in-addr.arpa ip6.arpa
     configBlock: |-
