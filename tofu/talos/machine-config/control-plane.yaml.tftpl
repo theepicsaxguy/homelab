@@ -21,6 +21,8 @@ machine:
     topology.kubernetes.io/zone: ${node_name}
 
 cluster:
+  coreDNS:
+    disabled: true
   allowSchedulingOnControlPlanes: false
   apiServer:
     extraArgs:
@@ -53,3 +55,7 @@ cluster:
   - name: cilium-bootstrap
     contents: |
       ${indent(6, cilium_install)}
+
+  - name: coredns-bootstrap
+    contents: |
+      ${file("${path.module}/talos/inline-manifests/coredns-install.yaml")}

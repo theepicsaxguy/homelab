@@ -1,0 +1,102 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-system
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: coredns
+  namespace: kube-system
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  Corefile: |
+    your.internal.domain:53 {
+      errors
+      cache 30
+      forward . /etc/resolv.conf
+    }
+    .:53 {
+      errors
+      health
+      ready
+      kubernetes your.internal.domain in-addr.arpa ip6.arpa
+      prometheus :9153
+      forward . /etc/resolv.conf
+      cache 30
+      loop
+      reload
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coredns
+  namespace: kube-system
+  labels:
+    k8s-app: coredns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: coredns
+  template:
+    metadata:
+      labels:
+        k8s-app: coredns
+    spec:
+      priorityClassName: system-cluster-critical
+      serviceAccountName: coredns
+      containers:
+        - name: coredns
+          image: coredns/coredns:1.11.1
+          args:
+            - -conf
+            - /etc/coredns/Corefile
+          ports:
+            - containerPort: 53
+              protocol: UDP
+            - containerPort: 53
+              protocol: TCP
+            - containerPort: 9153
+              protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/coredns
+              readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: coredns
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coredns
+  namespace: kube-system
+  labels:
+    k8s-app: coredns
+spec:
+  selector:
+    k8s-app: coredns
+  clusterIP: 10.96.0.10
+  ports:
+    - protocol: UDP
+      port: 53
+      targetPort: 53
+    - protocol: TCP
+      port: 53
+      targetPort: 53
+    - protocol: TCP
+      port: 9153
+      targetPort: 9153
