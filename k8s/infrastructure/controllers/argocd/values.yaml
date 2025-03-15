@@ -10,8 +10,8 @@ configs:
     plugins:
       kustomize-build-with-helm:
         generate:
-          command: [sh, -c]
-          args: ["kustomize build --enable-helm"]
+          command: [ sh, -c ]
+          args: [ kustomize build --enable-helm ]
   params:
     controller.diff.server.side: true
     server.insecure: true
@@ -96,6 +96,7 @@ repoServer:
           subPath: kustomize-build-with-helm.yaml
         - mountPath: /tmp
           name: cmp-tmp
+
 
 applicationSet:
   resources:
