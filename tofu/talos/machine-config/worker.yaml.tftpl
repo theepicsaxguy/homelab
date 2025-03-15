@@ -1,4 +1,7 @@
 machine:
+  kubelet:
+    clusterDNS:
+      - 10.96.0.10
   network:
     hostname: ${hostname}
   nodeLabels:
