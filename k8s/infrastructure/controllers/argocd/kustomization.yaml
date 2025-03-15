@@ -13,7 +13,7 @@ helmCharts:
     namespace: argocd
     repo: https://argoproj.github.io/argo-helm
     valuesFile: values.yaml
-    version: 7.8.10
+    version: 7.8.11
 
 # transformers:
 #   - argocd-cm-patch.yaml
