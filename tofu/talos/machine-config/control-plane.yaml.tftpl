@@ -5,6 +5,8 @@ machine:
     - ${cluster.endpoint}
 
   kubelet:
+    clusterDNS:
+      - 10.96.0.10
     extraArgs:
       # Needed for Netbird agent https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
