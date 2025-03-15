@@ -55,7 +55,6 @@ cluster:
   - name: cilium-bootstrap
     contents: |
       ${indent(6, cilium_install)}
-
   - name: coredns-bootstrap
     contents: |
-      ${file("${path.module}/talos/inline-manifests/coredns-install.yaml")}
+      ${indent(6, coredns_install)}
