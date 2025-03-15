@@ -33,7 +33,7 @@ servers:
 
   # Required to query kubernetes API for data
   - name: kubernetes
-    parameters: cluster.local in-addr.arpa ip6.arpa
+    parameters: kube.pc-tips.se in-addr.arpa ip6.arpa
     configBlock: |-
       pods insecure
       fallthrough in-addr.arpa ip6.arpa
@@ -47,8 +47,8 @@ servers:
   - name: cache
     parameters: 30
     configBlock: |-
-      disable success cluster.local
-      disable denial cluster.local
+      disable success kube.pc-tips.se
+      disable denial kube.pc-tips.se
 
   - name: loop
   - name: reload
