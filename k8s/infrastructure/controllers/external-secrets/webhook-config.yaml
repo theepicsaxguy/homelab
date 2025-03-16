@@ -19,3 +19,17 @@ webhooks:
     failurePolicy: Fail
     sideEffects: None
     admissionReviewVersions: ["v1"]
+  - name: validate.clustersecretstore.external-secrets.io
+    clientConfig:
+      service:
+        name: external-secrets-webhook
+        namespace: external-secrets
+        path: "/validate"
+    rules:
+      - apiGroups:   ["external-secrets.io"]
+        apiVersions: ["v1beta1"]
+        operations:  ["CREATE", "UPDATE"]
+        resources:   ["clustersecretstores"]
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1"]

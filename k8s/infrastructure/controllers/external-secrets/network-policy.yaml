@@ -17,6 +17,14 @@ spec:
             protocol: TCP
           - port: "443"
             protocol: TCP
+    # Allow webhook traffic from API server
+    - fromEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -41,6 +49,35 @@ spec:
             protocol: TCP
           - port: "80"
             protocol: TCP
+
+---
+# Webhook specific network policy
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: external-secrets-webhook-policy
+  namespace: external-secrets
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: external-secrets-webhook
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: external-secrets
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy

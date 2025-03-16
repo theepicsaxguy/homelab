@@ -21,8 +21,12 @@ spec:
     - digital signature
     - key encipherment
   dnsNames:
-    - bitwarden-sdk.kube.pc-tips.se
-    - external-secrets-webhook.kube.pc-tips.se
+    - bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se
+    - bitwarden-sdk-server.external-secrets.svc
+    - bitwarden-sdk-server.external-secrets.svc.cluster.local
+    - external-secrets-webhook.external-secrets.svc.kube.pc-tips.se
+    - external-secrets-webhook.external-secrets.svc
+    - external-secrets-webhook.external-secrets.svc.cluster.local
   issuerRef:
     name: cloudflare-issuer
     kind: ClusterIssuer
