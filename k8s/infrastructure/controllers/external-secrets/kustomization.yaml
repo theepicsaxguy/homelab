@@ -28,20 +28,14 @@ helmCharts:
           create: true
           issuerRef:
             kind: "ClusterIssuer"
-            name: "bootstrap-ca-issuer"
+            name: "cloudflare-issuer"
           duration: "8760h"
           renewBefore: "168h"
+          commonName: "external-secrets-webhook.kube.pc-tips.se"
+          dnsNames:
+            - external-secrets-webhook.kube.pc-tips.se
       timeoutSeconds: 30
       caBundleInjection: true
-      volumeMounts:
-        - name: cert
-          mountPath: /tmp/certs
-          readOnly: true
-      volumes:
-        - name: cert
-          secret:
-            secretName: webhook-bootstrap-cert
-
     bitwarden-sdk-server:
       enabled: true
       securityContext:

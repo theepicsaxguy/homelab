@@ -1,16 +1,51 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-argocd-apiserver
+  name: allow-argocd-full
   namespace: argocd
 spec:
-  description: "Allow ArgoCD components to communicate with Kubernetes API server and DNS"
+  description: "Allow ArgoCD components to communicate internally and with required services"
   endpointSelector:
     matchLabels:
       app.kubernetes.io/part-of: argocd
   egress:
-    # Allow all egress traffic
-    - {}
+    # Allow communication with Kubernetes API Server
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+
+    # Allow DNS resolution
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+
+    # Allow internal ArgoCD components to talk to each other
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
+
   ingress:
-    # Allow all ingress traffic
-    - {}
+    # Allow all ArgoCD components to talk to each other
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
+
+    # Allow external access (adjust based on requirements)
+    - fromEntities:
+        - cluster  # Allow cluster internal traffic
+        - world    # Allow external access (if needed, e.g., webhooks, UI)
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP

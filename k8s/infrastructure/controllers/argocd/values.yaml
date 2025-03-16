@@ -54,10 +54,10 @@ server:
   certificate:
     enabled: true
     domain: argocd.kube.pc-tips.se
-    issuer:
-      group: cert-manager.io
+    issuerRef:
+      name: cloudflare-issuer
       kind: ClusterIssuer
-      name: cloudflare-cluster-issuer
+
 
 repoServer:
   containerSecurityContext:

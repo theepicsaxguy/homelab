@@ -3,7 +3,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: external-secrets-validator
   annotations:
-    cert-manager.io/inject-ca-from: external-secrets/bitwarden-tls-certs
+    cert-manager.io/inject-ca-from: external-secrets/external-secrets-webhook-tls
 webhooks:
   - name: validate.external-secrets.io
     clientConfig:
@@ -16,6 +16,20 @@ webhooks:
         apiVersions: ["v1beta1"]
         operations:  ["CREATE", "UPDATE"]
         resources:   ["*"]
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
+  - name: validate.clustersecretstore.external-secrets.io
+    clientConfig:
+      service:
+        name: external-secrets-webhook
+        namespace: external-secrets
+        path: "/validate"
+    rules:
+      - apiGroups:   ["external-secrets.io"]
+        apiVersions: ["v1beta1"]
+        operations:  ["CREATE", "UPDATE"]
+        resources:   ["clustersecretstores"]
     failurePolicy: Fail
     sideEffects: None
     admissionReviewVersions: ["v1"]

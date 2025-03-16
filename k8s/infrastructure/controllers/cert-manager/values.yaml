@@ -19,9 +19,8 @@ webhook:
   serviceType: ClusterIP
   extraArgs:
     - --secure-port=10250
-    - --dynamic-serving-ca-secret-namespace=cert-manager
-    - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
-    - --dynamic-serving-dns-names=cert-manager-webhook,cert-manager-webhook.cert-manager,cert-manager-webhook.cert-manager.svc
+    - --tls-cert-file=/tls/tls.crt
+    - --tls-private-key-file=/tls/tls.key
   resources:
     limits:
       cpu: 100m
@@ -31,6 +30,15 @@ webhook:
       memory: 32Mi
   securityContext:
     runAsNonRoot: true
+  # Mount the TLS certificate and private key from our Certificate resource
+  volumeMounts:
+    - name: cert
+      mountPath: /tls
+      readOnly: true
+  volumes:
+    - name: cert
+      secret:
+        secretName: cert-manager-webhook-tls # This matches our Certificate's secretName
 
 cainjector:
   resources:
