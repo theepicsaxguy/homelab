@@ -25,12 +25,9 @@ data:
             ttl 30
         }
 
-        # Forward ALL _acme-challenge.<ANYTHING>.kube.pc-tips.se to external resolvers
+        # Forward only TXT queries for _acme-challenge.<ANYTHING>.kube.pc-tips.se
+        rewrite name regex ^_acme-challenge\.(.*)\.kube\.pc-tips\.se$ _acme-challenge.kube.pc-tips.se
         forward _acme-challenge.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
-            force_tcp
-        }
-
-        forward _acme-challenge.*.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
             force_tcp
         }
 

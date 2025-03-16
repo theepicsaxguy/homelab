@@ -1,32 +1,106 @@
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
 metadata:
-  name: allow-webhook-traffic
+  name: external-secrets-policy
   namespace: external-secrets
 spec:
-  podSelector:
+  endpointSelector:
     matchLabels:
-      app.kubernetes.io/component: webhook
-  policyTypes:
-    - Ingress
-    - Egress
+      app.kubernetes.io/name: external-secrets
   ingress:
-    - from:
-        - namespaceSelector: {}  # Allow from all namespaces
-      ports:
-        - port: 443
-          protocol: TCP
-        - port: 8080
-          protocol: TCP
-        - port: 8081
-          protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+          - port: "8080"
+            protocol: TCP
+          - port: "443"
+            protocol: TCP
+    # Allow webhook traffic from API server
+    - fromEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
   egress:
-    - to:
-        - namespaceSelector: {}  # Allow to all namespaces
-      ports:
-        - port: 443
-          protocol: TCP
-        - port: 8080
-          protocol: TCP
-        - port: 8081
-          protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:app.kubernetes.io/name: external-secrets
+            k8s:io.kubernetes.pod.namespace: external-secrets
+      toPorts:
+        - ports:
+          - port: "9998"
+            protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+          - port: "80"
+            protocol: TCP
+
+---
+# Webhook specific network policy
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: external-secrets-webhook-policy
+  namespace: external-secrets
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: external-secrets-webhook
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:k8s-app: kube-apiserver
+      toPorts:
+        - ports:
+          - port: "443"
+            protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: external-secrets
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: bitwarden-sdk-policy
+  namespace: external-secrets
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: bitwarden-sdk-server
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: external-secrets
+      toPorts:
+        - ports:
+          - port: "9998"
+            protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: external-secrets
+      toPorts:
+        - ports:
+          - port: "9998"
+            protocol: TCP
