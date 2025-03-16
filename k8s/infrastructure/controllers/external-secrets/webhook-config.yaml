@@ -3,7 +3,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: external-secrets-validator
   annotations:
-    cert-manager.io/inject-ca-from: external-secrets/bitwarden-tls-certs
+    cert-manager.io/inject-ca-from: external-secrets/external-secrets-webhook-tls
 webhooks:
   - name: validate.external-secrets.io
     clientConfig:
