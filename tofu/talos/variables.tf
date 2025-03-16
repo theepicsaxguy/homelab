@@ -48,9 +48,4 @@ variable "cilium" {
   })
 }
 
-variable "coredns" {
-  description = "CoreDNS configuration"
-  type = object({
-    install = string
-  })
-}
+
