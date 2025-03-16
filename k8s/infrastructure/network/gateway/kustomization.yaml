@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- nameserver.yaml
+- namespace.yaml
 - cert-pctips.yaml
 - gateway-class.yaml
 - gw-external.yaml
