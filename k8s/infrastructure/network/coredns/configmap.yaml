@@ -18,12 +18,24 @@ data:
 
         kubernetes kube.pc-tips.se in-addr.arpa ip6.arpa {
             pods insecure
-            fallthrough in-addr.arpa ip6.arpa
+            fallthrough
             ttl 30
         }
-        forward . /etc/resolv.conf {
-           max_concurrent 1000
+
+        # 🔥 Forward ALL _acme-challenge.<ANYTHING>.kube.pc-tips.se to external resolvers
+        forward _acme-challenge.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
+            force_tcp
         }
+
+        forward _acme-challenge.*.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
+            force_tcp
+        }
+
+        # General forward rule for everything else (local resolution)
+        forward . /etc/resolv.conf {
+            max_concurrent 1000
+        }
+
         cache 30
         loop
         reload
