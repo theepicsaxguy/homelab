@@ -24,7 +24,7 @@ machine:
 
 cluster:
   coreDNS:
-    disabled: false
+    disabled: true
   allowSchedulingOnControlPlanes: false
   clusterName: kube.pc-tips.se
   apiServer:
@@ -36,7 +36,7 @@ cluster:
       oidc-groups-claim: groups
       oidc-groups-prefix: 'authelia:'
   network:
-    dnsDomain: local.kube.pc-tips.se
+    dnsDomain: kube.pc-tips.se
     cni:
       name: none
   proxy:
