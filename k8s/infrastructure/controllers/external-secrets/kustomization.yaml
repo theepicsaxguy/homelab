@@ -8,7 +8,6 @@ resources:
 - network-policy.yaml
 - webhook-config.yaml
 - webhook-rbac.yaml
-- serviceaccounts.yaml
 
 helmCharts:
 - name: external-secrets
