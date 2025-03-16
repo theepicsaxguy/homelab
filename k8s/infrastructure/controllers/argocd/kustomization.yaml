@@ -4,6 +4,8 @@ namespace: argocd
 
 resources:
   - namespace.yaml
+  - argocd-redis-network-policy.yaml
+  - network-policy.yaml
   - http-route.yaml
 
 
