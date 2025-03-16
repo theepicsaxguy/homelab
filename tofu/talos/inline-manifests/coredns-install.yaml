@@ -19,7 +19,7 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
-    your.internal.domain:53 {
+    kube.pc-tips.se:53 {
       errors
       cache 30
       forward . /etc/resolv.conf
@@ -28,7 +28,7 @@ data:
       errors
       health
       ready
-      kubernetes your.internal.domain in-addr.arpa ip6.arpa
+      kubernetes kube.pc-tips.se in-addr.arpa ip6.arpa
       prometheus :9153
       forward . /etc/resolv.conf
       cache 30

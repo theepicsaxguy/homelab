@@ -12,10 +12,6 @@ machine:
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   network:
     hostname: ${hostname}
-    searchDomains:
-      - default.svc.kube.pc-tips.se
-      - svc.kube.pc-tips.se
-      - kube.pc-tips.se
     interfaces:
       - interface: eth0
         dhcp: true
@@ -30,6 +26,7 @@ cluster:
   coreDNS:
     disabled: false
   allowSchedulingOnControlPlanes: false
+  clusterName: kube.pc-tips.se
   apiServer:
     extraArgs:
       oidc-issuer-url: https://authelia.kube.pc-tips.se
@@ -39,7 +36,7 @@ cluster:
       oidc-groups-claim: groups
       oidc-groups-prefix: 'authelia:'
   network:
-    dnsDomain: kube.pc-tips.se
+    dnsDomain: local.kube.pc-tips.se
     cni:
       name: none
   proxy:
