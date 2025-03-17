@@ -14,13 +14,21 @@ resources:
     memory: 64Mi
 
 webhook:
+  config:
+    apiVersion: webhook.config.cert-manager.io/v1alpha1
+    kind: WebhookConfiguration
+    securePort: 10250
+    dynamic:
+      secretNamespace: "cert-manager"
+      secretName: "cert-manager-webhook-ca"
+      dnsNames:
+        - cert-manager-webhook.kube.pc-tips.se
+
   securePort: 10250
   hostNetwork: false
   serviceType: ClusterIP
   extraArgs:
     - --secure-port=10250
-    - --tls-cert-file=/tls/tls.crt
-    - --tls-private-key-file=/tls/tls.key
   resources:
     limits:
       cpu: 100m
@@ -30,15 +38,6 @@ webhook:
       memory: 32Mi
   securityContext:
     runAsNonRoot: true
-  # Mount the TLS certificate and private key from our Certificate resource
-  volumeMounts:
-    - name: cert
-      mountPath: /tls
-      readOnly: true
-  volumes:
-    - name: cert
-      secret:
-        secretName: cert-manager-webhook-tls # This matches our Certificate's secretName
 
 cainjector:
   resources:
