@@ -1,0 +1,50 @@
+crds:
+  enabled: true
+  keep: true
+
+extraArgs:
+  - "--enable-gateway-api"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+webhook:
+  securePort: 10250
+  hostNetwork: false
+  serviceType: ClusterIP
+  extraArgs:
+    - --secure-port=10250
+    - --tls-cert-file=/tls/tls.crt
+    - --tls-private-key-file=/tls/tls.key
+  resources:
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  securityContext:
+    runAsNonRoot: true
+  # Mount the TLS certificate and private key from our Certificate resource
+  volumeMounts:
+    - name: cert
+      mountPath: /tls
+      readOnly: true
+  volumes:
+    - name: cert
+      secret:
+        secretName: cert-manager-webhook-tls # This matches our Certificate's secretName
+
+cainjector:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi

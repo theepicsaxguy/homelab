@@ -50,6 +50,7 @@ spec:
           - --cluster-resource-namespace=$(POD_NAMESPACE)
           - --leader-election-namespace=kube-system
           - --acme-http01-solver-image=quay.io/jetstack/cert-manager-acmesolver:v1.17.1
+          - --enable-gateway-api
           - --max-concurrent-challenges=60
           ports:
           - containerPort: 9402
@@ -69,6 +70,13 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
           # LivenessProbe settings are based on those used for the Kubernetes
           # controller-manager. See:
           # https://github.com/kubernetes/kubernetes/blob/806b30170c61a38fedd54cc9ede4cd6275a1ad3b/cmd/kubeadm/app/util/staticpod/utils.go#L241-L245
