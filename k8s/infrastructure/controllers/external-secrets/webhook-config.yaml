@@ -12,10 +12,10 @@ webhooks:
         namespace: external-secrets
         path: "/validate"
     rules:
-      - apiGroups:   ["external-secrets.io"]
+      - apiGroups: ["external-secrets.io"]
         apiVersions: ["v1beta1"]
-        operations:  ["CREATE", "UPDATE"]
-        resources:   ["*"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["*"]
     failurePolicy: Fail
     sideEffects: None
     admissionReviewVersions: ["v1"]
@@ -26,10 +26,10 @@ webhooks:
         namespace: external-secrets
         path: "/validate"
     rules:
-      - apiGroups:   ["external-secrets.io"]
+      - apiGroups: ["external-secrets.io"]
         apiVersions: ["v1beta1"]
-        operations:  ["CREATE", "UPDATE"]
-        resources:   ["clustersecretstores"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["clustersecretstores"]
     failurePolicy: Fail
     sideEffects: None
     admissionReviewVersions: ["v1"]
