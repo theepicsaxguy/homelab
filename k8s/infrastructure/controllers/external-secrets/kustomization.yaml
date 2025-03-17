@@ -2,52 +2,54 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: external-secrets
 resources:
-- bitwarden-cert.yaml
-- namespace.yaml
-- bitwarden-store.yaml
-- network-policy.yaml
-- webhook-config.yaml
-- webhook-rbac.yaml
+  - bitwarden-sdk-tls.yaml
+  - namespace.yaml
+  - bitwarden-store.yaml
+  - network-policy.yaml
+  - webhook-config.yaml
+  - webhook-rbac.yaml
 
 helmCharts:
-- name: external-secrets
-  releaseName: external-secrets
-  repo: https://charts.external-secrets.io
-  valuesInline:
-    certController:
-      enabled: true
-    webhook:
-      create: true
-      port: 443
-      hostNetwork: false
-      certDir: /tmp/certs
-      lookaheadInterval: 210h
-      certManager:
+  - name: external-secrets
+    releaseName: external-secrets
+    repo: https://charts.external-secrets.io
+    version: 0.14.4
+    valuesInline:
+      certController:
         enabled: true
-        cert:
-          create: true
-          issuerRef:
-            kind: "ClusterIssuer"
-            name: "cloudflare-issuer"
-          duration: "8760h"
-          renewBefore: "168h"
-          commonName: "external-secrets-webhook.kube.pc-tips.se"
-          dnsNames:
-            - external-secrets-webhook.kube.pc-tips.se
-      timeoutSeconds: 30
-      caBundleInjection: true
-    bitwarden-sdk-server:
-      enabled: true
-      securityContext:
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: ["ALL"]
-        runAsNonRoot: true
-        runAsUser: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      podSecurityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        fsGroup: 1000
-  version: 0.14.4
+      webhook:
+        create: true
+        port: 443
+        hostNetwork: false
+        certDir: /tmp/certs
+        lookaheadInterval: 210h
+        certManager:
+          enabled: true
+          cert:
+            create: true
+            issuerRef:
+              kind: "ClusterIssuer"
+              name: "cloudflare-issuer"
+            duration: "8760h"
+            renewBefore: "168h"
+            commonName: "external-secrets-webhook.kube.pc-tips.se"
+            dnsNames:
+              - external-secrets-webhook.kube.pc-tips.se
+        timeoutSeconds: 30
+        caBundleInjection: true
+      bitwarden-sdk-server:
+        enabled: true
+        tls:
+          secretName: bitwarden-sdk-server-tls
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          fsGroup: 1000
