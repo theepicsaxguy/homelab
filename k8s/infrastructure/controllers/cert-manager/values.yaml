@@ -13,22 +13,26 @@ resources:
     cpu: 10m
     memory: 64Mi
 
+# --- Updated webhook section ---
 webhook:
   config:
     apiVersion: webhook.config.cert-manager.io/v1alpha1
     kind: WebhookConfiguration
     securePort: 10250
-    dynamic:
-      secretNamespace: "cert-manager"
-      secretName: "cert-manager-webhook-ca"
-      dnsNames:
-        - cert-manager-webhook.kube.pc-tips.se
-
   securePort: 10250
   hostNetwork: false
   serviceType: ClusterIP
   extraArgs:
     - --secure-port=10250
+    - --tls-cert-file=/etc/webhook-certs/tls.crt
+    - --tls-private-key-file=/etc/webhook-certs/tls.key
+  volumeMounts:
+    - name: webhook-certs
+      mountPath: /etc/webhook-certs
+  volumes:
+    - name: webhook-certs
+      secret:
+        secretName: webhook-custom-cert-tls
   resources:
     limits:
       cpu: 100m
