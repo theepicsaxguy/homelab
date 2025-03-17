@@ -1,0 +1,34 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-es-egress-to-cert-manager
+  namespace: external-secrets
+spec:
+  # Apply to all pods in external-secrets
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cert-manager
+            app: cert-manager-webhook
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-es-webhook-ingress
+  namespace: external-secrets
+spec:
+  endpointSelector:
+    matchLabels:
+      app: external-secrets-webhook
+  ingress:
+    - fromCIDR:
+        - "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
