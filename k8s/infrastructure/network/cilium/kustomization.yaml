@@ -12,4 +12,4 @@ helmCharts:
   releaseName: cilium
   repo: https://helm.cilium.io
   valuesFile: values.yaml
-  version: 1.17.1
+  version: 1.17.2
