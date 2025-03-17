@@ -13,18 +13,17 @@ spec:
             io.kubernetes.pod.namespace: kube-system
       toPorts:
         - ports:
-          - port: "8080"
-            protocol: TCP
-          - port: "443"
-            protocol: TCP
-    # Allow webhook traffic from API server
+            - port: "8080"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
     - fromEndpoints:
         - matchLabels:
             k8s:k8s-app: kube-apiserver
       toPorts:
         - ports:
-          - port: "443"
-            protocol: TCP
+            - port: "443"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -32,26 +31,25 @@ spec:
             k8s:io.kubernetes.pod.namespace: external-secrets
       toPorts:
         - ports:
-          - port: "9998"
-            protocol: TCP
+            - port: "9998"
+              protocol: TCP
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
       toPorts:
         - ports:
-          - port: "443"
-            protocol: TCP
+            - port: "443"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
         - ports:
-          - port: "443"
-            protocol: TCP
-          - port: "80"
-            protocol: TCP
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
 
 ---
-# Webhook specific network policy
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -67,8 +65,8 @@ spec:
             k8s:k8s-app: kube-apiserver
       toPorts:
         - ports:
-          - port: "443"
-            protocol: TCP
+            - port: "443"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -94,13 +92,13 @@ spec:
             app.kubernetes.io/name: external-secrets
       toPorts:
         - ports:
-          - port: "9998"
-            protocol: TCP
+            - port: "9998"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: external-secrets
       toPorts:
         - ports:
-          - port: "9998"
-            protocol: TCP
+            - port: "9998"
+              protocol: TCP
