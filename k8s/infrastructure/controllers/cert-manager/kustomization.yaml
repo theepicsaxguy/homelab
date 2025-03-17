@@ -7,6 +7,7 @@ resources:
 - namespace.yaml
 - cloudflare-issuer.yaml
 - webhook-certificate.yaml
+- networkpolicy.yaml
 #- cert-manager-secrets-external.yaml
 #- cert-manager-email-external.yaml
 

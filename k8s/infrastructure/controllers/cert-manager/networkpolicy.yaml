@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cert-manager-webhook-ingress
+  namespace: cert-manager
+spec:
+  endpointSelector:
+    matchLabels:
+      app: cert-manager-webhook
+  ingress:
+    - fromCIDR:
+        - "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
