@@ -1,31 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
-namespace: cert-manager
-
 resources:
-- namespace.yaml
+- cert-manager-secrets-external.yaml
 - cloudflare-issuer.yaml
-- webhook-certificate.yaml
-- networkpolicy.yaml
-#- cert-manager-secrets-external.yaml
-#- cert-manager-email-external.yaml
-
-helmCharts:
-- name: cert-manager
-  namespace: cert-manager
-  releaseName: cert-manager
-  repo: https://charts.jetstack.io
-  valuesFile: values.yaml
-  version: v1.17.1
-
-patches:
-- patch: |
-    - op: replace
-      path: /spec/acme/email
-      value: "admin@pc-tips.se"  # Temporary default email
-  target:
-    group: cert-manager.io
-    kind: ClusterIssuer
-    name: cloudflare-issuer
-    version: v1
+- namespace.yaml
+- ./templates
