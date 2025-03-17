@@ -27,7 +27,7 @@ spec:
             memory: "1Gi"
         env:
         - name: OLLAMA_BASE_URL
-          value: "http://ollama-service.open-webui.svc.cluster.local:11434"
+          value: "http://ollama-service.open-webui.svc.kube.pc-tips.se:11434"
         tty: true
         volumeMounts:
         - name: webui-volume
@@ -35,4 +35,4 @@ spec:
       volumes:
       - name: webui-volume
         persistentVolumeClaim:
-          claimName: open-webui-pvc          
+          claimName: open-webui-pvc
