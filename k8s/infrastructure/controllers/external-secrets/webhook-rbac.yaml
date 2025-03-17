@@ -28,7 +28,6 @@ subjects:
     namespace: external-secrets
 
 ---
-# Grant permissions for the webhook lease lock in its own namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
