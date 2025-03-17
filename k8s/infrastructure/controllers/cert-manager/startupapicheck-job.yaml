@@ -1,0 +1,61 @@
+---
+# Source: cert-manager/templates/startupapicheck-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: release-name-cert-manager-startupapicheck
+  namespace: cert-manager
+  labels:
+    app: startupapicheck
+    app.kubernetes.io/name: startupapicheck
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/component: "startupapicheck"
+    app.kubernetes.io/version: "v1.17.1"
+    app.kubernetes.io/managed-by: Helm
+    helm.sh/chart: cert-manager-v1.17.1
+  annotations:
+    helm.sh/hook: post-install
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "1"
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: startupapicheck
+        app.kubernetes.io/name: startupapicheck
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/component: "startupapicheck"
+        app.kubernetes.io/version: "v1.17.1"
+        app.kubernetes.io/managed-by: Helm
+        helm.sh/chart: cert-manager-v1.17.1
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: release-name-cert-manager-startupapicheck
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: cert-manager-startupapicheck
+          image: "quay.io/jetstack/cert-manager-startupapicheck:v1.17.1"
+          imagePullPolicy: IfNotPresent
+          args:
+          - check
+          - api
+          - --wait=1m
+          - -v
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+      nodeSelector:
+        kubernetes.io/os: linux
