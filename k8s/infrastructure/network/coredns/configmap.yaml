@@ -15,25 +15,17 @@ data:
             class error
         }
         prometheus :9153
-
-        # Rewrite cluster.local to kube.pc-tips.se
+        
+        # Handle internal Kubernetes domain resolution
         rewrite name suffix cluster.local kube.pc-tips.se
-
         kubernetes kube.pc-tips.se in-addr.arpa ip6.arpa {
             pods insecure
-            fallthrough
             ttl 30
         }
 
-        # Forward only TXT queries for _acme-challenge.<ANYTHING>.kube.pc-tips.se
-        rewrite name regex ^_acme-challenge\.(.*)\.kube\.pc-tips\.se$ _acme-challenge.kube.pc-tips.se
-        forward _acme-challenge.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
+        # Forward any unresolved queries to external DNS servers
+        forward . 1.1.1.1 8.8.8.8 {
             force_tcp
-        }
-
-        # General forward rule for everything else (local resolution)
-        forward . /etc/resolv.conf {
-            max_concurrent 1000
         }
 
         cache 30

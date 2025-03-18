@@ -9,6 +9,7 @@ resources:
   - webhook-config.yaml
   - webhook-rbac.yaml
   - cilium-network-policy-es-egress.yaml
+  - external-secrets-webhook-tls.yaml
 
 helmCharts:
   - name: external-secrets

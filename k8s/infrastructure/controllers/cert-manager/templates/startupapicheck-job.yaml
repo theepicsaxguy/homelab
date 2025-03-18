@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: release-name-cert-manager-startupapicheck
+  name: cert-manager-startupapicheck
   namespace: cert-manager
   labels:
     app: startupapicheck
@@ -31,7 +31,7 @@ spec:
         helm.sh/chart: cert-manager-v1.17.1
     spec:
       restartPolicy: OnFailure
-      serviceAccountName: release-name-cert-manager-startupapicheck
+      serviceAccountName: cert-manager-startupapicheck
       enableServiceLinks: false
       securityContext:
         runAsNonRoot: true

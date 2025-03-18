@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-webhook:subjectaccessreviews
+  name: cert-manager-webhook:subjectaccessreviews
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -21,7 +21,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-webhook:subjectaccessreviews
+  name: cert-manager-webhook:subjectaccessreviews
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -33,17 +33,17 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-webhook:subjectaccessreviews
+  name: cert-manager-webhook:subjectaccessreviews
 subjects:
 - kind: ServiceAccount
-  name: release-name-cert-manager-webhook
+  name: cert-manager-webhook
   namespace: cert-manager
 ---
 # Source: cert-manager/templates/webhook-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: release-name-cert-manager-webhook:dynamic-serving
+  name: cert-manager-webhook:dynamic-serving
   namespace: cert-manager
   labels:
     app: webhook
@@ -57,7 +57,7 @@ rules:
 - apiGroups: [""]
   resources: ["secrets"]
   resourceNames:
-  - 'release-name-cert-manager-webhook-ca'
+  - 'cert-manager-webhook-ca'
   verbs: ["get", "list", "watch", "update"]
 # It's not possible to grant CREATE permission on a single resourceName.
 - apiGroups: [""]
@@ -68,7 +68,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: release-name-cert-manager-webhook:dynamic-serving
+  name: cert-manager-webhook:dynamic-serving
   namespace: cert-manager
   labels:
     app: webhook
@@ -81,8 +81,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-cert-manager-webhook:dynamic-serving
+  name: cert-manager-webhook:dynamic-serving
 subjects:
 - kind: ServiceAccount
-  name: release-name-cert-manager-webhook
+  name: cert-manager-webhook
   namespace: cert-manager
