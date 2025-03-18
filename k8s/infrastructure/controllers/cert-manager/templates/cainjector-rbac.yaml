@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-cainjector
+  name: cert-manager-cainjector
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -36,7 +36,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-cainjector
+  name: cert-manager-cainjector
   labels:
     app: cainjector
     app.kubernetes.io/name: cainjector
@@ -48,9 +48,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-cainjector
+  name: cert-manager-cainjector
 subjects:
-  - name: release-name-cert-manager-cainjector
+  - name: cert-manager-cainjector
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -59,7 +59,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: release-name-cert-manager-cainjector:leaderelection
+  name: cert-manager-cainjector:leaderelection
   namespace: kube-system
   labels:
     app: cainjector
@@ -89,7 +89,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: release-name-cert-manager-cainjector:leaderelection
+  name: cert-manager-cainjector:leaderelection
   namespace: kube-system
   labels:
     app: cainjector
@@ -102,8 +102,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-cert-manager-cainjector:leaderelection
+  name: cert-manager-cainjector:leaderelection
 subjects:
   - kind: ServiceAccount
-    name: release-name-cert-manager-cainjector
+    name: cert-manager-cainjector
     namespace: cert-manager

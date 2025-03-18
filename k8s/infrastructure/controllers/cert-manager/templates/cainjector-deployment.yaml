@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-cert-manager-cainjector
+  name: cert-manager-cainjector
   namespace: cert-manager
   labels:
     app: cainjector
@@ -35,7 +35,7 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9402'
     spec:
-      serviceAccountName: release-name-cert-manager-cainjector
+      serviceAccountName: cert-manager-cainjector
       enableServiceLinks: false
       securityContext:
         runAsNonRoot: true

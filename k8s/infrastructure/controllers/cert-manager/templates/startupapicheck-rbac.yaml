@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: release-name-cert-manager-startupapicheck:create-cert
+  name: cert-manager-startupapicheck:create-cert
   namespace: cert-manager
   labels:
     app: startupapicheck
@@ -27,7 +27,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: release-name-cert-manager-startupapicheck:create-cert
+  name: cert-manager-startupapicheck:create-cert
   namespace: cert-manager
   labels:
     app: startupapicheck
@@ -44,8 +44,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-cert-manager-startupapicheck:create-cert
+  name: cert-manager-startupapicheck:create-cert
 subjects:
   - kind: ServiceAccount
-    name: release-name-cert-manager-startupapicheck
+    name: cert-manager-startupapicheck
     namespace: cert-manager

@@ -4,7 +4,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-issuers
+  name: cert-manager-controller-issuers
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -32,7 +32,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-clusterissuers
+  name: cert-manager-controller-clusterissuers
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -60,7 +60,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-certificates
+  name: cert-manager-controller-certificates
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -97,7 +97,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-orders
+  name: cert-manager-controller-orders
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -137,7 +137,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-challenges
+  name: cert-manager-controller-challenges
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -199,7 +199,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-ingress-shim
+  name: cert-manager-controller-ingress-shim
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -238,7 +238,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-cluster-view
+  name: cert-manager-cluster-view
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -257,7 +257,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-view
+  name: cert-manager-view
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -282,7 +282,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-edit
+  name: cert-manager-edit
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -309,7 +309,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-approve:cert-manager-io
+  name: cert-manager-controller-approve:cert-manager-io
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -333,7 +333,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: release-name-cert-manager-controller-certificatesigningrequests
+  name: cert-manager-controller-certificatesigningrequests
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -361,7 +361,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-issuers
+  name: cert-manager-controller-issuers
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -373,9 +373,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-issuers
+  name: cert-manager-controller-issuers
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -383,7 +383,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-clusterissuers
+  name: cert-manager-controller-clusterissuers
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -395,9 +395,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-clusterissuers
+  name: cert-manager-controller-clusterissuers
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -405,7 +405,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-certificates
+  name: cert-manager-controller-certificates
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -417,9 +417,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-certificates
+  name: cert-manager-controller-certificates
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -427,7 +427,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-orders
+  name: cert-manager-controller-orders
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -439,9 +439,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-orders
+  name: cert-manager-controller-orders
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -449,7 +449,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-challenges
+  name: cert-manager-controller-challenges
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -461,9 +461,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-challenges
+  name: cert-manager-controller-challenges
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -471,7 +471,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-ingress-shim
+  name: cert-manager-controller-ingress-shim
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -483,9 +483,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-ingress-shim
+  name: cert-manager-controller-ingress-shim
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -493,7 +493,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-approve:cert-manager-io
+  name: cert-manager-controller-approve:cert-manager-io
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -505,9 +505,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-approve:cert-manager-io
+  name: cert-manager-controller-approve:cert-manager-io
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -515,7 +515,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: release-name-cert-manager-controller-certificatesigningrequests
+  name: cert-manager-controller-certificatesigningrequests
   labels:
     app: cert-manager
     app.kubernetes.io/name: cert-manager
@@ -527,9 +527,9 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-cert-manager-controller-certificatesigningrequests
+  name: cert-manager-controller-certificatesigningrequests
 subjects:
-  - name: release-name-cert-manager
+  - name: cert-manager
     namespace: cert-manager
     kind: ServiceAccount
 ---
@@ -537,7 +537,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: release-name-cert-manager:leaderelection
+  name: cert-manager:leaderelection
   namespace: kube-system
   labels:
     app: cert-manager
@@ -560,7 +560,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: release-name-cert-manager-tokenrequest
+  name: cert-manager-tokenrequest
   namespace: cert-manager
   labels:
     app: cert-manager
@@ -573,7 +573,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["serviceaccounts/token"]
-    resourceNames: ["release-name-cert-manager"]
+    resourceNames: ["cert-manager"]
     verbs: ["create"]
 ---
 # Source: cert-manager/templates/rbac.yaml
@@ -582,7 +582,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: release-name-cert-manager:leaderelection
+  name: cert-manager:leaderelection
   namespace: kube-system
   labels:
     app: cert-manager
@@ -595,10 +595,10 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-cert-manager:leaderelection
+  name: cert-manager:leaderelection
 subjects:
   - kind: ServiceAccount
-    name: release-name-cert-manager
+    name: cert-manager
     namespace: cert-manager
 ---
 # Source: cert-manager/templates/rbac.yaml
@@ -606,7 +606,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: release-name-cert-manager-release-name-cert-manager-tokenrequest
+  name: cert-manager-cert-manager-tokenrequest
   namespace: cert-manager
   labels:
     app: cert-manager
@@ -619,8 +619,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-cert-manager-tokenrequest
+  name: cert-manager-tokenrequest
 subjects:
   - kind: ServiceAccount
-    name: release-name-cert-manager
+    name: cert-manager
     namespace: cert-manager
