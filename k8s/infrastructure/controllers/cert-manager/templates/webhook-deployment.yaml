@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-cert-manager-webhook
+  name: cert-manager-webhook
   namespace: cert-manager
   labels:
     app: webhook
@@ -35,7 +35,7 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9402'
     spec:
-      serviceAccountName: release-name-cert-manager-webhook
+      serviceAccountName: cert-manager-webhook
       enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
@@ -49,11 +49,11 @@ spec:
           - --v=2
           - --secure-port=10250
           - --dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)
-          - --dynamic-serving-ca-secret-name=release-name-cert-manager-webhook-ca
-          - --dynamic-serving-dns-names=release-name-cert-manager-webhook
-          - --dynamic-serving-dns-names=release-name-cert-manager-webhook.$(POD_NAMESPACE)
-          - --dynamic-serving-dns-names=release-name-cert-manager-webhook.$(POD_NAMESPACE).svc
-          
+          - --dynamic-serving-ca-secret-name=cert-manager-webhook-ca
+          - --dynamic-serving-dns-names=cert-manager-webhook
+          - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE)
+          - --dynamic-serving-dns-names=cert-manager-webhook.$(POD_NAMESPACE).svc
+
           - --secure-port=10250
           - --tls-cert-file=/tls/tls.crt
           - --tls-private-key-file=/tls/tls.key

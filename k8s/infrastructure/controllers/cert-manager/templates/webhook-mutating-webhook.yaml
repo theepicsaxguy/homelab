@@ -3,7 +3,7 @@
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  name: release-name-cert-manager-webhook
+  name: cert-manager-webhook
   labels:
     app: webhook
     app.kubernetes.io/name: webhook
@@ -13,7 +13,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     helm.sh/chart: cert-manager-v1.17.1
   annotations:
-    cert-manager.io/inject-ca-from-secret: "cert-manager/release-name-cert-manager-webhook-ca"
+    cert-manager.io/inject-ca-from-secret: "cert-manager/cert-manager-webhook-ca"
 webhooks:
   - name: webhook.cert-manager.io
     rules:
@@ -36,6 +36,6 @@ webhooks:
     sideEffects: None
     clientConfig:
       service:
-        name: release-name-cert-manager-webhook
+        name: cert-manager-webhook
         namespace: cert-manager
         path: /mutate
