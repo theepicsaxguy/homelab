@@ -28,7 +28,7 @@ helmCharts:
         certManager:
           enabled: true
           cert:
-            create: true
+            create: false
             issuerRef:
               kind: "ClusterIssuer"
               name: "cloudflare-issuer"
