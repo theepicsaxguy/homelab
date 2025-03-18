@@ -5,6 +5,18 @@ metadata:
   namespace: kube-system
 data:
   Corefile: |
+    # Handle DNS-01 challenge TXT queries for all subdomains
+    _acme-challenge.kube.pc-tips.se:53 {
+        errors
+        log
+        cache 30
+        forward . 1.1.1.1 8.8.8.8 {
+            force_tcp
+        }
+        reload
+    }
+
+    # Main server block for handling other queries
     .:53 {
         errors
         health {
@@ -15,27 +27,18 @@ data:
             class error
         }
         prometheus :9153
-
         # Rewrite cluster.local to kube.pc-tips.se
         rewrite name suffix cluster.local kube.pc-tips.se
-
         kubernetes kube.pc-tips.se in-addr.arpa ip6.arpa {
             pods insecure
             fallthrough
             ttl 30
         }
-
-        # Forward only TXT queries for _acme-challenge.<ANYTHING>.kube.pc-tips.se
-        rewrite name regex ^_acme-challenge\.(.*)\.kube\.pc-tips\.se$ _acme-challenge.kube.pc-tips.se
-        forward _acme-challenge.kube.pc-tips.se 1.1.1.1 8.8.8.8 {
+        # Forward unresolved queries to external DNS servers
+        forward . 1.1.1.1 8.8.8.8 {
             force_tcp
+            fallthrough
         }
-
-        # General forward rule for everything else (local resolution)
-        forward . /etc/resolv.conf {
-            max_concurrent 1000
-        }
-
         cache 30
         loop
         reload
