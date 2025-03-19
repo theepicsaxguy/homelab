@@ -15,15 +15,15 @@ data:
             class error
         }
         prometheus :9153
-        
-        # Handle internal Kubernetes domain resolution
-        rewrite name suffix cluster.local kube.pc-tips.se
-        kubernetes kube.pc-tips.se in-addr.arpa ip6.arpa {
+
+        # Kubernetes service domain
+        kubernetes cluster.local kube.pc-tips.se in-addr.arpa ip6.arpa {
             pods insecure
             ttl 30
+            fallthrough
         }
 
-        # Forward any unresolved queries to external DNS servers
+        # Forwarding to external DNS servers for non-cluster queries
         forward . 1.1.1.1 8.8.8.8 {
             force_tcp
         }
