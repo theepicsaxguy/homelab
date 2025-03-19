@@ -18,31 +18,30 @@ helmCharts:
     version: 0.15.0
     valuesInline:
       certController:
-        enabled: true
+        enabled: false  # Disable internal certificate generation
       webhook:
-        create: true
-        port: 443
-        hostNetwork: false
-        certDir: /tmp/certs
-        lookaheadInterval: 210h
         certManager:
-          enabled: true
-          cert:
-            create: false
-            issuerRef:
-              kind: "ClusterIssuer"
-              name: "cloudflare-issuer"
-            duration: "8760h"
-            renewBefore: "168h"
-            commonName: "external-secrets-webhook.kube.pc-tips.se"
-            dnsNames:
-              - external-secrets-webhook.kube.pc-tips.se
-        timeoutSeconds: 30
-        caBundleInjection: true
+          enabled: false  # Disable automatic certificate management
+        tls:
+          secretName: external-secrets-webhook-tls  # Reference your existing webhook TLS secret
       bitwarden-sdk-server:
-        enabled: true
         tls:
           secretName: bitwarden-sdk-server-tls
+        extraVolumeMounts:
+          - name: bitwarden-tls-certs
+            mountPath: /certs
+        extraVolumes:
+          - name: bitwarden-tls-certs
+            secret:
+              secretName: bitwarden-sdk-server-tls
+              items:
+                - key: tls.crt
+                  path: cert.pem
+                - key: tls.key
+                  path: key.pem
+                # Note: ca.crt is intentionally omitted
+
+              # DO NOT INCLUDE `ca.crt`
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -55,3 +54,4 @@ helmCharts:
           runAsNonRoot: true
           runAsUser: 1000
           fsGroup: 1000
+
