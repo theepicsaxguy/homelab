@@ -9,6 +9,7 @@ resources:
 - bitwarden-sdk-server
 - namespace.yaml
 - cilium-network-policy-es-egress.yaml
+- external-secrets-webhook.yaml
 - templates
 
 # helm template external-secrets \

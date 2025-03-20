@@ -58,6 +58,4 @@ spec:
               path: cert.pem
             - key: tls.key
               path: key.pem
-            - key: ca.crt
-              path: ca.pem
             secretName: bitwarden-sdk-server-tls
