@@ -2,56 +2,22 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: external-secrets
 resources:
-  - bitwarden-sdk-tls.yaml
-  - namespace.yaml
-  - bitwarden-store.yaml
-  - network-policy.yaml
-  - webhook-config.yaml
-  - webhook-rbac.yaml
-  - cilium-network-policy-es-egress.yaml
-  - external-secrets-webhook-tls.yaml
 
-helmCharts:
-  - name: external-secrets
-    releaseName: external-secrets
-    repo: https://charts.external-secrets.io
-    version: 0.15.0
-    valuesInline:
-      certController:
-        enabled: false  # Disable internal certificate generation
-      webhook:
-        certManager:
-          enabled: false  # Disable automatic certificate management
-        tls:
-          secretName: external-secrets-webhook-tls  # Reference your existing webhook TLS secret
-      bitwarden-sdk-server:
-        tls:
-          secretName: bitwarden-sdk-server-tls
-        extraVolumeMounts:
-          - name: bitwarden-tls-certs
-            mountPath: /certs
-        extraVolumes:
-          - name: bitwarden-tls-certs
-            secret:
-              secretName: bitwarden-sdk-server-tls
-              items:
-                - key: tls.crt
-                  path: cert.pem
-                - key: tls.key
-                  path: key.pem
-                # Note: ca.crt is intentionally omitted
+- bitwarden-sdk-tls.yaml
+- webhook-rbac.yaml
+- network-policy.yaml
+- bitwarden-sdk-server
+- namespace.yaml
+- cilium-network-policy-es-egress.yaml
+- templates
 
-              # DO NOT INCLUDE `ca.crt`
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-          runAsNonRoot: true
-          runAsUser: 1000
-          seccompProfile:
-            type: RuntimeDefault
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          fsGroup: 1000
+# helm template external-secrets \
+#   external-secrets/external-secrets \
+#   -n external-secrets \
+#   --create-namespace \
+#   --set installCRDs=false \
+#   --set bitwarden-sdk-server.enabled=true \
+#   --output-dir .
 
+# mv /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/* /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/bitwarden-sdk-server/
+# rm -rf /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/
