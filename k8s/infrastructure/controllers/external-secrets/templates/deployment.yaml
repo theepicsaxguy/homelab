@@ -1,0 +1,56 @@
+---
+# Source: external-secrets/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-secrets
+  namespace: external-secrets
+  labels:
+    helm.sh/chart: external-secrets-0.14.4
+    app.kubernetes.io/name: external-secrets
+    app.kubernetes.io/instance: external-secrets
+    app.kubernetes.io/version: "v0.14.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: external-secrets
+      app.kubernetes.io/instance: external-secrets
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: external-secrets-0.14.4
+        app.kubernetes.io/name: external-secrets
+        app.kubernetes.io/instance: external-secrets
+        app.kubernetes.io/version: "v0.14.4"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      serviceAccountName: external-secrets
+      automountServiceAccountToken: true
+      hostNetwork: false
+      containers:
+        - name: external-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          image: oci.external-secrets.io/external-secrets/external-secrets:v0.14.4
+          imagePullPolicy: IfNotPresent
+          args:
+          - --concurrent=1
+          - --metrics-addr=:8080
+          - --loglevel=info
+          - --zap-time-encoding=epoch
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: metrics
+      dnsPolicy: ClusterFirst
