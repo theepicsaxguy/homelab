@@ -1,0 +1,61 @@
+---
+# Source: external-secrets/charts/bitwarden-sdk-server/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitwarden-sdk-server
+  labels:
+    helm.sh/chart: bitwarden-sdk-server-v0.3.1
+    app.kubernetes.io/name: bitwarden-sdk-server
+    app.kubernetes.io/instance: external-secrets
+    app.kubernetes.io/version: "v0.3.1"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bitwarden-sdk-server
+      app.kubernetes.io/instance: external-secrets
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bitwarden-sdk-server
+        app.kubernetes.io/instance: external-secrets
+    spec:
+      serviceAccountName: bitwarden-sdk-server
+      securityContext:
+        {}
+      containers:
+        - name: bitwarden-sdk-server
+          securityContext:
+            {}
+          image: "ghcr.io/external-secrets/bitwarden-sdk-server:v0.3.1"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /certs
+            name: bitwarden-tls-certs
+          ports:
+            - name: http
+              containerPort: 9998
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: http
+              scheme: HTTPS
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+              scheme: HTTPS
+          resources:
+            {}
+      volumes:
+        - name: bitwarden-tls-certs
+          secret:
+            items:
+            - key: tls.crt
+              path: cert.pem
+            - key: tls.key
+              path: key.pem
+            secretName: bitwarden-sdk-server-tls
