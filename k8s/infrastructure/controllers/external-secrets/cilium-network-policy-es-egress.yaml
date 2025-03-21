@@ -4,7 +4,6 @@ metadata:
   name: allow-es-egress-to-cert-manager
   namespace: external-secrets
 spec:
-  # Apply to all pods in external-secrets
   endpointSelector: {}
   egress:
     - toEndpoints:
@@ -33,6 +32,7 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -46,25 +46,6 @@ spec:
   ingress:
     - fromCIDR:
         - "0.0.0.0/0"
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: allow-es-egress-to-kube-api
-  namespace: external-secrets
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: external-secrets
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kube-system
-            k8s:app.kubernetes.io/name: kube-apiserver
       toPorts:
         - ports:
             - port: "443"
