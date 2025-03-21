@@ -4,15 +4,9 @@ namespace: external-secrets
 resources:
 
 - bitwarden-sdk-tls.yaml
-- webhook-rbac.yaml
-- network-policy.yaml
 - bitwarden-sdk-server
 - namespace.yaml
-- cilium-network-policy-es-egress.yaml
-- external-secrets-webhook.yaml
 - templates
-- external-secrets-ca.yaml
-- external-secrets-issuer.yaml
 
 # helm template external-secrets \
 #   external-secrets/external-secrets \
