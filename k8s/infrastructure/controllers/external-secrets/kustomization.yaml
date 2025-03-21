@@ -11,7 +11,6 @@ resources:
 - cilium-network-policy-es-egress.yaml
 - external-secrets-webhook.yaml
 - templates
-- selfsigned-cluster-issuer.yaml
 - external-secrets-ca.yaml
 - external-secrets-issuer.yaml
 
