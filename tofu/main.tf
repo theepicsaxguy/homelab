@@ -25,6 +25,7 @@ module "talos" {
     vip             = "10.25.150.10"    # Control plane VIP
     talos_version   = "v1.9.4"
     proxmox_cluster = "kube"
+    kubernetes_version = "1.32.0"  # renovate: github-releases=kubernetes/kubernetes
   }
 
   nodes = {
@@ -36,6 +37,7 @@ module "talos" {
     vm_id         = 8101
     cpu           = 4
     ram_dedicated = 4096
+    update        = true
     igpu          = false
   }
   "ctrl-01" = {
@@ -46,6 +48,7 @@ module "talos" {
     vm_id         = 8102
     cpu           = 4
     ram_dedicated = 4096
+    update        = true
     igpu          = false
   }
   "ctrl-02" = {
@@ -56,6 +59,7 @@ module "talos" {
     vm_id         = 8103
     cpu           = 4
     ram_dedicated = 4096
+    update        = true
   }
   "work-00" = {
     host_node     = "host3"
@@ -65,6 +69,7 @@ module "talos" {
     vm_id         = 8201
     cpu           = 4
     ram_dedicated = 3096
+    update        = true
     disks = {
       longhorn = {
         size = "100G"
@@ -80,6 +85,7 @@ module "talos" {
     vm_id         = 8202
     cpu           = 4
     ram_dedicated = 4096
+    update        = true
     disks = {
       longhorn = {
         size = "100G"
@@ -95,6 +101,7 @@ module "talos" {
     vm_id         = 8203
     cpu           = 4
     ram_dedicated = 4096
+    update        = true
     disks = {
       longhorn = {
         size = "100G"

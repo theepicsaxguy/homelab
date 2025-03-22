@@ -15,12 +15,13 @@ variable "image" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name            = string
-    endpoint        = string
-    gateway         = string
-    vip             = string
-    talos_version   = string
-    proxmox_cluster = string
+    name              = string
+    endpoint          = string
+    gateway           = string
+    vip               = string
+    talos_version     = string
+    proxmox_cluster   = string
+    kubernetes_version = optional(string, "1.32.0")
   })
 }
 
