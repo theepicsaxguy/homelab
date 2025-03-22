@@ -17,7 +17,6 @@ spec:
           - path: k8s/infrastructure/controllers
           - path: k8s/infrastructure/network
           - path: k8s/infrastructure/storage
-          - path: k8s/infrastructure/auth
           - path: k8s/infrastructure/crds
   template:
     metadata:
