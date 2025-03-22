@@ -28,13 +28,13 @@ cluster:
   allowSchedulingOnControlPlanes: false
   clusterName: kube.pc-tips.se
   apiServer:
-    extraArgs:
-      oidc-issuer-url: https://authelia.kube.pc-tips.se
-      oidc-client-id: kubectl
-      oidc-username-claim: preferred_username
-      oidc-username-prefix: 'authelia:'
-      oidc-groups-claim: groups
-      oidc-groups-prefix: 'authelia:'
+    # extraArgs:
+    #   oidc-issuer-url: https://authelia.kube.pc-tips.se
+    #   oidc-client-id: kubectl
+    #   oidc-username-claim: preferred_username
+    #   oidc-username-prefix: 'authelia:'
+    #   oidc-groups-claim: groups
+    #   oidc-groups-prefix: 'authelia:'
   network:
     dnsDomain: kube.pc-tips.se
     cni:

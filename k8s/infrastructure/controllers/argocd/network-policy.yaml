@@ -4,20 +4,26 @@ metadata:
   name: allow-argocd-full
   namespace: argocd
 spec:
-  description: "Allow ArgoCD components to communicate internally and with required services"
+  description: "Allow ArgoCD to function correctly with internal communication, DNS, and API access"
   endpointSelector:
     matchLabels:
       app.kubernetes.io/part-of: argocd
   egress:
-    # Allow communication with Kubernetes API Server
-    - toEntities:
-        - kube-apiserver
+        # Allow access to Kubernetes API server via toServices
+    - toServices:
+        - k8sServiceSelector:
+            selector:
+              matchLabels:
+                component: apiserver
+            namespace: default
       toPorts:
         - ports:
             - port: "443"
               protocol: TCP
 
-    # Allow DNS resolution
+
+
+    # ✅ Allow DNS resolution (must match kube-dns pod labels explicitly)
     - toEndpoints:
         - matchLabels:
             k8s-app: kube-dns
@@ -28,21 +34,21 @@ spec:
             - port: "53"
               protocol: TCP
 
-    # Allow internal ArgoCD components to talk to each other
+    # ✅ Allow ArgoCD components to talk to each other
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/part-of: argocd
 
   ingress:
-    # Allow all ArgoCD components to talk to each other
+    # ✅ Internal ArgoCD communication
     - fromEndpoints:
         - matchLabels:
             app.kubernetes.io/part-of: argocd
 
-    # Allow external access (adjust based on requirements)
+    # ✅ External access (e.g., webhooks, UI)
     - fromEntities:
-        - cluster  # Allow cluster internal traffic
-        - world    # Allow external access (if needed, e.g., webhooks, UI)
+        - cluster
+        - world
       toPorts:
         - ports:
             - port: "80"
