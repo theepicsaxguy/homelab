@@ -36,8 +36,6 @@ Install ArgoCD:
 # Install ArgoCD components
 kustomize build --enable-helm infrastructure/controllers/argocd | kubectl apply -f -
 
-kubectl apply -k infrastructure/controllers/argo-rollouts
-
 argocd admin redis-initial-password -n argocd
 ```
 

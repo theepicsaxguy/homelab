@@ -6,7 +6,7 @@ module "talos" {
   }
 
   image = {
-    version = "v1.9.4"
+    version = "v1.9.5"
     update_version = "v1.9.5" # renovate: github-releases=siderolabs/talos
     schematic = file("${path.module}/talos/image/schematic.yaml")
   }
@@ -37,7 +37,7 @@ module "talos" {
     vm_id         = 8101
     cpu           = 4
     ram_dedicated = 4096
-    update        = true
+    update        = false
     igpu          = false
   }
   "ctrl-01" = {
@@ -48,7 +48,7 @@ module "talos" {
     vm_id         = 8102
     cpu           = 4
     ram_dedicated = 4096
-    update        = true
+    update        = false
     igpu          = false
   }
   "ctrl-02" = {
@@ -59,7 +59,7 @@ module "talos" {
     vm_id         = 8103
     cpu           = 4
     ram_dedicated = 4096
-    update        = true
+    update        = false
   }
   "work-00" = {
     host_node     = "host3"
@@ -69,7 +69,7 @@ module "talos" {
     vm_id         = 8201
     cpu           = 4
     ram_dedicated = 3096
-    update        = true
+    update        = false
     disks = {
       longhorn = {
         size = "100G"
@@ -85,7 +85,7 @@ module "talos" {
     vm_id         = 8202
     cpu           = 4
     ram_dedicated = 4096
-    update        = true
+    update        = false
     disks = {
       longhorn = {
         size = "100G"
@@ -101,7 +101,7 @@ module "talos" {
     vm_id         = 8203
     cpu           = 4
     ram_dedicated = 4096
-    update        = true
+    update        = false
     disks = {
       longhorn = {
         size = "100G"
