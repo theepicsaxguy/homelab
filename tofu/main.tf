@@ -16,7 +16,9 @@ module "talos" {
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
 
-
+  coredns = {
+    install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
+  }
 
   cluster = {
     name            = "talos"

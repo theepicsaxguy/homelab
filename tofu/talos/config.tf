@@ -26,6 +26,7 @@ data "talos_machine_configuration" "this" {
       cluster        = var.cluster
       cilium_values  = var.cilium.values
       cilium_install = var.cilium.install
+      coredns_install = var.coredns.install
     })
     ] : [
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
