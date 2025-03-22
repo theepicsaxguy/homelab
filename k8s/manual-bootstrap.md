@@ -27,6 +27,10 @@ Wait for Cilium to be ready:
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
 ```
 
+```shell
+kustomize build --enable-helm infrastructure/controllers/cert-manager | kubectl apply -f -
+```
+
 ## ArgoCD Bootstrap
 
 Install ArgoCD:
@@ -49,6 +53,31 @@ Get initial admin password:
 
 ```shell
 kubectl -n argocd get secret argocd-initial-admin-secret -ojson | jq -r '.data.password | @base64d'
+```
+
+```shell
+kustomize build --enable-helm infrastructure/storage/longhorn | kubectl apply -f -
+```
+
+```shell
+kustomize build --enable-helm infrastructure/network/coredns | kubectl apply -f -
+```
+
+```shell
+kustomize build --enable-helm infrastructure/controllers/external-secrets | kubectl apply -f -
+```
+
+```shell
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bitwarden-access-token
+  namespace: external-secrets
+type: Opaque
+data:
+  token: base64token==
+EOF
 ```
 
 ## GitOps Configuration
