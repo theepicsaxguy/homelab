@@ -76,6 +76,8 @@ envoy:
       envoy: [NET_ADMIN, PERFMON, BPF]
 
 hubble:
+  peerService:
+    clusterDomain: kube.pc-tips.se
   enabled: true
   relay:
     enabled: true
