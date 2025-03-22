@@ -38,6 +38,10 @@ variable "nodes" {
     ram_dedicated = number
     update = optional(bool, false)
     igpu = optional(bool, false)
+    disks = optional(map(object({
+      size = string
+      type = string
+    })), {})
   }))
 }
 
@@ -47,6 +51,23 @@ variable "cilium" {
     values  = string
     install = string
   })
+}
+
+variable "coredns" {
+  description = "CoreDNS configuration"
+  type = object({
+    install = string
+  })
+}
+
+variable "inline_manifests" {
+  description = "Inline manifests to apply after bootstrap with dependencies"
+  type = list(object({
+    name = string
+    content = string
+    dependencies = optional(list(string), [])
+  }))
+  default = []
 }
 
 
