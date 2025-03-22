@@ -54,7 +54,7 @@ server:
   certificate:
     enabled: true
     domain: argocd.kube.pc-tips.se
-    issuerRef:
+    issuer:
       name: cloudflare-issuer
       kind: ClusterIssuer
 

@@ -6,6 +6,8 @@ resources:
 - bitwarden-sdk-tls.yaml
 - bitwarden-sdk-server
 - namespace.yaml
+- clusterrole-clusterpushsecret.yaml
+- clusterrolebinding-clusterpushsecret.yaml
 - templates
 
 # helm template external-secrets \
@@ -18,3 +20,8 @@ resources:
 
 # mv /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/* /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/bitwarden-sdk-server/
 # rm -rf /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/
+
+# To get the CA certificate root@vscode:~/homelab/k8s# curl -sSL https://letsencrypt.org/certs/isrgrootx1.pem -o isrgrootx1.pem
+# root@vscode:~/homelab/k8s# kubectl create secret generic letsencrypt-ca \
+#   -n external-secrets \
+#   --from-file=ca.crt=isrgrootx1.pem
