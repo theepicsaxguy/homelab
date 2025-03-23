@@ -50,7 +50,7 @@ Our GitOps workflow follows strict principles:
 
 1. **Source of Truth**: All infrastructure defined in Git
 2. **Deployment Mechanism**: ArgoCD is the only deployment tool
-3. **Change Management**: 
+3. **Change Management**:
    - No direct kubectl applies
    - Changes must be committed to Git
    - Automated validation and testing

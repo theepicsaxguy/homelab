@@ -3,15 +3,13 @@
 This document describes the complete hierarchy of ApplicationSets in our homelab infrastructure, from bootstrap to
 application deployment.
 
-## 1. Bootstrap Layer (k8s/sets/)
+## 1. Bootstrap Layer
 
-The bootstrap layer is the foundation of our GitOps deployment strategy. It consists of three critical components that
-initialize the entire infrastructure:
+The bootstrap layer consists of three critical components that initialize the entire infrastructure:
 
-### 1.1 Root Project (sets/project.yaml)
+### 1.1 Root Project Configuration
 
 ```yaml
-# Root project that enables management of all other components
 metadata:
   name: app-of-apps
 spec:
@@ -24,13 +22,11 @@ spec:
 
 ### 1.2 Core Applications
 
-- **Infrastructure Set**: Manages all infrastructure components
-- **Applications Set**: Handles all user applications
-- **ArgoCD Set**: Manages ArgoCD itself
+- Infrastructure ApplicationSet
+- Applications ApplicationSet
+- ArgoCD ApplicationSet
 
-## 2. Infrastructure Layer (k8s/infrastructure/)
-
-The infrastructure layer follows a hierarchical deployment pattern with environment-specific configurations.
+## 2. Infrastructure Layer
 
 ### 2.1 Environment Progression
 
@@ -54,41 +50,37 @@ Sync Waves:
 
 ### 2.2 Component Sets
 
-Each infrastructure domain has its own ApplicationSet that inherits from the environment configuration:
+#### Network Components
 
-#### Network Components (network/application-set.yaml)
+- Cilium CNI and Service Mesh
+- Gateway API Implementation
+- DNS Services (CoreDNS)
 
-- Cilium CNI
-- Gateway API
-- DNS Services
+#### Storage Components
 
-#### Storage Components (storage/application-set.yaml)
-
-- Longhorn
+- Longhorn Storage
 - CSI Drivers
 - Storage Classes
 
-#### Authentication (auth/application-set.yaml)
+#### Authentication
 
-- Authelia
-- LLDAP
-- OAuth Providers
+- Authelia SSO
+- LLDAP Directory
+- OAuth/OIDC Providers
 
-#### Core Controllers (controllers/application-set.yaml)
+#### Core Controllers
 
 - Cert Manager
-- External Secrets
+- External Secrets Operator
 - Node Feature Discovery
 
-#### VPN Services (vpn/application-set.yaml)
+#### Security Components
 
-- WireGuard
-- OpenVPN
 - Network Policies
+- Pod Security Standards
+- RBAC Configurations
 
-## 3. Applications Layer (k8s/applications/)
-
-The applications layer manages all user workloads with its own environment progression.
+## 3. Applications Layer
 
 ### 3.1 Environment Management
 
@@ -112,19 +104,19 @@ Sync Waves:
 
 ### 3.2 Application Categories
 
-#### Media Applications (media/application-set.yaml)
+#### Media Applications
 
 - Plex
 - Jellyfin
 - \*arr stack (Sonarr, Radarr, etc.)
 
-#### Development Tools (tools/application-set.yaml)
+#### Development Tools
 
-- Debugging tools
-- Development utilities
+- Debug utilities
 - Testing frameworks
+- Development environments
 
-#### External Services (external/application-set.yaml)
+#### External Services
 
 - Third-party integrations
 - External APIs
@@ -134,8 +126,6 @@ Sync Waves:
 
 ### 4.1 Infrastructure Components
 
-All infrastructure components must include:
-
 ```yaml
 labels:
   app.kubernetes.io/part-of: infrastructure
@@ -143,8 +133,6 @@ labels:
 ```
 
 ### 4.2 User Applications
-
-All applications must include:
 
 ```yaml
 labels:
@@ -154,58 +142,57 @@ labels:
 
 ## 5. Deployment Flow
 
-1. Bootstrap ApplicationSet applies core components
-2. Infrastructure ApplicationSet deploys in waves (0-2)
-3. Applications ApplicationSet deploys in waves (3-5)
-4. Each wave ensures dependencies are met before proceeding
+1. Bootstrap ApplicationSet: Core Components
+2. Infrastructure ApplicationSet: Waves 0-2
+3. Applications ApplicationSet: Waves 3-5
+
+Each wave ensures dependencies are met before proceeding.
 
 ## 6. Best Practices
 
 ### 6.1 ApplicationSet Structure
 
-- Use consistent naming conventions
-- Include proper labels and annotations
-- Define explicit sync policies
-- Configure appropriate retry mechanisms
+- Consistent naming conventions
+- Proper labels and annotations
+- Explicit sync policies
+- Appropriate retry mechanisms
 
 ### 6.2 Resource Management
 
-- Define explicit resource requests/limits
-- Use appropriate replica counts per environment
-- Implement proper health checks
-- Configure meaningful liveness/readiness probes
+- Explicit resource requests/limits
+- Environment-appropriate replicas
+- Health check implementation
+- Meaningful probes
 
 ### 6.3 High Availability
 
-- Production environments require multiple replicas
-- Use pod anti-affinity rules
-- Implement proper PodDisruptionBudgets
-- Configure appropriate topology spread constraints
+- Production: 3+ replicas
+- Pod anti-affinity rules
+- PodDisruptionBudgets
+- Topology spread constraints
 
-### 6.4 Security Considerations
+### 6.4 Security
 
-- Follow least privilege principle
-- Implement proper network policies
-- Use secure pod security contexts
-- Configure appropriate RBAC rules
+- Least privilege principle
+- Network policy enforcement
+- Secure pod contexts
+- RBAC compliance
 
-## 7. Validation Requirements
+## 7. Validation and Testing
 
-### 7.1 Sync Status
+### 7.1 Current Capabilities
 
-Monitor sync status through:
+- ArgoCD health checks
+- Basic HTTP endpoint checks
+- Manual policy validation
+- Configuration verification
 
-- ArgoCD dashboard
-- Status endpoint health checks
-- Application state reconciliation
+### 7.2 Planned Improvements
 
-### 7.2 Health Checks
-
-Implement comprehensive health checks:
-
-- Liveness probes
-- Readiness probes
-- Startup probes where applicable
+- Automated testing
+- Policy validation
+- Security scanning
+- Performance testing
 
 ## 8. Troubleshooting
 
@@ -214,30 +201,30 @@ Implement comprehensive health checks:
 - Sync failures
 - Resource conflicts
 - Permission issues
-- Network policy conflicts
+- Network policies
 
-### 8.2 Resolution Steps
+### 8.2 Resolution
 
 1. Check ArgoCD logs
-2. Verify resource definitions
-3. Validate network policies
-4. Review RBAC permissions
+2. Verify resources
+3. Validate policies
+4. Review RBAC
 
-## 9. Maintenance and Updates
+## 9. Maintenance
 
 ### 9.1 Regular Tasks
 
-- Review sync status
-- Monitor resource usage
-- Update documentation
-- Validate configurations
+- Sync status review
+- Resource monitoring
+- Documentation updates
+- Configuration validation
 
 ### 9.2 Update Process
 
-1. Update development first
-2. Validate changes
-3. Progress to staging
-4. Deploy to production
+1. Development first
+2. Testing validation
+3. Staging promotion
+4. Production deployment
 
 ## 10. Future Considerations
 
@@ -246,11 +233,11 @@ Implement comprehensive health checks:
 - Multi-cluster support
 - Cross-cluster resources
 - Federation capabilities
-- Monitoring stack deployment
+- Enhanced monitoring
 
 ### 10.2 Improvements
 
 - Automated testing
 - Disaster recovery
-- Backup solutions
-- Enhanced observability
+- Backup automation
+- Enhanced validation

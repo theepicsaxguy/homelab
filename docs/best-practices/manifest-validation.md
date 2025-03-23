@@ -1,141 +1,256 @@
-# Manifest Validation Requirements
+# Manifest Validation Guidelines
 
 ## Overview
 
-This document outlines the validation requirements and procedures for Kubernetes manifests in our GitOps workflow.
+These guidelines define the validation requirements for all Kubernetes manifests in our GitOps-managed infrastructure.
+
+## Pre-Commit Validation
+
+### Required Checks
+
+1. YAML Syntax
+
+   - No syntax errors
+   - Proper indentation
+   - Valid YAML structure
+   - No duplicate keys
+
+2. Resource Schema
+
+   - Valid API versions
+   - Required fields present
+   - Correct field types
+   - Valid enum values
+
+3. Kustomize Validation
+   - Base resources exist
+   - Valid patches
+   - Correct references
+   - Resource generation
+
+## Static Analysis
+
+### Resource Requirements
+
+1. Metadata
+
+   ```yaml
+   metadata:
+     labels:
+       app.kubernetes.io/name: <app-name>
+       app.kubernetes.io/part-of: <component>
+       app.kubernetes.io/managed-by: argocd
+   ```
+
+2. Resource Limits
+
+   ```yaml
+   resources:
+     requests:
+       cpu: <required>
+       memory: <required>
+     limits:
+       cpu: <required>
+       memory: <required>
+   ```
+
+3. Health Checks
+   ```yaml
+   livenessProbe:
+     # Required for all containers
+   readinessProbe:
+     # Required for all containers
+   ```
+
+### Security Requirements
+
+1. Pod Security
+
+   ```yaml
+   securityContext:
+     runAsNonRoot: true
+     readOnlyRootFilesystem: true
+     allowPrivilegeEscalation: false
+   ```
+
+2. Network Policies
+   - Default deny
+   - Explicit allows
+   - Named ports
+   - Valid selectors
+
+## Environment Validation
+
+### Development
+
+- Basic schema validation
+- Resource presence
+- Security context
+- Network policies
+
+### Staging
+
+- Full validation
+- Resource limits
+- Health checks
+- Security compliance
+
+### Production
+
+- Strict validation
+- HA requirements
+- Security hardening
+- Performance checks
+
+## ApplicationSet Validation
+
+### Required Fields
+
+1. Project Configuration
+
+   ```yaml
+   spec:
+     project: <project-name>
+     source:
+       repoURL: <git-repo>
+       targetRevision: <branch/tag>
+       path: <path>
+   ```
+
+2. Sync Policy
+   ```yaml
+   spec:
+     syncPolicy:
+       automated:
+         prune: true
+         selfHeal: true
+       syncOptions:
+         - CreateNamespace=true
+         - ApplyOutOfSyncOnly=true
+   ```
+
+### Template Validation
+
+- Valid generators
+- Required fields
+- Path existence
+- Source validity
 
 ## Validation Tools
 
-### Kubeconform
+### Current Tools
 
-- All manifests must pass validation against Kubernetes v1.32.0 schemas
-- Strict validation is enabled
-- CustomResourceDefinitions are exempted from schema validation
-- Missing schemas are ignored to allow for custom resources
+- kubeval
+- conftest
+- kustomize build
+- ArgoCD validation
 
-### Kustomize
+### Future Tools
 
-- All kustomization directories must successfully build
-- Kustomize overlays must follow the repository structure guidelines
-- Helm support must be enabled with --enable-helm flag
-- Components and ApplicationSets must be properly referenced
+- Policy enforcement
+- Security scanning
+- Custom validators
+- Automated testing
 
-### Resource Validation
+## Common Issues
 
-#### Development Environment
+### Resource Issues
 
-```yaml
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
-```
+1. Missing limits
+2. Invalid probes
+3. Security context
+4. Network policies
 
-#### Staging Environment
+### Template Issues
 
-```yaml
-resources:
-  requests:
-    cpu: 500m
-    memory: 512Mi
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-replicas: 2
-```
+1. Invalid paths
+2. Wrong API versions
+3. Missing fields
+4. Invalid references
 
-#### Production Environment
+## Best Practices
 
-```yaml
-resources:
-  requests:
-    cpu: 1000m
-    memory: 1Gi
-  limits:
-    cpu: 2000m
-    memory: 2Gi
-replicas: 2
-```
+### Resource Management
 
-## Validation Process
+- Explicit requests/limits
+- Appropriate replicas
+- Anti-affinity rules
+- Update strategies
 
-1. **Local Validation**
+### Security
 
-   ```bash
-   # Run from repository root
-   ./scripts/validate_manifests.sh -d k8s/infra
-   ```
+- Non-root containers
+- Read-only filesystem
+- Limited capabilities
+- Network isolation
 
-2. **CI/CD Validation**
+### High Availability
 
-   - Runs automatically on pull requests
-   - Validates all environments
-   - Checks resource specifications
-   - Verifies high availability configs
+- Multiple replicas
+- Pod anti-affinity
+- PodDisruptionBudgets
+- Rolling updates
 
-3. **Security Scanning**
-   - Trivy scans for vulnerabilities
-   - Critical and High severity issues must be addressed
-   - Results uploaded to GitHub Security tab
+## Documentation Requirements
 
-## Common Validation Rules
+### Resource Documentation
 
-1. **Resource Requirements**
+- Purpose description
+- Dependencies list
+- Configuration notes
+- Security requirements
 
-   - All containers must have resource requests/limits
-   - Values must match environment specifications
-   - No over-provisioning allowed
+### Change Documentation
 
-2. **High Availability**
+- Change description
+- Impact assessment
+- Testing results
+- Rollback plan
 
-   - Staging/Production require 3 replicas
-   - Pod anti-affinity rules enforced
-   - Topology spread constraints validated
+## Validation Workflow
 
-3. **Network Policies**
+### New Resources
 
-   - Must be present for all components
-   - Follow zero-trust model
-   - Proper ingress/egress rules
+1. Create manifest
+2. Run static analysis
+3. Test in development
+4. Review security
+5. Update documentation
 
-4. **Health Checks**
-   - Liveness probes required
-   - Readiness probes configured
-   - Appropriate timeouts set
+### Changes
 
-## Validation Scripts
+1. Update manifest
+2. Validate changes
+3. Test impact
+4. Update docs
+5. Review security
 
-### validate_manifests.sh
+## Environment Specifics
 
-- Validates Kubernetes manifests
-- Checks kustomize builds
-- Verifies resource specifications
-- Run from repository root
+### Development
 
-### fix_kustomize.sh
+- Basic validation
+- Quick iteration
+- Debug enabled
+- Local testing
 
-- Fixes common kustomization issues
-- Updates deprecated fields
-- Standardizes formatting
+### Staging
 
-## Error Resolution
+- Full validation
+- Integration tests
+- Performance tests
+- Security scans
 
-1. **Resource Validation Failures**
+### Production
 
-   - Check environment-specific requirements
-   - Verify resource limits
-   - Validate replica counts
+- Strict validation
+- Zero-downtime
+- Full security
+- Performance requirements
 
-2. **Kustomize Build Errors**
+## Related Documentation
 
-   - Verify path references
-   - Check component existence
-   - Validate patches
-
-3. **Security Scan Failures**
-   - Address Critical/High issues
-   - Document exceptions
-   - Update affected components
+- [GitOps Guidelines](gitops.md)
+- [Security Guidelines](../security/overview.md)
+- [Resource Management](resources.md)
+- [ApplicationSet Configuration](../architecture/applicationsets.md)

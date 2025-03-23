@@ -2,19 +2,22 @@
 
 ## Overview
 
-Our security architecture follows a zero-trust model with defense in depth, implemented through multiple layers of security controls.
+Our security architecture follows a zero-trust model with defense in depth, implemented through multiple layers of
+security controls.
 
 ## Core Components
 
 ### Authentication & Authorization
 
 #### Authentication (Authelia)
+
 - SSO provider for all applications
 - OIDC integration
 - MFA support
 - User directory integration with LLDAP
 
 #### Authorization
+
 - Kubernetes RBAC
 - Namespace isolation
 - Service account management
@@ -23,6 +26,7 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ### Secret Management
 
 #### Bitwarden Secrets Manager
+
 - Central secrets store
 - Automated secret injection
 - Rotation capabilities
@@ -31,12 +35,14 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ### Network Security
 
 #### Zero Trust Implementation
+
 - Cilium network policies
 - Service mesh mTLS
 - Ingress/egress control
 - Traffic encryption
 
 #### Gateway Security
+
 - TLS termination
 - Certificate management
 - Rate limiting (planned)
@@ -45,12 +51,14 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ### Infrastructure Security
 
 #### Base Security
+
 - Talos Linux hardening
 - Immutable infrastructure
 - Automated updates
 - Security scanning (planned)
 
 #### Container Security
+
 - Non-root containers
 - Read-only root filesystem
 - Dropped capabilities
@@ -59,6 +67,7 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ## Current Security Controls
 
 ### Implemented
+
 1. Authentication via Authelia
 2. RBAC for all components
 3. Network policies
@@ -68,6 +77,7 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 7. Infrastructure immutability
 
 ### Planned
+
 1. Security monitoring
 2. Automated compliance checks
 3. Advanced threat detection
@@ -76,18 +86,21 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ## Environment-Specific Security
 
 ### Development
+
 - Relaxed network policies
 - Debug capabilities enabled
 - Full logging
 - Test credentials allowed
 
 ### Staging
+
 - Production-like security
 - Limited debug access
 - Sanitized data
 - Test security controls
 
 ### Production
+
 - Strict security enforcement
 - No direct debug access
 - Production data protection
@@ -96,12 +109,14 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ## Access Control
 
 ### External Access
+
 - Gateway API controls
 - Authentication required
 - TLS termination
 - IP filtering
 
 ### Internal Access
+
 - Service mesh control
 - Namespace isolation
 - RBAC enforcement
@@ -110,12 +125,14 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ## Certificate Management
 
 ### Implementation
+
 - cert-manager
 - ACME/Let's Encrypt
 - Automated renewal
 - Wildcard certificates
 
 ### Distribution
+
 - Secret injection
 - TLS termination
 - Service mesh certificates
@@ -139,12 +156,14 @@ Our security architecture follows a zero-trust model with defense in depth, impl
 ## Incident Response
 
 ### Current Capabilities
+
 - Manual investigation tools
 - Basic logging analysis
 - Infrastructure recovery
 - Documentation procedures
 
 ### Planned Improvements
+
 - Automated detection
 - Real-time alerts
 - Incident playbooks

@@ -1,88 +1,146 @@
 # Service Registry
 
-## Infrastructure Services
+## Core Infrastructure Services
 
-### Core Platform
+### Authentication & Authorization
 
-#### Authentication (Authelia)
+| Service  | Status | Description    | URL                            |
+| -------- | ------ | -------------- | ------------------------------ |
+| Authelia | Active | SSO Provider   | `https://auth.kube.pc-tips.se` |
+| LLDAP    | Active | LDAP Directory | Internal only                  |
 
-- **URL**: authelia.kube.pc-tips.se
-- **Description**: Single sign-on and 2FA provider
-- **Dependencies**:
-  - LDAP
-  - Redis
-  - PostgreSQL
-- **Integration Points**:
-  - Gateway API for auth
-  - Prometheus metrics
-  - Loki logging
+### Network Services
 
-#### Certificate Management (cert-manager)
+| Service     | Status | Description        | Access        |
+| ----------- | ------ | ------------------ | ------------- |
+| CoreDNS     | Active | DNS Services       | Internal only |
+| Cilium      | Active | CNI & Service Mesh | Cluster-wide  |
+| Gateway API | Active | Ingress Controller | Cluster-wide  |
 
-- **Version**: v1.17.1
-- **Description**: Automated certificate management
-- **Dependencies**:
-  - Cloudflare DNS
-  - Gateway API
-- **Integration Points**:
-  - Prometheus metrics
-  - Kubernetes API
-  - DNS providers
+### Storage Services
 
-### Networking
+| Service  | Status | Description     | Access        |
+| -------- | ------ | --------------- | ------------- |
+| Longhorn | Active | Primary Storage | Internal only |
+| Restic   | Active | Backup Solution | S3 Backend    |
 
-#### CNI (Cilium)
+### Certificate Management
 
-- **Version**: v1.17+
-- **Description**: Network and service mesh provider
-- **Features**:
-  - Gateway API implementation
-  - Service mesh capabilities
-  - Network policies
-  - Load balancing
-- **Integration Points**:
-  - Prometheus metrics
-  - Hubble UI
-  - Gateway API
-  - eBPF monitoring
+| Service      | Status | Description            | Access       |
+| ------------ | ------ | ---------------------- | ------------ |
+| cert-manager | Active | Certificate Management | Cluster-wide |
 
-#### DNS (CoreDNS)
+## Application Services
 
-- **Version**: 1.11.1
-- **Description**: Cluster DNS provider
-- **Configuration**:
-  - Custom domain: kube.pc-tips.se
-  - Pod DNS policy
-  - DNS forwarding
-- **Integration Points**:
-  - Prometheus metrics
-  - Health monitoring
-  - Gateway API
+### Media Applications
 
-### Storage
+| Service  | Status | Description        | URL                                |
+| -------- | ------ | ------------------ | ---------------------------------- |
+| Plex     | Active | Media Server       | `https://plex.kube.pc-tips.se`     |
+| Jellyfin | Active | Media Server       | `https://jellyfin.kube.pc-tips.se` |
+| Sonarr   | Active | TV Management      | `https://sonarr.kube.pc-tips.se`   |
+| Radarr   | Active | Movie Management   | `https://radarr.kube.pc-tips.se`   |
+| Prowlarr | Active | Indexer Management | `https://prowlarr.kube.pc-tips.se` |
 
-#### Primary Storage (Longhorn)
+### Development Tools
 
-- **Version**: v1.8.1
-- **Description**: Distributed block storage
-- **Features**:
-  - Volume replication
-  - Backup management
-  - Snapshot support
-- **Integration Points**:
-  - Prometheus metrics
-  - Volume health monitoring
-  - Backup verification
+| Service | Status | Description       | Access                           |
+| ------- | ------ | ----------------- | -------------------------------- |
+| ArgoCD  | Active | GitOps Controller | `https://argocd.kube.pc-tips.se` |
 
-### Monitoring Stack
+### External Integrations
 
-#### Metrics (Prometheus)
+| Service        | Status | Description        | Access                         |
+| -------------- | ------ | ------------------ | ------------------------------ |
+| Home Assistant | Active | Home Automation    | `https://hass.kube.pc-tips.se` |
+| Proxmox        | Active | VM Management      | External                       |
+| TrueNAS        | Active | Storage Management | External                       |
 
-- **Description**: Time-series metrics collection
-- **Components**:
-  - Prometheus server
-  - AlertManager
-  - Node exporter
-  - kube-state-metrics
-- **Integration Points**:
-  - Grafana dashboards
+## Planned Services
+
+### Monitoring Stack (Future)
+
+| Service      | Status  | Description        | Planned URL                            |
+| ------------ | ------- | ------------------ | -------------------------------------- |
+| Prometheus   | Planned | Metrics Collection | `https://prometheus.kube.pc-tips.se`   |
+| Grafana      | Planned | Visualization      | `https://grafana.kube.pc-tips.se`      |
+| Loki         | Planned | Log Aggregation    | Internal only                          |
+| Alertmanager | Planned | Alert Management   | `https://alertmanager.kube.pc-tips.se` |
+
+### Security Services (Future)
+
+| Service | Status  | Description           | Access        |
+| ------- | ------- | --------------------- | ------------- |
+| Falco   | Planned | Runtime Security      | Internal only |
+| Trivy   | Planned | Vulnerability Scanner | Internal only |
+
+## Service Dependencies
+
+### Critical Path Services
+
+1. Authentication (Authelia)
+2. DNS (CoreDNS)
+3. Storage (Longhorn)
+4. Network (Cilium)
+5. Certificates (cert-manager)
+
+### Service Relationships
+
+- All external services require Gateway API
+- All services use Authelia for authentication
+- Storage services depend on Longhorn
+- External access requires cert-manager
+
+## Access Methods
+
+### Internal Access
+
+- Service mesh communication
+- ClusterIP services
+- Internal DNS resolution
+- RBAC controls
+
+### External Access
+
+- Gateway API routes
+- TLS termination
+- Authentication enforcement
+- Network policies
+
+## Maintenance Windows
+
+### Regular Maintenance
+
+- Updates: Weekly (non-critical)
+- Backups: Daily
+- Health Checks: Hourly
+- Certificate Renewal: Automatic
+
+### Emergency Maintenance
+
+- Security patches: Immediate
+- Critical fixes: As needed
+- Data recovery: As needed
+
+## Health Monitoring
+
+### Current Implementation
+
+- Basic health probes
+- ArgoCD sync status
+- Manual verification
+- Basic logging
+
+### Future Monitoring
+
+- Prometheus metrics
+- Grafana dashboards
+- Automated alerts
+- Performance tracking
+
+## Documentation Notes
+
+1. Keep this registry updated with service changes
+2. Document all new services before deployment
+3. Update URLs and access methods as needed
+4. Track status changes and migrations

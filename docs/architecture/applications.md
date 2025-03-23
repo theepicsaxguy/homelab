@@ -23,118 +23,205 @@ k8s/applications/
 
 ### Environment Progression
 
-1. **Development (Wave 3)**
+1. Development (Wave 3)
 
-   - Allows empty applications
-   - Single replica deployments
-   - Minimal resource requests
+   - Initial deployment target
+   - Fast iteration cycle
+   - Minimal resource requirements
+   - Basic validation
 
-2. **Staging (Wave 4)**
+2. Staging (Wave 4)
 
-   - No empty applications
-   - 3 replicas with pod anti-affinity
-   - Production-like resource limits
+   - Pre-production validation
+   - Representative resources
+   - Full feature testing
+   - Integration validation
 
-3. **Production (Wave 5)**
-   - Strict validation
-   - 3 replicas with pod anti-affinity
-   - Full production resource limits
+3. Production (Wave 5)
+   - Final deployment target
+   - Full resource allocation
+   - Zero-downtime updates
+   - Complete validation
 
 ### High Availability Requirements
 
-- Staging and Production environments require:
-  - 3 replicas minimum
-  - Pod anti-affinity rules
-  - Proper resource limits
-  - Zero-downtime deployments
+#### Development
 
-### Resource Management
+- Single replica acceptable
+- Basic health checks
+- Debug capabilities
+- Fast recovery
 
-Resource limits are defined per environment:
+#### Staging
 
-| Environment | CPU Request | CPU Limit | Memory Request | Memory Limit |
-| ----------- | ----------- | --------- | -------------- | ------------ |
-| Dev         | 100m        | 500m      | 256Mi          | 512Mi        |
-| Staging     | 500m        | 2         | 1Gi            | 2Gi          |
-| Prod        | 1           | 4         | 2Gi            | 4Gi          |
+- Two replicas minimum
+- Pod anti-affinity
+- Automated recovery
+- Health monitoring
+
+#### Production
+
+- Three replicas minimum
+- Strict anti-affinity
+- Zero-downtime updates
+- Full monitoring (planned)
 
 ## Application Categories
 
 ### External Services
 
-- Proxmox integration
-- TrueNAS integration
-- Home Assistant integration
+#### Proxmox Integration
+
+- Health monitoring
+- API integration
+- Resource management
+- Metrics collection (planned)
+
+#### TrueNAS Integration
+
+- Storage provisioning
+- Backup coordination
+- Data management
+- Performance monitoring (planned)
+
+#### Home Assistant Integration
+
+- Automation control
+- Device management
+- State monitoring
+- Event handling
 
 ### Media Applications
 
-- \*arr stack (Sonarr, Radarr, etc.)
-- Media server (Jellyfin)
+#### Core Components
+
+- Plex media server
+- Jellyfin alternative
+- arr-stack (Sonarr, Radarr, etc.)
+- Media management tools
+
+#### Configuration
+
+- Persistent storage
+- Transcoding support
+- Hardware acceleration
+- Network optimization
 
 ### Development Tools
 
-- Debug tools
-- Utility containers
+#### Debug Tools
+
+- Network utilities
+- Diagnostic containers
+- Testing frameworks
+- Monitoring tools (planned)
+
+#### Utility Containers
+
+- Build environments
+- CI/CD tools
+- Development services
+- Testing platforms
 
 ## Security Considerations
 
-- All applications must use Bitwarden Secrets Manager
-- No direct volume mounting of secrets
-- Environment-specific security policies
-- Regular security scanning with Trivy
+### Authentication
 
-## Validation Requirements
+- Authelia SSO integration
+- OIDC authentication
+- Role-based access
+- MFA enforcement
 
-- Must pass kustomize build tests
-- Must validate against Kubernetes 1.32.0
-- Must pass security scanning
-- Must conform to resource limit requirements
+### Authorization
+
+- Kubernetes RBAC
+- Network policies
+- Pod security
+- Resource quotas
+
+### Data Protection
+
+- Encrypted storage
+- Secure communications
+- Backup encryption
+- Access auditing
 
 ## Resource Management
 
-### Media Applications
+### Default Limits
 
-- CPU: 1-4 cores
-- Memory: 4-8 GiB
-- Storage: 10-20 GiB ephemeral
-- Suitable for: Jellyfin, \*arr stack
+#### Development
 
-### External Integrations
+```yaml
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+```
 
-- CPU: 250m-1 core
-- Memory: 512Mi-2GiB
-- Storage: 1-5 GiB ephemeral
-- Suitable for: Proxmox, TrueNAS, HAOS integrations
+#### Staging/Production
 
-### Development Tools
+```yaml
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+```
 
-- CPU: 500m-2 cores
-- Memory: 1-4 GiB
-- Storage: 5-10 GiB ephemeral
-- Suitable for: Debug tools, utility containers
+### Storage Configuration
+
+- Dynamic provisioning
+- Capacity planning
+- Performance tiers
+- Backup integration
+
+## Current Limitations
+
+1. Basic health monitoring
+2. Manual scaling
+3. Limited automation
+4. Basic metrics only
 
 ## Security Policies
 
 ### Network Security
 
-- Default deny-all with explicit allows
+- Default deny-all
+- Explicit allows only
 - Namespace isolation
-- Monitoring access (port 9090)
-- DNS resolution for external access
-- ArgoCD connectivity for GitOps
+- Service mesh mTLS
 
 ### Pod Security
 
 - Non-root execution
 - Read-only root filesystem
-- Drop all capabilities
-- Resource quotas enforcement
-- Proper security contexts
+- Dropped capabilities
+- Resource constraints
 
 ### High Availability
 
-- Production/Staging: 3 replicas minimum
-- Pod anti-affinity rules
-- Topology spread constraints
-- Pod disruption budgets
-- Zero-downtime deployments
+- Pod anti-affinity
+- Topology spread
+- Disruption budgets
+- Recovery automation
+
+## Future Enhancements
+
+1. Monitoring stack integration
+2. Automated scaling
+3. Enhanced automation
+4. Advanced metrics
+5. Performance optimization
+
+## Related Documentation
+
+- [Environment Configuration](environments.md)
+- [Security Guidelines](../security/overview.md)
+- [Network Architecture](../networking/overview.md)
+- [Storage Configuration](../storage/overview.md)

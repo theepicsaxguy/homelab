@@ -2,7 +2,8 @@
 
 ## Overview
 
-The network architecture is built around Cilium as the primary networking component, providing CNI, service mesh, load balancing, and security features.
+The network architecture is built around Cilium as the primary networking component, providing CNI, service mesh, load
+balancing, and security features.
 
 ## Core Components
 
@@ -39,7 +40,7 @@ The network architecture is built around Cilium as the primary networking compon
 - Support for HTTP, HTTPS, and TCP routes
 - TLS termination via cert-manager
 
-## Network Policies 
+## Network Policies
 
 ### Default Policies
 
