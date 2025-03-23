@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.17.0](https://github.com/theepicsaxguy/homelab/compare/v1.16.0...v1.17.0) (2025-03-23)
+
+
+### Features
+
+* **cert-manager:** add Bitwarden issuer and certificate configurations ([#301](https://github.com/theepicsaxguy/homelab/issues/301)) ([12e6d26](https://github.com/theepicsaxguy/homelab/commit/12e6d2625faf60afab0c295ca65ed9093a3cc197))
+* **external-secrets:** add ClusterRole and ClusterRoleBinding for clusterpushsecret ([#290](https://github.com/theepicsaxguy/homelab/issues/290)) ([910c14f](https://github.com/theepicsaxguy/homelab/commit/910c14f818e8ad70580afab8295191d86171eb20))
+* **k8s:** add Cilium network policies for cert-manager and external-secrets ([#264](https://github.com/theepicsaxguy/homelab/issues/264)) ([2083501](https://github.com/theepicsaxguy/homelab/commit/208350162390270c5e0e4b181acb95e24da59c36))
+* **k8s:** add CoreDNS deployment and update configurations ([#253](https://github.com/theepicsaxguy/homelab/issues/253)) ([622d4ee](https://github.com/theepicsaxguy/homelab/commit/622d4eef0df12e4f61baa7baad8e5c5da5563695))
+* **k8s:** add namespaces for various components ([#238](https://github.com/theepicsaxguy/homelab/issues/238)) ([9ba98e0](https://github.com/theepicsaxguy/homelab/commit/9ba98e086ed1f2912f52bf5e09a7159b5dd576e6))
+* **k8s:** allowlist specific namespaces for resource management ([#225](https://github.com/theepicsaxguy/homelab/issues/225)) ([b80662f](https://github.com/theepicsaxguy/homelab/commit/b80662f17c8f22f611b7e0eabc112497e8f7f9b1))
+* **k8s:** change ArgoCD service type to LoadBalancer ([#242](https://github.com/theepicsaxguy/homelab/issues/242)) ([3082725](https://github.com/theepicsaxguy/homelab/commit/3082725d38bb9eb2b1a127386d90c0e28ca4c097))
+* **k8s:** enhance ArgoCD and cert-manager network policies ([#303](https://github.com/theepicsaxguy/homelab/issues/303)) ([736c5c1](https://github.com/theepicsaxguy/homelab/commit/736c5c1385e0c96beecc7fb045d73937edd84c18))
+* **k8s:** enhance namespace management and add webhook policies ([#232](https://github.com/theepicsaxguy/homelab/issues/232)) ([72cbdea](https://github.com/theepicsaxguy/homelab/commit/72cbdea8d6a7025d288ed810107490ee2f6f8e98))
+* **k8s:** enhance namespace management with dynamic allowlist updates ([#224](https://github.com/theepicsaxguy/homelab/issues/224)) ([c0e4ce9](https://github.com/theepicsaxguy/homelab/commit/c0e4ce919ec72cc425c13ade07bbb7959ea95804))
+* **k8s:** enhance network policies and configurations for ArgoCD and Open Web UI ([#262](https://github.com/theepicsaxguy/homelab/issues/262)) ([9301f98](https://github.com/theepicsaxguy/homelab/commit/9301f988ac5b00e91ff26c80c1bde0de9f3e0afd))
+* **k8s:** implement ArgoCD network policy and update configurations ([#237](https://github.com/theepicsaxguy/homelab/issues/237)) ([bcb48f4](https://github.com/theepicsaxguy/homelab/commit/bcb48f47dd8b41c72c798daea32d7dc1c3d05d39))
+* **k8s:** implement dynamic resource scaling for improved efficiency ([#227](https://github.com/theepicsaxguy/homelab/issues/227)) ([f10a63a](https://github.com/theepicsaxguy/homelab/commit/f10a63a0edf4d3a16c6c89ce798603e0e90576f3))
+* **k8s:** introduce service accounts and services for cert-manager ([#265](https://github.com/theepicsaxguy/homelab/issues/265)) ([d99bba0](https://github.com/theepicsaxguy/homelab/commit/d99bba083434f47bd4441da71be6f139eaecacdb))
+* **k8s:** reorganize application configurations and add new resources ([#222](https://github.com/theepicsaxguy/homelab/issues/222)) ([ddd6148](https://github.com/theepicsaxguy/homelab/commit/ddd61488413b3fc4f1d507f7a5c7a9b7af919d28))
+* **k8s:** update ArgoCD and Cilium configurations ([#239](https://github.com/theepicsaxguy/homelab/issues/239)) ([d2795a0](https://github.com/theepicsaxguy/homelab/commit/d2795a0ed00f51030d2c4e64102ae6da2096b767))
+* **k8s:** update Bitwarden configurations for external secrets ([#302](https://github.com/theepicsaxguy/homelab/issues/302)) ([1d4d464](https://github.com/theepicsaxguy/homelab/commit/1d4d46455c68730c668eee6538bd983a8a3af228))
+* **k8s:** update CoreDNS values.yaml configuration ([#257](https://github.com/theepicsaxguy/homelab/issues/257)) ([0c461cd](https://github.com/theepicsaxguy/homelab/commit/0c461cd2fe1ffdf88385fd66fd56a7c448729547))
+* **k8s:** update kustomization files to include additional resources ([#226](https://github.com/theepicsaxguy/homelab/issues/226)) ([cc50dd2](https://github.com/theepicsaxguy/homelab/commit/cc50dd2a6cd71729e4623578e15825641b7f1bb7))
+* **networking:** update CoreDNS configuration and add service definition ([#298](https://github.com/theepicsaxguy/homelab/issues/298)) ([7c1df8c](https://github.com/theepicsaxguy/homelab/commit/7c1df8c5764f99548749aba134bc9a2d4d4c8333))
+* **tofu:** update Talos configuration for Kubernetes version 1.32.0 ([#292](https://github.com/theepicsaxguy/homelab/issues/292)) ([e9900f1](https://github.com/theepicsaxguy/homelab/commit/e9900f1b617c714317584aee963243bda524e001))
+
+
+### Bug Fixes
+
+* **networking:** update Cilium network policy for ArgoCD and remove Authelia configurations ([#291](https://github.com/theepicsaxguy/homelab/issues/291)) ([1614f12](https://github.com/theepicsaxguy/homelab/commit/1614f12f96f8a85192218e60963daa2ccdd62b52))
+
 ## [1.16.0](https://github.com/theepicsaxguy/homelab/compare/v1.15.0...v1.16.0) (2025-03-09)
 
 
