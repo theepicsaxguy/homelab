@@ -1,80 +1,102 @@
-# Security Architecture Overview
+# Security Architecture
 
-## Security Model
+## Core Security Decisions
 
-The security architecture follows a defense-in-depth approach, implementing security at multiple layers of the
-infrastructure.
+### Zero-Trust Model
 
-## Core Components
+**Decision:** Implement zero-trust security from infrastructure up
 
-### 1. Infrastructure Security
+**Rationale:**
 
-- **Talos OS**
+- Traditional perimeter security insufficient for modern threats
+- Dynamic microservice environments need identity-based security
+- GitOps requires strict change control
+- Containers demand fine-grained access control
 
-  - Minimal attack surface
-  - Immutable infrastructure
-  - Automated security updates
-  - Secure configuration defaults
+**Trade-offs:**
 
-- **API Security**
-  - Token-based authentication
-  - mTLS communication
-  - SSH with agent forwarding only
-  - No password authentication
+- Higher initial complexity
+- More configuration overhead
+- Steeper learning curve
 
-### 2. Cluster Security
+### Authentication Strategy
 
-- **Access Control**
+**Decision:** Authelia as central authentication provider
 
-  - RBAC enforcement
-  - Namespaced resources
-  - Service accounts with minimal permissions
-  - Pod security policies
+**Rationale:**
 
-- **Network Security**
-  - Cilium network policies
-  - eBPF-based security
-  - Encrypted pod-to-pod communication
-  - Ingress traffic filtering
+- Native Kubernetes integration
+- Lower resource usage than alternatives
+- Simple SSO implementation
+- OIDC support for automation
 
-### 3. Application Security
+**Trade-offs:**
 
-- **Authentication**
+- Less mature than Keycloak
+- Fewer enterprise features
+- Smaller community
 
-  - Authelia for SSO
-  - Multi-factor authentication
-  - External identity provider integration
-  - Session management
+### Directory Service
 
-- **Secrets Management**
-  - Sealed secrets for GitOps
-  - External secrets operator
-  - Encryption at rest
-  - Key rotation policies
+**Decision:** LLDAP for user management
 
-## Detailed Documentation
+**Rationale:**
 
-- [Authentication Setup](authentication.md)
-- [RBAC Configuration](rbac.md)
-- [Network Security](network-security.md)
-- [Secrets Management](secrets-management.md)
-- [Compliance Standards](compliance.md)
+- Lightweight implementation
+- Simple management interface
+- Sufficient feature set
+- Easy backup/restore
 
-## Security Best Practices
+**Trade-offs:**
 
-1. **Principle of Least Privilege**
+- Limited advanced features
+- Basic schema support
+- No multi-master replication
 
-   - Minimal RBAC permissions
-   - Limited service account access
-   - Network policy enforcement
+### Secret Management
 
-2. **Secure Communication**
+**Decision:** Bitwarden Secrets Manager with operator
 
-   - TLS everywhere
-   - Certificate management
-   - Ingress security
+**Rationale:**
 
-3. **Monitoring and Auditing**
-   - Security event logging
-   - Access auditing
-   - Compliance monitoring
+- Native Kubernetes integration
+- Simple secret rotation
+- Automated sync support
+- Clear audit trail
+
+**Trade-offs:**
+
+- Additional system dependency
+- Sync latency considerations
+- Premium features cost
+
+## Current Status
+
+### Implemented
+
+- Zero-trust network model
+- Central authentication
+- Basic RBAC policies
+- Secret management
+
+### Known Gaps
+
+1. Limited audit logging
+2. Basic policy verification
+3. Simple security scanning
+4. Manual secret rotation
+
+## Next Steps
+
+Priority improvements:
+
+1. Enhanced audit system
+2. Automated policy testing
+3. Security scanning pipeline
+4. Automated secret rotation
+
+## Related Documents
+
+- [Network Security](../networking/policies.md)
+- [Access Control](rbac.md)
+- [Secret Management](secrets.md)

@@ -1,100 +1,103 @@
-# Infrastructure Overview
+# Infrastructure Architecture
 
-## Introduction
+## Key Architectural Decisions
 
-This document provides a high-level overview of the homelab infrastructure. For detailed documentation on specific
-components, please refer to the dedicated sections linked below.
+### Single Cluster Strategy
 
-## Core Components
+**Decision:** Use a single Kubernetes cluster with strong namespace isolation instead of multiple clusters.
 
-### Network Architecture
+**Rationale:**
 
-See [Network Architecture Overview](networking/overview.md) for details on:
+- Resource efficiency through shared control plane and worker nodes
+- Simplified management and monitoring overhead
+- Consistent security policies and controls across environments
+- Natural promotion path through namespaces while maintaining identical infrastructure
 
-- Cilium-based networking
-- Service mesh capabilities
-- DNS architecture
-- Network policies
-- Gateway API implementation
+**Trade-offs:**
 
-### Security Architecture
+- Less physical separation between environments
+- Potential for resource contention
+- More complex namespace-level security requirements
 
-See [Security Architecture Overview](security/overview.md) for details on:
+### Immutable Infrastructure (Talos)
 
-- Authentication and authorization
-- Network security policies
-- Secret management
-- Infrastructure hardening
-- Compliance and auditing
+**Decision:** Use Talos Linux as the base operating system.
 
-### Storage Architecture
+**Rationale:**
 
-See [Storage Architecture Overview](storage/overview.md) for details on:
+- Zero-trust security model from the ground up
+- Automated, atomic updates with built-in rollback
+- Reduced attack surface through immutable design
+- Kubernetes-native OS eliminates unnecessary complexity
 
-- Proxmox CSI implementation
-- Longhorn distributed storage
-- Backup strategies
-- Performance considerations
+**Trade-offs:**
 
-### Monitoring and Observability
+- Less flexibility for custom system modifications
+- Steeper learning curve for operations
+- Limited traditional debugging tools
 
-See [Monitoring Architecture Overview](monitoring/overview.md) for details on:
+### Network Architecture (Cilium)
 
-- Metrics collection
-- Logging infrastructure
-- Alerting system
-- Dashboard setup
+**Decision:** Use Cilium for CNI, replacing both traditional networking and service mesh.
 
-## Resource Requirements
+**Rationale:**
 
-```yaml
-control_plane:
-  cpu: 2 cores per node
-  memory: 4GB per node
-  nodes: 3 (HA setup)
-workers:
-  cpu: 4 cores per node
-  memory: 8GB per node
-  nodes: 2+ (scalable)
-```
+- Superior performance through eBPF vs iptables-based solutions
+- Unified networking eliminates multiple control planes
+- Native Gateway API support removes need for separate ingress controller
+- Identity-based security simplifies policy management
 
-## Disaster Recovery
+**Trade-offs:**
 
-1. Infrastructure Recovery:
+- More complex troubleshooting due to eBPF
+- Higher resource requirements than basic CNI
+- Limited traditional networking tools compatibility
 
-   - All configuration in Git
-   - OpenTofu state backed up
-   - Reproducible through automation
+### Deployment Strategy (ArgoCD)
 
-2. Application Recovery:
-   - GitOps-based deployment
-   - Persistent storage backup
-   - Application-specific backup solutions
+**Decision:** Use ArgoCD as the sole deployment mechanism.
 
-## Version Control and Updates
+**Rationale:**
 
-- Infrastructure changes through pull requests
-- Automated updates via Renovate
-- Semantic versioning for changes
-- Changelog maintenance
+- Ensures all changes are tracked in Git
+- Automatic drift detection and reconciliation
+- Clear audit trail through Git history
+- Simplified rollback through version control
 
-## Known Limitations
+**Trade-offs:**
 
-1. Single Proxmox instance as infrastructure provider
-2. Network dependent on underlying Proxmox network
-3. Storage performance tied to Proxmox storage performance
+- Initial setup complexity
+- Learning curve for GitOps workflows
+- More steps for emergency changes
 
-## Future Improvements
+## Current State
 
-1. Multi-cluster federation
-2. Enhanced backup solutions
-3. Expanded monitoring capabilities
-4. Additional storage providers
+### Implemented
 
-## Related Documentation
+- Immutable infrastructure with Talos
+- GitOps-based deployment pipeline
+- Network security with Cilium
+- Gateway API for ingress
+- Basic authentication with Authelia
 
-- [Service Registry](service-registry.md)
-- [Network Architecture](networking/overview.md)
+### Known Limitations
+
+1. Manual environment promotion process
+2. Limited automated testing
+3. Basic monitoring implementation
+4. Minimal automated security scanning
+
+## Next Steps
+
+Focus areas that directly address current limitations:
+
+1. Automated promotion between environments
+2. Enhanced testing framework
+3. Comprehensive monitoring stack
+4. Advanced security controls
+
+## Related Documents
+
+- [Network Design](networking/overview.md)
+- [Security Model](security/overview.md)
 - [Storage Architecture](storage/overview.md)
-- [Security Architecture](security/overview.md)
-- [Monitoring Architecture](monitoring/overview.md)

@@ -1,204 +1,84 @@
-# Environment Architecture
+# Environment Strategy
 
-## Overview
+## Core Strategy Decisions
 
-This document describes our environment architecture and configuration patterns across development, staging, and
-production environments.
+### Environment Model
 
-## Environment Structure
+**Decision:** Three-tier environment model (Development → Staging → Production)
 
-### Development (dev-infra)
+**Rationale:**
 
-- **Purpose**: Testing and development environment
-- **Resource Configuration**:
+- Balances testing thoroughness with operational overhead
+- Provides clear promotion path for changes
+- Allows proper validation without excessive complexity
+- Maintains consistent infrastructure across all tiers
 
-  ```yaml
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
-  ```
+**Trade-offs:**
 
-- **Characteristics**:
-  - Allows empty applications
-  - Single replica deployments
-  - 30s health check timeout
-  - Sync Wave: 0 (First to deploy)
+- More resource overhead than dev/prod only
+- Additional complexity in promotion process
+- Higher maintenance burden
 
-### Staging (staging-infra)
+### Resource Allocation
 
-- **Purpose**: Pre-production validation environment
-- **Resource Configuration**:
+**Decision:** Progressive resource limits across environments
 
-  ```yaml
-  requests:
-    cpu: 500m
-    memory: 512Mi
-  limits:
-    cpu: 1000m
-    memory: 1Gi
-  ```
+**Rationale:**
 
-- **Characteristics**:
-  - Mirrors production topology
-  - Two replicas minimum
-  - 60s health check timeout
-  - Pod anti-affinity (preferred)
-  - Sync Wave: 1 (Deploys after dev)
+- Development: Minimal resources for fast iteration
+- Staging: Production-like for accurate testing
+- Production: Full HA with guaranteed resources
 
-### Production (prod-infra)
+**Trade-offs:**
 
-- **Purpose**: Production environment
-- **Resource Configuration**:
+- Higher total resource requirements
+- More complex resource management
+- Potential for environment-specific bugs
 
-  ```yaml
-  requests:
-    cpu: 1000m
-    memory: 1Gi
-  limits:
-    cpu: 2000m
-    memory: 2Gi
-  ```
+### Security Boundaries
 
-- **Characteristics**:
-  - Strict resource limits
-  - Three replicas minimum
-  - 300s health check timeout
-  - Required pod anti-affinity
-  - Sync Wave: 2 (Deploys last)
+**Decision:** Namespace-based isolation with strict network policies
 
-## Implementation Details
+**Rationale:**
 
-### Base Configuration (`k8s/infrastructure/base`)
+- Network isolation between environments
+- Role-based access control per namespace
+- Resource quotas for fair sharing
+- Independent secret management
 
-- Common configurations shared across environments
-- Core infrastructure components:
-  - Network (Cilium, DNS, Gateway)
-  - Storage (CSI drivers)
-  - Authentication
-  - Controllers
-  - Monitoring
-  - VPN
+**Trade-offs:**
 
-### Environment-Specific Overlays
+- More complex policy management
+- Higher operational overhead
+- Increased setup complexity
 
-Located in `k8s/infrastructure/overlays/<environment>`:
+## Implementation Status
 
-- Namespace definitions
-- Centralized patches directory containing:
-  - Resource limit patches
-  - High availability configurations
-  - Component-specific overrides
-- Environment-specific labels
+### Current Capabilities
 
-Directory structure:
+- Namespace isolation
+- Basic RBAC policies
+- Resource quotas
+- Network segregation
 
-```
-k8s/infrastructure/overlays/<environment>/
-├── kustomization.yaml    # Environment overlay configuration
-└── patches/             # Centralized location for all patches
-    ├── resource-limits.yaml    # Global resource limits
-    ├── high-availability.yaml  # HA configurations
-    └── <component>.yaml        # Component-specific patches
-```
+### Known Gaps
 
-### ApplicationSet Integration
+1. Manual promotion process
+2. Basic validation gates
+3. Limited automation
+4. Simple rollback process
 
-Managed through ArgoCD ApplicationSets with:
+## Next Steps
 
-- Progressive sync waves (0 → 1 → 2)
-- Environment-specific sync policies
-- Automated pruning and self-healing
-- Retry policies with exponential backoff
+Priority improvements needed:
 
-## ApplicationSet Configuration
+1. Automated promotion workflow
+2. Enhanced validation gates
+3. Comprehensive testing
+4. Rollback automation
 
-### Key Configuration Requirements
+## Related Documents
 
-1. **Orphaned Resources**:
-
-   ```yaml
-   orphanedResources:
-     warn: true
-     ignore:
-       - group: ''
-         kind: ConfigMap
-         name: kube-root-ca.crt
-       - group: ''
-         kind: ServiceAccount
-         name: default
-   ```
-
-2. **Sync Policy**:
-
-   ```yaml
-   syncPolicy:
-     automated:
-       prune: true
-       selfHeal: true
-     syncOptions:
-       - CreateNamespace=true
-       - ServerSideApply=true
-     retry:
-       limit: 5
-       backoff:
-         duration: '30s'
-         factor: 2
-         maxDuration: '10m'
-   ```
-
-3. **Environment Variables**:
-   - Must use `values.environment` in template references
-   - Must use `values.namespace` for namespace definitions
-
-### Implementation Notes
-
-- ApplicationSets must be defined at the infrastructure level
-- All boolean values should be direct (`true`/`false`), not strings
-- Retry configuration belongs under syncPolicy
-- Orphaned resources configuration belongs under spec.template.spec
-
-## High Availability Configuration
-
-### Production & Staging
-
-```yaml
-spec:
-  replicas: 2
-  template:
-    spec:
-      topologySpreadConstraints:
-        - maxSkew: 1
-          topologyKey: kubernetes.io/hostname
-          whenUnsatisfied: DoNotSchedule
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              topologyKey: kubernetes.io/hostname
-```
-
-## GitOps Workflow
-
-1. Changes start in development environment
-2. Validated changes promote to staging
-3. Final validation before production deployment
-4. ArgoCD ensures state reconciliation across all environments
-
-## Validation Requirements
-
-- All changes must pass manifest validation
-- Kustomize builds must succeed with Helm support
-- Resource limits must be appropriate for environment
-- High availability configurations must be validated
-- Security policies must be environment-appropriate
-
-## Best Practices
-
-- Use targeted patches for environment-specific changes
-- Maintain consistent structure across all environments
-- Follow progressive deployment patterns
-- Implement proper health checks for each environment
-- Configure appropriate resource limits
+- [Network Policies](../networking/policies.md)
+- [Resource Management](../best-practices/resources.md)
+- [Security Controls](../security/overview.md)

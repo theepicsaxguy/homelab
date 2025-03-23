@@ -1,77 +1,92 @@
 # Service Registry
 
-## Overview
+## Core Infrastructure
 
-This document provides a central registry of all exposed services in the homelab infrastructure.
+### Critical Path Services
 
-## Domain-Based Services
+These services must be operational for the cluster to function:
 
-### Core Infrastructure
+**Authentication & Network**
 
-- ArgoCD: `argocd.kube.pc-tips.se`
-- Proxmox: `proxmox.kube.pc-tips.se`
-- TrueNAS: `truenas.kube.pc-tips.se`
+- Authelia: Identity provider, SSO gateway
+- Cilium: CNI, service mesh, network policies
+- CoreDNS: Service discovery, name resolution
+- Gateway API: External access management
 
-### Security & Authentication
+**Storage & State**
 
-- Authelia: `authelia.kube.pc-tips.se`
-- Hubble: `hubble.kube.pc-tips.se`
+- Longhorn: Primary storage provider
+- Restic: Backup management
+- cert-manager: Certificate lifecycle
 
-### Monitoring & Observability
+Dependencies flow: Network → Auth → Storage → Apps
 
-- Grafana: `grafana.kube.pc-tips.se`
-- Prometheus: `prometheus.kube.pc-tips.se`
+## Application Services
 
-### Media Services
+### Media Stack
 
-- Jellyfin: `jellyfin.kube.pc-tips.se`
-- Lidarr: `lidarr.kube.pc-tips.se`
-- Prowlarr: `prowlarr.kube.pc-tips.se`
-- Radarr: `radarr.kube.pc-tips.se`
-- Sonarr: `sonarr.kube.pc-tips.se`
+**Core:** Plex, Jellyfin **Management:** Sonarr, Radarr, Prowlarr
 
-### Home Automation
+- Requires: Storage, Authentication
+- Optional: External IP for remote access
 
-- Home Assistant: `haos.kube.pc-tips.se`
+### Development Tools
 
-### Network Services
+**ArgoCD**
 
-- AdGuard: `adguard.kube.pc-tips.se`
+- Critical for GitOps workflow
+- Requires: Authentication, Git access
+- Manages: All other deployments
 
-## IP-Based Services
+### External Integration
 
-### DNS Services
+**Home Assistant**
 
-- Unbound DNS: `10.25.150.252`
-- AdGuard DNS: `10.25.150.253`
+- Home automation hub
+- Requires: Storage, Network access
+- Optional: External device discovery
 
-### Application Services
+## Health Status
 
-- Torrent: `10.25.150.225`
-- Whoami: `10.25.150.223`
+### Monitoring
 
-## Service Configuration
+- Currently: Basic health checks only
+- Planned: Full monitoring stack (Q2 2025)
+- Critical need: Service metrics, alerts
 
-### Authentication Requirements
+### Backup Status
 
-All domain-based services require authentication through Authelia except:
+- Daily application backups
+- Weekly full cluster backup
+- Monthly archives
 
-- Authelia itself
-- Public endpoints (if any)
+## Security Context
 
-### Network Policies
+### Authentication
 
-Each service has dedicated network policies controlling:
+All services require:
 
-- Ingress/egress traffic
-- Cross-service communication
-- External access
+- Authelia SSO integration
+- RBAC configuration
+- Network policies
 
-### Monitoring Integration
+### External Access
 
-All services are monitored for:
+Services exposed via:
 
-- Availability
-- Performance metrics
-- Error rates
-- Resource usage
+- Gateway API routes
+- TLS termination
+- Authentication enforcement
+
+## Known Issues
+
+1. Manual backup verification
+2. Basic monitoring only
+3. Limited automated recovery
+4. Manual failover for some services
+
+## Related Info
+
+- [Security Model](security/overview.md)
+- [Network Architecture](networking/overview.md)
+- [Backup Configuration](storage/backup.md)
