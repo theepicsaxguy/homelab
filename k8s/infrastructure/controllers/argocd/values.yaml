@@ -5,6 +5,13 @@ configs:
     admin.enabled: true
     url: https://argocd.kube.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
+    accounts.kubechecks: apiKey
+    policy.csv: |
+      p, role:kubechecks, applications, get, */*, allow
+      p, role:kubechecks, applications, list, */*, allow
+      p, role:kubechecks, applications, sync, */*, allow
+      g, kubechecks, role:kubechecks
+
   cmp:
     create: true
     plugins:
