@@ -284,4 +284,4 @@ MIT License – See [LICENSE](LICENSE) for details.
 
 ## 🙏 Credits
 
-Special thanks to the inspiration and work behind [Vehagn's Homelab](https://github.com/theepicsaxguy/homelab).
+Special thanks to the inspiration and work behind [Vehagn's Homelab](https://github.com/vehagn/homelab).
