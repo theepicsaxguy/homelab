@@ -54,8 +54,10 @@ spec:
         - name: bitwarden-tls-certs
           secret:
             items:
-            - key: tls.crt
-              path: cert.pem
-            - key: tls.key
-              path: key.pem
-            secretName: bitwarden-sdk-server-tls
+            - key: "tls.crt"
+              path: "cert.pem"
+            - key: "tls.key"
+              path: "key.pem"
+            - key: "ca.crt"
+              path: "ca.pem"
+            secretName: bitwarden-tls-certs
