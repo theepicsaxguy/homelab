@@ -1,77 +1,88 @@
 # Service Registry
 
-## Overview
+## Infrastructure Services
 
-This document provides a central registry of all exposed services in the homelab infrastructure.
+### Core Platform
 
-## Domain-Based Services
+#### Authentication (Authelia)
 
-### Core Infrastructure
+- **URL**: authelia.kube.pc-tips.se
+- **Description**: Single sign-on and 2FA provider
+- **Dependencies**:
+  - LDAP
+  - Redis
+  - PostgreSQL
+- **Integration Points**:
+  - Gateway API for auth
+  - Prometheus metrics
+  - Loki logging
 
-- ArgoCD: `argocd.kube.pc-tips.se`
-- Proxmox: `proxmox.kube.pc-tips.se`
-- TrueNAS: `truenas.kube.pc-tips.se`
+#### Certificate Management (cert-manager)
 
-### Security & Authentication
+- **Version**: v1.17.1
+- **Description**: Automated certificate management
+- **Dependencies**:
+  - Cloudflare DNS
+  - Gateway API
+- **Integration Points**:
+  - Prometheus metrics
+  - Kubernetes API
+  - DNS providers
 
-- Authelia: `authelia.kube.pc-tips.se`
-- Hubble: `hubble.kube.pc-tips.se`
+### Networking
 
-### Monitoring & Observability
+#### CNI (Cilium)
 
-- Grafana: `grafana.kube.pc-tips.se`
-- Prometheus: `prometheus.kube.pc-tips.se`
+- **Version**: v1.17+
+- **Description**: Network and service mesh provider
+- **Features**:
+  - Gateway API implementation
+  - Service mesh capabilities
+  - Network policies
+  - Load balancing
+- **Integration Points**:
+  - Prometheus metrics
+  - Hubble UI
+  - Gateway API
+  - eBPF monitoring
 
-### Media Services
+#### DNS (CoreDNS)
 
-- Jellyfin: `jellyfin.kube.pc-tips.se`
-- Lidarr: `lidarr.kube.pc-tips.se`
-- Prowlarr: `prowlarr.kube.pc-tips.se`
-- Radarr: `radarr.kube.pc-tips.se`
-- Sonarr: `sonarr.kube.pc-tips.se`
+- **Version**: 1.11.1
+- **Description**: Cluster DNS provider
+- **Configuration**:
+  - Custom domain: kube.pc-tips.se
+  - Pod DNS policy
+  - DNS forwarding
+- **Integration Points**:
+  - Prometheus metrics
+  - Health monitoring
+  - Gateway API
 
-### Home Automation
+### Storage
 
-- Home Assistant: `haos.kube.pc-tips.se`
+#### Primary Storage (Longhorn)
 
-### Network Services
+- **Version**: v1.8.1
+- **Description**: Distributed block storage
+- **Features**:
+  - Volume replication
+  - Backup management
+  - Snapshot support
+- **Integration Points**:
+  - Prometheus metrics
+  - Volume health monitoring
+  - Backup verification
 
-- AdGuard: `adguard.kube.pc-tips.se`
+### Monitoring Stack
 
-## IP-Based Services
+#### Metrics (Prometheus)
 
-### DNS Services
-
-- Unbound DNS: `10.25.150.252`
-- AdGuard DNS: `10.25.150.253`
-
-### Application Services
-
-- Torrent: `10.25.150.225`
-- Whoami: `10.25.150.223`
-
-## Service Configuration
-
-### Authentication Requirements
-
-All domain-based services require authentication through Authelia except:
-
-- Authelia itself
-- Public endpoints (if any)
-
-### Network Policies
-
-Each service has dedicated network policies controlling:
-
-- Ingress/egress traffic
-- Cross-service communication
-- External access
-
-### Monitoring Integration
-
-All services are monitored for:
-
-- Availability
-- Performance metrics
-- Error rates
-- Resource usage
+- **Description**: Time-series metrics collection
+- **Components**:
+  - Prometheus server
+  - AlertManager
+  - Node exporter
+  - kube-state-metrics
+- **Integration Points**:
+  - Grafana dashboards

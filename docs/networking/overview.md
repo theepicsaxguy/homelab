@@ -1,119 +1,287 @@
-# Network Architecture Overview
+# Network Architecture
 
-## Core Network Design
+## Overview
 
-The cluster network infrastructure is built on Cilium, providing advanced networking capabilities and security features
-through eBPF technology with Gateway API integration.
+The network infrastructure is built on Cilium CNI with integrated service mesh capabilities and Gateway API support.
 
-## Components
+## Core Components
 
-1. **Cilium** - Primary CNI provider
-
-   - Service mesh functionality with Hubble UI
-   - Native Gateway API implementation
-   - Load balancing and traffic management
-   - Network policies with L7 visibility
-   - Direct routing optimization
-   - eBPF-based security features
-
-2. **Gateway API** - Modern Ingress Management
-
-   - External Gateway (Internet-facing services)
-   - Internal Gateway (Cluster-local services)
-   - TLS Passthrough Gateway (Direct TLS termination)
-   - Native certificate management
-   - Standardized HTTP/HTTPS routing
-
-3. **DNS Architecture**
-   - Primary: Unbound DNS (`10.25.150.252`)
-   - Secondary: AdGuard DNS (`10.25.150.253`)
-   - Internal service discovery via CoreDNS
-   - Automatic external DNS updates
-
-## Network Topology
+### Cilium (v1.17+)
 
 ```yaml
-gateways:
-  external:
-    class: cilium
-    addresses: ['10.25.150.240/29']
-    routes:
-      - argocd
-      - grafana
-      - prometheus
-      - jellyfin
-      - home-assistant
-  internal:
-    class: cilium
-    addresses: ['10.25.150.248/29']
-    routes:
-      - metrics
-      - monitoring
-      - auth
-  tls-passthrough:
-    class: cilium
-    routes:
-      - proxmox
-      - truenas
+cilium:
+  hubble:
+    enabled: true
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+
+  kubeProxyReplacement: strict
+  hostServices:
+    enabled: true
+
+  gatewayAPI:
+    enabled: true
+    routeNamespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: gateway-system
+
+  envoy:
+    enabled: true
+    prometheus:
+      serviceMonitor:
+        enabled: true
 ```
 
-## Network Ranges
+### Gateway API Configuration
+
+#### External Gateway
 
 ```yaml
-cluster_network:
-  pod_cidr: '10.42.0.0/16'
-  service_cidr: '10.43.0.0/16'
-external_services:
-  gateway_range: '10.25.150.240/29' # External Gateway
-  internal_range: '10.25.150.248/29' # Internal Gateway
-  service_range: '10.25.150.0/24' # Legacy Services
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: external-gateway
+  namespace: gateway-system
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-cert
 ```
 
-## Service Access Points
+#### Internal Gateway
 
-### Domain-based Access
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: internal-gateway
+  namespace: gateway-system
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 8080
+    - name: grpc
+      protocol: HTTP
+      port: 9090
+```
 
-All services are exposed through `*.kube.pc-tips.se` subdomains with authentication handled by Authelia.
+## Network Policies
 
-Key service endpoints:
+### Default Policies
 
-- Core Infrastructure:
-  - `argocd.pc-tips.se` (Gateway: external)
-  - `proxmox.pc-tips.se` (Gateway: tls-passthrough)
-  - `truenas.pc-tips.se` (Gateway: tls-passthrough)
-  - `argocd.kube.pc-tips.se`
-  - `proxmox.kube.pc-tips.se`
-  - `truenas.kube.pc-tips.se`
-- Monitoring:
-  - `grafana.pc-tips.se` (Gateway: external)
-  - `prometheus.pc-tips.se` (Gateway: external)
-  - `hubble.pc-tips.se` (Gateway: internal)
-  - `grafana.kube.pc-tips.se`
-  - `prometheus.kube.pc-tips.se`
-  - `hubble.kube.pc-tips.se`
-- Applications:
-  - `haos.pc-tips.se` (Gateway: external)
-  - Various media services (Gateway: external)
-  - `haos.kube.pc-tips.se`
-  - Various media services (Jellyfin, Radarr, etc.)
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  endpointSelector: {}
+  ingress: []
+  egress: []
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-system
+spec:
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+```
 
-### IP-based Services
+### Environment-Specific Policies
 
-Critical infrastructure services with dedicated IPs:
+#### Development
 
-- DNS Services:
-  - Unbound: `10.25.150.252`
-  - AdGuard: `10.25.150.253`
-- Gateway Services:
-  - External Gateway: `10.25.150.240/29`
-  - Internal Gateway: `10.25.150.248/29`
-- Legacy Services:
-  - Torrent: `10.25.150.225`
-  - Whoami: `10.25.150.223`
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: dev-environment
+spec:
+  endpointSelector:
+    matchLabels:
+      environment: dev
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            environment: dev
+  egress:
+    - toEndpoints:
+        - matchLabels: {}
+```
 
-## Detailed Documentation
+#### Production
 
-- [Cilium Configuration](cilium.md)
-- [DNS Setup and Configuration](dns.md)
-- [Gateway API Configuration](gateway.md)
-- [Network Policies](policies.md)
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: prod-environment
+spec:
+  endpointSelector:
+    matchLabels:
+      environment: prod
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            environment: prod
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+```
+
+## Service Mesh Features
+
+### Traffic Management
+
+- L7 load balancing
+- Traffic splitting
+- Circuit breaking
+- Retry policies
+
+### Security
+
+- mTLS encryption
+- Identity-based authentication
+- Authorization policies
+- Traffic encryption
+
+### Observability
+
+- Distributed tracing
+- Traffic visualization
+- Performance metrics
+- Health checks
+
+## Monitoring Integration
+
+### Hubble Metrics
+
+```yaml
+metrics:
+  flows:
+    - source_namespace
+    - destination_namespace
+    - source_workload
+    - destination_workload
+    - verdict
+  http:
+    - reporter
+    - protocol
+    - status_code
+    - method
+  tcp:
+    - reporter
+    - protocol
+    - flags
+```
+
+### Envoy Metrics
+
+```yaml
+metrics:
+  endpoints:
+    - path: /stats/prometheus
+      port: 9901
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+```
+
+## Performance Considerations
+
+### Resource Requirements
+
+```yaml
+resources:
+  cilium-agent:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+  hubble-relay:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+```
+
+### Optimization Settings
+
+```yaml
+optimization:
+  kubeProxyReplacement: strict
+  hostRouting: true
+  bpfMasquerade: true
+  autoDirectNodeRoutes: true
+  tunnel: disabled
+```
+
+## High Availability
+
+### Control Plane
+
+- Multiple Cilium operator replicas
+- Leader election enabled
+- Cross-node communication
+- Failure detection
+
+### Data Plane
+
+- Redundant gateways
+- Load balancing
+- Automatic failover
+- Health monitoring
+
+## Troubleshooting
+
+### Common Issues
+
+1. Connectivity Problems
+
+   - Check Cilium agent status
+   - Verify network policies
+   - Review gateway configurations
+   - Check DNS resolution
+
+2. Performance Issues
+   - Monitor BPF map usage
+   - Check connection tracking
+   - Analyze traffic patterns
+   - Review resource usage
+
+### Debugging Tools
+
+```yaml
+diagnostic_tools:
+  - cilium status
+  - cilium-health
+  - hubble observe
+  - tcpdump
+  - connectivity test
+```
