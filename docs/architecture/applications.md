@@ -1,140 +1,100 @@
 # Application Architecture
 
-## Overview
+## Core Application Decisions
 
-This document describes the application deployment architecture in our homelab infrastructure, following GitOps
-principles and using ArgoCD as the deployment mechanism.
+### Deployment Strategy
 
-## Structure
+**Decision:** Use ApplicationSets for all deployments
 
-```
-k8s/applications/
-├── base/                 # Base configurations
-│   ├── external/        # External service integrations
-│   ├── media/          # Media applications
-│   └── tools/          # Development tools
-└── overlays/            # Environment-specific configurations
-    ├── dev/            # Development environment
-    ├── staging/        # Staging environment
-    └── prod/           # Production environment
-```
+**Rationale:**
 
-## Deployment Strategy
+- Single source of truth for app definitions
+- Automated synchronization across environments
+- Simplified promotion path
+- Consistent configuration management
 
-### Environment Progression
+**Trade-offs:**
 
-1. **Development (Wave 3)**
-
-   - Allows empty applications
-   - Single replica deployments
-   - Minimal resource requests
-
-2. **Staging (Wave 4)**
-
-   - No empty applications
-   - 3 replicas with pod anti-affinity
-   - Production-like resource limits
-
-3. **Production (Wave 5)**
-   - Strict validation
-   - 3 replicas with pod anti-affinity
-   - Full production resource limits
-
-### High Availability Requirements
-
-- Staging and Production environments require:
-  - 3 replicas minimum
-  - Pod anti-affinity rules
-  - Proper resource limits
-  - Zero-downtime deployments
+- More complex initial setup
+- Additional abstraction layer
+- Steeper learning curve
 
 ### Resource Management
 
-Resource limits are defined per environment:
+**Decision:** Progressive resource allocation model
 
-| Environment | CPU Request | CPU Limit | Memory Request | Memory Limit |
-| ----------- | ----------- | --------- | -------------- | ------------ |
-| Dev         | 100m        | 500m      | 256Mi          | 512Mi        |
-| Staging     | 500m        | 2         | 1Gi            | 2Gi          |
-| Prod        | 1           | 4         | 2Gi            | 4Gi          |
+**Rationale:**
 
-## Application Categories
+- Development: Minimal resources for rapid iteration
+- Staging: Representative of production
+- Production: Full HA with guaranteed resources
 
-### External Services
+**Trade-offs:**
 
-- Proxmox integration
-- TrueNAS integration
-- Home Assistant integration
+- Higher total resource usage
+- More complex capacity planning
+- Potential environment differences
 
-### Media Applications
+### High Availability Model
 
-- \*arr stack (Sonarr, Radarr, etc.)
-- Media server (Jellyfin)
+**Decision:** Environment-specific HA requirements
 
-### Development Tools
+**Rationale:**
 
-- Debug tools
-- Utility containers
+- Development: Single replica for speed
+- Staging: Basic HA for testing
+- Production: Full HA with anti-affinity
 
-## Security Considerations
+**Trade-offs:**
 
-- All applications must use Bitwarden Secrets Manager
-- No direct volume mounting of secrets
-- Environment-specific security policies
-- Regular security scanning with Trivy
+- Resource overhead in higher environments
+- More complex deployment patterns
+- Additional failure scenarios to test
 
-## Validation Requirements
+### Security Implementation
 
-- Must pass kustomize build tests
-- Must validate against Kubernetes 1.32.0
-- Must pass security scanning
-- Must conform to resource limit requirements
+**Decision:** Zero-trust with centralized authentication
 
-## Resource Management
+**Rationale:**
 
-### Media Applications
+- Single sign-on across all applications
+- Consistent authentication flow
+- Centralized access control
+- Unified audit logging
 
-- CPU: 1-4 cores
-- Memory: 4-8 GiB
-- Storage: 10-20 GiB ephemeral
-- Suitable for: Jellyfin, \*arr stack
+**Trade-offs:**
 
-### External Integrations
+- Additional system dependency
+- More complex initial setup
+- Higher operational overhead
 
-- CPU: 250m-1 core
-- Memory: 512Mi-2GiB
-- Storage: 1-5 GiB ephemeral
-- Suitable for: Proxmox, TrueNAS, HAOS integrations
+## Current Status
 
-### Development Tools
+### Implemented
 
-- CPU: 500m-2 cores
-- Memory: 1-4 GiB
-- Storage: 5-10 GiB ephemeral
-- Suitable for: Debug tools, utility containers
+- ApplicationSet-based deployments
+- Basic environment promotion
+- Resource limit enforcement
+- Authentication integration
 
-## Security Policies
+### Known Gaps
 
-### Network Security
+1. Manual promotion process
+2. Basic validation gates
+3. Limited automated testing
+4. Simple monitoring
 
-- Default deny-all with explicit allows
-- Namespace isolation
-- Monitoring access (port 9090)
-- DNS resolution for external access
-- ArgoCD connectivity for GitOps
+## Next Steps
 
-### Pod Security
+Priority improvements:
 
-- Non-root execution
-- Read-only root filesystem
-- Drop all capabilities
-- Resource quotas enforcement
-- Proper security contexts
+1. Automated promotion workflow
+2. Enhanced validation testing
+3. Comprehensive monitoring
+4. Advanced security controls
 
-### High Availability
+## Related Documents
 
-- Production/Staging: 3 replicas minimum
-- Pod anti-affinity rules
-- Topology spread constraints
-- Pod disruption budgets
-- Zero-downtime deployments
+- [Environment Strategy](environments.md)
+- [Resource Management](../best-practices/resources.md)
+- [Security Controls](../security/overview.md)

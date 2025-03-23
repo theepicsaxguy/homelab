@@ -4,6 +4,14 @@ metadata:
   name: infra-health
 spec:
   metrics:
+  - name: web-ping
+    interval: 10s
+    count: 3
+    successCondition: result == true
+    provider:
+      web:
+        url: http://{{ args.service }}.{{ args.namespace }}.svc/health
+        timeoutSeconds: 15
   - name: success-rate
     interval: 120s
     successCondition: result[0] >= 0.99
