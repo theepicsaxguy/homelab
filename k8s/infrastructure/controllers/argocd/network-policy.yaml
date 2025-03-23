@@ -4,12 +4,43 @@ metadata:
   name: allow-argocd-full
   namespace: argocd
 spec:
-  description: "Allow ArgoCD to function correctly with internal communication, DNS, and API access"
   endpointSelector:
     matchLabels:
       app.kubernetes.io/part-of: argocd
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
+    - fromEndpoints:
+        - {}
+    - fromEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kubechecks
+      toPorts:
+        - ports:
+            - port: "443"
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    - fromEntities:
+        - world
   egress:
-        # Allow access to Kubernetes API server via toServices
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/part-of: argocd
     - toServices:
         - k8sServiceSelector:
             selector:
@@ -19,10 +50,8 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
-
-
-
-    # ✅ Allow DNS resolution (must match kube-dns pod labels explicitly)
+    - toEntities:
+        - cluster
     - toEndpoints:
         - matchLabels:
             k8s-app: kube-dns
@@ -32,25 +61,5 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
-
-    # ✅ Allow ArgoCD components to talk to each other
-    - toEndpoints:
-        - matchLabels:
-            app.kubernetes.io/part-of: argocd
-
-  ingress:
-    # ✅ Internal ArgoCD communication
-    - fromEndpoints:
-        - matchLabels:
-            app.kubernetes.io/part-of: argocd
-
-    # ✅ External access (e.g., webhooks, UI)
-    - fromEntities:
-        - cluster
+    - toEntities:
         - world
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "443"
-              protocol: TCP
