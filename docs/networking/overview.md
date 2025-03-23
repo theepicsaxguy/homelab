@@ -2,286 +2,117 @@
 
 ## Overview
 
-The network infrastructure is built on Cilium CNI with integrated service mesh capabilities and Gateway API support.
+The network architecture is built around Cilium as the primary networking component, providing CNI, service mesh, load balancing, and security features.
 
 ## Core Components
 
-### Cilium (v1.17+)
+### CNI (Cilium)
 
-```yaml
-cilium:
-  hubble:
-    enabled: true
-    metrics:
-      enabled: true
-      serviceMonitor:
-        enabled: true
+- **Version**: Latest stable (managed by Renovate)
+- **Features**:
+  - eBPF-based networking
+  - Kubernetes native service handling
+  - Built-in monitoring capabilities (future)
+  - Transparent encryption with WireGuard
+  - Service mesh with mTLS
 
-  kubeProxyReplacement: strict
-  hostServices:
-    enabled: true
+### Load Balancing
 
-  gatewayAPI:
-    enabled: true
-    routeNamespaceSelector:
-      matchLabels:
-        kubernetes.io/metadata.name: gateway-system
+- **Cilium LB IPAM**: Replaces traditional MetalLB
+- **BGP Control Plane**: For external route advertisement
+- **Service Types**:
+  - LoadBalancer: External services
+  - ClusterIP: Internal services
+  - NodePort: Limited use cases
 
-  envoy:
-    enabled: true
-    prometheus:
-      serviceMonitor:
-        enabled: true
-```
+### DNS Architecture
 
-### Gateway API Configuration
+- **CoreDNS**: Primary DNS service
+- **Service Discovery**: Native Kubernetes DNS
+- **External Resolution**: Configured via CoreDNS forward zones
+- **Split DNS**: Internal/external name resolution
 
-#### External Gateway
+### Gateway API
 
-```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: Gateway
-metadata:
-  name: external-gateway
-  namespace: gateway-system
-spec:
-  gatewayClassName: cilium
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-    - name: https
-      protocol: HTTPS
-      port: 443
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: wildcard-cert
-```
+- Native Kubernetes Gateway API implementation
+- Cilium-managed Gateway controller
+- Support for HTTP, HTTPS, and TCP routes
+- TLS termination via cert-manager
 
-#### Internal Gateway
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: Gateway
-metadata:
-  name: internal-gateway
-  namespace: gateway-system
-spec:
-  gatewayClassName: cilium
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 8080
-    - name: grpc
-      protocol: HTTP
-      port: 9090
-```
-
-## Network Policies
+## Network Policies 
 
 ### Default Policies
 
-```yaml
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: default-deny
-spec:
-  endpointSelector: {}
-  ingress: []
-  egress: []
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: allow-system
-spec:
-  endpointSelector: {}
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-```
+- Deny-all by default
+- Explicit allow rules required
+- Environment-specific policies
+- Service-to-service communication rules
 
-### Environment-Specific Policies
+### Security Groups
 
-#### Development
-
-```yaml
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: dev-environment
-spec:
-  endpointSelector:
-    matchLabels:
-      environment: dev
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            environment: dev
-  egress:
-    - toEndpoints:
-        - matchLabels: {}
-```
-
-#### Production
-
-```yaml
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: prod-environment
-spec:
-  endpointSelector:
-    matchLabels:
-      environment: prod
-  ingress:
-    - fromEndpoints:
-        - matchLabels:
-            environment: prod
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: monitoring
-```
+- Application-based grouping
+- Environment isolation
+- Cross-namespace communication control
+- Egress control for external services
 
 ## Service Mesh Features
 
-### Traffic Management
+Currently implemented features:
 
-- L7 load balancing
-- Traffic splitting
+- Transparent mTLS between services
+- Basic traffic management
+- L7 policy enforcement
+- Connection tracking
+
+Planned but not implemented:
+
+- Advanced traffic shaping
 - Circuit breaking
-- Retry policies
+- Rate limiting
+- Detailed metrics collection
 
-### Security
+## Current Limitations
 
-- mTLS encryption
-- Identity-based authentication
-- Authorization policies
-- Traffic encryption
-
-### Observability
-
-- Distributed tracing
-- Traffic visualization
-- Performance metrics
-- Health checks
-
-## Monitoring Integration
-
-### Hubble Metrics
-
-```yaml
-metrics:
-  flows:
-    - source_namespace
-    - destination_namespace
-    - source_workload
-    - destination_workload
-    - verdict
-  http:
-    - reporter
-    - protocol
-    - status_code
-    - method
-  tcp:
-    - reporter
-    - protocol
-    - flags
-```
-
-### Envoy Metrics
-
-```yaml
-metrics:
-  endpoints:
-    - path: /stats/prometheus
-      port: 9901
-  serviceMonitor:
-    enabled: true
-    interval: 15s
-```
+1. No current monitoring integration
+2. Basic traffic metrics only
+3. Manual policy verification required
+4. Limited automated testing of policies
 
 ## Performance Considerations
 
-### Resource Requirements
+### Resource Allocation
 
-```yaml
-resources:
-  cilium-agent:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
+- Cilium agent resources per node
+- CoreDNS scaling based on cluster size
+- Gateway API controller resources
 
-  hubble-relay:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-```
+### High Availability
 
-### Optimization Settings
-
-```yaml
-optimization:
-  kubeProxyReplacement: strict
-  hostRouting: true
-  bpfMasquerade: true
-  autoDirectNodeRoutes: true
-  tunnel: disabled
-```
-
-## High Availability
-
-### Control Plane
-
-- Multiple Cilium operator replicas
-- Leader election enabled
-- Cross-node communication
-- Failure detection
-
-### Data Plane
-
-- Redundant gateways
-- Load balancing
-- Automatic failover
-- Health monitoring
+- Multiple Cilium replicas
+- CoreDNS redundancy
+- Gateway API controller failover
+- Load balancer redundancy
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. Connectivity Problems
+1. DNS resolution problems
+2. Network policy conflicts
+3. Gateway API configuration issues
+4. Load balancer IP allocation
 
-   - Check Cilium agent status
-   - Verify network policies
-   - Review gateway configurations
-   - Check DNS resolution
+### Debug Tools
 
-2. Performance Issues
-   - Monitor BPF map usage
-   - Check connection tracking
-   - Analyze traffic patterns
-   - Review resource usage
+- cilium CLI tools
+- hubble UI and CLI
+- kubectl debug capabilities
+- Network policy analyzer
 
-### Debugging Tools
+## Related Documentation
 
-```yaml
-diagnostic_tools:
-  - cilium status
-  - cilium-health
-  - hubble observe
-  - tcpdump
-  - connectivity test
-```
+- [Cilium Configuration](cilium.md)
+- [DNS Setup](dns.md)
+- [Network Policies](policies.md)
+- [Gateway Configuration](gateway.md)
+- [Load Balancer Setup](loadbalancer.md)

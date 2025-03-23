@@ -2,275 +2,159 @@
 
 ## Overview
 
-Multi-layered security architecture implementing zero-trust principles across infrastructure, network, and application
-layers.
+Our security architecture follows a zero-trust model with defense in depth, implemented through multiple layers of security controls.
 
 ## Core Components
 
-### Authentication (Authelia)
+### Authentication & Authorization
 
-```yaml
-authelia:
-  access_control:
-    default_policy: deny
-    rules:
-      - domain: '*.kube.pc-tips.se'
-        policy: two_factor
-        networks:
-          - 10.0.0.0/8
-      - domain: 'grafana.kube.pc-tips.se'
-        policy: two_factor
-      - domain: 'argocd.kube.pc-tips.se'
-        policy: two_factor
+#### Authentication (Authelia)
+- SSO provider for all applications
+- OIDC integration
+- MFA support
+- User directory integration with LLDAP
 
-  authentication_backend:
-    password_reset:
-      disable: false
-    refresh_interval: 5m
-
-  session:
-    expiration: 4h
-    inactivity: 30m
-    remember_me_duration: 30d
-```
-
-### Network Security (Cilium)
-
-```yaml
-network_policies:
-  default:
-    ingress: deny
-    egress: deny
-
-  monitoring:
-    ingress:
-      - from: monitoring
-        ports: [9090, 9091, 9093]
-    egress:
-      - to: all-namespaces
-        ports: [9090, 9100]
-
-  authentication:
-    ingress:
-      - from: gateway-system
-        ports: [9091]
-    egress:
-      - to: ldap
-        ports: [636]
-```
+#### Authorization
+- Kubernetes RBAC
+- Namespace isolation
+- Service account management
+- Policy enforcement via Gatekeeper
 
 ### Secret Management
 
-```yaml
-bitwarden_operator:
-  sync_interval: 5m
-  namespaces:
-    - argocd
-    - cert-manager
-    - monitoring
-    - gateway-system
+#### Bitwarden Secrets Manager
+- Central secrets store
+- Automated secret injection
+- Rotation capabilities
+- Access auditing
 
-  access_control:
-    collections:
-      - id: 'production'
-        namespaces: ['prod-*']
-      - id: 'staging'
-        namespaces: ['staging-*']
-```
+### Network Security
 
-## Infrastructure Security
+#### Zero Trust Implementation
+- Cilium network policies
+- Service mesh mTLS
+- Ingress/egress control
+- Traffic encryption
 
-### Node Security (Talos)
+#### Gateway Security
+- TLS termination
+- Certificate management
+- Rate limiting (planned)
+- WAF capabilities (planned)
 
-```yaml
-talos:
-  kubernetes:
-    allowSchedulingOnControlPlanes: false
+### Infrastructure Security
 
-  network:
-    interfaces:
-      - interface: eth0
-        dhcp: true
-        vip:
-          ip: 10.25.150.10
+#### Base Security
+- Talos Linux hardening
+- Immutable infrastructure
+- Automated updates
+- Security scanning (planned)
 
-  sysctls:
-    net.ipv4.ip_forward: '0'
-    net.ipv6.conf.all.forwarding: '0'
-    kernel.unprivileged_bpf_disabled: '1'
-```
+#### Container Security
+- Non-root containers
+- Read-only root filesystem
+- Dropped capabilities
+- Resource limitations
 
-### Container Security
+## Current Security Controls
 
-```yaml
-pod_security_standards:
-  enforce:
-    - restricted
-  audit:
-    - restricted
-  warn:
-    - restricted
+### Implemented
+1. Authentication via Authelia
+2. RBAC for all components
+3. Network policies
+4. Secret management
+5. TLS everywhere
+6. Container hardening
+7. Infrastructure immutability
 
-seccomp_profiles:
-  default:
-    defaultAction: SCMP_ACT_ERRNO
-    architectures:
-      - SCMP_ARCH_X86_64
-      - SCMP_ARCH_ARM64
-```
-
-## Monitoring & Compliance
-
-### Security Monitoring
-
-```yaml
-falco:
-  rules:
-    custom_rules:
-      - macro: admin_namespaces
-        items: [kube-system, argocd]
-
-      - rule: Unauthorized Pod Namespace Change
-        desc: Detect attempts to create/modify pods in admin namespaces
-        condition: >-
-          kevt.category=create and kevt.type=pod and ka.target.namespace in (admin_namespaces)
-        output: 'Pod creation in admin namespace (user=%ka.user.name ns=%ka.target.namespace)'
-        priority: CRITICAL
-```
-
-### Audit Logging
-
-```yaml
-audit_policy:
-  rules:
-    - level: RequestResponse
-      resources:
-        - group: ''
-          resources: ['secrets', 'configmaps']
-
-    - level: Metadata
-      resources:
-        - group: 'apps'
-          resources: ['deployments', 'statefulsets']
-
-    - level: None
-      users: ['system:kube-proxy']
-      resources:
-        - group: '' # core
-          resources: ['endpoints', 'services', 'services/status']
-```
-
-## Access Control
-
-### RBAC Configuration
-
-```yaml
-roles:
-  developer:
-    rules:
-      - apiGroups: ['', 'apps']
-        resources: ['pods', 'deployments']
-        verbs: ['get', 'list', 'watch']
-      - apiGroups: ['monitoring.coreos.com']
-        resources: ['servicemonitors']
-        verbs: ['get', 'list', 'watch']
-
-  operator:
-    rules:
-      - apiGroups: ['', 'apps']
-        resources: ['*']
-        verbs: ['*']
-      - apiGroups: ['monitoring.coreos.com']
-        resources: ['*']
-        verbs: ['*']
-```
-
-### Service Accounts
-
-```yaml
-service_accounts:
-  monitoring:
-    name: prometheus-k8s
-    namespace: monitoring
-    roles:
-      - monitoring-reader
-
-  deployment:
-    name: argocd-application-controller
-    namespace: argocd
-    roles:
-      - application-controller
-```
-
-## Certificate Management
-
-### Cert-Manager Configuration
-
-```yaml
-cert_manager:
-  issuers:
-    letsencrypt-prod:
-      server: https://acme-v02.api.letsencrypt.org/directory
-      email: admin@pc-tips.se
-      privateKeySecretRef:
-        name: letsencrypt-prod
-      solvers:
-        - dns01:
-            cloudflare:
-              email: admin@pc-tips.se
-              apiTokenSecretRef:
-                name: cloudflare-api-token
-                key: api-token
-```
+### Planned
+1. Security monitoring
+2. Automated compliance checks
+3. Advanced threat detection
+4. Security metrics collection
 
 ## Environment-Specific Security
 
 ### Development
+- Relaxed network policies
+- Debug capabilities enabled
+- Full logging
+- Test credentials allowed
 
-```yaml
-security_config:
-  authentication:
-    mode: relaxed
-  network_policies:
-    default: allow
-  monitoring:
-    audit: minimal
-```
+### Staging
+- Production-like security
+- Limited debug access
+- Sanitized data
+- Test security controls
 
 ### Production
+- Strict security enforcement
+- No direct debug access
+- Production data protection
+- Regular security audits
 
-```yaml
-security_config:
-  authentication:
-    mode: strict
-    session_timeout: 4h
-  network_policies:
-    default: deny
-  monitoring:
-    audit: complete
-    retention: 90d
-```
+## Access Control
+
+### External Access
+- Gateway API controls
+- Authentication required
+- TLS termination
+- IP filtering
+
+### Internal Access
+- Service mesh control
+- Namespace isolation
+- RBAC enforcement
+- Pod security standards
+
+## Certificate Management
+
+### Implementation
+- cert-manager
+- ACME/Let's Encrypt
+- Automated renewal
+- Wildcard certificates
+
+### Distribution
+- Secret injection
+- TLS termination
+- Service mesh certificates
+- Application certificates
+
+## Known Limitations
+
+1. No automated security scanning
+2. Manual policy verification
+3. Basic audit logging only
+4. Limited compliance automation
+
+## Future Enhancements
+
+1. Security monitoring stack
+2. Automated compliance checks
+3. Enhanced audit logging
+4. Threat detection capabilities
+5. Security metrics dashboard
 
 ## Incident Response
 
-### Detection
+### Current Capabilities
+- Manual investigation tools
+- Basic logging analysis
+- Infrastructure recovery
+- Documentation procedures
 
-- Real-time threat monitoring
-- Behavioral analysis
-- Anomaly detection
-- Alert correlation
+### Planned Improvements
+- Automated detection
+- Real-time alerts
+- Incident playbooks
+- Response automation
 
-### Response Procedures
+## Related Documentation
 
-1. Incident Classification
-2. Containment Strategy
-3. Evidence Collection
-4. Root Cause Analysis
-5. Recovery Process
-
-### Recovery Plans
-
-- System Restoration
-- Data Recovery
-- Service Continuity
-- Post-Incident Review
+- [Authentication Configuration](authentication.md)
+- [RBAC Configuration](rbac.md)
+- [Network Security](network-security.md)
+- [Secrets Management](secrets-management.md)
+- [Certificate Management](certificates.md)
+- [Compliance Standards](compliance.md)

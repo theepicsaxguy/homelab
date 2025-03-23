@@ -9,23 +9,18 @@ Kubernetes (Talos), OpenTofu, and ArgoCD.
 
 ### Cluster Architecture
 
-- **Kubernetes Version**: 1.32.3
-- **Node Configuration**:
-  - Control Plane: 3 nodes (4 CPU, 4GB RAM each)
-  - Workers: Dynamically scaled based on workload
-- **Base Infrastructure**: Proxmox VMs managed by OpenTofu
+- **Control Plane**: Talos Linux-based Kubernetes control plane
+- **Node Management**: Fully automated through Talos machine configs
+- **Workload Distribution**: Pod anti-affinity and topology spread constraints
+- **Environment Isolation**: Strict namespace-based separation
 
 ### Network Architecture
 
-See [Network Architecture Overview](networking/overview.md) for details on:
-
-- **CNI**: Cilium v1.17+ with service mesh capabilities
-- **Gateway API**: Modern ingress management with:
-  - External gateway (Internet-facing services)
-  - Internal gateway (Cluster-local services)
-  - TLS passthrough gateway
-- **DNS**: CoreDNS with custom domain integration
-- **Security**: Zero-trust network model with Cilium network policies
+- **CNI**: Cilium (replacing Talos default CNI)
+- **Service Mesh**: Cilium service mesh with mTLS
+- **DNS**: CoreDNS with custom configurations
+- **Ingress**: Gateway API with Cilium
+- **Load Balancing**: Cilium LB IPAM + BGP Control Plane
 
 ### Security Architecture
 
@@ -51,113 +46,61 @@ See [Storage Architecture Overview](storage/overview.md) for details on:
 
 ## GitOps Workflow
 
-### Deployment Process
+Our GitOps workflow follows strict principles:
 
-1. **Infrastructure Layer** (OpenTofu)
-
-   - Cluster provisioning
-   - Network configuration
-   - Storage setup
-
-2. **Platform Layer** (ArgoCD)
-
-   - Core services deployment
-   - Monitoring stack
-   - Security components
-
-3. **Application Layer** (ArgoCD ApplicationSets)
-   - Service deployments
-   - Configuration management
-   - Progressive delivery
-
-### Environment Strategy
-
-#### Development
-
-- Fast iteration cycles
-- Reduced resource requirements
-- Debug logging enabled
-- 30s rollout analysis
-
-#### Staging
-
-- Production-like configuration
-- Full HA testing
-- 60s rollout analysis
-- Complete monitoring
-
-#### Production
-
-- Strict validation requirements
-- Zero-downtime deployments
-- 300s rollout analysis
-- Full audit logging
+1. **Source of Truth**: All infrastructure defined in Git
+2. **Deployment Mechanism**: ArgoCD is the only deployment tool
+3. **Change Management**: 
+   - No direct kubectl applies
+   - Changes must be committed to Git
+   - Automated validation and testing
 
 ## Resource Management
 
-### Standard Requirements
+### Resource Allocation
 
-```yaml
-control_plane:
-  cpu: 4 cores per node
-  memory: 4GB per node
-  nodes: 3 (HA setup)
-workers:
-  cpu: varies by workload
-  memory: varies by workload
-  nodes: dynamically scaled
-```
+- **Development**: Minimal resources, single replicas
+- **Staging**: Production-like with HA (2 replicas)
+- **Production**: Full HA (3+ replicas)
 
 ### High Availability
 
 - Pod anti-affinity rules
 - Topology spread constraints
+- PodDisruptionBudgets
 - Rolling update strategies
-- Readiness gates
 
 ## Disaster Recovery
 
-1. **Infrastructure Recovery**:
+Current disaster recovery capability includes:
 
-   - All configuration in Git
-   - OpenTofu state backed up
-   - Automated recovery procedures
-
-2. **Application Recovery**:
-
-   - GitOps-based deployment
-   - Persistent storage backup
-   - Application-specific backup solutions
-
-3. **Data Recovery**:
-   - Regular storage snapshots
-   - Off-site backup copies
-   - Validated restore procedures
+1. Git-based infrastructure restoration
+2. Talos machine config backups
+3. Application state backups via Restic
+4. Documentation of recovery procedures
 
 ## Version Control and Updates
 
-- Infrastructure changes through pull requests
-- Automated updates via Renovate
-- Semantic versioning for changes
-- Changelog maintenance
+- **Container Images**: Managed via Renovate
+- **Kubernetes**: Controlled upgrades via Talos
+- **Infrastructure Components**: Version pinning in Git
 
 ## Known Limitations
 
-1. Single Proxmox instance as infrastructure provider
-2. Network dependent on underlying Proxmox network
-3. Storage performance tied to Proxmox storage performance
+1. No current monitoring stack implementation (planned)
+2. Manual backup verification required
+3. Limited automated testing coverage
 
 ## Future Improvements
 
-1. Multi-cluster federation
-2. Enhanced backup solutions
-3. Expanded monitoring capabilities
-4. Additional storage providers
+1. Monitoring stack implementation (Phase 1)
+2. Automated backup verification
+3. Enhanced testing framework
+4. Multi-cluster federation
 
 ## Related Documentation
 
-- [Service Registry](service-registry.md)
 - [Network Architecture](networking/overview.md)
-- [Storage Architecture](storage/overview.md)
 - [Security Architecture](security/overview.md)
-- [Monitoring Architecture](monitoring/overview.md)
+- [Storage Architecture](storage/overview.md)
+- [Planned Monitoring](planned-features/monitoring-implementation.md)
