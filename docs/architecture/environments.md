@@ -1,258 +1,117 @@
-# Environment Architecture
+# Environment Strategy
 
-## Overview
+## Design Philosophy
 
-This document describes our environment architecture and configuration patterns across development, staging, and
-production environments.
+We chose a single cluster with strong namespace isolation over multiple clusters because:
 
-## Environment Structure
+1. **Resource Efficiency**
 
-### Development (dev-infra)
+   - Shared control plane reduces overhead
+   - Better resource utilization across environments
+   - Simplified management and monitoring
 
-#### Purpose
+2. **Consistent Security**
 
-- Fast iteration and testing
-- Minimal resource usage
-- Development-focused features
-- Allows empty applications
+   - Same security policies across environments
+   - Unified authentication and RBAC
+   - Consistent network policies
 
-#### Configuration
+3. **Progressive Delivery**
+   - Natural promotion path through namespaces
+   - Identical underlying infrastructure
+   - Real validation of production configs
 
-- Single replicas
+## Environment Characteristics
+
+### Development
+
+**Purpose:** Fast iteration and testing
+
+- Single replicas to save resources
 - Debug capabilities enabled
-- Relaxed security policies
+- Relaxed network policies
 - Minimal resource requests
 
-#### Sync Wave: 0
+**Why:** Developers need quick feedback and easy debugging
 
-- First environment to receive changes
-- Fast sync intervals
-- Allows manual intervention
-- Basic validation only
+### Staging
 
-### Staging (staging-infra)
+**Purpose:** Production validation
 
-#### Purpose
-
-- Pre-production validation
-- Performance testing
-- Security validation
-- Integration testing
-
-#### Configuration
-
-- Two replicas minimum
+- Two replicas for basic HA testing
+- Limited debug access
 - Production-like security
-- Representative resource allocation
-- Full feature testing
+- Representative data
 
-#### Sync Wave: 1
+**Why:** Validate changes in a production-like environment without risk
 
-- Secondary deployment target
-- Automated validation
-- Integration testing
-- Performance analysis
+### Production
 
-### Production (prod-infra)
+**Purpose:** Reliable service delivery
 
-#### Purpose
+- Full HA with three+ replicas
+- No debug access
+- Strict security enforcement
+- Real user data
 
-- Live service delivery
-- Maximum stability
-- Full security enforcement
-- Performance optimization
+**Why:** Ensure reliable, secure service delivery
 
-#### Configuration
+## Key Differences
 
-- Three replicas minimum
-- Strict security policies
-- Optimized resource allocation
-- Zero-downtime updates
+### Security Policies
 
-#### Sync Wave: 2
-
-- Final deployment target
-- Strict validation
-- No direct debugging
-- Performance monitoring
-
-## Implementation Details
+- Dev: Basic policies, debug allowed
+- Staging: Production policies, some debug
+- Prod: Strict policies, no debug
 
 ### Resource Management
 
-#### Development
+- Dev: Minimal guaranteed resources
+- Staging: Representative allocation
+- Prod: Full production sizing
 
-```yaml
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 256Mi
-```
+### Access Controls
 
-#### Staging
+- Dev: Team-wide access
+- Staging: Limited team access
+- Prod: Restricted access
 
-```yaml
-resources:
-  requests:
-    cpu: 200m
-    memory: 256Mi
-  limits:
-    cpu: 1000m
-    memory: 512Mi
-```
+## Common Elements
 
-#### Production
+These remain consistent across environments:
 
-```yaml
-resources:
-  requests:
-    cpu: 500m
-    memory: 512Mi
-  limits:
-    cpu: 2000m
-    memory: 1Gi
-```
+- Base infrastructure services
+- Network architecture
+- Storage classes
+- Authentication methods
 
-### High Availability Configuration
+## Promotion Process
 
-#### Development
+### Current Flow
 
-- Single replica
-- Basic health checks
-- Manual failover
-- Debug access enabled
+1. Changes tested in development
+2. Manually promoted to staging
+3. Validated in staging
+4. Manually promoted to production
 
-#### Staging
+### Known Limitations
 
-- Two replicas
-- Pod anti-affinity
-- Automated failover
-- Limited debug access
-
-#### Production
-
-- Three+ replicas
-- Strict anti-affinity
-- Automated recovery
-- No debug access
-
-## ApplicationSet Configuration
-
-### Development
-
-```yaml
-syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=true
-    - ApplyOutOfSyncOnly=true
-```
-
-### Staging/Production
-
-```yaml
-syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=true
-    - ApplyOutOfSyncOnly=true
-    - RespectIgnoreDifferences=true
-    - PruneLast=true
-```
-
-## GitOps Workflow
-
-### Development
-
-1. Push changes to main branch
-2. Automatic sync to dev
-3. Basic validation
-4. Manual testing
-
-### Staging
-
-1. Promote from dev
-2. Automated testing
-3. Performance analysis
-4. Security validation
-
-### Production
-
-1. Promote from staging
-2. Full validation
-3. Gradual rollout
-4. Performance monitoring
-
-## Validation Requirements
-
-### Development
-
-- Basic linting
-- Resource validation
-- Health checks
-- Configuration testing
-
-### Staging
-
-- Full test suite
-- Performance testing
-- Security scanning
-- Integration testing
-
-### Production
-
-- Complete validation
-- Load testing
-- Security audit
-- Compliance checks
-
-## Best Practices
-
-### General Guidelines
-
-- Use environment overlays
-- Maintain parity where possible
-- Document all differences
-- Use common components
-
-### Security Guidelines
-
-- Enforce least privilege
-- Use network policies
-- Enable audit logging
-- Implement RBAC
-
-### Resource Guidelines
-
-- Define explicit limits
-- Use resource quotas
-- Implement autoscaling
-- Monitor usage
-
-## Known Limitations
-
-1. No automated promotion
-2. Manual validation steps
-3. Basic monitoring only
-4. Limited automation
+1. Manual promotion steps
+2. Basic validation only
+3. No automated testing
+4. Limited rollback automation
 
 ## Future Improvements
 
-1. Automated environment promotion
-2. Enhanced monitoring
-3. Automated testing
-4. Advanced validation
+Near-term improvements focus on validation:
+
+1. Automated security scanning
+2. Performance testing
+3. Configuration validation
+4. Promotion automation
 
 ## Related Documentation
 
-- [ApplicationSet Configuration](applicationsets.md)
+- [Security Policies](../security/policies.md)
 - [Resource Management](../best-practices/resources.md)
-- [Security Guidelines](../security/overview.md)
 - [Network Architecture](../networking/overview.md)

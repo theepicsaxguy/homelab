@@ -2,26 +2,32 @@
 
 ## Infrastructure Architecture
 
-### Core Architecture
+### Design Principles
 
-- [Infrastructure Overview](architecture.md)
-- [ApplicationSets Hierarchy](architecture/applicationsets.md)
-- [Network Architecture](networking/overview.md)
-- [Security Architecture](security/overview.md)
-- [Storage Architecture](storage/overview.md)
+We chose a Kubernetes-based infrastructure with GitOps workflow because:
 
-### Environments
+- **GitOps-only changes:** Ensures all changes are tracked, reviewed, and reversible
+- **Progressive delivery:** Enables safe testing through dev → staging → prod
+- **Zero-trust security:** Implements defense in depth from infrastructure to application level
+- **Infrastructure as Code:** Makes the entire stack reproducible and version controlled
 
-- [Environment Overview](architecture/environments.md)
-- [Development Environment](architecture/environments/dev.md)
-- [Staging Environment](architecture/environments/staging.md)
-- [Production Environment](architecture/environments/prod.md)
+### Environment Strategy
 
-### Component Specific
+Rather than maintaining separate clusters, we use a single cluster with strong namespace isolation:
 
-- [Applications Architecture](architecture/applications.md)
-- [Monitoring Implementation Plan](planned-features/monitoring-implementation.md)
-- [Service Registry](service-registry.md)
+- **Development:** Fast iterations and testing with minimal resources
+- **Staging:** Production-like environment for validation
+- **Production:** Fully HA with strict security policies
+
+This approach balances resource efficiency with proper isolation.
+
+### Documentation Structure
+
+Documentation is organized by component rather than alphabetically to help understand relationships:
+
+- **Core designs:** Root `/docs` folder contains main architectural decisions
+- **Implementation details:** Component folders contain specific configurations
+- **Environment config:** Separate sections for environment-specific choices
 
 ## Best Practices
 
@@ -46,24 +52,22 @@
 
 ## Current Status
 
-### Implemented Components
+### Production Ready
 
-- Talos Kubernetes Cluster
-- ArgoCD-based GitOps
-- Cilium Networking
-- Longhorn Storage
-- Authentication (Authelia)
-- Certificate Management
-- Secret Management
-- Gateway API
+- Talos Kubernetes control plane - chosen for security and automation
+- ArgoCD-based GitOps - ensures consistent state management
+- Cilium networking - provides both CNI and security features
+- Longhorn storage - enables distributed persistent storage
+- Authelia authentication - centralizes access control
+- Gateway API - modern ingress management
 
-### Planned Components
+### Under Development
 
-- Monitoring Stack
-- Advanced Metrics
-- Automated Testing
-- Enhanced Backup Verification
-- Performance Monitoring
+The following key components are planned to enhance operations:
+
+- Monitoring stack - for better visibility and alerting
+- Automated testing - to validate changes more thoroughly
+- Enhanced backup verification - for improved reliability
 
 ## Key Principles
 

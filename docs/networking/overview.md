@@ -1,119 +1,68 @@
 # Network Architecture
 
-## Overview
+## Key Decisions
 
-The network architecture is built around Cilium as the primary networking component, providing CNI, service mesh, load
-balancing, and security features.
+### Why Cilium?
 
-## Core Components
+We chose Cilium over other CNIs because:
 
-### CNI (Cilium)
+- eBPF-based networking provides better performance than iptables
+- Native Gateway API support eliminates need for separate ingress controller
+- Built-in service mesh avoids Istio complexity
+- Identity-based security policies are more maintainable than IP-based
 
-- **Version**: Latest stable (managed by Renovate)
-- **Features**:
-  - eBPF-based networking
-  - Kubernetes native service handling
-  - Built-in monitoring capabilities (future)
-  - Transparent encryption with WireGuard
-  - Service mesh with mTLS
+### Why Gateway API?
 
-### Load Balancing
+Selected over Ingress because:
 
-- **Cilium LB IPAM**: Replaces traditional MetalLB
-- **BGP Control Plane**: For external route advertisement
-- **Service Types**:
-  - LoadBalancer: External services
-  - ClusterIP: Internal services
-  - NodePort: Limited use cases
+- More expressive routing capabilities
+- Better security model
+- Native TLS handling
+- Future-proof API design
 
-### DNS Architecture
+### Why Service Mesh?
 
-- **CoreDNS**: Primary DNS service
-- **Service Discovery**: Native Kubernetes DNS
-- **External Resolution**: Configured via CoreDNS forward zones
-- **Split DNS**: Internal/external name resolution
+Using Cilium's built-in service mesh because:
 
-### Gateway API
+- Simpler than dedicated service mesh
+- Lower resource overhead
+- Native integration with CNI
+- Sufficient features for our needs
 
-- Native Kubernetes Gateway API implementation
-- Cilium-managed Gateway controller
-- Support for HTTP, HTTPS, and TCP routes
-- TLS termination via cert-manager
+## Current Implementation
 
-## Network Policies
+### Network Flow
 
-### Default Policies
+1. External traffic → Gateway API
+2. Gateway → Authelia for auth
+3. Authelia → Backend services
+4. Inter-service via service mesh
 
-- Deny-all by default
-- Explicit allow rules required
-- Environment-specific policies
-- Service-to-service communication rules
+### Security Model
 
-### Security Groups
+- Default deny-all
+- Explicit allow rules
+- Identity-based policies
+- Encrypted pod traffic
 
-- Application-based grouping
-- Environment isolation
-- Cross-namespace communication control
-- Egress control for external services
+## Known Limitations
 
-## Service Mesh Features
+1. Basic traffic metrics only
+2. Manual policy verification
+3. Limited automated testing
+4. Basic monitoring integration
 
-Currently implemented features:
+## Planned Improvements
 
-- Transparent mTLS between services
-- Basic traffic management
-- L7 policy enforcement
-- Connection tracking
+Focusing on immediate needs:
 
-Planned but not implemented:
+1. Enhanced monitoring
+2. Policy testing
+3. Traffic analysis
+4. Performance optimization
 
-- Advanced traffic shaping
-- Circuit breaking
-- Rate limiting
-- Detailed metrics collection
+## Related Decisions
 
-## Current Limitations
-
-1. No current monitoring integration
-2. Basic traffic metrics only
-3. Manual policy verification required
-4. Limited automated testing of policies
-
-## Performance Considerations
-
-### Resource Allocation
-
-- Cilium agent resources per node
-- CoreDNS scaling based on cluster size
-- Gateway API controller resources
-
-### High Availability
-
-- Multiple Cilium replicas
-- CoreDNS redundancy
-- Gateway API controller failover
-- Load balancer redundancy
-
-## Troubleshooting
-
-### Common Issues
-
-1. DNS resolution problems
-2. Network policy conflicts
-3. Gateway API configuration issues
-4. Load balancer IP allocation
-
-### Debug Tools
-
-- cilium CLI tools
-- hubble UI and CLI
-- kubectl debug capabilities
-- Network policy analyzer
-
-## Related Documentation
-
-- [Cilium Configuration](cilium.md)
-- [DNS Setup](dns.md)
-- [Network Policies](policies.md)
-- [Gateway Configuration](gateway.md)
-- [Load Balancer Setup](loadbalancer.md)
+- [Security Architecture](../security/overview.md)
+- [Service Registry](../service-registry.md)
+- [Load Balancing](load-balancing.md)

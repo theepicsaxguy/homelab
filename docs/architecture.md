@@ -1,106 +1,58 @@
 # Infrastructure Architecture
 
-## Introduction
+## Core Design Decisions
 
-This document provides a comprehensive overview of the homelab infrastructure, built on GitOps principles with
-Kubernetes (Talos), OpenTofu, and ArgoCD.
+### Why Talos Linux
 
-## Core Components
+- Immutable, security-first design reduces attack surface
+- Automated updates with rollback capability
+- Built-in Kubernetes optimization
+- Minimal maintenance overhead
 
-### Cluster Architecture
+### Why Cilium
 
-- **Control Plane**: Talos Linux-based Kubernetes control plane
-- **Node Management**: Fully automated through Talos machine configs
-- **Workload Distribution**: Pod anti-affinity and topology spread constraints
-- **Environment Isolation**: Strict namespace-based separation
+- eBPF-based networking provides better performance than traditional solutions
+- Native Gateway API support eliminates need for separate ingress controller
+- Built-in service mesh capabilities without Istio complexity
+- Strong security through identity-based policies
 
-### Network Architecture
+### Why ArgoCD
 
-- **CNI**: Cilium (replacing Talos default CNI)
-- **Service Mesh**: Cilium service mesh with mTLS
-- **DNS**: CoreDNS with custom configurations
-- **Ingress**: Gateway API with Cilium
-- **Load Balancing**: Cilium LB IPAM + BGP Control Plane
+- GitOps-only infrastructure prevents configuration drift
+- Automatic drift detection and correction
+- Clear audit trail through Git history
+- Multi-cluster support for future expansion
 
-### Security Architecture
+## Current Architecture
 
-See [Security Architecture Overview](security/overview.md) for details on:
+### Infrastructure Layer (Wave 0-2)
 
-- **Authentication**: Authelia for SSO
-- **Authorization**: RBAC with least privilege
-- **Secret Management**: Bitwarden SM Operator
-- **Network Security**: Cilium-based zero-trust model
-- **Infrastructure Hardening**: Talos Linux security baseline
-- **Compliance**: Automated policy enforcement via Gatekeeper
+- Base cluster services deploy first
+- Network and storage foundations before applications
+- Security components early in process
 
-### Storage Architecture
+### Application Layer (Wave 3-5)
 
-See [Storage Architecture Overview](storage/overview.md) for details on:
-
-- **Primary Storage**: Longhorn v1.8.1
-- **Backup Storage**: Restic with S3 backend
-- **Performance Tiers**:
-  - fast-storage: SSD-backed for databases
-  - standard: General purpose storage
-  - archive: Cold storage for backups
-
-## GitOps Workflow
-
-Our GitOps workflow follows strict principles:
-
-1. **Source of Truth**: All infrastructure defined in Git
-2. **Deployment Mechanism**: ArgoCD is the only deployment tool
-3. **Change Management**:
-   - No direct kubectl applies
-   - Changes must be committed to Git
-   - Automated validation and testing
-
-## Resource Management
-
-### Resource Allocation
-
-- **Development**: Minimal resources, single replicas
-- **Staging**: Production-like with HA (2 replicas)
-- **Production**: Full HA (3+ replicas)
-
-### High Availability
-
-- Pod anti-affinity rules
-- Topology spread constraints
-- PodDisruptionBudgets
-- Rolling update strategies
-
-## Disaster Recovery
-
-Current disaster recovery capability includes:
-
-1. Git-based infrastructure restoration
-2. Talos machine config backups
-3. Application state backups via Restic
-4. Documentation of recovery procedures
-
-## Version Control and Updates
-
-- **Container Images**: Managed via Renovate
-- **Kubernetes**: Controlled upgrades via Talos
-- **Infrastructure Components**: Version pinning in Git
+- Progressive deployment through environments
+- Validation gates between stages
+- Resource limits increase with promotion
 
 ## Known Limitations
 
-1. No current monitoring stack implementation (planned)
-2. Manual backup verification required
-3. Limited automated testing coverage
+1. No current monitoring implementation
+2. Manual promotion between environments
+3. Basic security scanning only
+4. Limited automated testing
 
-## Future Improvements
+## Planned Improvements
 
-1. Monitoring stack implementation (Phase 1)
-2. Automated backup verification
-3. Enhanced testing framework
-4. Multi-cluster federation
+- Monitoring stack implementation (Q2 2025)
+- Automated environment promotion
+- Enhanced security controls
+- Expanded testing framework
 
-## Related Documentation
+## Related Decisions
 
-- [Network Architecture](networking/overview.md)
-- [Security Architecture](security/overview.md)
-- [Storage Architecture](storage/overview.md)
-- [Planned Monitoring](planned-features/monitoring-implementation.md)
+- [Network Design](networking/overview.md)
+- [Storage Choices](storage/overview.md)
+- [Security Model](security/overview.md)
