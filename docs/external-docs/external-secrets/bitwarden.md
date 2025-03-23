@@ -56,7 +56,7 @@ spec:
           credentials:
             key: token
             name: bitwarden-access-token
-      bitwardenServerSDKURL: https://bitwarden-sdk-server.default.svc.kube.pc-tips.se:9998
+      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se:9998
       caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t...
       organizationID: 7c0d21ec-10d9-4972-bdf8-ec52df99cc86
       projectID: 9c713cd6-728c-437a-a783-252b0773a0bb
