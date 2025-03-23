@@ -25,8 +25,7 @@ infrastructure/
 ├── controllers/          # Core controllers
 ├── crds/                 # Custom Resource Definitions
 ├── network/              # Networking components (Cilium, etc.)
-├── storage/              # Storage provisioners and configurations
-└── vpn/                  # VPN configurations
+└── storage/              # Storage components (Longhorn, etc.)
 ```
 
 ## 🚀 Core Components
@@ -54,7 +53,6 @@ Each overlay inherits common metadata and can include specific components and pa
 - **crds/**: Custom Resource Definitions for all components
 - **network/**: Cilium network policies and configurations
 - **storage/**: Storage classes and provisioners
-- **vpn/**: VPN configurations for secure access
 
 ## 📝 Using These Components
 
@@ -101,7 +99,6 @@ If you encounter issues:
 
 - [ArgoCD Setup](/k8s/argocd/)
 - [Application Workloads](/k8s/applications/)
-- [Monitoring Stack](/k8s/monitoring/)
 
 ## ⚠️ Important Notes
 

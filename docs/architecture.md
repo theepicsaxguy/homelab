@@ -49,15 +49,6 @@ See [Storage Architecture Overview](storage/overview.md) for details on:
   - standard: General purpose storage
   - archive: Cold storage for backups
 
-### Monitoring and Observability
-
-See [Monitoring Architecture Overview](monitoring/overview.md) for details on:
-
-- **Metrics**: Prometheus with custom dashboards
-- **Logging**: Loki with structured logging
-- **Tracing**: OpenTelemetry integration
-- **Alerting**: AlertManager with severity-based routing
-
 ## GitOps Workflow
 
 ### Deployment Process

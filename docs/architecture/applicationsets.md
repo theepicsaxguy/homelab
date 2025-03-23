@@ -80,12 +80,6 @@ Each infrastructure domain has its own ApplicationSet that inherits from the env
 - External Secrets
 - Node Feature Discovery
 
-#### Monitoring Stack (monitoring/application-set.yaml)
-
-- Prometheus
-- Grafana
-- Alert Manager
-
 #### VPN Services (vpn/application-set.yaml)
 
 - WireGuard
@@ -195,15 +189,15 @@ labels:
 - Use secure pod security contexts
 - Configure appropriate RBAC rules
 
-## 7. Validation and Monitoring
+## 7. Validation Requirements
 
 ### 7.1 Sync Status
 
 Monitor sync status through:
 
 - ArgoCD dashboard
-- Prometheus metrics
-- Alert manager rules
+- Status endpoint health checks
+- Application state reconciliation
 
 ### 7.2 Health Checks
 
@@ -252,10 +246,11 @@ Implement comprehensive health checks:
 - Multi-cluster support
 - Cross-cluster resources
 - Federation capabilities
+- Monitoring stack deployment
 
 ### 10.2 Improvements
 
-- Enhanced monitoring
 - Automated testing
 - Disaster recovery
 - Backup solutions
+- Enhanced observability
