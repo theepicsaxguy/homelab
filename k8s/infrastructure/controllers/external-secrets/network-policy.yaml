@@ -1,0 +1,12 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: external-secrets-webhook
+  namespace: external-secrets
+spec:
+  endpointSelector:
+    matchLabels:
+      app: external-secrets-webhook
+  ingress:
+  - fromEntities:
+    - kube-apiserver

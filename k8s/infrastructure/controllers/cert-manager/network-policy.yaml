@@ -1,0 +1,12 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  endpointSelector:
+    matchLabels:
+      app: webhook
+  ingress:
+  - fromEntities:
+    - kube-apiserver
