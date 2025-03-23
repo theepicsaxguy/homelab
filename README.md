@@ -121,8 +121,6 @@ If you’re ready to deploy your foolproof homelab, follow these steps:
    cd homelab
    ```
 
-````
-
 2. **Install Dependencies:** Make sure you have [Tofu](https://opentofu.org) installed along with any other
    prerequisites.
 
@@ -287,5 +285,3 @@ MIT License – See [LICENSE](LICENSE) for details.
 ## 🙏 Credits
 
 Special thanks to the inspiration and work behind [Vehagn's Homelab](https://github.com/theepicsaxguy/homelab).
-
-````
