@@ -1,117 +1,84 @@
 # Environment Strategy
 
-## Design Philosophy
+## Core Strategy Decisions
 
-We chose a single cluster with strong namespace isolation over multiple clusters because:
+### Environment Model
 
-1. **Resource Efficiency**
+**Decision:** Three-tier environment model (Development → Staging → Production)
 
-   - Shared control plane reduces overhead
-   - Better resource utilization across environments
-   - Simplified management and monitoring
+**Rationale:**
 
-2. **Consistent Security**
+- Balances testing thoroughness with operational overhead
+- Provides clear promotion path for changes
+- Allows proper validation without excessive complexity
+- Maintains consistent infrastructure across all tiers
 
-   - Same security policies across environments
-   - Unified authentication and RBAC
-   - Consistent network policies
+**Trade-offs:**
 
-3. **Progressive Delivery**
-   - Natural promotion path through namespaces
-   - Identical underlying infrastructure
-   - Real validation of production configs
+- More resource overhead than dev/prod only
+- Additional complexity in promotion process
+- Higher maintenance burden
 
-## Environment Characteristics
+### Resource Allocation
 
-### Development
+**Decision:** Progressive resource limits across environments
 
-**Purpose:** Fast iteration and testing
+**Rationale:**
 
-- Single replicas to save resources
-- Debug capabilities enabled
-- Relaxed network policies
-- Minimal resource requests
+- Development: Minimal resources for fast iteration
+- Staging: Production-like for accurate testing
+- Production: Full HA with guaranteed resources
 
-**Why:** Developers need quick feedback and easy debugging
+**Trade-offs:**
 
-### Staging
+- Higher total resource requirements
+- More complex resource management
+- Potential for environment-specific bugs
 
-**Purpose:** Production validation
+### Security Boundaries
 
-- Two replicas for basic HA testing
-- Limited debug access
-- Production-like security
-- Representative data
+**Decision:** Namespace-based isolation with strict network policies
 
-**Why:** Validate changes in a production-like environment without risk
+**Rationale:**
 
-### Production
+- Network isolation between environments
+- Role-based access control per namespace
+- Resource quotas for fair sharing
+- Independent secret management
 
-**Purpose:** Reliable service delivery
+**Trade-offs:**
 
-- Full HA with three+ replicas
-- No debug access
-- Strict security enforcement
-- Real user data
+- More complex policy management
+- Higher operational overhead
+- Increased setup complexity
 
-**Why:** Ensure reliable, secure service delivery
+## Implementation Status
 
-## Key Differences
+### Current Capabilities
 
-### Security Policies
+- Namespace isolation
+- Basic RBAC policies
+- Resource quotas
+- Network segregation
 
-- Dev: Basic policies, debug allowed
-- Staging: Production policies, some debug
-- Prod: Strict policies, no debug
+### Known Gaps
 
-### Resource Management
+1. Manual promotion process
+2. Basic validation gates
+3. Limited automation
+4. Simple rollback process
 
-- Dev: Minimal guaranteed resources
-- Staging: Representative allocation
-- Prod: Full production sizing
+## Next Steps
 
-### Access Controls
+Priority improvements needed:
 
-- Dev: Team-wide access
-- Staging: Limited team access
-- Prod: Restricted access
+1. Automated promotion workflow
+2. Enhanced validation gates
+3. Comprehensive testing
+4. Rollback automation
 
-## Common Elements
+## Related Documents
 
-These remain consistent across environments:
-
-- Base infrastructure services
-- Network architecture
-- Storage classes
-- Authentication methods
-
-## Promotion Process
-
-### Current Flow
-
-1. Changes tested in development
-2. Manually promoted to staging
-3. Validated in staging
-4. Manually promoted to production
-
-### Known Limitations
-
-1. Manual promotion steps
-2. Basic validation only
-3. No automated testing
-4. Limited rollback automation
-
-## Future Improvements
-
-Near-term improvements focus on validation:
-
-1. Automated security scanning
-2. Performance testing
-3. Configuration validation
-4. Promotion automation
-
-## Related Documentation
-
-- [Security Policies](../security/policies.md)
+- [Network Policies](../networking/policies.md)
 - [Resource Management](../best-practices/resources.md)
-- [Network Architecture](../networking/overview.md)
+- [Security Controls](../security/overview.md)

@@ -1,58 +1,103 @@
 # Infrastructure Architecture
 
-## Core Design Decisions
+## Key Architectural Decisions
 
-### Why Talos Linux
+### Single Cluster Strategy
 
-- Immutable, security-first design reduces attack surface
-- Automated updates with rollback capability
-- Built-in Kubernetes optimization
-- Minimal maintenance overhead
+**Decision:** Use a single Kubernetes cluster with strong namespace isolation instead of multiple clusters.
 
-### Why Cilium
+**Rationale:**
 
-- eBPF-based networking provides better performance than traditional solutions
-- Native Gateway API support eliminates need for separate ingress controller
-- Built-in service mesh capabilities without Istio complexity
-- Strong security through identity-based policies
+- Resource efficiency through shared control plane and worker nodes
+- Simplified management and monitoring overhead
+- Consistent security policies and controls across environments
+- Natural promotion path through namespaces while maintaining identical infrastructure
 
-### Why ArgoCD
+**Trade-offs:**
 
-- GitOps-only infrastructure prevents configuration drift
-- Automatic drift detection and correction
+- Less physical separation between environments
+- Potential for resource contention
+- More complex namespace-level security requirements
+
+### Immutable Infrastructure (Talos)
+
+**Decision:** Use Talos Linux as the base operating system.
+
+**Rationale:**
+
+- Zero-trust security model from the ground up
+- Automated, atomic updates with built-in rollback
+- Reduced attack surface through immutable design
+- Kubernetes-native OS eliminates unnecessary complexity
+
+**Trade-offs:**
+
+- Less flexibility for custom system modifications
+- Steeper learning curve for operations
+- Limited traditional debugging tools
+
+### Network Architecture (Cilium)
+
+**Decision:** Use Cilium for CNI, replacing both traditional networking and service mesh.
+
+**Rationale:**
+
+- Superior performance through eBPF vs iptables-based solutions
+- Unified networking eliminates multiple control planes
+- Native Gateway API support removes need for separate ingress controller
+- Identity-based security simplifies policy management
+
+**Trade-offs:**
+
+- More complex troubleshooting due to eBPF
+- Higher resource requirements than basic CNI
+- Limited traditional networking tools compatibility
+
+### Deployment Strategy (ArgoCD)
+
+**Decision:** Use ArgoCD as the sole deployment mechanism.
+
+**Rationale:**
+
+- Ensures all changes are tracked in Git
+- Automatic drift detection and reconciliation
 - Clear audit trail through Git history
-- Multi-cluster support for future expansion
+- Simplified rollback through version control
 
-## Current Architecture
+**Trade-offs:**
 
-### Infrastructure Layer (Wave 0-2)
+- Initial setup complexity
+- Learning curve for GitOps workflows
+- More steps for emergency changes
 
-- Base cluster services deploy first
-- Network and storage foundations before applications
-- Security components early in process
+## Current State
 
-### Application Layer (Wave 3-5)
+### Implemented
 
-- Progressive deployment through environments
-- Validation gates between stages
-- Resource limits increase with promotion
+- Immutable infrastructure with Talos
+- GitOps-based deployment pipeline
+- Network security with Cilium
+- Gateway API for ingress
+- Basic authentication with Authelia
 
-## Known Limitations
+### Known Limitations
 
-1. No current monitoring implementation
-2. Manual promotion between environments
-3. Basic security scanning only
-4. Limited automated testing
+1. Manual environment promotion process
+2. Limited automated testing
+3. Basic monitoring implementation
+4. Minimal automated security scanning
 
-## Planned Improvements
+## Next Steps
 
-- Monitoring stack implementation (Q2 2025)
-- Automated environment promotion
-- Enhanced security controls
-- Expanded testing framework
+Focus areas that directly address current limitations:
 
-## Related Decisions
+1. Automated promotion between environments
+2. Enhanced testing framework
+3. Comprehensive monitoring stack
+4. Advanced security controls
+
+## Related Documents
 
 - [Network Design](networking/overview.md)
-- [Storage Choices](storage/overview.md)
 - [Security Model](security/overview.md)
+- [Storage Architecture](storage/overview.md)

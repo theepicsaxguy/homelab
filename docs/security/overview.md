@@ -1,102 +1,102 @@
 # Security Architecture
 
-## Design Philosophy
+## Core Security Decisions
 
-### Why Zero Trust?
+### Zero-Trust Model
 
-We implement zero trust because:
+**Decision:** Implement zero-trust security from infrastructure up
 
-- Traditional perimeter security isn't sufficient for modern threats
-- Microservices require fine-grained access control
-- Dynamic environments need identity-based security
+**Rationale:**
+
+- Traditional perimeter security insufficient for modern threats
+- Dynamic microservice environments need identity-based security
 - GitOps requires strict change control
+- Containers demand fine-grained access control
 
-### Why Authelia?
+**Trade-offs:**
 
-Selected as our authentication provider because:
+- Higher initial complexity
+- More configuration overhead
+- Steeper learning curve
+
+### Authentication Strategy
+
+**Decision:** Authelia as central authentication provider
+
+**Rationale:**
 
 - Native Kubernetes integration
+- Lower resource usage than alternatives
 - Simple SSO implementation
 - OIDC support for automation
-- Lower resource usage than Keycloak
 
-### Why LLDAP?
+**Trade-offs:**
 
-Chose LLDAP over other directory services because:
+- Less mature than Keycloak
+- Fewer enterprise features
+- Smaller community
+
+### Directory Service
+
+**Decision:** LLDAP for user management
+
+**Rationale:**
 
 - Lightweight implementation
-- Simple user management
+- Simple management interface
 - Sufficient feature set
 - Easy backup/restore
 
-## Security Layers
+**Trade-offs:**
 
-### Infrastructure Security
+- Limited advanced features
+- Basic schema support
+- No multi-master replication
 
-**Talos Linux**
+### Secret Management
 
-- Immutable system design
-- Automated patching
-- Minimal attack surface
-- Built-in hardening
+**Decision:** Bitwarden Secrets Manager with operator
 
-**Network Security**
+**Rationale:**
 
-- Cilium network policies
-- Service mesh encryption
-- Gateway API controls
-- Default-deny stance
+- Native Kubernetes integration
+- Simple secret rotation
+- Automated sync support
+- Clear audit trail
 
-### Application Security
+**Trade-offs:**
 
-**Container Hardening**
+- Additional system dependency
+- Sync latency considerations
+- Premium features cost
 
-- Non-root execution
-- Read-only filesystems
-- Dropped capabilities
-- Resource limits
-
-**Access Control**
-
-- Centralized authentication
-- RBAC enforcement
-- Namespace isolation
-- Secret management
-
-## Current State
+## Current Status
 
 ### Implemented
 
 - Zero-trust network model
-- Service mesh encryption
-- Centralized authentication
-- RBAC policies
+- Central authentication
+- Basic RBAC policies
+- Secret management
 
-### Limitations
+### Known Gaps
 
-1. Basic audit logging
-2. Manual policy verification
-3. Limited security scanning
-4. Basic monitoring only
+1. Limited audit logging
+2. Basic policy verification
+3. Simple security scanning
+4. Manual secret rotation
 
-## Critical Workflows
+## Next Steps
 
-### Access Management
+Priority improvements:
 
-1. All requests authenticated
-2. Permissions via RBAC
-3. Network policies enforce
-4. Actions logged
+1. Enhanced audit system
+2. Automated policy testing
+3. Security scanning pipeline
+4. Automated secret rotation
 
-### Secret Handling
+## Related Documents
 
-1. Encrypted at rest
-2. Limited access scope
-3. Regular rotation
-4. Backup protection
-
-## Related Documentation
-
-- [Network Security](network-security.md)
-- [Access Control](access-control.md)
-- [Secret Management](secrets-management.md)
+- [Network Security](../networking/policies.md)
+- [Access Control](rbac.md)
+- [Secret Management](secrets.md)

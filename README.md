@@ -1,37 +1,35 @@
-# 🏠 **The Homelab That Refuses to Die**
+# 🏠 The Homelab That Refuses to Die
 
-#### _Because when life gets busy (and a kid is on the way), infrastructure shouldn’t be another toddler to babysit._
+#### _Because fixing endless VMs is for the birds—and my first kid is arriving soon!_
 
 ---
 
 ## 📌 Project Summary & Key Features
 
-**The Homelab That Refuses to Die** is a fully automated, GitOps-driven infrastructure solution designed for minimal
-downtime and rapid recovery. It leverages a blend of modern tools to create a self-healing, resilient homelab that
-minimizes manual intervention—letting you focus on what truly matters.
+**The Homelab That Refuses to Die** is a fully automated, GitOps-driven infrastructure built to be self-healing and
+nearly maintenance-free. It’s designed to rescue you from the endless cycle of VM fixes so you can focus on your growing
+family.
 
 **Key Features:**
 
-A fully automated, GitOps-driven infrastructure solution with:
-
-- Three-environment progression (dev → staging → prod)
-- Self-healing through ArgoCD
-- Environment-specific resource management
-- High availability in staging/production
-- Pure GitOps workflow
+- **Three-Stage Environment Progression:** Development → Staging → Production
+- **Pure GitOps Workflow:** All changes go through Git for full traceability and easy rollback.
+- **Self-Healing Infrastructure:** Leveraging ArgoCD to automatically reconcile your state.
+- **Zero Trust Security:** Enforced at every layer so you never worry about unauthorized changes.
+- **Rapid Recovery:** Disaster recovery in just a few commands.
 
 <div align="center" style="display: flex; justify-content: center; gap: 20px; align-items: center;">
   <a href="https://kubernetes.io">
     <img src="docs/assets/kubernetes-logo.svg" height="100px" alt="Kubernetes Logo">
-  </a>
-  <a href="https://www.proxmox.com">
-    <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px" alt="Proxmox VE Logo">
   </a>
   <a href="https://talos.dev">
     <img src="docs/assets/talos-logo.svg" height="100px" alt="Talos Linux Logo">
   </a>
   <a href="https://opentofu.org">
     <img src="docs/assets/tofu-on-light.svg" height="100px" alt="OpenTofu Logo">
+  </a>
+  <a href="https://www.proxmox.com">
+    <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px" alt="Proxmox Logo">
   </a>
 </div>
 
@@ -58,158 +56,63 @@ A fully automated, GitOps-driven infrastructure solution with:
 
 ---
 
-<details>
-  <summary>📑 Table of Contents</summary>
+## 📌 Why This Homelab?
 
-- [Project Summary & Key Features](#-project-summary--key-features)
-- [Quick Start Guide](#-quick-start-guide)
-- [Introduction & Motivation](#-introduction--motivation)
-- [Infrastructure & Applications](#-infrastructure--applications)
-  - [The Tech Stack](#the-tech-stack)
-  - [What’s Inside?](#whats-inside)
-- [Operational Excellence](#-operational-excellence)
-  - [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule)
-  - [Design Goals](#design-goals)
-  - [Performance Metrics](#performance-metrics)
-- [Project Journey & Future Vision](#-project-journey--future-vision)
-  - [Evolution: Lessons, Pitfalls & Epiphanies](#evolution-lessons-pitfalls--epiphanies)
-  - [Roadmap: What’s Next?](#roadmap-whats-next)
-- [Getting Involved](#-getting-involved)
-  - [Getting Started](#getting-started)
-  - [Contributing](#contributing)
-  - [Contributing Guidelines & Code of Conduct](#-contributing-guidelines--code-of-conduct)
-- [Community & Support](#-community--support)
-- [FAQ](#-faq)
-- [Final Thoughts](#final-thoughts)
-- [License](#license)
+I was fed up with manually fixing and maintaining multiple VMs and their operating systems. With a baby on the way, I
+needed a foolproof, low-maintenance system. This homelab is my answer:
 
-</details>
+- **Automation Overhead?** Gone.
+- **Manual Fixes at 3 AM?** Not happening.
+- **Downtime?** Reduced to a minimum.
+
+It's designed to be robust and self-recovering—so I can focus on my family rather than fighting infrastructure
+meltdowns.
 
 ---
 
-## 💖 Introduction & Motivation
-
-> **💡 Pro Tip:** Embrace chaos with a smile, a hearty laugh, and an endless cup of coffee!
-
-This project began as a **"let's learn Kubernetes"** experiment and quickly escalated into a full-blown **"automate my
-entire home before the baby arrives"** mission.
-
-For years, my lovingly handcrafted VMs were a ticking time bomb:
-
-- 🚨 **Something crashes** → 🛠 **Frantic manual fix** → ⏳ **Another meltdown in weeks** → 🔁 _Rinse, repeat, and cry
-  quietly at 3 AM._
-
-With a little one on the way (and a full plate of diapers, sleep-deprived nights, and a to-do list longer than a CVS
-receipt), I needed a homelab that:
-
-- ✅ **Self-heals** (because midnight debugging is a luxury I can’t afford)
-- ✅ **Rebuilds in 4 commands or less** (so I can spend more time on baby cuddles)
-- ✅ **Runs without babysitting** (automation for the win)
-
-Thus, this homelab was born—fully automated, GitOps-driven, and ready to survive chaos, spills, and the occasional
-tantrum.
-
----
-
-## 🖥 Infrastructure & Applications
+## 🖥 Infrastructure & Applications Overview
 
 ### Core Infrastructure
 
-Our infrastructure follows a strict GitOps-based organization:
+Our infrastructure is built on a GitOps foundation that makes everything reproducible and auditable.
 
-```
-k8s/
-├── infrastructure/          # Core Infrastructure
-│   ├── base/       # Base components
-│   └── overlays/   # Environment configs
-│       ├── dev/    # Development (Wave 0)
-│       ├── staging/# Staging (Wave 1)
-│       └── prod/   # Production (Wave 2)
-└── apps/          # Applications
-    ├── base/      # Base applications
-    └── overlays/  # App environments
-```
+**Key Components:**
+
+- **Talos Linux:** A Kubernetes-native OS that minimizes attack surface and maintenance.
+- **ArgoCD:** Our GitOps engine that ensures the cluster state always matches Git.
+- **Cilium:** Provides fast, secure networking with eBPF and native Gateway API support.
+- **Longhorn & Proxmox CSI:** Distributed storage solutions for resilience and scalability.
+- **Authelia & LDAP:** For centralized authentication and secure access control.
+
+_\*\*For more details, check out our [Architecture Deep Dive](docs/architecture.md)._
+
+### Environment Strategy
+
+We run one Kubernetes cluster and use robust namespace isolation to separate:
+
+- **Development:** Fast, minimal resources for rapid iteration.
+- **Staging:** A production-like environment for realistic testing.
+- **Production:** Fully high-availability with strict security controls.
+
+This approach optimizes resource use without sacrificing isolation or reliability.
 
 ### Technology Stack
 
-- **Talos Linux**: Kubernetes-native OS
-- **ArgoCD**: GitOps deployment engine
-- **Cilium**: eBPF-powered networking
-- **Kustomize**: Configuration management
-- **Bitwarden**: Secrets management
+- **Talos Linux**
+- **ArgoCD**
+- **Cilium**
+- **Kustomize**
+- **Bitwarden** (Secrets Management)
 
-### What’s Inside?
-
-#### **Core Infrastructure**
-
-- **Authentication:** Authelia, LDAP (keeping the riff-raff out so the baby can nap in peace)
-- **Monitoring:** Prometheus, Grafana, Loki (metrics to soothe even the most anxious parent)
-- **Storage:** Proxmox CSI, Longhorn, TrueNAS (distributed storage that scales with your dreams)
-- **Networking:** Cilium, CoreDNS, Gateway API (networking wizardry to keep things connected)
-
-#### **Applications**
-
-- **Jellyfin:** Because Plex is _so mainstream_ (and the baby’s already got good taste)
-- **Dev Environments:** For when you need to build, break, and rebuild (often simultaneously)
-- **Home Automation:** Making your home smarter while you catch a few winks
-- **And More:** Because the best ideas often come at 2 AM amidst diaper changes
-
-### Services Exposure
-
-#### Services Exposed via Subdomains
-
-- AdGuard: `adguard.kube.pc-tips.se`
-- Authelia: `authelia.kube.pc-tips.se`
-- Grafana: `grafana.kube.pc-tips.se`
-- Hubble: `hubble.kube.pc-tips.se`
-- Jellyfin: `jellyfin.kube.pc-tips.se`
-- Lidarr: `lidarr.kube.pc-tips.se`
-- Prowlarr: `prowlarr.kube.pc-tips.se`
-- Prometheus: `prometheus.kube.pc-tips.se`
-- Radarr: `radarr.kube.pc-tips.se`
-- Sonarr: `sonarr.kube.pc-tips.se`
-- Home Assistant: `haos.kube.pc-tips.se`
-- Proxmox: `proxmox.kube.pc-tips.se`
-- TrueNAS: `truenas.kube.pc-tips.se`
-- ArgoCD: `argocd.kube.pc-tips.se`
-
-#### Services Exposed via IPs
-
-- Unbound DNS: `10.25.150.252`
-- AdGuard DNS: `10.25.150.253`
-- Torrent: `10.25.150.225`
-- Whoami: `10.25.150.223`
-
-<details>
-  <summary>💡 Advanced Kubernetes Provider Configuration</summary>
-
-We now leverage a **performance-first approach** with `local.kubeconfig_data` derived from Talos resources. Our
-Kubernetes provider is set with:
-
-- `load_config_file = false`
-- `apply_retry_count = 3`
-
-_All in the name of rock-solid, GitOps-only deployments._
-
-</details>
-
----
-
-## 📝 Documentation
-
-Detailed docs in `/docs` - because even I forget how this all works sometimes:
-
-- [🏗 Architecture Deep Dive](docs/architecture.md)
-- [🌐 Network Magic Explained](docs/network-architecture.md)
-- [💾 Storage Setup](docs/storage-architecture.md)
-- [🔐 Security Model](docs/security-architecture.md)
-- [📊 Monitoring Stack](docs/monitoring-architecture.md)
+<div align="center">
+  <em>Because modern tech should work as hard as you do.</em>
+</div>
 
 ---
 
 ## 🚀 Quick Start Guide
 
-If you’re eager to deploy your homelab without delay, follow these concise steps:
+If you’re ready to deploy your foolproof homelab, follow these steps:
 
 1. **Clone the Repository:**
 
@@ -218,38 +121,38 @@ If you’re eager to deploy your homelab without delay, follow these concise ste
    cd homelab
    ```
 
-2. **Install Prerequisites:** Ensure you have [Tofu](https://opentofu.org) installed along with any other necessary
-   dependencies.
+````
 
-3. **Deploy Your Infrastructure:**
+2. **Install Dependencies:** Make sure you have [Tofu](https://opentofu.org) installed along with any other
+   prerequisites.
 
-   - Navigate to the infrastructure directory and run:
+3. **Deploy the Infrastructure:**
 
-     ```bash
-     cd tofu/kubernetes
-     tofu init && tofu apply
-     ```
+   ```bash
+   cd tofu/kubernetes
+   tofu init && tofu apply
+   ```
 
-   - Deploy Kubernetes workloads via ArgoCD:
+4. **Deploy Kubernetes Workloads via ArgoCD:**
 
-     ```bash
-     cd ../../k8s
-     tofu init && tofu apply
-     ```
+   ```bash
+   cd ../../k8s
+   tofu init && tofu apply
+   ```
 
-     _Refer to the [Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section for more
-     details._
+5. **Verify & Enjoy:** Check your deployment status and celebrate as your homelab comes to life—ready to self-heal and
+   keep you out of midnight fix sessions.
 
-4. **Verify & Enjoy:** Check your deployment status and celebrate as your homelab comes to life, ready to self-heal and
-   scale on its own.
+_For more detailed deployment instructions, see our
+[Disaster Recovery: The 4-Command Rule](#disaster-recovery-the-4-command-rule) section._
 
 ---
 
-## 🚀 Operational Excellence
+## 🛠 Operational Excellence
 
 ### Disaster Recovery: The 4-Command Rule
 
-When disaster strikes (and it will, like that unexpected diaper blowout), the homelab is designed to resurrect in
+When disaster strikes (like an unexpected VM meltdown—or a diaper blowout), your homelab is designed to resurrect in
 minutes:
 
 ```bash
@@ -260,82 +163,66 @@ cd tofu/kubernetes
 # 2. Deploy the infrastructure
 tofu init && tofu apply
 
-# 3. Deploy Kubernetes workloads via ArgoCD
+# 3. Deploy workloads via ArgoCD
 cd ../../k8s
 tofu init && tofu apply
 ```
 
-> **Quick Note:** Back online faster than you can say, "Where did my sanity go?" 😅
+> **Note:** Back online faster than you can say, “I need more sleep!” 😅
 
-#### Disaster Recovery Flowchart
-
-Below is a Mermaid diagram illustrating the disaster recovery process in all its quirky glory:
+A quick flowchart:
 
 ```mermaid
 flowchart TD
     A[Clone Repository] --> B[Deploy Infrastructure]
-    B --> C[Deploy Kubernetes Workloads via ArgoCD]
+    B --> C[Deploy Workloads via ArgoCD]
     C --> D[Homelab Up and Running!]
-    D --> E[Celebrate with Baby Giggles & Caffeine]
+    D --> E[Celebrate with Baby Giggles & Coffee]
 ```
 
-### Design Goals
+---
 
-- 🛠 **Minimal Overhead:** If I have to babysit my homelab, I’ve already lost.
-- 🔄 **Self-Healing:** Break it, and it’ll fix itself—miracles of modern tech.
-- 🚀 **Rapid Recovery:** Total disaster? Rebuild in minutes so you can focus on playtime.
-- 🛡 **Zero Trust Security:** Authentication everywhere, encryption always (because even your baby’s secrets matter).
-- ⚡ **Performance Tuned:** Leveraging eBPF, SSD caching, and optimized storage to keep pace with your busy life.
+## 📝 Documentation & Further Reading
 
-### Performance Metrics
+For the geekier details and in-depth configurations, dive into:
 
-Let's break down the numbers (because numbers are fun, especially when they tell a story):
+- [Architecture Deep Dive](docs/architecture.md)
+- [Network Magic Explained](docs/network-architecture.md)
+- [Storage Setup](docs/storage-architecture.md)
+- [Security Model](docs/security-architecture.md)
+- [Monitoring Stack Overview](docs/monitoring-architecture.md)
 
-| **Metric**                   | **Value**           | **Comment**                                                  |
-| ---------------------------- | ------------------- | ------------------------------------------------------------ |
-| Pod-to-pod latency           | _<1ms_              | Thanks to Cilium’s lightning-fast routing ⚡                 |
-| Storage throughput           | _Up to 1GB/s_       | Depending on the backend and your coffee intake ☕           |
-| Cluster startup time         | _~15 minutes_       | Faster than your morning routine ☀️                          |
-| Hours spent tweaking configs | _Let’s just say..._ | There’s a story there… (and probably a few sleepless nights) |
+_These docs contain all the YAML and configuration specifics so you can keep the main README lean and focused._
 
 ---
 
 ## 🌟 Project Journey & Future Vision
 
-### Evolution: Lessons, Pitfalls & Epiphanies
+### Evolution
 
-1. **K3s Beginnings:** Simple and lightweight, yet still wrestling with the complexities of Linux management.
-2. **Talos Transition:** Say goodbye to SSH and systemd; hello to a Kubernetes-only world where magic happens.
-3. **Rancher Rejection:** Realized that **Kustomize + ArgoCD** is the true GitOps dream team.
-4. **VM Woes:** Manual fixes became the nemesis of progress (and sanity).
-5. **Embracing GitOps:** Now, **Git is the sole source of truth.** If it’s not in Git, does it even exist?
+- **From VM Frustration:** Tired of endless manual fixes.
+- **Kubernetes Epiphany:** Embraced a GitOps-driven approach for self-healing.
+- **Talos Transition:** A move toward immutable, secure infrastructure.
+- **GitOps All the Way:** If it’s not in Git, it doesn’t exist.
 
-### Roadmap: What’s Next?
+### Roadmap
 
-#### **High Priority**
+**High Priority:**
 
-- **Hybrid Cloud Backups:** Offload backups to S3 or Backblaze B2, because redundancy is key.
-- **Node Autoscaling:** Dynamic scaling to keep pace with unpredictable life (and unpredictable kids).
-- **Disaster Recovery Testing:** Automated DR testing to ensure your 4-command recovery always works.
+- **Hybrid Cloud Backups:** Offload backups for extra redundancy.
+- **Node Autoscaling:** Let the cluster scale dynamically.
+- **Automated Disaster Recovery:** More tests, less manual intervention.
 
-#### **Security & Stability**
+**Security & Stability:**
 
-- **Enhanced Security Layers:** OPA, Linkerd, Falco, and tighter RBAC to keep the bad guys out.
-- **Stricter Network Policies:** Fine-tuning Cilium to lock things down like Fort Knox.
-- **Automated Compliance:** Security scanning woven into the GitOps pipeline for peace of mind.
+- **Enhanced Security Layers:** Tighter RBAC and network policies.
+- **Stricter Monitoring:** Upgrading our observability stack for proactive alerts.
 
-#### **Performance & Optimization**
+**Performance & Optimization:**
 
-- **Storage Refinements:** Optimized I/O and SSD caching to handle your workload like a champ.
-- **CI/CD Enhancements:** More automation, less manual labor—because you’ve got better things to do.
-- **Advanced Observability:** Extra Grafana dashboards and Loki improvements to keep you in the know.
-
-#### **Crazy Experiments**
-
-- **KubeEdge:** Running workloads on low-power edge devices (because why not?)
-- **Carpenter:** A reimagined cluster autoscaler (for the overachiever in all of us)
-- **Multi-Cluster Federation:** Because one cluster is never enough to contain our ambitions.
-- **Home Assistant + Kubernetes:** Integrating smart home tech to keep your nest as organized as your code.
+- **Storage Tuning:** Optimized I/O and SSD caching.
+- **CI/CD Enhancements:** More automation to reduce manual work.
+- **Advanced Observability:** More dashboards and metrics to keep you in the know.
 
 ---
 
@@ -352,55 +239,53 @@ Ready to join the revolution? Here’s your starter pack:
    cd homelab
    ```
 
-2. **Install Dependencies:** Make sure you have [Tofu](https://opentofu.org) and any other prerequisites installed.
+2. **Install Dependencies:** Ensure you have [Tofu](https://opentofu.org) and other prerequisites installed.
 
-3. **Deploy:** Follow the Disaster Recovery section above to deploy your homelab with confidence.
+3. **Deploy:** Follow the Quick Start Guide above to see the homelab in action.
 
-4. **Kick Back & Enjoy:** Sit back, relax, and watch as your infrastructure self-heals—so you can focus on life’s more
-   important moments (like baby giggles).
+4. **Contribute:** Fork, branch, and open a pull request with your ideas or fixes.
 
-### Contributing
+### Contributing Guidelines
 
-Your ideas, fixes, and love for overengineering are welcome here! If you’d like to contribute:
-
-- **Fork the Repo**
-- **Create a Feature Branch:** `git checkout -b feature/your-awesome-idea`
-- **Commit Your Changes** and open a Pull Request
-
-Every little contribution helps make this homelab even more resilient (and maybe even a bit more fun).
+- **Follow GitOps:** All changes must be tracked in Git.
+- **Keep It Lean:** Help us keep the main docs uncluttered—details go in the dedicated docs.
+- **Be Respectful:** Follow our [Code of Conduct](CONTRIBUTING.md).
 
 ---
 
 ## 💬 Community & Support
 
-Join our community to ask questions, share your ideas, or just chat about all things homelab:
+Join our community to chat, ask questions, or share your homelab adventures:
 
-- **GitHub Discussions/Issues:** Use the [GitHub issues](https://github.com/theepicsaxguy/homelab/issues) for bug
-  reports and feature requests.
-- **Documentation:** Detailed documentation is available in the [docs folder](docs/).
+- **GitHub Issues & Discussions:** [Join Here](https://github.com/theepicsaxguy/homelab/issues)
+- **Documentation:** Detailed docs are available in the [docs folder](docs/).
 
-If you encounter broken links or have accessibility suggestions, please open an issue so we can address them promptly.
+If you find broken links or have suggestions, please open an issue.
 
 ---
 
 ## 🤔 Final Thoughts
 
-This isn’t just another homelab—it’s a love letter to overengineering, automation, and the beautiful chaos of life. It’s
-built for:
+This isn’t just a homelab—it’s my escape from endless VM fixes and the chaos of life, engineered to be self-healing so I
+can enjoy family time. It’s built for:
 
-- **Automation:** So you can sleep in on weekends.
-- **Rapid Recovery:** Because even the best laid plans occasionally go awry.
-- **Zero Headaches:** Let the system fix itself while you focus on the little one coming up.
+- **Automation:** So you (and I) can sleep in on weekends.
+- **Rapid Recovery:** Because a few commands should bring everything back online.
+- **Zero Headaches:** Let the system work its magic while you focus on what matters.
 
-When things break, they get fixed. When all seems lost, a quick set of commands restores order. _All to free up time for
-what truly matters: family, love, and a little bit of code-induced adrenaline._
+When things break, they get fixed. When chaos ensues, a quick command restores order. And that, my friends, is how you
+free up time for family, love, and a bit of coding adrenaline.
 
 ---
 
 ## 📄 License
 
-MIT License - See [LICENSE](LICENSE) for details
+MIT License – See [LICENSE](LICENSE) for details.
 
-### Credits
+---
 
-This wouldnt be possible without [Vehagn's homelab](https://github.com/theepicsaxguy/homelab)
+## 🙏 Credits
+
+Special thanks to the inspiration and work behind [Vehagn's Homelab](https://github.com/theepicsaxguy/homelab).
+
+````

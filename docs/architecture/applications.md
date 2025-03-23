@@ -1,227 +1,100 @@
 # Application Architecture
 
-## Overview
+## Core Application Decisions
 
-This document describes the application deployment architecture in our homelab infrastructure, following GitOps
-principles and using ArgoCD as the deployment mechanism.
+### Deployment Strategy
 
-## Structure
+**Decision:** Use ApplicationSets for all deployments
 
-```
-k8s/applications/
-├── base/                 # Base configurations
-│   ├── external/        # External service integrations
-│   ├── media/          # Media applications
-│   └── tools/          # Development tools
-└── overlays/            # Environment-specific configurations
-    ├── dev/            # Development environment
-    ├── staging/        # Staging environment
-    └── prod/           # Production environment
-```
+**Rationale:**
 
-## Deployment Strategy
+- Single source of truth for app definitions
+- Automated synchronization across environments
+- Simplified promotion path
+- Consistent configuration management
 
-### Environment Progression
+**Trade-offs:**
 
-1. Development (Wave 3)
+- More complex initial setup
+- Additional abstraction layer
+- Steeper learning curve
 
-   - Initial deployment target
-   - Fast iteration cycle
-   - Minimal resource requirements
-   - Basic validation
+### Resource Management
 
-2. Staging (Wave 4)
+**Decision:** Progressive resource allocation model
 
-   - Pre-production validation
-   - Representative resources
-   - Full feature testing
-   - Integration validation
+**Rationale:**
 
-3. Production (Wave 5)
-   - Final deployment target
-   - Full resource allocation
-   - Zero-downtime updates
-   - Complete validation
+- Development: Minimal resources for rapid iteration
+- Staging: Representative of production
+- Production: Full HA with guaranteed resources
 
-### High Availability Requirements
+**Trade-offs:**
 
-#### Development
+- Higher total resource usage
+- More complex capacity planning
+- Potential environment differences
 
-- Single replica acceptable
-- Basic health checks
-- Debug capabilities
-- Fast recovery
+### High Availability Model
 
-#### Staging
+**Decision:** Environment-specific HA requirements
 
-- Two replicas minimum
-- Pod anti-affinity
-- Automated recovery
-- Health monitoring
+**Rationale:**
 
-#### Production
+- Development: Single replica for speed
+- Staging: Basic HA for testing
+- Production: Full HA with anti-affinity
 
-- Three replicas minimum
-- Strict anti-affinity
-- Zero-downtime updates
-- Full monitoring (planned)
+**Trade-offs:**
 
-## Application Categories
+- Resource overhead in higher environments
+- More complex deployment patterns
+- Additional failure scenarios to test
 
-### External Services
+### Security Implementation
 
-#### Proxmox Integration
+**Decision:** Zero-trust with centralized authentication
 
-- Health monitoring
-- API integration
-- Resource management
-- Metrics collection (planned)
+**Rationale:**
 
-#### TrueNAS Integration
+- Single sign-on across all applications
+- Consistent authentication flow
+- Centralized access control
+- Unified audit logging
 
-- Storage provisioning
-- Backup coordination
-- Data management
-- Performance monitoring (planned)
+**Trade-offs:**
 
-#### Home Assistant Integration
+- Additional system dependency
+- More complex initial setup
+- Higher operational overhead
 
-- Automation control
-- Device management
-- State monitoring
-- Event handling
+## Current Status
 
-### Media Applications
+### Implemented
 
-#### Core Components
+- ApplicationSet-based deployments
+- Basic environment promotion
+- Resource limit enforcement
+- Authentication integration
 
-- Plex media server
-- Jellyfin alternative
-- arr-stack (Sonarr, Radarr, etc.)
-- Media management tools
+### Known Gaps
 
-#### Configuration
+1. Manual promotion process
+2. Basic validation gates
+3. Limited automated testing
+4. Simple monitoring
 
-- Persistent storage
-- Transcoding support
-- Hardware acceleration
-- Network optimization
+## Next Steps
 
-### Development Tools
+Priority improvements:
 
-#### Debug Tools
+1. Automated promotion workflow
+2. Enhanced validation testing
+3. Comprehensive monitoring
+4. Advanced security controls
 
-- Network utilities
-- Diagnostic containers
-- Testing frameworks
-- Monitoring tools (planned)
+## Related Documents
 
-#### Utility Containers
-
-- Build environments
-- CI/CD tools
-- Development services
-- Testing platforms
-
-## Security Considerations
-
-### Authentication
-
-- Authelia SSO integration
-- OIDC authentication
-- Role-based access
-- MFA enforcement
-
-### Authorization
-
-- Kubernetes RBAC
-- Network policies
-- Pod security
-- Resource quotas
-
-### Data Protection
-
-- Encrypted storage
-- Secure communications
-- Backup encryption
-- Access auditing
-
-## Resource Management
-
-### Default Limits
-
-#### Development
-
-```yaml
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 256Mi
-```
-
-#### Staging/Production
-
-```yaml
-resources:
-  requests:
-    cpu: 200m
-    memory: 256Mi
-  limits:
-    cpu: 1000m
-    memory: 512Mi
-```
-
-### Storage Configuration
-
-- Dynamic provisioning
-- Capacity planning
-- Performance tiers
-- Backup integration
-
-## Current Limitations
-
-1. Basic health monitoring
-2. Manual scaling
-3. Limited automation
-4. Basic metrics only
-
-## Security Policies
-
-### Network Security
-
-- Default deny-all
-- Explicit allows only
-- Namespace isolation
-- Service mesh mTLS
-
-### Pod Security
-
-- Non-root execution
-- Read-only root filesystem
-- Dropped capabilities
-- Resource constraints
-
-### High Availability
-
-- Pod anti-affinity
-- Topology spread
-- Disruption budgets
-- Recovery automation
-
-## Future Enhancements
-
-1. Monitoring stack integration
-2. Automated scaling
-3. Enhanced automation
-4. Advanced metrics
-5. Performance optimization
-
-## Related Documentation
-
-- [Environment Configuration](environments.md)
-- [Security Guidelines](../security/overview.md)
-- [Network Architecture](../networking/overview.md)
-- [Storage Configuration](../storage/overview.md)
+- [Environment Strategy](environments.md)
+- [Resource Management](../best-practices/resources.md)
+- [Security Controls](../security/overview.md)

@@ -1,68 +1,95 @@
 # Network Architecture
 
-## Key Decisions
+## Core Network Decisions
 
-### Why Cilium?
+### CNI Selection
 
-We chose Cilium over other CNIs because:
+**Decision:** Use Cilium as the primary CNI and service mesh
 
-- eBPF-based networking provides better performance than iptables
-- Native Gateway API support eliminates need for separate ingress controller
-- Built-in service mesh avoids Istio complexity
-- Identity-based security policies are more maintainable than IP-based
+**Rationale:**
 
-### Why Gateway API?
+- eBPF provides significant performance benefits over iptables
+- Single control plane for networking, security, and observability
+- Native Gateway API support eliminates separate ingress controller
+- Built-in service mesh removes Istio complexity
 
-Selected over Ingress because:
+**Trade-offs:**
 
-- More expressive routing capabilities
-- Better security model
-- Native TLS handling
-- Future-proof API design
+- Higher complexity in debugging network issues
+- Requires newer kernel versions
+- More resource intensive than basic CNIs
 
-### Why Service Mesh?
+### Ingress Strategy
 
-Using Cilium's built-in service mesh because:
+**Decision:** Use Gateway API instead of Ingress resources
 
-- Simpler than dedicated service mesh
-- Lower resource overhead
-- Native integration with CNI
-- Sufficient features for our needs
+**Rationale:**
 
-## Current Implementation
+- More powerful routing capabilities
+- Better security model through explicit policies
+- Native TLS handling and cert management
+- Future-proof API design vs legacy Ingress
 
-### Network Flow
+**Trade-offs:**
 
-1. External traffic → Gateway API
-2. Gateway → Authelia for auth
-3. Authelia → Backend services
-4. Inter-service via service mesh
+- Newer standard with less ecosystem support
+- More complex configuration
+- Limited legacy application support
 
-### Security Model
+### Service Mesh Implementation
 
-- Default deny-all
-- Explicit allow rules
-- Identity-based policies
-- Encrypted pod traffic
+**Decision:** Use Cilium's built-in service mesh capabilities
+
+**Rationale:**
+
+- Avoids additional control plane overhead
+- Native integration with CNI layer
+- Lower resource requirements than Istio
+- Sufficient feature set for current needs
+
+**Trade-offs:**
+
+- Fewer advanced features than dedicated mesh
+- Limited ecosystem integrations
+- Less granular traffic control
+
+## Security Model
+
+### Current Implementation
+
+**Decision:** Zero-trust network model with default deny
+
+**Rationale:**
+
+- All traffic explicitly allowed through policies
+- Identity-based security instead of IP-based
+- Encrypted pod-to-pod communication
+- Granular access control at L7
+
+**Trade-offs:**
+
+- More complex initial setup
+- Higher learning curve
+- Additional policy maintenance
 
 ## Known Limitations
 
-1. Basic traffic metrics only
-2. Manual policy verification
-3. Limited automated testing
-4. Basic monitoring integration
+1. Basic traffic monitoring
+2. Limited policy automation
+3. Manual certificate management
+4. Simple load balancing
 
-## Planned Improvements
+## Next Steps
 
-Focusing on immediate needs:
+Priority improvements:
 
-1. Enhanced monitoring
-2. Policy testing
-3. Traffic analysis
-4. Performance optimization
+1. Enhanced traffic visibility
+2. Automated policy generation
+3. Advanced load balancing
+4. Certificate automation
 
-## Related Decisions
+## Related Documents
 
-- [Security Architecture](../security/overview.md)
-- [Service Registry](../service-registry.md)
+- [Network Policies](policies.md)
+- [DNS Configuration](dns.md)
 - [Load Balancing](load-balancing.md)
