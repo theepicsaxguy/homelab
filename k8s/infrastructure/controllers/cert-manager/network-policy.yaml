@@ -4,9 +4,30 @@ metadata:
   name: cert-manager
   namespace: cert-manager
 spec:
-  endpointSelector:
-    matchLabels:
-      app: webhook
+  endpointSelector: {}
   ingress:
-  - fromEntities:
-    - kube-apiserver
+    - fromEndpoints:
+        - {}
+    - fromEntities:
+        - cluster
+  egress:
+    - toEndpoints:
+        - {}
+    - toEntities:
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
