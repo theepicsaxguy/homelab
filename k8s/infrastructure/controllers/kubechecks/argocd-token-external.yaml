@@ -18,4 +18,4 @@ spec:
   data:
     - secretKey: argocd-api-token
       remoteRef:
-        key: 0d2a2732-db70-49b7-b64a-b29400a92230 # This should be updated to the correct Bitwarden secret UUID
+        key: 0d2a2732-db70-49b7-b64a-b29400a92230

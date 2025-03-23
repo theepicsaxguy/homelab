@@ -15,7 +15,6 @@ spec:
             selector:
               matchLabels:
                 component: apiserver
-            namespace: default
       toPorts:
         - ports:
             - port: "443"
