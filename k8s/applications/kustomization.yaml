@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - project.yaml
 - external
+- ai
 #- media
 - tools
 
