@@ -2,6 +2,20 @@ machine:
   kubelet:
     clusterDNS:
       - 10.96.0.10
+    extraMounts:
+      - destination: /var/lib/longhorn
+        type: bind
+        source: /var/lib/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
+  sysctls:
+    vm.nr_hugepages: "1024"
+  kernel:
+    modules:
+      - name: nvme_tcp
+      - name: vfio_pci
   network:
     hostname: ${hostname}
   nodeLabels:
