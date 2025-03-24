@@ -5,8 +5,10 @@ metadata:
   namespace: gateway
 spec:
   dnsNames:
+    - '*.pc-tips.se'
+    - pc-tips.se
     - '*.kube.pc-tips.se'
-    - kube.pc-tips.se
+    - 'kube.pc-tips.se'
   issuerRef:
     name: cloudflare-issuer
     kind: ClusterIssuer

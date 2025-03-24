@@ -1,37 +1,24 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-argocd-full
-  namespace: argocd
+  name: allow-monitoring
+  namespace: monitoring
 spec:
+  description: "Allow monitoring components to access metrics endpoints across the cluster"
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/part-of: argocd
+      io.kubernetes.pod.namespace: monitoring
   ingress:
+    # Allow all pods within monitoring namespace
     - fromEndpoints:
-        - {}
-    - fromEntities:
-        - cluster
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-            - port: "443"
-              protocol: TCP
-    - fromEntities:
-        - cluster
-    - fromEndpoints:
-        - {}
-    - fromEntities:
-        - world
-      toPorts:
-        - ports:
-            - port: "443"
-        - ports:
-            - port: "80"
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
   egress:
-    - toEntities:
-        - cluster
+    # Allow all pods within monitoring namespace
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+    # Allow DNS resolution
     - toEndpoints:
         - matchLabels:
             k8s-app: kube-dns
@@ -41,22 +28,24 @@ spec:
               protocol: UDP
             - port: "53"
               protocol: TCP
+    # Allow access to all metrics endpoints in cluster
     - toEndpoints:
-        - {}
+        - matchLabels: {}
       toPorts:
         - ports:
-            - port: "6379"
+            - port: "9090"
+              protocol: TCP
+            - port: "9100"
+              protocol: TCP
+            - port: "9153"
+              protocol: TCP
+            - port: "9402"
               protocol: TCP
             - port: "8080"
               protocol: TCP
-            - port: "8081"
+            - port: "10254"
               protocol: TCP
-            - port: "8082"
-              protocol: TCP
-            - port: "8083"
-              protocol: TCP
-    - toEndpoints:
-        - {}
+    # Allow access to Kubernetes API
     - toServices:
         - k8sServiceSelector:
             selector:
@@ -66,12 +55,10 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
-    - toEntities:
-        - world
+    # Allow external alerts (if needed)
     - toEntities:
         - world
       toPorts:
         - ports:
             - port: "443"
-        - ports:
-            - port: "80"
+              protocol: TCP

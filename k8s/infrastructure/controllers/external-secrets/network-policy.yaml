@@ -1,33 +1,62 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: external-secrets-webhook
+  name: allow-external-secrets
   namespace: external-secrets
 spec:
-  endpointSelector: {}
+  description: "Allow external-secrets to function and be accessed by other namespaces"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: external-secrets
   ingress:
+    # Allow all pods within external-secrets namespace
     - fromEndpoints:
-        - {}
-    - fromEntities:
-        - cluster
+        - matchLabels:
+            io.kubernetes.pod.namespace: external-secrets
+    # Allow webhook access from any namespace
+    - fromEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
   egress:
-    - toEndpoints:
-        - {}
-    - toEntities:
-        - cluster
+    # Allow all pods within external-secrets namespace
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
+            io.kubernetes.pod.namespace: external-secrets
+    # Allow DNS resolution
+    - toEndpoints:
+        - matchLabels:
             k8s-app: kube-dns
       toPorts:
         - ports:
             - port: "53"
               protocol: UDP
-          rules:
-            dns:
-              - matchPattern: "*"
+            - port: "53"
+              protocol: TCP
+    # Allow access to Kubernetes API
+    - toServices:
+        - k8sServiceSelector:
+            selector:
+              matchLabels:
+                provider: kubernetes
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Allow access to external secret providers (AWS, Azure, etc)
     - toEntities:
         - world
       toPorts:
         - ports:
             - port: "443"
+              protocol: TCP
+    # Allow metrics endpoints for monitoring
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
