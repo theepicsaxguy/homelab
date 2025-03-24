@@ -10,6 +10,20 @@ machine:
     extraArgs:
       # Needed for Netbird agent https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
+    extraMounts:
+      - destination: /var/lib/longhorn
+        type: bind
+        source: /var/lib/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
+  sysctls:
+    vm.nr_hugepages: "1024"
+  kernel:
+    modules:
+      - name: nvme_tcp
+      - name: vfio_pci
   network:
     hostname: ${hostname}
     interfaces:
