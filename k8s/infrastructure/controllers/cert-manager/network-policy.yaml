@@ -31,3 +31,68 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cert-manager
+  namespace: cert-manager
+spec:
+  description: "Allow cert-manager to function and be accessed by other namespaces"
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+  ingress:
+    # Allow all pods within cert-manager namespace
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cert-manager
+    # Allow webhook access from any namespace
+    - fromEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "9402"
+              protocol: TCP
+  egress:
+    # Allow all pods within cert-manager namespace
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cert-manager
+    # Allow DNS resolution
+    - toEndpoints:
+        - matchLabels:
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    # Allow access to Kubernetes API
+    - toServices:
+        - k8sServiceSelector:
+            selector:
+              matchLabels:
+                provider: kubernetes
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Allow access to ACME endpoints (Let's Encrypt, etc)
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Allow metrics endpoints for monitoring
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+      toPorts:
+        - ports:
+            - port: "9402"
+              protocol: TCP

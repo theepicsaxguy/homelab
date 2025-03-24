@@ -11,6 +11,7 @@ commonLabels:
 
 resources:
 - ns.yaml
+- base-network-policy.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
