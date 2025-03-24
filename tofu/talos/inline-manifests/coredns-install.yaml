@@ -99,14 +99,16 @@ metadata:
 spec:
   selector:
     k8s-app: coredns
-  clusterIP: 10.96.0.10
   ports:
-    - protocol: UDP
+    - name: dns-udp
+      protocol: UDP
       port: 53
       targetPort: 53
-    - protocol: TCP
+    - name: dns-tcp
+      protocol: TCP
       port: 53
       targetPort: 53
-    - protocol: TCP
+    - name: metrics
+      protocol: TCP
       port: 9153
       targetPort: 9153
