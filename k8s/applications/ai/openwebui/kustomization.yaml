@@ -1,8 +1,8 @@
 resources:
-  - open-webui.yaml
+  - namespace.yaml
   - ollama-service.yaml
   - ollama-statefulset.yaml
   - webui-deployment.yaml
   - webui-service.yaml
-  - webui-ingress.yaml
+  - http-route.yaml
   - webui-pvc.yaml

@@ -23,7 +23,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: pc-tips.se
+      hostname: kube.pc-tips.se
       tls:
         certificateRefs:
           - kind: Secret
