@@ -1,0 +1,20 @@
+prometheus:
+  prometheusSpec:
+    nodeSelector:
+      topology.kubernetes.io/zone: abel
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          volumeName: pv-prometheus
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10G
+          selector:
+            matchLabels:
+              app: prometheus
+
+nodeExporter:
+  enabled: false

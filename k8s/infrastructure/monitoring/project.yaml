@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: monitoring
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/vehagn/homelab'
+    - 'https://prometheus-community.github.io/helm-charts'
+  destinations:
+    - namespace: 'argocd'
+      server: '*'
+    - namespace: 'kube-system'
+      server: '*'
+    - namespace: 'monitoring'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
