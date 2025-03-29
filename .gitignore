@@ -10,7 +10,7 @@ output
 *.tfstate
 *.tfstate.*
 
-*.tfvars
+terraform.tfvars
 *.tfvars.json
 
 *.lock.hcl

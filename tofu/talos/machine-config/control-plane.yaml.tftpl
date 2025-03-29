@@ -1,78 +1,20 @@
 machine:
-  certSANs:
-    - ${cluster.vip}     # The VIP
-    - ${node_ip}      # The node's own IP
-    - ${cluster.endpoint}
-
   kubelet:
-    clusterDNS:
-      - 10.96.0.10
-    extraArgs:
-      # Needed for Netbird agent https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
-      allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
-    extraMounts:
-      - destination: /var/lib/longhorn
-        type: bind
-        source: /var/lib/longhorn
-        options:
-          - bind
-          - rshared
-          - rw
-  sysctls:
-    vm.nr_hugepages: "1024"
-  kernel:
-    modules:
-      - name: nvme_tcp
-      - name: vfio_pci
-  network:
-    hostname: ${hostname}
-    interfaces:
-      - interface: eth0
-        dhcp: true
-        vip:
-          ip: ${cluster.vip}
-
-  nodeLabels:
-    topology.kubernetes.io/region: ${cluster_name}
-    topology.kubernetes.io/zone: ${node_name}
+    ${indent(4, kubelet)}
 
 cluster:
-  coreDNS:
-    disabled: true
-  allowSchedulingOnControlPlanes: false
-  clusterName: kube.pc-tips.se
+  allowSchedulingOnControlPlanes: true
   apiServer:
-    # extraArgs:
-    #   oidc-issuer-url: https://authelia.kube.pc-tips.se
-    #   oidc-client-id: kubectl
-    #   oidc-username-claim: preferred_username
-    #   oidc-username-prefix: 'authelia:'
-    #   oidc-groups-claim: groups
-    #   oidc-groups-prefix: 'authelia:'
+    ${indent(4, api_server)}
   network:
-    dnsDomain: kube.pc-tips.se
     cni:
       name: none
   proxy:
     disabled: true
-  extraManifests:
-    - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
-    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
-  inlineManifests:
-  - name: cilium-values
-    contents: |
-      ---
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: cilium-values
-        namespace: kube-system
-      data:
-        values.yaml: |-
-          ${indent(10, cilium_values)}
-  - name: cilium-bootstrap
-    contents: |
-      ${indent(6, cilium_install)}
-  - name: coredns-bootstrap
-    contents: |
-      ${indent(6, coredns_install)}
+  discovery:
+    enabled: true
+    registries:
+      service:
+        disabled: false
+  extraManifests: ${extra_manifests}
+  inlineManifests: ${inline_manifests}

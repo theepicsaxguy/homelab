@@ -2,9 +2,9 @@ variable "image" {
   description = "Talos image configuration"
   type = object({
     factory_url = optional(string, "https://factory.talos.dev")
-    schematic = string
-    version   = string
-    update_schematic = optional(string)
+    schematic_path = string
+    version        = string
+    update_schematic_path = optional(string)
     update_version = optional(string)
     arch = optional(string, "amd64")
     platform = optional(string, "nocloud")
@@ -15,13 +15,21 @@ variable "image" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name              = string
-    endpoint          = string
-    gateway           = string
-    vip               = string
-    talos_version     = string
-    proxmox_cluster   = string
-    kubernetes_version = optional(string, "1.32.0")
+    name               = string
+    endpoint           = string
+    vip = optional(string)
+    gateway            = string
+    subnet_mask = optional(string, "24")
+    talos_machine_config_version = optional(string)
+    proxmox_cluster    = string
+    kubernetes_version = string
+    extra_manifests = optional(list(string))
+    kubelet = optional(string)
+    api_server = optional(string)
+    cilium = object({
+      bootstrap_manifest_path = string
+      values_file_path        = string
+    })
   })
 }
 
@@ -30,44 +38,14 @@ variable "nodes" {
   type = map(object({
     host_node     = string
     machine_type  = string
-    datastore_id = optional(string, "rpool3")
+    datastore_id = optional(string, "rpool2")
     ip            = string
+    dns = optional(list(string))
     mac_address   = string
     vm_id         = number
     cpu           = number
     ram_dedicated = number
     update = optional(bool, false)
     igpu = optional(bool, false)
-    disks = optional(map(object({
-      size = string
-      type = string
-    })), {})
   }))
 }
-
-variable "cilium" {
-  description = "Cilium configuration"
-  type = object({
-    values  = string
-    install = string
-  })
-}
-
-variable "coredns" {
-  description = "CoreDNS configuration"
-  type = object({
-    install = string
-  })
-}
-
-variable "inline_manifests" {
-  description = "Inline manifests to apply after bootstrap with dependencies"
-  type = list(object({
-    name = string
-    content = string
-    dependencies = optional(list(string), [])
-  }))
-  default = []
-}
-
-
