@@ -30,6 +30,10 @@ variable "cluster" {
       bootstrap_manifest_path = string
       values_file_path        = string
     })
+    coredns = object({
+      bootstrap_manifest_path = string
+      values_file_path        = string
+    })
   })
 }
 
