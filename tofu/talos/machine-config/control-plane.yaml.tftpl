@@ -10,7 +10,6 @@ cluster:
     certSANs:
       - ${vip}
       - ${node_ip}
-      - ${endpoint}
     ${indent(4, api_server)}
   network:
     cni:

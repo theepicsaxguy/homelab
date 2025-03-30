@@ -35,13 +35,6 @@ talos_cluster_config = {
   EOT
 
   api_server = <<-EOT
-    extraArgs:
-      oidc-issuer-url: "https://authelia.kube-pc-tips.se"
-      oidc-client-id: "kubectl"
-      oidc-username-claim: "preferred_username"
-      oidc-username-prefix: "authelia:"
-      oidc-groups-claim: "groups"
-      oidc-groups-prefix: "authelia:"
   EOT
 
   sysctls = <<-EOT
