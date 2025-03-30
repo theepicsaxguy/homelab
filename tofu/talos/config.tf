@@ -54,7 +54,7 @@ data "talos_machine_configuration" "this" {
       mac_address = lower(each.value.mac_address)
       gateway      = var.cluster.gateway
       subnet_mask  = var.cluster.subnet_mask
-      vip          = var.cluster.vip
+      vip           = each.value.machine_type == "controlplane" ? var.cluster.vip : null
     }), each.value.machine_type == "controlplane" ?
       templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
         kubelet = var.cluster.kubelet

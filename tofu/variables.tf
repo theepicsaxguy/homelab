@@ -86,7 +86,7 @@ variable "kubernetes_volumes" {
     object({
       node = string
       size = string
-      storage = optional(string, "local-zfs")
+      storage = optional(string, "rpool2")
       vmid = optional(number, 9999)
       format = optional(string, "raw")
     })

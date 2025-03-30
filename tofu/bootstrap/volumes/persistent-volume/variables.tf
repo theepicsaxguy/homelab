@@ -12,6 +12,6 @@ variable "volume" {
     mount_options = optional(list(string), ["noatime"])
     cache = optional(string, "writethrough")
     ssd = optional(bool, true)
-    storage = optional(string, "local-zfs")
+    storage = optional(string, "rpool2")
   })
 }
