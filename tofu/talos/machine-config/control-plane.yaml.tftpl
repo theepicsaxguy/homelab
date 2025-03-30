@@ -3,8 +3,14 @@ machine:
     ${indent(4, kubelet)}
 
 cluster:
-  allowSchedulingOnControlPlanes: true
+  allowSchedulingOnControlPlanes: false
+  coreDNS:
+    disabled: true
   apiServer:
+    certSANs:
+      - ${vip}
+      - ${node_ip}
+      - ${endpoint}
     ${indent(4, api_server)}
   network:
     cni:

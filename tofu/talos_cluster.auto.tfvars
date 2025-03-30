@@ -5,27 +5,31 @@ talos_cluster_config = {
   #       Not sure how it works if connected to the same router via ethernet (does it act as a switch then???)
   # Ref: https://www.talos.dev/v1.9/talos-guides/network/vip/#requirements
   # Note This is Kubernetes API endpoint. Different from all mentions of Talos endpoints.
+
   endpoint                     = "10.25.150.250"
   vip                          = "10.25.150.10"
   gateway                      = "10.25.150.1"
-  # The version of talos features to use in generated machine configuration. Generally the same as image version.
-  # See https://github.com/siderolabs/terraform-provider-talos/blob/main/docs/data-sources/machine_configuration.md
   talos_machine_config_version = "v1.9.5"
   proxmox_cluster              = "homelab"
-  kubernetes_version = "1.32.3"  # renovate: github-releases=kubernetes/kubernetes
+  kubernetes_version           = "1.32.3"
+
   cilium = {
     bootstrap_manifest_path = "talos/inline-manifests/cilium-install.yaml"
     values_file_path        = "../k8s/infrastructure/network/cilium/values.yaml"
   }
+
   extra_manifests = [
     "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml",
     "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
   ]
-  kubelet    = <<-EOT
+
+  kubelet = <<-EOT
+    clusterDNS:
+      - 10.96.0.10
     extraArgs:
-      # Needed for Netbird agent https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   EOT
+
   api_server = <<-EOT
     extraArgs:
       oidc-issuer-url: "https://authelia.kube-pc-tips.se"
@@ -34,5 +38,15 @@ talos_cluster_config = {
       oidc-username-prefix: "authelia:"
       oidc-groups-claim: "groups"
       oidc-groups-prefix: "authelia:"
+  EOT
+
+  sysctls = <<-EOT
+    vm.nr_hugepages: "1024"
+  EOT
+
+  kernel = <<-EOT
+    modules:
+      - name: nvme_tcp
+      - name: vfio_pci
   EOT
 }

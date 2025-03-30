@@ -57,10 +57,13 @@ data "talos_machine_configuration" "this" {
       vip           = each.value.machine_type == "controlplane" ? var.cluster.vip : null
     }), each.value.machine_type == "controlplane" ?
       templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-        kubelet = var.cluster.kubelet
-        extra_manifests = jsonencode(var.cluster.extra_manifests)
-        api_server = var.cluster.api_server
+        kubelet          = var.cluster.kubelet
+        extra_manifests  = jsonencode(var.cluster.extra_manifests)
+        api_server       = var.cluster.api_server
         inline_manifests = jsonencode(terraform_data.cilium_bootstrap_inline_manifests.output)
+        vip              = var.cluster.vip
+        endpoint         = var.cluster.endpoint
+        node_ip          = each.value.ip
       }) : ""
   ]
 }
@@ -93,7 +96,7 @@ data "talos_cluster_health" "this" {
   skip_kubernetes_checks = false
   client_configuration   = data.talos_client_configuration.this.client_configuration
   control_plane_nodes    = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
-  worker_nodes           = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
+  worker_nodes           = [for k, v in var.nodes : v.ip if v.machine_type ==   "worker"]
   endpoints              = data.talos_client_configuration.this.endpoints
   timeouts = {
     read = "10m"
