@@ -6,7 +6,7 @@ talos_nodes = {
     dns           = ["10.25.150.1"]
     mac_address   = "bc:24:11:e6:ba:07"
     vm_id         = 800
-    cpu           = 8
+    cpu           = 6
     ram_dedicated = 3096
     igpu          = false
   }
@@ -17,7 +17,7 @@ talos_nodes = {
     dns           = ["10.25.150.1"]
     mac_address   = "bc:24:11:44:94:5c"
     vm_id         = 801
-    cpu           = 4
+    cpu           = 6
     ram_dedicated = 3096
     igpu          = false
     #update        = true
@@ -29,7 +29,7 @@ talos_nodes = {
     dns           = ["10.25.150.1"]
     mac_address   = "bc:24:11:1e:1d:2f"
     vm_id         = 802
-    cpu           = 4
+    cpu           = 6
     ram_dedicated = 3096
     #update        = true
   }
