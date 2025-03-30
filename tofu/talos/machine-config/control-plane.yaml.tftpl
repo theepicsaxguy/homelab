@@ -8,7 +8,6 @@ cluster:
     disabled: true
   apiServer:
     certSANs:
-      - ${vip}
       - ${node_ip}
     ${indent(4, api_server)}
   network:

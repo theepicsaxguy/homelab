@@ -21,27 +21,27 @@ module "sealed_secrets" {
   cert = var.sealed_secrets_config
 }
 
-module "proxmox_csi_plugin" {
-  depends_on = [module.talos]
-  source = "./bootstrap/proxmox-csi-plugin"
+# module "proxmox_csi_plugin" {
+#   depends_on = [module.talos]
+#   source = "./bootstrap/proxmox-csi-plugin"
 
-  providers = {
-    proxmox    = proxmox
-    kubernetes = kubernetes
-  }
+#   providers = {
+#     proxmox    = proxmox
+#     kubernetes = kubernetes
+#   }
 
-  proxmox = var.proxmox
-}
+#   proxmox = var.proxmox
+# }
 
-module "volumes" {
-  depends_on = [module.proxmox_csi_plugin]
-  source = "./bootstrap/volumes"
+# module "volumes" {
+#   depends_on = [module.proxmox_csi_plugin]
+#   source = "./bootstrap/volumes"
 
-  providers = {
-    restapi    = restapi
-    kubernetes = kubernetes
-  }
+#   providers = {
+#     restapi    = restapi
+#     kubernetes = kubernetes
+#   }
 
-  proxmox_api = var.proxmox
-  volumes = var.kubernetes_volumes
-}
+#   proxmox_api = var.proxmox
+#   volumes = var.kubernetes_volumes
+# }
