@@ -10,16 +10,16 @@ module "talos" {
   nodes = var.talos_nodes
 }
 
-module "sealed_secrets" {
-  depends_on = [module.talos]
-  source = "./bootstrap/sealed-secrets"
+# module "sealed_secrets" {
+#   depends_on = [module.talos]
+#   source = "./bootstrap/sealed-secrets"
 
-  providers = {
-    kubernetes = kubernetes
-  }
+#   providers = {
+#     kubernetes = kubernetes
+#   }
 
-  cert = var.sealed_secrets_config
-}
+#   cert = var.sealed_secrets_config
+# }
 
 # module "proxmox_csi_plugin" {
 #   depends_on = [module.talos]
