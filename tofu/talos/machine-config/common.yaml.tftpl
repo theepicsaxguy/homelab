@@ -32,7 +32,8 @@ machine:
     vm.nr_hugepages: 1024                  # PostgreSQL
 cluster:
   coreDNS:
-    disabled: true
+    disabled: false
+    #turn off to install custom version.
   network:
     cni:
       name: none
