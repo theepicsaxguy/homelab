@@ -6,7 +6,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.74.0"
+      version = "0.74.1"
     }
     talos = {
       source  = "siderolabs/talos"
@@ -18,6 +18,7 @@ terraform {
     }
   }
 }
+
 
 provider "proxmox" {
   endpoint = var.proxmox.endpoint

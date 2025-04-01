@@ -10,29 +10,29 @@ talos_nodes = {
     ram_dedicated = 3096
     igpu          = false
   }
-  # "ctrl-01" = {
-  #   host_node     = "host3"
-  #   machine_type  = "controlplane"
-  #   ip            = "10.25.150.12"
-  #   dns           = ["10.25.150.1"]
-  #   mac_address   = "bc:24:11:44:94:5c"
-  #   vm_id         = 801
-  #   cpu           = 6
-  #   ram_dedicated = 3096
-  #   igpu          = false
-  #   #update        = true
-  # }
-  # "ctrl-02" = {
-  #   host_node     = "host3"
-  #   machine_type  = "controlplane"
-  #   ip            = "10.25.150.13"
-  #   dns           = ["10.25.150.1"]
-  #   mac_address   = "bc:24:11:1e:1d:2f"
-  #   vm_id         = 802
-  #   cpu           = 6
-  #   ram_dedicated = 3096
-  #   #update        = true
-  # }
+  "ctrl-01" = {
+    host_node     = "host3"
+    machine_type  = "controlplane"
+    ip            = "10.25.150.12"
+    dns           = ["10.25.150.1"]
+    mac_address   = "bc:24:11:44:94:5c"
+    vm_id         = 801
+    cpu           = 6
+    ram_dedicated = 3096
+    igpu          = false
+    #update        = true
+  }
+  "ctrl-02" = {
+    host_node     = "host3"
+    machine_type  = "controlplane"
+    ip            = "10.25.150.13"
+    dns           = ["10.25.150.1"]
+    mac_address   = "bc:24:11:1e:1d:2f"
+    vm_id         = 802
+    cpu           = 6
+    ram_dedicated = 3096
+    #update        = true
+  }
   #    "work-00" = {
   #      host_node     = "host3"
   #      machine_type  = "worker"

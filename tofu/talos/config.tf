@@ -9,6 +9,7 @@ data "talos_client_configuration" "this" {
   # Don't use vip in talosconfig endpoints
   # ref - https://www.talos.dev/v1.9/talos-guides/network/vip/#caveats
   endpoints            = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
+
 }
 
 resource "terraform_data" "cilium_bootstrap_inline_manifests" {
@@ -119,7 +120,7 @@ data "talos_cluster_health" "this" {
     talos_machine_configuration_apply.this,
     talos_machine_bootstrap.this
   ]
-  skip_kubernetes_checks = true
+  skip_kubernetes_checks = false
   client_configuration   = data.talos_client_configuration.this.client_configuration
   control_plane_nodes    = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
   worker_nodes           = [for k, v in var.nodes : v.ip if v.machine_type ==   "worker"]
