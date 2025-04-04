@@ -30,10 +30,10 @@ variable "cluster" {
       bootstrap_manifest_path = string
       values_file_path        = string
     })
-    coredns = object({
-      bootstrap_manifest_path = string
-      values_file_path        = string
-    })
+    # coredns = object({
+    #   bootstrap_manifest_path = string
+    #   values_file_path        = string
+    # })
   })
 }
 
@@ -42,7 +42,7 @@ variable "nodes" {
   type = map(object({
     host_node     = string
     machine_type  = string
-    datastore_id = optional(string, "rpool2")
+    datastore_id = optional(string, "velocity")
     ip            = string
     dns = optional(list(string))
     mac_address   = string

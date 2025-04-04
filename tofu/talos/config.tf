@@ -35,28 +35,28 @@ resource "terraform_data" "cilium_bootstrap_inline_manifests" {
   ]
 }
 
-resource "terraform_data" "coredns_bootstrap_inline_manifests" {
-  input = [
-    {
-      name     = "coredns-bootstrap"
-      contents = file("${path.root}/${var.cluster.coredns.bootstrap_manifest_path}")
-    },
-    {
-      name     = "coredns-values"
-      contents = yamlencode({
-        apiVersion = "v1"
-        kind       = "ConfigMap"
-        metadata = {
-          name      = "coredns-values"
-          namespace = "kube-system"
-        }
-        data = {
-          "values.yaml" = file("${path.root}/${var.cluster.coredns.values_file_path}")
-        }
-      })
-    }
-  ]
-}
+# resource "terraform_data" "coredns_bootstrap_inline_manifests" {
+#   input = [
+#     {
+#       name     = "coredns-bootstrap"
+#       contents = file("${path.root}/${var.cluster.coredns.bootstrap_manifest_path}")
+#     },
+#     {
+#       name     = "coredns-values"
+#       contents = yamlencode({
+#         apiVersion = "v1"
+#         kind       = "ConfigMap"
+#         metadata = {
+#           name      = "coredns-values"
+#           namespace = "kube-system"
+#         }
+#         data = {
+#           "values.yaml" = file("${path.root}/${var.cluster.coredns.values_file_path}")
+#         }
+#       })
+#     }
+#   ]
+# }
 
 data "talos_machine_configuration" "this" {
   for_each        = var.nodes
@@ -86,7 +86,7 @@ data "talos_machine_configuration" "this" {
         api_server       = var.cluster.api_server
         inline_manifests = jsonencode(concat(
           terraform_data.cilium_bootstrap_inline_manifests.output,
-          terraform_data.coredns_bootstrap_inline_manifests.output
+          # terraform_data.coredns_bootstrap_inline_manifests.output
         ))
         vip              = var.cluster.vip
         endpoint         = var.cluster.endpoint

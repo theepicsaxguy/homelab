@@ -46,10 +46,10 @@ variable "talos_cluster_config" {
       bootstrap_manifest_path = string
       values_file_path        = string
     })
-    coredns = object({
-      bootstrap_manifest_path = string
-      values_file_path        = string
-    })
+    # coredns = object({
+    #   bootstrap_manifest_path = string
+    #   values_file_path        = string
+    # })
   })
 }
 
@@ -90,7 +90,7 @@ variable "kubernetes_volumes" {
     object({
       node = string
       size = string
-      storage = optional(string, "rpool2")
+      storage = optional(string, "velocity")
       vmid = optional(number, 9999)
       format = optional(string, "raw")
     })

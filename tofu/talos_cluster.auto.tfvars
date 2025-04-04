@@ -6,7 +6,7 @@ talos_cluster_config = {
   # Ref: https://www.talos.dev/v1.9/talos-guides/network/vip/#requirements
   # Note This is Kubernetes API endpoint. Different from all mentions of Talos endpoints.
 
-  endpoint                     = "10.25.150.10"
+  endpoint                     = "api.kube.pc-tips.se"
   vip                          = "10.25.150.10"
   gateway                      = "10.25.150.1"
   talos_machine_config_version = "v1.9.5"
@@ -17,14 +17,11 @@ talos_cluster_config = {
     bootstrap_manifest_path = "talos/inline-manifests/cilium-install.yaml"
     values_file_path        = "../k8s/infrastructure/network/cilium/values.yaml"
   }
-  coredns = {
-    bootstrap_manifest_path = "talos/inline-manifests/coredns-install.yaml"
-    values_file_path        = "../k8s/infrastructure/network/coredns/values.yaml"
-  }
 
   extra_manifests = [
     "https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml",
-    "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml"
+    "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
+    "https://raw.githubusercontent.com/theepicsaxguy/homelab/refs/heads/Refactor-Talos-image-configuration-and-update-manifest-handling/tofu/talos/inline-manifests/coredns-install.yaml"
   ]
 
   kubelet = <<-EOT

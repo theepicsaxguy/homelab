@@ -4,8 +4,6 @@ machine:
 
 cluster:
   allowSchedulingOnControlPlanes: true
-  coreDNS:
-    disabled: true
   apiServer:
     certSANs:
       - ${node_ip}

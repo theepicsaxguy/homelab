@@ -11,7 +11,7 @@ variable "volumes" {
     object({
       node = string
       size = string
-      storage = optional(string, "rpool2")
+      storage = optional(string, "velocity")
       vmid = optional(number, 9999)
       format = optional(string, "raw")
     })
