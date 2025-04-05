@@ -33,6 +33,8 @@ data "talos_machine_configuration" "this" {
       hostname     = each.key
       node_name    = each.value.host_node
       cluster_name = var.cluster.proxmox_cluster
+      node_ip      = each.value.ip
+      cluster      = var.cluster
     })
   ]
 }
@@ -53,24 +55,14 @@ resource "talos_machine_configuration_apply" "this" {
   }
 }
 
-resource "time_sleep" "wait_machine_config" {
-  depends_on = [talos_machine_configuration_apply.this]
-  create_duration = "60s"
-}
-
 resource "talos_machine_bootstrap" "this" {
   depends_on = [
-    talos_machine_configuration_apply.this,
-    time_sleep.wait_machine_config
+    talos_machine_configuration_apply.this
   ]
+  # Bootstrap with the first node. VIP not yet available at this stage, so cant use var.cluster.endpoint as it may be set to VIP
+  # ref - https://www.talos.dev/v1.9/talos-guides/network/vip/#caveats
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
-  endpoint             = var.cluster.endpoint
   client_configuration = talos_machine_secrets.this.client_configuration
-}
-
-resource "time_sleep" "wait_60_seconds" {
-  depends_on = [talos_machine_bootstrap.this]
-  create_duration = "60s"
 }
 
 resource "talos_cluster_kubeconfig" "this" {
@@ -88,7 +80,6 @@ resource "talos_cluster_kubeconfig" "this" {
 data "talos_cluster_health" "this" {
   depends_on = [
     talos_cluster_kubeconfig.this,
-    time_sleep.wait_60_seconds,
     talos_machine_configuration_apply.this
   ]
   client_configuration = data.talos_client_configuration.this.client_configuration
@@ -96,18 +87,6 @@ data "talos_cluster_health" "this" {
   worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
   endpoints            = data.talos_client_configuration.this.endpoints
   timeouts = {
-    read = "5m"
+    read = "3m"
   }
 }
-
-# resource "null_resource" "talos_health_check" {
-#   depends_on = [
-#     talos_cluster_kubeconfig.this,
-#     time_sleep.wait_60_seconds,
-#     talos_machine_configuration_apply.this
-#   ]
-
-#   provisioner "local-exec" {
-#     command = "talosctl health -n api.kube.pc-tips.se --talosconfig=/root/homelab/tofu/output/talos-config.yaml"
-#   }
-# }

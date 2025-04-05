@@ -4,7 +4,7 @@ locals {
 
   # We'll use the raw content strings instead of trying to parse multi-document YAML
   cilium_content = try(local.inline_manifests_map["cilium-install"].content, "")
-  # coredns_content = try(local.inline_manifests_map["coredns-install"].content, "")
+  coredns_content = try(local.inline_manifests_map["coredns-install"].content, "")
 }
 
 # Configure kubernetes provider with the cluster's kubeconfig
@@ -24,9 +24,9 @@ output "cilium" {
   }
 }
 
-# output "core_dns" {
-#   description = "CoreDNS installation details"
-#   value = {
-#     install = var.coredns.install
-#   }
-# }
+ output "core_dns" {
+   description = "CoreDNS installation details"
+   value = {
+     install = var.coredns.install
+   }
+ }
