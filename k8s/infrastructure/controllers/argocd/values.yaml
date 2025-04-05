@@ -3,7 +3,7 @@ configs:
     create: true
     application.resourceTrackingMethod: annotation+label
     admin.enabled: true
-    url: https://argocd.kube.pc-tips.se
+    url: https://argocd.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
     policy.csv: |
@@ -52,6 +52,8 @@ server:
     type: LoadBalancer
     annotations:
       io.cilium/lb-ipam-ips: "10.25.150.225"
+  ingress:
+    enabled: false  # We're using Gateway API via HTTPRoute, not traditional ingress
   resources:
     requests:
       cpu: 50m
@@ -60,11 +62,12 @@ server:
       memory: 256Mi
   certificate:
     enabled: true
-    domain: argocd.kube.pc-tips.se
+    domain: argocd.pc-tips.se
     issuer:
       name: cloudflare-issuer
       kind: ClusterIssuer
-
+  extraArgs:
+    - --insecure  # Required for Gateway API to work properly
 
 repoServer:
   containerSecurityContext:

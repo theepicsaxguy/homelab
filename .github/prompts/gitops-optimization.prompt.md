@@ -1,32 +1,76 @@
-# GitOps and Deployment Optimization Prompt
+# GitOps Practices for GitHub Copilot
 
-Please analyze and suggest improvements for our GitOps practices:
+## Purpose
+This prompt provides specific GitOps guidelines for GitHub Copilot to ensure all code generation adheres to our GitOps-only infrastructure approach.
 
-1. ArgoCD Configuration:
+## ArgoCD Configuration Standards
 
-   - ApplicationSet patterns
-   - Sync strategies
-   - Resource health checks
-   - Rollout strategies
+### ApplicationSet Requirements
+- Use repository-based generators for app discovery
+- Implement matrix generators for complex deployment patterns
+- Ensure proper sync wave annotations for dependency management
+- Structure ApplicationSets by functionality, not by environment
 
-2. Deployment Structure:
+### Sync & Deployment Strategies
+- Enforce automatic pruning of resources
+- Implement proper health checks for all resources
+- Use progressive sync waves with appropriate delays
+- Apply retry limits for failed deployments
 
-   - Kustomize overlays
-   - Environment segregation
-   - Dependency management
-   - Resource organization
+### Resource Health Management
+- Define custom health checks for specialized resources
+- Implement readiness gates where appropriate
+- Set appropriate termination grace periods
+- Configure proper liveness and readiness probes
 
-3. CI/CD Flow:
+## Deployment Structure Guidelines
 
-   - Validation processes
-   - Automated testing
-   - Deployment safety
-   - Rollback procedures
+### Kustomize Best Practices
+- Use bases for common configurations
+- Apply overlays for environment-specific changes
+- Implement patches for targeted modifications
+- Maintain a clean hierarchy of resources
 
-4. Optimization Areas:
-   - Resource templates
-   - Configuration reuse
-   - Manifest organization
-   - Version management
+### Environment Segregation
+- Segregate by folder structure, not by cluster
+- Use consistent naming conventions across environments
+- Implement clear promotion paths between environments
+- Maintain consistency across deployments
 
-Provide specific recommendations for improving our GitOps practices and deployment efficiency.
+### Dependency Management
+- Use ArgoCD sync waves for deployment ordering
+- Implement proper readiness checks between components
+- Define explicit dependencies where required
+- Document component relationships
+
+## CI/CD Flow Requirements
+
+### Validation Processes
+- Run `kustomize build` validation in CI
+- Implement policy checks using OPA/Conftest
+- Validate YAML syntax and structure
+- Test all generated manifests before deployment
+
+### Deployment Safety
+- Implement progressive delivery when possible
+- Use canary deployments for critical services
+- Configure proper rollback strategies
+- Test disaster recovery procedures regularly
+
+## Usage Instructions
+
+Import this prompt when working on GitOps-related tasks:
+
+```
+#import:.github/prompts/gitops-optimization.prompt.md
+```
+
+Combine with other prompts as needed:
+- For Kubernetes resources: `#import:.github/prompts/kubernetes.prompt.md`
+- For Kustomize tasks: `#import:.github/prompts/kustomize/base.prompt.md`
+
+## References
+
+- `#file:../../k8s/argocd-bootstrap.tf`
+- `#file:../../docs/best-practices/gitops.md`
+- `#file:../../k8s/applications/application-set.yaml`
