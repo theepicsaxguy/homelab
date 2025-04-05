@@ -55,6 +55,7 @@ spec:
               - matchExpressions:
                   - key: node-role.kubernetes.io/control-plane
                     operator: Exists
+      serviceAccount: cilium-install
       serviceAccountName: cilium-install
       hostNetwork: true
       containers:
@@ -68,19 +69,23 @@ spec:
               fieldPath: status.podIP
         - name: KUBERNETES_SERVICE_PORT
           value: "6443"
-        volumeMounts:
-          - name: values
-            mountPath: /root/app/values.yaml
-            subPath: values.yaml
         command:
           - cilium
           - install
           - --version=v1.17.2 # renovate: github-releases=cilium/cilium
           - --set
+          - ipam.mode=kubernetes
+          - --set
           - kubeProxyReplacement=true
-          - --values
-          - values.yaml
-      volumes:
-        - name: values
-          configMap:
-            name: cilium-values
+          - --set
+          - securityContext.capabilities.ciliumAgent={CHOWN,KILL,NET_ADMIN,NET_RAW,IPC_LOCK,SYS_ADMIN,SYS_RESOURCE,DAC_OVERRIDE,FOWNER,SETGID,SETUID}
+          - --set
+          - securityContext.capabilities.cleanCiliumState={NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}
+          - --set
+          - cgroup.autoMount.enabled=false
+          - --set
+          - cgroup.hostRoot=/sys/fs/cgroup
+          - --set
+          - k8sServiceHost=localhost
+          - --set
+          - k8sServicePort=7445
