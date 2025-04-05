@@ -1,4 +1,8 @@
 machine:
+  certSANs:
+    - ${cluster.vip}     # The VIP
+    - ${node_ip}      # The node's own IP
+    - ${cluster.endpoint}
   kubelet:
     clusterDNS:
       - 10.96.0.10
