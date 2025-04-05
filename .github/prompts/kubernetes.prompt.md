@@ -1,42 +1,52 @@
-# Kubernetes Configuration Guidelines
+# Kubernetes Configuration Guidelines for GitHub Copilot
 
-## Architecture Preferences
+## Purpose
+This prompt extends the main guidelines with Kubernetes-specific rules for our GitOps-only homelab infrastructure.
 
-- Cilium as primary CNI with eBPF enabled
-- Service mesh and BGP routing enabled
-- Strict mTLS enforcement
-- CloudNative PG for database operations
+## Architecture Requirements
 
-## References
+- **CNI**: Cilium with eBPF enabled (Talos' default CNI is prohibited)
+- **Service Mesh**: Istio with strict mTLS enforcement
+- **BGP Routing**: Enabled for external service access
+- **Database**: CloudNative PG for all database operations
+- **Ingress**: Managed via ArgoCD using predefined templates
 
-[Kubernetes Apps](../../k8s/applications/README.md) [Infrastructure](../../k8s/infrastructure/README.md)
+## Security Standards
 
-## Provider Configuration
+- **Secrets Management**: External Secrets Operator required for all secrets
+- **RBAC**: Strictly implemented with least privilege principle
+- **Network Policies**: Required for all namespaces and workloads
+- **SecurityContexts**: Must be defined with appropriate restrictions
+- **Pod Security Standards**: Enforce restricted PSA profiles
 
-```hcl
-provider "kubernetes" {
-  host = local.endpoint
-  cluster_ca_certificate = local.cluster_ca_certificate
-  client_certificate = local.client_certificate
-  client_key = local.client_key
-  load_config_file = false
-}
+## Resource Organization
 
-provider "kubectl" {
-  apply_retry_count = 3
-  load_config_file = false
-}
-```
-
-## Security Requirements
-
-- All secrets must use sm-operator
-- Implement RBAC strictly
-- Enable network policies
-- Use SecurityContexts appropriately
+- **Namespace Strategy**: Functional grouping with consistent labeling
+- **Resource Limits**: All deployments must have CPU/memory limits
+- **Label Standards**: App, component, part-of, and managed-by required
+- **Annotations**: ArgoCD annotations for sync waves required
 
 ## Storage Configuration
 
-- TrueNAS + Proxmox CSI for persistence
-- Define appropriate StorageClasses
-- Implement backup strategies
+- **CSI Drivers**: TrueNAS + Proxmox CSI for persistence
+- **StorageClasses**: Must be defined in the infrastructure layer
+- **Backups**: Velero-based backup strategies for all persistent data
+- **No In-Cluster Changes**: All storage must be declared in Git
+
+## Usage Instructions
+
+Import this prompt when working on Kubernetes resources:
+
+```
+#import:.github/prompts/kubernetes.prompt.md
+```
+
+Combine with specific task prompts:
+- For Kustomize tasks: `#import:.github/prompts/kustomize/base.prompt.md`
+- For ApplicationSet: `#import:.github/prompts/RefactorApplicationSet.prompt.md`
+
+## References
+
+- `#file:../../k8s/applications/README.md`
+- `#file:../../k8s/infrastructure/README.md`
+- `#file:../../docs/kubernetes/best-practices.md`
