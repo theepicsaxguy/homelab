@@ -6,6 +6,8 @@ machine:
   kubelet:
     clusterDNS:
       - 10.96.0.10
+    extraArgs:
+      rotate-server-certificates: true
     extraMounts:
       - destination: /var/lib/longhorn
         type: bind
