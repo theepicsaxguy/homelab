@@ -66,6 +66,9 @@ enableCiliumEndpointSlice: true
 loadBalancer:
   algorithm: maglev
 
+bgpControlPlane:
+  enabled: true
+
 gatewayAPI:
   enabled: true
 envoy:
