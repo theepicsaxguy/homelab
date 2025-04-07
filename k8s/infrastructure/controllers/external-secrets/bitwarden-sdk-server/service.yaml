@@ -5,7 +5,7 @@ kind: Service
 metadata:
   name: bitwarden-sdk-server
   labels:
-    helm.sh/chart: bitwarden-sdk-server:v0.4.0
+    helm.sh/chart: bitwarden-sdk-server-v0.4.0
     app.kubernetes.io/name: bitwarden-sdk-server
     app.kubernetes.io/instance: external-secrets
     app.kubernetes.io/version: "v0.4.0"

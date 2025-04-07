@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: bitwarden-sdk-server
   labels:
-    helm.sh/chart: bitwarden-sdk-server:v0.4.0
+    helm.sh/chart: bitwarden-sdk-server-v0.4.0
     app.kubernetes.io/name: bitwarden-sdk-server
     app.kubernetes.io/instance: external-secrets
     app.kubernetes.io/version: "v0.4.0"
@@ -54,10 +54,10 @@ spec:
         - name: bitwarden-tls-certs
           secret:
             items:
-            - key: "tls.crt"
-              path: "cert.pem"
-            - key: "tls.key"
-              path: "key.pem"
-            - key: "ca.crt"
-              path: "ca.pem"
+            - key: tls.crt
+              path: cert.pem
+            - key: tls.key
+              path: key.pem
+            - key: ca.crt
+              path: ca.pem
             secretName: bitwarden-tls-certs
