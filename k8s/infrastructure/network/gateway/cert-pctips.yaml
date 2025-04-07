@@ -12,6 +12,3 @@ spec:
   dnsNames:
   - "*.pc-tips.se"
   - "pc-tips.se"
-  - "argocd.pc-tips.se"
-  - "*.kube.pc-tips.se"
-  - "kube.pc-tips.se"

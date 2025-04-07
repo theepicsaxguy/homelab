@@ -5,6 +5,7 @@ resources:
 - announce.yaml
 - ip-pool.yaml
 - bgp.yaml
+- argocd-lb-advertisement.yaml
 
 helmCharts:
 - includeCRDs: true
