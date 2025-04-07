@@ -31,3 +31,14 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - protocol: HTTPS
+      port: 443
+      name: argocd-gateway
+      hostname: argocd.pc-tips.se
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-pctips
+      allowedRoutes:
+        namespaces:
+          from: All

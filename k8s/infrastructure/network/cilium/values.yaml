@@ -64,7 +64,10 @@ externalIPs:
 enableCiliumEndpointSlice: true
 
 loadBalancer:
+  # https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/#maglev-consistent-hashing
   algorithm: maglev
+bgpControlPlane:
+  enabled: true
 
 gatewayAPI:
   enabled: true

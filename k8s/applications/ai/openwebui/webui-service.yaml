@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: open-webui-service
   namespace: open-webui
+  annotations:
+    io.cilium/lb-ipam-ips: 10.25.150.229
 spec:
   type: LoadBalancer  # Use LoadBalancer if you're on a cloud that supports it
   selector:
