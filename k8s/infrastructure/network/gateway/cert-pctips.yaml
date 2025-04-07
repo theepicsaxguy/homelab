@@ -4,15 +4,11 @@ metadata:
   name: cert-pctips
   namespace: gateway
 spec:
-  dnsNames:
-    - '*.pc-tips.se'
-    - pc-tips.se
-    - '*.kube.pc-tips.se'
-    - 'kube.pc-tips.se'
+  secretName: cert-pctips
   issuerRef:
     name: cloudflare-issuer
     kind: ClusterIssuer
-  secretName: cert-pctips
-  usages:
-    - digital signature
-    - key encipherment
+  commonName: "*.pc-tips.se"
+  dnsNames:
+  - "*.pc-tips.se"
+  - "pc-tips.se"
