@@ -1,29 +1,57 @@
+# .github/dependabot.yml
+# Configuration for Dependabot to keep dependencies updated across the homelab repository.
+# Includes beta support for Helm Chart.lock updates.
+
 version: 2
+enable-beta-ecosystems: true # Likely needed for the Helm package-ecosystem
+
+# Optional: Define private registries if needed for Docker images or Helm charts (OCI)
+# registries:
+#   my-ghcr:
+#     type: docker-registry
+#     url: ghcr.io
+#     username: ${{ secrets.GHCR_USERNAME }} # Or your username if public read is sufficient but login needed
+#     password: ${{ secrets.GHCR_TOKEN }}
+#   my-gcp-artifact-registry:
+#     type: docker-registry # Use this type for OCI Helm registries on GCP
+#     url: europe-docker.pkg.dev
+#     username: _json_key
+#     password: ${{ secrets.GCP_REGISTRY_TOKEN }}
+#   my-ecr-registry:
+#     type: docker-registry # Use this type for OCI Helm registries on AWS ECR
+#     url: <aws_account_id>.dkr.ecr.<region>.amazonaws.com
+#     username: AWS # Literal string AWS for ECR password auth
+#     password: ${{ secrets.ECR_PASSWORD }} # Typically requires an ECR login command output or specific token
+
 updates:
-  - package-ecosystem: "docker"
-    directory: "/" # Adjust if Dockerfiles are in subdirs
+  # --- Node.js / npm dependencies ---
+  - package-ecosystem: 'npm'
+    directory: '/' # Location of package.json
     schedule:
-      interval: "weekly"
-    ignore:
-      - dependency-name: "ghcr.io/onedr0p/*"
-      - dependency-name: "ghcr.io/jellyfin/*"
-      - dependency-name: "docker.io/netbirdio/*"
-      - dependency-name: "intel-device-plugins/*"
-      - dependency-name: "cilium/*"
-      - dependency-name: "ghcr.io/external-secrets/*"
+      interval: 'daily' # Check for updates every weekday
 
-  - package-ecosystem: "terraform"
-    directory: "/" # Adjust if you have module subdirs
+  # --- Terraform dependencies ---
+  - package-ecosystem: 'terraform'
+    directory: '/' # Scan the entire repo for Terraform files
     schedule:
-      interval: "weekly"
-    allow:
-      - dependency-type: "direct"
-    open-pull-requests-limit: 10
+      interval: 'daily'
 
-  - package-ecosystem: "github-actions"
+  # --- Docker image dependencies ---
+  - package-ecosystem: 'docker'
+    directories:
+      - '/k8s/' # Scan Kubernetes manifests recursively
+      - '/tofu/' # Scan potential embedded manifests/Dockerfiles in Tofu config
+    schedule:
+      interval: 'daily'
+
+  # --- GitHub Actions dependencies ---
+  - package-ecosystem: 'github-actions'
+    directory: '/' # Root directory required; Dependabot automatically checks .github/workflows
+    schedule:
+      interval: 'daily'
+
+  # --- Helm Chart dependencies ---
+  - package-ecosystem: "helm"
     directory: "/"
     schedule:
-      interval: "weekly"
-
-# Helm/Kustomize/YAML, regex-based custom managers — not supported in Dependabot
-# Automerge, grouping, badges, etc. — not supported or only partially available via GitHub UI
+      interval: "daily"
