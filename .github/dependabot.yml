@@ -38,9 +38,7 @@ updates:
 
   # --- Docker image dependencies ---
   - package-ecosystem: 'docker'
-    directories:
-      - '/k8s/' # Scan Kubernetes manifests recursively
-      - '/tofu/' # Scan potential embedded manifests/Dockerfiles in Tofu config
+    directory: '/k8s/' # Update to scan a single directory for Docker dependencies
     schedule:
       interval: 'daily'
 
