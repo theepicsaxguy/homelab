@@ -1,11 +1,29 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "docker"
+    directory: "/" # Adjust if Dockerfiles are in subdirs
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "ghcr.io/onedr0p/*"
+      - dependency-name: "ghcr.io/jellyfin/*"
+      - dependency-name: "docker.io/netbirdio/*"
+      - dependency-name: "intel-device-plugins/*"
+      - dependency-name: "cilium/*"
+      - dependency-name: "ghcr.io/external-secrets/*"
+
+  - package-ecosystem: "terraform"
+    directory: "/" # Adjust if you have module subdirs
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-type: "direct"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+# Helm/Kustomize/YAML, regex-based custom managers — not supported in Dependabot
+# Automerge, grouping, badges, etc. — not supported or only partially available via GitHub UI
