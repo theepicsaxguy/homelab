@@ -3,7 +3,11 @@ crds:
   keep: true
 
 extraArgs:
-  - "--enable-gateway-api"
+  - --v=2
+  - --cluster-resource-namespace=$(POD_NAMESPACE)
+  - --leader-election-namespace=kube-system
+  - --dns01-recursive-nameservers=10.96.0.10:53
+  - --dns01-recursive-nameservers-only=true
 
 resources:
   limits:
