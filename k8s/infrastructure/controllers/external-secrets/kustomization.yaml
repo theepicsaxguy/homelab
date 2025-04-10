@@ -2,7 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: external-secrets
 resources:
-- network-policy.yaml
 - bitwarden-certificate.yaml
 - bitwarden-sdk-server
 - bitwarden-store.yaml
