@@ -43,3 +43,6 @@ longhornManager:
 
 longhornDriver:
   priorityClass: system-cluster-critical
+
+preUpgradeChecker:
+  jobEnabled: false
