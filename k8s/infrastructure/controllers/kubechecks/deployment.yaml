@@ -37,6 +37,8 @@ spec:
           env:
             - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
               value: argocd-server.argocd.svc
+            - name: KUBECHECKS_ARGOCD_API_INSECURE
+              value: "true"
             - name: KUBECHECKS_ARGOCD_API_NAMESPACE
               value: argocd
             - name: KUBECHECKS_ARGOCD_REPOSITORY_ENDPOINT
