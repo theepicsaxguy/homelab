@@ -8,8 +8,3 @@ resources:
 - cert-manager
 - external-secrets
 - kubechecks
-labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: controllers
