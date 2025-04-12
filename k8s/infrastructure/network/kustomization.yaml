@@ -4,9 +4,3 @@ kind: Kustomization
 resources:
 - project.yaml
 - cilium
-
-labels:
-- includeSelectors: false
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: network
