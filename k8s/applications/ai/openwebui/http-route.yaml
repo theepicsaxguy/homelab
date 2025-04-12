@@ -8,7 +8,7 @@ spec:
     - name: external  # Use the same external gateway for consistency
       namespace: gateway  # This should be the namespace where your gateway is configured
   hostnames:
-    - 'open-webui.kube.pc-tips.se'
+    - 'open-webui.pc-tips.se'
   rules:
     - matches:
         - path:

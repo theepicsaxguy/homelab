@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'torrent.kube.pc-tips.se'
+    - 'torrent.pc-tips.se'
   rules:
     - matches:
         - path:

@@ -12,33 +12,22 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: '*.kube.pc-tips.se'
+      hostname: "*.pc-tips.se"
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-pctips
+            name: cert-pc-tips
       allowedRoutes:
         namespaces:
           from: All
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: kube.pc-tips.se
+      hostname: pc-tips.se
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-pctips
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: HTTPS
-      port: 443
-      name: argocd-gateway
-      hostname: argocd.pc-tips.se
-      tls:
-        certificateRefs:
-          - kind: Secret
-            name: cert-pctips
+            name: cert-pc-tips
       allowedRoutes:
         namespaces:
           from: All
