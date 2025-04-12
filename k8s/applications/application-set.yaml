@@ -14,9 +14,9 @@ spec:
         repoURL: https://github.com/theepicsaxguy/homelab.git
         revision: main
         directories:
-          - path: k8s/applications/external
           - path: k8s/applications/media
           - path: k8s/applications/tools
+          - path: k8s/applications/ai
   template:
     metadata:
       name: 'apps-{{ path.basename }}'
