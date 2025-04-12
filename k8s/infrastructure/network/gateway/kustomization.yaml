@@ -1,9 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
-- namespace.yaml
-- cert-pctips.yaml
-- gateway-class.yaml
-- gw-external.yaml
-- gw-internal.yaml
-- gw-tls-passthrough.yaml
+  - namespace.yaml
+  - cert-pc-tips.yaml
+  - gateway-class.yaml
+  - gw-external.yaml
+  - gw-internal.yaml
+  - gw-tls-passthrough.yaml

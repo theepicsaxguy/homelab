@@ -12,7 +12,7 @@ spec:
     - protocol: TLS
       port: 443
       name: proxmox
-      hostname: 'proxmox.kube.pc-tips.se'
+      hostname: "proxmox.pc-tips.se"
       tls:
         mode: Passthrough
       allowedRoutes:
@@ -21,7 +21,7 @@ spec:
     - protocol: TLS
       port: 443
       name: truenas
-      hostname: 'truenas.kube.pc-tips.se'
+      hostname: "truenas.pc-tips.se"
       tls:
         mode: Passthrough
       allowedRoutes:
