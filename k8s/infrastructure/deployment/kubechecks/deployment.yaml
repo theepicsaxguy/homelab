@@ -11,9 +11,9 @@ metadata:
     app.kubernetes.io/version: latest
     app.kubernetes.io/managed-by: argocd
     app.kubernetes.io/part-of: infrastructure
-    dev.pc-tips: cluster-components
+    dev.pc-tips: deployment
 spec:
-  revisionHistoryLimit: 10
+  revisionHistoryLimit: 3
   replicas: 1
   selector:
     matchLabels:
@@ -24,12 +24,15 @@ spec:
       labels:
         app.kubernetes.io/name: kubechecks
         app.kubernetes.io/instance: kubechecks
+        app.kubernetes.io/part-of: infrastructure
+        dev.pc-tips: deployment
     spec:
       serviceAccountName: kubechecks
       securityContext:
         fsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
+      dnsPolicy: ClusterFirst
       containers:
         - name: kubechecks
           image: ghcr.io/zapier/kubechecks:latest
@@ -110,18 +113,16 @@ spec:
               path: /live
               port: 8080
               scheme: HTTP
-            failureThreshold: 30
-            initialDelaySeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 30
             periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /ready
               port: 8080
               scheme: HTTP
-            failureThreshold: 30
-            initialDelaySeconds: 5
+            failureThreshold: 3
+            initialDelaySeconds: 20
             periodSeconds: 10
-            successThreshold: 1
             timeoutSeconds: 5

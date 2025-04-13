@@ -5,6 +5,10 @@ kind: Role
 metadata:
   name: kubechecks
   namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: infrastructure
+    app.kubernetes.io/managed-by: argocd
+    dev.pc-tips: deployment
 rules:
   - apiGroups:
       - ""
@@ -15,3 +19,13 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - "argoproj.io"
+    resources:
+      - "applications"
+      - "applicationsets"
+    verbs:
+      - get
+      - list
+      - watch
+      - sync

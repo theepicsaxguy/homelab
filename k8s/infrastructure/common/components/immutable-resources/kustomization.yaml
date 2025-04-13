@@ -30,13 +30,7 @@ patches:
   target:
     kind: Deployment
     name: unbound
-- patch: |-
-    - op: add
-      path: /metadata/annotations/argocd.argoproj.io~1sync-wave
-      value: "0"
-  target:
-    kind: Deployment
-    name: kubechecks
+
 - patch: |-
     - op: add
       path: /metadata/annotations/argocd.argoproj.io~1sync-wave
