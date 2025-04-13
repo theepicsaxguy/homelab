@@ -5,9 +5,3 @@ resources:
 - project.yaml
 - jellyfin
 - arr
-
-labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: app-management

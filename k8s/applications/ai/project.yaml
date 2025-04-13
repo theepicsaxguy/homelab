@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: ai
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab'
+  destinations:
+    - namespace: 'hoarder'
+      server: '*'
+    - namespace: 'open-webui'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
