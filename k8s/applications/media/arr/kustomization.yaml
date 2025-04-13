@@ -7,10 +7,6 @@ configMapGenerator:
   name: common-env
 
 
-components:
-  - ../../common/components/namespace-manager
-namespace: arr
-
 resources:
 - lidarr
 - prowlarr
