@@ -1,7 +1,7 @@
 prometheus:
   prometheusSpec:
     nodeSelector:
-      topology.kubernetes.io/zone: abel
+      topology.kubernetes.io/zone: host3
     storageSpec:
       volumeClaimTemplate:
         spec:

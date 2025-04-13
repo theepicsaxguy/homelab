@@ -19,16 +19,32 @@ spec:
         app: unrar
     spec:
       nodeSelector:
-        topology.kubernetes.io/zone: cantor
+        topology.kubernetes.io/zone: host3
       securityContext:
+        runAsNonRoot: true
         runAsUser: 2501
         runAsGroup: 2501
         fsGroup: 2501
         fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: unrar
-          image: ghcr.io/nzrsky/unrar:main
-          command: [ "sleep", "1d" ]
+          image: ghcr.io/onedr0p/unrar:5.6.8  # Using onedr0p's maintained image
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do find /mnt/data -name '*.rar' -exec unrar x -o+ {} $(dirname {}) \\; && sleep 300; done"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ "ALL" ]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
           volumeMounts:
             - name: tmp
               mountPath: /tmp
