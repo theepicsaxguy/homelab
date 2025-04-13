@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sonarr
-  namespace: arr
+  namespace: media
   labels:
     app: sonarr
 spec:
@@ -14,7 +14,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      namespace: sonarr
       labels:
         app: sonarr
     spec:

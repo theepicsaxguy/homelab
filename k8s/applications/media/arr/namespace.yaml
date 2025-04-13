@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arr
+  labels:
+    kubernetes.io/metadata.name: arr
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: media

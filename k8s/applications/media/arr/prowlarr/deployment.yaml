@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prowlarr
-  namespace: arr
+  namespace: media
   labels:
     app: prowlarr
 spec:
@@ -14,7 +14,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      namespace: prowlarr
       labels:
         app: prowlarr
     spec:
