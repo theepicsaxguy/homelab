@@ -13,7 +13,7 @@ spec:
       targetRevision: 70.4.2 # renovate: docker=ghcr.io/prometheus-community/charts/kube-prometheus-stack
       helm:
         valueFiles:
-          - $values/k8s/infra/monitoring/prometheus-stack/values.yaml
+          - values.yaml
     - repoURL: https://github.com/theepicsaxguy/homelab
       targetRevision: main
       ref: values
