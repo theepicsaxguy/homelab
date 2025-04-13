@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.0.0](https://github.com/theepicsaxguy/homelab/compare/v1.17.0...v2.0.0) (2025-04-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **network-policy:** Changed API responses from 'hostname' to 'dnsNames' in the gateway specification.
+
+### Features
+
+* **k8s:** add Hoarder application deployment and configuration ([#307](https://github.com/theepicsaxguy/homelab/issues/307)) ([0cf58a4](https://github.com/theepicsaxguy/homelab/commit/0cf58a47d789e87ce87598b68d6cec7467dc220a))
+* **k8s:** add HTTPRoute configuration for it-tools ([#358](https://github.com/theepicsaxguy/homelab/issues/358)) ([1e90d98](https://github.com/theepicsaxguy/homelab/commit/1e90d986575a327b1d9c2e6fd06c235040667a74))
+* **k8s:** add HTTPRoute configurations for Argo Rollouts and Longhorn ([#352](https://github.com/theepicsaxguy/homelab/issues/352)) ([57cbe3c](https://github.com/theepicsaxguy/homelab/commit/57cbe3cf9be6d43de36420a505bdf365e093e2cf))
+* **k8s:** add KUBECHECKS_ARGOCD_API_INSECURE environment variable ([#351](https://github.com/theepicsaxguy/homelab/issues/351)) ([7a3e130](https://github.com/theepicsaxguy/homelab/commit/7a3e13084d092e116638c26b47a0e2c730ef8b8f))
+* **k8s:** add monitoring stack with Prometheus and Grafana ([#313](https://github.com/theepicsaxguy/homelab/issues/313)) ([2a75469](https://github.com/theepicsaxguy/homelab/commit/2a75469b97111bfa7409618dd31fa17028b0a704))
+* **k8s:** implement kubechecks deployment with external secrets ([#356](https://github.com/theepicsaxguy/homelab/issues/356)) ([550dd90](https://github.com/theepicsaxguy/homelab/commit/550dd905f33dcc951737b35acb3034c68c8a591f))
+* **k8s:** update HTTPRoute hostnames and kustomization configurations ([#348](https://github.com/theepicsaxguy/homelab/issues/348)) ([32e089b](https://github.com/theepicsaxguy/homelab/commit/32e089b1b419e5908e81cbd5a64fe69cfb9455e9))
+* **tofu:** add extra mounts and kernel modules to machine config ([#310](https://github.com/theepicsaxguy/homelab/issues/310)) ([66425f3](https://github.com/theepicsaxguy/homelab/commit/66425f3143cd7526792039acc7ed332d605dc938))
+
+
+### Code Refactoring
+
+* **network-policy:** enhanced security settings ([#304](https://github.com/theepicsaxguy/homelab/issues/304)) ([187d68d](https://github.com/theepicsaxguy/homelab/commit/187d68d69e1141f80957faa1e962baec09ba7543)), closes [#5678](https://github.com/theepicsaxguy/homelab/issues/5678)
+
 ## [1.17.0](https://github.com/theepicsaxguy/homelab/compare/v1.16.0...v1.17.0) (2025-03-23)
 
 
