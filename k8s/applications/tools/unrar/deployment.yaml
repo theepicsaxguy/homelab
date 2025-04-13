@@ -54,6 +54,5 @@ spec:
         - name: tmp
           emptyDir: { }
         - name: data
-          nfs:
-            server: 10.25.150.117
-            path: /mnt/pool-0/data
+          persistentVolumeClaim:
+            claimName: unrar-data
