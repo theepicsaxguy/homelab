@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
 - project.yaml
 - network-policy.yaml
+- hubble
+- prometheus-stack
