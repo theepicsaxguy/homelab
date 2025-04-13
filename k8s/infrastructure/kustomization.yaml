@@ -6,6 +6,7 @@ resources:
 - network
 - storage
 - controllers
+- deployment
 
 configurations:
 - common/varreference.yaml

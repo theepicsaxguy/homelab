@@ -3,7 +3,4 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- argo-rollouts
-- argocd
-- cert-manager
-- external-secrets
+- kubechecks

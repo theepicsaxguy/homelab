@@ -4,14 +4,21 @@ kind: Kustomization
 namespace: hoarder
 
 secretGenerator:
-- envs:
-  - .secrets
-  name: hoarder-secrets
+- name: hoarder-secrets
+  # Removed: envs:
+  # - .secrets
+  literals: # Use literals instead of envs
+  - NEXTAUTH_SECRET=generated_secret  # Replace with your actual generated secret
+  - MEILI_MASTER_KEY=generated_secret # Replace with your actual generated secret
+  - NEXT_PUBLIC_SECRET="my-super-duper-secret-string"
 
 configMapGenerator:
-  - envs:
-    - .env
-    name: hoarder-configuration
+- name: hoarder-configuration
+  # Removed: envs:
+  # - .env
+  literals: # Use literals instead of envs
+  - NEXTAUTH_URL=http://localhost:3000
+  - HOARDER_VERSION=release
 
 resources:
 - namespace.yaml
