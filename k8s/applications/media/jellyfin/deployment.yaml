@@ -13,7 +13,7 @@ spec:
   template:
     spec:
       nodeSelector:
-        topology.kubernetes.io/zone: euclid
+        topology.kubernetes.io/zone: host3
       securityContext:
         runAsNonRoot: true
         runAsUser: 2501
