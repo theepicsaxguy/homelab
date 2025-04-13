@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: media
+  labels:
+    kubernetes.io/metadata.name: media
+    app.kubernetes.io/managed-by: argocd
+    app.kubernetes.io/part-of: applications

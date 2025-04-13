@@ -44,6 +44,21 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_id      = each.value.update == true ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
   }
 
+  # Create additional disks defined in the node configuration
+  dynamic "disk" {
+    for_each = each.value.disks
+    content {
+      datastore_id = each.value.datastore_id
+      interface    = "${disk.value.type}${disk.key == "longhorn" ? "1" : index(keys(each.value.disks), disk.key) + 1}"
+      iothread     = true
+      cache        = "writethrough"
+      discard      = "on"
+      ssd          = true
+      file_format  = "raw"
+      size         = tonumber(replace(disk.value.size, "G", ""))
+    }
+  }
+
   boot_order = ["scsi0"]
 
   operating_system {

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: torrent
-  namespace: arr
+  namespace: media
   labels:
     app: torrent
 spec:
@@ -14,7 +14,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      namespace: torrent
       labels:
         app: torrent
     spec:

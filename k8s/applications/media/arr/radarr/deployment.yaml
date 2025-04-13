@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: radarr
-  namespace: arr
+  namespace: media
   labels:
     app: radarr
 spec:
@@ -14,7 +14,6 @@ spec:
     type: Recreate
   template:
     metadata:
-      namespace: radarr
       labels:
         app: radarr
     spec:
