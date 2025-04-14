@@ -1,7 +1,7 @@
 machine:
   certSANs:
-    - ${cluster.vip}     # The VIP
-    - ${node_ip}      # The node's own IP
+    - ${cluster.vip}
+    - ${node_ip}
     - ${cluster.endpoint}
   kubelet:
     clusterDNS:
@@ -27,7 +27,18 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+%{ if length(disks) > 0 }
+  additionalDisks:
+%{ for disk_name, disk in disks }
+    - device: /dev/disk/by-label/${disk_name}
+      partitions:
+        - mountpoint: /var/mnt/${disk_name}
+          wipe: true
+          filesystem: ext4
+%{ endfor }
+%{ endif }
+
 cluster:
-    clusterName: kube.pc-tips.se
-    network:
-        dnsDomain: kube.pc-tips.se
+  clusterName: kube.pc-tips.se
+  network:
+    dnsDomain: kube.pc-tips.se
