@@ -35,6 +35,7 @@ data "talos_machine_configuration" "this" {
       cluster_name = var.cluster.proxmox_cluster
       node_ip      = each.value.ip
       cluster      = var.cluster
+      disks        = each.value.disks
     })
   ]
 }
