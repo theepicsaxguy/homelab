@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: meilisearch
-          image: getmeili/meilisearch:v1.13.3
+          image: getmeili/meilisearch:v1.14.0
           env:
             - name: MEILI_NO_ANALYTICS
               value: "true"
