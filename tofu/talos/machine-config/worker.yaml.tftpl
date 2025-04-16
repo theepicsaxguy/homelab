@@ -26,7 +26,7 @@ machine:
     hostname: ${hostname}
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
-    topology.kubernetes.io/zone: ${node_name} 
+    topology.kubernetes.io/zone: ${node_name}
 %{ if length(disks) > 0 }
   additionalDisks:
 %{ for disk_name, disk in disks }
@@ -37,7 +37,7 @@ machine:
           filesystem: ext4
 %{ endfor }
 %{ endif }
-  cluster: 
-    clusterName: kube.pc-tips.se 
-    network: 
-         dnsDomain: kube.pc-tips.se
+cluster:
+    clusterName: kube.pc-tips.se
+    network:
+        dnsDomain: kube.pc-tips.se
