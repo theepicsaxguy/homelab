@@ -16,6 +16,17 @@ machine:
           - bind
           - rshared
           - rw
+%{ if length(disks) > 0 }
+%{ for disk_name, disk in disks }
+      - destination: /var/mnt/${disk_name}
+        type: bind
+        source: /var/mnt/${disk_name}
+        options:
+          - bind
+          - rshared
+          - rw
+%{ endfor }
+%{ endif }
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:
@@ -28,13 +39,11 @@ machine:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
 %{ if length(disks) > 0 }
-  additionalDisks:
+  disks:
 %{ for disk_name, disk in disks }
     - device: /dev/disk/by-label/${disk_name}
       partitions:
         - mountpoint: /var/mnt/${disk_name}
-          wipe: true
-          filesystem: ext4
 %{ endfor }
 %{ endif }
 cluster:
