@@ -3,25 +3,19 @@ machine:
     - ${cluster.vip}
     - ${node_ip}
     - ${cluster.endpoint}
+
   kubelet:
     clusterDNS:
       - 10.96.0.10
     extraArgs:
       rotate-server-certificates: true
     extraMounts:
-      - destination: /var/lib/longhorn
-        type: bind
-        source: /var/lib/longhorn
-        options:
-          - bind
-          - rshared
-          - rw
 %{ if length(disks) > 0 }
-      # bind-mount each disk into the kubelet
 %{ for disk_name, disk in disks }
-      - destination: /var/mnt/${disk_name}
+      # bind‑mount each extra disk’s mountpoint
+      - destination: ${disk.mountpoint}
         type: bind
-        source: /var/mnt/${disk_name}
+        source: ${disk.mountpoint}
         options:
           - bind
           - rshared
@@ -34,15 +28,18 @@ machine:
     modules:
       - name: nvme_tcp
       - name: vfio_pci
+
   network:
     hostname: ${hostname}
+
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+
 %{ if length(disks) > 0 }
   disks:
 %{ for disk_name, disk in disks }
-    - device: ${disk.device}         # e.g. “/dev/sdb”
+    - device: ${disk.device}
       partitions:
         - mountpoint: ${disk.mountpoint}
 %{ endfor }
