@@ -11,4 +11,7 @@ helmCharts:
     version: 2.3.0
     releaseName: babybuddy
     namespace: babybuddy
+    # ← Tell Kustomize to pull dependencies before templating:
+    includeCRDs: true
     valuesFile: values.yaml
+
