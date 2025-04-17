@@ -74,8 +74,9 @@ module "talos" {
     update        = false
     disks = {
       longhorn = {
-        size = "100G"
-        type = "scsi"
+        device = "/dev/sdb"
+        size   = "100G"
+        type   = "scsi"
       }
     }
   }
@@ -90,8 +91,9 @@ module "talos" {
     update        = false
     disks = {
       longhorn = {
-        size = "100G"
-        type = "scsi"
+        device = "/dev/sdb"
+        size   = "100G"
+        type   = "scsi"
       }
     }
   }
@@ -106,8 +108,9 @@ module "talos" {
     update        = false
     disks = {
       longhorn = {
-        size = "100G"
-        type = "scsi"
+        device = "/dev/sdb"
+        size   = "100G"
+        type   = "scsi"
       }
     }
   }

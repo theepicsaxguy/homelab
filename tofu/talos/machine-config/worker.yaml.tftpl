@@ -17,6 +17,7 @@ machine:
           - rshared
           - rw
 %{ if length(disks) > 0 }
+      # bind-mount each disk into the kubelet
 %{ for disk_name, disk in disks }
       - destination: /var/mnt/${disk_name}
         type: bind
@@ -39,14 +40,16 @@ machine:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
 %{ if length(disks) > 0 }
+  # Tell Talos to partition, format and mount each disk at first boot.
   disks:
 %{ for disk_name, disk in disks }
-    - device: /dev/disk/by-label/${disk_name}
+    - device: ${disk.device}           # e.g. "/dev/sdb"
       partitions:
         - mountpoint: /var/mnt/${disk_name}
+          # size: 100%                 # you can omit this; defaults to full disk :contentReference[oaicite:0]{index=0}
 %{ endfor }
 %{ endif }
 cluster:
-    clusterName: kube.pc-tips.se
-    network:
-        dnsDomain: kube.pc-tips.se
+  clusterName: kube.pc-tips.se
+  network:
+    dnsDomain: kube.pc-tips.se
