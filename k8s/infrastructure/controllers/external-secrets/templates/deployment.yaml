@@ -42,7 +42,7 @@ spec:
             runAsUser: 1000
             seccompProfile:
               type: RuntimeDefault
-          image: oci.external-secrets.io/external-secrets/external-secrets:v0.15.1
+          image: oci.external-secrets.io/external-secrets/external-secrets:v0.16.1
           imagePullPolicy: IfNotPresent
           args:
           - --concurrent=1
