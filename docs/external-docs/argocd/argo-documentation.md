@@ -272,7 +272,7 @@ spec:
             project: 'default'
             source:
               repoURL: https://github.com/argoproj/argo-cd.git
-              targetRevision: HEAD
+              targetRevision: main
               # Use the cluster name in the path via parameter substitution:
               path: 'apps/{{cluster}}'
             destination: {}
@@ -735,7 +735,7 @@ To illustrate, here are some concise examples for each generator type:
         project: default
         source:
           repoURL: https://github.com/example/nginx-manifests.git
-          targetRevision: HEAD
+          targetRevision: main
           path: ./
         destination:
           server: https://kubernetes.default.svc
@@ -833,7 +833,7 @@ To illustrate, here are some concise examples for each generator type:
         project: infra
         source:
           repoURL: https://github.com/myorg/infra.git
-          targetRevision: HEAD
+          targetRevision: main
           path: 'apps/base-manifests'
         destination:
           server: '{{ cluster.address }}'
