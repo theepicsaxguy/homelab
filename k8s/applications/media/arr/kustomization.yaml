@@ -1,15 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: media
-
 configMapGenerator:
 - literals:
   - TZ="Europe/Oslo"
   name: common-env
 
+# remove the explicit Namespace resource and let kustomize set it
+namespace: media
+
 resources:
-- namespace.yaml
 - lidarr
 - prowlarr
 - radarr

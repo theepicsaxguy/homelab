@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: lidarr
-  namespace: arr
+  namespace: media
 spec:
   type: ClusterIP
   selector:

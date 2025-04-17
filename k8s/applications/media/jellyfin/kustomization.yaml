@@ -6,9 +6,7 @@ configMapGenerator:
   - TZ="Europe/Oslo"
   name: jellyfin-env
 
-components:
-  - ../../common/components/namespace-manager
-namespace: jellyfin
+namespace: media
 
 resources:
 - svc.yaml
