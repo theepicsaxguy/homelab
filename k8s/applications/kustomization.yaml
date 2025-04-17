@@ -6,6 +6,7 @@ resources:
 - ai
 - media
 - tools
+- external
 
 configurations:
 - common/varreference.yaml
