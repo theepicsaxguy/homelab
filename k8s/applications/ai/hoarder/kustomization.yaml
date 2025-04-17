@@ -30,6 +30,7 @@ resources:
 - meilisearch-service.yaml
 - meilisearch-pvc.yaml
 - data-pvc.yaml
+- http-route.yaml
 
 replacements:
 - source:
