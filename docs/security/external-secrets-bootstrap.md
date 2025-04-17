@@ -114,7 +114,7 @@ If the bootstrap fails with error `MountVolume.SetUp failed for volume "bitwarde
 After certificates are properly issued, configure the SecretStore to connect to Bitwarden:
 
 ```yaml
-apiVersion: external-secrets.io/v1alpha1
+apiVersion: external-secrets.io/v1beta1
 kind: SecretStore
 metadata:
   name: bitwarden-secretsmanager
@@ -150,7 +150,7 @@ And test that External Secrets can access Bitwarden:
 
 ```bash
 kubectl create -f - <<EOF
-apiVersion: external-secrets.io/v1alpha1
+apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
   name: test-external-secret
