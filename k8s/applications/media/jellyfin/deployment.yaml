@@ -57,9 +57,8 @@ spec:
           persistentVolumeClaim:
             claimName: jellyfin-config
         - name: media
-          nfs:
-            server: 10.25.150.117
-            path: /mnt/pool-0/data/media
+          persistentVolumeClaim:
+            claimName: jellyfin-media
         - name: cache
           emptyDir:
             medium: Memory

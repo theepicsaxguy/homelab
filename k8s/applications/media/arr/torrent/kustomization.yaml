@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - pvc.yaml
+- data-pvc.yaml
 - svc.yaml
 - svc-torrent.yaml
 - http-route.yaml

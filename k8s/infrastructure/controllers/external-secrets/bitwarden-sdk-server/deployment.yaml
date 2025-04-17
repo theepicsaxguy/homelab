@@ -24,11 +24,19 @@ spec:
     spec:
       serviceAccountName: bitwarden-sdk-server
       securityContext:
-        {}
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: bitwarden-sdk-server
           securityContext:
-            {}
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
           image: "ghcr.io/external-secrets/bitwarden-sdk-server:v0.4.0"
           imagePullPolicy: IfNotPresent
           volumeMounts:
@@ -49,7 +57,12 @@ spec:
               port: http
               scheme: HTTPS
           resources:
-            {}
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
       volumes:
         - name: bitwarden-tls-certs
           secret:
