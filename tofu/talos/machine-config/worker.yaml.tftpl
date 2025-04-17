@@ -1,7 +1,7 @@
 machine:
   certSANs:
-    - ${cluster.vip}     # The VIP
-    - ${node_ip}      # The node's own IP
+    - ${cluster.vip}
+    - ${node_ip}
     - ${cluster.endpoint}
   kubelet:
     clusterDNS:
@@ -16,6 +16,18 @@ machine:
           - bind
           - rshared
           - rw
+%{ if length(disks) > 0 }
+      # bind-mount each disk into the kubelet
+%{ for disk_name, disk in disks }
+      - destination: /var/mnt/${disk_name}
+        type: bind
+        source: /var/mnt/${disk_name}
+        options:
+          - bind
+          - rshared
+          - rw
+%{ endfor }
+%{ endif }
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:
@@ -27,7 +39,16 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+%{ if length(disks) > 0 }
+  disks:
+%{ for disk_name, disk in disks }
+    - device: ${disk.device}         # e.g. “/dev/sdb”
+      partitions:
+        - mountpoint: ${disk.mountpoint}
+%{ endfor }
+%{ endif }
+
 cluster:
-    clusterName: kube.pc-tips.se
-    network:
-        dnsDomain: kube.pc-tips.se
+  clusterName: kube.pc-tips.se
+  network:
+    dnsDomain: kube.pc-tips.se
