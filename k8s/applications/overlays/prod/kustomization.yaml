@@ -9,7 +9,6 @@ resources:
 components:
 - ../../common/components/env-vars
 - ../../common/components/rollouts
-- ../../common/components/namespace-manager
 namespace: prod-apps
 
 configMapGenerator:
