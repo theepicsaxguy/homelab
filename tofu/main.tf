@@ -77,6 +77,7 @@ module "talos" {
         device = "/dev/sdb"
         size   = "100G"
         type   = "scsi"
+        mountpoint = "/var/lib/longhorn"
       }
     }
   }
@@ -94,6 +95,7 @@ module "talos" {
         device = "/dev/sdb"
         size   = "100G"
         type   = "scsi"
+        mountpoint = "/var/lib/longhorn"
       }
     }
   }
@@ -111,6 +113,7 @@ module "talos" {
         device = "/dev/sdb"
         size   = "100G"
         type   = "scsi"
+        mountpoint = "/var/lib/longhorn"
       }
     }
   }
