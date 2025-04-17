@@ -7,6 +7,7 @@ resources:
 - media
 - tools
 - external
+- web
 
 configurations:
 - common/varreference.yaml
