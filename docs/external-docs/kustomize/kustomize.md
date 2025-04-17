@@ -181,7 +181,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/kubernetes-sigs/kustomize'
-    targetRevision: HEAD
+    targetRevision: main
     path: examples/helloWorld
   destination:
     namespace: default
@@ -262,7 +262,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     repoURL: https://github.com/argoproj/argocd-example-apps
-    targetRevision: HEAD
+    targetRevision: main
     path: kustomize-guestbook
     kustomize:
       namespace: demo # This ensures resources get the demo namespace, even if not set in the manifests.
@@ -316,7 +316,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/argoproj/argocd-example-apps.git
-    targetRevision: HEAD
+    targetRevision: main
     path: kustomize-guestbook
     kustomize:
       version: v3.5.4
