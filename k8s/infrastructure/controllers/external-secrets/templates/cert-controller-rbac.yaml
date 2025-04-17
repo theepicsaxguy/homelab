@@ -5,10 +5,10 @@ kind: ClusterRole
 metadata:
   name: external-secrets-cert-controller
   labels:
-    helm.sh/chart: external-secrets-0.15.1
+    helm.sh/chart: external-secrets-0.16.1
     app.kubernetes.io/name: external-secrets-cert-controller
     app.kubernetes.io/instance: external-secrets
-    app.kubernetes.io/version: "v0.15.1"
+    app.kubernetes.io/version: "v0.16.1"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -80,10 +80,10 @@ kind: ClusterRoleBinding
 metadata:
   name: external-secrets-cert-controller
   labels:
-    helm.sh/chart: external-secrets-0.15.1
+    helm.sh/chart: external-secrets-0.16.1
     app.kubernetes.io/name: external-secrets-cert-controller
     app.kubernetes.io/instance: external-secrets
-    app.kubernetes.io/version: "v0.15.1"
+    app.kubernetes.io/version: "v0.16.1"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io

@@ -42,7 +42,7 @@ Once the Bitwarden SDK Server is running, you can configure the **SecretStore** 
 securely. Below is an example of the configuration for the **SecretStore** resource.
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: bitwarden-secretsmanager
@@ -78,7 +78,7 @@ You can fetch secrets from Bitwarden using two methods: **by UUID** or **by Name
 To retrieve a secret by its UUID, you simply provide the UUID as the remote key in the `ExternalSecret` resource:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: bitwarden
@@ -105,7 +105,7 @@ When retrieving a secret by its name, additional information is required, includ
 Here is an example of how to fetch a secret by name:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: bitwarden
@@ -133,7 +133,7 @@ Bitwarden. When pushing a secret, the following rules apply to prevent accidenta
 Below is an example of how to push a secret:
 
 ```yaml
-apiVersion: external-secrets.io/v1alpha1
+apiVersion: external-secrets.io/v1
 kind: PushSecret
 metadata:
   name: pushsecret-bitwarden
