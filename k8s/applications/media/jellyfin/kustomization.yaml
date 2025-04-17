@@ -11,6 +11,7 @@ namespace: media
 resources:
 - svc.yaml
 - pvc.yaml
+- media-pvc.yaml
 - http-route.yaml
 - deployment.yaml
 
