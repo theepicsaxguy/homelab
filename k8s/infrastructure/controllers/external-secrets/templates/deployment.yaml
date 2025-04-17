@@ -6,7 +6,7 @@ metadata:
   name: external-secrets
   namespace: external-secrets
   labels:
-    helm.sh/chart: external-secrets-0.15.1
+    helm.sh/chart: external-secrets-0.16.1
     app.kubernetes.io/name: external-secrets
     app.kubernetes.io/instance: external-secrets
     app.kubernetes.io/version: "v0.16.1"
@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: external-secrets-0.15.1
+        helm.sh/chart: external-secrets-0.16.1
         app.kubernetes.io/name: external-secrets
         app.kubernetes.io/instance: external-secrets
         app.kubernetes.io/version: "v0.16.1"
