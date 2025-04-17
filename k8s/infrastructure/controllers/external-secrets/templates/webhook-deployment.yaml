@@ -9,7 +9,7 @@ metadata:
     helm.sh/chart: external-secrets-0.15.1
     app.kubernetes.io/name: external-secrets-webhook
     app.kubernetes.io/instance: external-secrets
-    app.kubernetes.io/version: "v0.15.1"
+    app.kubernetes.io/version: "v0.16.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -24,7 +24,7 @@ spec:
         helm.sh/chart: external-secrets-0.15.1
         app.kubernetes.io/name: external-secrets-webhook
         app.kubernetes.io/instance: external-secrets
-        app.kubernetes.io/version: "v0.15.1"
+        app.kubernetes.io/version: "v0.16.1"
         app.kubernetes.io/managed-by: Helm
     spec:
       hostNetwork: false
