@@ -39,8 +39,10 @@ variable "nodes" {
     update = optional(bool, false)
     igpu = optional(bool, false)
     disks = optional(map(object({
+      device = string
       size = string
       type = string
+      mountpoint = string
     })), {})
   }))
 }
