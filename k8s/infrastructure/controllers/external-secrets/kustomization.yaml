@@ -15,6 +15,7 @@ resources:
 #   -n external-secrets \
 #   --create-namespace \
 #   --set installCRDs=false \
+#   --version 0.16.1 \
 #   --set bitwarden-sdk-server.enabled=true \
 #   --output-dir .
 

@@ -7,3 +7,4 @@ namespace: unrar
 resources:
 - deployment.yaml
 - pvc.yaml
+- namespace.yaml
