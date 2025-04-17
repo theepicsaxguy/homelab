@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: web
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab'
+  destinations:
+    - namespace: 'argocd'
+      server: '*'
+    - namespace: 'web'
+      server: '*'
+    - namespace: 'babybuddy'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
