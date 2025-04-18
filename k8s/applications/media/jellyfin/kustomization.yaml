@@ -13,6 +13,7 @@ resources:
 - http-route.yaml
 - deployment.yaml
 - media-share-pvc.yaml
+- jellyfin-config-pvc.yaml
 
 labels:
 - includeSelectors: true
