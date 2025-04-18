@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jellyfin
-  namespace: jellyfin
+  namespace: media
 spec:
   type: ClusterIP
   selector:
