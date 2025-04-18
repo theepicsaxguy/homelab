@@ -39,7 +39,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
-              value: argocd-server.argocd.svc
+              value: argocd-server.argocd.svc:443
             - name: KUBECHECKS_ARGOCD_API_INSECURE
               value: "true"
             - name: KUBECHECKS_ARGOCD_API_NAMESPACE
@@ -65,7 +65,7 @@ spec:
             - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
               value: "true"
             - name: KUBECHECKS_LOG_LEVEL
-              value: info
+              value: debug
             - name: KUBECHECKS_SHOW_DEBUG_INFO
               value: "false"
             - name: KUBECHECKS_ENABLE_KUBECONFORM
@@ -82,6 +82,8 @@ spec:
               value: "1024"
             - name: KUBECHECKS_REPLAN_COMMENT_MSG
               value: kubechecks again
+            - name: KUBECHECKS_PERSIST_LOG_LEVEL
+              value: "true"
           ports:
             - name: http
               containerPort: 8080
