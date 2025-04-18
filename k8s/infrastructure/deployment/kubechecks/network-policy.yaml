@@ -1,49 +1,43 @@
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
 metadata:
   name: allow-to-argocd
   namespace: kubechecks
 spec:
-  podSelector:
+  endpointSelector:
     matchLabels:
       app.kubernetes.io/name: kubechecks
-  policyTypes:
-    - Egress
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kubechecks
   egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              app.kubernetes.io/part-of: infrastructure   # or match on namespace “argocd”
-        - podSelector:
-            matchLabels:
-              app.kubernetes.io/name: argocd-server
-      ports:
-        - protocol: TCP
-          port: 443
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: argocd
-          podSelector:
-            matchLabels:
-              app.kubernetes.io/name: argocd-repo-server
-      ports:
-        - protocol: TCP
-          port: 8081
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: default
-          podSelector:
-            matchLabels:
-              kubernetes.io/name: kubernetes
-      ports:
-        - protocol: TCP
-          port: 443
-    - to:
-        - namespaceSelector: {}
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: argocd-server
+      toPorts:
+        - ports:
+            - port: 443
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: argocd-repo-server
+      toPorts:
+        - ports:
+            - port: 8081
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            kubernetes.io/name: kubernetes
+      toPorts:
+        - ports:
+            - port: 443
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels: {}
+      toPorts:
+        - ports:
+            - port: 53
+              protocol: UDP
+            - port: 53
+              protocol: TCP
