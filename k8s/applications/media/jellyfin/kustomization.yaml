@@ -12,7 +12,6 @@ resources:
 - svc.yaml
 - http-route.yaml
 - deployment.yaml
-- media-share-pvc.yaml
 - jellyfin-config-pvc.yaml
 
 labels:
