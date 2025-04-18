@@ -102,6 +102,3 @@ spec:
           emptyDir: { }
         - name: themes
           emptyDir: { }
-        - name: data
-          persistentVolumeClaim:
-            claimName: torrent-data
