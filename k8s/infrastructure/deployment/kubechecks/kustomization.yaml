@@ -14,6 +14,7 @@ resources:
 - rolebinding.yaml
 - service.yaml
 - serviceaccount.yaml
+- network-policy.yaml
 labels:
 - includeSelectors: true
   pairs:
