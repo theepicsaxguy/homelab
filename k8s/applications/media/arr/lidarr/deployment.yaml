@@ -29,6 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: lidarr
+          # renovate: registry=ghcr.io/drag0n141/lidarr
           image: ghcr.io/drag0n141/lidarr:2.9
           securityContext:
             allowPrivilegeEscalation: false
