@@ -65,6 +65,3 @@ spec:
             claimName: media-share
         - name: tmp
           emptyDir: { }
-        - name: data
-          persistentVolumeClaim:
-            claimName: sonarr-data
