@@ -60,6 +60,9 @@ spec:
         - name: radarr-config
           persistentVolumeClaim:
             claimName: radarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-share
         - name: tmp
           emptyDir: { }
         - name: data

@@ -58,5 +58,8 @@ spec:
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-share
         - name: tmp
           emptyDir: { }

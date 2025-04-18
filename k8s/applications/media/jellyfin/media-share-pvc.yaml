@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-config
+  name: media-share
   namespace: jellyfin
 spec:
-  storageClassName: longhorn
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 12G
+      storage: 2Ti
+  volumeName: media-share
+  storageClassName: ""
