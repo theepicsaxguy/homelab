@@ -20,9 +20,18 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: nginx-logs
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+
       containers:
       - name: it-tools
         image: corentinth/it-tools:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         securityContext:
@@ -37,3 +46,10 @@ spec:
           limits:
             cpu: 200m
             memory: 256Mi
+        volumeMounts:
+          - name: nginx-logs
+            mountPath: /var/log/nginx
+          - name: nginx-cache
+            mountPath: /var/cache/nginx
+          - name: nginx-run
+            mountPath: /run
