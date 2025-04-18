@@ -60,6 +60,9 @@ spec:
         - name: lidarr-config
           persistentVolumeClaim:
             claimName: lidarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-share
         - name: tmp
           emptyDir: { }
         - name: data

@@ -95,6 +95,9 @@ spec:
         - name: torrent-config
           persistentVolumeClaim:
             claimName: torrent-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-share
         - name: tmp
           emptyDir: { }
         - name: themes
