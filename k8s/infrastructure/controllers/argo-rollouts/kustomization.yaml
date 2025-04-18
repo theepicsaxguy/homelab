@@ -7,5 +7,5 @@ namespace: argo-rollouts
 resources:
 - namespace.yaml
 - http-route.yaml
-- https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+- https://github.com/argoproj/argo-rollouts/releases/download/v1.8.2/install.yaml
 - dashboard-service.yaml
