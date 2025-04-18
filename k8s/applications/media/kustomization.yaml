@@ -8,3 +8,5 @@ resources:
 - project.yaml
 - jellyfin
 - arr
+- media-share-pvc.yaml
+- nfs-pv.yaml

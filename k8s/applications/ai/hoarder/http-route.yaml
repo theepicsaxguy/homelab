@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: web
-          port: 8080
+          port: 3000
