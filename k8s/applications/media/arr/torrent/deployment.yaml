@@ -45,8 +45,8 @@ spec:
             - -v=2
           resources:
             requests:
-              cpu: 10m
-              memory: 16Mi
+              cpu: 100m
+              memory: 512Mi
             limits:
               cpu: 2000m
               memory: 256Mi
@@ -78,7 +78,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 1.5Gi
+              memory: 512Mi
             limits:
               cpu: 2000m
               memory: 8Gi
