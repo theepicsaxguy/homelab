@@ -33,12 +33,11 @@ spec:
               drop: [ "ALL" ]
           resources:
             requests:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 100m
+              memory: 128Mi
             limits:
-              cpu: 6000m
-              memory: 6Gi
-              gpu.intel.com/i915: 1000m
+              cpu: 1000m
+              memory: 4Gi
           envFrom:
             - configMapRef:
                 name: jellyfin-env
