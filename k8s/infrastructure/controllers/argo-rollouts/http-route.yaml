@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: argo-rollouts-dashboard
-          port: 80
+          port: 3100

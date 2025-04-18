@@ -8,4 +8,4 @@ resources:
 - namespace.yaml
 - http-route.yaml
 - https://github.com/argoproj/argo-rollouts/releases/download/v1.8.2/install.yaml
-- dashboard-service.yaml
+- https://raw.githubusercontent.com/argoproj/argo-rollouts/v1.8.2/manifests/dashboard-install.yaml

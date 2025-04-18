@@ -16,4 +16,4 @@ spec:
             value: /
       backendRefs:
         - name: it-tools-service
-          port: 80
+          port: 8080
