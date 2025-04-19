@@ -1,0 +1,44 @@
+# FILE: k8s/applications/web/babybuddy/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: babybuddy
+  namespace: babybuddy
+  labels:
+    app: babybuddy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: babybuddy
+  template:
+    metadata:
+      labels:
+        app: babybuddy
+    spec:
+      securityContext:
+        fsGroup: 1000            # ensure PVC files are owned by PUID/PGID
+      containers:
+        - name: babybuddy
+          image: ghcr.io/linuxserver/babybuddy:2.7.1-ls185
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/Stockholm"
+          envFrom:
+            - secretRef:
+                name: es-babybuddy-secret-key
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: babybuddy-config
