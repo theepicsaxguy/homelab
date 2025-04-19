@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - http-route.yaml
-  - babybuddy-external-secret.yaml  # added ExternalSecret
+  - babybuddy-external-secret.yaml   # already present
 
 helmCharts:
   - name: babybuddy
@@ -14,3 +14,6 @@ helmCharts:
     namespace: babybuddy
     includeCRDs: true
     valuesFile: values.yaml
+
+patchesStrategicMerge:
+  - babybuddy-secret-env-patch.yaml   # inject SECRET_KEY env var
