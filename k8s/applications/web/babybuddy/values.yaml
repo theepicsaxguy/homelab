@@ -25,7 +25,8 @@ ingress:
 persistence:
   config:
     enabled: true
-    emptyDir: false
+    size: 5Gi
+    storageClass: longhorn
     mountPath: /config
 
 # Enable postgres
