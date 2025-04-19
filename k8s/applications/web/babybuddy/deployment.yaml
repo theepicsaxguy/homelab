@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000            # ensure PVC files are owned by PUID/PGID
       containers:
         - name: babybuddy
-          image: ghcr.io/linuxserver/babybuddy:2.7.1-ls185
+          image: ghcr.io/linuxserver/babybuddy:2.7.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
