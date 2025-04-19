@@ -35,7 +35,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: kubechecks
-          image: ghcr.io/zapier/kubechecks:v0.5.4
+          image: ghcr.io/zapier/kubechecks:v2.4.2
           imagePullPolicy: Always
           env:
             - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR

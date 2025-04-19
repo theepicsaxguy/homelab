@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: lidarr
-          image: lscr.io/linuxserver/lidarr:2.10.3
+          image: lscr.io/linuxserver/lidarr:8.1.2135
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
