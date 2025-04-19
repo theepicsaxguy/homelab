@@ -16,6 +16,11 @@ image:
 env: {}
   # TZ:
 
+# Mount the Bitwarden‑provided SECRET_KEY via envFrom
+envFrom:
+  - secretRef:
+      name: es-babybuddy-secret-key
+
 service:
   port:
     port: 8000
