@@ -14,6 +14,3 @@ helmCharts:
   repo: https://nicholaswilde.github.io/helm-charts/
   valuesFile: values.yaml
   version: 2.3.0
-
-patches:
-- path: babybuddy-secret-env-patch.yaml

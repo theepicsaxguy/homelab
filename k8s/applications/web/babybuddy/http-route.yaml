@@ -15,5 +15,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: babybuddy     # <— this is the Kubernetes Service name created by the chart
-          port: 8000            # <— the Service port (matches .Values.service.port)
+        - name: babybuddy
+          port: 8000
