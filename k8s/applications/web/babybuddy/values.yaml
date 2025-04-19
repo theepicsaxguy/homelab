@@ -17,15 +17,14 @@ env: {}
   # TZ:
 
 service:
-  port:
-    port: 8000
+  port: 8000
 
 ingress:
   enabled: false
 
 persistence:
   config:
-    enabled: false
+    enabled: true
     emptyDir: false
     mountPath: /config
 
