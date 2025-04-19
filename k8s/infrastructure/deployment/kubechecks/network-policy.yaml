@@ -33,8 +33,10 @@ spec:
         - ports:
             - port: 443
               protocol: TCP
-    - toEndpoints:
-        - matchLabels: {}
+    - toEntities:
+        - cluster
+        - kube-apiserver
+        - world
       toPorts:
         - ports:
             - port: 53
