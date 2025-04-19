@@ -1,0 +1,13 @@
+# FILE: k8s/applications/web/babybuddy/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: babybuddy-config
+  namespace: babybuddy
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
