@@ -39,6 +39,11 @@ spec:
             cpu: "1000m"
             memory: "1Gi"
         env:
+        - name: WEBUI_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openwebui-secret
+              key: WEBUI_SECRET_KEY
         - name: OLLAMA_BASE_URL
           value: "http://ollama-service.open-webui.svc.kube.pc-tips.se:11434"
         tty: true
