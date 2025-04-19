@@ -8,7 +8,7 @@ metadata:
     helm.sh/chart: kubechecks-0.5.4
     app.kubernetes.io/name: kubechecks
     app.kubernetes.io/instance: kubechecks
-    app.kubernetes.io/version: latest
+    app.kubernetes.io/version: v0.5.4
     app.kubernetes.io/managed-by: argocd
     app.kubernetes.io/part-of: infrastructure
     dev.pc-tips: deployment
@@ -35,7 +35,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: kubechecks
-          image: ghcr.io/zapier/kubechecks:latest
+          image: ghcr.io/zapier/kubechecks:v0.5.4
           imagePullPolicy: Always
           env:
             - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
