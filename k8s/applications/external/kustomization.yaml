@@ -6,5 +6,5 @@ labels:
     app.kubernetes.io/managed-by: argocd
 
 resources:
-  - project.yaml
-  - application-set.yaml
+- project.yaml
+- application-set.yaml

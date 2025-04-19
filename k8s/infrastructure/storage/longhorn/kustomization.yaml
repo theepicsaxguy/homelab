@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: longhorn-system
 
 resources:
-  - namespace.yaml
-  - http-route.yaml
+- namespace.yaml
+- http-route.yaml
 
 helmCharts:
 - name: longhorn
