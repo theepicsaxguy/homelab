@@ -17,8 +17,7 @@ env: {}
   # TZ:
 
 service:
-  port:
-    port: 8000
+  port: 8000
 
 ingress:
   enabled: false
