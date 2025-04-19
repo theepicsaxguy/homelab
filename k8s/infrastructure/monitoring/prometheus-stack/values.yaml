@@ -4,17 +4,15 @@ prometheus:
       topology.kubernetes.io/zone: host3
     storageSpec:
       volumeClaimTemplate:
+        metadata:
+          name: prometheus-storage
         spec:
           storageClassName: longhorn
-          volumeName: pv-prometheus
           accessModes:
             - ReadWriteOnce
           resources:
             requests:
-              storage: 10G
-          selector:
-            matchLabels:
-              app: prometheus
+              storage: 10Gi
 
 nodeExporter:
   enabled: false
