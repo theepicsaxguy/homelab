@@ -3,20 +3,21 @@ kind: Kustomization
 namespace: kubechecks
 
 resources:
-- namespace.yaml
-- clusterrole.yaml
-- clusterrolebinding.yaml
-- deployment.yaml
-- kubechecks-secret-external.yaml
-- argocd-token-external.yaml
-- service.yaml
-- serviceaccount.yaml
-- network-policy.yaml
-labels:
-- includeSelectors: true
-  pairs:
-    app.kubernetes.io/managed-by: argocd
-    app.kubernetes.io/part-of: infrastructure
-    dev.pc-tips: deployment
-patchesStrategicMerge:
-- network-policy.yaml
+  - namespace.yaml
+  - kubechecks-secret-external.yaml
+  - argocd-token-external.yaml
+  - network-policy.yaml
+
+helmCharts:
+  - name: kubechecks
+    repo: https://zapier.github.io/kubechecks
+    version: 0.5.4
+    releaseName: kubechecks
+    namespace: kubechecks
+    valuesFile: values.yaml
+
+patches:
+  - path: network-policy.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

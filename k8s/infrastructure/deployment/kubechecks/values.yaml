@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: zapier/kubechecks
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+secrets:
+  create: false
+  extra:
+    - name: github-token
+      key: github_token
+    - name: argocd-token
+      key: argocd-api-token
+
+deployment:
+  envFrom:
+    - secretRef:
+        name: github-token
+    - secretRef:
+        name: argocd-token
+  env: []
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
