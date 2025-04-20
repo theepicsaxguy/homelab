@@ -7,7 +7,7 @@ spec:
   - name: success-rate
     interval: 60s
     successCondition: result[0] >= 0.98
-    failureLimit: 2
+    failureLimit: 5
     provider:
       prometheus:
         address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
@@ -21,6 +21,7 @@ spec:
     interval: 5s
     count: 2
     successCondition: result == true
+    failureLimit: 5
     provider:
       web:
         url: http://{{ args.service }}.{{ args.namespace }}.svc/health
