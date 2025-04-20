@@ -3,6 +3,5 @@ kind: Kustomization
 
 resources:
 - project.yaml
-- unrar
 - whoami
 - it-tools
