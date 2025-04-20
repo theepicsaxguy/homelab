@@ -13,7 +13,7 @@ spec:
     name: bitwarden-backend
     kind: ClusterSecretStore
   target:
-    name: kubechecks-argocd-token
+    name: argocd-token
     creationPolicy: Owner
   data:
     - secretKey: argocd-api-token

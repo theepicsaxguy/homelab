@@ -1,20 +1,39 @@
-KUBECHECKS_ARGOCD_API_SERVER_ADDR: argocd-server.argocd.svc:443
-KUBECHECKS_ARGOCD_API_INSECURE: "true"
-KUBECHECKS_ARGOCD_API_NAMESPACE: argocd
-KUBECHECKS_ARGOCD_REPOSITORY_ENDPOINT: argocd-repo-server.argocd.svc:8081
-KUBECHECKS_ARGOCD_REPOSITORY_INSECURE: "true"
-KUBECHECKS_ARGOCD_API_TOKEN: "${ARGOCD_API_TOKEN}"
-KUBECHECKS_VCS_TYPE: github
-KUBECHECKS_VCS_TOKEN: "${GITHUB_TOKEN}"
-KUBECHECKS_KUBERNETES_TYPE: local
-KUBECHECKS_MONITOR_ALL_APPLICATIONS: "true"
-KUBECHECKS_LOG_LEVEL: debug
-KUBECHECKS_SHOW_DEBUG_INFO: "false"
-KUBECHECKS_ENABLE_KUBECONFORM: "true"
-KUBECHECKS_ENABLE_PREUPGRADE: "true"
-KUBECHECKS_ENABLE_CONFTEST: "false"
-KUBECHECKS_FALLBACK_K8S_VERSION: "1.32.0"
-KUBECHECKS_MAX_CONCURRENT_CHECKS: "32"
-KUBECHECKS_MAX_QUEUE_SIZE: "1024"
-KUBECHECKS_REPLAN_COMMENT_MSG: kubechecks again
-KUBECHECKS_PERSIST_LOG_LEVEL: "true"
+replicaCount: 1
+
+image:
+  repository: zapier/kubechecks
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+secrets:
+  create: false
+  extra:
+    - name: github-token
+      key: github_token
+    - name: argocd-token
+      key: argocd-api-token
+
+deployment:
+  envFrom:
+    - secretRef:
+        name: github-token
+    - secretRef:
+        name: argocd-token
+  env: []
+
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

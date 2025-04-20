@@ -4,11 +4,8 @@ namespace: kubechecks
 
 resources:
   - namespace.yaml
-  - clusterrole.yaml
-  - clusterrolebinding.yaml
   - kubechecks-secret-external.yaml
   - argocd-token-external.yaml
-  - serviceaccount.yaml
   - network-policy.yaml
 
 helmCharts:
