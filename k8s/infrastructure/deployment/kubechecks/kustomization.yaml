@@ -16,8 +16,5 @@ helmCharts:
     namespace: kubechecks
     valuesFile: values.yaml
 
-patches:
-  - path: network-policy.yaml
-
 generatorOptions:
   disableNameSuffixHash: true

@@ -1,8 +1,9 @@
+# values.yaml
 replicaCount: 1
 
 image:
-  repository: zapier/kubechecks
-  tag: latest
+  repository: ghcr.io/zapier/kubechecks
+  tag: ""            # defaults to chart appVersion
   pullPolicy: Always
 
 service:
@@ -17,16 +18,27 @@ resources:
     cpu: 100m
     memory: 128Mi
 
+# We're using ExternalSecret to provide these, so disable chart-managed secrets.
 secrets:
   create: false
 
 deployment:
-  envFrom:
-    - secretRef:
-        name: github-token
-    - secretRef:
-        name: argocd-token
-  env: []
+  # Remove any envFrom, because the key names in your secrets
+  # don't match kubechecks' expected env-var names.
+  envFrom: []
+
+  # Explicitly map your existing secrets->keys to the variables kubechecks needs.
+  env:
+    - name: KUBECHECKS_VCS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: github-token
+          key: github_token
+    - name: KUBECHECKS_ARGOCD_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: argocd-token
+          key: argocd-api-token
 
 podAnnotations: {}
 nodeSelector: {}
