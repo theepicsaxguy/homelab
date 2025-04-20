@@ -4,8 +4,9 @@ kind: Kustomization
 namespace: media
 
 helmCharts:
-  - name: jellyseerr
-    repo: oci://ghcr.io/fallenbagel/jellyseerr/jellyseerr-chart
+  - name: jellyseerr-chart
+    chart: jellyseerr-chart
+    repo: oci://ghcr.io/fallenbagel/jellyseerr
     version: 2.3.3
     releaseName: jellyseerr
     namespace: media
