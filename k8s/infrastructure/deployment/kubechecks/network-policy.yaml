@@ -17,21 +17,21 @@ spec:
             app.kubernetes.io/name: argocd-server
       toPorts:
         - ports:
-            - port: 443
+            - port: "443"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: argocd-repo-server
       toPorts:
         - ports:
-            - port: 8081
+            - port: "8081"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
             kubernetes.io/name: kubernetes
       toPorts:
         - ports:
-            - port: 443
+            - port: "443"
               protocol: TCP
     - toEntities:
         - cluster
@@ -39,7 +39,7 @@ spec:
         - world
       toPorts:
         - ports:
-            - port: 53
+            - port: "53"
               protocol: UDP
-            - port: 53
+            - port: "53"
               protocol: TCP
