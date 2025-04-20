@@ -10,7 +10,7 @@ configMapGenerator:
 namespace: media
 
 resources:
-- lidarr
+#- lidarr
 - prowlarr
 - radarr
 - sonarr
