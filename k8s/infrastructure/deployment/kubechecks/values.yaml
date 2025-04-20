@@ -7,21 +7,6 @@ commonLabels: {}
 configMap:
   create: false
   env: {}
-  # KUBECHECKS_ADDITIONAL_APPS_NAMESPACES: "*"
-  # KUBECHECKS_ARGOCD_API_INSECURE: "false"
-  # KUBECHECKS_ARGOCD_API_PATH_PREFIX: /
-  # KUBECHECKS_ARGOCD_API_NAMESPACE: argocd
-  # KUBECHECKS_ARGOCD_WEBHOOK_URL: https://argocd.<domain.com>/api/webhook
-  # KUBECHECKS_FALLBACK_K8S_VERSION: "1.22.0"
-  # KUBECHECKS_LOG_LEVEL: debug
-  # KUBECHECKS_NAMESPACE: kubechecks
-  # KUBECHECKS_WEBHOOK_URL_BASE: https://kubechecks.<domain.com>.
-  # KUBECHECKS_WEBHOOK_URL_PREFIX: kubechecks
-  # KUBECHECKS_ARGOCD_API_SERVER_ADDR: argocd.<domain.com>
-  # ARGOCD_EXEC_TIMEOUT: 600s
-  # KUBECHECKS_OTEL_COLLECTOR_PORT: "4317"
-  # KUBECHECKS_OTEL_ENABLED: "true"
-  # KUBECHECKS_TIDY_OUTDATED_COMMENTS_MODE: "hide" # other options: delete
 
 deployment:
   env:
@@ -37,6 +22,8 @@ deployment:
         secretKeyRef:
           name: argocd-token
           key: argocd-api-token
+    - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
+      value: "argocd-server.argocd.svc.kube.pc-tips.se"
   annotations: {}
   podAnnotations: {}
   args: []
@@ -73,7 +60,7 @@ deployment:
     initialDelaySeconds: 5
     periodSeconds: 10
     successThreshold: 1
-    timeoutSeconds: 5
+    timeoutSeconds: 10
   volumes: []
   volumeMounts: []
 
