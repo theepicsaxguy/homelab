@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+  registry: ghcr.io
+  repository: fallenbagel/jellyseerr
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  persistence:
+    name: jellyseerr-config
+    accessModes:
+      - ReadWriteOnce
+    size: 5Gi
+    annotations: {}
+
+extraEnv: []
+extraEnvFrom: []
+
+ingress:
+  enabled: false
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+resources: {}
