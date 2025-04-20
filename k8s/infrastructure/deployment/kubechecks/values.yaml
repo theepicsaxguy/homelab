@@ -26,6 +26,8 @@ configMap:
 
 deployment:
   env:
+    - name: KUBECHECKS_VCS_TYPE
+      value: "github"
     - name: KUBECHECKS_VCS_TOKEN
       valueFrom:
         secretKeyRef:
