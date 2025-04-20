@@ -19,11 +19,6 @@ resources:
 
 secrets:
   create: false
-  extra:
-    - name: github-token
-      key: github_token
-    - name: argocd-token
-      key: argocd-api-token
 
 deployment:
   envFrom:
