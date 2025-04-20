@@ -24,6 +24,10 @@ deployment:
           key: argocd-api-token
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
       value: "argocd-server.argocd.svc.kube.pc-tips.se"
+    - name: KUBECHECKS_ARGOCD_API_INSECURE
+      value: "true"
+    - name: KUBECHECKS_LOG_LEVEL
+      value: "debug"
   annotations: {}
   podAnnotations: {}
   args: []
