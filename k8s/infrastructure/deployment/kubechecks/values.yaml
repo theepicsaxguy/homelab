@@ -1,33 +1,30 @@
-# values.yaml
-replicaCount: 1
+# Labels to apply to all resources created by this Helm chart
+argocd:
+  namespace: argocd
 
-image:
-  repository: ghcr.io/zapier/kubechecks
-  tag: ""            # defaults to chart appVersion
-  pullPolicy: Always
+commonLabels: {}
 
-service:
-  type: ClusterIP
-  port: 8080
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-# We're using ExternalSecret to provide these, so disable chart-managed secrets.
-secrets:
+configMap:
   create: false
+  env: {}
+  # KUBECHECKS_ADDITIONAL_APPS_NAMESPACES: "*"
+  # KUBECHECKS_ARGOCD_API_INSECURE: "false"
+  # KUBECHECKS_ARGOCD_API_PATH_PREFIX: /
+  # KUBECHECKS_ARGOCD_API_NAMESPACE: argocd
+  # KUBECHECKS_ARGOCD_WEBHOOK_URL: https://argocd.<domain.com>/api/webhook
+  # KUBECHECKS_FALLBACK_K8S_VERSION: "1.22.0"
+  # KUBECHECKS_LOG_LEVEL: debug
+  # KUBECHECKS_NAMESPACE: kubechecks
+  # KUBECHECKS_WEBHOOK_URL_BASE: https://kubechecks.<domain.com>.
+  # KUBECHECKS_WEBHOOK_URL_PREFIX: kubechecks
+  # KUBECHECKS_ARGOCD_API_SERVER_ADDR: argocd.<domain.com>
+  # ARGOCD_EXEC_TIMEOUT: 600s
+  # KUBECHECKS_OTEL_COLLECTOR_PORT: "4317"
+  # KUBECHECKS_OTEL_ENABLED: "true"
+  # KUBECHECKS_VCS_TYPE: "github"
+  # KUBECHECKS_TIDY_OUTDATED_COMMENTS_MODE: "hide" # other options delete
 
 deployment:
-  # Remove any envFrom, because the key names in your secrets
-  # don't match kubechecks' expected env-var names.
-  envFrom: []
-
-  # Explicitly map your existing secrets->keys to the variables kubechecks needs.
   env:
     - name: KUBECHECKS_VCS_TOKEN
       valueFrom:
@@ -39,8 +36,113 @@ deployment:
         secretKeyRef:
           name: argocd-token
           key: argocd-api-token
+  annotations: {}
+    # reloader.stakater.com/auto: "true"
 
-podAnnotations: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+  podAnnotations: {}
+
+  args: []
+
+  # Default values for kubechecks.
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      memory: 256Mi
+      cpu: 200m
+
+  revisionHistoryLimit: 10
+  replicaCount: 1
+
+  image:
+    pullPolicy: Always
+    name: "ghcr.io/zapier/kubechecks"
+    tag: "latest"
+
+  imagePullSecrets: []
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  podSecurityContext: {}
+    # runAsNonRoot: true
+    # runAsUser: 32123
+    # fsGroup: 32123
+
+  securityContext: {}
+    # allowPrivilegeEscalation: false
+    # privileged: false
+    # capabilities:
+    #   drop:
+    #     - ALL
+    # readOnlyRootFilesystem: false
+
+  env: []
+
+  envFrom: []
+
+  startupProbe:
+    failureThreshold: 30
+    periodSeconds: 10
+
+  livenessProbe:
+    failureThreshold: 30
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  readinessProbe:
+    failureThreshold: 30
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  volumes: []
+  volumeMounts: []
+
+secrets:
+  create: false
+
+serviceAccount:
+  # Specifies whether a service account should be created or used
+  create: true
+  enabled: true
+  name: '{{ include "kubechecks.fullname" . }}'
+  annotations: {}
+
+service:
+  create: true
+  type: ClusterIP
+  port: 8080
+  name: http
+
+ingress:
+  create: false
+  className: ""
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
+  #   # See https://cert-manager.readthedocs.io/en/latest/reference/ingress-shim.html#supported-annotations
+  #   kubernetes.io/tls-acme: "true"
+  hosts:
+    kubechecks.local:
+      paths:
+        - path: "/hooks"
+          pathType: Prefix
+
+  # Secrets must be manually created in the namespace
+  # tls:
+  #  - secretName: kubechecks-ingress-tls
+  #    hosts:
+  #    - kubechecks.example.com
+
+autoscaling:
+  create: false
+  # minReplicas: 1
+  # maxReplicas: 100
+  # targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
