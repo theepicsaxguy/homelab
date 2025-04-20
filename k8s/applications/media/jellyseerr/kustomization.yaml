@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: media
+
+helmCharts:
+  - name: jellyseerr
+    repo: oci://ghcr.io/fallenbagel/jellyseerr/jellyseerr-chart
+    version: 2.3.3
+    releaseName: jellyseerr
+    namespace: media
+    valuesFile: values.yaml

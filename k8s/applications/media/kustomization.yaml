@@ -10,3 +10,4 @@ resources:
 - arr
 - media-share-pvc.yaml
 - nfs-pv.yaml
+- jellyseerr
