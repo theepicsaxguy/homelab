@@ -6,7 +6,7 @@ commonLabels: {}
 
 configMap:
   create: false
-  env: {}
+  env:
   # KUBECHECKS_ADDITIONAL_APPS_NAMESPACES: "*"
   # KUBECHECKS_ARGOCD_API_INSECURE: "false"
   # KUBECHECKS_ARGOCD_API_PATH_PREFIX: /
@@ -21,7 +21,7 @@ configMap:
   # ARGOCD_EXEC_TIMEOUT: 600s
   # KUBECHECKS_OTEL_COLLECTOR_PORT: "4317"
   # KUBECHECKS_OTEL_ENABLED: "true"
-  # KUBECHECKS_VCS_TYPE: "github"
+   KUBECHECKS_VCS_TYPE: "github"
   # KUBECHECKS_TIDY_OUTDATED_COMMENTS_MODE: "hide" # other options delete
 
 deployment:
