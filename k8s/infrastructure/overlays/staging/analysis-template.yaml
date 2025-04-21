@@ -8,6 +8,7 @@ spec:
     interval: 10s
     count: 3
     successCondition: result == true
+    # The failureLimit is set to 5 to allow up to 5 consecutive failures before triggering an alert.
     failureLimit: 5
     provider:
       web:
