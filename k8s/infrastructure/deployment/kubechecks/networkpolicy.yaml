@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-all-traffic-argocd
+  namespace: argocd
+spec:
+  # matches every pod in argocd
+  endpointSelector: {}
+
+  # allow all incoming traffic
+  ingress:
+  - fromEntities:
+    - cluster
+    - host
+    - world
+
+  # allow all outgoing traffic
+  egress:
+  - toEntities:
+    - cluster
+    - host
+    - world
