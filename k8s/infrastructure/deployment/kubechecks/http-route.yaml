@@ -13,7 +13,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /hooks
+            value: /
       filters:
         - type: RequestHeaderModifier
           requestHeaderModifier:
