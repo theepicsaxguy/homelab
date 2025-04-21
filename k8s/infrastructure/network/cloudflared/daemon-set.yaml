@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    app: cloudflared
+  name: cloudflared
+  namespace: cloudflared
+spec:
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+        - name: cloudflared
+          image: cloudflare/cloudflared:2025.4.0 # renovate: docker=cloudflare/cloudflared
+          imagePullPolicy: IfNotPresent
+          args:
+            - tunnel
+            - --config
+            - /etc/cloudflared/config/config.yaml
+            - run
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: 2000
+            initialDelaySeconds: 60
+            failureThreshold: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared/config/config.yaml
+              subPath: config.yaml
+            - name: credentials
+              mountPath: /etc/cloudflared/credentials
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: config
+        - name: credentials
+          secret:
+            secretName: tunnel-credentials
