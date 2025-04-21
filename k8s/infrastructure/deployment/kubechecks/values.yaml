@@ -10,8 +10,10 @@ configMap:
 
 deployment:
   env:
-    - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS   # <‑‑ add these two lines
-      value: "false"
+    - name: HOME
+      value: /home/kubechecks
+    - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
+      value: "true"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
@@ -39,6 +41,15 @@ deployment:
       value: "true"
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
+
+  volumes:
+    - name: home
+      emptyDir: {}
+
+  volumeMounts:
+    - name: home
+      mountPath: /home/kubechecks
+
   annotations: {}
   podAnnotations: {}
   args: []
@@ -62,7 +73,6 @@ deployment:
     runAsNonRoot: true
     runAsUser: 32123
     fsGroup: 32123
-
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -87,8 +97,6 @@ deployment:
     periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 10
-  volumes: []
-  volumeMounts: []
 
 secrets:
   create: false
