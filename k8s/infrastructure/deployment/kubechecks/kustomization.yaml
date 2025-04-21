@@ -6,6 +6,7 @@ resources:
   - namespace.yaml
   - kubechecks-secret-external.yaml
   - http-route.yaml
+  - networkpolicy.yaml
 
 helmCharts:
   - name: kubechecks
