@@ -1,4 +1,5 @@
-# Labels to apply to all resources created by this Helm chart
+# values.yaml for kubechecks v0.5.4
+
 argocd:
   namespace: argocd
 
@@ -14,8 +15,6 @@ deployment:
       value: /home/kubechecks
     - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
       value: "true"
-    - name: KUBECHECKS_VCS_EMAIL
-      value: "kubechecks.pc-tips.se"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
@@ -37,9 +36,9 @@ deployment:
         secretKeyRef:
           name: kubechecks-combined-secret
           key: argocd_api_token
-    - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
-      value: "argocd-server.argocd.svc.kube.pc-tips.se"
     - name: KUBECHECKS_ARGOCD_API_INSECURE
+      value: "true"
+    - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
       value: "true"
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
@@ -55,26 +54,32 @@ deployment:
   annotations: {}
   podAnnotations: {}
   args: []
+
   resources:
     limits:
       memory: 512Mi
     requests:
       memory: 256Mi
       cpu: 200m
+
   revisionHistoryLimit: 10
   replicaCount: 1
+
   image:
     pullPolicy: Always
     name: "ghcr.io/zapier/kubechecks"
     tag: "latest"
+
   imagePullSecrets: []
   nodeSelector: {}
   tolerations: []
   affinity: {}
+
   podSecurityContext:
     runAsNonRoot: true
     runAsUser: 32123
     fsGroup: 32123
+
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -82,17 +87,21 @@ deployment:
       drop:
         - ALL
     readOnlyRootFilesystem: false
+
   envFrom: []
+
   startupProbe:
     initialDelaySeconds: 30
     failureThreshold: 30
     periodSeconds: 10
+
   livenessProbe:
     failureThreshold: 30
     initialDelaySeconds: 5
     periodSeconds: 10
     successThreshold: 1
     timeoutSeconds: 5
+
   readinessProbe:
     failureThreshold: 30
     initialDelaySeconds: 5
