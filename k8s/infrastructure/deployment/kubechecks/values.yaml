@@ -10,6 +10,8 @@ configMap:
 
 deployment:
   env:
+    - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS   # <‑‑ add these two lines
+      value: "false"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
@@ -56,17 +58,21 @@ deployment:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 32123
+    fsGroup: 32123
+
   securityContext:
     allowPrivilegeEscalation: false
+    privileged: false
     capabilities:
       drop:
         - ALL
-    seccompProfile:
-      type: RuntimeDefault
-
+    readOnlyRootFilesystem: false
   envFrom: []
   startupProbe:
+    initialDelaySeconds: 30
     failureThreshold: 30
     periodSeconds: 10
   livenessProbe:
