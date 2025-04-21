@@ -5,8 +5,10 @@ metadata:
   namespace: open-webui
 spec:
   parentRefs:
-    - name: external  # Use the same external gateway for consistency
-      namespace: gateway  # This should be the namespace where your gateway is configured
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
   hostnames:
     - 'open-webui.pc-tips.se'
   rules:
