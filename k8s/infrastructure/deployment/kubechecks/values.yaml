@@ -12,6 +12,8 @@ deployment:
   env:
     - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS   # <‑‑ add these two lines
       value: "false"
+    - name: KUBECHECKS_VCS_EMAIL
+      value: "kubechecks.pc-tips.se"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
