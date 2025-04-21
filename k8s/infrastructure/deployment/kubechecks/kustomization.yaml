@@ -5,7 +5,6 @@ namespace: kubechecks
 resources:
   - namespace.yaml
   - kubechecks-secret-external.yaml
-  - argocd-token-external.yaml
   - http-route.yaml
   - network-policy.yaml
 
