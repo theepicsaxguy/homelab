@@ -38,6 +38,9 @@ deployment:
           key: argocd_api_token
     - name: KUBECHECKS_ARGOCD_API_INSECURE
       value: "true"
+    - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
+      value: argocd-server.argocd.svc.kube.pc-tips.se
+
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
       value: "true"
     - name: KUBECHECKS_LOG_LEVEL
