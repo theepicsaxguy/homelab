@@ -14,12 +14,6 @@ spec:
         - path:
             type: PathPrefix
             value: /
-      filters:
-        - type: RequestHeaderModifier
-          requestHeaderModifier:
-            add:
-              - name: X-Forwarded-Proto
-                value: https
       backendRefs:
         - name: kubechecks
           port: 8080
