@@ -56,16 +56,15 @@ deployment:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  podSecurityContext:
-    runAsNonRoot: true
+  podSecurityContext: {}
   securityContext:
-    runAsNonRoot: true
     allowPrivilegeEscalation: false
     capabilities:
       drop:
         - ALL
     seccompProfile:
       type: RuntimeDefault
+
   envFrom: []
   startupProbe:
     failureThreshold: 30
