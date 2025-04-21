@@ -10,6 +10,15 @@ configMap:
 
 deployment:
   env:
+    - name: KUBECHECKS_WEBHOOK_URL_BASE
+      value: "https://kubechecks.pc-tips.se"
+    - name: KUBECHECKS_ENSURE_WEBHOOKS
+      value: "true"
+    - name: KUBECHECKS_WEBHOOK_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-webhook-secret
+          key: hmac
     - name: KUBECHECKS_VCS_TYPE
       value: "github"
     - name: KUBECHECKS_VCS_TOKEN
