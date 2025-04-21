@@ -7,6 +7,8 @@ warp-routing:
   enabled: true
 
 ingress:
+  - hostname: kubechecks.pc-tips.se
+    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
   - hostname: hello.pc-tips.se
     service: hello_world
   - hostname: "*.pc-tips.se"
