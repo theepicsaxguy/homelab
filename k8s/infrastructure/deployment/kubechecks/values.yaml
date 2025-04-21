@@ -17,20 +17,20 @@ deployment:
     - name: KUBECHECKS_WEBHOOK_SECRET
       valueFrom:
         secretKeyRef:
-          name: kubechecks-webhook-secret
-          key: hmac
+          name: kubechecks-combined-secret
+          key: webhook_hmac
     - name: KUBECHECKS_VCS_TYPE
       value: "github"
     - name: KUBECHECKS_VCS_TOKEN
       valueFrom:
         secretKeyRef:
-          name: github-token
+          name: kubechecks-combined-secret
           key: github_token
     - name: KUBECHECKS_ARGOCD_API_TOKEN
       valueFrom:
         secretKeyRef:
-          name: argocd-token
-          key: argocd-api-token
+          name: kubechecks-combined-secret
+          key: argocd_api_token
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
       value: "argocd-server.argocd.svc.kube.pc-tips.se"
     - name: KUBECHECKS_ARGOCD_API_INSECURE
