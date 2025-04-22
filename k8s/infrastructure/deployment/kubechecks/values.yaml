@@ -37,11 +37,11 @@ deployment:
           name: kubechecks-combined-secret
           key: argocd_api_token
     - name: KUBECHECKS_ARGOCD_API_INSECURE
-      value: "true"
+      value: "true"                                    # Skip certificate verification for internal service
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
-      value: "argocd-server.argocd.svc.kube.pc-tips.se:443"
+      value: "argocd-server.argocd.svc:443"          # Use HTTPS port
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
-      value: "false"
+      value: "false"                                  # Use HTTPS since we're doing direct service communication
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
       value: "true"
     - name: KUBECHECKS_LOG_LEVEL
