@@ -39,7 +39,7 @@ deployment:
     - name: KUBECHECKS_ARGOCD_API_INSECURE
       value: "false"                                    # Skip certificate verification for internal service
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
-      value: "argocd-server.argocd.svc:443"          # Use HTTPS port
+      value: "argocd-server.argocd.svc.kube.pc‑tips.se:443"
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
       value: "false"                                  # Use HTTPS since we're doing direct service communication
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
