@@ -20,14 +20,17 @@ configs:
         generate:
           command: [ sh, -c ]
           args: [ kustomize build --enable-helm ]
+
   params:
     controller.diff.server.side: true
-    server.insecure: true                # Enable HTTP for gateway traffic
-    server.tls.certificate.secretName: argocd-server-tls  # Keep TLS cert for service-to-service
+    server.insecure: false               # Disable “insecure” mode to enable TLS
+    server.tls.certificate.secretName: argocd-server-tls
 
 server:
-  extraArgs:
-    - --insecure
+  extraArgs: []                         # No --insecure flag, so HTTPS listener will start
+  tls:
+    certificate:
+      secretName: argocd-server-tls
   service:
     servicePortHttps: 443
     servicePortHttp: 80
@@ -48,7 +51,7 @@ repoServer:
       configMap:
         name: argocd-cmp-cm
     - name: cmp-tmp
-      emptyDir: { }
+      emptyDir: {}
   resources:
     requests:
       cpu: 100m
@@ -75,8 +78,8 @@ repoServer:
         - name: cmp-kustomize-build-with-helm
           mountPath: /home/argocd/cmp-server/config/plugin.yaml
           subPath: kustomize-build-with-helm.yaml
-        - mountPath: /tmp
-          name: cmp-tmp
+        - name: cmp-tmp
+          mountPath: /tmp
 
 applicationSet:
   resources:
