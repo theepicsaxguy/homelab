@@ -63,10 +63,11 @@ redis:
 server:
   extraArgs:
     - --insecure
-    - --tls
-    - --tlscacert=/app/config/tls/tls.crt
-    - --tlscertfile=/app/config/tls/tls.crt
-    - --tlskeyfile=/app/config/tls/tls.key
+  service:
+    servicePortHttps: 443
+    servicePortHttp: 80
+    targetPortHttp: 8080
+    targetPortHttps: 8080
   volumes:
     - name: argocd-server-tls
       secret:
@@ -74,9 +75,6 @@ server:
   volumeMounts:
     - name: argocd-server-tls
       mountPath: /app/config/tls
-  service:
-    servicePortHttps: 443
-    servicePortHttp: 80
   resources:
     requests:
       cpu: 50m
