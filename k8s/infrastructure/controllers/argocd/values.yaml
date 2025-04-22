@@ -22,22 +22,61 @@ configs:
           args: [ kustomize build --enable-helm ]
   params:
     controller.diff.server.side: true
-    server.insecure: false
+    server.insecure: true               # Allow both HTTP and HTTPS
     server.tls.certificate.secretName: argocd-server-tls
+
+  rbac:
+    policy.csv: |
+      g, argocd:admin, role:admin
+      g, argocd:read_all, role:readonly
+
+crds:
+  install: true
+  # -- Keep CRDs on chart uninstall
+  keep: false
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 700Mi
+    limits:
+      memory: 4Gi
+
+dex:
+  enabled: false
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 128Mi
+
+redis:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      memory: 1Gi
 
 server:
   extraArgs:
-    - --insecure=false
+    - --insecure
+    - --tls
+    - --tlscacert=/app/config/tls/tls.crt
+    - --tlscertfile=/app/config/tls/tls.crt
+    - --tlskeyfile=/app/config/tls/tls.key
+  volumes:
+    - name: argocd-server-tls
+      secret:
+        secretName: argocd-server-tls
+  volumeMounts:
+    - name: argocd-server-tls
+      mountPath: /app/config/tls
   service:
     servicePortHttps: 443
     servicePortHttp: 80
-  certificate:
-    enabled: true
-    domain: argocd-server.argocd.svc.kube.pc-tips.se
-    issuer:
-      group: cert-manager.io
-      kind: ClusterIssuer
-      name: cloudflare-issuer
   resources:
     requests:
       cpu: 50m
