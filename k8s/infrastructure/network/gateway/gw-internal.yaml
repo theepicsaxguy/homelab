@@ -9,21 +9,13 @@ spec:
     annotations:
       io.cilium/lb-ipam-ips: 10.25.150.220
   listeners:
-    - protocol: HTTPS
+    - name: https
+      protocol: HTTPS
       port: 443
-      name: https-gateway
-      hostname: "*.pc-tips.se"
-      tls:
-        certificateRefs:
-          - kind: Secret
-            name: cert-pc-tips
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: HTTPS
-      port: 443
-      name: https-domain-gateway
-      hostname: pc-tips.se
+      # both apex and subdomains
+      hostnames:
+        - "pc-tips.se"
+        - "*.pc-tips.se"
       tls:
         certificateRefs:
           - kind: Secret
