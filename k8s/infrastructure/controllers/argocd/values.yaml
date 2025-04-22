@@ -23,8 +23,8 @@ configs:
 
   params:
     controller.diff.server.side: true
-    server.insecure: false               # Disable “insecure” mode to enable TLS
-    server.tls.certificate.secretName: argocd-server-tls
+    server.insecure: "false"
+    server.tls.certificate.secretName: "argocd-server-tls"
 
 server:
   extraArgs: []                         # No --insecure flag, so HTTPS listener will start
