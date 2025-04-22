@@ -27,14 +27,7 @@ configs:
 
 server:
   extraArgs:
-    - --insecure                         # Allow both HTTP and HTTPS
-  volumes:
-    - name: argocd-server-tls
-      secret:
-        secretName: argocd-server-tls
-  volumeMounts:
-    - name: argocd-server-tls
-      mountPath: /app/config/tls
+    - --insecure
   service:
     servicePortHttps: 443
     servicePortHttp: 80
