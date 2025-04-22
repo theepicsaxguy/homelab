@@ -5,10 +5,11 @@ metadata:
   namespace: argocd
 spec:
   parentRefs:
-    - name: internal        # your Gateway with a TLS listener on 443
+    - name: internal
       namespace: gateway
+      sectionName: https-gateway    # ← binds to only that listener
   hostnames:
-    - "argocd.pc-tips.se"   # the public hostname clients hit
+    - "argocd.pc-tips.se"
   rules:
     - matches:
         - path:
@@ -16,4 +17,4 @@ spec:
             value: /
       backendRefs:
         - name: argocd-server
-          port: 80           # HTTPRoute → Service:80 (plaintext)
+          port: 80
