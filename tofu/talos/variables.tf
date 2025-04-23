@@ -25,6 +25,7 @@ variable "cluster" {
   })
 }
 
+
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
@@ -62,6 +63,18 @@ variable "coredns" {
   })
 }
 
+variable "storage_pool" {
+  type        = string
+  description = "Default Proxmox storage pool to use for VM disks."
+}
+
+variable "disk_owner" {
+  description = "Where to create the data disks VM"
+  type = object({
+    node_name = string
+    vm_id     = number
+  })
+}
 variable "inline_manifests" {
   description = "Inline manifests to apply after bootstrap with dependencies"
   type = list(object({
