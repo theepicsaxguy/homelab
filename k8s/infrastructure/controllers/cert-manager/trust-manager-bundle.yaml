@@ -1,0 +1,19 @@
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: internal-ca-bundle
+spec:
+  # Source: the internal root CA secret created by internal-ca-issuer
+  sources:
+    - secret:
+        name: internal-ca-tls
+        key: ca.crt
+
+  # Target: distribute as a ConfigMap in every namespace
+  target:
+    configMap:
+      name: internal-ca-bundle
+      key: ca.crt
+
+  # Apply to all namespaces
+  namespaceSelector: {}

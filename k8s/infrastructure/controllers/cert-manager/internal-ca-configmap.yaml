@@ -4,7 +4,6 @@ metadata:
   name: internal-ca-configmap
   namespace: cert-manager
 spec:
-  # Additional certificate for creating a ConfigMap
   secretName: internal-ca-for-configmap
   commonName: internal-ca-configmap
   dnsNames:
@@ -21,57 +20,3 @@ spec:
     name: internal-ca-issuer
     kind: ClusterIssuer
     group: cert-manager.io
----
-# Create a Job to distribute the CA certificate as a ConfigMap
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: ca-cert-distribution-job
-  namespace: cert-manager
-spec:
-  template:
-    metadata:
-      labels:
-        app: ca-cert-distribution
-    spec:
-      serviceAccountName: cert-manager
-      securityContext:
-        runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-      - name: kubectl
-        image: bitnami/kubectl:latest
-        command:
-        - /bin/sh
-        - -c
-        - |
-          set -e
-          # Using emptyDir volume mounted at /workdir instead of /tmp
-          # Extract CA cert from the secret directly to kubectl commands
-          CA_DATA=$(kubectl get secret internal-ca-tls -n cert-manager -o jsonpath='{.data.ca\.crt}')
-
-          # Create ConfigMap in cert-manager namespace
-          kubectl create configmap internal-ca-bundle -n cert-manager --from-literal=ca.crt="$(echo $CA_DATA | base64 -d)" --dry-run=client -o yaml | kubectl apply -f -
-
-          # Get list of all namespaces and create ConfigMap in each
-          for ns in $(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}'); do
-            # Skip cert-manager namespace (already created)
-            if [ "$ns" != "cert-manager" ]; then
-              kubectl create configmap internal-ca-bundle -n $ns --from-literal=ca.crt="$(echo $CA_DATA | base64 -d)" --dry-run=client -o yaml | kubectl apply -f -
-              echo "Created ConfigMap in namespace: $ns"
-            fi
-          done
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - name: workdir
-          mountPath: /workdir
-      volumes:
-      - name: workdir
-        emptyDir: {}
-      restartPolicy: OnFailure
