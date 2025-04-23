@@ -42,7 +42,7 @@ webhook:
   volumes:
     - name: cert
       secret:
-        secretName: cert-manager-webhook-tls # This matches our Certificate's secretName
+        secretName: cert-manager-webhook-tls
 
 cainjector:
   resources:

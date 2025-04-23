@@ -1,0 +1,77 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-server-tls
+  namespace: argocd
+spec:
+  secretName: argocd-server-tls
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  subject:
+    organizations:
+      - homelab-internal
+  commonName: argocd-server
+  dnsNames:
+    - argocd-server
+    - argocd-server.argocd
+    - argocd-server.argocd.svc
+    - argocd-server.argocd.svc.cluster.local
+  usages:
+    - server auth
+    - client auth
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-repo-server-tls
+  namespace: argocd
+spec:
+  secretName: argocd-repo-server-tls
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  subject:
+    organizations:
+      - homelab-internal
+  commonName: argocd-repo-server
+  dnsNames:
+    - argocd-repo-server
+    - argocd-repo-server.argocd
+    - argocd-repo-server.argocd.svc
+    - argocd-repo-server.argocd.svc.cluster.local
+  usages:
+    - server auth
+    - client auth
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-application-controller-tls
+  namespace: argocd
+spec:
+  secretName: argocd-application-controller-tls
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  subject:
+    organizations:
+      - homelab-internal
+  commonName: argocd-application-controller
+  dnsNames:
+    - argocd-application-controller
+    - argocd-application-controller.argocd
+    - argocd-application-controller.argocd.svc
+    - argocd-application-controller.argocd.svc.cluster.local
+  usages:
+    - server auth
+    - client auth
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
