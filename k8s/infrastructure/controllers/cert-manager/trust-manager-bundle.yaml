@@ -10,4 +10,6 @@ spec:
   target:
     configMap:
       key: ca.crt
-    namespaceSelector: {}
+    namespaceSelector:
+      matchLabels:
+        trust-manager.cert-manager.io/inject-trust: "true"
