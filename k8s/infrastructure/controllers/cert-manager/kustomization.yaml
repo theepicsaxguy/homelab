@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - cert-manager-secrets-external.yaml
   - cloudflare-issuer.yaml
-  - bitwarden-issuer.yaml
   - internal-ca-issuer.yaml
   - trust-manager-bundle.yaml
 
