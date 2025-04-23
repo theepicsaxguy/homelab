@@ -5,6 +5,10 @@ module "talos" {
     proxmox = proxmox
   }
 
+  disk_owner = var.disk_owner
+  storage_pool = var.storage_pool
+
+
   image = {
     version = "v1.9.5"
     update_version = "v1.9.5" # renovate: github-releases=siderolabs/talos

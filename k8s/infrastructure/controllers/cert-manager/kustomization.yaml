@@ -5,6 +5,7 @@ resources:
   - cloudflare-issuer.yaml
   - internal-ca-issuer.yaml
   - trust-manager-bundle.yaml
+  - cert-manager-webhook-tls.yaml
 
 helmCharts:
   - name: cert-manager

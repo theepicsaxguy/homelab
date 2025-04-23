@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-manager-webhook-tls
+  namespace: cert-manager
+spec:
+  secretName: cert-manager-webhook-tls
+  duration: 2160h
+  renewBefore: 360h
+  commonName: trust-manager.cert-manager.svc
+  dnsNames:
+    - trust-manager.cert-manager.svc
+    - trust-manager.cert-manager.svc.cluster.local
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

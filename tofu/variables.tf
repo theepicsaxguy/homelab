@@ -10,45 +10,54 @@ variable "proxmox" {
   sensitive = true
 }
 
-#variable "cluster_config" {
-#  description = "Talos node configuration"
-#  type = object({
-#
-#    cluster_name    = string
-#    proxmox_cluster = string
-#    endpoint        = string
-#    talos_version   = string
-#
-#    nodes = map(
-#      object({
-#        host_node     = string
-#        machine_type  = string
-#        ip            = string
-#        mac_address   = string
-#        vm_id         = number
-#        cpu           = number
-#        ram_dedicated = number
-#        update = optional(bool, false)
-#        igpu = optional(bool, false)
-#      })
-#    )
-#  })
-#
-#  validation {
-#    condition     = length([
-#      for n in var.cluster_config.nodes : n if contains(["controlplane", "worker"], n.machine_type)]) == length(var.cluster_config.nodes)
-#    error_message = "Node machine_type must be either 'controlplane' or 'worker'."
-#  }
-#}
-#
-#variable "volumes" {
-#  type = map(
-#    object({
-#      node = string
-#      size = string
-#      storage = optional(string, "velocity")
-#      vmid = optional(number, 9999)
-#      format = optional(string, "raw")
-#    })
-#  )
-#}
+variable "storage_pool" {
+  description = "Proxmox storage pool for VM disks"
+  type        = string
+  default     = "local-lvm"
+}
+
+variable "disk_owner" {
+  description = "Where to create the data disks VM"
+  type = object({
+    node_name = string  # Proxmox node to host the data disks VM
+    vm_id     = number  # VM ID for the data disks VM
+  })
+  default = {
+    node_name = "host1"
+    vm_id     = 9000
+  }
+}
+
+
+variable "nodes" {
+  description = "Map of Talos nodes to create"
+  type = map(object({
+    host_node     = string
+    machine_type  = string # controlplane or worker
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    cpu           = number
+    ram_dedicated = number
+    update        = bool
+    igpu          = optional(bool, false)
+    disks = optional(map(object({
+      device     = string # e.g., /dev/sdb
+      size       = string # e.g., 150G
+      type       = string # e.g., scsi, virtio
+      mountpoint = string # e.g., /var/lib/longhorn
+    })), {})
+  }))
+  default = {}
+
+  validation {
+    condition = alltrue([
+      for node in values(var.nodes) :
+      alltrue([
+        for disk in values(node.disks) :
+        can(regex("^\\d+G$", disk.size))
+      ])
+    ])
+    error_message = "All disk sizes must be specified in gigabytes (e.g., '150G')."
+  }
+}
