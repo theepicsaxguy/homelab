@@ -31,6 +31,17 @@ server:
   tls:
     certificate:
       secretName: argocd-server-tls
+  volumes:
+    - name: internal-ca-bundle
+      configMap:
+        name: internal-ca-bundle
+        items:
+          - key: ca.crt
+            path: internal-ca.crt
+  volumeMounts:
+    - name: internal-ca-bundle
+      mountPath: /etc/ssl/certs/internal-ca.crt
+      subPath: internal-ca.crt
   service:
     servicePortHttps: 443
     servicePortHttp: 80
@@ -46,12 +57,26 @@ server:
 repoServer:
   containerSecurityContext:
     readOnlyRootFilesystem: true
+  tls:
+    enabled: true
+    certificate:
+      secretName: argocd-repo-server-tls
   volumes:
     - name: cmp-kustomize-build-with-helm
       configMap:
         name: argocd-cmp-cm
     - name: cmp-tmp
       emptyDir: {}
+    - name: internal-ca-bundle
+      configMap:
+        name: internal-ca-bundle
+        items:
+          - key: ca.crt
+            path: internal-ca.crt
+  volumeMounts:
+    - name: internal-ca-bundle
+      mountPath: /etc/ssl/certs/internal-ca.crt
+      subPath: internal-ca.crt
   resources:
     requests:
       cpu: 100m
@@ -80,6 +105,23 @@ repoServer:
           subPath: kustomize-build-with-helm.yaml
         - name: cmp-tmp
           mountPath: /tmp
+
+controller:
+  tls:
+    enabled: true
+    certificate:
+      secretName: argocd-application-controller-tls
+  volumes:
+    - name: internal-ca-bundle
+      configMap:
+        name: internal-ca-bundle
+        items:
+          - key: ca.crt
+            path: internal-ca.crt
+  volumeMounts:
+    - name: internal-ca-bundle
+      mountPath: /etc/ssl/certs/internal-ca.crt
+      subPath: internal-ca.crt
 
 applicationSet:
   resources:

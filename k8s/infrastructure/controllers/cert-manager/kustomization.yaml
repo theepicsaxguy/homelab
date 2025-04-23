@@ -5,3 +5,5 @@ resources:
 - cert-manager-secrets-external.yaml
 - cloudflare-issuer.yaml
 - bitwarden-issuer.yaml
+- internal-ca-issuer.yaml
+- internal-ca-configmap.yaml
