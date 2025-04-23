@@ -53,9 +53,16 @@ from these rules unless a deviation is explicitly required and fully documented.
 
 ## 7. Deviation Handling & Documentation
 
-- If a convention must be violated:
-  - **Clearly state the deviation**, citing the specific rule and justification.
-  - Provide a plan or suggestion for returning to full compliance, if applicable.
+- When it is necessary to break from a convention:
+  - **Explicitly document the deviation**, referencing the affected rule and providing justification.
+  - Wherever possible, outline a plan or recommendation for restoring full compliance.
+
+## 8. Certificate Management
+
+- Manage all TLS certificates for external services using a shared `ClusterIssuer`.
+- Utilize `cert-manager` to handle certificate lifecycle operations.
+- For internal pod communication, establish trust via `trust-manager` and the internal certificate authority (CA).
+  - Enable this by adding the label: `trust-manager.cert-manager.io/inject-trust: "true"`
 
 ---
 
