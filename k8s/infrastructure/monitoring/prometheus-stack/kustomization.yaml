@@ -3,7 +3,15 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - kube-prometheus-stack.yaml
   - alertmanager-http-route.yaml
   - grafana-http-route.yaml
   - prometheus-http-route.yaml
+
+helmCharts:
+  - name: kube-prometheus-stack
+    repo: https://prometheus-community.github.io/helm-charts
+    version: 70.7.0 # renovate: docker=ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    releaseName: kube-prometheus-stack
+    namespace: monitoring
+    valuesFile: values.yaml
+    includeCRDs: true
