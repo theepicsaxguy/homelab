@@ -20,33 +20,49 @@ configs:
         generate:
           command: [ sh, -c ]
           args: [ kustomize build --enable-helm ]
-
   params:
     controller.diff.server.side: true
-    server.insecure: "false"
-    server.tls.certificate.secretName: "argocd-server-tls"
+    server.insecure: true
+  rbac:
+    policy.csv: |
+      g, argocd:admin, role:admin
+      g, argocd:read_all, role:readonly
+
+crds:
+  install: true
+  # -- Keep CRDs on chart uninstall
+  keep: false
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 700Mi
+    limits:
+      memory: 4Gi
+
+dex:
+  enabled: false
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 128Mi
+
+redis:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      memory: 1Gi
 
 server:
-  extraArgs: []                         # No --insecure flag, so HTTPS listener will start
-  tls:
-    certificate:
-      secretName: argocd-server-tls
-  volumes:
-    - name: internal-ca-bundle
-      configMap:
-        name: internal-ca-bundle
-        items:
-          - key: ca.crt
-            path: internal-ca.crt
-  volumeMounts:
-    - name: internal-ca-bundle
-      mountPath: /etc/ssl/certs/internal-ca.crt
-      subPath: internal-ca.crt
   service:
-    servicePortHttps: 443
-    servicePortHttp: 80
-    targetPortHttp: 8080
-    targetPortHttps: 8080
+      httpsPort: 443
+      httpsTargetPort: 8443
+
   resources:
     requests:
       cpu: 50m
@@ -57,26 +73,12 @@ server:
 repoServer:
   containerSecurityContext:
     readOnlyRootFilesystem: true
-  tls:
-    enabled: true
-    certificate:
-      secretName: argocd-repo-server-tls
   volumes:
     - name: cmp-kustomize-build-with-helm
       configMap:
         name: argocd-cmp-cm
     - name: cmp-tmp
-      emptyDir: {}
-    - name: internal-ca-bundle
-      configMap:
-        name: internal-ca-bundle
-        items:
-          - key: ca.crt
-            path: internal-ca.crt
-  volumeMounts:
-    - name: internal-ca-bundle
-      mountPath: /etc/ssl/certs/internal-ca.crt
-      subPath: internal-ca.crt
+      emptyDir: { }
   resources:
     requests:
       cpu: 100m
@@ -103,25 +105,8 @@ repoServer:
         - name: cmp-kustomize-build-with-helm
           mountPath: /home/argocd/cmp-server/config/plugin.yaml
           subPath: kustomize-build-with-helm.yaml
-        - name: cmp-tmp
-          mountPath: /tmp
-
-controller:
-  tls:
-    enabled: true
-    certificate:
-      secretName: argocd-application-controller-tls
-  volumes:
-    - name: internal-ca-bundle
-      configMap:
-        name: internal-ca-bundle
-        items:
-          - key: ca.crt
-            path: internal-ca.crt
-  volumeMounts:
-    - name: internal-ca-bundle
-      mountPath: /etc/ssl/certs/internal-ca.crt
-      subPath: internal-ca.crt
+        - mountPath: /tmp
+          name: cmp-tmp
 
 applicationSet:
   resources:
