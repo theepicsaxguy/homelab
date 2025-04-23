@@ -13,6 +13,7 @@ from these rules unless a deviation is explicitly required and fully documented.
 - Use **only** Kustomize, Helm (via Kustomize), or ArgoCD for deployments.
 - Manual `helm install` or direct Helm CLI commands are **strictly prohibited**.
 - Use `kubectl` **only** for testing, validation, or troubleshooting—**never** for deploying or modifying resources.
+- Use tofu/ for provisioning and managing the virtual machines.
 
 ## 2. Troubleshooting Workflow
 
