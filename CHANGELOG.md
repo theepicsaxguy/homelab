@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.0](https://github.com/theepicsaxguy/homelab/compare/v2.0.0...v2.1.0) (2025-04-17)
+
+
+### Features
+
+* **k8s:** add external application management resources ([#377](https://github.com/theepicsaxguy/homelab/issues/377)) ([a77461a](https://github.com/theepicsaxguy/homelab/commit/a77461adc24caa9721862e564fb7ed4d1d4347e8))
+* **k8s:** add HTTPRoute for hoarder-web and remove Ingress sample ([#380](https://github.com/theepicsaxguy/homelab/issues/380)) ([e1416fb](https://github.com/theepicsaxguy/homelab/commit/e1416fb361bee2852231af7c66e1ec407499ec76))
+
 ## [2.0.0](https://github.com/theepicsaxguy/homelab/compare/v1.17.0...v2.0.0) (2025-04-13)
 
 
