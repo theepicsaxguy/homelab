@@ -46,3 +46,13 @@ longhornDriver:
 
 preUpgradeChecker:
   jobEnabled: false
+
+metrics:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: {}
+    annotations: {}
+    interval: "30s" # Default scrape interval. Override if needed.
+    scrapeTimeout: "10s" # Default scrape timeout for Prometheus metrics
+    relabelings: []
+    metricRelabelings: []

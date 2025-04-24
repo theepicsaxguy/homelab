@@ -5,6 +5,10 @@ module "talos" {
     proxmox = proxmox
   }
 
+  disk_owner = var.disk_owner
+  storage_pool = var.storage_pool
+
+
   image = {
     version = "v1.9.5"
     update_version = "v1.9.5" # renovate: github-releases=siderolabs/talos
@@ -27,7 +31,7 @@ module "talos" {
     vip             = "10.25.150.10"    # Control plane VIP
     talos_version   = "v1.9.5"
     proxmox_cluster = "kube"
-    kubernetes_version = "1.32.3"  # renovate: github-releases=kubernetes/kubernetes
+    kubernetes_version = "1.33.0"  # renovate: github-releases=kubernetes/kubernetes
   }
 
   nodes = {
@@ -70,7 +74,7 @@ module "talos" {
     mac_address   = "bc:24:11:64:5b:cb"
     vm_id         = 8201
     cpu           = 8
-    ram_dedicated = 5120
+    ram_dedicated = 6120
     update        = false
     disks = {
       longhorn = {
@@ -88,7 +92,7 @@ module "talos" {
     mac_address   = "bc:24:11:c9:22:c3"
     vm_id         = 8202
     cpu           = 8
-    ram_dedicated = 5120
+    ram_dedicated = 6120
     update        = false
     disks = {
       longhorn = {

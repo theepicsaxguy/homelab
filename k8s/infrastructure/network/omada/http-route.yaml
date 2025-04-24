@@ -1,19 +1,19 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: lidarr
-  namespace: media
+  name: omada
+  namespace: omada
 spec:
   parentRefs:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'lidarr.pc-tips.se'
+    - "omada.pc-tips.se"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: lidarr
-          port: 80
+        - name: omada-controller
+          port: 8043

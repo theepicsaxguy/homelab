@@ -1,34 +1,140 @@
-replicaCount: 1
+# values.yaml for kubechecks v0.5.4
 
-image:
-  repository: zapier/kubechecks
-  tag: latest
-  pullPolicy: Always
+argocd:
+  namespace: argocd
 
-service:
-  type: ClusterIP
-  port: 8080
+commonLabels: {}
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
+configMap:
+  create: false
+  env: {}
+
+deployment:
+  env:
+    - name: HOME
+      value: /home/kubechecks
+    - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
+      value: "true"
+    - name: KUBECHECKS_WEBHOOK_URL_BASE
+      value: "https://kubechecks.pc-tips.se"
+    - name: KUBECHECKS_ENSURE_WEBHOOKS
+      value: "true"
+    - name: KUBECHECKS_WEBHOOK_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-combined-secret
+          key: webhook_hmac
+    - name: KUBECHECKS_VCS_TYPE
+      value: "github"
+    - name: KUBECHECKS_VCS_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-combined-secret
+          key: github_token
+    - name: KUBECHECKS_ARGOCD_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-combined-secret
+          key: argocd_api_token
+    - name: KUBECHECKS_ARGOCD_API_INSECURE
+      value: "false"                                    # Skip certificate verification for internal service
+    - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
+      value: "argocd-server.argocd.svc.kube.pc‑tips.se:443"
+    - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
+      value: "false"                                  # Use HTTPS since we're doing direct service communication
+    - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
+      value: "false"
+    - name: KUBECHECKS_LOG_LEVEL
+      value: "debug"
+  volumes:
+    - name: home
+      emptyDir: {}
+
+  volumeMounts:
+    - name: home
+      mountPath: /home/kubechecks
+
+  annotations: {}
+  podAnnotations: {}
+  args: []
+
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      memory: 256Mi
+      cpu: 200m
+
+  revisionHistoryLimit: 10
+  replicaCount: 1
+
+  image:
+    pullPolicy: Always
+    name: "ghcr.io/zapier/kubechecks"
+    tag: "latest"
+
+  imagePullSecrets: []
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 32123
+    fsGroup: 32123
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
+
+  envFrom: []
+
+  startupProbe:
+    initialDelaySeconds: 30
+    failureThreshold: 30
+    periodSeconds: 10
+
+  livenessProbe:
+    failureThreshold: 30
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  readinessProbe:
+    failureThreshold: 30
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
 
 secrets:
   create: false
 
-deployment:
-  envFrom:
-    - secretRef:
-        name: github-token
-    - secretRef:
-        name: argocd-token
-  env: []
+serviceAccount:
+  create: true
+  enabled: true
+  name: '{{ include "kubechecks.fullname" . }}'
+  annotations: {}
 
-podAnnotations: {}
-nodeSelector: {}
-tolerations: []
-affinity: {}
+service:
+  create: true
+  type: ClusterIP
+  port: 8080
+  name: http
+
+ingress:
+  create: false
+  className: ""
+  hosts:
+    kubechecks.local:
+      paths:
+        - path: "/hooks"
+          pathType: Prefix
+
+autoscaling:
+  create: false

@@ -5,8 +5,7 @@ namespace: kubechecks
 resources:
   - namespace.yaml
   - kubechecks-secret-external.yaml
-  - argocd-token-external.yaml
-  - network-policy.yaml
+  - http-route.yaml
 
 helmCharts:
   - name: kubechecks
@@ -15,9 +14,6 @@ helmCharts:
     releaseName: kubechecks
     namespace: kubechecks
     valuesFile: values.yaml
-
-patches:
-  - path: network-policy.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

@@ -7,4 +7,5 @@ metadata:
     app.kubernetes.io/managed-by: argocd
     dev.pc-tips: deployment
     kubernetes.io/metadata.name: kubechecks
-    network-policy: enabled
+    # enforce baseline policy (allows root, disallows privileged/host namespaces/hostPath, etc)
+    pod-security.kubernetes.io/enforce: baseline

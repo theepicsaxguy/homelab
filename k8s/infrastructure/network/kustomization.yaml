@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
 - project.yaml
 - cilium
+- cloudflared
+- gateway
+- coredns
+- omada

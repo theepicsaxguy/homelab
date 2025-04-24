@@ -59,6 +59,10 @@ redis:
       memory: 1Gi
 
 server:
+  service:
+      httpsPort: 443
+      httpsTargetPort: 8443
+
   resources:
     requests:
       cpu: 50m
