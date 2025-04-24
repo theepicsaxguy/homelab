@@ -21,7 +21,13 @@ machine:
           - rshared
           - rw
 %{ endfor }
-%{ endif }
+%{ endif %}
+    extraConfig:
+      imageMinimumGCAge: 1h
+      imageGCHighThresholdPercent: "85"
+      imageGCLowThresholdPercent: "80"
+      containerGCHighThreshold: 200
+      containerGCLowThreshold: 100
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:
