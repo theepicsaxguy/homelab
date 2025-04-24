@@ -5,6 +5,5 @@ namespace: omada
 resources:
 - deployment.yaml
 - svc.yaml
-- pvc.yaml
 - http-route.yaml
 - namespace.yaml
