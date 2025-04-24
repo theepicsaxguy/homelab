@@ -10,6 +10,14 @@ spec:
       template:
         spec:
           serviceAccountName: containerd-snapshot-gc
+          # Add tolerations to allow running on control-plane nodes
+          tolerations:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+            effect: NoSchedule
           containers:
           - name: containerd-snapshot-gc
             # Replace with the actual digest you provide
@@ -30,11 +38,12 @@ spec:
                 cpu: 100m
                 memory: 128Mi
             securityContext:
-              # Remove privileged: true. Access to the socket is handled via volumeMounts and potentially PSP/RBAC.
-              # Ensure the underlying node security allows this mount.
+              # Harden security context
+              runAsUser: 0 # Required to access /run/containerd/containerd.sock by default
               privileged: false
-              # Add other necessary security context settings if required by your policies
-              # e.g., runAsUser, runAsGroup, allowPrivilegeEscalation: false, capabilities: { drop: ["ALL"] }
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
             volumeMounts:
             - name: containerd-socket
               mountPath: /run/containerd/containerd.sock

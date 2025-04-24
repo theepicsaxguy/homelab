@@ -62,3 +62,29 @@ variable "nodes" {
     error_message = "All disk sizes must be specified in gigabytes (e.g., '150G')."
   }
 }
+
+variable "pool_id" {
+  description = "Proxmox resource pool ID"
+  type        = string
+}
+
+variable "cluster" {
+  description = "Cluster settings (we only need .gateway)"
+  type        = object({ gateway = string })
+}
+
+variable "dns_servers" {
+  description = "DNS server IPs"
+  type        = list(string)
+}
+
+variable "network_bridge" {
+  description = "Proxmox bridge for VMs"
+  type        = string
+}
+
+variable "network_mtu" {
+  description = "MTU for VM network interface"
+  type        = number
+  default     = 1500
+}

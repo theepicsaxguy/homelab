@@ -5,6 +5,13 @@ module "talos" {
     proxmox = proxmox
   }
 
+  # Pass required variables from root module
+  pool_id        = var.pool_id
+  gateway_ip     = var.cluster.gateway # Assuming gateway is defined in var.cluster
+  dns_servers    = var.dns_servers     # Assuming var.dns_servers exists in root
+  network_bridge = var.network_bridge  # Assuming var.network_bridge exists in root
+  network_mtu    = var.network_mtu     # Assuming var.network_mtu exists in root
+
   disk_owner   = var.disk_owner
   storage_pool = var.storage_pool
 
@@ -120,6 +127,11 @@ module "talos" {
         }
       }
     }
+  }
+
+  longhorn_disk_files = {
+    for name, vm in proxmox_virtual_environment_vm.data_disks :
+    name => vm.disk[0].file_id
   }
 }
 

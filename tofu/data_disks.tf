@@ -8,7 +8,7 @@ resource "proxmox_virtual_environment_vm" "data_disks" {
   disk {
     datastore_id = var.storage_pool
     interface    = "scsi0"
-    size         = 1     // the VM’s OS disk (tiny)
+    size         = 1 // the VM’s OS disk (tiny)
     iothread     = true
     cache        = "writethrough"
   }

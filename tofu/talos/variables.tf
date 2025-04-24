@@ -85,4 +85,36 @@ variable "inline_manifests" {
   default = []
 }
 
+variable "longhorn_disk_files" {
+  description = "Map of worker node name to its Longhorn data disk file ID."
+  type        = map(string)
+  default     = {}
+}
+
+variable "pool_id" {
+  description = "The Proxmox resource pool ID where VMs will be placed."
+  type        = string
+}
+
+variable "gateway_ip" {
+  description = "The IP address of the network gateway."
+  type        = string
+}
+
+variable "dns_servers" {
+  description = "List of DNS server IP addresses."
+  type        = list(string)
+}
+
+variable "network_bridge" {
+  description = "The name of the Proxmox network bridge to connect VMs to."
+  type        = string
+}
+
+variable "network_mtu" {
+  description = "The MTU (Maximum Transmission Unit) for the network interface."
+  type        = number
+  default     = 1500 # Or another sensible default
+}
+
 

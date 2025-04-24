@@ -1,47 +1,29 @@
-resource "proxmox_virtual_environment_vm" "this" {
+resource "proxmox_virtual_environment_vm" "k8s_node" {
   for_each = var.nodes
-
   node_name = each.value.host_node
   name      = each.key
-  vm_id     = each.value.vm_id
-  on_boot   = true
-  started   = true
-  template  = false
+  tags      = each.value.tags
+  pool_id   = var.pool_id
 
   agent {
     enabled = true
-    fs_trim = true
   }
 
-  network_device {
-    bridge      = "vmbr0"
-    firewall    = false
-    mac_address = each.value.mac_address
-  }
-
-  // Boot disk (assuming scsi0 is the boot disk, adjust if different)
-  disk {
+  bios = "ovmf"
+  efi_disk {
     datastore_id = var.storage_pool
-    interface    = "scsi0"
-    size         = 50 # Example boot disk size, adjust as needed
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
     file_format  = "raw"
-    file_id      = each.value.update == true ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
+    type         = "4m"
   }
 
-  // Attach Longhorn disks from data_disks VM
   dynamic "disk" {
-    for_each = {
-      for idx, d in proxmox_virtual_environment_vm.data_disks.disk :
-      idx => d if idx > 0  // skip scsi0
-    }
+    # <-- instead consume the passed-in var.longhorn_disk_files map
+    for_each = var.longhorn_disk_files
+
     content {
-      datastore_id = proxmox_virtual_environment_vm.data_disks.disk[0].datastore_id
-      file_id      = proxmox_virtual_environment_vm.data_disks.disk[disk.key].file_id
-      interface    = "scsi${disk.key}"       // aligns: data_disks scsi1 → worker scsi1
+      datastore_id = var.storage_pool
+      file_id      = each.value
+      interface    = "scsi${count.index + 1}" # Note: This assumes count.index starts at 0 and maps correctly. Verify if needed.
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
@@ -49,54 +31,79 @@ resource "proxmox_virtual_environment_vm" "this" {
     }
   }
 
+  disk {
+    datastore_id = var.storage_pool
+    file_id      = local.os_disk_file_id
+    interface    = "scsi0"
+    size         = each.value.disk_size
+    iothread     = true
+    cache        = "writethrough"
+    discard      = "on"
+    ssd          = true
+  }
+
+  initialization {
+    datastore_id = var.storage_pool
+    user_data_file_id = talos_image_factory_schematic.this[each.key].machine_config_iso_file_id
+
+    ip_config {
+      ipv4 {
+        address = "${each.value.ip_address}/24"
+        gateway = var.gateway_ip
+      }
+    }
+
+    dns {
+      servers = var.dns_servers
+    }
+  }
+
+  machine = "q35"
+  memory {
+    dedicated = each.value.memory
+  }
+
+  network_device {
+    bridge    = var.network_bridge
+    firewall  = false
+    mac_address = each.value.mac_address
+    model     = "virtio"
+    mtu       = var.network_mtu
+    rate_limit_megabytes_per_second = 0
+  }
+
+  operating_system {
+    type = "l26"
+  }
+
+  protection {
+    delete = false
+  }
+
+  reboot_required = false
+  scsi_hardware   = "virtio-scsi-single"
   cpu {
     architecture = "x86_64"
-    cores        = each.value.cpu
+    cores        = each.value.cpu_cores
     sockets      = 1
     type         = "host"
   }
 
-  memory {
-    dedicated = each.value.ram_dedicated
-  }
-
-  operating_system {
-    type = "l26" # Linux Kernel 2.6 - 6.x
-  }
-
-  serial_device {}
-
-  vga {
-    memory = 64
-    type   = "qxl"
-  }
-
-  #################################################################
-  # OPTIONAL GPU passthrough—only when igpu == true for the node #
-  #################################################################
   dynamic "hostpci" {
-    # Correctly reference the outer 'each' for the node
     for_each = lookup(each.value, "igpu", false) ? [1] : []
     content {
-      device = "hostpci0"
-      # Correctly reference the outer 'each' for the node
-      mapping = lookup(each.value, "gpu_id", "iGPU")
-      pcie    = true
-      rombar  = true
-      xvga    = false
+      device_id = "0"
+      mapping   = "intel-gvt-g"
+      mdev      = "i915-GVTg_V5_4"
     }
   }
 
-  lifecycle {
-    ignore_changes = [
-      network_device,
-      disk[0].file_id, # Ignore changes to the boot disk file_id after creation
-    ]
+  dynamic "hostpci" {
+    for_each = lookup(each.value, "igpu", false) ? [1] : []
+    content {
+      device_id = "1"
+      mapping   = "intel-gvt-g"
+      mdev      = "i915-GVTg_V5_4"
+    }
   }
-
-  depends_on = [
-    proxmox_virtual_environment_download_file.this,
-    proxmox_virtual_environment_download_file.update,
-    null_resource.detach_data_disks # Ensure disks are detached before attaching here
-  ]
 }

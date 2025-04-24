@@ -75,7 +75,9 @@ resource "talos_machine_configuration_apply" "this" {
 
   # wait for **all** VMs, avoid per-instance indexing
   depends_on = [
-    proxmox_virtual_environment_vm.k8s_node
+    proxmox_virtual_environment_vm.k8s_node,
+    talos_image_factory_schematic.this,
+    talos_image_factory_schematic.updated,
   ]
 }
 
