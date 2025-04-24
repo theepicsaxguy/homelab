@@ -91,4 +91,25 @@ variable "longhorn_disk_files" {
   default     = {}
 }
 
+# New variables required by the module
+variable "pool_id" {
+  description = "Proxmox Pool ID for VMs"
+  type        = string
+}
+
+variable "dns_servers" {
+  description = "List of DNS servers for VMs"
+  type        = list(string)
+}
+
+variable "network_bridge" {
+  description = "Proxmox network bridge for VMs"
+  type        = string
+}
+
+variable "network_mtu" {
+  description = "Network MTU for VMs"
+  type        = number
+}
+
 

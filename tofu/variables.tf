@@ -60,3 +60,38 @@ variable "nodes" {
     error_message = "All disk sizes must be specified in gigabytes (e.g., '150G')."
   }
 }
+
+variable "pool_id" {
+  description = "Proxmox Pool ID for VMs"
+  type        = string
+  # Add default or sensitive = true as needed
+}
+
+variable "dns_servers" {
+  description = "List of DNS servers for VMs"
+  type        = list(string)
+  # Add default or sensitive = true as needed
+}
+
+variable "network_bridge" {
+  description = "Proxmox network bridge for VMs"
+  type        = string
+  # Add default or sensitive = true as needed
+}
+
+variable "network_mtu" {
+  description = "Network MTU for VMs"
+  type        = number
+  # Add default or sensitive = true as needed
+}
+
+variable "proxmox" {
+  description = "Proxmox API connection details"
+  type = object({
+    endpoint  = string
+    insecure  = bool
+    username  = string
+    api_token = string
+  })
+  sensitive = true
+}

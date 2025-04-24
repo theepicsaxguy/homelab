@@ -1,16 +1,24 @@
+module "data_disks" {
+  source       = "./modules/data_disks"
+  disk_owner   = var.disk_owner
+  storage_pool = var.storage_pool
+  nodes        = var.nodes
+}
+
 module "talos" {
-  source = "./talos"
+  source    = "./talos" # Assuming source is ./talos based on structure
+  providers = { proxmox = proxmox }
 
-  providers = {
-    proxmox = proxmox
-  }
+  # Pass new variables
+  pool_id        = var.pool_id
+  dns_servers    = var.dns_servers
+  network_bridge = var.network_bridge
+  network_mtu    = var.network_mtu
 
-  # Pass required variables from root module
-  storage_pool   = var.storage_pool
-  cluster        = var.cluster
-  disk_owner     = var.disk_owner # Assuming this was intended, if not, please clarify
-
-  # Pass the Longhorn disk outputs
+  proxmox            = var.proxmox
+  storage_pool       = var.storage_pool
+  cluster            = var.cluster
+  disk_owner         = var.disk_owner
   longhorn_disk_files = module.data_disks.longhorn_disk_files
 
   image = {
