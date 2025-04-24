@@ -64,14 +64,14 @@ data "talos_machine_configuration" "worker" {
 resource "talos_machine_configuration_apply" "this" {
   for_each = var.nodes
 
-  client_configuration        = data.talos_client_configuration.this.client_configuration
+  client_configuration = data.talos_client_configuration.this.client_configuration
   # Conditionally select the correct machine configuration based on node type
   machine_configuration_input = (
     each.value.machine_type == "controlplane"
     ? data.talos_machine_configuration.this[each.key].machine_configuration
     : data.talos_machine_configuration.worker[each.key].machine_configuration
   )
-  node                        = each.value.ip
+  node = each.value.ip
 
   # wait for **all** VMs, avoid per-instance indexing
   depends_on = [

@@ -122,8 +122,5 @@ module "talos" {
       }
     }
   }
-
-  # Pass Longhorn disk info into the module
-  longhorn_disks = proxmox_virtual_environment_vm.longhorn_data.disk
 }
 

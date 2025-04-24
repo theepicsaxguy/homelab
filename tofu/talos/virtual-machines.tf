@@ -59,30 +59,44 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
         "node_${k}" => {
           datastore_id = var.storage_pool
           size         = tonumber(replace(disk_val.size, "G", ""))
-          # Start index at 1 (scsi1/virtio1)
-          interface = disk_val.type == "scsi" ? "scsi${index(keys(lookup(each.value, "disks", {})), k) + 1}" : "virtio${index(keys(lookup(each.value, "disks", {})), k) + 1}"
-          iothread  = true
+          interface    = disk_val.type == "scsi" ? "scsi${index(keys(lookup(each.value, "disks", {})), k) + 1}" : "virtio${index(keys(lookup(each.value, "disks", {})), k) + 1}"
+          iothread     = true
+          # Add other relevant attributes for node-specific disks if needed (e.g., cache, ssd)
+          cache   = "writethrough" # Example
+          discard = "on"           # Example
+          ssd     = true           # Example
         }
       },
-      # Longhorn disks for worker nodes, converting list to map and starting index after node disks
+      # Attach the dedicated Longhorn disk file for this worker node using file_id
       each.value.machine_type == "worker" ? {
-        for idx, lh_disk in var.longhorn_disks :
-        "longhorn_${idx}" => {
-          datastore_id      = lh_disk.datastore_id
-          path_in_datastore = lh_disk.path_in_datastore
-          # Ensure interface index doesn't clash with node disks, start after them
-          interface = "scsi${length(lookup(each.value, "disks", {})) + idx + 1}"
+        "longhorn_dedicated" = {
+          datastore_id = var.storage_pool # Disk is in the same pool
+          # Reference the file_id from the corresponding longhorn_data VM's disk[0]
+          file_id = proxmox_virtual_environment_vm.longhorn_data[each.key].disk[0].file_id
+          # Ensure interface index doesn't clash, start after node disks
+          interface = "scsi${length(lookup(each.value, "disks", {})) + 1}"
           iothread  = true
+          # No size needed when using file_id
+          # No shared needed, as file_id implies attaching an existing disk exclusively (by default)
+          # Add other relevant attributes if needed, matching the source disk if possible
+          cache   = "writethrough" # Match source disk attributes if necessary
+          discard = "on"           # Match source disk attributes if necessary
+          ssd     = true           # Match source disk attributes if necessary
         }
       } : {}
     )
 
     content {
-      datastore_id      = disk.value.datastore_id
-      size              = lookup(disk.value, "size", null)              # Only present for node disks
-      path_in_datastore = lookup(disk.value, "path_in_datastore", null) # Only present for Longhorn disks
-      interface         = disk.value.interface
-      iothread          = disk.value.iothread
+      datastore_id = disk.value.datastore_id
+      size         = lookup(disk.value, "size", null)    # Only present for node disks created by size
+      file_id      = lookup(disk.value, "file_id", null) # Only present for Longhorn disk attached by file_id
+      interface    = disk.value.interface
+      iothread     = disk.value.iothread
+      # Pass other attributes defined in the for_each maps
+      cache   = lookup(disk.value, "cache", null)
+      discard = lookup(disk.value, "discard", null)
+      ssd     = lookup(disk.value, "ssd", null)
+      # Removed path_in_datastore and shared as they are not used/applicable here
     }
   }
 
