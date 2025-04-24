@@ -25,7 +25,6 @@ variable "cluster" {
   })
 }
 
-
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
@@ -46,6 +45,12 @@ variable "nodes" {
       mountpoint = string
     })), {})
   }))
+}
+
+variable "longhorn_disk_files" {
+  description = "Map of worker node names to their dedicated Longhorn disk file IDs."
+  type        = map(string)
+  default     = {}
 }
 
 variable "cilium" {

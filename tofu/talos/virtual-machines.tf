@@ -52,7 +52,7 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
 
   # Combined dynamic block for additional data disks (original node disks + Longhorn)
   dynamic "disk" {
-    # Combine original disks and Longhorn disks into a single map
+    # Calculate the combined disk map directly in for_each
     for_each = merge(
       # Original disks defined in var.nodes, starting interface index at 1
       { for k, disk_val in lookup(each.value, "disks", {}) :
@@ -61,42 +61,36 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
           size         = tonumber(replace(disk_val.size, "G", ""))
           interface    = disk_val.type == "scsi" ? "scsi${index(keys(lookup(each.value, "disks", {})), k) + 1}" : "virtio${index(keys(lookup(each.value, "disks", {})), k) + 1}"
           iothread     = true
-          # Add other relevant attributes for node-specific disks if needed (e.g., cache, ssd)
-          cache   = "writethrough" # Example
-          discard = "on"           # Example
-          ssd     = true           # Example
+          cache        = "writethrough"
+          discard      = "on"
+          ssd          = true
         }
       },
-      # Attach the dedicated Longhorn disk file for this worker node using file_id
-      each.value.machine_type == "worker" ? {
+      # Attach the dedicated Longhorn disk file for this worker node using file_id from the input variable
+      each.value.machine_type == "worker" && lookup(var.longhorn_disk_files, each.key, null) != null ? {
         "longhorn_dedicated" = {
           datastore_id = var.storage_pool # Disk is in the same pool
-          # Reference the file_id from the corresponding longhorn_data VM's disk[0]
-          file_id = proxmox_virtual_environment_vm.longhorn_data[each.key].disk[0].file_id
+          file_id      = var.longhorn_disk_files[each.key]
           # Ensure interface index doesn't clash, start after node disks
           interface = "scsi${length(lookup(each.value, "disks", {})) + 1}"
           iothread  = true
-          # No size needed when using file_id
-          # No shared needed, as file_id implies attaching an existing disk exclusively (by default)
-          # Add other relevant attributes if needed, matching the source disk if possible
-          cache   = "writethrough" # Match source disk attributes if necessary
-          discard = "on"           # Match source disk attributes if necessary
-          ssd     = true           # Match source disk attributes if necessary
+          cache     = "writethrough"
+          discard   = "on"
+          ssd       = true
         }
       } : {}
     )
 
     content {
+      # disk.value here refers to the value from the inner loop (the merged map)
       datastore_id = disk.value.datastore_id
-      size         = lookup(disk.value, "size", null)    # Only present for node disks created by size
-      file_id      = lookup(disk.value, "file_id", null) # Only present for Longhorn disk attached by file_id
+      size         = lookup(disk.value, "size", null)
+      file_id      = lookup(disk.value, "file_id", null)
       interface    = disk.value.interface
       iothread     = disk.value.iothread
-      # Pass other attributes defined in the for_each maps
-      cache   = lookup(disk.value, "cache", null)
-      discard = lookup(disk.value, "discard", null)
-      ssd     = lookup(disk.value, "ssd", null)
-      # Removed path_in_datastore and shared as they are not used/applicable here
+      cache        = lookup(disk.value, "cache", null)
+      discard      = lookup(disk.value, "discard", null)
+      ssd          = lookup(disk.value, "ssd", null)
     }
   }
 
@@ -124,10 +118,12 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
   # OPTIONAL GPU passthrough—only when igpu == true for the node #
   #################################################################
   dynamic "hostpci" {
+    # Correctly reference the outer 'each' for the node
     for_each = lookup(each.value, "igpu", false) ? [1] : []
     content {
-      device  = "hostpci0"
-      mapping = lookup(each.value, "gpu_id", "iGPU") # default mapping name
+      device = "hostpci0"
+      # Correctly reference the outer 'each' for the node
+      mapping = lookup(each.value, "gpu_id", "iGPU")
       pcie    = true
       rombar  = true
       xvga    = false
