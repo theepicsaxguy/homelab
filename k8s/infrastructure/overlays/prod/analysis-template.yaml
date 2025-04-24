@@ -8,7 +8,7 @@ spec:
     interval: 15s
     count: 5
     successCondition: result == true
-    failureLimit: 1
+    failureLimit: 5
     provider:
       web:
         url: http://{{ args.service }}.{{ args.namespace }}.svc/health
@@ -16,7 +16,7 @@ spec:
   - name: resource-health
     interval: 300s
     successCondition: result[0] >= 0.999
-    failureLimit: 1
+    failureLimit: 5
     provider:
       prometheus:
         address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
@@ -31,7 +31,7 @@ spec:
   - name: error-rate
     interval: 300s
     successCondition: result[0] <= 0.001
-    failureLimit: 1
+    failureLimit: 5
     provider:
       prometheus:
         address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090

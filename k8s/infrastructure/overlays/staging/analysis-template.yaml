@@ -8,6 +8,8 @@ spec:
     interval: 10s
     count: 3
     successCondition: result == true
+    # The failureLimit is set to 5 to allow up to 5 consecutive failures before triggering an alert.
+    failureLimit: 5
     provider:
       web:
         url: http://{{ args.service }}.{{ args.namespace }}.svc/health
@@ -15,7 +17,7 @@ spec:
   - name: success-rate
     interval: 120s
     successCondition: result[0] >= 0.99
-    failureLimit: 1
+    failureLimit: 5
     provider:
       prometheus:
         address: http://prometheus-operated.monitoring.svc.kube.pc-tips.se:9090
