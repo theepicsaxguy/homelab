@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: omada-svc
+  namespace: omada
 spec:
   type: LoadBalancer
   selector:

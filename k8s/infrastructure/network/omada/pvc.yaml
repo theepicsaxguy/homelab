@@ -2,7 +2,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: omada-data-pvc
+  namespace: omada
 spec:
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:
@@ -13,7 +15,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: omada-logs-pvc
+  namespace: omada
 spec:
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:
