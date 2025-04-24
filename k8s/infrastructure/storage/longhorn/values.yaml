@@ -52,7 +52,7 @@ metrics:
     enabled: true
     additionalLabels: {}
     annotations: {}
-    interval: ""
+    interval: "30s" # Default scrape interval. Override if needed.
     scrapeTimeout: ""
     relabelings: []
     metricRelabelings: []
