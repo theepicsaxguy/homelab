@@ -47,12 +47,6 @@ variable "nodes" {
   }))
 }
 
-variable "longhorn_disk_files" {
-  description = "Map of worker node names to their dedicated Longhorn disk file IDs."
-  type        = map(string)
-  default     = {}
-}
-
 variable "cilium" {
   description = "Cilium configuration"
   type = object({
@@ -80,6 +74,7 @@ variable "disk_owner" {
     vm_id     = number
   })
 }
+
 variable "inline_manifests" {
   description = "Inline manifests to apply after bootstrap with dependencies"
   type = list(object({
@@ -88,12 +83,6 @@ variable "inline_manifests" {
     dependencies = optional(list(string), [])
   }))
   default = []
-}
-
-variable "longhorn_disks" {
-  description = "Information about disks from the dedicated Longhorn data VM."
-  type        = any # Use a more specific type if possible, like list(object({...}))
-  default     = {}
 }
 
 

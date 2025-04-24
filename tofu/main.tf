@@ -8,7 +8,6 @@ module "talos" {
   disk_owner   = var.disk_owner
   storage_pool = var.storage_pool
 
-
   image = {
     version        = "v1.9.5"
     update_version = "v1.9.5" # renovate: github-releases=siderolabs/talos
@@ -121,19 +120,6 @@ module "talos" {
         }
       }
     }
-  }
-
-  # Pass the pre-calculated Longhorn disk file IDs map into the module
-  longhorn_disk_files = local.longhorn_disk_files_map
-}
-
-# Calculate the map of worker node names to their Longhorn disk file IDs
-locals {
-  longhorn_disk_files_map = {
-    # Iterate over the worker nodes, which correspond to the keys of the resource instances
-    for name, node in var.nodes :
-    name => proxmox_virtual_environment_vm.longhorn_data[name].disk[0].file_id
-    if node.machine_type == "worker" # Ensure we only try to access existing instances
   }
 }
 

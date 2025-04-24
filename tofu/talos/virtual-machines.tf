@@ -1,43 +1,25 @@
-moved {
-  from = proxmox_virtual_environment_vm.this
-  to   = proxmox_virtual_environment_vm.k8s_node
-}
-
-resource "proxmox_virtual_environment_vm" "k8s_node" {
+resource "proxmox_virtual_environment_vm" "this" {
   for_each = var.nodes
 
   node_name = each.value.host_node
-
-  name        = each.key
-  description = each.value.machine_type == "controlplane" ? "Talos Control Plane" : "Talos Worker"
-  tags        = each.value.machine_type == "controlplane" ? ["k8s", "control-plane"] : ["k8s", "worker"]
-  on_boot     = true
-  vm_id       = each.value.vm_id
-
-  machine       = "q35"
-  scsi_hardware = "virtio-scsi-single"
-  bios          = "seabios"
+  name      = each.key
+  vm_id     = each.value.vm_id
+  on_boot   = true
+  started   = true
+  template  = false
 
   agent {
     enabled = true
-  }
-
-  cpu {
-    cores = each.value.cpu
-    type  = "host"
-  }
-
-  memory {
-    dedicated = each.value.ram_dedicated
+    fs_trim = true
   }
 
   network_device {
     bridge      = "vmbr0"
-    vlan_id     = 150
+    firewall    = false
     mac_address = each.value.mac_address
   }
 
-  # Boot disk (assuming scsi0 is the boot disk, adjust if different)
+  // Boot disk (assuming scsi0 is the boot disk, adjust if different)
   disk {
     datastore_id = var.storage_pool
     interface    = "scsi0"
@@ -50,68 +32,43 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
     file_id      = each.value.update == true ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
   }
 
-  # Combined dynamic block for additional data disks (original node disks + Longhorn)
+  // Attach Longhorn disks from data_disks VM
   dynamic "disk" {
-    # Calculate the combined disk map directly in for_each
-    for_each = merge(
-      # Original disks defined in var.nodes, starting interface index at 1
-      { for k, disk_val in lookup(each.value, "disks", {}) :
-        "node_${k}" => {
-          datastore_id = var.storage_pool
-          size         = tonumber(replace(disk_val.size, "G", ""))
-          interface    = disk_val.type == "scsi" ? "scsi${index(keys(lookup(each.value, "disks", {})), k) + 1}" : "virtio${index(keys(lookup(each.value, "disks", {})), k) + 1}"
-          iothread     = true
-          cache        = "writethrough"
-          discard      = "on"
-          ssd          = true
-        }
-      },
-      # Attach the dedicated Longhorn disk file for this worker node using file_id from the input variable
-      each.value.machine_type == "worker" && lookup(var.longhorn_disk_files, each.key, null) != null ? {
-        "longhorn_dedicated" = {
-          datastore_id = var.storage_pool # Disk is in the same pool
-          file_id      = var.longhorn_disk_files[each.key]
-          # Ensure interface index doesn't clash, start after node disks
-          interface = "scsi${length(lookup(each.value, "disks", {})) + 1}"
-          iothread  = true
-          cache     = "writethrough"
-          discard   = "on"
-          ssd       = true
-        }
-      } : {}
-    )
-
+    for_each = {
+      for idx, d in proxmox_virtual_environment_vm.data_disks.disk :
+      idx => d if idx > 0  // skip scsi0
+    }
     content {
-      # disk.value here refers to the value from the inner loop (the merged map)
-      datastore_id = disk.value.datastore_id
-      size         = lookup(disk.value, "size", null)
-      file_id      = lookup(disk.value, "file_id", null)
-      interface    = disk.value.interface
-      iothread     = disk.value.iothread
-      cache        = lookup(disk.value, "cache", null)
-      discard      = lookup(disk.value, "discard", null)
-      ssd          = lookup(disk.value, "ssd", null)
+      datastore_id = proxmox_virtual_environment_vm.data_disks.disk[0].datastore_id
+      file_id      = proxmox_virtual_environment_vm.data_disks.disk[disk.key].file_id
+      interface    = "scsi${disk.key}"       // aligns: data_disks scsi1 → worker scsi1
+      iothread     = true
+      cache        = "writethrough"
+      discard      = "on"
+      ssd          = true
     }
   }
 
-  boot_order = ["scsi0"]
+  cpu {
+    architecture = "x86_64"
+    cores        = each.value.cpu
+    sockets      = 1
+    type         = "host"
+  }
+
+  memory {
+    dedicated = each.value.ram_dedicated
+  }
 
   operating_system {
-    type = "l26" # Linux Kernel 2.6 - 6.X.
+    type = "l26" # Linux Kernel 2.6 - 6.x
   }
 
-  initialization {
-    datastore_id = each.value.datastore_id
-    dns {
-      domain  = "kube.pc-tips.se"
-      servers = ["10.25.150.1"]
-    }
-    ip_config {
-      ipv4 {
-        address = "${each.value.ip}/24"
-        gateway = var.cluster.gateway
-      }
-    }
+  serial_device {}
+
+  vga {
+    memory = 64
+    type   = "qxl"
   }
 
   #################################################################
@@ -129,4 +86,17 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
       xvga    = false
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      network_device,
+      disk[0].file_id, # Ignore changes to the boot disk file_id after creation
+    ]
+  }
+
+  depends_on = [
+    proxmox_virtual_environment_download_file.this,
+    proxmox_virtual_environment_download_file.update,
+    null_resource.detach_data_disks # Ensure disks are detached before attaching here
+  ]
 }

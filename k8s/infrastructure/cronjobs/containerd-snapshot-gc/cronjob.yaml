@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: containerd-snapshot-gc
+  namespace: kube-system # Assuming this runs in kube-system
+spec:
+  schedule: "15 2 * * *" # Run daily at 2:15 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: containerd-snapshot-gc
+          containers:
+          - name: containerd-snapshot-gc
+            # Replace with the actual digest you provide
+            image: ghcr.io/containerd/ctr@sha256:<exact-digest-for-1.7.13>
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              set -euo pipefail
+              echo "Running containerd garbage collection..."
+              # The command to trigger GC via the socket
+              ctr -a /run/containerd/containerd.sock content garbage-collect
+              echo "Containerd garbage collection complete."
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 100m
+                memory: 128Mi
+            securityContext:
+              # Remove privileged: true. Access to the socket is handled via volumeMounts and potentially PSP/RBAC.
+              # Ensure the underlying node security allows this mount.
+              privileged: false
+              # Add other necessary security context settings if required by your policies
+              # e.g., runAsUser, runAsGroup, allowPrivilegeEscalation: false, capabilities: { drop: ["ALL"] }
+            volumeMounts:
+            - name: containerd-socket
+              mountPath: /run/containerd/containerd.sock
+          volumes:
+          - name: containerd-socket
+            hostPath:
+              path: /run/containerd/containerd.sock
+              type: Socket # Ensure the socket exists at this path on the node
+          restartPolicy: OnFailure
+          # Add nodeSelector or tolerations if needed to ensure it runs on appropriate nodes
+          # nodeSelector:
+          #   kubernetes.io/os: linux

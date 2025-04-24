@@ -13,7 +13,7 @@ variable "proxmox" {
 variable "storage_pool" {
   description = "Proxmox storage pool for VM disks"
   type        = string
-  default     = "local-lvm"
+  default     = "velocity"
 }
 
 variable "disk_owner" {
