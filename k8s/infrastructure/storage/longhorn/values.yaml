@@ -53,6 +53,6 @@ metrics:
     additionalLabels: {}
     annotations: {}
     interval: "30s" # Default scrape interval. Override if needed.
-    scrapeTimeout: ""
+    scrapeTimeout: "10s" # Default scrape timeout for Prometheus metrics
     relabelings: []
     metricRelabelings: []
