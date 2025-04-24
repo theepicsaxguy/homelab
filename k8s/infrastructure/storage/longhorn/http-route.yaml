@@ -9,6 +9,7 @@ spec:
       namespace: gateway
   hostnames:
     - "longhorn.pc-tips.se"
+    - "longhorn-metrics.pc-tips.se"
   rules:
     - matches:
         - path:
@@ -17,3 +18,10 @@ spec:
       backendRefs:
         - name: longhorn-frontend
           port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /metrics
+      backendRefs:
+        - name: longhorn-metrics
+          port: 8080
