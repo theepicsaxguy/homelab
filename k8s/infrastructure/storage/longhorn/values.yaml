@@ -15,16 +15,16 @@ defaultSettings:
   defaultDataPath: /var/lib/longhorn/
   autoDeletePodWhenVolumeDetachedUnexpectedly: true
   autoSalvage: true
-  replicaZoneSoftAntiAffinity: true
+  replicaZoneSoftAntiAffinity: false
   concurrentReplicaRebuildPerNodeLimit: 2
   backupstorePollInterval: 300
-
+  replicaSoftAntiAffinity: false
 persistence:
   defaultClass: true
   defaultClassReplicaCount: 3
   reclaimPolicy: Delete
   defaultFsType: ext4
-  defaultDataLocality: disabled
+  defaultDataLocality: strict-local
 
 resources:
   requests:
