@@ -3,7 +3,7 @@ locals {
   inline_manifests_map = { for manifest in var.inline_manifests : manifest.name => manifest }
 
   # We'll use the raw content strings instead of trying to parse multi-document YAML
-  cilium_content = try(local.inline_manifests_map["cilium-install"].content, "")
+  cilium_content  = try(local.inline_manifests_map["cilium-install"].content, "")
   coredns_content = try(local.inline_manifests_map["coredns-install"].content, "")
 }
 
@@ -24,9 +24,9 @@ output "cilium" {
   }
 }
 
- output "core_dns" {
-   description = "CoreDNS installation details"
-   value = {
-     install = var.coredns.install
-   }
- }
+output "core_dns" {
+  description = "CoreDNS installation details"
+  value = {
+    install = var.coredns.install
+  }
+}

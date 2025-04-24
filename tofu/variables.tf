@@ -19,8 +19,8 @@ variable "storage_pool" {
 variable "disk_owner" {
   description = "Where to create the data disks VM"
   type = object({
-    node_name = string  # Proxmox node to host the data disks VM
-    vm_id     = number  # VM ID for the data disks VM
+    node_name = string # Proxmox node to host the data disks VM
+    vm_id     = number # VM ID for the data disks VM
   })
   default = {
     node_name = "host1"
@@ -41,6 +41,7 @@ variable "nodes" {
     ram_dedicated = number
     update        = bool
     igpu          = optional(bool, false)
+    gpu_id        = optional(string) # Add this line for explicit schema definition
     disks = optional(map(object({
       device     = string # e.g., /dev/sdb
       size       = string # e.g., 150G

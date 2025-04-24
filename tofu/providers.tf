@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.36.0"  # This ensures you get the latest 2.35.x version
+      version = "~> 2.36.0" # This ensures you get the latest 2.35.x version
     }
     proxmox = {
       source  = "bpg/proxmox"
@@ -42,8 +42,8 @@ provider "restapi" {
 }
 
 provider "kubernetes" {
-  host = module.talos.kube_config.kubernetes_client_configuration.host
-  client_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
-  client_key = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
+  host                   = module.talos.kube_config.kubernetes_client_configuration.host
+  client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
+  client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
 }
