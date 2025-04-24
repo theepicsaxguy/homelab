@@ -6,14 +6,12 @@ module "talos" {
   }
 
   # Pass required variables from root module
-  pool_id        = var.pool_id
-  gateway_ip     = var.cluster.gateway # Assuming gateway is defined in var.cluster
-  dns_servers    = var.dns_servers     # Assuming var.dns_servers exists in root
-  network_bridge = var.network_bridge  # Assuming var.network_bridge exists in root
-  network_mtu    = var.network_mtu     # Assuming var.network_mtu exists in root
+  storage_pool   = var.storage_pool
+  cluster        = var.cluster
+  disk_owner     = var.disk_owner # Assuming this was intended, if not, please clarify
 
-  disk_owner   = var.disk_owner
-  storage_pool = var.storage_pool
+  # Pass the Longhorn disk outputs
+  longhorn_disk_files = module.data_disks.longhorn_disk_files
 
   image = {
     version        = "v1.9.5"
@@ -28,16 +26,6 @@ module "talos" {
 
   coredns = {
     install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
-  }
-
-  cluster = {
-    name               = "talos"
-    endpoint           = "api.kube.pc-tips.se"
-    gateway            = "10.25.150.1"  # Network gateway
-    vip                = "10.25.150.10" # Control plane VIP
-    talos_version      = "v1.9.5"
-    proxmox_cluster    = "kube"
-    kubernetes_version = "1.33.0" # renovate: github-releases=kubernetes/kubernetes
   }
 
   nodes = {
@@ -127,11 +115,6 @@ module "talos" {
         }
       }
     }
-  }
-
-  longhorn_disk_files = {
-    for name, vm in proxmox_virtual_environment_vm.data_disks :
-    name => vm.disk[0].file_id
   }
 }
 

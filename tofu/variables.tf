@@ -1,33 +1,31 @@
-variable "proxmox" {
+variable "cluster" {
+  description = "Cluster configuration details"
   type = object({
-    name         = string
-    cluster_name = string
-    endpoint     = string
-    insecure     = bool
-    username     = string
-    api_token    = string
+    name               = string
+    endpoint           = string
+    gateway            = string
+    vip                = string
+    talos_version      = string
+    proxmox_cluster    = string
+    kubernetes_version = optional(string, "1.32.0") # Default K8s version if not specified
   })
-  sensitive = true
+  # Add default or sensitive = true as needed
 }
 
 variable "storage_pool" {
-  description = "Proxmox storage pool for VM disks"
+  description = "The Proxmox storage pool to use for VM disks."
   type        = string
-  default     = "velocity"
+  # Add default or sensitive = true as needed
 }
 
 variable "disk_owner" {
-  description = "Where to create the data disks VM"
+  description = "Specifies the Proxmox node and VM ID for the dedicated data disks VM."
   type = object({
-    node_name = string # Proxmox node to host the data disks VM
-    vm_id     = number # VM ID for the data disks VM
+    node_name = string
+    vm_id     = number
   })
-  default = {
-    node_name = "host1"
-    vm_id     = 9000
-  }
+  # Add default or sensitive = true as needed
 }
-
 
 variable "nodes" {
   description = "Map of Talos nodes to create"
@@ -61,30 +59,4 @@ variable "nodes" {
     ])
     error_message = "All disk sizes must be specified in gigabytes (e.g., '150G')."
   }
-}
-
-variable "pool_id" {
-  description = "Proxmox resource pool ID"
-  type        = string
-}
-
-variable "cluster" {
-  description = "Cluster settings (we only need .gateway)"
-  type        = object({ gateway = string })
-}
-
-variable "dns_servers" {
-  description = "DNS server IPs"
-  type        = list(string)
-}
-
-variable "network_bridge" {
-  description = "Proxmox bridge for VMs"
-  type        = string
-}
-
-variable "network_mtu" {
-  description = "MTU for VM network interface"
-  type        = number
-  default     = 1500
 }
