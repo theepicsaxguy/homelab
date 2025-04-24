@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: omada-controller
+  namespace: omada
 spec:
   replicas: 1
   strategy:
