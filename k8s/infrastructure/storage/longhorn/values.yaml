@@ -46,3 +46,13 @@ longhornDriver:
 
 preUpgradeChecker:
   jobEnabled: false
+
+metrics:
+  serviceMonitor:
+    enabled: true
+    additionalLabels: {}
+    annotations: {}
+    interval: ""
+    scrapeTimeout: ""
+    relabelings: []
+    metricRelabelings: []
