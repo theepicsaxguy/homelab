@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_vm" "worker" {
+resource "proxmox_virtual_environment_vm" "this" {
   for_each        = var.nodes
   stop_on_destroy = true
   node_name       = each.value.host_node
@@ -82,4 +82,10 @@ resource "proxmox_virtual_environment_vm" "worker" {
   boot_order  = ["scsi0"]
   description = "Talos Worker"
   operating_system { type = "l26" }
+
+  lifecycle {
+    prevent_destroy = true
+    # Optionally, add ignore_changes = [disk] if you want to prevent disk reattachments from triggering changes
+    # ignore_changes = [disk]
+  }
 }

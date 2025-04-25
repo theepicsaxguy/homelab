@@ -147,3 +147,4 @@ module "talos" {
   worker_disk_specs   = local.worker_disk_specs
   os_disk_file_id     = local.os_disk_file_id
 }
+
