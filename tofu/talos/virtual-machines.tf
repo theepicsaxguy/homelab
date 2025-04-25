@@ -84,7 +84,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   operating_system { type = "l26" }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
     # Optionally, add ignore_changes = [disk] if you want to prevent disk reattachments from triggering changes
     # ignore_changes = [disk]
   }
