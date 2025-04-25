@@ -12,9 +12,9 @@ module "talos" {
     schematic      = var.image.schematic
   }
 
-  os_disk_file_id     = { for k, v in var.nodes : k => "${var.storage_pool}:vm-${v.vm_id}-os" }
-  worker_disk_specs   = local.worker_disk_specs
   longhorn_disk_files = local.longhorn_disk_files
+  worker_disk_specs   = local.worker_disk_specs
+  os_disk_file_id     = { for k, v in var.nodes : k => "${var.storage_pool}:vm-${v.vm_id}-os" }
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")

@@ -1,18 +1,3 @@
-variable "os_disk_file_id" {
-  description = "Map of node name to OS disk file_id."
-  type        = map(string)
-}
-
-variable "worker_disk_specs" {
-  description = "Flattened map of worker disk specs for dynamic disk and null_resource blocks."
-  type        = map(any)
-}
-
-variable "longhorn_disk_files" {
-  description = "Map of node name to Longhorn disk file_id."
-  type        = map(string)
-}
-
 variable "image" {
   description = "Talos image configuration"
   type = object({
@@ -72,5 +57,17 @@ variable "inline_manifests" {
   }))
   default = []
 }
+
+variable "longhorn_disk_files" { type = map(string) }
+variable "worker_disk_specs" { type = map(object({
+  host      = string
+  vm_id     = number
+  interface = string
+  node      = string
+  disk_key  = string
+  pool      = string
+  size      = string
+})) }
+variable "os_disk_file_id" { type = map(string) }
 
 
