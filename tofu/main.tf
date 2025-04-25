@@ -1,21 +1,19 @@
 module "data_disks" {
   source       = "./modules/data_disks"
+  providers    = { proxmox = proxmox }
   disk_owner   = var.disk_owner
   storage_pool = var.storage_pool
   nodes        = var.nodes
 }
 
 module "talos" {
-  source    = "./talos" # Assuming source is ./talos based on structure
+  source    = "./talos"
   providers = { proxmox = proxmox }
 
-  # Pass new variables
   pool_id        = var.pool_id
   dns_servers    = var.dns_servers
   network_bridge = var.network_bridge
   network_mtu    = var.network_mtu
-
-  proxmox            = var.proxmox
   storage_pool       = var.storage_pool
   cluster            = var.cluster
   disk_owner         = var.disk_owner

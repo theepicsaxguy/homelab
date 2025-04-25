@@ -1,4 +1,13 @@
 // tofu/data_disks.tf
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "bpg/proxmox"
+      version = "~> 0.76"
+    }
+  }
+}
+
 // Dedicated VM to hold Longhorn disks so they survive worker reprovision
 resource "proxmox_virtual_environment_vm" "data_disks" {
   name      = "talos-data-disks"
