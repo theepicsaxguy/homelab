@@ -7,7 +7,6 @@ resources:
 - storage
 - controllers
 - deployment
-- cronjobs
 
 configurations:
 - common/varreference.yaml
