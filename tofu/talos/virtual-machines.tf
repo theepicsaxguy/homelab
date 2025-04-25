@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_vm" "this" {
+resource "proxmox_virtual_environment_vm" "worker" {
   for_each        = var.nodes
   stop_on_destroy = true
   node_name       = each.value.host_node
@@ -40,19 +40,17 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   dynamic "disk" {
-    for_each = {
-      for spec_key, spec in local.worker_disk_specs :
-      spec_key => spec
-      if spec.vm_id == each.value.vm_id && spec.disk_key == "longhorn"
-    }
+    for_each = local.worker_disks
     content {
-      interface   = disk.value.interface
-      file_id     = local.longhorn_disk_files[disk.value.node]
-      iothread    = true
-      cache       = "writethrough"
-      discard     = "on"
-      ssd         = true
-      file_format = "raw"
+      datastore_id = "velocity" # explicitly correct datastore
+      interface    = disk.value.interface
+      file_id      = local.longhorn_disk_files[disk.value.node]
+      size         = 150 # explicitly set back to 150GB
+      iothread     = true
+      cache        = "writethrough"
+      discard      = "on"
+      ssd          = true
+      file_format  = "raw"
     }
   }
 
@@ -80,4 +78,8 @@ resource "proxmox_virtual_environment_vm" "this" {
       xvga    = false
     }
   }
+
+  boot_order = ["scsi0"]
+  description = "Talos Worker"
+  operating_system { type = "l26" }
 }

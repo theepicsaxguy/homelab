@@ -19,6 +19,18 @@ variable "storage_pool" {
   default     = "velocity"
 }
 
+variable "disk_owner" {
+  description = "Where to create the data-disks VM"
+  type = object({
+    node_name = string
+    vm_id     = number
+  })
+  default = {
+    node_name = "host1"
+    vm_id     = 9000
+  }
+}
+
 # override baked-in cluster settings if desired
 variable "cluster" {
   description = "Cluster configuration object"
