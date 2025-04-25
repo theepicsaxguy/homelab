@@ -95,3 +95,22 @@ variable "proxmox" {
   })
   sensitive = true
 }
+
+variable "image" {
+  description = "Talos image configuration"
+  type = object({
+    version        = string
+    update_version = string
+    schematic      = string
+  })
+}
+
+variable "inline_manifests" {
+  description = "Additional manifests to apply after bootstrap"
+  type = list(object({
+    name         = string
+    content      = string
+    dependencies = optional(list(string), [])
+  }))
+  default = []
+}

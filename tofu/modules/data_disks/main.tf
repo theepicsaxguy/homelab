@@ -31,7 +31,8 @@ resource "proxmox_virtual_environment_vm" "data_disks" {
     }
     content {
       datastore_id = var.storage_pool
-      interface    = "scsi${index(sort(keys(var.nodes)), node_name) + 1}"
+      # Use each.key instead of node_name
+      interface    = "scsi${index(sort(keys(var.nodes)), each.key) + 1}"
       size         = tonumber(replace(disk.value.size, "G", ""))
       iothread     = true
       cache        = "writethrough"
@@ -40,7 +41,9 @@ resource "proxmox_virtual_environment_vm" "data_disks" {
 
   lifecycle {
     prevent_destroy = true
+    # Remove empty ignore_changes block
   }
+  # ... ensure no other lifecycle blocks exist for this resource ...
 }
 
 // Before re-attaching disks to workers, detach them here

@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.36.0" # This ensures you get the latest 2.35.x version
+      version = "~> 2.36.0"
     }
     proxmox = {
       source  = "bpg/proxmox"
@@ -19,13 +19,19 @@ terraform {
   }
 }
 
+# Configure the Proxmox provider
 provider "proxmox" {
   endpoint = var.proxmox.endpoint
   insecure = var.proxmox.insecure
-  username = var.proxmox.username
-  token    = var.proxmox.api_token
+
+  api_token = var.proxmox.api_token
+  ssh {
+    agent    = true
+    username = var.proxmox.username
+  }
 }
 
+# Configure the REST API provider
 provider "restapi" {
   uri                  = var.proxmox.endpoint
   insecure             = var.proxmox.insecure
@@ -37,6 +43,7 @@ provider "restapi" {
   }
 }
 
+# Configure the Kubernetes provider
 provider "kubernetes" {
   host                   = module.talos.kube_config.kubernetes_client_configuration.host
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)

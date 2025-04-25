@@ -7,29 +7,29 @@ module "data_disks" {
 }
 
 module "talos" {
-  source    = "./talos"
-  providers = { proxmox = proxmox }
+  source = "./talos"
+
+  providers           = { proxmox = proxmox }
+  disk_owner          = var.disk_owner
+  longhorn_disk_files = module.data_disks.longhorn_disk_files
+  cluster             = var.cluster
 
   pool_id        = var.pool_id
   dns_servers    = var.dns_servers
   network_bridge = var.network_bridge
   network_mtu    = var.network_mtu
-  storage_pool       = var.storage_pool
-  cluster            = var.cluster
-  disk_owner         = var.disk_owner
-  longhorn_disk_files = module.data_disks.longhorn_disk_files
+  storage_pool   = var.storage_pool
 
   image = {
-    version        = "v1.9.5"
-    update_version = "v1.9.5" # renovate: github-releases=siderolabs/talos
-    schematic      = file("${path.module}/talos/image/schematic.yaml")
+    version        = var.image.version
+    update_version = var.image.update_version
+    schematic      = var.image.schematic
   }
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
-
   coredns = {
     install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
   }

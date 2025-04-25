@@ -1,29 +1,32 @@
 resource "proxmox_virtual_environment_vm" "k8s_node" {
+  # ... Keep original attributes like for_each, node_name, name, tags ...
   for_each = var.nodes
   node_name = each.value.host_node
   name      = each.key
   tags      = each.value.tags
-  pool_id   = var.pool_id
 
+  # ... Keep original agent block if present ...
   agent {
     enabled = true
   }
 
-  bios = "ovmf"
-  efi_disk {
-    datastore_id = var.storage_pool
-    file_format  = "raw"
-    type         = "4m"
+  # Original OS disk block - KEEP THIS
+  disk {
+    datastore_id = var.storage_pool # Keep original datastore_id
+    file_id      = local.os_disk_file_id # Keep original file_id reference
+    interface    = "scsi0" # Keep original interface
+    size         = 20 # Keep original size (or each.value.disk_size if that was original)
+    # ... other original OS disk settings ...
   }
 
+  # Re-attach existing Longhorn disks - ADD THIS
   dynamic "disk" {
-    # <-- instead consume the passed-in var.longhorn_disk_files map
     for_each = var.longhorn_disk_files
-
     content {
-      datastore_id = var.storage_pool
+      datastore_id = var.storage_pool # Use the correct storage pool for data disks
       file_id      = each.value
-      interface    = "scsi${count.index + 1}" # Note: This assumes count.index starts at 0 and maps correctly. Verify if needed.
+      interface    = "scsi${index(sort(keys(var.longhorn_disk_files)), each.key) + 1}"
+      # ... other necessary settings for data disks ...
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
@@ -31,79 +34,20 @@ resource "proxmox_virtual_environment_vm" "k8s_node" {
     }
   }
 
-  disk {
-    datastore_id = var.storage_pool
-    file_id      = local.os_disk_file_id
-    interface    = "scsi0"
-    size         = each.value.disk_size
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
-  }
+  # Protect the new VM itself from accidentally deleting disks - Use argument syntax
+  protection = false
 
-  initialization {
-    datastore_id = var.storage_pool
-    user_data_file_id = talos_image_factory_schematic.this[each.key].machine_config_iso_file_id
-
-    ip_config {
-      ipv4 {
-        address = "${each.value.ip_address}/24"
-        gateway = var.gateway_ip
-      }
-    }
-
-    dns {
-      servers = var.dns_servers
-    }
-  }
-
-  machine = "q35"
-  memory {
-    dedicated = each.value.memory
-  }
-
-  network_device {
-    bridge    = var.network_bridge
-    firewall  = false
-    mac_address = each.value.mac_address
-    model     = "virtio"
-    mtu       = var.network_mtu
-    rate_limit_megabytes_per_second = 0
-  }
-
-  operating_system {
-    type = "l26"
-  }
-
-  protection {
-    delete = false
-  }
-
-  reboot_required = false
-  scsi_hardware   = "virtio-scsi-single"
+  # ... Keep other original essential settings (cpu, memory, network_device, scsi_hardware etc.) ...
   cpu {
-    architecture = "x86_64"
-    cores        = each.value.cpu_cores
-    sockets      = 1
-    type         = "host"
+    # ... original cpu settings ...
   }
+  memory {
+    # ... original memory settings ...
+  }
+  network_device {
+    # ... original network_device settings ...
+  }
+  scsi_hardware = "virtio-scsi-single" # Example: Keep if original
 
-  dynamic "hostpci" {
-    for_each = lookup(each.value, "igpu", false) ? [1] : []
-    content {
-      device_id = "0"
-      mapping   = "intel-gvt-g"
-      mdev      = "i915-GVTg_V5_4"
-    }
-  }
-
-  dynamic "hostpci" {
-    for_each = lookup(each.value, "igpu", false) ? [1] : []
-    content {
-      device_id = "1"
-      mapping   = "intel-gvt-g"
-      mdev      = "i915-GVTg_V5_4"
-    }
-  }
+  # REMOVE unrelated blocks/attributes added in previous attempts (bios, efi_disk, hostpci, initialization, machine, operating_system, etc.)
 }

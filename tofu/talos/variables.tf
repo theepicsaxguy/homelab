@@ -47,8 +47,27 @@ variable "nodes" {
   }))
 }
 
+// -------------------------------------------------------------------
+// Inputs for disk‐persistence and Proxmox wiring
+
+variable "disk_owner" {
+  description = "Where to create the data disks VM"
+  type = object({
+    node_name = string
+    vm_id     = number
+  })
+}
+
+variable "storage_pool" {
+  description = "Proxmox storage pool to use for all VM disks"
+  type        = string
+}
+
+// -------------------------------------------------------------------
+// Inputs for the Talos VM orchestrator
+
 variable "cilium" {
-  description = "Cilium configuration"
+  description = "Cilium inline-manifest settings"
   type = object({
     values  = string
     install = string
@@ -56,22 +75,9 @@ variable "cilium" {
 }
 
 variable "coredns" {
-  description = "CoreDNS configuration"
+  description = "CoreDNS inline-manifest settings"
   type = object({
     install = string
-  })
-}
-
-variable "storage_pool" {
-  type        = string
-  description = "Default Proxmox storage pool to use for VM disks."
-}
-
-variable "disk_owner" {
-  description = "Where to create the data disks VM"
-  type = object({
-    node_name = string
-    vm_id     = number
   })
 }
 
