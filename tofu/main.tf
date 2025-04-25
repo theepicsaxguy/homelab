@@ -1,30 +1,41 @@
-module "talos" {
-  source = "./talos"
+#####################################
+# Static defaults kept in this file
+#####################################
 
-  providers    = { proxmox = proxmox }
-  storage_pool = var.storage_pool
-
-  cluster = var.cluster
-
-  image = {
-    version        = var.image.version
-    update_version = var.image.update_version
-    schematic      = var.image.schematic
+locals {
+  # ---- cluster-wide constants (edit to taste) ----
+  cluster_defaults = {
+    name               = "talos"
+    endpoint           = "api.kube.pc-tips.se"
+    gateway            = "10.25.150.1"
+    vip                = "10.25.150.10"
+    domain             = "kube.pc-tips.se"
+    bridge             = "vmbr0"
+    vlan_id            = 150
+    talos_version      = "v1.9.5"
+    proxmox_cluster    = "kube"
+    kubernetes_version = "1.33.0"
   }
 
-  longhorn_disk_files = local.longhorn_disk_files
-  worker_disk_specs   = local.worker_disk_specs
-  os_disk_file_id     = { for k, v in var.nodes : k => "${var.storage_pool}:vm-${v.vm_id}-os" }
+  # ---- Talos image to use ----
+  image_defaults = {
+    version        = "v1.9.5"
+    update_version = "v1.9.5"
+    schematic      = file("${path.module}/talos/image/schematic.yaml")
+  }
 
-  cilium = {
+  # ---- packaged inline manifests ----
+  cilium_defaults = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
-  coredns = {
+
+  coredns_defaults = {
     install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
   }
 
-  nodes = {
+  # baked‐in node map (only used if you don't pass -var nodes)
+  nodes_defaults = {
     "ctrl-00" = {
       host_node     = "host3"
       machine_type  = "controlplane"
@@ -56,6 +67,7 @@ module "talos" {
       cpu           = 4
       ram_dedicated = 6150
       update        = false
+      igpu          = false
     }
     "work-00" = {
       host_node     = "host3"
@@ -114,3 +126,22 @@ module "talos" {
   }
 }
 
+#####################################
+# Talos module invocation
+#####################################
+
+module "talos" {
+  source = "./talos"
+
+  storage_pool = var.storage_pool
+
+  cluster = coalesce(var.cluster,  local.cluster_defaults)
+  image   = coalesce(var.image,    local.image_defaults)
+  cilium  = coalesce(var.cilium,   local.cilium_defaults)
+  coredns = coalesce(var.coredns,  local.coredns_defaults)
+  nodes   = coalesce(var.nodes,    local.nodes_defaults)
+
+  longhorn_disk_files = local.longhorn_disk_files
+  worker_disk_specs   = local.worker_disk_specs
+  os_disk_file_id     = local.os_disk_file_id
+}

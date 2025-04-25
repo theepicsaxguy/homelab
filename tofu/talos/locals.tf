@@ -1,13 +1,16 @@
 locals {
   default_tags = {
-    controlplane = ["k8s", "control-plane"]
-    worker       = ["k8s", "worker"]
+    controlplane = ["k8s","control-plane"]
+    worker       = ["k8s","worker"]
   }
+
   longhorn_disk_files = {
     for name, spec in var.nodes :
     name => "${var.storage_pool}:vm-${spec.vm_id}-disk-longhorn"
-    if spec.machine_type == "worker" && contains(keys(lookup(spec, "disks", {})), "longhorn")
+    if spec.machine_type == "worker"
+      && contains(keys(lookup(spec, "disks", {})), "longhorn")
   }
+
   worker_disk_specs = merge([
     for node, spec in var.nodes :
     lookup(spec, "disks", null) == null ? {} : {
