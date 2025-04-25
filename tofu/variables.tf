@@ -1,5 +1,4 @@
 variable "cluster" {
-  description = "Cluster configuration details"
   type = object({
     name               = string
     endpoint           = string
@@ -9,22 +8,21 @@ variable "cluster" {
     proxmox_cluster    = string
     kubernetes_version = optional(string, "1.32.0") # Default K8s version if not specified
   })
-  # Add default or sensitive = true as needed
+  default = {
+    name               = "talos"
+    endpoint           = "api.kube.pc-tips.se"
+    gateway            = "10.25.150.1"
+    vip                = "10.25.150.10"
+    talos_version      = "v1.9.5"
+    proxmox_cluster    = "kube"
+    kubernetes_version = "1.33.0"
+  }
 }
 
 variable "storage_pool" {
-  description = "The Proxmox storage pool to use for VM disks."
-  type        = string
-  # Add default or sensitive = true as needed
-}
-
-variable "disk_owner" {
-  description = "Specifies the Proxmox node and VM ID for the dedicated data disks VM."
-  type = object({
-    node_name = string
-    vm_id     = number
-  })
-  # Add default or sensitive = true as needed
+   description = "The Proxmox storage pool to use for VM disks."
+   type        = string
+   default     = "local-lvm"
 }
 
 variable "nodes" {
@@ -61,30 +59,6 @@ variable "nodes" {
   }
 }
 
-variable "pool_id" {
-  description = "Proxmox Pool ID for VMs"
-  type        = string
-  # Add default or sensitive = true as needed
-}
-
-variable "dns_servers" {
-  description = "List of DNS servers for VMs"
-  type        = list(string)
-  # Add default or sensitive = true as needed
-}
-
-variable "network_bridge" {
-  description = "Proxmox network bridge for VMs"
-  type        = string
-  # Add default or sensitive = true as needed
-}
-
-variable "network_mtu" {
-  description = "Network MTU for VMs"
-  type        = number
-  # Add default or sensitive = true as needed
-}
-
 variable "proxmox" {
   description = "Proxmox API connection details"
   type = object({
@@ -103,6 +77,11 @@ variable "image" {
     update_version = string
     schematic      = string
   })
+  default = {
+    version        = "v1.9.5"
+    update_version = "v1.9.5"
+    schematic      = "talos/image/schematic.yaml"
+  }
 }
 
 variable "inline_manifests" {

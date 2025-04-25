@@ -6,7 +6,6 @@ locals {
   update_image_id    = local.needs_update_image ? "${talos_image_factory_schematic.updated[0].id}_${var.image.update_version}" : null
   # Collapse ternary onto one line
   # Revert back to using .id for the downloaded file identifier
-  os_disk_file_id = local.needs_update_image ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
 }
 
 resource "talos_image_factory_schematic" "this" {

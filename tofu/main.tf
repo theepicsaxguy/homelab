@@ -1,24 +1,9 @@
-module "data_disks" {
-  source       = "./modules/data_disks"
-  providers    = { proxmox = proxmox }
-  disk_owner   = var.disk_owner
-  storage_pool = var.storage_pool
-  nodes        = var.nodes
-}
-
 module "talos" {
   source = "./talos"
 
-  providers           = { proxmox = proxmox }
-  disk_owner          = var.disk_owner
-  longhorn_disk_files = module.data_disks.longhorn_disk_files
-  cluster             = var.cluster
-
-  pool_id        = var.pool_id
-  dns_servers    = var.dns_servers
-  network_bridge = var.network_bridge
-  network_mtu    = var.network_mtu
-  storage_pool   = var.storage_pool
+  providers   = { proxmox = proxmox }
+  cluster     = var.cluster
+  storage_pool= var.storage_pool
 
   image = {
     version        = var.image.version

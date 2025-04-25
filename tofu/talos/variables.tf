@@ -50,14 +50,6 @@ variable "nodes" {
 // -------------------------------------------------------------------
 // Inputs for disk‐persistence and Proxmox wiring
 
-variable "disk_owner" {
-  description = "Where to create the data disks VM"
-  type = object({
-    node_name = string
-    vm_id     = number
-  })
-}
-
 variable "storage_pool" {
   description = "Proxmox storage pool to use for all VM disks"
   type        = string
@@ -89,33 +81,6 @@ variable "inline_manifests" {
     dependencies = optional(list(string), [])
   }))
   default = []
-}
-
-variable "longhorn_disk_files" {
-  description = "Map of worker node name to its Longhorn data disk file ID."
-  type        = map(string)
-  default     = {}
-}
-
-# New variables required by the module
-variable "pool_id" {
-  description = "Proxmox Pool ID for VMs"
-  type        = string
-}
-
-variable "dns_servers" {
-  description = "List of DNS servers for VMs"
-  type        = list(string)
-}
-
-variable "network_bridge" {
-  description = "Proxmox network bridge for VMs"
-  type        = string
-}
-
-variable "network_mtu" {
-  description = "Network MTU for VMs"
-  type        = number
 }
 
 

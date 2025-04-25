@@ -72,10 +72,16 @@ resource "talos_machine_configuration_apply" "this" {
     : data.talos_machine_configuration.worker[each.key].machine_configuration
   )
   node = each.value.ip
+  lifecycle {
+    replace_triggered_by = [proxmox_virtual_environment_vm.this[each.key]]
+  }
+
 
   # wait for **all** VMs, avoid per-instance indexing
   depends_on = [
-    proxmox_virtual_environment_vm.k8s_node,
+    proxmox_virtual_environment_vm.this,
+    null_resource.longhorn_detach,
+    null_resource.longhorn_attach,
     talos_image_factory_schematic.this,
     talos_image_factory_schematic.updated,
   ]
