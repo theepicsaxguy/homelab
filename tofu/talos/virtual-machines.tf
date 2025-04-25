@@ -44,8 +44,8 @@ resource "proxmox_virtual_environment_vm" "worker" {
     content {
       datastore_id = var.storage_pool
       interface    = disk.value.interface
-      file_id      = local.longhorn_disk_files[disk.value.node]
-      size         = lookup(local.worker_disk_specs["${disk.value.node}-longhorn"], "size", 150)
+      file_id      = var.longhorn_disk_files[disk.value.node]
+      size         = tonumber(replace(lookup(var.worker_disk_specs["${disk.value.node}-longhorn"], "size", "0G"), "G", ""))
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
