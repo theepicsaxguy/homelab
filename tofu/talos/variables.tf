@@ -14,12 +14,39 @@ variable "image" {
 
 variable "nodes" {
   description = "Configuration for cluster nodes (passthrough from root)"
-  type        = any
+  type = map(object({
+    host_node     = string
+    machine_type  = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    cpu           = number
+    ram_dedicated = number
+    update        = optional(bool, false)
+    igpu          = optional(bool, false)
+    disks = optional(map(object({
+      device     = string
+      size       = string
+      type       = string
+      mountpoint = string
+    })), {})
+  }))
 }
 
 variable "cluster" {
   description = "Cluster configuration object (passthrough from root)"
-  type        = any
+  type = object({
+    name               = string
+    endpoint           = string
+    gateway            = string
+    vip                = string
+    domain             = string
+    bridge             = string
+    vlan_id            = number
+    talos_version      = string
+    proxmox_cluster    = string
+    kubernetes_version = string
+  })
 }
 
 // -------------------------------------------------------------------

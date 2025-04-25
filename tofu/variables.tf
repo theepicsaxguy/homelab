@@ -34,15 +34,42 @@ variable "disk_owner" {
 # override baked-in cluster settings if desired
 variable "cluster" {
   description = "Cluster configuration object"
-  type        = any
-  default     = null
+  type = object({
+    name               = string
+    endpoint           = string
+    gateway            = string
+    vip                = string
+    domain             = string
+    bridge             = string
+    vlan_id            = number
+    talos_version      = string
+    proxmox_cluster    = string
+    kubernetes_version = string
+  })
+  default = null
 }
 
 # override baked-in node map if desired
 variable "nodes" {
   description = "Map of all Talos nodes"
-  type        = any
-  default     = null
+  type = map(object({
+    host_node     = string
+    machine_type  = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    cpu           = number
+    ram_dedicated = number
+    update        = optional(bool, false)
+    igpu          = optional(bool, false)
+    disks = optional(map(object({
+      device     = string
+      size       = string
+      type       = string
+      mountpoint = string
+    })), {})
+  }))
+  default = null
 }
 
 variable "image" {

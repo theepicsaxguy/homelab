@@ -124,6 +124,8 @@ locals {
       }
     }
   }
+
+  effective_cluster = merge(local.cluster_defaults, var.cluster != null ? var.cluster : {})
 }
 
 #####################################
@@ -135,11 +137,11 @@ module "talos" {
 
   storage_pool = var.storage_pool
 
-  cluster = coalesce(var.cluster,  local.cluster_defaults)
-  image   = coalesce(var.image,    local.image_defaults)
-  cilium  = coalesce(var.cilium,   local.cilium_defaults)
-  coredns = coalesce(var.coredns,  local.coredns_defaults)
-  nodes   = coalesce(var.nodes,    local.nodes_defaults)
+  cluster = local.effective_cluster
+  image   = coalesce(var.image, local.image_defaults)
+  cilium  = coalesce(var.cilium, local.cilium_defaults)
+  coredns = coalesce(var.coredns, local.coredns_defaults)
+  nodes   = coalesce(var.nodes, local.nodes_defaults)
 
   longhorn_disk_files = local.longhorn_disk_files
   worker_disk_specs   = local.worker_disk_specs

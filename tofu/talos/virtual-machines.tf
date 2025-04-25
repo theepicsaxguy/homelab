@@ -32,20 +32,20 @@ resource "proxmox_virtual_environment_vm" "worker" {
     size         = 20
     file_format  = "raw"
     # single-line ternary for file_id
-    file_id      = each.value.update ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
+    file_id  = each.value.update ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
+    iothread = true
+    cache    = "writethrough"
+    discard  = "on"
+    ssd      = true
   }
 
   dynamic "disk" {
     for_each = local.worker_disks
     content {
-      datastore_id = "velocity" # explicitly correct datastore
+      datastore_id = var.storage_pool
       interface    = disk.value.interface
       file_id      = local.longhorn_disk_files[disk.value.node]
-      size         = 150 # explicitly set back to 150GB
+      size         = lookup(local.worker_disk_specs["${disk.value.node}-longhorn"], "size", 150)
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
@@ -58,7 +58,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     datastore_id = var.storage_pool
     dns {
       domain  = var.cluster.domain
-      servers = [ var.cluster.gateway ]
+      servers = [var.cluster.gateway]
     }
     ip_config {
       ipv4 {
@@ -79,7 +79,7 @@ resource "proxmox_virtual_environment_vm" "worker" {
     }
   }
 
-  boot_order = ["scsi0"]
+  boot_order  = ["scsi0"]
   description = "Talos Worker"
   operating_system { type = "l26" }
 }
