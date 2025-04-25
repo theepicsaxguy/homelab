@@ -1,3 +1,18 @@
+variable "os_disk_file_id" {
+  description = "Map of node name to OS disk file_id."
+  type        = map(string)
+}
+
+variable "worker_disk_specs" {
+  description = "Flattened map of worker disk specs for dynamic disk and null_resource blocks."
+  type        = map(any)
+}
+
+variable "longhorn_disk_files" {
+  description = "Map of node name to Longhorn disk file_id."
+  type        = map(string)
+}
+
 variable "image" {
   description = "Talos image configuration"
   type = object({
@@ -12,39 +27,14 @@ variable "image" {
   })
 }
 
-variable "cluster" {
-  description = "Cluster configuration"
-  type = object({
-    name               = string
-    endpoint           = string
-    gateway            = string
-    vip                = string
-    talos_version      = string
-    proxmox_cluster    = string
-    kubernetes_version = optional(string, "1.32.0")
-  })
+variable "nodes" {
+  description = "Configuration for cluster nodes (passthrough from root)"
+  type        = any
 }
 
-variable "nodes" {
-  description = "Configuration for cluster nodes"
-  type = map(object({
-    host_node     = string
-    machine_type  = string
-    datastore_id  = optional(string, "velocity")
-    ip            = string
-    mac_address   = string
-    vm_id         = number
-    cpu           = number
-    ram_dedicated = number
-    update        = optional(bool, false)
-    igpu          = optional(bool, false)
-    disks = optional(map(object({
-      device     = string
-      size       = string
-      type       = string
-      mountpoint = string
-    })), {})
-  }))
+variable "cluster" {
+  description = "Cluster configuration object (passthrough from root)"
+  type        = any
 }
 
 // -------------------------------------------------------------------

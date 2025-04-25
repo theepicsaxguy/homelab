@@ -20,9 +20,9 @@ variable "cluster" {
 }
 
 variable "storage_pool" {
-   description = "The Proxmox storage pool to use for VM disks."
-   type        = string
-   default     = "local-lvm"
+  description = "The Proxmox storage pool to use for VM disks."
+  type        = string
+  default     = "local-lvm"
 }
 
 variable "nodes" {

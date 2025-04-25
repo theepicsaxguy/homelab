@@ -1,15 +1,20 @@
 module "talos" {
   source = "./talos"
 
-  providers   = { proxmox = proxmox }
-  cluster     = var.cluster
-  storage_pool= var.storage_pool
+  providers    = { proxmox = proxmox }
+  storage_pool = var.storage_pool
+
+  cluster = var.cluster
 
   image = {
     version        = var.image.version
     update_version = var.image.update_version
     schematic      = var.image.schematic
   }
+
+  os_disk_file_id     = { for k, v in var.nodes : k => "${var.storage_pool}:vm-${v.vm_id}-os" }
+  worker_disk_specs   = local.worker_disk_specs
+  longhorn_disk_files = local.longhorn_disk_files
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
