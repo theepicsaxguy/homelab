@@ -18,6 +18,7 @@ proceed using best practices and defaults where possible.
 4. Cite evidence for recommendations (logs/YAML/command output), but proceed with best-practice fixes if some evidence
    is missing.
 5. If you must recommend an imperative change, explain why and flag for future remediation.
+6. Do not generate manual patches or overlays. Alter existing ones.
 
 ---
 

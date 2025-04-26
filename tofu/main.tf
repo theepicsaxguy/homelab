@@ -63,7 +63,7 @@ module "talos" {
     ip            = "10.25.150.13"
     mac_address   = "bc:24:11:1e:1d:2f"
     vm_id         = 8103
-    cpu           = 4
+    cpu           = 6
     ram_dedicated = 6150
     update        = false
   }
