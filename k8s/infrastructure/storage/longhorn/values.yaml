@@ -24,7 +24,7 @@ persistence:
   defaultClassReplicaCount: 3
   reclaimPolicy: Delete
   defaultFsType: ext4
-  defaultDataLocality: strict-local
+  defaultDataLocality: disabled  #strict-local
 
 resources:
   requests:
