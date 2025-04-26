@@ -5,8 +5,8 @@ module "talos" {
     proxmox = proxmox
   }
 
-  disk_owner = var.disk_owner
-  storage_pool = var.storage_pool
+  # disk_owner = var.disk_owner
+  # storage_pool = var.storage_pool
 
 
   image = {

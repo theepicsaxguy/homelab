@@ -7,3 +7,4 @@ resources:
 - argocd
 - cert-manager
 - external-secrets
+- trust-manager

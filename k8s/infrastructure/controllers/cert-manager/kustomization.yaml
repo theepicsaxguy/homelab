@@ -1,10 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - namespace.yaml
   - cert-manager-secrets-external.yaml
   - cloudflare-issuer.yaml
   - internal-ca-issuer.yaml
-  - trust-manager-bundle.yaml
 
 helmCharts:
   - name: cert-manager
@@ -13,15 +13,3 @@ helmCharts:
     releaseName: cert-manager
     namespace: cert-manager
     valuesFile: values.yaml
-
-  - name: cert-manager-csi-driver
-    repo: https://charts.jetstack.io
-    version: v0.10.2
-    releaseName: cert-manager-csi-driver
-    namespace: cert-manager
-
-  - name: trust-manager
-    repo: https://charts.jetstack.io
-    version: v0.16.0
-    releaseName: trust-manager
-    namespace: cert-manager

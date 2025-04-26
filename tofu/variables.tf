@@ -10,23 +10,23 @@ variable "proxmox" {
   sensitive = true
 }
 
-variable "storage_pool" {
-  description = "Proxmox storage pool for VM disks"
-  type        = string
-  default     = "local-lvm"
-}
+# variable "storage_pool" {
+#   description = "Proxmox storage pool for VM disks"
+#   type        = string
+#   default     = "local-lvm"
+# }
 
-variable "disk_owner" {
-  description = "Where to create the data disks VM"
-  type = object({
-    node_name = string  # Proxmox node to host the data disks VM
-    vm_id     = number  # VM ID for the data disks VM
-  })
-  default = {
-    node_name = "host1"
-    vm_id     = 9000
-  }
-}
+# variable "disk_owner" {
+#   description = "Where to create the data disks VM"
+#   type = object({
+#     node_name = string  # Proxmox node to host the data disks VM
+#     vm_id     = number  # VM ID for the data disks VM
+#   })
+#   default = {
+#     node_name = "host1"
+#     vm_id     = 9000
+#   }
+# }
 
 
 variable "nodes" {
