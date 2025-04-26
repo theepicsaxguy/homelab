@@ -72,6 +72,13 @@ spec:
           args:
             - -conf
             - /etc/coredns/Corefile
+          resources:
+            limits:
+              cpu: 200m
+              memory: 170Mi
+            requests:
+              cpu: 100m
+              memory: 70Mi
           ports:
             - containerPort: 53
               protocol: UDP
