@@ -25,6 +25,9 @@ spec:
       containers:
       - name: ollama
         image: ollama/ollama:latest
+        env:
+          - name: HOME
+            value: /root
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
