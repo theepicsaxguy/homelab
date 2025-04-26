@@ -2,5 +2,4 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: cert-manager
-  labels:
-    trust-manager.cert-manager.io/inject-trust: "true"
+
