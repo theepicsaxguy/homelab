@@ -56,3 +56,31 @@ metrics:
     scrapeTimeout: "10s" # Default scrape timeout for Prometheus metrics
     relabelings: []
     metricRelabelings: []
+
+# ---
+# PodSecurityContext/PodSecurity Admission Compliance
+# The Longhorn Helm chart does not expose direct securityContext fields for DaemonSet/Jobs.
+# To enforce PodSecurity restricted baseline, use a Helm post-render patch or Kustomize overlay.
+# Example Kustomize patch (apply in overlays/longhorn):
+#
+# apiVersion: apps/v1
+# kind: DaemonSet
+# metadata:
+#   name: longhorn-manager
+#   namespace: longhorn-system
+# spec:
+#   template:
+#     spec:
+#       containers:
+#         - name: longhorn-manager
+#           securityContext:
+#             runAsNonRoot: true
+#             allowPrivilegeEscalation: false
+#             seccompProfile:
+#               type: RuntimeDefault
+#             capabilities:
+#               drop: ["ALL"]
+#
+# Repeat for any Job templates as needed.
+#
+# This is a best-practice deviation due to Helm chart limitations. Track for future chart updates.
