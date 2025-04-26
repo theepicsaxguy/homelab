@@ -46,10 +46,10 @@ spec:
           resources:
             requests:
               cpu: 200m
-              memory: 512Mi
+              memory: 250Mi
             limits:
               cpu: 1000m
-              memory: 1Gi
+              memory: 500Mi
           env:
             - name: MEILI_NO_ANALYTICS
               value: "true"

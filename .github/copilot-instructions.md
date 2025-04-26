@@ -19,7 +19,7 @@ proceed using best practices and defaults where possible.
    is missing.
 5. If you must recommend an imperative change, explain why and flag for future remediation.
 6. Do not generate manual patches or overlays. Alter existing ones.
-
+7. Rendered helm charts are not to be modified manually. These are generated when building with kustomize.
 ---
 
 ## Manifest Analysis Protocol
