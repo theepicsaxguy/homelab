@@ -20,6 +20,9 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: chrome
           image: gcr.io/zenika-hub/alpine-chrome:124
@@ -28,6 +31,9 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           command:
             - chromium-browser
             - --headless
