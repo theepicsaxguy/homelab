@@ -2,7 +2,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-omada
-  namespace: gateway
+  namespace: omada
 spec:
   dnsNames:
     - "*.omada.pc-tips.se"
