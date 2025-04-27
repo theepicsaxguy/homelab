@@ -1,0 +1,19 @@
+image:
+  repository: your-registry/pedro-bot
+  pullPolicy: IfNotPresent
+  tag: latest
+
+envFrom:
+  - secretRef:
+      name: es-pedro-bot-secrets
+
+service:
+  port:
+    port: 3000
+
+persistence:
+  mongo-data:
+    enabled: true
+    size: 5Gi
+    storageClass: longhorn
+    mountPath: /data/db

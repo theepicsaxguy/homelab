@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedro-bot
+  namespace: pedro-bot
+  labels:
+    app: pedro-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pedro-bot
+  template:
+    metadata:
+      labels:
+        app: pedro-bot
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: pedro-bot
+          image: your-registry/pedro-bot:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: es-pedro-bot-secrets
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongodb:27017/pedro-bot
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: logs
+          hostPath:
+            path: /var/log/pedro-bot
+        - name: data
+          hostPath:
+            path: /etc/pedro-bot
