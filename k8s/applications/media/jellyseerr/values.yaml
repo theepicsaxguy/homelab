@@ -7,7 +7,7 @@ image:
 
 service:
   type: ClusterIP
-  port: 80
+  port: 5055
 
 config:
   persistence:
