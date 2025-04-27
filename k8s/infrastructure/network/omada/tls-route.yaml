@@ -1,14 +1,14 @@
-apiVersion: gateway.networking.k8s.io/v1alpha2
+apiVersion: gateway.networking.k8s.io/v1alpha3
 kind: TLSRoute
 metadata:
-  name: omada-tls
+  name: omada-route
   namespace: omada
 spec:
   parentRefs:
-    - name: tls-passthrough
+    - name: internal
       namespace: gateway
   hostnames:
-    - "omada.pc-tips.se"
+    - omada.pc-tips.se
   rules:
     - backendRefs:
         - name: omada-svc

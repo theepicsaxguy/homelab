@@ -9,3 +9,4 @@ resources:
 - tls-route.yaml
 - namespace.yaml
 - pvc.yaml
+- backend-tls-omada.yaml

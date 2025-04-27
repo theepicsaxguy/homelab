@@ -88,7 +88,6 @@ spec:
         - name: omada-cert
           mountPath: /cert
           readOnly: true
-
       volumes:
       - name: omada-data
         persistentVolumeClaim:
@@ -98,6 +97,6 @@ spec:
           claimName: omada-logs-pvc
       - name: omada-cert
         secret:
-          secretName: cert-omada
+          secretName: cert-pc-tips
 
       restartPolicy: Always

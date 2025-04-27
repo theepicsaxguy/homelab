@@ -27,3 +27,17 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - protocol: HTTPS
+      port: 443
+      name: omada
+      hostname: "omada.pc-tips.se"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: cert-omada
+            kind: Secret
+            namespace: omada
+      allowedRoutes:
+        namespaces:
+          from: All
+
