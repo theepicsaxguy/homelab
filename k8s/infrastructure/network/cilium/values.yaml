@@ -42,11 +42,11 @@ operator:
 rollOutCiliumPods: true
 resources:
   limits:
-    cpu: 1000m
-    memory: 1Gi
-  requests:
-    cpu: 200m
+    cpu: 500m
     memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
 
 #debug:
 #  enabled: true
@@ -83,9 +83,23 @@ hubble:
   relay:
     enabled: true
     rollOutPods: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
   ui:
     enabled: true
     rollOutPods: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
 
 ingressController:
   enabled: false
