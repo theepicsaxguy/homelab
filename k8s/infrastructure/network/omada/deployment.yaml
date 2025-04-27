@@ -85,9 +85,9 @@ spec:
           mountPath: /opt/tplink/EAPController/data
         - name: omada-logs
           mountPath: /opt/tplink/EAPController/logs
-        - name: omada-cert
-          mountPath: /cert
-          readOnly: true
+        # - name: omada-cert
+        #   mountPath: /cert
+        #   readOnly: true
 
       volumes:
       - name: omada-data
@@ -96,8 +96,8 @@ spec:
       - name: omada-logs
         persistentVolumeClaim:
           claimName: omada-logs-pvc
-      - name: omada-cert
-        secret:
-          secretName: cert-omada
+      # - name: omada-cert
+      #   secret:
+      #     secretName: cert-omada
 
       restartPolicy: Always
