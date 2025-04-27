@@ -1,0 +1,17 @@
+apiVersion: gateway.networking.k8s.io/v1alpha3
+kind: BackendTLSPolicy
+metadata:
+  name: omada-backend-tls
+  namespace: gateway
+spec:
+  targetRefs:
+    - kind: Service
+      group: ""
+      namespace: omada
+      name: omada-svc
+  validation:
+    caCertificateRefs:
+      - kind: Secret
+        name: omada-ca
+        group: ""
+    hostname: omada.pc-tips.se

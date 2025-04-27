@@ -5,7 +5,7 @@ metadata:
   namespace: omada
 spec:
   parentRefs:
-    - name: tls-passthrough
+    - name: internal
       namespace: gateway
   hostnames:
     - omada.pc-tips.se

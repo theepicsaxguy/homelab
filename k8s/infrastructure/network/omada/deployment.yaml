@@ -72,10 +72,6 @@ spec:
           value: "true"
         - name: SHOW_MONGODB_LOGS
           value: "false"
-        - name: SSL_CERT_NAME
-          value: tls.crt
-        - name: SSL_KEY_NAME
-          value: tls.key
         - name: TZ
           value: Etc/UTC
         - name: SKIP_USERMOD
@@ -85,10 +81,6 @@ spec:
           mountPath: /opt/tplink/EAPController/data
         - name: omada-logs
           mountPath: /opt/tplink/EAPController/logs
-        # - name: omada-cert
-        #   mountPath: /cert
-        #   readOnly: true
-
       volumes:
       - name: omada-data
         persistentVolumeClaim:
@@ -96,8 +88,5 @@ spec:
       - name: omada-logs
         persistentVolumeClaim:
           claimName: omada-logs-pvc
-      # - name: omada-cert
-      #   secret:
-      #     secretName: cert-omada
 
       restartPolicy: Always
