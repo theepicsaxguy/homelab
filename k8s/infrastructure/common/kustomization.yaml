@@ -13,6 +13,8 @@ commonLabels:
 resources:
 - ns.yaml
 - base-network-policy.yaml
+- limit-range.yaml
+- control-plane-limit-range.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
