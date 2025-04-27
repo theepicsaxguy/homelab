@@ -34,10 +34,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 128Mi
+              memory: 192Mi
             limits:
               cpu: 1000m
-              memory: 500Mi
+              memory: 384Mi
           envFrom:
             - configMapRef:
                 name: jellyfin-env
