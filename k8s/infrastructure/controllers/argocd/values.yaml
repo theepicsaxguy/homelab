@@ -37,9 +37,10 @@ controller:
   resources:
     requests:
       cpu: 100m
-      memory: 700Mi
+      memory: 256Mi
     limits:
-      memory: 4Gi
+      cpu: 500m
+      memory: 512Mi
 
 dex:
   enabled: false
@@ -84,7 +85,8 @@ repoServer:
       cpu: 100m
       memory: 256Mi
     limits:
-      memory: 2Gi
+      cpu: 500m
+      memory: 512Mi
   extraContainers:
     - name: kustomize-build-with-helm
       command:

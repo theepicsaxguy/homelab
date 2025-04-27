@@ -3,26 +3,15 @@ kind: Kustomization
 namespace: external-secrets
 resources:
 - bitwarden-certificate.yaml
-- bitwarden-sdk-server
 - bitwarden-store.yaml
 - namespace.yaml
-- clusterrole-clusterpushsecret.yaml
 - clusterrolebinding-clusterpushsecret.yaml
-- templates
+- clusterrole-clusterpushsecret.yaml
 
-# helm template external-secrets \
-#   external-secrets/external-secrets \
-#   -n external-secrets \
-#   --create-namespace \
-#   --set installCRDs=false \
-#   --version 0.16.1 \
-#   --set bitwarden-sdk-server.enabled=true \
-#   --output-dir .
-
-# mv /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/* /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/bitwarden-sdk-server/
-# rm -rf /root/homelab/k8s/infrastructure/controllers/external-secrets/external-secrets/charts/bitwarden-sdk-server/templates/
-
-# To get the CA certificate root@vscode:~/homelab/k8s# curl -sSL https://letsencrypt.org/certs/isrgrootx1.pem -o isrgrootx1.pem
-# root@vscode:~/homelab/k8s# kubectl create secret generic letsencrypt-ca \
-#   -n external-secrets \
-#   --from-file=ca.crt=isrgrootx1.pem
+helmCharts:
+  - name: external-secrets
+    repo: https://charts.external-secrets.io
+    version: v0.16.1
+    releaseName: external-secrets
+    namespace: external-secrets
+    valuesFile: values.yaml
