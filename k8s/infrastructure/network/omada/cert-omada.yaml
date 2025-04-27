@@ -4,6 +4,9 @@ metadata:
   name: cert-omada
   namespace: omada
 spec:
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1          # guarantees plain, unencrypted key
   dnsNames:
     - "*.omada.pc-tips.se"
     - omada.pc-tips.se
