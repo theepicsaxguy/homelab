@@ -40,10 +40,10 @@ spec:
         resources:
           requests:
             cpu: "250m"
-            memory: "250Mi"
+            memory: "512Mi"
           limits:
             cpu: "1000m"
-            memory: "500Mi"
+            memory: "1Gi"
         env:
         - name: WEBUI_SECRET_KEY
           valueFrom:

@@ -26,11 +26,11 @@ spec:
         image: ollama/ollama:latest
         env:
           - name: HOME
-            value: /root
+            value: /home/ollama
         securityContext:
           runAsNonRoot: true
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           capabilities:
             drop: ["ALL"]
         ports:
@@ -38,14 +38,14 @@ spec:
         resources:
           requests:
             cpu: "2000m"
-            memory: "250Mi"
+            memory: "500Mi"
           limits:
             cpu: "4000m"
-            memory: "500Mi"
+            memory: "1Gi"
             nvidia.com/gpu: "0"
         volumeMounts:
         - name: ollama-volume
-          mountPath: /root/.ollama
+          mountPath: /home/ollama/.ollama
         tty: true
   volumeClaimTemplates:
   - metadata:
