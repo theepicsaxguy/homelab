@@ -6,7 +6,7 @@ resources:
 - deployment.yaml
 - cert-omada.yaml
 - svc.yaml
-- http-route.yaml
+- tls-route.yaml
 - namespace.yaml
 - pvc.yaml
 - backend-tls-omada.yaml
