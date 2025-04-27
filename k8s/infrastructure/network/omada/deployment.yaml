@@ -34,6 +34,13 @@ spec:
           capabilities:
             drop:
             - ALL
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         env:
         - name: ROOTLESS
           value: "true"
@@ -78,6 +85,10 @@ spec:
           mountPath: /opt/tplink/EAPController/data
         - name: omada-logs
           mountPath: /opt/tplink/EAPController/logs
+        - name: omada-cert
+          mountPath: /cert
+          readOnly: true
+
       volumes:
       - name: omada-data
         persistentVolumeClaim:
@@ -85,4 +96,8 @@ spec:
       - name: omada-logs
         persistentVolumeClaim:
           claimName: omada-logs-pvc
+      - name: omada-cert
+        secret:
+          secretName: cert-omada
+
       restartPolicy: Always
