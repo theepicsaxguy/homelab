@@ -13,6 +13,8 @@ spec:
         app: hoarder-web
     spec:
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
@@ -22,6 +24,8 @@ spec:
         - name: web
           image: ghcr.io/hoarder-app/hoarder
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
