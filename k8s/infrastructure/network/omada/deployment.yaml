@@ -97,6 +97,6 @@ spec:
           claimName: omada-logs-pvc
       - name: omada-cert
         secret:
-          secretName: cert-pc-tips
+          secretName: cert-omada
 
       restartPolicy: Always
