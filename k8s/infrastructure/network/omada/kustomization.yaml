@@ -9,3 +9,4 @@ resources:
 - namespace.yaml
 - pvc.yaml
 - cert-omada.yaml
+- envoy-config.yaml
