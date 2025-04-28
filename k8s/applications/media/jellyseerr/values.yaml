@@ -7,15 +7,19 @@ image:
 
 service:
   type: ClusterIP
-  port: 5055
+  ports:
+    - name: web
+      port: 5055
+      targetPort: 5055
 
 config:
   persistence:
     name: jellyseerr-config
-    accessModes:
-      - ReadWriteOnce
-    size: 5Gi
-    annotations: {}
+
+persistence:
+  config:
+    enabled: true
+    existingClaim: jellyseerr-config
 
 extraEnv: []
 extraEnvFrom: []
@@ -26,6 +30,7 @@ ingress:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
 resources:
   requests:
     cpu: 100m
