@@ -12,20 +12,14 @@ spec:
       labels:
         app: hoarder-web
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data-pvc
       containers:
         - name: web
           image: ghcr.io/hoarder-app/hoarder
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
@@ -47,7 +41,6 @@ spec:
               value: http://chrome:9222
             - name: DATA_DIR
               value: /data
-            # Add OPENAI_API_KEY to the ConfigMap if necessary
           volumeMounts:
             - mountPath: /data
               name: data
@@ -56,7 +49,3 @@ spec:
                 name: hoarder-secrets
             - configMapRef:
                 name: hoarder-configuration
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: data-pvc
