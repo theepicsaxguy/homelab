@@ -21,7 +21,7 @@ spec:
           image: ghcr.io/hoarder-app/hoarder
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
           resources:
