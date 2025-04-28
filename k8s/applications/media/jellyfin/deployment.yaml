@@ -33,11 +33,11 @@ spec:
               drop: [ "ALL" ]
           resources:
             requests:
-              cpu: 100m
-              memory: 192Mi
+              cpu: 500m
+              memory: 512Mi
             limits:
-              cpu: 1000m
-              memory: 384Mi
+              cpu: 2000m
+              memory: 2Gi
           envFrom:
             - configMapRef:
                 name: jellyfin-env
