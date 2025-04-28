@@ -17,5 +17,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: hoarder-web
+        - name: web
           port: 3000
