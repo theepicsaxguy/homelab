@@ -3,7 +3,7 @@ kind: Kustomization
 
 configMapGenerator:
 - literals:
-  - TZ="Europe/Oslo"
+  - TZ="Europe/Stockholm"
   name: jellyfin-env
 
 namespace: media
