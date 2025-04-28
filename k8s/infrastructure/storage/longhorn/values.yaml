@@ -7,42 +7,42 @@ csi:
   plugin:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 250m
+        memory: 256Mi
       limits:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
   provisioner:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 250m
+        memory: 256Mi
       limits:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
   attacher:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 250m
+        memory: 256Mi
       limits:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
   resizer:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 250m
+        memory: 256Mi
       limits:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
   snapshotter:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 250m
+        memory: 256Mi
       limits:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
 
 defaultSettings:
@@ -69,23 +69,21 @@ persistence:
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
+    cpu: 250m
     memory: 256Mi
-
-
+  limits:
+    cpu: 250m
+    memory: 256Mi
 
 service:
   ui:
     type: ClusterIP
 
 longhornManager:
-  priorityClass: system-cluster-critical
+  priorityClass: system-critical
 
 longhornDriver:
-  priorityClass: system-cluster-critical
+  priorityClass: system-critical
 
 preUpgradeChecker:
   jobEnabled: false

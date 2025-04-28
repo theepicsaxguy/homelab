@@ -35,7 +35,7 @@ spec:
                   - kube-dns
               topologyKey: kubernetes.io/hostname
       serviceAccountName: coredns
-      priorityClassName: system-cluster-critical
+      priorityClassName: system-critical
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
@@ -49,8 +49,8 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             limits:
-              cpu: 200m
-              memory: 170Mi
+              cpu: 100m
+              memory: 70Mi
             requests:
               cpu: 100m
               memory: 70Mi

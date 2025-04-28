@@ -15,6 +15,7 @@ resources:
 - base-network-policy.yaml
 - limit-range.yaml
 - control-plane-limit-range.yaml
+- ../scheduling/priorityclass.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

@@ -20,3 +20,4 @@ components:
 - common/components/immutable-resources
 - common/components/container-images
 - common/components/configmap-validation
+- common/kustomization.yaml
