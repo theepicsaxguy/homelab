@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
 - project.yaml
 - openwebui
-- hoarder
+- karakeep

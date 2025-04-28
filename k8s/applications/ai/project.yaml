@@ -7,7 +7,7 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: 'hoarder'
+    - namespace: 'karakeep'
       server: '*'
     - namespace: 'open-webui'
       server: '*'

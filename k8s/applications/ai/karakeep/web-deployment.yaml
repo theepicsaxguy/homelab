@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: hoarder-web
+      app: karakeep-web
   template:
     metadata:
       labels:
-        app: hoarder-web
+        app: karakeep-web
     spec:
       volumes:
         - name: data
@@ -18,7 +18,7 @@ spec:
             claimName: data-pvc
       containers:
         - name: web
-          image: ghcr.io/hoarder-app/hoarder
+          image: ghcr.io/karakeep-app/karakeep
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
@@ -46,6 +46,6 @@ spec:
               name: data
           envFrom:
             - secretRef:
-                name: hoarder-secrets
+                name: karakeep-secrets
             - configMapRef:
-                name: hoarder-configuration
+                name: karakeep-configuration
