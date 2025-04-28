@@ -92,7 +92,7 @@ module "talos" {
     mac_address   = "bc:24:11:c9:22:c3"
     vm_id         = 8202
     cpu           = 8
-    ram_dedicated = 8192
+    ram_dedicated = 10240
     update        = false
     disks = {
       longhorn = {
