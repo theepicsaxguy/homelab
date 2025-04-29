@@ -11,4 +11,4 @@ spec:
   rules:
   - backendRefs:
     - name: omada-svc
-      port: 8088
+      port: 8888
