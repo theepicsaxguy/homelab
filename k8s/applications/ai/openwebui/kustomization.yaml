@@ -1,7 +1,5 @@
 resources:
 - namespace.yaml
-- ollama-service.yaml
-- ollama-statefulset.yaml
 - webui-deployment.yaml
 - webui-service.yaml
 - http-route.yaml
