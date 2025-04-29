@@ -15,5 +15,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: radarr
+        - name: radarr-web
           port: 80

@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: omada-udp
+  namespace: omada
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+  rules:
+    - backendRefs:
+        - name: omada-svc
+          port: 29810   # PORT_DISCOVERY
+    - backendRefs:
+        - name: omada-svc
+          port: 27001   # PORT_APP_DISCOVERY
