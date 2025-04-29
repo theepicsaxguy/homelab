@@ -47,7 +47,7 @@ spec:
         - {name: omada-logs, mountPath: /opt/tplink/EAPController/logs}
         - {name: omada-cert, mountPath: /cert, readOnly: true}
       - name: envoy-sidecar
-        image: envoyproxy/envoy:v1.30-latest
+        image: envoyproxy/envoy:v1.34-latest
         args: ["-c", "/etc/envoy/envoy.yaml"]
         ports:
         - {containerPort: 8080}
