@@ -21,7 +21,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       # Init container to ensure correct volume permissions before main container starts
-      initContainers:
+        initContainers:
         - name: fix-permissions
           image: busybox:1.37
           command: ["sh", "-c", "chown -R 1000:1000 /meili_data || echo 'chown failed, check storage class permissions'"]
@@ -29,8 +29,8 @@ spec:
             - mountPath: /meili_data
               name: meilisearch
           securityContext:
-            runAsUser: 1000  # Must not be 0 due to PodSecurity restricted policy
-            runAsGroup: 1000
+            runAsUser: 0
+            runAsGroup: 0
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:

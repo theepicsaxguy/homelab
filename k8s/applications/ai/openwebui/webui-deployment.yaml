@@ -43,7 +43,7 @@ spec:
             memory: "512Mi"
           limits:
             cpu: "1000m"
-            memory: "1Gi"
+            memory: "2Gi"
         env:
         - name: WEBUI_SECRET_KEY
           valueFrom:
