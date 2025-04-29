@@ -40,7 +40,7 @@ spec:
           image: getmeili/meilisearch:v1.14.0
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
           resources:
