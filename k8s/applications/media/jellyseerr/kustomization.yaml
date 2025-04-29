@@ -3,6 +3,9 @@ kind: Kustomization
 
 namespace: media
 
+resources:
+  - http-route.yaml
+
 helmCharts:
 - name: jellyseerr-chart
   repo: oci://ghcr.io/fallenbagel/jellyseerr
