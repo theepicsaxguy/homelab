@@ -57,7 +57,7 @@ securityContext:
       - ALL
   seccompProfile:
     type: RuntimeDefault
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
 
 initContainers:
   - name: wget
