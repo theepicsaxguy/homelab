@@ -31,15 +31,3 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    # - name: omada-https
-    #   protocol: HTTPS
-    #   port: 443
-    #   hostname: omada.pc-tips.se
-    #   tls:
-    #     certificateRefs:
-    #     - kind: Secret
-    #       name: cert-omada
-    #   allowedRoutes:
-    #     namespaces:
-    #       from: All
-
