@@ -74,6 +74,12 @@ spec:
           value: Etc/UTC
         - name: SKIP_USERMOD
           value: "true"
+        volumeMounts:
+          - name: omada-data
+            mountPath: /opt/tplink/EAPController/data
+          - name: omada-logs
+            mountPath: /opt/tplink/EAPController/logs
+
       - name: envoy-sidecar
         image: envoyproxy/envoy:v1.34-latest
         args: ["-c", "/etc/envoy/envoy.yaml"]
@@ -81,10 +87,6 @@ spec:
         - {containerPort: 8888}
         volumeMounts:
         - {name: envoy-config, mountPath: /etc/envoy}
-        - name: omada-data
-          mountPath: /opt/tplink/EAPController/data
-        - name: omada-logs
-          mountPath: /opt/tplink/EAPController/logs
       volumes:
       - name: omada-data
         persistentVolumeClaim:

@@ -28,18 +28,55 @@ spec:
         certificateRefs:
           - kind: Secret
             name: cert-pc-tips
+
+    # Add TCP listeners for Omada device mgmt
+    - protocol: TCP
+      port: 29811
+      name: omada-mgr-v1
       allowedRoutes:
         namespaces:
           from: All
-    # - name: omada-https
-    #   protocol: HTTPS
-    #   port: 443
-    #   hostname: omada.pc-tips.se
-    #   tls:
-    #     certificateRefs:
-    #     - kind: Secret
-    #       name: cert-omada
-    #   allowedRoutes:
-    #     namespaces:
-    #       from: All
+    - protocol: TCP
+      port: 29812
+      name: omada-adopt-v1
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 29813
+      name: omada-upgrade-v1
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 29814
+      name: omada-mgr-v2
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 29815
+      name: omada-transfer-v2
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: TCP
+      port: 29816
+      name: omada-rtty
+      allowedRoutes:
+        namespaces:
+          from: All
 
+    # Add UDP listeners for Omada discovery
+    - protocol: UDP
+      port: 29810
+      name: omada-discovery
+      allowedRoutes:
+        namespaces:
+          from: All
+    - protocol: UDP
+      port: 27001
+      name: omada-app-discovery
+      allowedRoutes:
+        namespaces:
+          from: All
