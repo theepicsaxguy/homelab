@@ -61,6 +61,7 @@ redis:
 
 server:
   service:
+      type: LoadBalancer
       httpsPort: 443
       httpsTargetPort: 8443
 
