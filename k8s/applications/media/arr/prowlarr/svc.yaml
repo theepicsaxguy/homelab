@@ -8,6 +8,6 @@ spec:
   selector:
     app: prowlarr
   ports:
-    - name: web
+    - name: prowlarr-web
       port: 80
       targetPort: http

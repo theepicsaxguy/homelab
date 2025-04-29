@@ -9,3 +9,5 @@ resources:
 - namespace.yaml
 - pvc.yaml
 - envoy-config.yaml
+- tcp-route.yaml
+- udp-route.yaml
