@@ -19,6 +19,11 @@ deployment:
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
       value: "true"
+    - name: KUBECHECKS_OPENAI_API_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-combined-secret
+          key: openai_key
     - name: KUBECHECKS_WEBHOOK_SECRET
       valueFrom:
         secretKeyRef:
