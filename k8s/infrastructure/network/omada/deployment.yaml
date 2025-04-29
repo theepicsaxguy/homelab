@@ -50,7 +50,7 @@ spec:
         image: envoyproxy/envoy:v1.34-latest
         args: ["-c", "/etc/envoy/envoy.yaml"]
         ports:
-        - {containerPort: 8080}
+        - {containerPort: 8088}
         volumeMounts:
         - {name: envoy-config, mountPath: /etc/envoy}
       volumes:
@@ -58,4 +58,3 @@ spec:
       - {name: omada-logs, persistentVolumeClaim: {claimName: omada-logs-pvc}}
       - {name: omada-cert, secret: {secretName: cert-omada}}
       - {name: envoy-config, configMap: {name: envoy-config}}
-      restartPolicy: Always

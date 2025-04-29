@@ -14,7 +14,7 @@ data:
         - filters:
           - name: envoy.filters.network.http_connection_manager
             typed_config:
-              "@type": type.googleapis.com/envoy.config.filter.network.http_connection_manager.v2.HttpConnectionManager
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
               stat_prefix: ingress_http
               route_config:
                 name: local_route
@@ -26,6 +26,8 @@ data:
                     route: {cluster: backend_service_https}
               http_filters:
               - name: envoy.filters.http.router
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       clusters:
       - name: backend_service_https
         connect_timeout: 5s
@@ -41,8 +43,7 @@ data:
         transport_socket:
           name: envoy.transport_sockets.tls
           typed_config:
-            "@type": type.googleapis.com/envoy.api.v2.auth.UpstreamTlsContext
+            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
             common_tls_context:
               validation_context:
-                trusted_ca:
-                  filename: /etc/ssl/certs/ca-certificates.crt
+                trust_chain_verification: ACCEPT_UNTRUSTED
