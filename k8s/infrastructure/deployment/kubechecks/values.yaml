@@ -15,6 +15,8 @@ deployment:
       value: /home/kubechecks
     - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
       value: "true"
+    - name: KUBECHECKS_ENABLE_HOOKS_RENDERER
+      value: "true"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
       value: "https://kubechecks.pc-tips.se"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
