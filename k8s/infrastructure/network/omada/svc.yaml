@@ -11,6 +11,9 @@ spec:
   - name: manage-http
     port: 8088
     targetPort: 8088
+  - name: envoy-http
+    port: 8888
+    targetPort: 8888
     protocol: TCP
   - name: manage-https
     port: 8043

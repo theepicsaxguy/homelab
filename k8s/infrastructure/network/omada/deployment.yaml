@@ -50,7 +50,7 @@ spec:
         image: envoyproxy/envoy:v1.34-latest
         args: ["-c", "/etc/envoy/envoy.yaml"]
         ports:
-        - {containerPort: 8088}
+        - {containerPort: 8888}
         volumeMounts:
         - {name: envoy-config, mountPath: /etc/envoy}
       volumes:
