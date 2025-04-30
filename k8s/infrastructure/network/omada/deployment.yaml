@@ -34,7 +34,7 @@ spec:
             - ALL
         resources:
           requests: {cpu: 100m, memory: 512Mi}
-          limits:   {cpu: 500m, memory: 1Gi}
+          limits:   {cpu: 750m, memory: 2Gi}
         env:
         - name: ROOTLESS
           value: "true"
