@@ -8,15 +8,15 @@ resources:
 - controllers
 - deployment
 
-configurations:
-- common/varreference.yaml
+# configurations:
+# - common/varreference.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
 
-components:
-- common/components/env-vars
-- common/components/rollouts
-- common/components/immutable-resources
-- common/components/container-images
-- common/components/configmap-validation
+# components:
+# - common/components/env-vars
+# - common/components/rollouts
+# - common/components/immutable-resources
+# - common/components/container-images
+# - common/components/configmap-validation
