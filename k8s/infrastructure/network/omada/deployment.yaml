@@ -66,10 +66,6 @@ spec:
           value: "true"
         - name: SHOW_MONGODB_LOGS
           value: "false"
-        - name: SSL_CERT_NAME
-          value: tls.crt
-        - name: SSL_KEY_NAME
-          value: tls.key
         - name: TZ
           value: Etc/UTC
         - name: SKIP_USERMOD
