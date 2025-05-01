@@ -13,8 +13,6 @@ spec:
       labels:
         app: sabnzbd
     spec:
-      nodeSelector:
-        fileserv: "true"
       containers:
       - name: sabnzbd
         image: sabnzbd/sabnzbd
