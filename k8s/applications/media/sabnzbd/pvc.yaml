@@ -1,11 +1,25 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: sabnzbd
+  name: sabnzbd-config
   namespace: media
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 1Gi
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sabnzbd-downloads
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
