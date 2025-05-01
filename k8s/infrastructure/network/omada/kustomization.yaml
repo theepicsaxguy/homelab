@@ -5,9 +5,9 @@ namespace: omada
 resources:
 - deployment.yaml
 - svc.yaml
-- http-route.yaml
+- tls-route.yaml
 - namespace.yaml
 - pvc.yaml
-- envoy-config.yaml
 - tcp-route.yaml
 - udp-route.yaml
+- cert-omada.yaml
