@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prowlarr
+  name: bazarr
   namespace: media
   labels:
-    app: prowlarr
+    app: bazarr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prowlarr
+      app: bazarr
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: prowlarr
+        app: bazarr
     spec:
       nodeSelector:
         topology.kubernetes.io/zone: host3
@@ -28,8 +28,8 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: prowlarr
-          image: ghcr.io/onedr0p/prowlarr:1.32.2 # renovate: docker=ghcr.io/onedr0p/prowlarr
+        - name: bazarr
+          image: ghcr.io/linuxserver/bazarr:1.5.1 # renovate: ghcr.io/linuxserver/bazarr
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -37,13 +37,14 @@ spec:
               drop: [ "ALL" ]
           ports:
             - name: http
-              containerPort: 9696
+              containerPort: 6767
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: common-env
                 optional: true
           volumeMounts:
-            - name: prowlarr-config
+            - name: bazarr-config
               mountPath: /config
             - name: data
               mountPath: /app/data
@@ -57,9 +58,9 @@ spec:
               cpu: 1000m
               memory: 256Mi
       volumes:
-        - name: prowlarr-config
+        - name: bazarr-config
           persistentVolumeClaim:
-            claimName: prowlarr-config
+            claimName: bazarr-config
         - name: data
           persistentVolumeClaim:
             claimName: media-share

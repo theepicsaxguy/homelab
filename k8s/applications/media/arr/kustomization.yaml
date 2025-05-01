@@ -6,10 +6,10 @@ configMapGenerator:
   - TZ="Europe/Oslo"
   name: common-env
 
-# remove the explicit Namespace resource and let kustomize set it
 namespace: media
 
 resources:
 - prowlarr
 - radarr
 - sonarr
+- bazarr
