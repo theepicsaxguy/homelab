@@ -6,3 +6,13 @@ resources:
 - svc.yaml
 - http-route.yaml
 - deployment.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+- name: bazarr-env
+  literals:
+    - PUID=2501
+    - PGID=2501
+    - TZ=Europe/Stockholm
