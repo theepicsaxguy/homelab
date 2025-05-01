@@ -40,9 +40,8 @@ spec:
               containerPort: 6767
               protocol: TCP
           envFrom:
-            - configMapRef:
-                name: common-env
-                optional: true
+          - configMapRef:
+              name: bazarr-env
           volumeMounts:
             - name: bazarr-config
               mountPath: /config
