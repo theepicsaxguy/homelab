@@ -1,19 +1,19 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: prowlarr
+  name: bazarr
   namespace: media
 spec:
   parentRefs:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'prowlarr.pc-tips.se'
+    - 'bazarr.pc-tips.se'
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: prowlarr
+        - name: bazarr
           port: 80
