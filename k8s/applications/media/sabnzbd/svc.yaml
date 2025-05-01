@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+    kubernetes.io/name: "sabnzbd"
+spec:
+  selector:
+    app: sabnzbd
+  ports:
+  - name: sabnzbd
+    port: 80
+    targetPort: 8080

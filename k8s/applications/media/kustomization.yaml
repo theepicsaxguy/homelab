@@ -11,3 +11,4 @@ resources:
 - media-share-pvc.yaml
 - nfs-pv.yaml
 - jellyseerr
+- sabnzbd
