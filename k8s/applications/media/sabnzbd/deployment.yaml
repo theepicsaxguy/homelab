@@ -39,7 +39,4 @@ spec:
           claimName: sabnzbd-config
       - name: sabnzbd-downloads
         persistentVolumeClaim:
-          claimName: media-share
-      - name: sabnzbd-incomplete
-        persistentVolumeClaim:
-          claimName: sabnzbd-incomplete
+          claimName: sabnzbd-downloads
