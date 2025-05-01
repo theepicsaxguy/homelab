@@ -75,14 +75,9 @@ spec:
             mountPath: /opt/tplink/EAPController/data
           - name: omada-logs
             mountPath: /opt/tplink/EAPController/logs
-
-      - name: envoy-sidecar
-        image: envoyproxy/envoy:v1.34-latest
-        args: ["-c", "/etc/envoy/envoy.yaml"]
-        ports:
-        - {containerPort: 8888}
-        volumeMounts:
-        - {name: envoy-config, mountPath: /etc/envoy}
+          - name: omada-certs
+            mountPath: /cert
+            readOnly: true
       volumes:
       - name: omada-data
         persistentVolumeClaim:
@@ -90,5 +85,12 @@ spec:
       - name: omada-logs
         persistentVolumeClaim:
           claimName: omada-logs-pvc
-      - {name: envoy-config, configMap: {name: envoy-config}}
+      - name: omada-certs
+        secret:
+          secretName: cert-omada
+          items:
+            - key: tls.crt
+              path: tls.crt
+            - key: tls.key
+              path: tls.key
       restartPolicy: Always
