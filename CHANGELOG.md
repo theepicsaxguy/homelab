@@ -1,5 +1,34 @@
 # Changelog
 
+## [2.2.0](https://github.com/theepicsaxguy/homelab/compare/v2.1.0...v2.2.0) (2025-05-01)
+
+
+### Features
+
+* **k8s:** add deployment, service, and external secret for pedro-bot ([#498](https://github.com/theepicsaxguy/homelab/issues/498)) ([b394df2](https://github.com/theepicsaxguy/homelab/commit/b394df250e32d9644400fd27e57920d839e29ca0))
+* **k8s:** add HTTPS route for omada service ([#502](https://github.com/theepicsaxguy/homelab/issues/502)) ([9675e13](https://github.com/theepicsaxguy/homelab/commit/9675e13e47bfcb216ec021c0d999941a8688e6c2))
+* **k8s:** add karakeep application resources ([#515](https://github.com/theepicsaxguy/homelab/issues/515)) ([5d3d62f](https://github.com/theepicsaxguy/homelab/commit/5d3d62fe43ce9054d33e6ab393dd4576b8638d0b))
+* **k8s:** add omada certificate and update references ([#505](https://github.com/theepicsaxguy/homelab/issues/505)) ([25752ad](https://github.com/theepicsaxguy/homelab/commit/25752ad436cda31462c1100c17542504d05a31d6))
+* **k8s:** add sabnzbd deployment and associated resources ([#547](https://github.com/theepicsaxguy/homelab/issues/547)) ([d7c3e64](https://github.com/theepicsaxguy/homelab/commit/d7c3e64d979f9159361574eab357d8e9ba87cfec))
+* **k8s:** implement TLS passthrough and certificate management for omada ([#546](https://github.com/theepicsaxguy/homelab/issues/546)) ([77f342e](https://github.com/theepicsaxguy/homelab/commit/77f342eeab53b3b591d8f3584a64de0890bbbbcc))
+* **k8s:** update jellyseerr service configuration ([#517](https://github.com/theepicsaxguy/homelab/issues/517)) ([929626e](https://github.com/theepicsaxguy/homelab/commit/929626e0c2b862f8e0b4d285bbae801d4ee9545f))
+* **networking:** add HTTPRoute and Namespace for omada service ([#480](https://github.com/theepicsaxguy/homelab/issues/480)) ([0ec0f84](https://github.com/theepicsaxguy/homelab/commit/0ec0f84cc26a1bcf8ad9e22f6d4b868d59cc331f))
+* **networking:** add TLS route and certificate for omada ([#499](https://github.com/theepicsaxguy/homelab/issues/499)) ([cfeed5b](https://github.com/theepicsaxguy/homelab/commit/cfeed5bdcf58016497146e7a7c1b8437a4300e7e))
+
+
+### Bug Fixes
+
+* **k8s:** update jellyfin hostname and timezone configuration ([#516](https://github.com/theepicsaxguy/homelab/issues/516)) ([ce5888f](https://github.com/theepicsaxguy/homelab/commit/ce5888f1ff8a5366bcf398c902b3b34cd3009f55))
+* **k8s:** update jellyseerr and omada configurations for port changes ([#533](https://github.com/theepicsaxguy/homelab/issues/533)) ([1e5f43b](https://github.com/theepicsaxguy/homelab/commit/1e5f43b5b7a2b1a2ee2eb0208d8f83a4a40a1024))
+* **k8s:** update jellyseerr service port and remove unused PVC ([#532](https://github.com/theepicsaxguy/homelab/issues/532)) ([b0fb271](https://github.com/theepicsaxguy/homelab/commit/b0fb2715adb7f53d40907b38121cb0b4dea92615))
+* **k8s:** update meilisearch deployment init container and security context ([#527](https://github.com/theepicsaxguy/homelab/issues/527)) ([af500f6](https://github.com/theepicsaxguy/homelab/commit/af500f6021c2d1aaecfaff1d042e60dcd68b0991))
+
+
+### Performance Improvements
+
+* **k8s:** increase CPU resource requests and limits for open-webui ([#528](https://github.com/theepicsaxguy/homelab/issues/528)) ([95acdfa](https://github.com/theepicsaxguy/homelab/commit/95acdfa42a96ea651acba6ed800e79dba0eba050))
+* **k8s:** increase resource limits for omada-controller deployment ([#545](https://github.com/theepicsaxguy/homelab/issues/545)) ([287ffc2](https://github.com/theepicsaxguy/homelab/commit/287ffc29e270f9f9c6a786daba4ab6d3b25bf254))
+
 ## [2.1.0](https://github.com/theepicsaxguy/homelab/compare/v2.0.0...v2.1.0) (2025-04-17)
 
 
