@@ -5,6 +5,9 @@ metadata:
   namespace: media
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd
   template:
     metadata:
       labels:
@@ -20,9 +23,9 @@ spec:
         - containerPort: 8080
         env:
         - name: SABNZBD_UID
-          value: "1000"
+          value: "2501"
         - name: SABNZBD_GID
-          value: "1000"
+          value: "2501"
         volumeMounts:
         - name: sabnzbd
           mountPath: /datadir
