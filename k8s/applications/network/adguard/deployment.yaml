@@ -36,4 +36,5 @@ spec:
         - name: workdir
           emptyDir: {}
         - name: confdir
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: adguard-config

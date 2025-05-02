@@ -15,11 +15,4 @@ spec:
             value: /
       backendRefs:
         - name: adguard
-          port: 80
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: adguard
           port: 3000
