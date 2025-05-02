@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: auth
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab'
+  destinations:
+    - namespace: 'auth'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
