@@ -19,36 +19,31 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/zone: host3
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 2501
-        runAsGroup: 2501
-        fsGroup: 2501
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: bazarr
-          image: ghcr.io/linuxserver/bazarr:1.5.1 # renovate: ghcr.io/linuxserver/bazarr
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false # Changed back from true
-            capabilities:
-              drop: [ "ALL" ]
+          image: ghcr.io/hotio/bazarr:latest
           ports:
             - name: http
               containerPort: 6767
               protocol: TCP
-          envFrom:
-          - configMapRef:
-              name: bazarr-env
+          env:
+            - name: PUID
+              value: "2501"
+            - name: VPN_ENABLED
+              value: "false"
+            - name: PGID
+              value: "2501"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: UMASK
+              value: "002"
+            - name: WEBUI_PORTS
+              value: "6767/tcp,6767/udp"
           volumeMounts:
             - name: bazarr-config
               mountPath: /config
             - name: data
-              mountPath: /app/data
-            - name: tmp
-              mountPath: /tmp
+              mountPath: /data
           resources:
             requests:
               cpu: 50m
@@ -63,5 +58,3 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: media-share
-        - name: tmp
-          emptyDir: { }
