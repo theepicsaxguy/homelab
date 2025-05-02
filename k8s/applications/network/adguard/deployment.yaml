@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguard
+  template:
+    metadata:
+      labels:
+        app: adguard
+    spec:
+      containers:
+        - name: adguard
+          image: adguard/adguardhome:v0.107.61
+          ports:
+            - containerPort: 53  # DNS (UDP/TCP)
+              protocol: UDP
+            - containerPort: 53
+              protocol: TCP
+            - containerPort: 67
+              protocol: UDP
+            - containerPort: 68
+              protocol: UDP
+            - containerPort: 80   # HTTP admin
+            - containerPort: 443  # HTTPS
+            - containerPort: 3000 # Admin setup
+          volumeMounts:
+            - name: workdir
+              mountPath: /opt/adguardhome/work
+            - name: confdir
+              mountPath: /opt/adguardhome/conf
+      volumes:
+        - name: workdir
+          emptyDir: {}
+        - name: confdir
+          emptyDir: {}
