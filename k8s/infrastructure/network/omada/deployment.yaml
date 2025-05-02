@@ -35,6 +35,37 @@ spec:
         resources:
           requests: {cpu: 100m, memory: 512Mi}
           limits:   {cpu: 750m, memory: 2Gi}
+        ports:
+        - containerPort: 8088
+          name: manage-http
+          protocol: TCP
+        - containerPort: 8043
+          name: manage-https
+          protocol: TCP
+        - containerPort: 8843
+          name: porta-https
+          protocol: TCP
+        - containerPort: 27001
+          name: app-discovery
+          protocol: UDP
+        - containerPort: 29810
+          name: discovery
+          protocol: UDP
+        - containerPort: 29811
+          name: discovery-v1
+          protocol: TCP
+        - containerPort: 29813
+          name: upgrade-v1
+          protocol: TCP
+        - containerPort: 29814
+          name: manager-v1
+          protocol: TCP
+        - containerPort: 29815
+          name: transfer-v2
+          protocol: TCP
+        - containerPort: 29816
+          name: rtty
+          protocol: TCP
         env:
         - name: ROOTLESS
           value: "true"
