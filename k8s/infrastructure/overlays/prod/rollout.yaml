@@ -4,7 +4,7 @@ metadata:
   name: infra-rollout-prod
 spec:
   replicas: 3
-  revisionHistoryLimit: 5
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
       app.kubernetes.io/part-of: infrastructure
