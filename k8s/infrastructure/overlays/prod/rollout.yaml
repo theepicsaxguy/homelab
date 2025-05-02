@@ -9,8 +9,18 @@ spec:
     matchLabels:
       app.kubernetes.io/part-of: infrastructure
       app.kubernetes.io/instance: infra-service
+  # Add progress deadline configuration
+  progressDeadlineSeconds: 600
+  progressDeadlineAbort: true
   strategy:
     canary:
+      # Add background analysis
+      analysis:
+        templates:
+          - templateName: infra-health-background
+        args:
+          - name: service-name
+            value: infra-service
       steps:
         - setWeight: 10
         - pause: { duration: 300s } # Longer observation period
@@ -53,6 +63,15 @@ spec:
             limits:
               cpu: 2000m
               memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution: # Stronger HA requirement for prod
