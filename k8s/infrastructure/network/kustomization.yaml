@@ -7,4 +7,3 @@ resources:
 - cloudflared
 - gateway
 - coredns
-- omada
