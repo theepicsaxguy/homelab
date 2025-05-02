@@ -19,6 +19,7 @@ spec:
           - path: k8s/applications/ai
           - path: k8s/applications/external
           - path: k8s/applications/web
+          - path: k8s/applications/network
   template:
     metadata:
       name: 'apps-{{ path.basename }}'

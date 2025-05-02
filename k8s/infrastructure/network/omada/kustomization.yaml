@@ -8,6 +8,4 @@ resources:
 - tls-route.yaml
 - namespace.yaml
 - pvc.yaml
-- tcp-route.yaml
-- udp-route.yaml
 - cert-omada.yaml

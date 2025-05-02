@@ -8,6 +8,7 @@ resources:
 - tools
 - external
 - web
+- network
 
 # configurations:
 # - common/varreference.yaml
