@@ -4,9 +4,9 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - deployment.yaml
-  - service.yaml
+  - svc.yaml
   - http-route.yaml
-  - pvc.yaml
+  - adguard-secrets.yaml
 
 
 namespace: apps-network
