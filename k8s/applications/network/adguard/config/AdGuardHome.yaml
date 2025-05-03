@@ -70,7 +70,7 @@ tls:
   enabled: true
   certificate_chain: "/opt/adguardhome/tls/tls.crt"
   private_key: "/opt/adguardhome/tls/tls.key"
-  server_name: "adguard.pc-tips.se"
+  server_name: "localdns.pc-tips.se"
   force_https: false
   port_https: 443
   port_dns_over_tls: 853
@@ -109,7 +109,7 @@ user_rules:
 dhcp:
   enabled: false
   interface_name: ""
-  local_domain_name: lan
+  local_domain_name: pc-tips.se
   dhcpv4:
     gateway_ip: ""
     subnet_mask: ""
