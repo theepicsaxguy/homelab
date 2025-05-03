@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: analysis-template
+spec:
+  metrics:
+  - name: success-rate
+    interval: 30s
+    successCondition: result >= 0.95
+    failureLimit: 3
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring:9090
+        query: |
+          sum(rate(http_requests_total{status!~"5.*", service="{{ args.service-name }}"}[5m]))
+          /
+          sum(rate(http_requests_total{service="{{ args.service-name }}"}[5m]))
+  - name: latency
+    interval: 30s
+    successCondition: result <= 500
+    failureLimit: 3
+    provider:
+      prometheus:
+        address: http://prometheus-operated.monitoring:9090
+        query: |
+          histogram_quantile(0.95,
+            sum(rate(http_request_duration_ms_bucket{service="{{ args.service-name }}"}[5m])) by (le))

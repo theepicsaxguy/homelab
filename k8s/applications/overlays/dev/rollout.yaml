@@ -11,33 +11,15 @@ spec:
       app.kubernetes.io/part-of: applications
       app.kubernetes.io/instance: apps-service
   strategy:
-    canary:
-      steps:
-        - setWeight: 10
-        - pause: { duration: 30s } # Shorter timeout for Dev
-        - analysis:
-            templates:
-              - templateName: apps-health
-            args:
-              - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace  # Fix: Explicitly pass namespace
-              - name: service
-                value: "apps-service"
-        - setWeight: 30
-        - pause: { duration: 30s }
-        - analysis:
-            templates:
-              - templateName: apps-health
-            args:
-              - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
-              - name: service
-                value: "apps-service"
-        - setWeight: 100
+    blueGreen:
+      activeService: apps-service
+      previewService: apps-service-preview
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 60        # Promote after 1 minute for dev
+      previewReplicaCount: 1          # Low replica count for dev
+      scaleDownDelaySeconds: 30       # Quick scale down after promotion
+      cleanup:
+        keepHistory: 1                # Only keep one revision history
   template:
     metadata:
       labels:

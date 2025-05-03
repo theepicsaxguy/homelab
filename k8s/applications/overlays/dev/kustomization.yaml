@@ -25,6 +25,8 @@ configMapGenerator:
 
 patches:
 - path: env-overrides.yaml
+- path: patches/rollout-patch.yaml
+
 
 labels:
 - pairs:
