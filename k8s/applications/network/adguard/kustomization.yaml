@@ -14,6 +14,7 @@ resources:
   - svc.yaml
   - http-route.yaml
   - adguard-secrets.yaml
+  - cert-adguard.yaml
 
 
 namespace: apps-network

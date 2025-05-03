@@ -19,5 +19,8 @@ spec:
     - name: dchp
       port: 67
       protocol: UDP
+    - name: dns-tls
+      port: 853
+      protocol: TCP
   selector:
     app: adguard
