@@ -67,6 +67,9 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+            - name: dns-tls
+              containerPort: 853
+              protocol: TCP
           resources:
             requests:
               cpu: 50m
@@ -75,6 +78,9 @@ spec:
               cpu: 500m
               memory: 256Mi
           volumeMounts:
+            - name: tls-cert
+              mountPath: /opt/adguardhome/tls
+              readOnly: true
             - name: config-folder
               mountPath: /opt/adguardhome/conf
             - name: work-folder
@@ -90,3 +96,6 @@ spec:
           emptyDir: { }
         - name: work-folder
           emptyDir: { }
+        - name: tls-cert
+          secret:
+            secretName: cert-adguard
