@@ -13,40 +13,28 @@ spec:
   progressDeadlineSeconds: 600
   progressDeadlineAbort: true
   strategy:
-    canary:
-      # Add background analysis
-      analysis:
+    blueGreen:
+      activeService: apps-service
+      previewService: apps-service-preview
+      autoPromotionEnabled: false     # Require explicit approval in production
+      scaleDownDelaySeconds: 3600     # Wait 1 hour before scaling down old version
+      previewReplicaCount: 3          # Match production replica count
+      antiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution: {}
+      prePromotionAnalysis:
         templates:
-          - templateName: apps-health-background
+          - templateName: apps-health
+        args:
+          - name: service-name
+            value: apps-service-preview
+      postPromotionAnalysis:
+        templates:
+          - templateName: apps-health
         args:
           - name: service-name
             value: apps-service
-      steps:
-        - setWeight: 10
-        - pause: { duration: 300s } # Longer observation period
-        - analysis:
-            templates:
-              - templateName: apps-health
-            args:
-              - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
-              - name: service
-                value: "apps-service"
-        - setWeight: 30
-        - pause: { duration: 300s }
-        - analysis:
-            templates:
-              - templateName: apps-health
-            args:
-              - name: namespace
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.namespace
-              - name: service
-                value: "apps-service"
-        - setWeight: 100
+      cleanup:
+        keepHistory: 2                # Keep two revision histories
   template:
     metadata:
       labels:

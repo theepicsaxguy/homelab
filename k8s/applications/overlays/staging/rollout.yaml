@@ -11,19 +11,28 @@ spec:
       app.kubernetes.io/part-of: applications
       app.kubernetes.io/instance: apps-service
   strategy:
-    canary:
-      analysis:
+    blueGreen:
+      activeService: apps-service
+      previewService: apps-service-preview
+      autoPromotionEnabled: false     # Require manual promotion in staging
+      scaleDownDelaySeconds: 300      # Wait 5 minutes before scaling down old version
+      previewReplicaCount: 2          # Match production replica count
+      antiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution: {}
+      prePromotionAnalysis:
         templates:
           - templateName: apps-health
-      steps:
-        - setWeight: 20
-        - pause: { duration: $(ROLLOUT_TIMEOUT) }
-        - analysis:
-            templates:
-              - templateName: success-rate
-        - setWeight: 50
-        - pause: { duration: $(ROLLOUT_TIMEOUT) }
-        - setWeight: 100
+        args:
+          - name: service-name
+            value: apps-service-preview
+      postPromotionAnalysis:
+        templates:
+          - templateName: apps-health
+        args:
+          - name: service-name
+            value: apps-service
+      cleanup:
+        keepHistory: 2                # Keep two revision histories in staging
   template:
     metadata:
       labels:
