@@ -114,22 +114,22 @@ filters:
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_17.txt
     name: Frellwit's Swedish Hosts File
     id: 4
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt
-    name: Phishing URL Blocklist (PhishTank and OpenPhish)
-    id: 5
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt
-    name: Scam Blocklist by DurableNapkin
-    id: 6
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_42.txt
-    name: ShadowWhisperer's Malware List
-    id: 7
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_9.txt
-    name: The Big List of Hacked Malware Web Sites
-    id: 8
+  # - enabled: true
+  #   url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt
+  #   name: Phishing URL Blocklist (PhishTank and OpenPhish)
+  #   id: 5
+  # - enabled: true
+  #   url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt
+  #   name: Scam Blocklist by DurableNapkin
+  #   id: 6
+  # - enabled: true
+  #   url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_42.txt
+  #   name: ShadowWhisperer's Malware List
+  #   id: 7
+  # - enabled: true
+  #   url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_9.txt
+  #   name: The Big List of Hacked Malware Web Sites
+  #   id: 8
 whitelist_filters: [ ]
 user_rules:
   - '@@||sdk.iad-01.braze.com^$important'
