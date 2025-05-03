@@ -57,9 +57,13 @@ dns:
   ipset_file: ""
   bootstrap_prefer_ipv6: false
   upstream_timeout: 10s
-  private_networks: [ ]
+  private_networks:
+    - 10.0.0.0/8
+    - 192.168.0.0/16
+    - 172.16.0.0/12
   use_private_ptr_resolvers: true
-  local_ptr_upstreams: [ ]
+  local_ptr_upstreams:
+    - 10.25.150.1
   use_dns64: false
   dns64_prefixes: [ ]
   serve_http3: false
@@ -98,10 +102,34 @@ filters:
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
     name: AdGuard DNS filter
     id: 1
-  - enabled: false
+  - enabled: true
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
     name: AdAway Default Blocklist
     id: 2
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_24.txt
+    name: 1Hosts (Lite)
+    id: 3
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_17.txt
+    name: Frellwit's Swedish Hosts File
+    id: 4
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_30.txt
+    name: Phishing URL Blocklist (PhishTank and OpenPhish)
+    id: 5
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_10.txt
+    name: Scam Blocklist by DurableNapkin
+    id: 6
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_42.txt
+    name: ShadowWhisperer's Malware List
+    id: 7
+  - enabled: true
+    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_9.txt
+    name: The Big List of Hacked Malware Web Sites
+    id: 8
 whitelist_filters: [ ]
 user_rules:
   - '@@||sdk.iad-01.braze.com^$important'
