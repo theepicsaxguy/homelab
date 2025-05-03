@@ -20,15 +20,11 @@ dns:
   ratelimit_whitelist: [ ]
   refuse_any: true
   upstream_dns:
-    - 1.1.1.1
-    - 9.9.9.9
+    - 10.25.150.1
   upstream_dns_file: ""
   bootstrap_dns:
-    - 1.1.1.1
-    - 9.9.9.9
-  fallback_dns:
-    - 8.8.8.8
-    - 8.8.4.4
+    - 10.25.150.1
+  fallback_dns: []
   upstream_mode: parallel
   fastest_timeout: 1s
   allowed_clients: [ ]
