@@ -20,10 +20,10 @@ dns:
   ratelimit_whitelist: [ ]
   refuse_any: true
   upstream_dns:
-    - 10.25.150.1:5335
+    - 10.25.150.1
   upstream_dns_file: ""
   bootstrap_dns:
-    - 10.25.150.1:5335
+    - 10.25.150.1
   fallback_dns: []
   upstream_mode: parallel
   fastest_timeout: 1s
@@ -133,7 +133,7 @@ user_rules:
 dhcp:
   enabled: false
   interface_name: ""
-  local_domain_name: pc-tips.se
+  local_domain_name:
   dhcpv4:
     gateway_ip: ""
     subnet_mask: ""
@@ -169,10 +169,6 @@ filtering:
   rewrites:
     - domain: truenas.pc-tips.se
       answer: 10.25.150.221
-    - domain: '*.pc-tips.se'
-      answer: 10.25.150.220
-    - domain: pc-tips.se
-      answer: 10.25.150.220
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576
