@@ -6,6 +6,7 @@ metadata:
     io.cilium/lb-ipam-ips: 10.25.150.241
 spec:
   type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
     - name: http
       protocol: TCP
