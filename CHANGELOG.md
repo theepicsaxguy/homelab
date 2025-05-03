@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.3.0](https://github.com/theepicsaxguy/homelab/compare/v2.2.0...v2.3.0) (2025-05-03)
+
+
+### Features
+
+* **k8s:** add Bazarr deployment and service configuration ([#552](https://github.com/theepicsaxguy/homelab/issues/552)) ([6d3315e](https://github.com/theepicsaxguy/homelab/commit/6d3315e8f0f764a9c549163fbfcacd4af1cbebfa))
+* **k8s:** add configMapGenerator for AdGuard configuration ([#567](https://github.com/theepicsaxguy/homelab/issues/567)) ([8c4e733](https://github.com/theepicsaxguy/homelab/commit/8c4e7336c2042b7a6ee134934917fbacd441f27b))
+* **k8s:** add Omada controller deployment and related resources ([#565](https://github.com/theepicsaxguy/homelab/issues/565)) ([857e81c](https://github.com/theepicsaxguy/homelab/commit/857e81c40b61b20cdc549cc2e1ff11a24b29c335))
+* **k8s:** enhance rollout configuration with health checks and analysis ([#561](https://github.com/theepicsaxguy/homelab/issues/561)) ([8f889e1](https://github.com/theepicsaxguy/homelab/commit/8f889e155d57894fe2c8831239596becce5000a3))
+* **k8s:** implement blue-green deployment strategy for applications ([#571](https://github.com/theepicsaxguy/homelab/issues/571)) ([527f372](https://github.com/theepicsaxguy/homelab/commit/527f372845aa0ad3ecdd5f1ab855e282372c763b))
+* **k8s:** update AdGuard deployment with persistent volume claim ([#560](https://github.com/theepicsaxguy/homelab/issues/560)) ([7a9b432](https://github.com/theepicsaxguy/homelab/commit/7a9b432adba78c57208f34f3454127c14627c49a))
+* **k8s:** update Bazarr deployment to use new configMap reference ([#554](https://github.com/theepicsaxguy/homelab/issues/554)) ([58af7ab](https://github.com/theepicsaxguy/homelab/commit/58af7ab667249b9aa660ed0f33b219ff22a2653e))
+* **k8s:** update resource requests and limits for open-webui deployment ([#572](https://github.com/theepicsaxguy/homelab/issues/572)) ([c45a067](https://github.com/theepicsaxguy/homelab/commit/c45a0671e797ecf5629b31b0470055a3b67263b0))
+* **networking:** implement AdGuard deployment with init containers ([#566](https://github.com/theepicsaxguy/homelab/issues/566)) ([bc715c1](https://github.com/theepicsaxguy/homelab/commit/bc715c135d82884c615110f89aa486b229e55c96))
+
+
+### Bug Fixes
+
+* **k8s:** update Bazarr security context to allow read-write filesystem ([#556](https://github.com/theepicsaxguy/homelab/issues/556)) ([2eed9d9](https://github.com/theepicsaxguy/homelab/commit/2eed9d9de7d68ffacc460103f4500ec13a259625))
+
 ## [2.2.0](https://github.com/theepicsaxguy/homelab/compare/v2.1.0...v2.2.0) (2025-05-01)
 
 
