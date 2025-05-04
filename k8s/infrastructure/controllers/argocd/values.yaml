@@ -7,13 +7,6 @@ configs:
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
-    policy.csv: |
-      p, role:kubechecks, applications, get, */*, allow
-      p, role:kubechecks, applications, list, */*, allow
-      p, role:kubechecks, applications, sync, */*, allow
-      p, role:kubechecks, applications, create, */*, allow
-      p, role:kubechecks, applications, update, */*, allow
-      g, kubechecks, role:kubechecks
 
   cmp:
     create: true
@@ -29,6 +22,15 @@ configs:
     policy.csv: |
       g, argocd:admin, role:admin
       g, argocd:read_all, role:readonly
+      p, role:kubechecks, applications, get,   */*, allow
+      p, role:kubechecks, applications, list,  */*, allow
+      p, role:kubechecks, applications, sync,  */*, allow
+      p, role:kubechecks, applications, create, */*, allow
+      p, role:kubechecks, applications, update, */*, allow
+      p, role:kubechecks, projects, get,       *, allow
+      p, role:kubechecks, projects, update,    *, allow
+      g, kubechecks, role:kubechecks
+
 
 crds:
   install: true
