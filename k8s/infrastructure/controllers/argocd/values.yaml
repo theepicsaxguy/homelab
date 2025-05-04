@@ -19,6 +19,7 @@ configs:
     controller.diff.server.side: true
     server.insecure: true
   rbac:
+    create: true
     policy.csv: |
       g, argocd:admin, role:admin
       g, argocd:read_all, role:readonly
@@ -29,6 +30,7 @@ configs:
       p, role:kubechecks, applications, update, */*, allow
       p, role:kubechecks, projects, get,       *, allow
       p, role:kubechecks, projects, update,    *, allow
+      p, role:kubechecks, clusters, get, *, allow
       g, kubechecks, role:kubechecks
 
 

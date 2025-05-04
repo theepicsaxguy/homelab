@@ -6,6 +6,8 @@ resources:
   - http-route.yaml
   - http-route-api.yaml
   - argocd-tls.yaml
+  - rolebinding.yaml
+  - role.yaml
 
 helmCharts:
   - name: argo-cd
