@@ -1,24 +1,20 @@
+
 authentik:
-  secret_key: ""  # Will be sourced from an existing K8s secret via extraSecretMounts (see below)
+  secret_key: ""
   error_reporting:
     enabled: true
+
   postgresql:
-    password: ""  # Sourced from existing secret
+    # Same idea: value is supplied via ENV
+    password: ""
 
 server:
   ingress:
     enabled: false
-  # Use extraSecretMounts to mount secrets as files per authentik chart documentation
-  extraSecretMounts:
-    - name: authentik-secrets
-      secretName: authentik-combined-secret
-      mountPath: /authentik-secrets
-      readOnly: true
-    - name: postgres-creds
-      secretName: authentik-combined-secret
-      mountPath: /postgres-creds
-      readOnly: true
-  extraEnv:
+
+  # Environment variables – **this is the critical fix**
+  # The Helm chart expects them under `server.env`, not `extraEnv`.
+  env:
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:
         secretKeyRef:
@@ -30,23 +26,28 @@ server:
           name: authentik-combined-secret
           key: postgresql_password
 
-postgresql:
-  enabled: true
-  auth:
-    password: ""  # will be sourced in the same way
-
-redis:
-  enabled: true
+  # We no longer mount the secret as a directory, so wipe the old blocks.
+  extraSecretMounts: []
+  extraEnv: []
 
 worker:
-  extraSecretMounts:
-    - name: postgres-creds
-      secretName: authentik-combined-secret
-      mountPath: /postgres-creds
-      readOnly: true
-  extraEnv:
+  env:
     - name: AUTHENTIK_POSTGRESQL__PASSWORD
       valueFrom:
         secretKeyRef:
           name: authentik-combined-secret
           key: postgresql_password
+  extraSecretMounts: []
+  extraEnv: []
+
+postgresql:
+  enabled: true
+  auth:
+    # Tell Bitnami to reuse the same ExternalSecret
+    existingSecret: authentik-combined-secret
+    secretKeys:
+      # Map Bitnami’s expected field -> key that already exists in the secret
+      adminPasswordKey: postgresql_password
+
+redis:
+  enabled: true
