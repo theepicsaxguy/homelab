@@ -11,6 +11,8 @@ configs:
       p, role:kubechecks, applications, get, */*, allow
       p, role:kubechecks, applications, list, */*, allow
       p, role:kubechecks, applications, sync, */*, allow
+      p, role:kubechecks, applications, create, */*, allow
+      p, role:kubechecks, applications, update, */*, allow
       g, kubechecks, role:kubechecks
 
   cmp:
