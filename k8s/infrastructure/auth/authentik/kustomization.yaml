@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: auth
+resources:
+  - externalsecret.yaml
+  - http-route.yaml
+helmCharts:
+  - name: authentik
+    repo: https://charts.goauthentik.io
+    version: 2025.4.0
+    releaseName: authentik
+    namespace: auth
+    valuesFile: values.yaml
+generatorOptions:
+  disableNameSuffixHash: true
