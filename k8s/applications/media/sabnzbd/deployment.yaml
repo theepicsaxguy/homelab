@@ -30,7 +30,9 @@ spec:
         - name: sabnzbd-config
           mountPath: /config
         - name: sabnzbd-downloads
-          mountPath: /downloads
+          mountPath: /downloads/complete
+        - name: sabnzbd-incomplete
+          mountPath: /downloads/incomplete
       volumes:
       - name: sabnzbd-config
         persistentVolumeClaim:
@@ -38,3 +40,5 @@ spec:
       - name: sabnzbd-downloads
         persistentVolumeClaim:
           claimName: sabnzbd-downloads
+      - name: sabnzbd-incomplete
+        emptyDir: {}

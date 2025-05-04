@@ -49,6 +49,8 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /app/data
+            - name: sabnzbd-downloads
+              mountPath: /downloads/complete
           resources:
             requests:
               cpu: 50m
@@ -65,3 +67,6 @@ spec:
             claimName: media-share
         - name: tmp
           emptyDir: { }
+        - name: sabnzbd-downloads
+          persistentVolumeClaim:
+            claimName: sabnzbd-downloads
