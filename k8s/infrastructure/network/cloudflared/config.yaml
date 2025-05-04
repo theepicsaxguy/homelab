@@ -10,7 +10,7 @@ ingress:
 
   - hostname: ittools.pc-tips.se
     service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
-  - hostname: argocd.pc-tips.se/api/webhook
+  - hostname: argocd.pc-tips.se
     service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
   - hostname: "*.pc-tips.se"
     service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
