@@ -50,7 +50,7 @@ deployment:
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
       value: "true"                                  # Use HTTPS since we're doing direct service communication
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
-      value: "false"
+      value: "true"
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
   volumes:
