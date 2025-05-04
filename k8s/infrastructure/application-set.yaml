@@ -20,6 +20,7 @@ spec:
           - path: k8s/infrastructure/crds
           - path: k8s/infrastructure/monitoring
           - path: k8s/infrastructure/deployment
+          - path: k8s/infrastructure/auth
   template:
     metadata:
       name: 'infra-{{ path.basename }}'
