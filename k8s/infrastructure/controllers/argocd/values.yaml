@@ -30,6 +30,7 @@ configs:
       p, role:kubechecks, applications, update, */*, allow
       p, role:kubechecks, projects, get,       *, allow
       p, role:kubechecks, projects, update,    *, allow
+      p, role:kubechecks, clusters, get, *, allow
       g, kubechecks, role:kubechecks
 
 
