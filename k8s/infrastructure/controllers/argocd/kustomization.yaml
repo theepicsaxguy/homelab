@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - http-route.yaml
+  - http-route-api.yaml
   - argocd-tls.yaml
 
 helmCharts:
