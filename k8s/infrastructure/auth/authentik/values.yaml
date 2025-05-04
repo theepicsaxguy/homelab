@@ -1,0 +1,44 @@
+authentik:
+  # Instead of using valueFrom, provide the path to a file containing the secret value.
+  secret_key: file:///authentik-secrets/secret_key
+  error_reporting:
+    enabled: true
+  postgresql:
+    password: file:///postgres-creds/postgresql_password
+
+server:
+  ingress:
+    enabled: false
+  volumes:
+    # Mount the combined secret for credentials as a volume.
+    - name: postgres-creds
+      secret:
+        secretName: authentik-combined-secret
+    - name: authentik-secrets
+      secret:
+        secretName: authentik-combined-secret
+  volumeMounts:
+    - name: postgres-creds
+      mountPath: /postgres-creds
+      readOnly: true
+    - name: authentik-secrets
+      mountPath: /authentik-secrets
+      readOnly: true
+
+postgresql:
+  enabled: true
+  auth:
+    password: file:///postgres-creds/postgresql_password
+
+redis:
+  enabled: true
+
+worker:
+  volumes:
+    - name: postgres-creds
+      secret:
+        secretName: authentik-combined-secret
+  volumeMounts:
+    - name: postgres-creds
+      mountPath: /postgres-creds
+      readOnly: true

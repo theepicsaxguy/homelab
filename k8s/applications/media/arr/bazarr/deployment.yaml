@@ -44,6 +44,8 @@ spec:
               mountPath: /config
             - name: data
               mountPath: /data
+            - name: sabnzbd-downloads
+              mountPath: /downloads/complete
           resources:
             requests:
               cpu: 50m
@@ -58,3 +60,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: media-share
+        - name: sabnzbd-downloads
+          persistentVolumeClaim:
+            claimName: sabnzbd-downloads
