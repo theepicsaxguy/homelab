@@ -1,44 +1,52 @@
 authentik:
-  # Instead of using valueFrom, provide the path to a file containing the secret value.
-  secret_key: file:///authentik-secrets/secret_key
+  secret_key: ""  # Will be sourced from an existing K8s secret via extraSecretMounts (see below)
   error_reporting:
     enabled: true
   postgresql:
-    password: file:///postgres-creds/postgresql_password
+    password: ""  # Sourced from existing secret
 
 server:
   ingress:
     enabled: false
-  volumes:
-    # Mount the combined secret for credentials as a volume.
-    - name: postgres-creds
-      secret:
-        secretName: authentik-combined-secret
+  # Use extraSecretMounts to mount secrets as files per authentik chart documentation
+  extraSecretMounts:
     - name: authentik-secrets
-      secret:
-        secretName: authentik-combined-secret
-  volumeMounts:
-    - name: postgres-creds
-      mountPath: /postgres-creds
-      readOnly: true
-    - name: authentik-secrets
+      secretName: authentik-combined-secret
       mountPath: /authentik-secrets
       readOnly: true
+    - name: postgres-creds
+      secretName: authentik-combined-secret
+      mountPath: /postgres-creds
+      readOnly: true
+  extraEnv:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: secret_key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: postgresql_password
 
 postgresql:
   enabled: true
   auth:
-    password: file:///postgres-creds/postgresql_password
+    password: ""  # will be sourced in the same way
 
 redis:
   enabled: true
 
 worker:
-  volumes:
+  extraSecretMounts:
     - name: postgres-creds
-      secret:
-        secretName: authentik-combined-secret
-  volumeMounts:
-    - name: postgres-creds
+      secretName: authentik-combined-secret
       mountPath: /postgres-creds
       readOnly: true
+  extraEnv:
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: postgresql_password
