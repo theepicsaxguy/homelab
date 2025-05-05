@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: frigate
+  namespace: frigate
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - "frigate.pc-tips.se"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: frigate
+          port: 5000
