@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: automation
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab'
+  destinations:
+    - namespace: 'frigate'
+      server: '*'
+    - namespace: 'mqtt'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
