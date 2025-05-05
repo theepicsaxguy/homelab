@@ -54,7 +54,9 @@ deployment:
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
     - name: KUBECHECKS_SCHEMAS_LOCATION
-      value: "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/release-1.0/config/crd/standard,https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd"
+      value: |
+        - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/release-1.0/config/crd/standard
+        - https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.76.0/example/prometheus-operator-crd
   volumes:
     - name: home
       emptyDir: {}
