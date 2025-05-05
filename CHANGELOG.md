@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.4.0](https://github.com/theepicsaxguy/homelab/compare/v2.3.0...v2.4.0) (2025-05-05)
+
+
+### Features
+
+* **k8s:** add automation and MQTT configurations ([#587](https://github.com/theepicsaxguy/homelab/issues/587)) ([7ad437e](https://github.com/theepicsaxguy/homelab/commit/7ad437e7fd94540cdfadf35ce96e8ddcd59407a8))
+* **k8s:** add HTTPRoute for argocd webhook ([#579](https://github.com/theepicsaxguy/homelab/issues/579)) ([1e29074](https://github.com/theepicsaxguy/homelab/commit/1e29074f03f565d368b56d31349cf1fdd453fdcf))
+
+
+### Bug Fixes
+
+* **k8s:** add missing DNS entry for cilium-gateway-external ([#578](https://github.com/theepicsaxguy/homelab/issues/578)) ([29562ff](https://github.com/theepicsaxguy/homelab/commit/29562ff8e7470563f88ae7e2560c3d617ca05b6e))
+* **k8s:** increase memory limit for controller to 2Gi ([#577](https://github.com/theepicsaxguy/homelab/issues/577)) ([95ab6ef](https://github.com/theepicsaxguy/homelab/commit/95ab6efdd559aa24d25ef712e87c7283306c4d50))
+* **k8s:** update argocd webhook hostname in cloudflared config ([#581](https://github.com/theepicsaxguy/homelab/issues/581)) ([258fd82](https://github.com/theepicsaxguy/homelab/commit/258fd82888438208708733a29c735f0e025721e7))
+* **k8s:** update cert-manager CRD version in kustomization.yaml ([#575](https://github.com/theepicsaxguy/homelab/issues/575)) ([8126055](https://github.com/theepicsaxguy/homelab/commit/81260559121f6f923be55de6bef19a54f13a69dc))
+* **k8s:** update kubechecks role permissions in values.yaml ([#580](https://github.com/theepicsaxguy/homelab/issues/580)) ([3bf02bb](https://github.com/theepicsaxguy/homelab/commit/3bf02bbb8101cfb9c03e385a689921d5092181da))
+
 ## [2.3.0](https://github.com/theepicsaxguy/homelab/compare/v2.2.0...v2.3.0) (2025-05-03)
 
 
