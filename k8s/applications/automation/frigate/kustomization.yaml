@@ -14,7 +14,7 @@ configMapGenerator:
 helmCharts:
   - name: frigate
     repo: https://blakeblackshear.github.io/blakeshome-charts/
-    version: 7.3.0
+    version: 7.8.0
     releaseName: frigate
     namespace: frigate
     valuesFile: values.yaml
