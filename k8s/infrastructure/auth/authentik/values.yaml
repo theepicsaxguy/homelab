@@ -1,53 +1,33 @@
-
+# 2) values.yaml: reference that Secret everywhere
 authentik:
-  secret_key: ""
-  error_reporting:
-    enabled: true
-
-  postgresql:
-    # Same idea: value is supplied via ENV
-    password: ""
-
-server:
-  ingress:
-    enabled: false
-
-  # Environment variables – **this is the critical fix**
-  # The Helm chart expects them under `server.env`, not `extraEnv`.
+  # inject the secret_key via env instead of file
   env:
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:
         secretKeyRef:
           name: authentik-combined-secret
           key: secret_key
-    - name: AUTHENTIK_POSTGRESQL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-combined-secret
-          key: postgresql_password
+  bootstrap:
+    password: ""    # leave blank – we’ll also env‑mount below
+    token: ""
+    email: ""       # optional, you can skip if not using bootstrap
+  # inject bootstrap secrets via env
+  envFrom:
+    - secretRef:
+        name: authentik-combined-secret
 
-  # We no longer mount the secret as a directory, so wipe the old blocks.
-  extraSecretMounts: []
-  extraEnv: []
-
-worker:
-  env:
-    - name: AUTHENTIK_POSTGRESQL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-combined-secret
-          key: postgresql_password
-  extraSecretMounts: []
-  extraEnv: []
-
+# Bitnami PostgreSQL sub‑chart
 postgresql:
   enabled: true
   auth:
-    # Tell Bitnami to reuse the same ExternalSecret
     existingSecret: authentik-combined-secret
     secretKeys:
-      # Map Bitnami’s expected field -> key that already exists in the secret
       adminPasswordKey: postgresql_password
 
+# Bitnami Redis sub‑chart
 redis:
   enabled: true
+  auth:
+    existingSecret: authentik-combined-secret
+    existingSecretPasswordKey: redis_password
+    usePasswordFile: false
