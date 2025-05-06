@@ -77,8 +77,8 @@ config: |
     streams:
       reolink:
         - "{FRIGATE_RTSP_MAIN}"
-        - "{FRIGATE_RTSP_SUB}"
-        - "{FRIGATE_ONVIF}"
+        - "{FRIGATE_RTSP_SUB}"  # REMOVED: FRIGATE_ONVIF (unnecessary stream decoding)
+
   cameras:
     sovrum:
       ffmpeg:
@@ -93,8 +93,6 @@ config: |
               - -timeout
               - '5000000'
           - path: "{FRIGATE_RTSP_SUB}"
-            # The 'detect' role is intentionally used here to limit processing to detection tasks
-            # for the secondary stream, optimizing resource usage.
             roles:
               - detect
             input_args:
@@ -112,27 +110,29 @@ config: |
           - person
           - dog
       motion:
-        threshold: 25
-        contour_area: 40
+        threshold: 50           # Increased for less false motion triggers
+        contour_area: 100       # Reduced CPU from small object processing
       record:
         enabled: true
         retain:
           days: 3
         events:
+          pre_capture: 2        # Optional: trim unneeded pre/post footage
+          post_capture: 2
           retain:
             default: 20
       snapshots:
         enabled: true
         retain:
           default: 5
+        required_zones: []      # Optional: restrict snapshot frequency
       onvif:
         host: 192.168.16.186
         port: 8000
         user: "{FRIGATE_RTSP_USERNAME}"
         password: "{FRIGATE_RTSP_PASSWORD}"
       rtmp:
-        enabled: true
-
+        enabled: false          # DISABLED: unnecessary unless used externally
 
 # Probes configuration
 probes:
