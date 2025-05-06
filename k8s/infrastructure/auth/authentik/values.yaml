@@ -1,123 +1,53 @@
-    authentik:
-      log_level: info
-    postgresql:
-      enabled: false
-    prometheus:
-      rules:
-        enabled: true
-    redis:
-      architecture: standalone
-      auth:
-        enabled: true
-        existingSecret: authentik-credentials
-        existingSecretPasswordKey: AUTHENTIK_REDIS_PASS
-      enabled: true
-      master:
-        persistence:
-          accessModes:
-          - ReadWriteOnce
-          enabled: true
-      sentinel:
-        enabled: false
-    server:
-      env:
-      - name: AUTHENTIK_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_SECRET_KEY
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_PASSWORD
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_TOKEN
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_TOKEN
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_EMAIL
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_EMAIL
-            name: authentik-credentials
-      - name: AUTHENTIK_REDIS__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_REDIS_PASS
-            name: authentik-credentials
-      - name: AUTHENTIK_POSTGRESQL__HOST
-        value: postgres-shared-rw.postgres-shared.svc
-      - name: AUTHENTIK_POSTGRESQL__PORT
-        value: "5432"
-      - name: AUTHENTIK_POSTGRESQL__NAME
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__USER
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_DB_PASS
-            name: authentik-database-credentials
-      replicas: 2
-      resources:
-        limits:
-          memory: 1Gi
-        requests:
-          cpu: 50m
-          memory: 1Gi
-      serviceMonitor:
-        enabled: true
-        interval: 30s
-        scrapeTimeout: 3s
-    worker:
-      env:
-      - name: AUTHENTIK_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_SECRET_KEY
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_PASSWORD
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_TOKEN
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_TOKEN
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_EMAIL
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_EMAIL
-            name: authentik-credentials
-      - name: AUTHENTIK_REDIS__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_REDIS_PASS
-            name: authentik-credentials
-      - name: AUTHENTIK_POSTGRESQL__HOST
-        value: postgres-shared-rw.postgres-shared.svc
-      - name: AUTHENTIK_POSTGRESQL__PORT
-        value: "5432"
-      - name: AUTHENTIK_POSTGRESQL__NAME
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__USER
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_DB_PASS
-            name: authentik-database-credentials
-      replicas: 2
-      resources:
-        limits:
-          memory: 500Mi
-        requests:
-          cpu: 10m
-          memory: 500Mi
-      serviceMonitor:
-        enabled: true
-        interval: 30s
-        scrapeTimeout: 3s
+
+authentik:
+  secret_key: ""
+  error_reporting:
+    enabled: true
+
+  postgresql:
+    # Same idea: value is supplied via ENV
+    password: ""
+
+server:
+  ingress:
+    enabled: false
+
+  # Environment variables – **this is the critical fix**
+  # The Helm chart expects them under `server.env`, not `extraEnv`.
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: secret_key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: postgresql_password
+
+  # We no longer mount the secret as a directory, so wipe the old blocks.
+  extraSecretMounts: []
+  extraEnv: []
+
+worker:
+  env:
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-combined-secret
+          key: postgresql_password
+  extraSecretMounts: []
+  extraEnv: []
+
+postgresql:
+  enabled: true
+  auth:
+    # Tell Bitnami to reuse the same ExternalSecret
+    existingSecret: authentik-combined-secret
+    secretKeys:
+      # Map Bitnami’s expected field -> key that already exists in the secret
+      adminPasswordKey: postgresql_password
+
+redis:
+  enabled: true
