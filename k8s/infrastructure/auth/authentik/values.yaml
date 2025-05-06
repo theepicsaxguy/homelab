@@ -1,24 +1,21 @@
-# 0) Inject all six keys into every Pod via envFrom
 global:
   envFrom:
     - secretRef:
         name: authentik-combined-secret
 
-# 1) Authentik’s own config secret
 authentik:
-  # Tell Authentik to read its SECRET_KEY from this env var
-  secret_key: env://AUTHENTIK_SECRET_KEY
-
-  # Tell Authentik’s bootstrap step to read these from env vars
+  secret_key: env://SECRET_KEY
   bootstrap:
-    password: env://AUTHENTIK_BOOTSTRAP_PASSWORD
-    token:   env://AUTHENTIK_BOOTSTRAP_TOKEN
-    email:   env://AUTHENTIK_BOOTSTRAP_EMAIL
-
+    password: env://BOOTSTRAP_PASSWORD
+    token:   env://BOOTSTRAP_TOKEN
+    email:   env://BOOTSTRAP_EMAIL
+  postgresql:
+    password: env://POSTGRESQL_PASSWORD
+  redis:
+    password: env://REDIS_PASSWORD
   error_reporting:
     enabled: true
 
-# 2) Postgres sub‑chart (no mounts at all)
 postgresql:
   enabled: true
   auth:
@@ -26,7 +23,6 @@ postgresql:
     secretKeys:
       adminPasswordKey: postgresql_password
 
-# 3) Redis sub‑chart
 redis:
   enabled: true
   auth:
@@ -34,7 +30,6 @@ redis:
     existingSecretPasswordKey: redis_password
     usePasswordFile: false
 
-# 4) Ensure both server & worker blocks exist
 server:
   enabled: true
   ingress:
