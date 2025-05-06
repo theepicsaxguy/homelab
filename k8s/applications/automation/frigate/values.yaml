@@ -125,7 +125,7 @@ config: |
         retain:
           days: 3
         events:
-          pre_capture: 2     # Trim recordings before and after to avoid useless padding
+          pre_capture: 2     # Trim recordings before an event to avoid useless padding
           post_capture: 2
           retain:
             default: 20
