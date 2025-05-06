@@ -93,6 +93,8 @@ config: |
               - -timeout
               - '5000000'
           - path: "{FRIGATE_RTSP_SUB}"
+            # The 'detect' role is intentionally used here to limit processing to detection tasks
+            # for the secondary stream, optimizing resource usage.
             roles:
               - detect
             input_args:
