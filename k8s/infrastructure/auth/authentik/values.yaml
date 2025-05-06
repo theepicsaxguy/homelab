@@ -1,123 +1,46 @@
-    authentik:
-      log_level: info
-    postgresql:
-      enabled: false
-    prometheus:
-      rules:
-        enabled: true
-    redis:
-      architecture: standalone
-      auth:
-        enabled: true
-        existingSecret: authentik-credentials
-        existingSecretPasswordKey: AUTHENTIK_REDIS_PASS
-      enabled: true
-      master:
-        persistence:
-          accessModes:
-          - ReadWriteOnce
-          enabled: true
-      sentinel:
-        enabled: false
-    server:
-      env:
-      - name: AUTHENTIK_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_SECRET_KEY
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_PASSWORD
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_TOKEN
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_TOKEN
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_EMAIL
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_EMAIL
-            name: authentik-credentials
-      - name: AUTHENTIK_REDIS__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_REDIS_PASS
-            name: authentik-credentials
-      - name: AUTHENTIK_POSTGRESQL__HOST
-        value: postgres-shared-rw.postgres-shared.svc
-      - name: AUTHENTIK_POSTGRESQL__PORT
-        value: "5432"
-      - name: AUTHENTIK_POSTGRESQL__NAME
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__USER
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_DB_PASS
-            name: authentik-database-credentials
-      replicas: 2
-      resources:
-        limits:
-          memory: 1Gi
-        requests:
-          cpu: 50m
-          memory: 1Gi
-      serviceMonitor:
-        enabled: true
-        interval: 30s
-        scrapeTimeout: 3s
-    worker:
-      env:
-      - name: AUTHENTIK_SECRET_KEY
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_SECRET_KEY
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_PASSWORD
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_TOKEN
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_TOKEN
-            name: authentik-credentials
-      - name: AUTHENTIK_BOOTSTRAP_EMAIL
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_BOOTSTRAP_EMAIL
-            name: authentik-credentials
-      - name: AUTHENTIK_REDIS__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_REDIS_PASS
-            name: authentik-credentials
-      - name: AUTHENTIK_POSTGRESQL__HOST
-        value: postgres-shared-rw.postgres-shared.svc
-      - name: AUTHENTIK_POSTGRESQL__PORT
-        value: "5432"
-      - name: AUTHENTIK_POSTGRESQL__NAME
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__USER
-        value: authentik
-      - name: AUTHENTIK_POSTGRESQL__PASSWORD
-        valueFrom:
-          secretKeyRef:
-            key: AUTHENTIK_DB_PASS
-            name: authentik-database-credentials
-      replicas: 2
-      resources:
-        limits:
-          memory: 500Mi
-        requests:
-          cpu: 10m
-          memory: 500Mi
-      serviceMonitor:
-        enabled: true
-        interval: 30s
-        scrapeTimeout: 3s
+# 0) Inject all six keys into every Pod via envFrom
+global:
+  envFrom:
+    - secretRef:
+        name: authentik-combined-secret
+
+# 1) Authentik’s own config secret
+authentik:
+  # Tell Authentik to read its SECRET_KEY from this env var
+  secret_key: env://AUTHENTIK_SECRET_KEY
+
+  # Tell Authentik’s bootstrap step to read these from env vars
+  bootstrap:
+    password: env://AUTHENTIK_BOOTSTRAP_PASSWORD
+    token:   env://AUTHENTIK_BOOTSTRAP_TOKEN
+    email:   env://AUTHENTIK_BOOTSTRAP_EMAIL
+
+  error_reporting:
+    enabled: true
+
+# 2) Postgres sub‑chart (no mounts at all)
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: authentik-combined-secret
+    secretKeys:
+      adminPasswordKey: postgresql_password
+
+# 3) Redis sub‑chart
+redis:
+  enabled: true
+  auth:
+    existingSecret: authentik-combined-secret
+    existingSecretPasswordKey: redis_password
+    usePasswordFile: false
+
+# 4) Ensure both server & worker blocks exist
+server:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - authentik.pc-tips.se
+
+worker:
+  enabled: true

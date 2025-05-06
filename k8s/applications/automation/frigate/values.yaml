@@ -85,7 +85,7 @@ config: |
         inputs:
           - path: "{FRIGATE_RTSP_MAIN}"
             roles:
-              - rtmp
+              - audio
               - record
             input_args:
               - -rtsp_transport
