@@ -1,22 +1,24 @@
-# 2) values.yaml: reference that Secret everywhere
-authentik:
-  # inject the secret_key via env instead of file
-  env:
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-combined-secret
-          key: secret_key
-  bootstrap:
-    password: ""    # leave blank – we’ll also env‑mount below
-    token: ""
-    email: ""       # optional, you can skip if not using bootstrap
-  # inject bootstrap secrets via env
+# 0) Inject all six keys into every Pod via envFrom
+global:
   envFrom:
     - secretRef:
         name: authentik-combined-secret
 
-# Bitnami PostgreSQL sub‑chart
+# 1) Authentik’s own config secret
+authentik:
+  # Tell Authentik to read its SECRET_KEY from this env var
+  secret_key: env://AUTHENTIK_SECRET_KEY
+
+  # Tell Authentik’s bootstrap step to read these from env vars
+  bootstrap:
+    password: env://AUTHENTIK_BOOTSTRAP_PASSWORD
+    token:   env://AUTHENTIK_BOOTSTRAP_TOKEN
+    email:   env://AUTHENTIK_BOOTSTRAP_EMAIL
+
+  error_reporting:
+    enabled: true
+
+# 2) Postgres sub‑chart (no mounts at all)
 postgresql:
   enabled: true
   auth:
@@ -24,10 +26,21 @@ postgresql:
     secretKeys:
       adminPasswordKey: postgresql_password
 
-# Bitnami Redis sub‑chart
+# 3) Redis sub‑chart
 redis:
   enabled: true
   auth:
     existingSecret: authentik-combined-secret
     existingSecretPasswordKey: redis_password
     usePasswordFile: false
+
+# 4) Ensure both server & worker blocks exist
+server:
+  enabled: true
+  ingress:
+    enabled: true
+    hosts:
+      - authentik.pc-tips.se
+
+worker:
+  enabled: true
