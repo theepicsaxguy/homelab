@@ -6,12 +6,12 @@ resources:
 helmCharts:
   - name: cert-manager-csi-driver
     repo: https://charts.jetstack.io
-    version: v0.10.2
+    version: v0.10.3
     releaseName: cert-manager-csi-driver
     namespace: cert-manager
 
   - name: trust-manager
     repo: https://charts.jetstack.io
-    version: v0.17.0
+    version: v0.17.1
     releaseName: trust-manager
     namespace: cert-manager
