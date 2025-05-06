@@ -79,16 +79,22 @@ config: |
         - "{FRIGATE_RTSP_MAIN}"
         - "{FRIGATE_RTSP_SUB}"
         - "{FRIGATE_ONVIF}"
-
   cameras:
     sovrum:
       ffmpeg:
         inputs:
           - path: "{FRIGATE_RTSP_MAIN}"
             roles:
-              - detect
               - rtmp
               - record
+            input_args:
+              - -rtsp_transport
+              - tcp
+              - -timeout
+              - '5000000'
+          - path: "{FRIGATE_RTSP_SUB}"
+            roles:
+              - detect
             input_args:
               - -rtsp_transport
               - tcp
@@ -113,8 +119,6 @@ config: |
         port: 8000
         user: "{FRIGATE_RTSP_USERNAME}"
         password: "{FRIGATE_RTSP_PASSWORD}"
-
-
 
 
 # Probes configuration
