@@ -132,7 +132,6 @@ config: |
         password: "{FRIGATE_RTSP_PASSWORD}"
       rtmp:
         enabled: true
-      name: sovrum_camera
 
 
 # Probes configuration
