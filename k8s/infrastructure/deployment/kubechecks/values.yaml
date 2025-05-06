@@ -56,7 +56,7 @@ deployment:
     - name: KUBECHECKS_SCHEMAS_LOCATION
       value: "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
     - name: KUBECHECKS_GITHUB_APP_ID
-      value: 1243453
+      value: "1243453"
     - name: KUBECHECKS_GITHUB_INSTALLATION_ID
       value: 65970314
     - name: KUBECHECKS_GITHUB_PRIVATE_KEY
