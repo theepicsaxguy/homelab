@@ -33,28 +33,37 @@ deployment:
           key: webhook_hmac
     - name: KUBECHECKS_VCS_TYPE
       value: "github"
-    - name: KUBECHECKS_VCS_TOKEN
-      valueFrom:
-        secretKeyRef:
-          name: kubechecks-combined-secret
-          key: github_token
+    # - name: KUBECHECKS_VCS_TOKEN
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: kubechecks-combined-secret
+    #       key: github_token
     - name: KUBECHECKS_ARGOCD_API_TOKEN
       valueFrom:
         secretKeyRef:
           name: kubechecks-combined-secret
           key: argocd_api_token
     - name: KUBECHECKS_ARGOCD_API_INSECURE
-      value: "true"                                    # Skip certificate verification for internal service
+      value: "true"
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
       value: "argocd-server.argocd.svc.kube.pc-tips.se"
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
-      value: "true"                                  # Use HTTPS since we're doing direct service communication
+      value: "true"
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
       value: "true"
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
     - name: KUBECHECKS_SCHEMAS_LOCATION
       value: "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
+    - name: KUBECHECKS_GITHUB_APP_ID
+      value: "1243453"
+    - name: KUBECHECKS_GITHUB_INSTALLATION_ID
+      value: "65970314"
+    - name: KUBECHECKS_GITHUB_PRIVATE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: kubechecks-combined-secret
+          key: github_token
   volumes:
     - name: home
       emptyDir: {}

@@ -106,9 +106,14 @@ config: |
           record: -f segment -segment_time 60 -reset_timestamps 1 -strftime 1 -c copy
       detect:
         enabled: true
-        width: 640
-        height: 360
-        fps: 5
+        max_disappeared: 25
+      objects:
+        track:
+          - person
+          - dog
+      motion:
+        threshold: 25
+        contour_area: 40
       record:
         enabled: true
         retain:
@@ -116,11 +121,18 @@ config: |
         events:
           retain:
             default: 20
+      snapshots:
+        enabled: true
+        retain:
+          default: 5
       onvif:
         host: 192.168.16.186
         port: 8000
         user: "{FRIGATE_RTSP_USERNAME}"
         password: "{FRIGATE_RTSP_PASSWORD}"
+      rtmp:
+        enabled: true
+      name: sovrum_camera
 
 
 # Probes configuration
