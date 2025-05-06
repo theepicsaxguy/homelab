@@ -58,7 +58,7 @@ deployment:
     - name: KUBECHECKS_GITHUB_APP_ID
       value: "1243453"
     - name: KUBECHECKS_GITHUB_INSTALLATION_ID
-      value: 65970314
+      value: "65970314"
     - name: KUBECHECKS_GITHUB_PRIVATE_KEY
       valueFrom:
         secretKeyRef:
