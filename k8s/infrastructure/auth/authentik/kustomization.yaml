@@ -4,6 +4,7 @@ namespace: auth
 resources:
   - externalsecret.yaml
   - database.yaml
+  - httproute.yaml
 
 configMapGenerator:
   - name: authentik-blueprints
