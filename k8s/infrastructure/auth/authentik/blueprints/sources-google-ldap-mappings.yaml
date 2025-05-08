@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Google Secure LDAP mappings
+  name: pctips - Google Secure LDAP mappings
 entries:
   - identifiers:
       managed: goauthentik.io/sources/ldap/google-uid

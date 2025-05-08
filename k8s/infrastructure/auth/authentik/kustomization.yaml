@@ -4,6 +4,22 @@ namespace: auth
 resources:
   - externalsecret.yaml
   - database.yaml
+
+configMapGenerator:
+  - name: authentik-blueprints
+    files:
+      - blueprints/flows-authenticator-email-setup.yaml
+      - blueprints/flows-enrollment-2-stage.yaml
+      - blueprints/flows-enrollment-email-verification.yaml
+      - blueprints/flows-login-2fa.yaml
+      - blueprints/flows-login-conditional-captcha.yaml
+      - blueprints/flows-recovery-email-verification.yaml
+      - blueprints/flows-unenrollment.yaml
+      - blueprints/sources-google-ldap-mappings.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
 helmCharts:
   - name: authentik
     repo: https://charts.goauthentik.io
@@ -11,5 +27,9 @@ helmCharts:
     releaseName: authentik
     namespace: auth
     valuesFile: values.yaml
-generatorOptions:
-  disableNameSuffixHash: true
+    valuesInline:
+      blueprints:
+        enabled: true
+        configMapName: authentik-blueprints
+
+
