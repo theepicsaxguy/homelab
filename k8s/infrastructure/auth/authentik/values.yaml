@@ -1,96 +1,36 @@
-global:
-  addPrometheusAnnotations: true
-  env:
-    - name: AUTHENTIK_POSTGRESQL__HOST
-      value: "postgresql.postgresql.svc.kube.pc-tips.se"
-    - name: AUTHENTIK_POSTGRESQL__NAME
-      value: "authentik"
-    - name: AUTHENTIK_POSTGRESQL__USER
-      value: "authentik"
-    - name: AUTHENTIK_POSTGRESQL__PORT
-      value: "5432"
-    - name: AUTHENTIK_POSTGRESQL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: postgres-password
-    - name: AUTHENTIK_REDIS__HOST
-      value: redis-master.redis.svc.kube.pc-tips.se
-    - name: AUTHENTIK_REDIS__PORT
-      value: "6379"
-    - name: AUTHENTIK_REDIS__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: redis-password
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: authentik-secret
 authentik:
-  log_level: debug
-  error_reporting:
-    enabled: false
-  env:
-    - name: AUTHENTIK_POSTGRESQL__HOST
-      value: "postgresql.postgresql.svc.kube.pc-tips.se"
-    - name: AUTHENTIK_POSTGRESQL__NAME
-      value: "authentik"
-    - name: AUTHENTIK_POSTGRESQL__USER
-      value: "authentik"
-    - name: AUTHENTIK_POSTGRESQL__PORT
-      value: "5432"
-    - name: AUTHENTIK_POSTGRESQL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: postgres-password
-    - name: AUTHENTIK_REDIS__HOST
-      value: redis-master.redis.svc.kube.pc-tips.se
-    - name: AUTHENTIK_REDIS__PORT
-      value: "6379"
-    - name: AUTHENTIK_REDIS__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: redis-password
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: authentik-secret
-worker:
-  env:
-    - name: AUTHENTIK_POSTGRESQL__HOST
-      value: "postgresql.postgresql.svc.kube.pc-tips.se"
-    - name: AUTHENTIK_POSTGRESQL__NAME
-      value: "authentika"
-    - name: AUTHENTIK_POSTGRESQL__USER
-      value: "authentik"
-    - name: AUTHENTIK_POSTGRESQL__PORT
-      value: "5432"
-    - name: AUTHENTIK_POSTGRESQL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: postgres-password
-    - name: AUTHENTIK_REDIS__HOST
-      value: redis-master.redis.svc.kube.pc-tips.se
-    - name: AUTHENTIK_REDIS__PORT
-      value: "6379"
-    - name: AUTHENTIK_REDIS__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: redis-password
-    - name: AUTHENTIK_SECRET_KEY
-      valueFrom:
-        secretKeyRef:
-          name: authentik-secret
-          key: authentik-secret
+  secret_key: file:///secrets/authentik/secret-key
+  postgresql:
+    user: file:///secrets/authentik/pg-username
+    password: file:///secrets/authentik/pg-password
+
 server:
-  service:
-    type: LoadBalancer
-  metrics:
+  volumes:
+    - name: secrets
+      secret:
+        secretName: authentik-external-secrets
+  volumeMounts:
+    - name: secrets
+      mountPath: /secrets/authentik
+      readOnly: true
+
+worker:
+  volumes:
+    - name: secrets
+      secret:
+        secretName: authentik-external-secrets
+  volumeMounts:
+    - name: secrets
+      mountPath: /secrets/authentik
+      readOnly: true
+
+postgresql:
+  enabled: false
+
+
+redis:
+  enabled: true
+  auth:
     enabled: true
+    existingSecret: authentik-external-secrets
+    passwordKey: redis-password
