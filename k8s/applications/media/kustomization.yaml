@@ -12,3 +12,4 @@ resources:
 - nfs-pv.yaml
 - jellyseerr
 - sabnzbd
+- whisperasr
