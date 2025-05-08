@@ -9,17 +9,3 @@ spec:
   resources:
     requests:
       storage: 1Gi
-
----
-
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: sabnzbd-downloads
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 30Gi
