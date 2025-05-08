@@ -8,6 +8,7 @@ resources:
 - controllers
 - deployment
 - auth
+- database
 
 generatorOptions:
   disableNameSuffixHash: true
