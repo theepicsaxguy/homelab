@@ -13,6 +13,8 @@ deployment:
   env:
     - name: HOME
       value: /home/kubechecks
+    - name: KUBECHECKS_FALLBACK_K8S_VERSION
+      value: "1.32.0"
     - name: KUBECHECKS_MONITOR_ALL_APPLICATIONS
       value: "true"
     - name: KUBECHECKS_ENABLE_HOOKS_RENDERER
