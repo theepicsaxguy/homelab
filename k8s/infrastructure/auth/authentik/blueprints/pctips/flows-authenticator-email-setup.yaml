@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Email MFA setup flow
+  name: pctips - Email MFA setup flow
 entries:
 - attrs:
     designation: stage_configuration

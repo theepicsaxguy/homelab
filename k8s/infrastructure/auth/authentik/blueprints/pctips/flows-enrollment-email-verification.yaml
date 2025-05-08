@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Enrollment with email verification
+  name: pctips - Enrollment with email verification
 entries:
   - identifiers:
       slug: default-enrollment-flow

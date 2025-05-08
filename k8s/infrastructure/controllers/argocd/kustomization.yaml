@@ -8,6 +8,7 @@ resources:
   - argocd-tls.yaml
   - rolebinding.yaml
   - role.yaml
+  - externalsecret.yaml
 
 helmCharts:
   - name: argo-cd

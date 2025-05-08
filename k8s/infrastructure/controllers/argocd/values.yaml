@@ -7,6 +7,16 @@ configs:
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
+    # OIDC Configuration
+    oidc.config: |
+      name: authentik
+      issuer: https://authentik.pc-tips.se/application/o/argocd/
+      clientID: $argocd.clientId
+      clientSecret: $argocd.clientSecret
+      requestedScopes: ["openid", "profile", "email", "groups"]
+      requestedIDTokenClaims:
+        groups:
+          essential: true
 
   cmp:
     create: true
@@ -21,6 +31,10 @@ configs:
   rbac:
     create: true
     policy.csv: |
+      g, ArgoCD Admins, role:admin
+      g, ArgoCD Viewers, role:readonly
+      g, ArgoCDAdmins, role:admin
+      g, ArgoCDViewers, role:readonly
       g, argocd:admin, role:admin
       g, argocd:read_all, role:readonly
       p, role:kubechecks, applications, get,   */*, allow

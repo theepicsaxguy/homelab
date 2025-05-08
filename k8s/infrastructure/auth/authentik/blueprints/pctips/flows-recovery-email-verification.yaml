@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Recovery with email verification
+  name: pctips - Recovery with email verification
 entries:
   - identifiers:
       slug: default-recovery-flow

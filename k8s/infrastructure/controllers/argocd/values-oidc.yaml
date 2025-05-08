@@ -1,0 +1,18 @@
+configs:
+  cm:
+    oidc.config: |
+      name: authentik
+      issuer: https://authentik.{{ defaultDomain }}/application/o/argocd/
+      clientID: $argocd.clientID
+      clientSecret: $argocd.clientSecret
+      requestedScopes: ["openid", "profile", "email", "groups"]
+      requestedIDTokenClaims:
+        groups:
+          essential: true
+
+  rbac:
+    policy.csv: |
+      g, ArgoCD Admins, role:admin
+      g, ArgoCD Viewers, role:readonly
+      g, ArgoCDAdmins, role:admin
+      g, ArgoCDViewers, role:readonly
