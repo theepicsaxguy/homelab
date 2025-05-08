@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: database
+  namespace: argocd
+spec:
+  sourceRepos:
+    - 'https://github.com/theepicsaxguy/homelab'
+  destinations:
+    - namespace: 'database'
+      server: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'

@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: auth
 resources:
   - externalsecret.yaml
-  - http-route.yaml
+  - database.yaml
 helmCharts:
   - name: authentik
     repo: https://charts.goauthentik.io
