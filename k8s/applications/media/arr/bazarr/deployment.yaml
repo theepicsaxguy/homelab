@@ -21,7 +21,7 @@ spec:
         topology.kubernetes.io/zone: host3
       containers:
         - name: bazarr
-          image: ghcr.io/hotio/bazarr:latest
+          image: ghcr.io/hotio/bazarr:release-1.5.1
           ports:
             - name: http
               containerPort: 6767
