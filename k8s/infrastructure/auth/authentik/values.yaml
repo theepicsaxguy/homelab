@@ -1,36 +1,296 @@
+
+## Globally shared configuration for authentik components.
+global:
+  # -- Provide a name in place of `authentik`
+  nameOverride: ""
+  # -- String to fully override `"authentik.fullname"`
+  fullnameOverride: ""
+  # -- A custom namespace to override the default namespace for the deployed resources.
+  namespaceOverride: ""
+  # -- Common labels for all resources.
+  additionalLabels: {}
+    # app: authentik
+
+  # Number of old deployment ReplicaSets to retain. The rest will be garbage collected.
+  revisionHistoryLimit: 3
+
+  # Default image used by all authentik components. For GeoIP configuration, see the geoip values below.
+  image:
+    # -- If defined, a repository applied to all authentik deployments
+    repository: ghcr.io/goauthentik/server
+    # -- Overrides the global authentik whose default is the chart appVersion
+    tag: ""
+    # -- If defined, an image digest applied to all authentik deployments
+    digest: ""
+    # -- If defined, an imagePullPolicy applied to all authentik deployments
+    pullPolicy: IfNotPresent
+
+  # -- Secrets with credentials to pull images from a private registry
+  imagePullSecrets: []
+
+  # -- Annotations for all deployed Deployments
+  deploymentAnnotations: {}
+
+  # -- Annotations for all deployed pods
+  podAnnotations: {}
+
+  # -- Annotations for all deployed secrets
+  secretAnnotations: {}
+
+  # -- Labels for all deployed pods
+  podLabels: {}
+
+  # -- Add Prometheus scrape annotations to all metrics services. This can be used as an alternative to the ServiceMonitors.
+  addPrometheusAnnotations: false
+
+  # -- Toggle and define pod-level security context.
+  # @default -- `{}` (See [values.yaml])
+  securityContext: {}
+    # runAsUser: 1000
+    # runAsGroup: 1000
+    # fsGroup: 1000
+
+  # -- Mapping between IP and hostnames that will be injected as entries in the pod's hosts files
+  hostAliases: []
+    # - ip: 10.20.30.40
+    #   hostnames:
+    #     - my.hostname
+
+  # -- Default priority class for all components
+  priorityClassName: ""
+
+  # -- Default node selector for all components
+  nodeSelector: {}
+
+  # -- Default tolerations for all components
+  tolerations: []
+
+  # Default affinity preset for all components
+  affinity:
+    # -- Default pod anti-affinity rules. Either: `none`, `soft` or `hard`
+    podAntiAffinity: soft
+    # Node affinity rules
+    nodeAffinity:
+      # -- Default node affinity rules. Either `none`, `soft` or `hard`
+      type: hard
+      # -- Default match expressions for node affinity
+      matchExpressions: []
+        # - key: topology.kubernetes.io/zone
+        #   operator: In
+        #   values:
+        #     - zonea
+        #     - zoneb
+
+  # -- Default [TopologySpreadConstraints] rules for all components
+  ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints: []
+    # - maxSkew: 1
+    #   topologyKey: topology.kubernetes.io/zone
+    #   whenUnsatisfiable: DoNotSchedule
+
+  # -- Deployment strategy for all deployed Deployments
+  deploymentStrategy: {}
+    # type: RollingUpdate
+    # rollingUpdate:
+    #   maxSurge: 25%
+    #   maxUnavailable: 25%
+
+  # -- Environment variables to pass to all deployed Deployments. Does not apply to GeoIP
+  # See configuration options at https://goauthentik.io/docs/installation/configuration/
+  # @default -- `[]` (See [values.yaml])
+  env:
+    - name: AUTHENTIK_REDIS__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: auth.authentik-db.credentials
+          key: redis-password
+
+  volumes:
+    - name: db-creds
+      secret:
+        secretName: authentik-user.authentik-postgresql.credentials.postgresql.acid.zalan.do
+    - name: app-creds
+      secret:
+        secretName: auth.authentik-db.credentials
+  volumeMounts:
+    - name: db-creds
+      mountPath: /secrets/authentik
+      readOnly: true
+    - name: app-creds
+      mountPath: /secrets/app
+      readOnly: true
+
+  # -- envFrom to pass to all deployed Deployments. Does not apply to GeoIP
+  # @default -- `[]` (See [values.yaml])
+  envFrom:
+  - secretRef:
+        name: auth.authentik.env
+
+
 authentik:
-  secret_key: file:///secrets/authentik/secret-key
+  secret_key: file:///secrets/app/secret-key
   postgresql:
-    user: file:///secrets/authentik/pg-username
-    password: file:///secrets/authentik/pg-password
+    host: authentik-postgresql
+    name: authentik
+    user: file:///secrets/authentik/username
+    password: file:///secrets/authentik/password
+    port: 5432
+
+    email:
+      # -- SMTP Server emails are sent from, fully optional
+      host: ""
+      # -- SMTP server port
+      port: 587
+      # -- SMTP credentials, when left empty, no authentication will be done
+      username: ""
+      # -- SMTP credentials, when left empty, no authentication will be done
+      password: ""
+      # -- Use StartTLS. Enable either use_tls or use_ssl, they can't be enabled at the same time.
+      use_tls: false
+      # -- Use SSL. Enable either use_tls or use_ssl, they can't be enabled at the same time.
+      use_ssl: false
+      # -- Connection timeout
+      timeout: 30
+      # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
+      from: ""
 
 server:
-  volumes:
-    - name: secrets
-      secret:
-        secretName: authentik-external-secrets
-  volumeMounts:
-    - name: secrets
-      mountPath: /secrets/authentik
-      readOnly: true
+  enabled: true
+  service:
+    type: LoadBalancer
+  # env:
+  #   - name: AUTHENTIK_REDIS__PASSWORD
+  #     valueFrom:
+  #       secretKeyRef:
+  #         name: auth.authentik-db.credentials
+  #         key: redis-password
+
+
 
 worker:
-  volumes:
-    - name: secrets
-      secret:
-        secretName: authentik-external-secrets
-  volumeMounts:
-    - name: secrets
-      mountPath: /secrets/authentik
-      readOnly: true
+  enabled: true
+  # env:
+  #   - name: AUTHENTIK_REDIS__PASSWORD
+  #     valueFrom:
+  #       secretKeyRef:
+  #         name: auth.authentik-db.credentials
+  #         key: redis-password
+  # volumes:
+  #   - name: db-creds
+  #     secret:
+  #       secretName: authentik-user.authentik-postgresql.credentials.postgresql.acid.zalan.do
+  #   - name: app-creds
+  #     secret:
+  #       secretName: auth.authentik-db.credentials
+  # volumeMounts:
+  #   - name: db-creds
+  #     mountPath: /secrets/authentik
+  #     readOnly: true
+  #   - name: app-creds
+  #     mountPath: /secrets/app
+  #     readOnly: true
 
 postgresql:
   enabled: false
-
 
 redis:
   enabled: true
   auth:
     enabled: true
-    existingSecret: authentik-external-secrets
+    existingSecret: auth.authentik-db.credentials
     passwordKey: redis-password
+
+
+blueprints:
+  # -- List of config maps to mount blueprints from.
+  # Only keys in the configMap ending with `.yaml` will be discovered and applied.
+  configMaps: []
+  # -- List of secrets to mount blueprints from.
+  # Only keys in the secret ending with `.yaml` will be discovered and applied.
+  secrets: []
+route:
+    main:
+      # -- enable an HTTPRoute resource for the authentik server.
+      # Be aware that this is an early beta of this feature. We don't guarantee this works and is subject to change.
+      enabled: true
+      # -- Set the route apiVersion
+      apiVersion: gateway.networking.k8s.io/v1
+      # -- Set the route kind
+      kind: HTTPRoute
+
+      # -- Route annotations
+      annotations: {}
+      # -- Route labels
+      labels: {}
+
+      # -- Route hostnames
+      hostnames:
+        - "sso.pc-tips.se"
+      # -- Reference to parent gateways
+      parentRefs:
+        - name: external
+          namespace: gateway
+        - name: internal
+          namespace: gateway
+
+      # -- Create http route for redirect (https://gateway-api.sigs.k8s.io/guides/http-redirect-rewrite/#http-to-https-redirects).
+      # Take care that you only enable this on the http listener of the gateway to avoid an infinite redirect.
+      # Matches, filters and additionalRules will be ignored if this is set to true
+      httpsRedirect: false
+
+      # -- uses `server.service.servicePortHttps` instead of `server.service.servicePortHttp`
+      https: false
+
+      # -- Route matches
+      matches:
+        - path:
+            type: PathPrefix
+            value: "{{ .Values.authentik.web.path }}"
+
+      # -- Route filters
+      filters: []
+
+      # -- Additional custom rules that can be added to the route
+      additionalRules: []
+## authentik server metrics service configuration
+metrics:
+  # -- deploy metrics service
+  enabled: true
+  service:
+    # -- metrics service type
+    type: ClusterIP
+    # -- metrics service clusterIP. `None` makes a "headless service" (no virtual IP)
+    clusterIP: ""
+    # -- metrics service annotations
+    annotations: {}
+    # -- metrics service labels
+    labels: {}
+    # -- metrics service port
+    servicePort: 9300
+    # -- metrics service port name
+    portName: metrics
+  serviceMonitor:
+    # -- enable a prometheus ServiceMonitor
+    enabled: false
+    # -- Prometheus ServiceMonitor interval
+    interval: 30s
+    # -- Prometheus ServiceMonitor scrape timeout
+    scrapeTimeout: 3s
+    # -- Prometheus [RelabelConfigs] to apply to samples before scraping
+    relabelings: []
+    # -- Prometheus [MetricsRelabelConfigs] to apply to samples before ingestion
+    metricRelabelings: []
+    # -- Prometheus ServiceMonitor selector
+    selector: {}
+      # prometheus: kube-prometheus
+
+    # -- Prometheus ServiceMonitor scheme
+    scheme: ""
+    # -- Prometheus ServiceMonitor tlsConfig
+    tlsConfig: {}
+    # -- Prometheus ServiceMonitor namespace
+    namespace: ""
+    # -- Prometheus ServiceMonitor labels
+    labels: {}
+    # -- Prometheus ServiceMonitor annotations
+    annotations: {}
