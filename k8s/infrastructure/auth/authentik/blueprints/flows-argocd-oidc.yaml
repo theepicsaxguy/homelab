@@ -1,0 +1,45 @@
+version: 1
+metadata:
+  name: ArgoCD SSO Setup
+entries:
+- model: authentik_flows.flow
+  id: default-authentication-flow
+  identifiers:
+    slug: default-authentication-flow
+  attrs:
+    name: Default Authentication Flow
+    title: Default Authentication Flow
+    designation: authentication
+
+- model: authentik_flows.flow
+  id: default-authorization-flow
+  identifiers:
+    slug: default-authorization-flow
+  attrs:
+    name: Default Authorization Flow
+    title: Default Authorization Flow
+    designation: authorization
+
+- model: authentik_flows.flow
+  id: default-invalidation-flow
+  identifiers:
+    slug: default-invalidation-flow
+  attrs:
+    name: Default Invalidation Flow
+    title: Default Invalidation Flow
+    designation: invalidation
+
+- model: authentik_providers_oauth2.oauth2provider
+  id: argocd-provider
+  identifiers:
+    name: ArgoCD OIDC Provider
+  attrs:
+    name: ArgoCD OIDC Provider
+    authentication_flow: !KeyOf default-authentication-flow
+    authorization_flow: !KeyOf default-authorization-flow
+    invalidation_flow: !KeyOf default-invalidation-flow
+    client_type: confidential
+    redirect_uris:
+      - uri: https://argocd.pc-tips.se/api/dex/callback
+      - uri: https://localhost:8085/auth/callback
+    include_claims_in_id_token: true

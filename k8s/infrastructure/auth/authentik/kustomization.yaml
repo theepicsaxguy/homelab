@@ -16,6 +16,7 @@ configMapGenerator:
       - blueprints/flows-recovery-email-verification.yaml
       - blueprints/flows-unenrollment.yaml
       - blueprints/sources-google-ldap-mappings.yaml
+      - blueprints/flows-argocd-oidc.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
