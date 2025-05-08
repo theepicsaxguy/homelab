@@ -43,7 +43,7 @@ spec:
             - name: bazarr-config
               mountPath: /config
             - name: data
-              mountPath: /data
+              mountPath: /app/data
           resources:
             requests:
               cpu: 50m

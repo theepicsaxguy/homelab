@@ -32,7 +32,7 @@ spec:
         - name: sabnzbd-config
           mountPath: /config
         - name: media-share
-          mountPath: /downloads/complete
+          mountPath: /app/data
         - name: sabnzbd-incomplete
           mountPath: /downloads/incomplete
       volumes:

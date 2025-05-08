@@ -48,7 +48,7 @@ spec:
             - name: config
               mountPath: /config
             - name: media
-              mountPath: /mnt/media
+              mountPath: /app/data
             - name: cache
               mountPath: /cache
       volumes:
