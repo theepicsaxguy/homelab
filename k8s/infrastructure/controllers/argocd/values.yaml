@@ -10,7 +10,7 @@ configs:
     # OIDC Configuration
     oidc.config: |
       name: authentik
-      issuer: https://authentik.pc-tips.se/application/o/argocd/
+      issuer: https://sso.pc-tips.se/application/o/argocd/
       clientID: $argocd.clientId
       clientSecret: $argocd.clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
