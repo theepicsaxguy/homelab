@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Enrollment (2 Stage)
+  name: pctips - Enrollment (2 Stage)
 entries:
   - identifiers:
       slug: default-enrollment-flow

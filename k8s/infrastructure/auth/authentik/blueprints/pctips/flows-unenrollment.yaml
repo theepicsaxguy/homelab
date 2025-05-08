@@ -2,7 +2,7 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - User deletion
+  name: pctips - User deletion
 entries:
   - identifiers:
       slug: default-unenrollment-flow

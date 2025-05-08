@@ -2,28 +2,28 @@ version: 1
 metadata:
   labels:
     blueprints.goauthentik.io/instantiate: "false"
-  name: Example - Two-factor Login
+  name: pctips - Login with conditional Captcha
 entries:
   - identifiers:
       slug: default-authentication-flow
-    model: authentik_flows.flow
     id: flow
+    model: authentik_flows.flow
     attrs:
       name: Default Authentication Flow
       title: Welcome to authentik!
       designation: authentication
       authentication: require_unauthenticated
   - identifiers:
-      name: test-not-app-password
-    id: test-not-app-password
-    model: authentik_policies_expression.expressionpolicy
-    attrs:
-      expression: |
-        return context.get("auth_method") != "app_password"
-  - identifiers:
       name: default-authentication-login
     id: default-authentication-login
     model: authentik_stages_user_login.userloginstage
+  - identifiers:
+      name: default-authentication-flow-captcha
+    id: default-authentication-flow-captcha
+    model: authentik_stages_captcha.captchastage
+    attrs:
+      public_key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+      private_key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
   - identifiers:
       name: default-authentication-identification
     id: default-authentication-identification
@@ -33,10 +33,6 @@ entries:
         - email
         - username
       template: stages/identification/login.html
-  - identifiers:
-      name: default-authentication-flow-mfa
-    id: default-authentication-flow-mfa
-    model: authentik_stages_authenticator_validate.authenticatorvalidatestage
   - identifiers:
       name: default-authentication-password
     id: default-authentication-password
@@ -58,11 +54,12 @@ entries:
     model: authentik_flows.flowstagebinding
   - identifiers:
       target: !KeyOf flow
-      stage: !KeyOf default-authentication-flow-mfa
+      stage: !KeyOf default-authentication-flow-captcha
       order: 30
+    id: flow-binding-captcha
     model: authentik_flows.flowstagebinding
-    id: flow-binding-mfa
     attrs:
+      evaluate_on_plan: false
       re_evaluate_policies: true
   - identifiers:
       target: !KeyOf flow
@@ -70,7 +67,15 @@ entries:
       order: 100
     model: authentik_flows.flowstagebinding
   - identifiers:
-      policy: !KeyOf test-not-app-password
-      target: !KeyOf flow-binding-mfa
+      name: default-authentication-flow-conditional-captcha
+    id: default-authentication-flow-conditional-captcha
+    model: authentik_policies_reputation.reputationpolicy
+    attrs:
+      check_ip: true
+      check_username: true
+      threshold: -5
+  - identifiers:
+      policy: !KeyOf default-authentication-flow-conditional-captcha
+      target: !KeyOf flow-binding-captcha
       order: 0
     model: authentik_policies.policybinding
