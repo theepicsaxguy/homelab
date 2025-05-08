@@ -8,15 +8,15 @@ resources:
 configMapGenerator:
   - name: authentik-blueprints
     files:
-      - blueprints/flows-authenticator-email-setup.yaml
-      - blueprints/flows-enrollment-2-stage.yaml
-      - blueprints/flows-enrollment-email-verification.yaml
-      - blueprints/flows-login-2fa.yaml
-      - blueprints/flows-login-conditional-captcha.yaml
-      - blueprints/flows-recovery-email-verification.yaml
-      - blueprints/flows-unenrollment.yaml
-      - blueprints/sources-google-ldap-mappings.yaml
-      - blueprints/flows-argocd-oidc.yaml
+      - blueprints/pctips/flows-authenticator-email-setup.yaml
+      - blueprints/pctips/flows-enrollment-2-stage.yaml
+      - blueprints/pctips/flows-enrollment-email-verification.yaml
+      - blueprints/pctips/flows-login-2fa.yaml
+      - blueprints/pctips/flows-login-conditional-captcha.yaml
+      - blueprints/pctips/flows-recovery-email-verification.yaml
+      - blueprints/pctips/flows-unenrollment.yaml
+      - blueprints/pctips/sources-google-ldap-mappings.yaml
+      - blueprints/pctips/flows-argocd-oidc.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
