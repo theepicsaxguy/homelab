@@ -26,6 +26,8 @@ spec:
           value: "2501"
         - name: TZ
           value: "Europe/Stockholm"
+        - name: HOST_WHITELIST_ENTRIES
+          value: "sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
         volumeMounts:
         - name: sabnzbd-config
           mountPath: /config

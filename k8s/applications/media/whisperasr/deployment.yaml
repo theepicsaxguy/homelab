@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whisperasr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whisperasr
+  template:
+    metadata:
+      labels:
+        app: whisperasr
+    spec:
+      containers:
+        - name: whisperasr
+          image: onerahmet/openai-whisper-asr-webservice:1.8.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+          env:
+            - name: ASR_MODEL
+              value: "small"
+            - name: ASR_ENGINE
+              value: "faster_whisper"
