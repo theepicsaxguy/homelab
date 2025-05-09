@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
     - name: external
-      namespace: gateway    
+      namespace: gateway
   hostnames:
     - "sso.pc-tips.se"
   rules:
