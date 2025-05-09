@@ -3,16 +3,12 @@
   "extends": [
     "config:recommended",
     ":rebaseStalePrs",
-    "config:recommended",
     ":enablePreCommit",
     "docker:enableMajor",
     ":automergePatch",
     ":automergeMinor",
     "mergeConfidence:all-badges"
   ],
-  "platform": "github",
-  "onboarding": false,
-  "requireConfig": "optional",
   "dependencyDashboard": true,
   "kustomize": {
     "managerFilePatterns": ["/(^|/)kustomization\\.ya?ml(\\.j2)?$/"]
