@@ -1,0 +1,99 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: authentik-outpost-api
+  namespace: auth
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: authentik-outpost-api
+    creationPolicy: Owner
+  data:
+    - secretKey: authentik_host
+      remoteRef:
+        key: 286314ab-6f56-4371-9e31-b2d800e2bdc1
+    - secretKey: authentik_host_insecure
+      remoteRef:
+        key: 0556c078-be92-494a-94e1-b2d800e2fac8
+    - secretKey: token
+      remoteRef:
+        key: 8d257027-d623-4781-8079-b2d800e3e8d6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: proxy-outpost
+    app.kubernetes.io/managed-by: goauthentik.io
+    app.kubernetes.io/name: authentik-proxy
+    app.kubernetes.io/version: 2021.12.3
+  name: authentik-outpost
+spec:
+  ports:
+    - name: http
+      port: 9000
+      protocol: TCP
+      targetPort: http
+    - name: https
+      port: 9443
+      protocol: TCP
+      targetPort: https
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/managed-by: goauthentik.io
+    app.kubernetes.io/name: authentik-outpost
+    app.kubernetes.io/instance: proxy-outpost
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: proxy-outpost
+    app.kubernetes.io/managed-by: goauthentik.io
+    app.kubernetes.io/name: authentik-proxy
+    app.kubernetes.io/version: 2021.12.3
+  name: authentik-outpost
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: proxy-outpost
+      app.kubernetes.io/managed-by: goauthentik.io
+      app.kubernetes.io/name: authentik-proxy
+      app.kubernetes.io/version: 2021.12.3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: proxy-outpost
+        app.kubernetes.io/managed-by: goauthentik.io
+        app.kubernetes.io/name: authentik-proxy
+        app.kubernetes.io/version: 2021.12.3
+    spec:
+      containers:
+        - name: proxy
+          image: ghcr.io/goauthentik/proxy
+          ports:
+            - containerPort: 9000
+              name: http
+              protocol: TCP
+            - containerPort: 9443
+              name: https
+              protocol: TCP
+          env:
+            - name: AUTHENTIK_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: authentik_host
+                  name: authentik-outpost-api
+            - name: AUTHENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: authentik-outpost-api
+            - name: AUTHENTIK_INSECURE
+              valueFrom:
+                secretKeyRef:
+                  key: authentik_host_insecure
+                  name: authentik-outpost-api

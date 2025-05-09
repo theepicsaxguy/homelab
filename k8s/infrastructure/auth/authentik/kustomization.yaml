@@ -5,6 +5,7 @@ resources:
   - externalsecret.yaml
   - database.yaml
   - httproute.yaml
+  - outpost.yaml
 
 configMapGenerator:
   - name: authentik-blueprints
