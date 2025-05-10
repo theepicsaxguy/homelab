@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-frigate-to-auth-services
+  namespace: auth  # This must be in the target namespace (auth)
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: frigate
+  to:
+  - group: ""
+    kind: Service
+    name: authentik-outpost  # You can specify a particular service or omit this field to allow any service
