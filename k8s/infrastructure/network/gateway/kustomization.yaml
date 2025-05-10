@@ -7,3 +7,4 @@ resources:
   - gw-external.yaml
   - gw-internal.yaml
   - gw-tls-passthrough.yaml
+  - gatewayclass.yaml
