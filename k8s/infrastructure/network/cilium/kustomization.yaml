@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - announce.yaml
   - ip-pool.yaml
-  - gateway-config.yaml
 
 helmCharts:
   - name: cilium
