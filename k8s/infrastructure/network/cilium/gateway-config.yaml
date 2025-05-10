@@ -1,0 +1,8 @@
+apiVersion: cilium.io/v2alpha1
+kind: CiliumGatewayConfig
+metadata:
+  name: cilium-gateway-config
+  namespace: kube-system
+spec:
+  backendNamespaceSelector:
+    matchLabels: {}
