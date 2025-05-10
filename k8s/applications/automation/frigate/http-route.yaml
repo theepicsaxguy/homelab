@@ -7,6 +7,8 @@ spec:
   parentRefs:
     - name: internal
       namespace: gateway
+    - name: external
+      namespace: gateway
   hostnames:
     - "frigate.pc-tips.se"
   rules:
@@ -15,5 +17,6 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: frigate
-          port: 5000
+        - name: authentik-outpost
+          namespace: auth
+          port: 9000
