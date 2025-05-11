@@ -17,6 +17,6 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: authentik-outpost
+        - name: authentik-proxy
           namespace: auth
           port: 9000

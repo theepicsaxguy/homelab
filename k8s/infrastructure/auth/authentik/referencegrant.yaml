@@ -11,4 +11,4 @@ spec:
   to:
   - group: ""
     kind: Service
-    name: authentik-outpost  # You can specify a particular service or omit this field to allow any service
+    name: authentik-proxy
