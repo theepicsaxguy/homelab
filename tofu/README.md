@@ -137,3 +137,11 @@ tofu output -raw kube_config > ~/.kube/config
 chmod 600 ~/.talos/config
 chmod 600 ~/.kube/config
 ```
+
+---
+
+To recreate a node you do for example:
+
+tofu taint 'module.talos.proxmox_virtual_environment_vm.this["work-00"]'
+
+Since talos is immutable one instance of where you would need to recreate a node if you increase the size of the disk.

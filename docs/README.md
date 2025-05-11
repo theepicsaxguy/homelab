@@ -1,135 +1,50 @@
-# Homelab Infrastructure Guidelines
+---
+title: System documentation: Homelab Kubernetes configuration
+---
 
-## Infrastructure Architecture
+This document provides an overview of the Kubernetes setup for this homelab environment, which is designed to run
+various applications and services. It aims to explain the system's structure and the rationale behind key design
+decisions, enabling an IT administrator to understand, operate, and maintain the system.
 
-### Design Principles
+## About this system
 
-We chose a Kubernetes-based infrastructure with GitOps workflow because:
+This Kubernetes setup is built upon several guiding principles:
 
-- **GitOps-only changes:** Ensures all changes are tracked, reviewed, and reversible
-- **Progressive delivery:** Enables safe testing through dev → staging → prod
-- **Zero-trust security:** Implements defense in depth from infrastructure to application level
-- **Infrastructure as Code:** Makes the entire stack reproducible and version controlled
+1. **GitOps as the Source of Truth:** The state of the cluster (applications, infrastructure components) is defined
+   entirely within this Git repository. ArgoCD is employed to continuously reconcile the cluster state with these
+   definitions. This ensures that all changes are made via Git commits, providing a comprehensive audit trail and a
+   single, reliable source of truth.
+2. **Declarative Configuration:** The system favors declarative tools such as Kubernetes YAML, Kustomize, and Terraform.
+   The desired state of components is defined, and the tools are responsible for achieving that state.
+3. **Automation:** A high degree of automation is implemented, covering processes from application deployment with
+   ArgoCD ApplicationSets to certificate management with Cert-Manager.
+4. **Security Considerations:** Although this is a homelab environment, security best practices are applied. These
+   include running containers as non-root users, utilizing network policies for traffic control, and managing secrets
+   externally to the Git repository.
+5. **Modularity and Organization:** Configurations are structured using Kustomize and ArgoCD projects and
+   ApplicationSets. This approach promotes organization and simplifies the process of adding new applications or
+   components.
 
-### Environment Strategy
+## Documentation structure
 
-Rather than maintaining separate clusters, we use a single cluster with strong namespace isolation:
+This `/docs` directory contains detailed documentation for various parts of the system:
 
-- **Development:** Fast iterations and testing with minimal resources
-- **Staging:** Production-like environment for validation
-- **Production:** Fully HA with strict security policies
+- **[Provision the Talos Kubernetes cluster with Terraform](./tofu/README.md):** Explains how the underlying Kubernetes
+  cluster, running Talos on Proxmox, is provisioned using Terraform.
+- **[Manage Kubernetes configuration with GitOps](./k8s/README.md):** Describes the overall structure of Kubernetes
+  manifests, with a focus on ArgoCD for implementing GitOps, and details how applications and infrastructure services
+  are managed.
+  - **[Bootstrap ArgoCD](./k8s/argocd-bootstrap.md):** Details the initial setup process for ArgoCD on the cluster.
+  - **[Deploy and manage applications](./k8s/applications/README.md):** Explains the deployment and management
+    strategies for user-facing applications.
+  - **[Deploy and manage infrastructure services](./k8s/infrastructure/README.md):** Covers the deployment and
+    management of core cluster services, including networking, storage, authentication, and monitoring.
+  - **[Automate PR preview environments](./k8s/pr-preview/README.md):** Describes the system used to automatically
+    create temporary environments for testing pull requests.
+- **[Utilize utility and bootstrapping scripts](./scripts/README.md):** Provides documentation for various utility and
+  bootstrapping scripts used within the system.
+- **[Configure the GitHub repository](./github/README.md):** Contains information about CI/CD workflows and Dependabot
+  settings for repository maintenance.
 
-This approach balances resource efficiency with proper isolation.
-
-### Documentation Structure
-
-Documentation is organized by component rather than alphabetically to help understand relationships:
-
-- **Core designs:** Root `/docs` folder contains main architectural decisions
-- **Implementation details:** Component folders contain specific configurations
-- **Environment config:** Separate sections for environment-specific choices
-
-## Best Practices
-
-### GitOps & Deployment
-
-- [ApplicationSet Patterns](best-practices/applicationset-patterns.md)
-- [Manifest Validation](best-practices/manifest-validation.md)
-- [GitOps Guidelines](best-practices/gitops.md)
-- [Secret Management](security/secrets-management.md)
-
-### Development Workflow
-
-- [Build and Deploy](best-practices/build.md)
-- [Resource Management](best-practices/resources.md)
-- [Testing Guidelines](best-practices/testing.md)
-
-### Operations
-
-- [Disaster Recovery](operations/disaster-recovery.md)
-- [Maintenance](operations/maintenance.md)
-- [Troubleshooting](operations/troubleshooting.md)
-
-## Current Status
-
-### Production Ready
-
-- Talos Kubernetes control plane - chosen for security and automation
-- ArgoCD-based GitOps - ensures consistent state management
-- Cilium networking - provides both CNI and security features
-- Longhorn storage - enables distributed persistent storage
-- Authelia authentication - centralizes access control
-- Gateway API - modern ingress management
-
-### Under Development
-
-The following key components are planned to enhance operations:
-
-- Monitoring stack - for better visibility and alerting
-- Automated testing - to validate changes more thoroughly
-- Enhanced backup verification - for improved reliability
-
-## Key Principles
-
-1. GitOps-Only Infrastructure
-
-   - All changes through Git
-   - No manual interventions
-   - Automated reconciliation
-
-2. Environment Progression
-
-   - Dev → Staging → Prod
-   - Progressive validation
-   - Resource graduation
-
-3. Security First
-
-   - Zero-trust model
-   - Defense in depth
-   - Least privilege access
-
-4. Infrastructure as Code
-   - Declarative configurations
-   - Version controlled
-   - Automated validation
-
-## Documentation Standards
-
-### File Organization
-
-- Core concepts in root /docs
-- Detailed docs in subdirectories
-- Environment-specific in /environments
-- Best practices in /best-practices
-
-### Document Structure
-
-- Clear overview section
-- Implementation details
-- Current limitations
-- Future improvements
-- Related documentation
-
-### Maintenance
-
-- Regular updates required
-- Version control aligned
-- Automated validation
-- Clear change history
-
-## References
-
-### Internal
-
-- [Main README](../README.md)
-- [Kubernetes Configuration](../k8s/README.md)
-- [Infrastructure Components](../k8s/infrastructure/README.md)
-- [Application Components](../k8s/applications/README.md)
-
-### External
-
-- [Talos Linux Documentation](https://talos.dev/docs)
-- [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
-- [Cilium Documentation](https://docs.cilium.io/)
-- [Kubernetes Documentation](https://kubernetes.io/docs/)
+This documentation aims to be clear, concise, and actionable. For each component, it explains its function, operational
+details, and the rationale behind its specific design or configuration choices.

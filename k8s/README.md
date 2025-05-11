@@ -11,37 +11,6 @@ Our infrastructure follows a strict GitOps approach with:
 - Progressive deployment through sync waves
 - Resource graduation across environments
 
-## Directory Structure
-
-```
-.
-├── apps/                   # Application workloads
-│   ├── base/              # Base application configurations
-│   │   ├── external/      # External service integrations
-│   │   ├── media/        # Media applications
-│   │   └── tools/        # Development tools
-│   └── overlays/         # Environment-specific configs
-│       ├── dev/          # Development (Wave 3)
-│       ├── staging/      # Staging (Wave 4)
-│       └── prod/         # Production (Wave 5)
-├── infrastructure/        # Core infrastructure
-│   ├── base/             # Base infrastructure components
-│   │   ├── network/      # Cilium, Gateway API, DNS
-│   │   │   ├── cilium/   # CNI and Service Mesh
-│   │   │   └── gateway/  # Gateway API configurations
-│   │   ├── storage/      # CSI drivers, Longhorn
-│   │   ├── auth/         # Authelia, LLDAP
-│   │   ├── controllers/  # Core controllers
-│   │   ├── monitoring/   # Prometheus, Grafana
-│   │   └── vpn/          # VPN services
-│   └── overlays/         # Environment configurations
-│       ├── dev/          # Development (Wave 0)
-│       ├── staging/      # Staging (Wave 1)
-│       └── prod/
-└── sets/                  # ApplicationSet configurations
-
-```
-
 ## Environment Strategy
 
 - **Development**: Fast iteration, relaxed limits
@@ -74,65 +43,16 @@ Gateways:
       - Certificate management
 ```
 
-## Infrastructure Components
+To safely reboot a node.
 
-| Component   | Purpose            | Configuration Path             | Health Check    |
-| ----------- | ------------------ | ------------------------------ | --------------- |
-| Cilium      | CNI & Service Mesh | infrastructure/network/cilium  | Pods & Services |
-| Gateway API | Ingress Management | infrastructure/network/gateway | Routes & Certs  |
-| Authelia    | Authentication     | infrastructure/auth/authelia   | Deployment & DB |
-| Prometheus  | Monitoring         | infrastructure/monitoring      | StatefulSet     |
-| CSI Drivers | Storage            | infrastructure/storage         | DaemonSet       |
+For example:
 
-## Getting Started
+´´´
 
-1. **Initial Setup**:
+kubectl cordon work-00 kubectl drain work-00 --ignore-daemonsets --delete-emptydir-data
 
-   - Follow manual-bootstrap.md for first-time setup
-   - Ensure ArgoCD is configured
+´´´ ´´´
 
-2. **Making Changes**:
+talosctl reboot --nodes 10.25.150.21
 
-   - Modify base configurations or overlays
-   - Validate using provided scripts
-   - Let ArgoCD handle deployment
-
-3. **Validation**:
-
-   ```bash
-   # From repository root
-   ./scripts/validate_manifests.sh -d k8s/infra
-   ```
-
-## Best Practices
-
-1. **GitOps Workflow**
-
-   - All changes through Git
-   - ArgoCD as deployment mechanism
-   - No manual kubectl applies
-
-2. **Resource Management**
-
-   - Use appropriate limits per environment
-   - Enable HPA for scalable workloads
-   - Follow pod anti-affinity in prod/staging
-
-3. **Security**
-
-   - Network policies required
-   - Secrets via Bitwarden SM Operator
-   - RBAC with least privilege
-
-4. **Monitoring**
-   - Health checks configured
-   - Resource metrics enabled
-   - Proper logging setup
-
-## Troubleshooting
-
-1. Check ArgoCD UI for sync status
-2. Verify kustomize builds locally
-3. Review resource limits
-4. Check application logs
-5. Validate network policies
+´´´ kubectl uncordon work-00
