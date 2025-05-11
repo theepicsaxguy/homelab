@@ -1,5 +1,5 @@
 ---
-title: GitHub configuration: CI/CD and repository maintenance
+title: CI/CD and repository maintenance
 ---
 
 This document outlines the use of GitHub features, specifically GitHub Actions and Dependabot, to maintain this homelab
@@ -19,15 +19,15 @@ improve overall stability.
 - **Function:** This workflow employs the `googleapis/release-please-action` to automate the process of semantic
   versioning and release creation based on Conventional Commit messages merged into the `main` branch.
 - **How it works:**
-  1.  When commits adhering to the Conventional Commits specification are pushed to the `main` branch, `release-please`
-      analyzes these messages.
-  2.  If it identifies commits that signify a new version (e.g., `feat:` for a minor release, `fix:` for a patch
-      release, or a commit message containing `BREAKING CHANGE:` for a major release), it automatically creates or
-      updates a "release pull request." This PR includes an updated `CHANGELOG.md` file (generated from the commit
-      messages) and proposes a version bump (typically managed via Git tags, which Release Please will also create).
-  3.  When this release PR is reviewed and merged into `main`, the `release-please-action` then proceeds to create a
-      corresponding GitHub Release. This release is tagged with the new version number and includes the generated
-      changelog entries.
+  1. When commits adhering to the Conventional Commits specification are pushed to the `main` branch, `release-please`
+     analyzes these messages.
+  2. If it identifies commits that signify a new version (e.g., `feat:` for a minor release, `fix:` for a patch release,
+     or a commit message containing `BREAKING CHANGE:` for a major release), it automatically creates or updates a
+     "release pull request." This PR includes an updated `CHANGELOG.md` file (generated from the commit messages) and
+     proposes a version bump (typically managed via Git tags, which Release Please will also create).
+  3. When this release PR is reviewed and merged into `main`, the `release-please-action` then proceeds to create a
+     corresponding GitHub Release. This release is tagged with the new version number and includes the generated
+     changelog entries.
 - **Permissions:** The workflow requires `contents: write` permission to push tags and update the changelog file in the
   repository. It also needs `pull-requests: write` permission to create and update the release pull request.
 - **`release-type: simple`:** A straightforward versioning scheme is used, suitable for projects that don't require

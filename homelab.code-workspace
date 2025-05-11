@@ -14,12 +14,8 @@
       "path": ".github"
     },
     {
-      "name": "docs",
-      "path": "docs"
-    },
-    {
-      "name": "scripts",
-      "path": "scripts"
+      "name": "website",
+      "path": "website"
     },
     {
       "name": "root",

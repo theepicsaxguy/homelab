@@ -1,5 +1,5 @@
 ---
-title: System documentation: Homelab Kubernetes configuration
+title: Homelab Kubernetes configuration
 ---
 
 This document provides an overview of the Kubernetes setup for this homelab environment, which is designed to run
