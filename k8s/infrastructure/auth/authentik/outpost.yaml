@@ -25,37 +25,39 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: authentik-proxy
+  namespace: auth
   labels:
     app.kubernetes.io/instance: proxy-outpost
     app.kubernetes.io/managed-by: goauthentik.io
     app.kubernetes.io/name: authentik-proxy
     app.kubernetes.io/version: 2021.12.3
-  name: authentik-outpost
 spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/instance: proxy-outpost
+    app.kubernetes.io/managed-by: goauthentik.io
+    app.kubernetes.io/name: authentik-proxy
   ports:
     - name: http
       port: 9000
-      protocol: TCP
       targetPort: http
+      protocol: TCP
     - name: https
       port: 9443
-      protocol: TCP
       targetPort: https
-  type: ClusterIP
-  selector:
-    app.kubernetes.io/managed-by: goauthentik.io
-    app.kubernetes.io/name: authentik-outpost
-    app.kubernetes.io/instance: proxy-outpost
+      protocol: TCP
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: authentik-proxy
+  namespace: auth
   labels:
     app.kubernetes.io/instance: proxy-outpost
     app.kubernetes.io/managed-by: goauthentik.io
     app.kubernetes.io/name: authentik-proxy
     app.kubernetes.io/version: 2021.12.3
-  name: authentik-outpost
 spec:
   selector:
     matchLabels:
@@ -74,6 +76,7 @@ spec:
       containers:
         - name: proxy
           image: ghcr.io/goauthentik/proxy:2025.4.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 9000
               name: http
@@ -85,15 +88,15 @@ spec:
             - name: AUTHENTIK_HOST
               valueFrom:
                 secretKeyRef:
-                  key: authentik_host
                   name: authentik-outpost-api
+                  key: authentik_host
             - name: AUTHENTIK_TOKEN
               valueFrom:
                 secretKeyRef:
-                  key: token
                   name: authentik-outpost-api
+                  key: token
             - name: AUTHENTIK_INSECURE
               valueFrom:
                 secretKeyRef:
-                  key: authentik_host_insecure
                   name: authentik-outpost-api
+                  key: authentik_host_insecure
