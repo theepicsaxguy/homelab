@@ -1,25 +1,20 @@
 ---
-title: Style Guide
+title: Documentation style guide
 ---
 
-This Style Guide provides guidelines to ensure that the documentation is consistent, clear, and easy to follow. It
-standardizes aspects like phrasing, formatting, tone, and structure across all documentation.
+This style guide provides guidelines to ensure that the documentation for this project is consistent, clear, and easy to follow. It standardizes aspects like phrasing, formatting, tone, and structure across all documentation.
 
-We appreciate all contributions to our documentation — whether it's fixing a typo, adding new content, or writing an
-entirely new topic. To help us review and merge your contributions more efficiently, please follow our
-[writing documentation](./writing-documentation.md) guidelines. If you notice any inconsistencies, feel free to open an
-[Issue](https://github.com/theepicsaxguy/homelab/issues) or submit a
-[Pull Request](https://github.com/theepicsaxguy/homelab/pulls) to fix them.
+We appreciate all contributions to the documentation — whether it's fixing a typo, adding new content, or writing an entirely new topic. To help us review and merge your contributions more efficiently, please follow the [writing documentation](./writing-documentation.md) guidelines. If you notice any inconsistencies, feel free to open an [Issue](https://github.com/theepicsaxguy/homelab/issues) or submit a [Pull Request](https://github.com/theepicsaxguy/homelab/pulls) to fix them.
 
-- [General Style Guidelines](#general-style-guidelines)
+- [General style guidelines](#general-style-guidelines)
 - [Terminology](#terminology)
-- [Writing Style](#writing-style)
-- [Word Choices](#word-choices)
-- [Formatting Guidelines](#formatting-guidelines)
-- [Component-Based Formatting](#component-based-formatting)
-- [Error Message Formatting and Troubleshooting](#error-message-formatting-and-troubleshooting)
-- [Accessibility Best Practices](#accessibility-best-practices)
-- [Notes and Warnings](#notes-and-warnings)
+- [Writing style](#writing-style)
+- [Word choices](#word-choices)
+- [Formatting guidelines](#formatting-guidelines)
+- [Component-based formatting (if applicable)](#component-based-formatting-if-applicable)
+- [Error message formatting and troubleshooting](#error-message-formatting-and-troubleshooting)
+- [Accessibility best practices](#accessibility-best-practices)
+- [Notes and warnings](#notes-and-warnings)
 
 ---
 
@@ -27,348 +22,317 @@ entirely new topic. To help us review and merge your contributions more efficien
 
 ### Logical order
 
-- Documentation should be structured to follow the natural order of tasks, making it easier for users to follow.
-  Organize sections in a manner that reflects the actual workflow used to complete tasks.
+- Documentation should be structured to follow the natural order of tasks or concepts, making it easier for users to understand and follow. Organize sections in a manner that reflects a logical workflow or a progressive understanding of a topic.
 
-- When writing procedural documentation (How Tos) the steps should follow the workflow in the UI, specifying the exact
-  pages to navigate and the precise fields, tabs, etc., to select or complete. Present the UI components in the document
-  in the same order they appear in the UI.
+- When writing procedural documentation (how-to guides), the steps should follow the actual workflow, whether it involves Command Line Interface (CLI) commands, editing configuration files, or interacting with a Web UI. Specify the exact commands, file paths, or UI elements to interact with, and present them in the order they are encountered.
 
 ### Headings
 
-Use headings (sub-titles) to break up large blocks of text, making it easier for users to navigate the content and find
-specific sections quickly.
+Use headings (sub-titles) to break up large blocks of text, making it easier for users to navigate the content and find specific sections quickly.
 
 ### Look and feel of the docs
 
-In general, the visual, aesthetics of the technical documentation is intended to be lean and clean. Both the content
-(shorter sentences, concise instructions, etc) and the layout strive to have a clean, uncluttered look, with restrained
-use of colors and large call0outs or announcements. Relatedly, the colors used for our Info and Warning callouts, light
-blue and light yellow respectively, are reserved for those purposes only.
+In general, the visual aesthetic of the technical documentation is intended to be lean and clean. Both the content (shorter sentences, concise instructions, etc.) and the layout should strive for a clean, uncluttered look, with restrained use of colors and large callouts. The colors used for `:::info` and `:::warning` callouts (typically light blue and light yellow based on rendering engines) should be reserved for those purposes.
 
 ### Cross-references
 
-Always include cross-references to related content. If a concept is referenced elsewhere in the documentation, link to
-the relevant section to provide users with additional context or instructions.
+Always include cross-references to related content. If a concept or component is detailed elsewhere in the documentation, link to the relevant section to provide users with additional context or instructions.
 
 ### Relative vs. absolute paths
 
-Use relative paths when linking to other documentation files. This will ensure links are automatically updated if file
-paths change in the future. If you are linking between another resource that is not in the same repository and our
-regular technical docs, then use an absolute path.
+Use relative paths when linking to other documentation files within this repository (e.g., `[Link text](./another-doc.md)`). This ensures links remain valid if the documentation structure is hosted or moved. If linking to an external resource or a different repository, use an absolute path.
 
 ### Markdown file type
 
-The standard file type for documentation is `.md`. Use `.mdx` only if React components, such as interactive elements,
-are required.
+The standard file type for documentation is `.md`. Use `.mdx` only if advanced features requiring React components (like interactive elements provided by a static site generator such as Docusaurus) are necessary. For this project, `.md` is typically sufficient.
 
 ### OS-agnostic, clarify where needed
 
-Try to write procedural (How To) docs generically enough that it does not endorse or force a specific operating system.
-If it is necessary to specify a specific OS be sure to label it clearly. Consider using tabs (with MDX) to show the
-different OSes.
+Strive to write procedural documentation generically enough that it does not assume or force a specific client operating system (e.g., for running `kubectl` or `ssh`). If OS-specific instructions are necessary (e.g., different shell commands for Windows vs. Linux), clearly label them or consider using tabs if the rendering engine supports them (an advanced `.mdx` feature).
 
 ## Terminology
 
 ### Industry terms and technology names
 
-- When referring to external tools or industry terms, always use the exact capitalization and naming conventions that
-  the product or company uses. Refer to their website or official documentation for the proper formatting. For example,
-  use "OAuth", "SAML", or "Docker" as per the official conventions.
-- Avoid abbreviations unless they are well-known and widely recognized (e.g., SSO, MFA, RBAC).
-- If an acronym is used less frequently, spell out its full meaning when first mentioned, followed by the acronym in
-  parentheses. For instance, "Security Assertion Markup Language (SAML)". In some cases the acronym can come first,
-  followed by the full term in parentheses.
+- When referring to external tools, services, or industry terms (e.g., Kubernetes, Docker, Git, YAML, OAuth, SAML), always use the exact capitalization and naming conventions that the product or standard uses. Refer to their official websites or documentation for proper formatting.
+- Avoid abbreviations unless they are well-known and widely recognized within the context of this project (e.g., K8s for Kubernetes, VM for Virtual Machine, CI/CD).
+- If an acronym is used less frequently or might be ambiguous, spell out its full meaning upon first mention, followed by the acronym in parentheses. For instance, "Persistent Volume Claim (PVC)."
 
 ## Writing style
 
 ### Tone
 
-The tone of the documentation should be friendly but professional. It should be approachable, yet not overly casual.
-When appropriate, address the reader directly using second-person pronouns (e.g., "Next, you need to configure the login
-settings").
+The tone of the documentation should be friendly but professional. It should be approachable and helpful, yet not overly casual. When appropriate, address the reader directly using second-person pronouns (e.g., "Next, you need to configure the `ConfigMap`.").
 
 ### Language
 
-The documentation uses **American English** spelling conventions (e.g., "customize" instead of "customise").
+The documentation uses **American English** spelling conventions (e.g., "customize" instead of "customise," "initialize" instead of "initialise").
 
 ### Voice
 
 Use **active voice** and **present tense** for clear, direct communication.
 
-- **DON'T:** "The Applications page will be loaded."
-- **DO:** "The Applications page displays."
+- **DON'T:** "The ArgoCD Application will be synchronized by the controller."
+- **DO:** "The ArgoCD controller synchronizes the Application." or "ArgoCD synchronizes the Application."
 
 ### User-friendly phrasing
 
-Avoid phrasing that blames the user. Be subjective and polite when providing instructions.
+Avoid phrasing that might seem to blame the user for errors or misunderstandings. Be objective and polite when providing instructions or troubleshooting advice.
 
-- **DON'T:** "Never modify the default file."
-- **DO:** "We recommend that you do not modify the default file, as doing so may result in unexpected issues."
+- **DON'T:** "You failed to set the correct replica count."
+- **DO:** "Ensure that the replica count is set to the desired value. An incorrect replica count might lead to..."
 
 ### Punctuation
 
-For Ken's sake, and many others, try to not use too many commas (avoid commaitis). Use a comma when needed to separate
-clauses, or for "slowing the pace" or clarity. Please **do** use the Oxford comma.
+Strive for clarity in punctuation. Use commas to separate clauses or items in a list and to improve readability. Please **do** use the Oxford comma (e.g., "networking, storage, and compute resources").
 
 ### Capitalization
 
 #### Titles and headers
 
-Titles and headers (H1, H2, H3, etc.) should follow **sentence case capitalization**, meaning only the first word is
-capitalized, except for proper nouns or product names.For more information, see [below](#titles-and-headers)
+Titles and headers (H1, H2, H3, etc.) should follow **sentence case capitalization**. This means only the first word and proper nouns (like Kubernetes, ArgoCD, Talos, Proxmox, Bitwarden, names of specific scripts or files like `argocd-bootstrap.tf`) are capitalized.
 
 #### Following a colon
 
-Whether to capitalize after a colon depends on the context. Typically, we do not capitalize the first word after a colon
-_unless_ it's a proper noun or if it is the start of a complete sentence. If the colon introduces a list, do not
-capitalize the first word unless it's a proper noun. In headings and titles, capitalize the first word after the colon.
+Whether to capitalize after a colon depends on the context. Typically, do not capitalize the first word after a colon *unless* it's a proper noun or the start of a complete sentence. If the colon introduces a list of items that are not complete sentences, do not capitalize the first word of each item unless it's a proper noun. In headings and titles, if a colon is used, the first word after the colon should generally be capitalized if it begins a distinct conceptual part of the title.
 
 ## Word choices
 
 ### "May" versus "Might" versus "Can"
 
-- Typically, avoid using the word "may" in technical writing, as it implies permission rather than ability to perform an
-  action. Instead, use **"can"** to suggest possibility.
-- **"Might"** should be used to indicate that something could happen under certain conditions, but use it sparingly. It
-  implies unpredictability, which can be undesirable in software documentation.
+-   Typically, avoid using "may" in technical writing, as it can imply permission rather than capability. Instead, use **"can"** to suggest possibility or ability.
+-   **"Might"** should be used to indicate that something could happen under certain conditions, but it implies a degree of unpredictability. Use it sparingly.
 
-  - **DON'T:** "You may use an Expression policy to enforce MFA adherence."
-  - **DO:** "You can use an Expression policy to enforce MFA adherence."
-  - **DO:** "Values might differ depending on the source of the property mappings."
+    -   **DON'T:** "You may use a `NetworkPolicy` to restrict traffic."
+    -   **DO:** "You **can** use a `NetworkPolicy` to restrict traffic."
+    -   **DO:** "The pod **might** enter a `CrashLoopBackOff` state if the configuration is incorrect."
 
 ### "Login", "Log in", and "Log in to"
 
-- As a noun or descriptive term, use **login** (e.g., "The login panel").
-- As a verb, use **"log in"** (e.g., "This stage prompts the user to log in").
-- As a verb followed by the proposition **"to"**, use **"log in to"** (e.g., "Log in to the application").
+-   As a noun or adjective, use **login** (e.g., "The ArgoCD login page," "login credentials").
+-   As a verb, use **log in** (e.g., "You will need to log in to the Grafana UI.").
+-   As a verb followed by the preposition "to," use **log in to** (e.g., "Log in to the Proxmox server.").
 
 ### Use "that" as a conjunction
 
-It's important to use "that" as a conjunction to introduce a dependent clause, or as a "connection" between a noun and a
-verb ("The provider that you created in Step 3."). Including "that" as a conjunction helps non-native English speakers
-more easily parse phrases, and improves output for translation tools.
+It's often good practice to use "that" as a conjunction to introduce a dependent clause, as it can improve clarity, especially for non-native English speakers and automated translation tools.
 
-- **DO:** "Ensure that the new user's password is valid."
-- **DON'T:** "Ensure the new user's password is valid."
+-   **DO:** "Ensure **that** the `kubeconfig` file has the correct permissions."
+-   **DON'T:** "Ensure the `kubeconfig` file has the correct permissions." (While not strictly incorrect, the former can be clearer).
 
 ### "which" vs "that"
 
-Th easiest way to remember when to use "which" versus "that" is:
+A common guideline:
+-   Use **"that"** for restrictive clauses (clauses essential to the meaning of the sentence and not set off by commas).
+-   Use **"which"** for non-restrictive clauses (clauses that add extra information and are usually set off by commas).
 
-- if the second part (clause) of the sentence is required to understand the first part, use "that." If the second clause
-  is only additional info, then you should use "which".
-
-For more information, see https://www.grammarly.com/blog/which-vs-that/.
+For more information, see [Grammarly's explanation](https://www.grammarly.com/blog/which-vs-that/).
 
 ### “since” (time-based) vs “because” (causal)
 
-When writing about a status or anything that is causal ("this happened because of that"), use the word "because". Use
-the word "since" for time-based topics (this will be rare in technical writing).
+-   Use **"because"** when indicating a cause or reason ("The pod failed **because** the image was not found.").
+-   Use **"since"** primarily for time-based references ("The cluster has been stable **since** the last upgrade."). Avoid using "since" to mean "because."
 
 ### Avoid using “once” (numeric) to mean “after” (time-based).
 
-When writing out steps in a procedural topic, avoid starting with "Once...". Instead, you can say "After you have
-created the scope mapping...".
+When writing procedural steps, avoid starting a step with "Once..." to mean "After...".
+
+-   **DON'T:** "**Once** the script completes, check the logs."
+-   **DO:** "**After** the script completes, check the logs." or "**After** you have run the script, check the logs."
 
 ## Formatting guidelines
 
 ### Fonts and font styling
 
-- When referring to internal components, like the policy engine, or blueprints, do not use any special formatting, and
-  do not capitalize. Link to the relevant documentation when possible.
-
-- When referring to functionality and features, do not capitalize and do not use bold or italic text. When possible link
-  to the corresponding documentation.
-
-- Use **bold** to highlight:
-
-  - UI elements such as field names, labels, buttons, or options (e.g., **Save** button, **Username** field).
-  - Key actions in instructions (e.g., **Click Next**).
-
-- Use _italic_ for:
-
-  - Emphasis, but sparingly, to avoid overuse. For example, you can use italics for important terms or concepts on first
-    mention in a section.
-
-- Use `code formatting` for:
-
-  - Commands (e.g., `docker run`).
-  - File paths, file names, and directory names (e.g., `/usr/local/bin/`).
-  - Inline code snippets (e.g., `.env`).
-
-- When handling URLs:
-
-  - For URLs entered as values or defined in fields, enclose any variables inside angle brackets (`< >`) to clearly
-    indicate that these are placeholders that require user input.
-
-    For example: `https://example.company/application/o/<slug>/.well-known/openid-configuration`
-
-  - When mentioning URLs in text or within procedural instructions, omit code formatting. For instance: "In your
-    browser, go to https://example.com."
+-   When referring to general system components (e.g., "the GitOps workflow," "the storage solution"), do not use special formatting or capitalization unless it's a proper noun. Link to relevant documentation when possible.
+-   When referring to specific tools or technologies by name (e.g., ArgoCD, Kustomize, Longhorn), use their official capitalization.
+-   Use **bold** to highlight:
+    *   UI elements if described (e.g., "**Save** button," "**Applications** tab in ArgoCD UI).
+    *   Key actions in instructions (e.g., "**Execute** the following command:").
+    *   Important terms or parameters being defined or emphasized for the first time.
+-   Use _italic_ for:
+    *   Emphasis, but sparingly, to avoid overuse. For example, you can use italics for important terms or concepts on first mention in a section.
+    *   Filenames or paths when mentioned in a sentence but not as a literal path to be copied (though backticks are often preferred for paths).
+-   Use `code formatting` (backticks) for:
+    *   Commands (e.g., `kubectl get pods -n argocd`).
+    *   File paths and directory names (e.g., `/k8s/infrastructure/networking/`, `kustomization.yaml`).
+    *   Inline code snippets, parameter names, keys in YAML/JSON (e.g., `spec.replicas`, `targetRevision: main`).
+    *   Environment variable names (e.g., `KUBECONFIG`).
+-   When handling URLs:
+    *   For URLs that are literal values in configurations or examples, or if they contain placeholders, use `code formatting` and enclose any variables inside angle brackets (`< >`) to clearly indicate that these are placeholders that require user input.
+        **Example**: `https://<your-argocd-server>/api/v1`
+    *   When mentioning general URLs in explanatory text or within procedural instructions as a reference, omit code formatting. For instance: "You can find more details on the official Kubernetes documentation site at https://kubernetes.io."
 
 ### Titles and headers
 
-- Titles and headers (H1, H2, H3) should follow **sentence case capitalization**, meaning only the first word is
-  capitalized, except for proper nouns or product names.
-
-  - **DO:** "Configure the Google Workspace provider"
-  - **DON'T:** "CONFIGURE THE GOOGLE WORKSPACE PROVIDER"
-  - **DON'T:** "Configure The Google Workspace Provider"
-
-- Ensure titles and headers are descriptive and clearly convey the purpose of the section. Avoid vague titles like
-  "Overview." Instead, opt for something more specific, like "About kustomize workflow."
-
-- Use the **imperative verb form** in procedural topics, not gerunds. For example, use "Configure your instance" instead
-  of "Configuring your instance."
+-   Titles and headers (H1, H2, H3) should follow **sentence case capitalization**: only the first word is capitalized, except for proper nouns or acronyms that are always capitalized (e.g., Kubernetes, ArgoCD, NFS).
+    -   **DO:** "Configure the Cilium network policies"
+    -   **DON'T:** "CONFIGURE THE CILIUM NETWORK POLICIES"
+    -   **DON'T:** "Configure The Cilium Network Policies"
+-   Ensure titles and headers are descriptive and clearly convey the purpose of the section. Avoid vague titles like "Overview." Instead, opt for something more specific, like "About the Kustomize build process."
+-   Use the **imperative verb form** in procedural topic titles and headings, not gerunds. For example, use "Bootstrap the cluster" instead of "Bootstrapping the cluster."
 
 ### Examples
 
-When you want to show an example (say, a code snippet), start on a new line, use bold text for the word "Example", and a
-semi-colon, like this:
+When providing examples, such as code snippets or configuration blocks:
 
-    **Example**:
+**Example**:
 
-    This expression policy uses an expression based on the user's name:
-        ```
-        if request.context["pending_user"].username == "marie":
-            return True
-            return False
-        ```
+This Kustomization manifest demonstrates how to include resources:
+```yaml
+# kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+namespace: my-app
+```
 
 ## Code blocks
 
-When you want to show sections of code use **Code blocks** to provide syntax highlighting, a copy button, line numbering
-and line highlighting:
+Use fenced code blocks (triple backticks) for multi-line code, configuration examples, or shell commands. Specify the language for syntax highlighting.
 
 ```text
-` ` ` yaml showLineNumbers {5} title="/etc/wazuh-indexer/opensearch-security/roles_mapping.yml"
-all_access:
-reserved: true
-hidden: false
-backend_roles:
-    - "wazuh-admin"
-    - "admin"
-hosts: []
-users: []
-and_backend_roles: []
-description: "Maps admin to all_access"
+` ` `yaml showLineNumbers {5} title="/k8s/applications/example-app/deployment.yaml"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app-deployment
+spec:
+  replicas: 2 # highlight-this-line
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+      - name: app-container
+        image: "nginx:latest"
+        ports:
+        - containerPort: 80
 ` ` `
 ```
 
-Which is rendered as:
+Which might be rendered (depending on the Markdown processor) similar to:
 
-```yaml showLineNumbers {5} title="/etc/wazuh-indexer/opensearch-security/roles_mapping.yml"
-all_access:
-reserved: true
-hidden: false
-backend_roles:
-  - 'wazuh-admin'
-  - 'admin'
-hosts: []
-users: []
-and_backend_roles: []
-description: 'Maps admin to all_access'
+```yaml showLineNumbers {5} title="/k8s/applications/example-app/deployment.yaml"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-app-deployment
+spec:
+  replicas: 2 # highlight-this-line
+  selector:
+    matchLabels:
+      app: example-app
+  template:
+    metadata:
+      labels:
+        app: example-app
+    spec:
+      containers:
+      - name: app-container
+        image: "nginx:latest"
+        ports:
+        - containerPort: 80
 ```
 
-- `` ` ` ` yaml `` defines the language used for syntax highlighting. Other languages can be used such as; `jsx`,
-  `python`, `bash` and `text`.
+-   `` ` ` `yaml `` defines the language (e.g., `yaml`, `bash`, `terraform`, `json`, `text`).
+-   Optional configurations (depending on your Markdown renderer, e.g., Docusaurus):
+    -   `showLineNumbers`: Enables line numbering.
+    -   `title="<path/to/file_or_description>"`: Defines a title displayed above the code block.
+    -   `{N}` or `{N-M}`: Defines line number(s) to be highlighted.
+    -   Comments like `// highlight-next-line`, `// highlight-start`, `// highlight-end` can also be used for highlighting within the code block if supported.
 
-Optional configurations:
+## Component-based formatting (if applicable)
 
-- `showLineNumbers`: enables the line numbering on the left-hand side of the code block.
-- `title=" "`: defines the title displayed at the top of the code block. This is useful for defining filenames and
-  paths.
-- `{5}`: defines the line number that will be highlighted. Ranges and lists can also be used (e.g. `{5, 7, 9-11}`).
-- `// highlight-next-line`: is used within a code block to highlight the next line.
-- `// highlight-start` and `// highlight-end`: are used within a code block to highlight one or more lines.
+This section would cover the usage of special components (like React components in MDX) if the documentation system supports and uses them. For standard Markdown (`.md`) files, this is generally not applicable.
 
-More information on codeblocks can be found in the
-[Docusaurus code block documentation](https://docusaurus.io/docs/markdown-features/code-blocks).
+### Tabs for multiple configurations (MDX example)
 
-## Component-based formatting
+If using an MDX-based system, you can use tabs to display different configurations or command sequences side-by-side.
 
-This section covers the usage of React components within our documentation. Files that use component-based formatting
-must use the `.mdx` extension.
-
-### Tabs for multiple configurations
-
-Use **Tabs** to display different configurations (e.g., setting up authentication with OIDC vs. SAML) to help users
-navigate between options. Default to the easier or more common option. Insert the following lines wherever you want the
-code block to appear:
-
+**Example** (conceptual, for MDX):
 ```jsx
-import TabItem from '@theme/TabItem';
-import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem'; // Assuming Docusaurus
+import Tabs from '@theme/Tabs';       // Assuming Docusaurus
 
 <Tabs
-  defaultValue="oidc"
+  defaultValue="linux"
   values={[
-    { label: 'OIDC', value: 'oidc' },
-    { label: 'SAML', value: 'saml' },
+    { label: 'Linux/macOS', value: 'linux' },
+    { label: 'Windows (PowerShell)', value: 'windows' },
   ]}
 >
-  <TabItem value="oidc">OIDC configuration details go here.</TabItem>
-  <TabItem value="saml">SAML configuration details go here.</TabItem>
-</Tabs>;
+  <TabItem value="linux">
+    ```bash
+    # Command for Linux/macOS
+    export MY_VAR="value"
+    ./run_script.sh
+    ```
+  </TabItem>
+  <TabItem value="windows">
+    ```powershell
+    # Command for Windows
+    $env:MY_VAR="value"
+    .\run_script.ps1
+    ```
+  </TabItem>
+</Tabs>
 ```
-
-Tabs improve readability when presenting different configurations or setup options.
+This project currently uses plain Markdown, so these advanced tab features are not directly applicable unless the rendering pipeline includes such capabilities.
 
 ## Error message formatting and troubleshooting
 
-When documenting error messages:
+When documenting error messages and their solutions:
 
-- Display the error message
-- Explain possible causes
-- Offer solutions
+-   **Display the error message** clearly, preferably in a code block.
+-   Explain **possible causes** of the error.
+-   Offer concrete **solutions** or troubleshooting steps.
 
-Example:
+**Example**:
 
-- **Error message:**
-
-  ```sh
-  Error: Authentication failed. Invalid credentials.
-  ```
-
-- **Possible causes:**
-
-  - Incorrect username or password
-  - Account is locked due to too many failed login attempts
-
-- **Solution:**
-
-  - Verify your username and password
-  - Reset your password if necessary
-  - Contact an administrator if your account is locked
+-   **Error message:**
+    ```bash
+    Error from server (NotFound): deployments.apps "my-nginx" not found
+    ```
+-   **Possible causes:**
+    *   The deployment `my-nginx` does not exist in the current namespace.
+    *   A typo in the deployment name.
+    *   You are targeting the wrong namespace (`kubectl config current-context` or `kubens` can verify).
+-   **Solution:**
+    1.  Verify the deployment name and the namespace you are operating in.
+    2.  List deployments in the namespace to check for existence:
+        ```bash
+        kubectl get deployments -n <your-namespace>
+        ```
+    3.  If the deployment should exist, check ArgoCD sync status or application logs for deployment errors.
 
 ## Accessibility best practices
 
-- Avoid using color as the sole method of conveying information (e.g., "Click the red button"). Instead, use descriptive
-  labels to ensure accessibility.
-- Provide **descriptive link text**. Avoid using generic terms like "Click here". Be specific about where the link will
-  take the user.
-  - **DON'T:** "Click here."
-  - **DO:** "See the [Authentication Settings](/) for more details."
+-   Avoid using color as the sole method of conveying information (e.g., "The failing pods are shown in red"). Instead, use descriptive text.
+-   Provide **descriptive link text**. Avoid generic terms like "Click here." Be specific about the destination or purpose of the link.
+    -   **DON'T:** "Click [here](./some-file.md) for details."
+    -   **DO:** "For more details, see the [Kubernetes manifest validation guide](./scripts/validate_manifests.md)."
 
 ## Notes and warnings
 
-For notes and important information:
+Use admonitions to draw attention to important pieces of information.
 
-**Notes** are formatted using:
-
-```
+**Notes** are for supplementary information, tips, or elaborations. Format using:
+```markdown
 :::info
-Write your note here.
-:::
-```
+This is an informational note. It provides additional context or a helpful tip related to the main text.
+:::```
 
-**Warnings** are formatted using:
-
-```
+**Warnings** are for critical information that users must be aware of to avoid errors, data loss, or security risks. Format using:
+```markdown
 :::warning
-Write your warning here.
+Exercise caution when modifying this configuration, as incorrect changes can lead to system instability.
 :::
 ```
-
-Use these conventions to ensure that the reader's attention is drawn to crucial information.
+Use these conventions consistently to help readers identify crucial information.

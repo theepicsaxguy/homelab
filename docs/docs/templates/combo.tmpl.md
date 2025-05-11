@@ -1,44 +1,68 @@
 ---
-title: 'Markdown template: combo'
+title: 'Markdown template: Combination topic'
 ---
 
-add brief description of the feature/functionality
+Provide a brief (1-2 sentence) description of the feature, component, or configuration this document covers.
 
-## About feature XYZ
+## About [Feature/Component XYZ]
 
-In this section, go into a deeper explanation of the feature, provide typical use cases, etc.
+In this section, provide a more detailed explanation. Discuss typical use cases, its role in the system, and any core
+concepts.
 
-:::info if needed, use this syntax to add a note (info) or warning (warning). :::
+:::info If needed, use this syntax to add an informational note, provide rationale, or highlight key considerations. :::
 
-### More info about the feature, a sub-category of info
+### More details about [Feature/Component XYZ] (Optional Sub-section)
 
-Use this section if there are several big topics or categories of info that the reader needs to know about the feature
-or task. Add as many of these sections as needed.
+Use this H3 sub-section for distinct aspects or categories of information. Add as many as needed.
 
-## Prerequisites
+## Prerequisites (Optional)
 
-bullet list of pre-reqs
+- List any prerequisite tools, configurations, or knowledge.
+- **Example:** Ensure `kubectl` is configured to access the cluster.
 
-## Overview of steps/workflow (Optional, only if there are a lot of steps)
+## Overview of [Steps/Workflow/Configuration Structure] (Optional, for complex topics)
 
-describe the 50,000 meter view before they dive into the detailed steps, using a bullet list of the main steps, or even
-a diagram of the workflow.
+Describe the high-level view before diving into details. This can be a bullet list of main stages or a brief explanation
+of the overall structure.
 
-## first several group steps
+## [First main section of steps or configuration details]
 
-1. first step
+Orient the reader (e.g., "The following settings are configured in the `/k8s/example/kustomization.yaml` file:").
 
-2. second step
+1. **First step or configuration item:** Explain the goal, then the action.
 
-3. third step
+   - Provide details.
+   - **Example:** To set the replica count, modify the `spec.replicas` field in your `Deployment` manifest.
 
-if you need a tabbed section to represent diff processes or code snippets for diff install environments, use an MDX
-tabbed component.
+     ```yaml
+     # /k8s/apps/my-app/deployment.yaml
+     apiVersion: apps/v1
+     kind: Deployment
+     metadata:
+       name: my-app
+     spec:
+       replicas: 3 # Set desired replica count here
+     # ...
+     ```
 
-## next step of grouped steps, if needed
+2. **Second step or configuration item:** ...
 
-Continue with the steps...
+## [Next main section of steps or configuration details] (If needed)
 
-## verify the steps
+Continue with further steps or details, maintaining logical grouping.
 
-add verification steps
+## Verify the [Configuration/Setup/Process]
+
+Provide steps for the user to verify that the configuration is correct or the process was successful.
+
+- **Example:** After applying the manifests, verify that the pods are running:
+
+  ```bash
+  kubectl get pods -n your-namespace
+  ```
+
+- Check logs for any errors:
+
+  ```bash
+  kubectl logs -n your-namespace -l app=your-app-label
+  ```

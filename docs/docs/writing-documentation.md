@@ -1,78 +1,61 @@
 ---
-title: Writing documentation
+title: Writing documentation for this project
 ---
 
-Writing documentation is a great way for both new and experienced users to improve and contribute to the project. We
-appreciate contributions to our documentation; everything from fixing a typo to adding additional content to writing a
-completely new topic.
+Contributing documentation is a valuable way for users of all experience levels to improve and support this homelab
+project. We appreciate all contributions, from fixing simple typos to adding substantial new content or creating
+entirely new topics.
 
-Adhering to the following guidelines will help us get your PRs merged much easier and faster, with fewer edits needed.
+To ensure a smooth process for reviewing and merging your documentation contributions (Pull Requests - PRs), please
+adhere to the following guidelines.
 
-- Ideally, when you are making contributions to the documentation, you should fork and clone our repo, then
-  [build it locally](#set-up-your-local-build), so that you can test the docs and run the required linting and spell
-  checkers before pushing your PR. While you can do much of the writing and editing within the GitHub UI, you cannot run
-  the required linters from the GitHub UI.
+- Ideally, when making documentation contributions, you should fork and clone the
+  [homelab repository](https://github.com/theepicsaxguy/homelab). While much writing and editing can be done directly
+  within the GitHub UI, local editing allows for more robust spell-checking and formatting.
+- Please refer to our [Documentation style guide](./style-guide.mdx). This guide contains important conventions
+  regarding terminology, formatting of titles and headers, use of code blocks, and much more.
+- Remember to use the [documentation templates](./templates/index.md) when appropriate. They are pre-structured to align
+  with our style guidelines, simplify the writing process (helping to avoid the "blank page" challenge), and maintain
+  consistency in document structure and headings.
+- Before submitting a PR, ensure your Markdown is well-formatted. If you have local Markdown linting tools configured,
+  please run them.
+- For new documentation pages, ensure they are appropriately linked from relevant sections in the main `/docs/README.md`
+  or other logical overview pages so that users can discover them.
 
-- Please refer to our [Style Guide](./style-guide.mdx) for documentation. Here you will learn important guidelines about
-  not capitalizing, how we format our titles and headers, and much more.
+## Set up your local environment (Recommended)
 
-- Remember to use our [docs templates](./templates/index.md) when possible; they are already set up to follow our style
-  guidelines, they make it a lot easier for you (no blank page frights!), and keeps the documentation structure and
-  headings consistent.
+While not strictly required for simple edits, having a local setup can be beneficial for larger contributions.
 
-- To test how the documentation renders you can build locally and then use the Netlify Deploy Preview, especially when
-  using Docusaurus-specific features. You can also run the `make website-watch` command on your local build, to see the
-  rendered pages as you make changes.
+**Requirements:**
 
-- Be sure to run the `make website` command on your local branch, before pushing the PR to the repo. This command does
-  important linting, and the build check in our repo will fail if the linting has not been done.
+- A good Markdown editor (e.g., VS Code with Markdown extensions, Obsidian, Typora).
+- Git, for cloning the repository and managing changes.
 
-- For new entries, make sure to add any new pages to the appropriate `sidebar.js` file. Otherwise, the new page will not
-  appear in the table of contents to the left.
+**Local Build/Preview (Optional, if using a static site generator):** This project's documentation is primarily plain
+Markdown. If you are rendering it locally with a tool like Docusaurus, Pandoc, or a similar static site generator for
+preview purposes, follow that tool's specific setup instructions. Currently, this repository does not include a
+dedicated website build process for the `/docs` directly within its CI.
 
-## Set up your local build
+The documentation source files are located in the `/docs` folder of the
+[homelab repository](https://github.com/theepicsaxguy/homelab/).
 
-Requirements:
+## General guidance for documentation content
 
-- Node.js 20 (or greater, we use Node.js 22)
+In addition to following the [Documentation style guide](./style-guide.mdx), please consider these points when writing:
 
-The docs and the code are in the same Github repo, at <https://github.com/theepicsaxguy/homelab/>, so if you have cloned
-the repo, you already have the docs.
-
-You can do local builds of the documentation to test your changes or review your new content, and to run the required
-`make website` command (which runs `prettier` and other linters) before pushing your PR.
-
-The documentation site is situated in the `/website` folder of the repo.
-
-The site is built using npm, below are some useful make commands:
-
-- **Installation**: `make website-install`
-
-  This command is required before running any of the following commands, and after upgrading any dependencies.
-
-- **Formatting**: `make website`, `make website-lint-fix`, or `npm run prettier`
-
-  Run the appropriate formatting command for your set up before committing, to ensure consistent syntax, clean
-  formatting, and verify links. Note that if the formatting command is not run, the build will fail with an error about
-  linting.
-
-- **Live editing**: `make website-watch`
-
-  For real-time viewing of changes, as you make them.
-
-:::info Be sure to run a formatting command before committing changes. :::
-
-## Documentation for Integrations
-
-In addition to following the [Style Guide](./style-guide.mdx) please review the following guidelines.
-
-For new integration documentation, please use the Integrations template in our
-[Github repo](https://github.com/theepicsaxguy/homelab/) at `/website/integrations/template/service.md`.
-
-- Make sure to add the service to a fitting category in `/website/sidebarsIntegrations.js`. If this is not done the
-  service will not appear in the table of contents to the left.
-
-- For placeholder domains, use `example.company` and `app-name.company`, where `app-name` is the name of the application
-  that you are writing documentation for.
-
-- Try to order the documentation sections in an order that makes it easiest for the user to configure.
+- **Clarity and Conciseness:** Aim for clear, straightforward language. Avoid jargon where possible, or explain it if
+  necessary.
+- **Accuracy:** Ensure all technical details, commands, file paths, and configurations are accurate and up-to-date with
+  the current state of the repository.
+- **Audience:** Write for an IT administrator or a technically-minded user who has some familiarity with Kubernetes and
+  related technologies but may not be an expert in every specific component.
+- **Completeness:** For procedural topics, include all necessary steps. For conceptual topics, provide sufficient
+  background and context.
+- **Examples:** Use relevant examples (e.g., YAML snippets, shell commands, Terraform configurations) that are specific
+  to this homelab setup where appropriate.
+- **Order of Information:** For procedural documentation, structure steps in a logical sequence that reflects how a user
+  would perform the task. For conceptual topics, build information progressively.
+- **Placeholder Values:** When using placeholder values in examples (e.g., domain names, IP addresses, secret keys),
+  clearly indicate them using conventions like `<placeholder_name>` or `your-value-here` and instruct the user to
+  replace them.
+  - **Example:** For placeholder domains, use generic forms like `your.domain.tld` or `service.your.domain.tld`.

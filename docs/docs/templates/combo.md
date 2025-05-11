@@ -1,68 +1,83 @@
 ---
-title: 'Combination topic'
+title: Combination topic template guide
 ---
 
-:::info **How to use this template**: start with the markdown version of the template, either by copying the
-[`combo.tmpl.md`](https://github.com/theepicsaxguy/homelab/tree/main/docs/docs/templates) file from the GitHub repo or
-downloading the template file using the following command:
+:::info **How to use this template guide**: This page explains the sections of the "Combination" (Combo) topic template.
+To create a new document using this template, start with the markdown version by copying the
+[`combo.tmpl.md`](https://github.com/theepicsaxguy/homelab/blob/main/docs/docs/templates/combo.tmpl.md) file from the
+GitHub repository or by downloading it:
 
+```bash
+wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/combo.tmpl.md -O your-topic-name.md
 ```
-wget https://github.com/theepicsaxguy/homelab/tree/main/docs/docs/templates/combo.tmpl.md
-```
 
-Edit your markdown file as you work, reading this page for the descriptions of each section. You can build out a "stub
-file" with just headers, then gradually add content to each section. Use screenshots sparingly, only for complex UIs
-where it is difficult to describe a UI element with words. Refer to our [Style Guide](../style-guide.mdx) for writing
-tips and specific rules. :::
+Edit your new markdown file, referring to this page for descriptions of each section. You can build out a "stub file"
+with just headers, then gradually add content. Use screenshots sparingly, only for complex UIs or where visual context
+is essential and difficult to describe with words. Refer to our [Documentation style guide](../style-guide.mdx) for
+writing tips and project-specific rules. :::
 
-For a combo topic, the title is typically the name of the feature ("Branding" or "Remote Access Control").
+For a combination topic, the title is typically the name of the feature, component, or configuration being described
+(e.g., "ArgoCD ApplicationSet for infrastructure" or "Longhorn storage configuration").
 
-In this first section, right after the title but with no header, write one or two sentences about the task. Keep it
-brief, just an overview.
+In the first section, immediately after the title (with no H2 heading), write one or two sentences providing a brief
+overview of the topic.
 
-## About feature XYZ
+## About [Feature/Component XYZ]
 
-In this section, go into a deeper explanation of the feature, provide typical use cases, etc.
+In this section, provide a more detailed explanation of the feature, component, or configuration. Discuss its purpose,
+typical use cases within the homelab context, and its general role in the system.
 
-### More info about the feature, a sub-category of info
+### More details about [Feature/Component XYZ] (Optional Sub-section)
 
-Use this section if there are several big topics or categories of info that the reader needs to know about the feature
-or task. Add as many of these sections as needed.
+Use this H3 sub-section if there are several distinct aspects or categories of information that the reader needs to
+understand about the subject. Add as many of these H3 sections as needed to break down complex information logically.
 
-## Prerequisites (optional section)
+## Prerequisites (Optional Section)
 
-In this section, inform the reader of anything they need to do, or have configured or installed, before they start
-following the procedural instructions below.
+If applicable, inform the reader of anything they need to have configured, installed, or understood _before_ they
+proceed with any steps or try to implement the described configuration. This could include:
 
-## Overview of steps/workflow (optional section)
+- Required tools (e.g., `kubectl`, `terraform`).
+- Previously configured components (e.g., "Ensure ArgoCD is bootstrapped").
+- Access credentials or specific permissions.
 
-If the task is quite long or complex, it might be good to add a bullet list of the main steps, or even a diagram of the
-workflow, just so that the reader can first familairize themselves with the 50,000 meter view before they dive into the
-detailed steps.
+## Overview of [Steps/Workflow/Configuration Structure] (Optional Section)
 
-## First several group steps
+If the topic involves a complex procedure, a multi-step workflow, or an intricate configuration structure, it can be
+beneficial to provide a high-level overview here. This might be a bulleted list of the main stages or even a simple
+text-based diagram of the workflow, allowing the reader to grasp the overall picture before diving into details.
 
-If the task involves a lot of steps, try to group them into similar steps and have a Head3 or Head4 title for each
-group.
+## [First Group of Steps or Configuration Details]
 
-In this section, help the reader get oriented... where do they need to be (i.e. in the GUI, on a CLI, etc).
+If the topic involves many steps or detailed configuration aspects, try to group them logically under descriptive H2 or
+H3 titles.
 
-Have a separate paragraph for each step.
+In this section, orient the reader. For example, specify which file they should be editing, what CLI they might be
+using, or what conceptual area is being addressed.
 
-_Start instructions with the desired goal_, followed by the instructions. For example, in this sentence: "To define a
-new port number, navigate to the Admin interface, and then to the **Settings** tab." we first read the goal (to define a
-new port) and then we see the instructions.
+For procedural parts, present each step clearly. Start instructions with the desired goal, followed by the specific
+actions.
 
-## Next step of grouped steps (if a second group is needed)
+**Example procedural instruction:** "To define a new environment variable for a Deployment, you modify the `env` section
+of the container specification in the `deployment.yaml` file."
 
-Continue with the steps...
+## [Next Group of Steps or Configuration Details] (If needed)
 
-Use screenshots sparingly, only for complex UIs where it is difficult to describe a UI element with words.
+Continue with further steps or details, maintaining logical grouping.
 
-Provide as many code snippets and examples as needed.
+Use screenshots very sparingly. For this project, which is primarily configuration-as-code, clear YAML/code snippets are
+usually more effective than screenshots of UIs (unless a specific UI interaction is being documented, e.g., for ArgoCD
+or Longhorn UI).
 
-## Verify the steps
+Provide as many relevant code snippets (YAML, Bash, Terraform, etc.) and examples as necessary to clarify the
+configuration or procedure.
 
-Use a heading such as "Verify your installation" or "Verify successful configuration". Whenever possible, it is useful
-to add verification steps at the end of a procedural topic. For example, if the procedural was about installing a
-product, use this section to tell them how they can verify that the install was successful.
+## Verify the [Configuration/Setup/Process]
+
+Whenever possible, conclude procedural or detailed configuration topics with steps on how the reader can verify that
+their setup is correct or that the process was successful.
+
+**Example verification steps:**
+
+- "To verify that the ArgoCD Application is synced, navigate to the ArgoCD UI or run `argocd app get <app-name>`."
+- "Check the pod logs for any errors: `kubectl logs -n <namespace> <pod-name>`."
