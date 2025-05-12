@@ -5,7 +5,7 @@ title: Documentation style guide
 This style guide provides guidelines to ensure that the documentation for this project is consistent, clear, and easy to
 follow. It standardizes aspects like phrasing, formatting, tone, and structure across all documentation.
 
-We appreciate all contributions to the documentation — whether it's fixing a typo, adding new content, or writing an
+We appreciate all contributions to the documentation—whether it's fixing a typo, adding new content, or writing an
 entirely new topic. To help us review and merge your contributions more efficiently, please follow the
 [writing documentation](./writing-documentation.md) guidelines. If you notice any inconsistencies, feel free to open an
 [Issue](https://github.com/theepicsaxguy/homelab/issues) or submit a
@@ -30,7 +30,6 @@ entirely new topic. To help us review and merge your contributions more efficien
 - Documentation should be structured to follow the natural order of tasks or concepts, making it easier for users to
   understand and follow. Organize sections in a manner that reflects a logical workflow or a progressive understanding
   of a topic.
-
 - When writing procedural documentation (how-to guides), the steps should follow the actual workflow, whether it
   involves Command Line Interface (CLI) commands, editing configuration files, or interacting with a Web UI. Specify the
   exact commands, file paths, or UI elements to interact with, and present them in the order they are encountered.
@@ -169,13 +168,13 @@ A common guideline:
 
 For more information, see [Grammarly's explanation](https://www.grammarly.com/blog/which-vs-that/).
 
-### “since” (time-based) vs “because” (causal)
+### "since" (time-based) vs "because" (causal)
 
 - Use **"because"** when indicating a cause or reason ("The pod failed **because** the image was not found.").
 - Use **"since"** primarily for time-based references ("The cluster has been stable **since** the last upgrade."). Avoid
   using "since" to mean "because."
 
-### Avoid using “once” (numeric) to mean “after” (time-based).
+### Avoid using "once" (numeric) to mean "after" (time-based)
 
 When writing procedural steps, avoid starting a step with "Once..." to mean "After...".
 
@@ -210,19 +209,7 @@ When writing procedural steps, avoid starting a step with "Once..." to mean "Aft
     placeholders that require user input. **Example**: `https://<your-argocd-server>/api/v1`
   - When mentioning general URLs in explanatory text or within procedural instructions as a reference, omit code
     formatting. For instance: "You can find more details on the official Kubernetes documentation site at
-    https://kubernetes.io."
-
-### Titles and headers
-
-- Titles and headers (H1, H2, H3) should follow **sentence case capitalization**: only the first word is capitalized,
-  except for proper nouns or acronyms that are always capitalized (e.g., Kubernetes, ArgoCD, NFS).
-  - **DO:** "Configure the Cilium network policies"
-  - **DON'T:** "CONFIGURE THE CILIUM NETWORK POLICIES"
-  - **DON'T:** "Configure The Cilium Network Policies"
-- Ensure titles and headers are descriptive and clearly convey the purpose of the section. Avoid vague titles like
-  "Overview." Instead, opt for something more specific, like "About the Kustomize build process."
-- Use the **imperative verb form** in procedural topic titles and headings, not gerunds. For example, use "Bootstrap the
-  cluster" instead of "Bootstrapping the cluster."
+    [https://kubernetes.io](https://kubernetes.io)."
 
 ### Examples
 
@@ -247,32 +234,7 @@ namespace: my-app
 Use fenced code blocks (triple backticks) for multi-line code, configuration examples, or shell commands. Specify the
 language for syntax highlighting.
 
-```text
-` ` `yaml showLineNumbers {5} title="/k8s/applications/example-app/deployment.yaml"
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: example-app-deployment
-spec:
-  replicas: 2 # highlight-this-line
-  selector:
-    matchLabels:
-      app: example-app
-  template:
-    metadata:
-      labels:
-        app: example-app
-    spec:
-      containers:
-      - name: app-container
-        image: "nginx:latest"
-        ports:
-        - containerPort: 80
-` ` `
-```
-
-Which might be rendered (depending on the Markdown processor) similar to:
-
+````markdown
 ```yaml showLineNumbers {5} title="/k8s/applications/example-app/deployment.yaml"
 apiVersion: apps/v1
 kind: Deployment
@@ -294,8 +256,9 @@ spec:
           ports:
             - containerPort: 80
 ```
+````
 
-- `` ` ` `yaml `` defines the language (e.g., `yaml`, `bash`, `terraform`, `json`, `text`).
+- ` ```yaml ` defines the language (e.g., `yaml`, `bash`, `terraform`, `json`, `text`).
 - Optional configurations (depending on your Markdown renderer, e.g., Docusaurus):
   - `showLineNumbers`: Enables line numbering.
   - `title="<path/to/file_or_description>"`: Defines a title displayed above the code block.
@@ -314,9 +277,9 @@ If using an MDX-based system, you can use tabs to display different configuratio
 
 **Example** (conceptual, for MDX):
 
-````jsx
-import TabItem from '@theme/TabItem'; // Assuming Docusaurus
-import Tabs from '@theme/Tabs'; // Assuming Docusaurus
+```jsx
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 <Tabs
   defaultValue="linux"
@@ -325,10 +288,18 @@ import Tabs from '@theme/Tabs'; // Assuming Docusaurus
     { label: 'Windows (PowerShell)', value: 'windows' },
   ]}
 >
-  <TabItem value="linux">```bash # Command for Linux/macOS export MY_VAR="value" ./run_script.sh ```</TabItem>
-  <TabItem value="windows">```powershell # Command for Windows $env:MY_VAR="value" .\run_script.ps1 ```</TabItem>
+  <TabItem value="linux">
+    <pre>
+      <code className="language-bash">export MY_VAR="value" ./run_script.sh</code>
+    </pre>
+  </TabItem>
+  <TabItem value="windows">
+    <pre>
+      <code className="language-powershell">$env:MY_VAR="value" .\run_script.ps1</code>
+    </pre>
+  </TabItem>
 </Tabs>;
-````
+```
 
 This project currently uses plain Markdown, so these advanced tab features are not directly applicable unless the
 rendering pipeline includes such capabilities.
@@ -344,20 +315,27 @@ When documenting error messages and their solutions:
 **Example**:
 
 - **Error message:**
+
   ```bash
   Error from server (NotFound): deployments.apps "my-nginx" not found
   ```
+
 - **Possible causes:**
+
   - The deployment `my-nginx` does not exist in the current namespace.
   - A typo in the deployment name.
   - You are targeting the wrong namespace (`kubectl config current-context` or `kubens` can verify).
+
 - **Solution:**
-  1.  Verify the deployment name and the namespace you are operating in.
-  2.  List deployments in the namespace to check for existence:
-      ```bash
-      kubectl get deployments -n <your-namespace>
-      ```
-  3.  If the deployment should exist, check ArgoCD sync status or application logs for deployment errors.
+
+  1. Verify the deployment name and the namespace you are operating in.
+  2. List deployments in the namespace to check for existence:
+
+     ```bash
+     kubectl get deployments -n <your-namespace>
+     ```
+
+  3. If the deployment should exist, check ArgoCD sync status or application logs for deployment errors.
 
 ## Accessibility best practices
 
@@ -365,8 +343,8 @@ When documenting error messages and their solutions:
   use descriptive text.
 - Provide **descriptive link text**. Avoid generic terms like "Click here." Be specific about the destination or purpose
   of the link.
-  - **DON'T:** "Click [here](./some-file.md) for details."
-  - **DO:** "For more details, see the [Kubernetes manifest validation guide](./scripts/validate_manifests.md)."
+  - **DON'T:** "Click [here](./writing-documentation.md) for details."
+  - **DO:** "For more details, see the [Kubernetes manifest validation guide](./writing-documentation.md)."
 
 ## Notes and warnings
 
@@ -374,8 +352,9 @@ Use admonitions to draw attention to important pieces of information.
 
 **Notes** are for supplementary information, tips, or elaborations. Format using:
 
-````markdown
-:::info This is an informational note. It provides additional context or a helpful tip related to the main text. :::```
+```markdown
+:::info This is an informational note. It provides additional context or a helpful tip related to the main text. :::
+```
 
 **Warnings** are for critical information that users must be aware of to avoid errors, data loss, or security risks.
 Format using:
@@ -383,6 +362,3 @@ Format using:
 ```markdown
 :::warning Exercise caution when modifying this configuration, as incorrect changes can lead to system instability. :::
 ```
-````
-
-Use these conventions consistently to help readers identify crucial information.

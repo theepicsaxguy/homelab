@@ -10,7 +10,7 @@ core methodology is GitOps, orchestrated by ArgoCD.
 Applications are organized into functional categories within the `/k8s/applications/` directory. This structure promotes
 clarity and ease of management.
 
-### Typical application categories:
+### Typical application categories
 
 - `ai/` (e.g., OpenWebUI, KaraKeep)
 - `automation/` (e.g., Frigate, MQTT)

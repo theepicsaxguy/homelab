@@ -11,7 +11,7 @@ essential capabilities like networking, storage, authentication, and monitoring.
 Infrastructure components are organized within the `/k8s/infrastructure/` directory, typically grouped by their
 function.
 
-### Infrastructure categories:
+### Infrastructure categories
 
 - `auth/` (e.g., Authentik for identity management)
 - `controllers/` (e.g., ArgoCD (managed via app-of-apps), Cert-Manager, External Secrets Operator, Argo Rollouts, Trust
@@ -90,11 +90,11 @@ Below are highlights of key infrastructure components and the rationale behind t
 
   - **Function:** Provides CNI capabilities, network observability, and security features.
   - **Deployment:** Deployed via its Helm chart. The initial bootstrap is handled by the Talos machine configuration
-    (see [Provision the Talos Kubernetes cluster with Terraform](../tofu/README.md)). This ArgoCD application manages
-    its configuration post-bootstrap. It includes a `CiliumL2AnnouncementPolicy` for exposing LoadBalancer services on
-    the Local Area Network (LAN) and a `CiliumLoadBalancerIPPool` to define IP ranges for these services. :::info
-    **Rationale for Cilium:** Cilium is chosen for its powerful eBPF-based networking, robust network policy
-    enforcement, integrated Kubernetes Gateway API implementation, and observability features with Hubble.
+    (see [Provision the Talos Kubernetes cluster with Terraform](../../tofu/opentofu-provisioning.md)). This ArgoCD
+    application manages its configuration post-bootstrap. It includes a `CiliumL2AnnouncementPolicy` for exposing
+    LoadBalancer services on the Local Area Network (LAN) and a `CiliumLoadBalancerIPPool` to define IP ranges for these
+    services. :::info **Rationale for Cilium:** Cilium is chosen for its powerful eBPF-based networking, robust network
+    policy enforcement, integrated Kubernetes Gateway API implementation, and observability features with Hubble.
     `kubeProxyReplacement: true` is enabled for improved performance and efficiency. The `k8sServiceHost` and
     `k8sServicePort` are set to `localhost` and `7445` respectively, specific to the Talos setup where the Kubelet
     proxies kube-apiserver access. `bpf.hostLegacyRouting: true` was necessary in the Talos environment for correct host
@@ -132,9 +132,9 @@ Below are highlights of key infrastructure components and the rationale behind t
 - **Cert-Manager (`/k8s/infrastructure/controllers/cert-manager/`)**
 
   - **Function:** Automates the management and issuance of TLS certificates.
-  - **Deployment:** Deployed via its Helm chart. _ `cloudflare-issuer.yaml`: A `ClusterIssuer` configured to use
+  - **Deployment:** Deployed via its Helm chart. _`cloudflare-issuer.yaml`: A `ClusterIssuer` configured to use
     Cloudflare for DNS01 challenges to obtain Let's Encrypt certificates. The Cloudflare API token is managed by an
-    `ExternalSecret` (`cert-manager-secrets-external.yaml`) that syncs it from Bitwarden. _ `internal-ca-issuer.yaml`:
+    `ExternalSecret` (`cert-manager-secrets-external.yaml`) that syncs it from Bitwarden._ `internal-ca-issuer.yaml`:
     Establishes a self-signed Certificate Authority (CA) and a `ClusterIssuer` (`internal-issuer`) that uses this CA to
     issue certificates for internal services. This is useful for mutual TLS (mTLS) or services not exposed publicly.
     :::info **Rationale for Cert-Manager setup:** This configuration provides an automated and secure certificate
@@ -155,13 +155,13 @@ Below are highlights of key infrastructure components and the rationale behind t
 - **Longhorn (`/k8s/infrastructure/storage/longhorn/`)**
 
   - **Function:** Provides distributed block storage for Kubernetes.
-  - **Deployment:** Deployed via its Helm chart. _ `defaultClass: true`: Configures Longhorn as the default
-    `StorageClass` for the cluster. _ `defaultDataPath: /var/lib/longhorn/`: Specifies the path on worker nodes where
+  - **Deployment:** Deployed via its Helm chart. _`defaultClass: true`: Configures Longhorn as the default
+    `StorageClass` for the cluster._ `defaultDataPath: /var/lib/longhorn/`: Specifies the path on worker nodes where
     Longhorn stores data. Worker nodes are provisioned with dedicated disks mounted at this location (see
-    [Provision the Talos Kubernetes cluster with Terraform](../tofu/README.md)). \* `http-route.yaml`: Exposes the
-    Longhorn UI for management and monitoring. :::info **Rationale for Longhorn:** Longhorn offers replicated,
-    persistent storage suitable for stateful applications, providing features like snapshots and backups. It is
-    relatively straightforward to set up and manage in a homelab environment. :::
+    [Provision the Talos Kubernetes cluster with Terraform](../../tofu/opentofu-provisioning.md)). \* `http-route.yaml`:
+    Exposes the Longhorn UI for management and monitoring. :::info **Rationale for Longhorn:** Longhorn offers
+    replicated, persistent storage suitable for stateful applications, providing features like snapshots and backups. It
+    is relatively straightforward to set up and manage in a homelab environment. :::
 
 - **Kube Prometheus Stack (`/k8s/infrastructure/monitoring/prometheus-stack/`)**
 
@@ -176,10 +176,10 @@ Below are highlights of key infrastructure components and the rationale behind t
 - **Authentik (`/k8s/infrastructure/auth/authentik/`)**
 
   - **Function:** Serves as an identity provider (IdP) and Single Sign-On (SSO) solution.
-  - **Deployment:** Deployed via its Helm chart. _ It uses PostgreSQL as a backend, which is intended to be provisioned
-    by the Zalando Postgres Operator (defined in `database.yaml`). _ Secrets (database credentials, Redis password,
+  - **Deployment:** Deployed via its Helm chart. _It uses PostgreSQL as a backend, which is intended to be provisioned
+    by the Zalando Postgres Operator (defined in `database.yaml`)._ Secrets (database credentials, Redis password,
     bootstrap tokens) are managed via `ExternalSecret` resources (`externalsecret.yaml`) sourced from Bitwarden. _
-    `httproute.yaml` exposes the Authentik user interface and API. _ `blueprints/`: Authentik flow configurations,
+    `httproute.yaml` exposes the Authentik user interface and API._ `blueprints/`: Authentik flow configurations,
     provider setups, and other internal settings are stored as blueprints in this directory. These are applied via a
     ConfigMap referenced in the Helm values. :::info **Rationale for Authentik blueprints:** This enables declarative
     management of Authentik's internal configuration through Git, aligning with GitOps principles. ::: \*

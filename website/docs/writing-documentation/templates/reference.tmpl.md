@@ -20,6 +20,7 @@ definition lists for individual items.
 - **Required:** Yes
 - **Default:** `null`
 - **Example:**
+
   ```yaml
   # In some_config.yaml
   parameter_one: 'value_for_one'
@@ -32,6 +33,7 @@ definition lists for individual items.
 - **Required:** No
 - **Default:** `false`
 - **Example:**
+
   ```yaml
   # In some_config.yaml
   parameter_two: true
@@ -46,6 +48,7 @@ After a brief description of this section, list the items.
   - **Description:** Explanation of what this command-line argument controls.
   - **Accepts:** (e.g., string, path to a file)
   - **Example:**
+
     ```bash
     ./your_script.sh --argument-alpha "/path/to/input"
     ```
@@ -54,6 +57,7 @@ After a brief description of this section, list the items.
   - **Description:** Enables the experimental beta feature.
   - **Accepts:** N/A (boolean flag)
   - **Example:**
+
     ```bash
     ./your_script.sh --enable-beta-feature
     ```
