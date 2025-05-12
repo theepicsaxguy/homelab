@@ -22,42 +22,28 @@ The most common types of documentation you might write for this project are:
   descriptions of specific items like configuration parameters, script arguments, API endpoints (if applicable), or
   resource definitions.
 
-### Using a template
+## Using a template
 
-To use a template:
+To use a template, you can download it directly into your local clone of the `homelab` repository using `wget` or a similar tool. Navigate to the directory where you want to create your new documentation page (e.g., `website/docs/your-chosen-subdirectory/`) and run the appropriate command:
 
-1. Identify the most appropriate template type for the content you plan to write.
-2. Copy the content of the corresponding `.tmpl.md` file (e.g., `combo.tmpl.md`) into a new `.md` file in the
-    appropriate `/docs` subdirectory.
-3. Follow the guidance within the chosen template and our general [Documentation style guide](../style-guide.mdx) to
-    fill in your content.
-
-**Example `wget` commands to download templates:**
-
-(Ensure you are in the directory where you want to save the template)
-
-- **Combo Template:**
-
+- **For the Combo Template:**
   ```bash
-  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/combo.tmpl.md -O my-new-combo-topic.md
+  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/combo.tmpl.md -O my-new-combo-topic.md
   ```
 
-- **Procedural Template:**
-
+- **For the Conceptual Template:**
   ```bash
-  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/procedural.tmpl.md -O my-new-procedural-guide.md
+  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/conceptual.tmpl.md -O my-new-conceptual-topic.md
   ```
 
-- **Conceptual Template:**
-
+- **For the Procedural Template:**
   ```bash
-  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/conceptual.tmpl.md -O my-new-conceptual-overview.md
+  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/procedural.tmpl.md -O my-new-procedural-topic.md
   ```
 
-- **Reference Template:**
-
+- **For the Reference Template:**
   ```bash
-  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/reference.tmpl.md -O my-new-reference-sheet.md
+  wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/reference.tmpl.md -O my-new-reference-topic.md
   ```
 
-Replace `my-new-...` with your desired filename.
+Remember to replace `my-new-...-topic.md` with your desired filename. After downloading, open the file and fill in the content according to the template's structure and the guidance provided in its corresponding `.md` guide file (e.g., [./combo.md](./combo.md) for the combo template).

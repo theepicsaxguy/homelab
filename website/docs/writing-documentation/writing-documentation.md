@@ -19,8 +19,7 @@ adhere to the following guidelines.
   consistency in document structure and headings.
 - Before submitting a PR, ensure your Markdown is well-formatted. If you have local Markdown linting tools configured,
   please run them.
-- For new documentation pages, ensure they are appropriately linked from relevant sections in the main `/docs/README.md`
-  or other logical overview pages so that users can discover them.
+- For new documentation pages, ensure they are appropriately linked from relevant sections in the main documentation (e.g., `website/docs/intro.md` or other logical overview pages) so that users can discover them.
 
 ## Set up your local environment (Recommended)
 
@@ -31,10 +30,7 @@ While not strictly required for simple edits, having a local setup can be benefi
 - A good Markdown editor (e.g., VS Code with Markdown extensions, Obsidian, Typora).
 - Git, for cloning the repository and managing changes.
 
-**Local Build/Preview (Optional, if using a static site generator):** This project's documentation is primarily plain
-Markdown. If you are rendering it locally with a tool like Docusaurus, Pandoc, or a similar static site generator for
-preview purposes, follow that tool's specific setup instructions. Currently, this repository does not include a
-dedicated website build process for the `/docs` directly within its CI.
+**Local Build/Preview (Optional, if using a static site generator):** This project's documentation is part of a Docusaurus website located in the `website/` directory. You can build and serve the documentation locally by following Docusaurus CLI commands (e.g., `npm install` or `yarn install` in the `website/` directory, then `npm run start` or `yarn start`). The `website/package.json` contains the necessary scripts (like `docusaurus build`).
 
 The documentation source files are located in the `/docs` folder of the
 [homelab repository](https://github.com/theepicsaxguy/homelab/).

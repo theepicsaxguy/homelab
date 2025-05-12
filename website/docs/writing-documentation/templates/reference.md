@@ -8,7 +8,7 @@ a new document using this template, start with the markdown version by copying t
 from the GitHub repository or by downloading it:
 
 ```bash
-wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/reference.tmpl.md -O your-reference-topic-name.md
+wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/reference.tmpl.md -O your-reference-topic-name.md
 ```
 
 Edit your new markdown file, referring to this page for descriptions of each section. You can build out a "stub file"
