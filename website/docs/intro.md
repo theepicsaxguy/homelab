@@ -1,48 +1,74 @@
 ---
-title: Homelab Kubernetes configuration
+title: Homelab Kubernetes Configuration Guide
 ---
 
-This document provides an overview of the Kubernetes setup for this homelab environment, which is designed to run
-various applications and services. It aims to explain the system's structure and the rationale behind key design
-decisions, enabling an IT administrator to understand, operate, and maintain the system.
+# Overview
 
-## About this system
+This guide explains our homelab Kubernetes setup, designed to help IT admins understand, run, and maintain the system.
 
-This Kubernetes setup is built upon several guiding principles:
+# Core Design Principles
 
-1. **GitOps as the Source of Truth:** The state of the cluster (applications, infrastructure components) is defined
-   entirely within this Git repository. ArgoCD is employed to continuously reconcile the cluster state with these
-   definitions. This ensures that all changes are made via Git commits, providing a comprehensive audit trail and a
-   single, reliable source of truth.
-2. **Declarative Configuration:** The system favors declarative tools such as Kubernetes YAML, Kustomize, and Terraform.
-   The desired state of components is defined, and the tools are responsible for achieving that state.
-3. **Automation:** A high degree of automation is implemented, covering processes from application deployment with
-   ArgoCD ApplicationSets to certificate management with Cert-Manager.
-4. **Security Considerations:** Although this is a homelab environment, security best practices are applied. These
-   include running containers as non-root users, utilizing network policies for traffic control, and managing secrets
-   externally to the Git repository.
-5. **Modularity and Organization:** Configurations are structured using Kustomize and ArgoCD projects and
-   ApplicationSets. This approach promotes organization and simplifies the process of adding new applications or
-   components.
+1. **GitOps as Source of Truth**
+   - All cluster states live in this Git repo
+   - ArgoCD syncs cluster state with Git definitions
+   - Changes require Git commits for audit tracking
 
-## Documentation structure
+2. **Declarative Configuration**
+   - Uses Kubernetes YAML, Kustomize, and Terraform
+   - Tools manage state based on defined specs
 
-This `/docs` directory contains detailed documentation for various parts of the system:
+3. **Automated Operations**
+   - ArgoCD ApplicationSets handle deployments
+   - Cert-Manager runs certificate lifecycle
+   - CI/CD pipelines automate testing and deployment
 
-- **[Provision the Talos Kubernetes cluster with Terraform](./tofu/opentofu-provisioning.md):** Explains how the
-  underlying Kubernetes cluster, running Talos on Proxmox, is provisioned using Terraform.
-- **[Manage Kubernetes configuration with GitOps](./k8s/manage-kubernetes.md):** Describes the overall structure of
-  Kubernetes manifests, with a focus on ArgoCD for implementing GitOps, and details how applications and infrastructure
-  services are managed.
-  - **[Bootstrap ArgoCD](./k8s/manage-kubernetes.md):** Details the initial setup process for ArgoCD on the cluster.
-  - **[Deploy and manage applications](./k8s/applications/application-management.md):** Explains the deployment and
-    management strategies for user-facing applications.
-  - **[Deploy and manage infrastructure services](./k8s/infrastructure/infrastructure-management.md):** Covers the
-    deployment and management of core cluster services, including networking, storage, authentication, and monitoring.
-  - **[Automate PR preview environments](./k8s/manage-kubernetes.md):** Describes the system used to automatically
-    create temporary environments for testing pull requests.
-- **[Configure CI/CD and Repository Management](./github/github-configuration.md):** Contains information about CI/CD
-  workflows and Dependabot settings for repository maintenance.
+4. **Security First**
+   - Non-root container execution
+   - Network policies control traffic
+   - External secrets management
+   - Regular security scans
 
-This documentation aims to be clear, concise, and actionable. For each component, it explains its function, operational
-details, and the rationale behind its specific design or configuration choices.
+5. **Clean Organization**
+   - Kustomize manages configurations
+   - ArgoCD projects group related apps
+   - ApplicationSets simplify scaling
+
+# Documentation Map
+
+## Cluster Setup
+
+- [Provision Talos Kubernetes](./tofu/opentofu-provisioning.md)
+  - OpenTofu-based Talos deployment on Proxmox
+  - Infrastructure setup steps
+
+## Kubernetes Management
+
+- [GitOps Configuration](./k8s/manage-kubernetes.md)
+  - ArgoCD setup and usage
+  - Manifest structure
+  - Service management
+
+## Application Guides
+
+- [Deploy Apps](./k8s/applications/application-management.md)
+  - User application deployment
+  - App lifecycle management
+
+## Infrastructure
+
+- [Core Services](./k8s/infrastructure/infrastructure-management.md)
+  - Network setup
+  - Storage configuration
+  - Auth systems
+  - Monitoring stack
+
+## Development
+
+- The repository includes configurations for various development and operational tasks. Refer to specific workflow files and scripts for details on local development and testing.
+- [PR Preview Environments](./dev/pr-previews.md): Learn how Pull Request Preview Environments are configured and used.
+## CI/CD
+
+- [Pipeline Configuration](./github/github-configuration.md)
+  - CI/CD workflow setup
+  - Dependabot settings
+  - Repo maintenance
