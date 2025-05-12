@@ -11,9 +11,9 @@ Applications live in `/k8s/applications/` organized by function:
 - `ai/` - AI tools like OpenWebUI, KaraKeep
 - `automation/` - Home automation (Frigate, MQTT)
 - `media/` - Media servers and tools (Jellyfin, *arr stack)
-- `network/` - Network apps (AdGuard Home)
-- `tools/` - Utility apps (IT-Tools, Whoami)
-- `web/` - Web applications (BabyBuddy)
+- `network/` - Network apps (AdGuard Home, Omada)
+- `tools/` - Utility apps (IT-Tools, Whoami, Unrar)
+- `web/` - Web applications (BabyBuddy, Pedrobot)
 - `external/` - Services outside Kubernetes but referenced internally
 
 ## How Application Deployment Works
@@ -21,14 +21,15 @@ Applications live in `/k8s/applications/` organized by function:
 We use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the process:
 
 1. Add your app files to a category folder (e.g., `/k8s/applications/media/myapp/`)
-2. Include the path in `/k8s/applications/application-set.yaml`
-3. ArgoCD detects the change and deploys automatically
+2. For most applications, ensure they are discoverable by the main ApplicationSet in `/k8s/applications/application-set.yaml` (which scans subdirectories).
+3. For applications in the `external/` category (like HAOS, Proxmox, TrueNAS), these are managed by a separate ApplicationSet located at `/k8s/applications/external/application-set.yaml`. This ApplicationSet specifically scans paths like `k8s/apps/external/*`.
+4. ArgoCD detects the change and deploys automatically.
 
 ### Key Files
 
 - `kustomization.yaml` - Groups apps in each category
 - `project.yaml` - Sets ArgoCD permissions and controls
-- `application-set.yaml` - Main deployment configuration
+- `application-set.yaml` - Main deployment configuration (additional ApplicationSets may exist for specific categories like `external`)
 
 ## Application Structure
 
@@ -59,11 +60,11 @@ Here's how KaraKeep (`/k8s/applications/ai/karakeep/`) is structured:
    - Uses default security profiles
 
 3. **Storage**
-   - Uses Longhorn for app data
-   - Connects to NFS for shared media
+   - Uses Longhorn for app data via PersistentVolumeClaims (e.g., `data-pvc`, `meilisearch-pvc`), which use the default StorageClass (Longhorn).
+   - While a shared NFS media store exists for other media applications, KaraKeep primarily uses its dedicated PVCs for its operational data.
 
 4. **Network Access**
-   - Internal access via ClusterIP
+   - The primary web interface is exposed via a `LoadBalancer` service (e.g., `karakeep-web-svc` with IP `10.25.150.230`). Internal components like Meilisearch or Chrome might use `ClusterIP` services.
    - External access through Gateway API
    - Custom IPs via Cilium
 

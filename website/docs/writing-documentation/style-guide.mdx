@@ -48,8 +48,15 @@ blue and light yellow based on rendering engines) should be reserved for those p
 
 ### Cross-references
 
-Always include cross-references to related content. If a concept or component is detailed elsewhere in the
-documentation, link to the relevant section to provide users with additional context or instructions.
+When linking to other documents within the `/docs` site, use relative paths.
+
+- **Good:** `[Link text](./path/to/document.md)`
+- **Bad:** `[Link text](/docs/path/to/document.md)` (avoid root-relative paths if simple relative paths work)
+- **Bad:** `[Link text](https://your-site.com/docs/path/to/document.md)` (avoid absolute URLs for internal links)
+
+**Example:**
+
+For more details on contributing documentation, see our [guidelines for writing documentation](./writing-documentation.md).
 
 ### Relative vs. absolute paths
 

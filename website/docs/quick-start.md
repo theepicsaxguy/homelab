@@ -2,36 +2,33 @@
 title: Quick start
 ---
 
-One command to see the whole stack in action.
+This page previously described a Makefile-based quick start. However, the `Makefile` is not currently available in the repository.
 
 ## About the quick‑start
 
-The `Makefile` wraps provisioning and bootstrapping for a disposable test drive.
+The intention was to provide a single command to wrap provisioning and bootstrapping for a disposable test drive. This is not functional at the moment.
 
 ## Prerequisites
 
-- Same toolchain as the [getting‑started guide](./getting-started.md).
-- A clean Proxmox node with available resources.
+For setting up the homelab, please refer to the [getting‑started guide](./getting-started.md) for the current recommended procedure and prerequisites.
 
 ## Overview of workflow
 
-1. `make demo-cluster` → Creates Talos cluster.
-2. `make demo-apps` → Installs ArgoCD and syncs all manifests.
+The original quick-start aimed to:
+1. Create a Talos cluster.
+2. Install ArgoCD and sync all manifests.
+
+This automated process is not available via `make` commands.
 
 ## Run the demo
 
-1. **Kick off everything:**
+The `make demo-cluster && make demo-apps` commands are not available. Please follow the [getting‑started guide](./getting-started.md) for a step-by-step setup.
 
-   ```bash
-   make demo-cluster && make demo-apps
+## Verify the setup
 
-````
+After following the [getting‑started guide](./getting-started.md):
 
-2. **Open ArgoCD:** Navigate to `https://argocd.<YOUR-DOMAIN>` and log in with the admin password printed by the script.
+*   **Applications:** Expect green check marks in ArgoCD after manifests are synced. You can access ArgoCD at `https://argocd.<YOUR-DOMAIN>` (e.g., `https://argocd.pc-tips.se`).
+*   **Services:** Test any endpoint such as `https://grafana.<YOUR-DOMAIN>` (see Gateway IPs in `k8s/infrastructure/network/gateway/`).
 
-## Verify the demo cluster
-
-* **Applications:** Expect green check marks in ArgoCD after \~10 minutes.
-* **Services:** Test any endpoint such as `https://grafana.<YOUR-DOMAIN>` (see Gateway IPs in `k8s/infrastructure/network/gateway/`).
-
-Tear down with `make demo-clean` when you’re done.
+To tear down a cluster provisioned with OpenTofu, you would typically use `opentofu destroy` in the `tofu` directory.

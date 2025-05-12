@@ -8,10 +8,12 @@ create a new document using this template, start with the markdown version by co
 from the GitHub repository or by downloading it:
 
 ```bash
-wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/docs/docs/templates/conceptual.tmpl.md -O your-conceptual-topic-name.md
+wget https://raw.githubusercontent.com/theepicsaxguy/homelab/main/website/docs/writing-documentation/templates/conceptual.tmpl.md -O your-topic-name.md
 ```
+Replace `your-topic-name.md` with the desired filename for your new document.
 
-Edit your new markdown file, referring to this page for descriptions of each section. You can build out a "stub file"
+2.  **Edit the downloaded file**:
+    Open `your-topic-name.md` in your preferred Markdown editor, referring to this page for descriptions of each section. You can build out a "stub file"
 with just headers, then gradually add content. Use screenshots sparingly. Refer to our
 [Documentation style guide](../style-guide.mdx) for writing tips and project-specific rules. :::
 

@@ -33,15 +33,15 @@ This page explains how GitHub Actions, Dependabot, and pre-commit hooks keep thi
 
 ### Validation & CI (Implied Workflows)
 
-- **What:** While workflow YAMLs aren't shown here, scripts like `validate_argocd.sh`, `validate_charts.sh`, `validate_manifests.sh`, and `hooks/validate-external-secrets.sh` are present and likely wired up to CI.
+- **What:** While specific workflow YAMLs for all validation steps aren't detailed here, the presence of scripts like `hooks/validate-external-secrets.sh` suggests CI integration for validation. The repository aims to automatically lint and validate configurations.
 - **Purpose:** Automatically lint and validate configurations (Kubernetes, Helm charts, scripts) on every push or PR.
 - **When triggered:**
   - Every push to `main`
   - Every pull request to `main`
 - **Jobs may include:**
   - YAML and script linting
-  - Run `validate_argocd.sh` (Kustomize and ArgoCD validation)
-  - Run `validate_charts.sh` (Helm chart checks)
+  - Kustomize and ArgoCD validation (typically using `kustomize build` and ArgoCD CLI tools)
+  - Helm chart checks (typically using `helm lint` or `helm template`)
   - Run `validate-external-secrets.sh` for secret validation
 - **Why:**
   - **Automation:** Prevents errors and broken configs from reaching production.

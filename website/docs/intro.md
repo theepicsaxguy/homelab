@@ -38,7 +38,7 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
 ## Cluster Setup
 
 - [Provision Talos Kubernetes](./tofu/opentofu-provisioning.md)
-  - Terraform-based Talos deployment on Proxmox
+  - OpenTofu-based Talos deployment on Proxmox
   - Infrastructure setup steps
 
 ## Kubernetes Management
@@ -64,10 +64,8 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
 
 ## Development
 
-- [PR Preview Environments](./k8s/manage-kubernetes.md)
-  - Automatic test environment creation
-  - PR testing workflow
-
+- The repository includes configurations for various development and operational tasks. Refer to specific workflow files and scripts for details on local development and testing.
+- [PR Preview Environments](./dev/pr-previews.md): Learn how Pull Request Preview Environments are configured and used.
 ## CI/CD
 
 - [Pipeline Configuration](./github/github-configuration.md)

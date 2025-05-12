@@ -52,12 +52,24 @@ Define nodes in `/tofu/main.tf` with:
 module "talos" {
   nodes = {
     "node1" = {
-      host_node = "proxmox1"
+      host_node    = "proxmox1"
       machine_type = "controlplane"
-      ip = "10.0.0.1"
-      cpu = 4
+      ip           = "10.0.0.1" # Example IP
+      cpu          = 4
       ram_dedicated = 8192
-      disks = ["180G"]
+      disks = {
+        # Example: a primary disk for the OS (often handled by the image cloning)
+        # and an additional disk for Longhorn.
+        # The exact structure depends on your module's variables.tf.
+        # This example assumes a structure like the one found in the repository:
+        longhorn = { # Key for the disk, e.g., 'longhorn' or 'data'
+          device     = "/dev/sdb" # Or another available device
+          size       = "180G"
+          type       = "scsi"     # Or 'virtio', 'sata'
+          mountpoint = "/var/lib/longhorn" # If applicable for Talos config
+        }
+        # os_disk = { ... } # If explicitly defining the OS disk
+      }
     }
   }
 }
@@ -103,16 +115,29 @@ We embed essential services in the Talos config:
 
 ## Version Upgrades
 
-1. Update versions in `main.tf`:
+1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions might be specified in multiple places:
+   - For the Talos image factory (e.g., `module "talos" { image = { version = "vX.Y.Z" } }`)
+   - For the machine configurations and cluster secrets (e.g., `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
+   - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
 
+   Example snippet from `main.tf` (actual structure may vary based on module inputs):
    ```hcl
-   cluster = {
-     talos_version = "1.5.0"
-     kubernetes_version = "1.28.0"
+   module "talos" {
+     # ...
+     image = {
+       version = "v1.9.5" # Target Talos version for OS images
+       # ...
+     }
+     cluster = {
+       talos_version      = "v1.9.5" # Target Talos version for machine configs
+       kubernetes_version = "v1.29.3"  # Target Kubernetes version
+       # ...
+     }
+     # ...
    }
    ```
 
-2. Set `update = true` for affected nodes
+2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise, `opentofu apply` will handle changes to version properties.
 
 3. Run:
 

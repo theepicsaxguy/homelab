@@ -32,19 +32,25 @@ Prefer a minimal demo? See the [quick‑start](./quick-start.md).
    ```bash
    git clone https://github.com/theepicsaxguy/homelab.git
    cd homelab
-````
+   ```
 
 2. **Provision the cluster (skip if you have one):**
 
    ```bash
-   cd website/tofu
+   cd tofu
    opentofu init && opentofu apply
    ```
 
 3. **Bootstrap ArgoCD:**
 
+   ArgoCD is typically bootstrapped as part of the OpenTofu provisioning process (defined in `k8s/argocd-bootstrap.tf`) or by applying its Helm chart manifests (e.g., from `k8s/infrastructure/controllers/argocd/`). Once the cluster is up and OpenTofu has run, ArgoCD should be getting installed.
+   You can monitor its installation. If manual application of core ArgoCD components is needed (e.g., if not fully handled by OpenTofu initial setup for some reason):
+
    ```bash
-   kubectl apply -f k8s/bootstrap/argocd-install.yaml
+   # This step might be handled automatically by OpenTofu.
+   # Verify ArgoCD installation after 'opentofu apply'
+   # If needed, apply the ArgoCD manifests from your infrastructure definitions:
+   # kubectl apply -k k8s/infrastructure/controllers/argocd
    ```
 
 4. **Watch ArgoCD reconcile:**
@@ -55,10 +61,10 @@ Prefer a minimal demo? See the [quick‑start](./quick-start.md).
 
 ## Verify the setup
 
-* **Nodes healthy?**
+- **Nodes healthy?**
 
   ```bash
   talosctl health --talosconfig talosconfig --nodes <control-plane-IP>
   ```
 
-* **Apps synced?** ArgoCD UI should show *Synced / Healthy* for every application.
+- **Apps synced?** ArgoCD UI should show *Synced / Healthy* for every application.
