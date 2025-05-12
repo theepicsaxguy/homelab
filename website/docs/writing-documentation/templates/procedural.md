@@ -54,22 +54,25 @@ action.
 
 **Example step format:**
 
-1.  **Navigate to the configuration directory:** Open your terminal and change to the `/k8s/applications/my-app`
-    directory.
-    ```bash
-    cd /k8s/applications/my-app
-    ```
-2.  **Modify the `replicas` count:** Open the `deployment.yaml` file and update the `spec.replicas` field to the desired
-    number. **Example**:
-    ```yaml
-    # deployment.yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    # ...
-    spec:
-      replicas: 3 # Change this value
-    # ...
-    ```
+1. **Navigate to the configuration directory:** Open your terminal and change to the `/k8s/applications/my-app`
+   directory.
+
+   ```bash
+   cd /k8s/applications/my-app
+   ```
+
+2. **Modify the `replicas` count:** Open the `deployment.yaml` file and update the `spec.replicas` field to the desired
+   number. **Example**:
+
+   ```yaml
+   # deployment.yaml
+   apiVersion: apps/v1
+   kind: Deployment
+   # ...
+   spec:
+     replicas: 3 # Change this value
+   # ...
+   ```
 
 ## [Next group of steps: e.g., Apply the configuration] (If needed)
 
@@ -91,11 +94,15 @@ the expected state.
 **Example verification steps:**
 
 - "To confirm that the application pods are running, execute:
+
   ```bash
   kubectl get pods -n my-app-namespace -l app=my-app
   ```
+
   You should see the specified number of pods in the `Running` state."
+
 - "Check the application logs for any startup errors:
+
   ````bash
   kubectl logs -n my-app-namespace -l app=my-app --tail=50
   ```"

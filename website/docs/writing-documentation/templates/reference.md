@@ -51,6 +51,7 @@ explanation for this sub-grouping.
 - **Default Value:** (If applicable)
 - **Allowed Values/Format:** (If there's a specific set of allowed values or a format to follow)
 - **Example:**
+
   ```yaml
   parameter_name: 'example_value'
   ```

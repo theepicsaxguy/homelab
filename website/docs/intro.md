@@ -34,14 +34,13 @@ This `/docs` directory contains detailed documentation for various parts of the 
 - **[Manage Kubernetes configuration with GitOps](./k8s/manage-kubernetes.md):** Describes the overall structure of
   Kubernetes manifests, with a focus on ArgoCD for implementing GitOps, and details how applications and infrastructure
   services are managed.
-  - **[Bootstrap ArgoCD](./k8s/manage-kubernetes.md#bootstrap-argocd):** Details the initial setup process for ArgoCD on
-    the cluster.
+  - **[Bootstrap ArgoCD](./k8s/manage-kubernetes.md):** Details the initial setup process for ArgoCD on the cluster.
   - **[Deploy and manage applications](./k8s/applications/application-management.md):** Explains the deployment and
     management strategies for user-facing applications.
   - **[Deploy and manage infrastructure services](./k8s/infrastructure/infrastructure-management.md):** Covers the
     deployment and management of core cluster services, including networking, storage, authentication, and monitoring.
-  - **[Automate PR preview environments](./k8s/manage-kubernetes.md#pr-preview-environments):** Describes the system
-    used to automatically create temporary environments for testing pull requests.
+  - **[Automate PR preview environments](./k8s/manage-kubernetes.md):** Describes the system used to automatically
+    create temporary environments for testing pull requests.
 - **[Configure CI/CD and Repository Management](./github/github-configuration.md):** Contains information about CI/CD
   workflows and Dependabot settings for repository maintenance.
 
