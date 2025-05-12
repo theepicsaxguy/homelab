@@ -33,10 +33,6 @@
       "*.tfvars": "terraform",
       "Tiltfile": "python"
     },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.formatOnSave": true
-    },
 
     // Editor settings
     "editor.insertSpaces": true,

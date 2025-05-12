@@ -3,7 +3,7 @@ title: Manage Kubernetes configuration with GitOps
 ---
 
 Once the Kubernetes cluster is provisioned (as detailed in the
-[Provision the Talos Kubernetes cluster with Terraform](../tofu/README.md) documentation), all subsequent
+[Provision the Talos Kubernetes cluster with Terraform](../tofu/opentofu-provisioning.md) documentation), all subsequent
 configurations, applications, and infrastructure services are managed using a GitOps workflow. This workflow is powered
 by ArgoCD.
 
@@ -28,14 +28,10 @@ ArgoCD ensures that the cluster's actual state converges to this defined state.
 
 The `/k8s` directory is structured to organize Kubernetes manifests logically:
 
-- **`argocd-bootstrap.tf`:** A Terraform file for the initial bootstrapping of ArgoCD onto a new cluster. This is
-  typically run once. (See [Bootstrap ArgoCD](./argocd-bootstrap.md)).
 - **`applications/`:** Contains manifests for user-facing applications like media servers and AI tools. (See
-  [Deploy and manage applications](./applications/README.md)).
+  [Deploy and manage applications](./applications/application-management.md)).
 - **`infrastructure/`:** Contains manifests for core cluster services such as networking, storage, authentication, and
-  monitoring. (See [Deploy and manage infrastructure services](./infrastructure/README.md)).
-- **`pr-preview/`:** Configuration for automatically creating preview environments for pull requests. (See
-  [Automate PR preview environments](./pr-preview/README.md)).
+  monitoring. (See [Deploy and manage infrastructure services](./infrastructure/infrastructure-management.md)).
 - **`crds/`:** While many Custom Resource Definitions (CRDs) are installed by Helm charts managed by ArgoCD, this
   directory includes a Kustomization to apply CRDs that are prerequisites or globally required, such as the Kubernetes
   Gateway API CRDs. This centralization ensures their presence before controllers dependent on them are deployed.
