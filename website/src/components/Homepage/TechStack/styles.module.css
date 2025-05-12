@@ -1,0 +1,34 @@
+.techStack {
+  padding: 4rem 0;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.techStackTitle {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.techGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.techItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.techLogo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.techName {
+  font-weight: 600;
+}
