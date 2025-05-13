@@ -47,7 +47,7 @@ For a minimal demo or test setup, see the [quick‑start version](./quick-start.
    ```
 
    :::info
-   Use secure storage for secrets, like 1Password or Bitwarden, and avoid committing sensitive files.
+   Use secure storage for secrets, like 1Password or Bitwarden, and avoid committing sensitive files. For more information, see the [Argo CD Secrets Management ](https://argo-cd.readthedocs.io/en/stable/operator-manual/secret-management/).
    :::
 
 ## Apply and deploy the cluster
