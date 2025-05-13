@@ -1,34 +1,84 @@
 ---
-title: Quick start
+title: Homelab Quick start
 ---
+Get your Kubernetes homelab up and running fast. This guide covers the minimum steps to launch a cluster and deploy apps with GitOps.
 
-This page previously described a Makefile-based quick start. However, the `Makefile` is not currently available in the repository.
-
-## About the quick‑start
-
-The intention was to provide a single command to wrap provisioning and bootstrapping for a disposable test drive. This is not functional at the moment.
+:::info
+For a deeper technical guide or troubleshooting steps, see [Getting Started](./getting-started.md).
+:::
 
 ## Prerequisites
 
-For setting up the homelab, please refer to the [getting‑started guide](./getting-started.md) for the current recommended procedure and prerequisites.
+- Proxmox access with your SSH key added to the hypervisor.
+- Tools installed: `opentofu`, `talosctl`, `kubectl`, and `argocd`.
+- This repository cloned locally.
 
-## Overview of workflow
+## Overview of steps
 
-The original quick-start aimed to:
-1. Create a Talos cluster.
-2. Install ArgoCD and sync all manifests.
+1. Configure cluster variables.
+2. Launch the cluster with OpenTofu.
+3. Retrieve access configs.
 
-This automated process is not available via `make` commands.
+## Quick Start Steps
 
-## Run the demo
+1. **Clone the repository and move into it:**
 
-The `make demo-cluster && make demo-apps` commands are not available. Please follow the [getting‑started guide](./getting-started.md) for a step-by-step setup.
+   ```bash
+   git clone https://github.com/theepicsaxguy/homelab.git
+   cd homelab
+   ```
 
-## Verify the setup
+2. **Create your cluster variable file (`terraform.tfvars`):**
 
-After following the [getting‑started guide](./getting-started.md):
+   ```hcl
+   # terraform.tfvars
+   cluster_name     = "homelab"
+   controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
+   worker_ips       = ["10.25.150.20", "10.25.150.21"]
+   ```
 
-*   **Applications:** Expect green check marks in ArgoCD after manifests are synced. You can access ArgoCD at `https://argocd.<YOUR-DOMAIN>` (e.g., `https://argocd.pc-tips.se`).
-*   **Services:** Test any endpoint such as `https://grafana.<YOUR-DOMAIN>` (see Gateway IPs in `k8s/infrastructure/network/gateway/`).
+   :::info
+   Customize IPs and hostnames as needed for your lab environment.
+   :::
 
-To tear down a cluster provisioned with OpenTofu, you would typically use `opentofu destroy` in the `tofu` directory.
+3. **Initialize SSH agent and OpenTofu:**
+
+   ```bash
+   eval $(ssh-agent)
+   ssh-add ~/.ssh/id_rsa
+   tofu init
+   ```
+
+4. **Provision the cluster (this may take a few minutes):**
+
+   ```bash
+   tofu apply
+   ```
+
+5. **Fetch your access configs:**
+
+   ```bash
+   tofu output -raw talos_config > ~/.talos/config
+   tofu output -raw kube_config > ~/.kube/config
+   chmod 600 ~/.talos/config ~/.kube/config
+   ```
+
+## Verify
+
+1. **Check that Talos nodes are healthy:**
+
+   ```bash
+   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
+   ```
+
+2. **Confirm apps are syncing (ArgoCD):**
+
+   ```bash
+   argocd app list
+   ```
+
+   All applications should be `Healthy` and `Synced`.
+   For any issues, see [troubleshooting in the full guide](./getting-started.md).
+
+---
+That's it! Your cluster and GitOps stack are live.
