@@ -1,39 +1,64 @@
+/* src/components/Homepage/FeatureGrid/styles.module.css */
 .features {
   padding: 4rem 0;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+}
+
+.gradientText {
+  background: linear-gradient(120deg, var(--ifm-color-primary), var(--ifm-color-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .featureGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin-top: 2rem;
 }
 
 .featureCard {
   padding: 2rem;
-  background: var(--ifm-card-background-color);
-  border-radius: var(--ifm-card-border-radius);
-  box-shadow: var(--ifm-card-box-shadow);
+  background: var(--ifm-background-surface-color);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background: var(--ifm-color-primary);
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .featureIcon {
-  width: 48px;
-  height: 48px;
-  margin-bottom: 1rem;
-}
-
-.featureIcon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
 }
 
 .featureTitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
 .featureDescription {
-  margin: 0;
+  color: var(--ifm-color-emphasis-700);
   line-height: 1.6;
+  margin: 0;
 }

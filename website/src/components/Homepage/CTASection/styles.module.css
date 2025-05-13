@@ -1,0 +1,37 @@
+/* src/components/Homepage/CTASection/styles.module.css */
+.cta {
+  padding: 5rem 0;
+  background: linear-gradient(to right, var(--ifm-color-primary), var(--ifm-color-primary-dark));
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.primaryButton {
+  background: white;
+  color: var(--ifm-color-primary);
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton {
+  border: 2px solid white;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}

@@ -1,30 +1,60 @@
-import React, { JSX } from 'react';
+// src/components/Homepage/HeroSection/index.tsx
+import React, { JSX, useEffect } from 'react';
 import Link from '@docusaurus/Link';
-import clsx from 'clsx';
+import Typed from 'typed.js';
 import styles from './styles.module.css';
 
 export function HeroSection(): JSX.Element {
+  useEffect(() => {
+    const typed = new Typed('#typed', {
+      strings: [
+        'Run Kubernetes at home like a pro.',
+        'GitOps-driven infrastructure automation.',
+        'Production-grade homelab setup.',
+        'Self-hosted cloud native stack.'
+      ],
+      typeSpeed: 50,
+      backSpeed: 30,
+      backDelay: 1500,
+      loop: true
+    });
+
+    return () => {
+      typed.destroy();
+    };
+  }, []);
+
   return (
-    <header className={clsx('hero', styles.heroBanner)}>
+    <section className={styles.hero}>
       <div className="container">
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
-            Modern Homelab Infrastructure
-            <span className={styles.heroHighlight}>Powered by Kubernetes</span>
+            Your Home Infrastructure,
+            <span className={styles.gradientText}>Enterprise Grade</span>
           </h1>
-          <p className={styles.heroSubtitle}>
-            A production-grade, GitOps-driven homelab built with Kubernetes, Talos, and modern DevOps practices
-          </p>
-          <div className={styles.buttons}>
-            <Link className="button button--primary button--lg" to="/docs/getting-started">
-              Get Started
+          <div className={styles.typedWrapper}>
+            <span id="typed"></span>
+          </div>
+          <div className={styles.ctaButtons}>
+            <Link
+              to="/docs/quick-start"
+              className={styles.primaryButton}
+            >
+              Get Started →
             </Link>
-            <Link className="button button--secondary button--lg" to="/docs/architecture">
-              View Architecture
+            <Link
+              to="#demo"
+              className={styles.secondaryButton}
+            >
+              Watch Demo
             </Link>
           </div>
+          {/* Add stats section */}
+        </div>
+        <div className={styles.codePreview}>
+          {/* Add code preview section */}
         </div>
       </div>
-    </header>
+    </section>
   );
 }
