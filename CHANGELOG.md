@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.5.0](https://github.com/theepicsaxguy/homelab/compare/v2.4.0...v2.5.0) (2025-05-13)
+
+
+### Features
+
+* **k8s:** add whisperasr deployment and service configuration ([#616](https://github.com/theepicsaxguy/homelab/issues/616)) ([bafe4a9](https://github.com/theepicsaxguy/homelab/commit/bafe4a9a5f2945791146ca9d61679d2d18f02e20))
+* **k8s:** update frigate HTTPRoute and add Authentik Outpost configuration ([#623](https://github.com/theepicsaxguy/homelab/issues/623)) ([81de4f2](https://github.com/theepicsaxguy/homelab/commit/81de4f29e1b169ff96bfabeac2a936d46a81ca21))
+* **website:** enhance homepage with new sections and styling ([#643](https://github.com/theepicsaxguy/homelab/issues/643)) ([56bbe20](https://github.com/theepicsaxguy/homelab/commit/56bbe20762e3e3e990f5344895e854f77304e985))
+
+
+### Bug Fixes
+
+* **k8s:** correct HTTPRoute name and backend reference for frigate ([#625](https://github.com/theepicsaxguy/homelab/issues/625)) ([1ad965c](https://github.com/theepicsaxguy/homelab/commit/1ad965c4eee4bf96b3ca97ac5a546cab0f08e074))
+* **k8s:** update OIDC issuer URL for authentik configuration ([#612](https://github.com/theepicsaxguy/homelab/issues/612)) ([db644ee](https://github.com/theepicsaxguy/homelab/commit/db644eeac7cc0b86b5033d015c739e7e3044fdad))
+
 ## [2.4.0](https://github.com/theepicsaxguy/homelab/compare/v2.3.0...v2.4.0) (2025-05-05)
 
 
