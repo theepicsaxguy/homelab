@@ -182,15 +182,8 @@ flowchart TD
 
 ## 📝 Documentation & Further Reading
 
-For the geekier details and in-depth configurations, dive into:
-
-- [Architecture Deep Dive](docs/architecture.md)
-- [Network Magic Explained](docs/network-architecture.md)
-- [Storage Setup](docs/storage-architecture.md)
-- [Security Model](docs/security-architecture.md)
-- [Monitoring Stack Overview](docs/monitoring-architecture.md)
-
-_These docs contain all the YAML and configuration specifics so you can keep the main README lean and focused._
+For geekier details, in-depth configurations, and all the YAML, visit the
+[Documentation](https://homelab.orkestack.com/docs/)
 
 ---
 
