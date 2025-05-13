@@ -121,6 +121,7 @@ We embed essential services in the Talos config:
    - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
 
    Example snippet from `main.tf` (actual structure may vary based on module inputs):
+
    ```hcl
    module "talos" {
      # ...
@@ -137,12 +138,12 @@ We embed essential services in the Talos config:
    }
    ```
 
-2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise, `opentofu apply` will handle changes to version properties.
+2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise, `tofu apply` will handle changes to version properties.
 
 3. Run:
 
    ```bash
-   opentofu apply
+   tofu apply
    ```
 
 ## Node Management
@@ -150,12 +151,12 @@ We embed essential services in the Talos config:
 ### Add/Remove Nodes
 
 1. Modify `nodes` in `main.tf`
-2. Run `opentofu apply`
+2. Run `tofu apply`
 
 ### Change Resources
 
 1. Update node specs in `main.tf`
-2. Run `opentofu apply`
+2. Run `tofu apply`
 
 > Note: Resource changes may require VM restarts
 
