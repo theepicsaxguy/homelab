@@ -25,18 +25,16 @@ export function Footer(): JSX.Element {
           <div className={styles.column}>
             <h3 className={styles.title}>Community</h3>
             <ul className={styles.list}>
-              <li><Link to="https://github.com/yourusername/homelab">GitHub</Link></li>
-              <li><Link to="https://discord.gg/yourinvite">Discord</Link></li>
-              <li><Link to="https://twitter.com/yourhandle">Twitter</Link></li>
+              <li><Link to="https://github.com/theepicsaxguy/homelab">GitHub</Link></li>
             </ul>
           </div>
-          <div className={styles.column}>
+          {/* <div className={styles.column}>
             <h3 className={styles.title}>Legal</h3>
             <ul className={styles.list}>
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/terms">Terms of Service</Link></li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

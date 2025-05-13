@@ -10,13 +10,13 @@ export function CTASection(): JSX.Element {
         <h2 className={styles.title}>Ready to Transform Your Homelab?</h2>
         <div className={styles.buttons}>
           <Link
-            to="https://github.com/yourusername/homelab"
+            to="https://github.com/theepicsaxguy/homelab"
             className={styles.primaryButton}
           >
             Star on GitHub
           </Link>
           <Link
-            to="/docs"
+            to="/docs/architecture"
             className={styles.secondaryButton}
           >
             Read the Docs
