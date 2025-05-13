@@ -1,8 +1,10 @@
-theepixsaxguy:
+theepicsaxguy:
   name: Benjamin Sandén
-  title: Front End Engineer @ Facebook
-  url: https://github.com/theepixsaxguy
-  image_url: https://github.com/theepixsaxgux.png
-  page: true
+  title: Docusaurus maintainer
+  url: https://github.com/theepicsaxguy
+  image_url: https://github.com/theepicsaxguy.png
+  page:
+    # customize the url of the author page at /blog/authors/<permalink>
+    permalink: '/all-theepicsaxguy-articles'
   socials:
-    github: theepixsaxguy
+    github: theepicsaxguy

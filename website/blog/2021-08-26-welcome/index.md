@@ -9,17 +9,15 @@ Welcome to the official blog for my Kubernetes-based homelab project! This space
 
 This project is all about leveraging enterprise-grade patterns and open-source tooling to create a robust, automated, and fun platform for self-hosting various services. If you're passionate about Kubernetes, infrastructure-as-code, and pushing the boundaries of what a homelab can be, you're in the right place.
 
-<!-- truncate -->
-
 ## What's This Homelab All About?
 
 At its core, this homelab is built upon a few key principles and technologies:
 
-*   **Kubernetes as the Orchestrator:** Using [Talos OS](https://www.talos.dev/) for a minimal, immutable, and API-driven Kubernetes experience.
-*   **Infrastructure as Code (IaC):** Leveraging [OpenTofu](https://opentofu.org/) (a fork of Terraform) to provision and manage the underlying virtual machines on Proxmox.
-*   **GitOps for Everything:** [ArgoCD](https://argo-cd.readthedocs.io/en/stable/) is the heart of our deployment strategy, ensuring that the state of our cluster (from infrastructure components to applications) is defined declaratively in this Git repository.
-*   **Declarative Configuration:** [Kustomize](https://kustomize.io/) helps manage Kubernetes manifest variations without excessive templating.
-*   **Automation:** From CI/CD pipelines with GitHub Actions to automated certificate management with Cert-Manager.
+* **Kubernetes as the Orchestrator:** Using [Talos OS](https://www.talos.dev/) for a minimal, immutable, and API-driven Kubernetes experience.
+* **Infrastructure as Code (IaC):** Leveraging [OpenTofu](https://opentofu.org/) (a fork of Terraform) to provision and manage the underlying virtual machines on Proxmox.
+* **GitOps for Everything:** [ArgoCD](https://argo-cd.readthedocs.io/en/stable/) is the heart of our deployment strategy, ensuring that the state of our cluster (from infrastructure components to applications) is defined declaratively in this Git repository.
+* **Declarative Configuration:** [Kustomize](https://kustomize.io/) helps manage Kubernetes manifest variations without excessive templating.
+* **Automation:** From CI/CD pipelines with GitHub Actions to automated certificate management with Cert-Manager.
 
 The goal is to create a system that is not only powerful but also resilient, auditable, and relatively easy to manage once set up.
 
@@ -27,11 +25,11 @@ The goal is to create a system that is not only powerful but also resilient, aud
 
 This blog will serve as a chronicle of this homelab's development. You can expect posts on topics such as:
 
-*   **Deep Dives:** Detailed explanations of specific components, configurations, and architectural choices (e.g., network setup with Cilium, storage with Longhorn, authentication with Authentik).
-*   **Tutorials & How-Tos:** Step-by-step guides for setting up new services or implementing particular features.
-*   **Troubleshooting & Learnings:** Sharing challenges encountered and how they were overcome – because no homelab journey is without its bumps!
-*   **New Additions & Upgrades:** Updates on new applications being self-hosted or major infrastructure upgrades.
-*   **Project Updates:** Milestones, refactoring efforts, and new documentation highlights.
+* **Deep Dives:** Detailed explanations of specific components, configurations, and architectural choices (e.g., network setup with Cilium, storage with Longhorn, authentication with Authentik).
+* **Tutorials & How-Tos:** Step-by-step guides for setting up new services or implementing particular features.
+* **Troubleshooting & Learnings:** Sharing challenges encountered and how they were overcome – because no homelab journey is without its bumps!
+* **New Additions & Upgrades:** Updates on new applications being self-hosted or major infrastructure upgrades.
+* **Project Updates:** Milestones, refactoring efforts, and new documentation highlights.
 
 ## Exploring the Repository
 
@@ -39,39 +37,12 @@ All the configurations and documentation for this homelab are publicly available
 
 Feel free to browse:
 
-*   The `/k8s/` directory for all Kubernetes manifests, managed by ArgoCD.
-*   The `/tofu/` directory for the OpenTofu code that provisions the Talos cluster.
-*   The `/website/docs/` for comprehensive documentation on architecture, setup, and management.
+* The `/k8s/` directory for all Kubernetes manifests, managed by ArgoCD.
+* The `/tofu/` directory for the OpenTofu code that provisions the Talos cluster.
+* The `/website/docs/` for comprehensive documentation on architecture, setup, and management.
 
 ## Getting Involved
 
 This project is a personal learning and exploration endeavor, but feedback, suggestions, and discussions are always welcome! Feel free to open an [Issue](https://github.com/theepicsaxguy/homelab/issues) if you spot something amiss or have an idea.
 
 Stay tuned for more updates as this homelab continues to grow and evolve!
-
----
-
-**Next Steps for You:**
-
-1.  **Create/Update `website/blog/authors.yml`:**
-    Add an entry for `theepicsaxguy`:
-    ```yaml
-    theepicsaxguy:
-      name: The Epic Sax Guy # Or your preferred name
-      title: Homelab Architect & Tinkerer
-      url: https://github.com/theepicsaxguy
-      image_url: https://github.com/theepicsaxguy.png # Or a custom image path
-    ```
-
-2.  **Save the Blog Post:**
-    Save the content above into a new file named something like `website/blog/2025-05-12-welcome-to-the-homelab-journey.mdx` (adjust the date).
-
-3.  **Add an Image (Optional but Recommended):**
-    You could add a relevant image to the blog post. For example, a conceptual diagram of the homelab or a logo collage. If you add an image:
-    *   Place it in a folder like `website/blog/img/` or co-locate it if you make the blog post a folder (e.g., `website/blog/YYYY-MM-DD-welcome-homelab/index.mdx` and `website/blog/YYYY-MM-DD-welcome-homelab/your-image.png`).
-    *   Reference it in the Markdown: `![Descriptive Alt Text](./img/your-image.png)`
-
-4.  **Review Tags:**
-    The tags `[homelab, kubernetes, gitops, opentofu, talos, argocd, introduction]` are a good starting point. You can adjust them as you see fit. Make sure these tags (or new ones) are defined in `website/blog/tags.yml` if you want custom permalinks or descriptions for them.
-
-This post aims to be informative and set the stage for future content. Let me know if you'd like any adjustments!
