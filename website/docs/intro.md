@@ -62,10 +62,6 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
   - Auth systems
   - Monitoring stack
 
-## Development
-
-- The repository includes configurations for various development and operational tasks. Refer to specific workflow files and scripts for details on local development and testing.
-- [PR Preview Environments](./dev/pr-previews.md): Learn how Pull Request Preview Environments are configured and used.
 ## CI/CD
 
 - [Pipeline Configuration](./github/github-configuration.md)

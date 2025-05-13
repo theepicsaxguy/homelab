@@ -1,59 +1,95 @@
 ---
-title: Getting started
+title: 'Getting Started: Homelab Cluster and GitOps Onboarding'
 ---
-
-Spin up the lab, bootstrap GitOps, and watch apps deploy—all in about one hour.
-
-## About the getting‑started workflow
-
-These steps provision the cluster (optional if you already have one), install ArgoCD, and let the Git repository take over.
+This guide walks you through spinning up a Kubernetes homelab: provisioning VMs, bootstrapping the cluster, and deploying workloads using GitOps—all in under one hour.
 
 :::info
-Prefer a minimal demo? See the [quick‑start](./quick-start.md).
+For a minimal demo or test setup, see the [quick‑start version](./quick-start.md).
 :::
 
 ## Prerequisites
 
-- Proxmox access and an SSH key on the hypervisor.
-- Packages: `opentofu`, `talosctl`, `kubectl`, `argocd`.
+- Proxmox access (with SSH key set up on the hypervisor).
+- Installed tools:
+  - [`opentofu`](https://opentofu.org/)
+  - [`talosctl`](https://www.talos.dev/)
+  - [`kubectl`](https://kubernetes.io/docs/tasks/tools/)
+  - [`argocd`](https://argo-cd.readthedocs.io/)
+- `terraform.tfvars` file with your cluster's details (see below for example).
+- Access to this Git repository.
 
 ## Overview of steps
 
-1. Clone repository.
-2. Provision VMs + Talos (optional).
-3. Install ArgoCD.
-4. Let ApplicationSets sync.
-5. Verify health.
+1. Configure cluster variables.
+2. Launch and provision VMs with Talos.
+3. Retrieve cluster access configs.
+4. Bootstrap and verify ArgoCD.
+5. Confirm GitOps deployment and cluster health.
 
-## Step‑by‑step guide
+## Prepare the configuration
 
-1. **Clone the repo:**
+1. **Clone the repository:**
+   Download the required files and move into the working directory.
 
    ```bash
    git clone https://github.com/theepicsaxguy/homelab.git
    cd homelab
    ```
 
-2. **Provision the cluster (skip if you have one):**
+2. **Configure cluster variables:**
+   Edit or create the `terraform.tfvars` file to define your cluster nodes:
 
-   ```bash
-   cd tofu
-   opentofu init && opentofu apply
+   ```hcl
+   # terraform.tfvars
+   cluster_name     = "homelab"
+   controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
+   worker_ips       = ["10.25.150.20", "10.25.150.21"]
    ```
 
-3. **Bootstrap ArgoCD:**
+   :::info
+   Use secure storage for secrets, like 1Password or Bitwarden, and avoid committing sensitive files.
+   :::
 
-   ArgoCD is typically bootstrapped as part of the OpenTofu provisioning process (defined in `k8s/argocd-bootstrap.tf`) or by applying its Helm chart manifests (e.g., from `k8s/infrastructure/controllers/argocd/`). Once the cluster is up and OpenTofu has run, ArgoCD should be getting installed.
-   You can monitor its installation. If manual application of core ArgoCD components is needed (e.g., if not fully handled by OpenTofu initial setup for some reason):
+## Apply and deploy the cluster
+
+3. **Initialize SSH agent and OpenTofu:**
+   Enable SSH access and initialize the environment.
 
    ```bash
-   # This step might be handled automatically by OpenTofu.
-   # Verify ArgoCD installation after 'opentofu apply'
-   # If needed, apply the ArgoCD manifests from your infrastructure definitions:
-   # kubectl apply -k k8s/infrastructure/controllers/argocd
+   eval $(ssh-agent)
+   ssh-add ~/.ssh/id_rsa
+   tofu init
    ```
 
-4. **Watch ArgoCD reconcile:**
+4. **Provision the VMs and Talos cluster:**
+   This step creates and configures all control-plane and worker nodes.
+
+   ```bash
+   tofu apply
+   ```
+
+5. **Retrieve Talos and Kubernetes configs:**
+   Fetch access configs and set secure permissions.
+
+   ```bash
+   tofu output -raw talos_config > ~/.talos/config
+   tofu output -raw kube_config > ~/.kube/config
+   chmod 600 ~/.talos/config ~/.kube/config
+   ```
+
+## Bootstrap and verify ArgoCD
+
+6. **Check or install ArgoCD:**
+   ArgoCD is usually installed automatically. To verify or re-apply manually:
+
+   ```bash
+   kubectl get pods -n argocd
+   # If ArgoCD pods aren't running, install with:
+   kubectl apply -k k8s/infrastructure/controllers/argocd
+   ```
+
+7. **Monitor ApplicationSet synchronization:**
+   Use the ArgoCD CLI to confirm apps are recognized and syncing.
 
    ```bash
    argocd app list
@@ -61,10 +97,44 @@ Prefer a minimal demo? See the [quick‑start](./quick-start.md).
 
 ## Verify the setup
 
-- **Nodes healthy?**
+1. **Check node and service health:**
+
+   ```bash
+   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
+   ```
+
+   All checks should report `healthy`.
+
+2. **Confirm apps are synced in ArgoCD UI:**
+   All applications should show *Synced / Healthy* status.
+
+3. **Inspect ArgoCD logs (optional troubleshooting):**
+
+   ```bash
+   kubectl logs -n argocd deployment/argocd-server
+   ```
+
+   Look for messages indicating healthy reconciliation.
+
+---
+
+## Pro tips and troubleshooting
+
+- **To recreate a node (e.g., after resizing a disk):**
 
   ```bash
-  talosctl health --talosconfig talosconfig --nodes <control-plane-IP>
+  tofu taint 'module.talos.proxmox_virtual_environment_vm.this["work-00"]'
+  tofu apply
   ```
 
-- **Apps synced?** ArgoCD UI should show *Synced / Healthy* for every application.
+- **For common issues (API or etcd failures):**
+
+  ```bash
+  talosctl etcd members
+  ```
+
+- Back up your `talosconfig` and `kubeconfig` immediately after setup.
+- Document and save your network layout for future troubleshooting.
+
+---
+For further details on cluster architecture, networking, and recovery, see [Cluster Details](./architecture.md).
