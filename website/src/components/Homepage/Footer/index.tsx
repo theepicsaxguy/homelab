@@ -19,7 +19,6 @@ export function Footer(): JSX.Element {
             <ul className={styles.list}>
               <li><Link to="/docs/getting-started">Getting Started</Link></li>
               <li><Link to="/docs/architecture">Architecture</Link></li>
-              <li><Link to="/docs/components">Components</Link></li>
             </ul>
           </div>
           <div className={styles.column}>
