@@ -1,19 +1,18 @@
 import React, { JSX } from 'react';
 import styles from './styles.module.css';
-
 interface Technology {
   name: string;
   logo: string;
 }
-
 const technologies: Technology[] = [
   { name: 'Kubernetes', logo: 'kubernetes.svg' },
   { name: 'Talos', logo: 'talos.svg' },
-  { name: 'ArgoCD', logo: 'argo.svg' },
+  { name: 'ArgoCD', logo: 'argocd.svg' },
   { name: 'OpenTofu', logo: 'opentofu.svg' },
-  { name: 'Proxmox', logo: 'proxmox.svg' },
+  { name: 'Prometheus', logo: 'prometheus.svg' },
+  { name: 'Grafana', logo: 'grafana.svg' },
+  { name: 'Proxmox', logo: 'proxmox.svg' }
 ];
-
 export function TechStack(): JSX.Element {
   return (
     <section className={styles.techStack}>

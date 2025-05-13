@@ -1,5 +1,5 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
@@ -64,6 +64,11 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
+    colorMode: {
+    defaultMode: 'dark',
+    disableSwitch: false,
+    respectPrefersColorScheme: false,
+  },
     image: 'img/homelab.png',
     navbar: {
       title: 'Homelab',
@@ -74,11 +79,11 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'DocumenationSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Documenation',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        { to: '/blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/theepicsaxguy/homelab',
           label: 'GitHub',
