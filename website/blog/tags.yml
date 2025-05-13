@@ -1,19 +1,35 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+homelab:
+  label: homelab
+  permalink: /homelab
+  description: homelab tag description
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+kubernetes:
+  label: kubernetes
+  permalink: /kubernetes
+  description: kubernetes tag description
 
 docusaurus:
   label: Docusaurus
   permalink: /docusaurus
   description: Docusaurus tag description
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+gitops:
+  label: gitops
+  permalink: /gitops
+  description: gitops tag description
+opentofu:
+  label: opentofu
+  permalink: /opentofu
+  description: opentofu tag description
+talos:
+  label: talos
+  permalink: /talos
+  description: talos tag description
+argocd:
+  label: argocd
+  permalink: /argocd
+  description: argocd tag description
+introduction:
+  label: introduction
+  permalink: /introduction
+  description: introduction tag description
