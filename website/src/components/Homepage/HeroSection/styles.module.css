@@ -1,67 +1,53 @@
 /* src/components/Homepage/HeroSection/styles.module.css */
-.heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(145deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-darker) 100%);
-  color: white;
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 5rem;
+  background: var(--ifm-background-color);
 }
 
 .heroContent {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 600px;
 }
 
 .heroTitle {
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 700;
   line-height: 1.2;
+  margin-bottom: 2rem;
 }
 
-.heroHighlight {
-  display: block;
+.gradientText {
+  background: linear-gradient(120deg, var(--ifm-color-primary), var(--ifm-color-primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.typedWrapper {
   font-size: 1.5rem;
-  margin-top: 0.5rem;
-  color: var(--ifm-color-primary-lighter);
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 2rem;
 }
 
-.heroSubtitle {
-  font-size: 1.2rem;
-  margin: 1.5rem 0;
-}
-
-.buttons {
+.ctaButtons {
   display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 1rem;
 }
 
-/* src/components/Homepage/FeatureGrid/styles.module.css */
-.features {
-  padding: 4rem 0;
-  background: var(--ifm-background-surface-color);
-}
-
-.featureGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 2rem 0;
-}
-
-.featureCard {
-  padding: 2rem;
-  border-radius: var(--ifm-card-border-radius);
-  background: var(--ifm-background-color);
-  box-shadow: var(--ifm-shadow-lw);
+.primaryButton {
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
   transition: all 0.3s ease;
 }
 
-.featureCard:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--ifm-shadow-md);
+.secondaryButton {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
-
-/* Add more styles for other components... */
