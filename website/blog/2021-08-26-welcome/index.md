@@ -9,6 +9,8 @@ Welcome to the official blog for my Kubernetes-based homelab project! This space
 
 This project is all about leveraging enterprise-grade patterns and open-source tooling to create a robust, automated, and fun platform for self-hosting various services. If you're passionate about Kubernetes, infrastructure-as-code, and pushing the boundaries of what a homelab can be, you're in the right place.
 
+<!-- truncate -->
+
 ## What's This Homelab All About?
 
 At its core, this homelab is built upon a few key principles and technologies:
