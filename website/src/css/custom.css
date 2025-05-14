@@ -3,7 +3,6 @@
   --primary: #6366f1;
   --secondary: #818cf8;
   --accent: #4f46e5;
-
   --ifm-color-primary: var(--primary);
   --ifm-color-primary-dark: var(--accent);
   --ifm-color-primary-darker: #4338ca;
@@ -11,22 +10,47 @@
   --ifm-color-primary-light: var(--secondary);
   --ifm-color-primary-lighter: #a5b4fc;
   --ifm-color-primary-lightest: #c7d2fe;
+  --ifm-gradient-primary: linear-gradient(120deg, var(--primary), var(--secondary));
+  --ifm-card-background-color: var(--ifm-background-surface-color);
+  --ifm-hover-overlay: rgba(99, 102, 241, 0.1);
 }
 
 /* Add dark theme variables */
 [data-theme='dark'] {
   --ifm-background-color: #111827;
   --ifm-background-surface-color: #1f2937;
+  --ifm-color-primary: var(--primary);
+  --ifm-color-primary-dark: var(--accent);
+  --ifm-color-primary-darker: #4338ca;
+  --ifm-color-primary-darkest: #3730a3;
+  --ifm-color-primary-light: var(--secondary);
+  --ifm-color-primary-lighter: #a5b4fc;
+  --ifm-color-primary-lightest: #c7d2fe;
+  --docusaurus-highlighted-code-line-bg: rgba(99, 102, 241, 0.1);
 }
 
-[data-theme='dark'] {
-  --ifm-color-primary: #EF5F3C;
-  --ifm-color-primary-dark: #D94E2B;
-  --ifm-color-primary-darker: #BF3D1D;
-  --ifm-color-primary-darkest: #9F2A11;
-  --ifm-color-primary-light: #F3775D;
-  --ifm-color-primary-lighter: #FA8B70;
-  --ifm-color-primary-lightest: #FF9981;
+.primaryButton {
+  background: var(--ifm-color-primary);
+  color: white;
 
-  --docusaurus-highlighted-code-line-bg: rgba(255, 95, 60, 0.1);
+  &:hover {
+    background: var(--ifm-color-primary-dark);
+  }
+}
+
+.secondaryButton {
+  border: 2px solid var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+
+  &:hover {
+    background: var(--ifm-color-primary);
+    color: white;
+  }
+}
+
+/* Add hover effects */
+.featureCard:hover,
+.testimonialCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
 }

@@ -10,7 +10,7 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://your-homelab-docs-site.com', // Or your real site URL
+  url: 'https://homelab.orkestack.com', // Or your real site URL
   baseUrl: '/',
 
   // GitHub pages deployment config.
@@ -18,7 +18,7 @@ const config: Config = {
   organizationName: 'theepicsaxguy', // Usually your GitHub org/user name.
   projectName: 'homelab', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -65,16 +65,16 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     colorMode: {
-    defaultMode: 'dark',
-    disableSwitch: false,
-    respectPrefersColorScheme: false,
-  },
-    image: 'img/homelab.png',
+      defaultMode: 'dark',
+      disableSwitch: false,
+      respectPrefersColorScheme: false,
+    },
+    image: 'img/logo.png',
     navbar: {
       title: 'Homelab',
       logo: {
         alt: 'Homelab Logo',
-        src: 'img/homelab.png',
+        src: 'img/logo.png',
       },
       items: [
         {

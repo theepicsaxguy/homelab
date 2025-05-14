@@ -1,7 +1,7 @@
 /* src/components/Homepage/CTASection/styles.module.css */
 .cta {
   padding: 5rem 0;
-  background: linear-gradient(to right, var(--ifm-color-primary), var(--ifm-color-primary-dark));
+  background: var(--ifm-gradient-primary);
   text-align: center;
 }
 
