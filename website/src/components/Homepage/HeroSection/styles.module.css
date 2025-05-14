@@ -19,7 +19,7 @@
 }
 
 .gradientText {
-  background: linear-gradient(120deg, var(--ifm-color-primary), var(--ifm-color-primary-light));
+  background: var(--ifm-gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
