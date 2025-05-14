@@ -27,7 +27,7 @@
 }
 
 .testimonialCard {
-  background: var(--ifm-background-color);
+  background: var(--ifm-card-background-color);
   padding: 1.5rem;
   border-radius: 0.75rem;
 }

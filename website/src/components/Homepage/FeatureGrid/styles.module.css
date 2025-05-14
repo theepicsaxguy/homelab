@@ -24,7 +24,7 @@
 
 .featureCard {
   padding: 2rem;
-  background: var(--ifm-background-surface-color);
+  background: var(--ifm-card-background-color);
   border-radius: 1rem;
   transition: all 0.3s ease;
 }
@@ -40,7 +40,9 @@
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  background: var(--ifm-color-primary);
+  background: rgba(99, 102, 241, 0.1);
+  /* More subtle icon background */
+  color: var(--ifm-color-primary);
   border-radius: 0.75rem;
   margin-bottom: 1.5rem;
 }
