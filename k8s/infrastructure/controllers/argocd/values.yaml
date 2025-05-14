@@ -11,8 +11,8 @@ configs:
     oidc.config: |
       name: authentik
       issuer: https://sso.pc-tips.se/application/o/argocd/
-      clientID: $argocd.clientId
-      clientSecret: $argocd.clientSecret
+      clientID: $oidc.authentik.clientId
+      clientSecret: $oidc.authentik.clientSecret
       requestedScopes: ["openid", "profile", "email", "groups"]
       requestedIDTokenClaims:
         groups:

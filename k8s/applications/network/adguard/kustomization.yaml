@@ -17,4 +17,4 @@ resources:
   - cert-adguard.yaml
 
 
-namespace: apps-network
+namespace: dns
