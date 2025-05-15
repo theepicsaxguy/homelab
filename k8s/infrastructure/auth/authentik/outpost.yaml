@@ -75,7 +75,7 @@ spec:
     spec:
       containers:
         - name: proxy
-          image: ghcr.io/goauthentik/proxy:2025.4.0
+          image: ghcr.io/goauthentik/proxy:2025.4.1
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
