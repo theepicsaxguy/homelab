@@ -31,7 +31,7 @@ module "talos" {
     vip                = "10.25.150.10" # Control plane VIP
     talos_version      = "v1.9.5"
     proxmox_cluster    = "kube"
-    kubernetes_version = "1.33.0" # renovate: github-releases=kubernetes/kubernetes
+    kubernetes_version = "1.33.1" # renovate: github-releases=kubernetes/kubernetes
   }
 
   nodes = {
