@@ -11,7 +11,7 @@ resources:
 - network
 
 configurations:
-  - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
+  - ../common/rollout-transform.yaml
 
 # configurations:
 # - common/varreference.yaml
