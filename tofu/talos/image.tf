@@ -16,7 +16,7 @@ resource "talos_image_factory_schematic" "updated" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  node_name    = "host3"
+  node_name    = var.download_node
   content_type = "iso"
   datastore_id = var.image.proxmox_datastore
 
@@ -28,8 +28,8 @@ resource "proxmox_virtual_environment_download_file" "this" {
 
 resource "proxmox_virtual_environment_download_file" "update" {
   count = local.needs_update_image ? 1 : 0
-  
-  node_name    = "host3"
+
+  node_name    = var.download_node
   content_type = "iso"
   datastore_id = var.image.proxmox_datastore
 

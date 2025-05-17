@@ -80,11 +80,12 @@ Our infrastructure is built on a GitOps foundation that makes everything reprodu
 
 - **Talos Linux:** A Kubernetes-native OS that minimizes attack surface and maintenance.
 - **ArgoCD:** Our GitOps engine that ensures the cluster state always matches Git.
-- **Cilium:** Provides fast, secure networking with eBPF and native Gateway API support.
-- **Longhorn & Proxmox CSI:** Distributed storage solutions for resilience and scalability.
-- **Authelia & LDAP:** For centralized authentication and secure access control.
+- **Cilium & Gateway API:** Advanced networking, security, and load balancing.
+- **Authentik:** For centralized authentication and secure access control.
+- **Longhorn:** Distributed storage solution. Proxmox is used as the hypervisor.
+- **External Secrets & Cert-Manager:** Securely manage secrets and automate TLS certificate provisioning.
 
-_\*\*For more details, check out our [Architecture Deep Dive](docs/architecture.md)._
+_\*\*For more details, check out our [Architecture Deep Dive](/docs/architecture)._
 
 ### Environment Strategy
 
@@ -127,14 +128,14 @@ If you’re ready to deploy your foolproof homelab, follow these steps:
 3. **Deploy the Infrastructure:**
 
    ```bash
-   cd tofu/kubernetes
+   cd tofu
    tofu init && tofu apply
    ```
 
 4. **Deploy Kubernetes Workloads via ArgoCD:**
 
    ```bash
-   cd ../../k8s
+   cd ../k8s
    tofu init && tofu apply
    ```
 
@@ -156,13 +157,13 @@ minutes:
 ```bash
 # 1. Clone the repository
 git clone https://github.com/theepicsaxguy/homelab.git
-cd tofu/kubernetes
+cd tofu
 
 # 2. Deploy the infrastructure
 tofu init && tofu apply
 
 # 3. Deploy workloads via ArgoCD
-cd ../../k8s
+cd ../k8s
 tofu init && tofu apply
 ```
 

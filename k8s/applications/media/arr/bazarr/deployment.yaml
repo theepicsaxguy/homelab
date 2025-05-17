@@ -19,6 +19,10 @@ spec:
     spec:
       nodeSelector:
         topology.kubernetes.io/zone: host3
+      securityContext:
+        runAsUser: 2501
+        runAsGroup: 2501
+        fsGroup: 2501
       containers:
         - name: bazarr
           image: ghcr.io/hotio/bazarr:release-1.5.1
@@ -27,18 +31,15 @@ spec:
               containerPort: 6767
               protocol: TCP
           env:
-            - name: PUID
-              value: "2501"
             - name: VPN_ENABLED
               value: "false"
-            - name: PGID
-              value: "2501"
-            - name: TZ
-              value: "Etc/UTC"
             - name: UMASK
               value: "002"
             - name: WEBUI_PORTS
               value: "6767/tcp,6767/udp"
+          envFrom:
+            - configMapRef:
+                name: common-env
           volumeMounts:
             - name: bazarr-config
               mountPath: /config
