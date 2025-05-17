@@ -10,6 +10,9 @@ resources:
 - web
 - network
 
+configurations:
+  - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
+
 # configurations:
 # - common/varreference.yaml
 
