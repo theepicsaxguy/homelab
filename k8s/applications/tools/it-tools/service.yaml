@@ -13,3 +13,20 @@ spec:
       port: 8080
       targetPort: 80
   type: LoadBalancer
+
+
+---
+# Preview service
+apiVersion: v1
+kind: Service
+metadata:
+  name: it-tools-preview-service
+  namespace: it-tools
+spec:
+  selector:
+    app: it-tools
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+  type: ClusterIP
