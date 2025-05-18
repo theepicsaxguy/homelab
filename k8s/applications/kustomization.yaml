@@ -10,18 +10,9 @@ resources:
 - web
 - network
 
-configurations:
-  - ../common/rollout-transform.yaml
 
-# configurations:
-# - common/varreference.yaml
+configurations:
+  - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
-
-# components:
-# - common/components/env-vars
-# - common/components/rollouts
-# - common/components/immutable-resources
-# - common/components/container-images
-# - common/components/configmap-validation

@@ -6,7 +6,4 @@ resources:
 - service.yaml
 - http-route.yaml
 - namespace.yaml
-
-configurations:
-  - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
-
+- rollout.yaml
