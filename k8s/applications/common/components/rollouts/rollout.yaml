@@ -24,9 +24,15 @@ spec:
       prePromotionAnalysis:
         templates:
         - templateName: analysis-template
+          args:
+          - name: service-name
+            value: "app-service"
       postPromotionAnalysis:
         templates:
         - templateName: analysis-template
+          args:
+          - name: service-name
+            value: "app-service"
       antiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
         - topologyKey: kubernetes.io/hostname
