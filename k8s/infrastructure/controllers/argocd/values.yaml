@@ -12,7 +12,7 @@ configs:
       connectors:
       - config:
           issuer: https://sso.pc-tips.se/application/o/argocd/
-          clientID: $argocd.clientId
+          clientID: $dex.authentik.clientId
           clientSecret: $dex.authentik.clientSecret
           insecureEnableGroups: true
           scopes:
