@@ -3,6 +3,9 @@ kind: AnalysisTemplate
 metadata:
   name: analysis-template
 spec:
+  args:
+  - name: service-name
+    value: "app-service"
   metrics:
   - name: success-rate
     interval: 30s
