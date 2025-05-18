@@ -71,7 +71,7 @@ spec:
       abortScaleDownDelaySeconds: 600
       prePromotionAnalysis:
         templates:
-        - clusterTemplateName: success-rate
+        - templateName: success-rate
         args:
         - name: service-name
           value: it-tools-service
