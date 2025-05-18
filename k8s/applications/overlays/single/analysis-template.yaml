@@ -3,6 +3,9 @@ kind: AnalysisTemplate
 metadata:
   name: apps-health
 spec:
+  args:
+  - name: service-name
+    value: "apps-service"
   metrics:
     - name: success-rate
       interval: 60s
@@ -13,9 +16,9 @@ spec:
         prometheus:
           address: http://prometheus-operated.monitoring.svc:9090
           query: |
-            sum(rate(http_requests_total{job="apps-service",status!~"5.*"}[5m]))
+            sum(rate(http_requests_total{job="{{ args.service-name }}",status!~"5.*"}[5m]))
             /
-            sum(rate(http_requests_total{job="apps-service"}[5m]))
+            sum(rate(http_requests_total{job="{{ args.service-name }}"}[5m]))
     - name: web-ping
       interval: 15s
       count: 2
