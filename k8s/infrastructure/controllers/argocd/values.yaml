@@ -8,15 +8,20 @@ configs:
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
     # OIDC Configuration
-    oidc.config: |
-      name: authentik
-      issuer: https://sso.pc-tips.se/application/o/argocd/
-      clientID: $argocd.clientId
-      clientSecret: $argocd.clientSecret
-      requestedScopes: ["openid", "profile", "email", "groups"]
-      requestedIDTokenClaims:
-        groups:
-          essential: true
+    dex.config: |
+      connectors:
+      - config:
+          issuer: https://sso.pc-tips.se/application/o/argocd/
+          clientID: $dex.authentik.clientId
+          clientSecret: $dex.authentik.clientSecret
+          insecureEnableGroups: true
+          scopes:
+            - openid
+            - profile
+            - email
+        name: authentik
+        type: oidc
+        id: authentik
 
   cmp:
     create: true
@@ -63,7 +68,7 @@ controller:
       memory: 2Gi
 
 dex:
-  enabled: false
+  enabled: true
   resources:
     requests:
       cpu: 10m
