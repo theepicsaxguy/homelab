@@ -1,6 +1,6 @@
-Here's a clearer, more organized rewrite:
-
-# Deploy and Manage Applications
+---
+title: Deploy and Manage Applications
+---
 
 This guide explains how to deploy and manage applications on our Kubernetes cluster using GitOps with ArgoCD.
 
