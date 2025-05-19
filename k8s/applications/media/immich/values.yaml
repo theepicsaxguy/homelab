@@ -1,14 +1,6 @@
 env:
   TZ: Europe/Stockholm
-  DB_HOSTNAME: immich-postgresql
-  DB_PORT: "5432"
-  DB_USERNAME: "immich"
-  DB_DATABASE_NAME: "immich"
-  DB_PASSWORD:
-    valueFrom:
-      secretKeyRef:
-        name: immich.immich-postgresql.credentials.postgresql.acid.zalan.do
-        key: password
+  DB_VECTOR_EXTENSION: pgvector
   DB_URL:
     valueFrom:
       secretKeyRef:
@@ -17,11 +9,6 @@ env:
 
 server:
   enabled: true
-  service:
-    main:
-      ports:
-        http:
-          port: 3001
 
 microservices:
   enabled: true
@@ -78,41 +65,34 @@ immich:
       tonemap: hable
       accel: disabled
       accelDecode: false
-    backup:
-      database:
-        enabled: true
-        cronExpression: 0 02 * * *
-        keepLastAmount: 14
-    job:
-      backgroundTask:
-        concurrency: 5
-      smartSearch:
-        concurrency: 2
-      metadataExtraction:
-        concurrency: 5
-      faceDetection:
-        concurrency: 2
-      search:
-        concurrency: 5
-      sidecar:
-        concurrency: 5
-      library:
-        concurrency: 5
-      migration:
-        concurrency: 5
-      thumbnailGeneration:
-        concurrency: 3
-      videoConversion:
-        concurrency: 1
-      notifications:
-        concurrency: 5
+  #   job:
+  #     backgroundTask:
+  #       concurrency: 5
+  #     smartSearch:
+  #       concurrency: 2
+  #     metadataExtraction:
+  #       concurrency: 5
+  #     faceDetection:
+  #       concurrency: 2
+  #     search:
+  #       concurrency: 5
+  #     sidecar:
+  #       concurrency: 5
+  #     library:
+  #       concurrency: 5
+  #     migration:
+  #       concurrency: 5
+  #     thumbnailGeneration:
+  #       concurrency: 3
+  #     videoConversion:
+  #       concurrency: 1
+  #     notifications:
+  #       concurrency: 5
     logging:
       enabled: true
       level: log
     machineLearning:
       enabled: true
-      urls:
-        - http://immich-machine-learning:3003
       clip:
         enabled: true
         modelName: ViT-B-32__openai
@@ -134,22 +114,22 @@ immich:
     metadata:
       faces:
         import: false
-    oauth:
-      autoLaunch: false
-      autoRegister: true
-      buttonText: Login with OAuth
-      clientId: ""
-      clientSecret: ""
-      defaultStorageQuota: 0
-      enabled: false
-      issuerUrl: ""
-      mobileOverrideEnabled: false
-      mobileRedirectUri: ""
-      scope: openid email profile
-      signingAlgorithm: RS256
-      profileSigningAlgorithm: none
-      storageLabelClaim: preferred_username
-      storageQuotaClaim: immich_quota
+  #   oauth:
+  #     autoLaunch: false
+  #     autoRegister: true
+  #     buttonText: Login with OAuth
+  #     clientId: ""
+  #     clientSecret: ""
+  #     defaultStorageQuota: 0
+  #     enabled: false
+  #     issuerUrl: ""
+  #     mobileOverrideEnabled: false
+  #     mobileRedirectUri: ""
+  #     scope: openid email profile
+  #     signingAlgorithm: RS256
+  #     profileSigningAlgorithm: none
+  #     storageLabelClaim: preferred_username
+  #     storageQuotaClaim: immich_quota
     passwordLogin:
       enabled: true
     storageTemplate:
@@ -172,28 +152,28 @@ immich:
     trash:
       enabled: true
       days: 30
-    theme:
-      customCss: ""
-    library:
-      scan:
-        enabled: true
-        cronExpression: 0 0 * * *
-      watch:
-        enabled: false
-    server:
-      externalDomain: ""
-      loginPageMessage: ""
-    notifications:
-      smtp:
-        enabled: false
-        from: ""
-        replyTo: ""
-        transport:
-          ignoreCert: false
-          host: ""
-          port: 587
-          username: ""
-          password: ""
+  #   theme:
+  #     customCss: ""
+  #   library:
+  #     scan:
+  #       enabled: true
+  #       cronExpression: 0 0 * * *
+  #     watch:
+  #       enabled: false
+  #   server:
+  #     externalDomain: ""
+  #     loginPageMessage: ""
+  #   notifications:
+  #     smtp:
+  #       enabled: false
+  #       from: ""
+  #       replyTo: ""
+  #       transport:
+  #         ignoreCert: false
+  #         host: ""
+  #         port: 587
+  #         username: ""
+  #         password: ""
     user:
       deleteDelay: 7
 
