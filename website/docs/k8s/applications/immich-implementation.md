@@ -39,7 +39,6 @@ spec:
     immich:
       extensions:
         pgvector: public
-        pgvecto_rs: public
 ```
 
 ---
