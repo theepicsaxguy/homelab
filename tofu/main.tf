@@ -42,8 +42,8 @@ module "talos" {
       mac_address   = "bc:24:11:e6:ba:07"
       vm_id         = 8101
       cpu           = 6
-      ram_dedicated = 6144
-      update        = false
+      ram_dedicated = 7168
+      update        = true
       igpu          = false
     }
     "ctrl-01" = {
@@ -110,7 +110,7 @@ module "talos" {
       mac_address   = "bc:24:11:6f:20:03"
       vm_id         = 8203
       cpu           = 8
-      ram_dedicated = 8192
+      ram_dedicated = 10240
       update        = false
       disks = {
         longhorn = {
