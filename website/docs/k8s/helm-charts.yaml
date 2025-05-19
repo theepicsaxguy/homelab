@@ -1,4 +1,6 @@
-# helmchart Application Deployment Reference
+---
+title: helmchart Application Deployment
+---
 
 This document provides a standardized reference for deploying applications in our Kubernetes cluster. It outlines the essential file structure, configuration parameters, and optional components needed for consistent application deployment.
 
