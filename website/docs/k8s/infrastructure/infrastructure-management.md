@@ -1,10 +1,13 @@
-# Deploy and Manage Infrastructure Services
+---
+title: 'Deploy and Manage Infrastructure Services'
+---
 
 This guide explains how we deploy and manage core Kubernetes infrastructure using GitOps with ArgoCD.
 
 ## Quick Start
 
 Infrastructure components live in `/k8s/infrastructure/` organized by function:
+
 - `auth/` - Identity management (Authentik)
 - `controllers/` - Core controllers (ArgoCD, Cert-Manager)
 - `crds/` - Custom Resource Definitions
@@ -22,6 +25,7 @@ We use ArgoCD ApplicationSet to manage infrastructure:
 3. ArgoCD automatically deploys changes
 
 ### Key Files
+
 ```yaml
 # /k8s/infrastructure/application-set.yaml
 metadata:
@@ -35,6 +39,7 @@ spec:
 ## Core Components
 
 ### 1. Networking (Cilium)
+
 - **Purpose:** CNI, network security, load balancing
 - **Features:**
   - eBPF-based networking
@@ -43,17 +48,21 @@ spec:
   - Kubernetes Gateway API support
 
 ### 2. DNS (CoreDNS)
+
 - Internal domain: kube.pc-tips.se
 - External forwarding to 1.1.1.1, 8.8.8.8
 - Caching enabled
 
 ### 3. Gateway API
+
 Three gateway types:
+
 - External (10.25.150.222) - Internet-facing
 - Internal (10.25.150.220) - LAN only
 - TLS Passthrough (10.25.150.221) - Direct TLS
 
 ### 4. Security
+
 - **Cert-Manager:**
   - Cloudflare DNS validation
   - Internal CA for cluster services
@@ -65,18 +74,22 @@ Three gateway types:
   - Certificate-based auth
 
 ### 5. Storage (Longhorn)
+
 - Distributed block storage
 - Default storage class
 - Path: /var/lib/longhorn/
 - Web UI available
 
 ### 6. Monitoring
+
 Kube Prometheus Stack provides:
+
 - Metrics collection
 - Alerting
 - Grafana dashboards
 
 ### 7. Authentication (Authentik)
+
 - Single Sign-On
 - PostgreSQL backend
 - Proxy outpost for app protection
