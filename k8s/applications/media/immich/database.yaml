@@ -1,0 +1,30 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: immich-postgresql
+  namespace: immich
+spec:
+  teamId: "immich"
+  volume:
+    size: 10Gi
+  numberOfInstances: 1
+  users:
+    immich:
+      - superuser
+      - createdb
+  databases:
+    immich: immich
+  preparedDatabases:
+    immich:
+      extensions:
+        pgvector: public
+  postgresql:
+    version: "17"
+  enableConnectionPooler: false
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
