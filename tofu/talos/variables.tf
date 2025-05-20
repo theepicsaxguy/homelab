@@ -85,4 +85,10 @@ variable "inline_manifests" {
   default = []
 }
 
+variable "download_node" {
+  description = "Proxmox node to use for downloading Talos images"
+  type        = string
+  default     = "host3"  # For backward compatibility
+}
+
 

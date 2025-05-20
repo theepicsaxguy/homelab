@@ -9,9 +9,9 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab
-        revision: HEAD
+        revision: main
         directories:
-          - path: k8s/apps/external/*
+          - path: k8s/applications/external/*
   template:
     metadata:
       name: '{{ path.basename }}'
@@ -26,8 +26,8 @@ spec:
         targetRevision: main
         path: '{{ path }}'
       destination:
-        name: in-cluster
-        namespace: argocd
+        server: https://kubernetes.default.svc
+        namespace: '{{ path.basename }}'
       syncPolicy:
         automated:
           selfHeal: true
