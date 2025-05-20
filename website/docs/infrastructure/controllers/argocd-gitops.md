@@ -80,7 +80,7 @@ spec:
   source:
     path: k8s/infrastructure/network/cilium
     repoURL: https://github.com/pc-cdn/homelab.git
-    targetRevision: HEAD
+    targetRevision: main
   destination:
     namespace: network
     server: https://kubernetes.default.svc

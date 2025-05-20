@@ -23,7 +23,7 @@ spec:
       project: external
       source:
         repoURL: https://github.com/theepicsaxguy/homelab
-        targetRevision: HEAD
+        targetRevision: main
         path: '{{ path }}'
       destination:
         server: https://kubernetes.default.svc
