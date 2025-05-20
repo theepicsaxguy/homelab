@@ -3,12 +3,16 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- application-set.yaml
 - network
 - storage
 - controllers
 - deployment
 - auth
 - database
+
+configurations:
+  - https://argoproj.github.io/argo-rollouts/features/kustomize/rollout-transform-kustomize-v5.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

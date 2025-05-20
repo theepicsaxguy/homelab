@@ -6,3 +6,4 @@ resources:
 - service.yaml
 - http-route.yaml
 - namespace.yaml
+- rollout.yaml

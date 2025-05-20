@@ -31,7 +31,7 @@ metadata:
     app.kubernetes.io/instance: proxy-outpost
     app.kubernetes.io/managed-by: goauthentik.io
     app.kubernetes.io/name: authentik-proxy
-    app.kubernetes.io/version: 2021.12.3
+    app.kubernetes.io/version: 2025.4.1
 spec:
   type: ClusterIP
   selector:
@@ -57,25 +57,25 @@ metadata:
     app.kubernetes.io/instance: proxy-outpost
     app.kubernetes.io/managed-by: goauthentik.io
     app.kubernetes.io/name: authentik-proxy
-    app.kubernetes.io/version: 2021.12.3
+    app.kubernetes.io/version: 2025.4.1
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/instance: proxy-outpost
       app.kubernetes.io/managed-by: goauthentik.io
       app.kubernetes.io/name: authentik-proxy
-      app.kubernetes.io/version: 2021.12.3
+      app.kubernetes.io/version: 2025.4.1
   template:
     metadata:
       labels:
         app.kubernetes.io/instance: proxy-outpost
         app.kubernetes.io/managed-by: goauthentik.io
         app.kubernetes.io/name: authentik-proxy
-        app.kubernetes.io/version: 2021.12.3
+        app.kubernetes.io/version: 2025.4.1
     spec:
       containers:
         - name: proxy
-          image: ghcr.io/goauthentik/proxy:2025.4.0
+          image: ghcr.io/goauthentik/proxy:2025.4.1
           imagePullPolicy: Always
           ports:
             - containerPort: 9000

@@ -1,19 +1,23 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: authentik-postgresql
-  namespace: auth
+  name: immich-postgresql
+  namespace: immich
 spec:
-  teamId: "auth"
+  teamId: "immich"
   volume:
     size: 10Gi
   numberOfInstances: 1
   users:
-    authentik_user:
+    immich:
       - superuser
       - createdb
   databases:
-    authentik: authentik_user
+    immich: immich
+  preparedDatabases:
+    immich:
+      extensions:
+        pgvector: public
   postgresql:
     version: "17"
   enableConnectionPooler: false

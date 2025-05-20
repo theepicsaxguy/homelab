@@ -3,20 +3,25 @@ configs:
   cm:
     create: true
     application.resourceTrackingMethod: annotation+label
-    admin.enabled: true
+    admin.enabled: false
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
     # OIDC Configuration
-    oidc.config: |
-      name: authentik
-      issuer: https://sso.pc-tips.se/application/o/argocd/
-      clientID: $oidc.authentik.clientId
-      clientSecret: $oidc.authentik.clientSecret
-      requestedScopes: ["openid", "profile", "email", "groups"]
-      requestedIDTokenClaims:
-        groups:
-          essential: true
+    dex.config: |
+      connectors:
+      - config:
+          issuer: https://sso.pc-tips.se/application/o/argocd/
+          clientID: $dex.authentik.clientId
+          clientSecret: $dex.authentik.clientSecret
+          insecureEnableGroups: true
+          scopes:
+            - openid
+            - profile
+            - email
+        name: authentik
+        type: oidc
+        id: authentik
 
   cmp:
     create: true
@@ -63,7 +68,7 @@ controller:
       memory: 2Gi
 
 dex:
-  enabled: false
+  enabled: true
   resources:
     requests:
       cpu: 10m
@@ -80,6 +85,13 @@ redis:
       memory: 1Gi
 
 server:
+  extensions:
+    enabled: true
+    extensionList:
+      - name: rollout-extension
+        env:
+          - name: EXTENSION_URL
+            value: https://github.com/argoproj-labs/rollout-extension/releases/download/v0.3.4/extension.tar
   service:
       type: LoadBalancer
       httpsPort: 443

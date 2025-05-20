@@ -10,8 +10,8 @@ module "talos" {
 
 
   image = {
-    version        = "v1.9.5"
-    update_version = "v1.10.1" # renovate: github-releases=siderolabs/talos
+    version        = "v1.10.2"
+    update_version = "v1.10.2" # renovate: github-releases=siderolabs/talos
     schematic      = file("${path.module}/talos/image/schematic.yaml")
   }
 
@@ -29,9 +29,9 @@ module "talos" {
     endpoint           = "api.kube.pc-tips.se"
     gateway            = "10.25.150.1"  # Network gateway
     vip                = "10.25.150.10" # Control plane VIP
-    talos_version      = "v1.9.5"
+    talos_version      = "v1.10.2"
     proxmox_cluster    = "kube"
-    kubernetes_version = "1.33.0" # renovate: github-releases=kubernetes/kubernetes
+    kubernetes_version = "1.33.1" # renovate: github-releases=kubernetes/kubernetes
   }
 
   nodes = {
@@ -42,7 +42,7 @@ module "talos" {
       mac_address   = "bc:24:11:e6:ba:07"
       vm_id         = 8101
       cpu           = 6
-      ram_dedicated = 6144
+      ram_dedicated = 7168
       update        = false
       igpu          = false
     }
@@ -110,7 +110,7 @@ module "talos" {
       mac_address   = "bc:24:11:6f:20:03"
       vm_id         = 8203
       cpu           = 8
-      ram_dedicated = 8192
+      ram_dedicated = 10240
       update        = false
       disks = {
         longhorn = {
