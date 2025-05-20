@@ -63,7 +63,7 @@ persistence:
     name: "jellyseerr-config"
     # -- Name of the permanent volume to reference in the claim.
     # Can be used to bind to existing volumes.
-    # volumeName: "jellyseerr-config"  # Commented out to allow dynamic provisioning
+    volumeName: "jellyseerr-config"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
