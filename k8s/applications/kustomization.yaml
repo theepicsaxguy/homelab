@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- application-set.yaml
 - ai
 - media
 - tools
