@@ -6,6 +6,18 @@ env:
       secretKeyRef:
         name: immich-db-url
         key: DB_URL
+  OIDC_CLIENT_ID:
+    valueFrom:
+      secretKeyRef:
+        name: photo-oidc
+        key: photo_clientid
+  OIDC_CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: photo-oidc
+        key: photo_clientsecret
+image:
+  tag: v1.132.3
 
 server:
   enabled: true
@@ -65,29 +77,29 @@ immich:
       tonemap: hable
       accel: disabled
       accelDecode: false
-  #   job:
-  #     backgroundTask:
-  #       concurrency: 5
-  #     smartSearch:
-  #       concurrency: 2
-  #     metadataExtraction:
-  #       concurrency: 5
-  #     faceDetection:
-  #       concurrency: 2
-  #     search:
-  #       concurrency: 5
-  #     sidecar:
-  #       concurrency: 5
-  #     library:
-  #       concurrency: 5
-  #     migration:
-  #       concurrency: 5
-  #     thumbnailGeneration:
-  #       concurrency: 3
-  #     videoConversion:
-  #       concurrency: 1
-  #     notifications:
-  #       concurrency: 5
+    job:
+      backgroundTask:
+        concurrency: 5
+      smartSearch:
+        concurrency: 2
+      metadataExtraction:
+        concurrency: 5
+      faceDetection:
+        concurrency: 2
+      search:
+        concurrency: 5
+      sidecar:
+        concurrency: 5
+      library:
+        concurrency: 5
+      migration:
+        concurrency: 5
+      thumbnailGeneration:
+        concurrency: 3
+      videoConversion:
+        concurrency: 1
+      notifications:
+        concurrency: 5
     logging:
       enabled: true
       level: log
@@ -104,7 +116,7 @@ immich:
         modelName: buffalo_l
         minScore: 0.7
         maxDistance: 0.5
-        minFaces: 3
+        minFaces: 1
     map:
       enabled: true
       lightStyle: https://tiles.immich.cloud/v1/style/light.json
@@ -113,25 +125,25 @@ immich:
       enabled: true
     metadata:
       faces:
-        import: false
-  #   oauth:
-  #     autoLaunch: false
-  #     autoRegister: true
-  #     buttonText: Login with OAuth
-  #     clientId: ""
-  #     clientSecret: ""
-  #     defaultStorageQuota: 0
-  #     enabled: false
-  #     issuerUrl: ""
-  #     mobileOverrideEnabled: false
-  #     mobileRedirectUri: ""
-  #     scope: openid email profile
-  #     signingAlgorithm: RS256
-  #     profileSigningAlgorithm: none
-  #     storageLabelClaim: preferred_username
-  #     storageQuotaClaim: immich_quota
-    passwordLogin:
+        import: true
+    oauth:
       enabled: true
+      autoLaunch: true
+      autoRegister: true
+      buttonText: Login with SSO
+      clientId: "$(OIDC_CLIENT_ID)"
+      clientSecret: "$(OIDC_CLIENT_SECRET)"
+      defaultStorageQuota: 0
+      issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
+      mobileOverrideEnabled: false
+      mobileRedirectUri: ""
+      scope: openid email profile
+      signingAlgorithm: RS256
+      profileSigningAlgorithm: none
+      storageLabelClaim: preferred_username
+      storageQuotaClaim: immich_quota
+    passwordLogin:
+      enabled: false
     storageTemplate:
       enabled: false
       hashVerificationEnabled: true
@@ -152,28 +164,28 @@ immich:
     trash:
       enabled: true
       days: 30
-  #   theme:
-  #     customCss: ""
-  #   library:
-  #     scan:
-  #       enabled: true
-  #       cronExpression: 0 0 * * *
-  #     watch:
-  #       enabled: false
-  #   server:
-  #     externalDomain: ""
-  #     loginPageMessage: ""
-  #   notifications:
-  #     smtp:
-  #       enabled: false
-  #       from: ""
-  #       replyTo: ""
-  #       transport:
-  #         ignoreCert: false
-  #         host: ""
-  #         port: 587
-  #         username: ""
-  #         password: ""
+    theme:
+      customCss: ""
+    library:
+      scan:
+        enabled: true
+        cronExpression: 0 0 * * *
+      watch:
+        enabled: false
+    # server:
+    #   externalDomain: ""
+    #   loginPageMessage: ""
+    # notifications:
+    #   smtp:
+    #     enabled: false
+    #     from: ""
+    #     replyTo: ""
+    #     transport:
+    #       ignoreCert: false
+    #       host: ""
+    #       port: 587
+    #       username: ""
+    #       password: ""
     user:
       deleteDelay: 7
 

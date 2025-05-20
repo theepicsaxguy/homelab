@@ -9,6 +9,7 @@ resources:
   - pvc.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
+  - authsecret.yaml
 generatorOptions:
   disableNameSuffixHash: true
 helmCharts:
