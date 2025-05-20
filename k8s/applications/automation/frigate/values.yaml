@@ -60,91 +60,106 @@ fullnameOverride: ""
 
 # -- frigate configuration - see [Docs](https://docs.frigate.video/configuration/index) for more info
 config: |
-  mqtt:
-    host: mosquitto.mqtt.svc.kube.pc-tips.se
-    port: 1883
-    topic_prefix: frigate
-    client_id: frigate
-    user: mqtt_user
-    password: '{FRIGATE_MQTT_PASSWORD}'
-    stats_interval: 60  # Reduced stat frequency to minimize MQTT overhead
+  version: 0.15-1
 
-  detectors:
-    cpu1:
-      type: cpu  # Using CPU since no Coral or GPU is available
+  # logger:
+    # logs:
+
+  mqtt:
+      host: mosquitto.mqtt.svc.kube.pc-tips.se
+      port: 1883
+      topic_prefix: frigate
+      client_id: frigate
+      user: mqtt_user
+      password: '{FRIGATE_MQTT_PASSWORD}'
+      stats_interval: 60
+
+  ffmpeg:
+  #  hwaccel_args: preset-vaapi
+    input_args: preset-rtsp-restream
+    output_args:
+      record: preset-record-generic-audio-copy
+
+  record: # Record configuration - NOTE: Can be overridden at the camera level
+    enabled: true
+    retain:
+      days: 15 # Number of days to retain recordings regardless of events
+      mode: motion # save all recordings segments with any detected motion
+    alerts:
+      retain:
+        days: 30
+      pre_capture: 30
+      post_capture: 30
+    detections:
+      retain:
+        days: 30
+      pre_capture: 30
+      post_capture: 30
+  audio: # Audio Events Configuration - NOTE: Can be overridden at the camera level
+    enabled: false
+    listen:
+      - alarm
+      - scream
+      - yell
+
+  detect: # Detect configuration - NOTE: Can be overridden at the camera level
+    enabled: false
+    fps: 7
+
+  objects: # Object configuration - NOTE: Can be overridden at the camera level
+    track:
+      - cat
+      - dog
+      - person
+
+  snapshots: # Configuration for the jpg snapshots written to the clips directory for each event - NOTE: Can be overridden at the camera level
+    enabled: true # Enable writing jpg snapshot to /media/frigate/clips
+    clean_copy: false # Save a clean PNG copy of the snapshot image
+    timestamp: true # Print a timestamp on the snapshots
+    bounding_box: true # Draw bounding box on the snapshots
+
+  review: # Review configuration - NOTE: Can be overridden at the camera level
+    alerts: # Car/Person only by default
+      labels:
+        - cat
+        - person
 
   go2rtc:
     streams:
-      reolink:
-        - "{FRIGATE_RTSP_MAIN}"
-        - "{FRIGATE_RTSP_SUB}"
-        # REMOVED ONVIF stream here — it's not needed for streaming, only for PTZ/metadata
-        # and decoding it adds unnecessary load.
+      vagga: #Reolink E1 Pro
+        - '{FRIGATE_RTSP_MAIN}'
+      vagga_sub:
+        - '{FRIGATE_RTSP_SUB}'
 
   cameras:
-    sovrum:
+    vagga:
+      enabled: true
+      ui:
+        order: 01
       ffmpeg:
+        output_args:
+          record: preset-record-generic-audio-aac
         inputs:
-          - path: "{FRIGATE_RTSP_MAIN}"
+          # High Resolution Stream - Record
+          - path: rtsp://127.0.0.1:8554/vagga
             roles:
-              - audio
               - record
-            input_args:
-              - -rtsp_transport
-              - tcp
-              - -timeout
-              - '5000000'
-          - path: "{FRIGATE_RTSP_SUB}"
+          # Low Resolution Stream - Detection
+          - path: rtsp://127.0.0.1:8554/vagga_sub
             roles:
               - detect
-            input_args:
-              - -rtsp_transport
-              - tcp
-              - -timeout
-              - '5000000'
-        output_args:
-          record: -f segment -segment_time 60 -reset_timestamps 1 -strftime 1 -c copy
-          # Using `-c copy` avoids CPU-expensive re-encoding of the recording
-
-      detect:
-        enabled: true
-        max_disappeared: 25
-        fps: 10  # Force detection max FPS to 10, reduces CPU from substream
-
-      objects:
-        track:
-          - person
-          - dog  # Only tracking what's needed limits detection processing time
-
-      motion:
-        threshold: 50        # Increased to reduce motion noise
-        contour_area: 100    # Ignores small motion events that aren't important
-
-      record:
-        enabled: true
-        retain:
-          days: 3
-        events:
-          pre_capture: 2     # Trim recordings before an event to avoid useless padding
-          post_capture: 2
-          retain:
-            default: 20
-
-      snapshots:
-        enabled: true
-        retain:
-          default: 5
-        required_zones: []  # Avoids snapshotting on all motion events
+              - audio
+      review: # Camera override - ignores global settings above
+        alerts:
+          labels:
+            - cat
+            - person
 
       onvif:
         host: 192.168.16.186
         port: 8000
-        user: "{FRIGATE_RTSP_USERNAME}"
-        password: "{FRIGATE_RTSP_PASSWORD}"
-        # Kept for PTZ or metadata support — doesn't impact stream decode
-
-      rtmp:
-        enabled: false  # Disabled to avoid extra stream decode and encode overhead
+        user: '{FRIGATE_RTSP_USERNAME}'
+        password: '{FRIGATE_RTSP_PASSWORD}'
 
 # Probes configuration
 probes:

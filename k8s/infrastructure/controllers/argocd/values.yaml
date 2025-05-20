@@ -3,7 +3,7 @@ configs:
   cm:
     create: true
     application.resourceTrackingMethod: annotation+label
-    admin.enabled: false
+    admin.enabled: true
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: "--enable-helm"
     accounts.kubechecks: apiKey
