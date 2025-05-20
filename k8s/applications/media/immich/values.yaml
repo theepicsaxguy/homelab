@@ -6,16 +6,7 @@ env:
       secretKeyRef:
         name: immich-db-url
         key: DB_URL
-  OIDC_CLIENT_ID:
-    valueFrom:
-      secretKeyRef:
-        name: photo-oidc
-        key: photo_clientid
-  OIDC_CLIENT_SECRET:
-    valueFrom:
-      secretKeyRef:
-        name: photo-oidc
-        key: photo_clientsecret
+  IMMICH_CONFIG_FILE: /config/immich.json
 image:
   tag: v1.132.3
 
@@ -40,6 +31,13 @@ redis:
   auth:
     enabled: false
 
+persistence:
+  config:
+    enabled: true
+    type: secret
+    name: immich-config     # Secret created by ExternalSecret
+    mountPath: /config
+    readOnly: true
 immich:
   metrics:
     enabled: true
@@ -126,22 +124,24 @@ immich:
     metadata:
       faces:
         import: true
-    oauth:
-      enabled: true
-      autoLaunch: true
-      autoRegister: true
-      buttonText: Login with SSO
-      clientId: "$(OIDC_CLIENT_ID)"
-      clientSecret: "$(OIDC_CLIENT_SECRET)"
-      defaultStorageQuota: 0
-      issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
-      mobileOverrideEnabled: false
-      mobileRedirectUri: ""
-      scope: openid email profile
-      signingAlgorithm: RS256
-      profileSigningAlgorithm: none
-      storageLabelClaim: preferred_username
-      storageQuotaClaim: immich_quota
+    # oauth:
+    #   enabled: true
+    #   autoLaunch: true
+    #   autoRegister: true
+    #   buttonText: Login with SSO
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: photo-oidc
+    #       key: photo_clientid
+    #   defaultStorageQuota: 0
+    #   issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
+    #   mobileOverrideEnabled: false
+    #   mobileRedirectUri: ""
+    #   scope: openid email profile
+    #   signingAlgorithm: RS256
+    #   profileSigningAlgorithm: none
+    #   storageLabelClaim: preferred_username
+    #   storageQuotaClaim: immich_quota
     passwordLogin:
       enabled: false
     storageTemplate:
