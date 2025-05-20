@@ -42,12 +42,12 @@ export function HeroSection(): JSX.Element {
             >
               Get Started →
             </Link>
-            <Link
+            {/* <Link
               to="#demo"
               className={styles.secondaryButton}
             >
               Watch Demo
-            </Link>
+            </Link> */}
           </div>
           {/* Add stats section */}
         </div>
