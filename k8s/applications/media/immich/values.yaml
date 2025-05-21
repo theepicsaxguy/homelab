@@ -8,7 +8,7 @@ env:
         key: DB_URL
   IMMICH_CONFIG_FILE: /config/immich.json
 image:
-  tag: v1.132.3
+  tag: v1.133.0
 
 server:
   enabled: true
