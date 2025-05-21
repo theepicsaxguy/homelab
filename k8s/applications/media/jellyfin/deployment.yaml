@@ -33,10 +33,10 @@ spec:
               drop: [ "ALL" ]
           resources:
             requests:
-              cpu: 1000m
-              memory: 1Gi
+              cpu: 2000m
+              memory: 2Gi
             limits:
-              cpu: 3000m
+              cpu: 4000m
               memory: 5Gi
           envFrom:
             - configMapRef:
