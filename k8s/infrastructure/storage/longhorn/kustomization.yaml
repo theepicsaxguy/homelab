@@ -6,6 +6,7 @@ namespace: longhorn-system
 resources:
 - namespace.yaml
 - http-route.yaml
+- externalsecret.yaml
 
 helmCharts:
 - name: longhorn
