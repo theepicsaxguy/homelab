@@ -1,107 +1,65 @@
-# Commit Message Convention
+Exact commit-message rules that release-please parses
 
-This repository follows the Conventional Commits specification.
+Element	Required?	Syntax rules release-please enforces	Effect on the version	Changelog section	Spec source
 
----
+type	YES	Lower-case noun followed by : (optionally (scope) before the colon). Allowed values are at least feat, fix, perf, docs, style, refactor, test, build, ci, chore, revert.	feat → MINOR bump fix or perf → PATCH bump. All other types bump nothing unless combined with a breaking change.	Becomes top-level heading (e.g. Features, Bug Fixes, Performance Improvements).	
+scope	optional	A noun inside () right after the type; e.g. feat(k8s): …. Any UTF-8, no spaces, no trailing dots.	None.	Shown in parentheses just after the type heading if present.	
+description	YES	Imperative mood, ≤ 72 chars, no trailing period. Follows type (and optional scope) after exactly :␠.	None.	First line of bullet entry.	
+body	optional	Starts after one blank line. Free text or bullet list. Wrap at 72 chars.	None.	Included verbatim under the bullet.	
+BREAKING CHANGE	optional	Either add ! immediately before : → feat(api)!: … or add a footer line BREAKING CHANGE: <explanation> after one blank line.	Always bumps MAJOR.	Adds a ⚠ BREAKING CHANGES block with the explanation.	
+other footers	optional	One per line, <Token>: <value> or <Token> #123. Typical tokens: Refs:, Reviewed-by:, Co-authored-by:.	None.	Shown beneath the bullet.	
+revert commit	optional	Must start with revert: (lower-case) and contain a body line Reverts: <SHA or PR #>.	No direct bump; release-please shows it under Reverts.	Reverts section.	
 
-### Format
 
-```
-<type>(<scope>): <subject>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-The subject is a concise summary of the change. The body (if needed) provides additional details or lists key
-modifications. The footer is used for metadata like `BREAKING CHANGE:`.
 
 ---
 
-### Types
+Minimum valid commit line
 
-- feat → Introduces a new feature
-- fix → Resolves a bug
-- docs → Updates documentation
-- style → Code formatting (no functional changes)
-- refactor → Improves code structure (no bug fixes or features)
-- perf → Enhances performance
-- test → Adds or modifies tests
-- build → Adjusts build system or dependencies
-- ci → Updates CI configuration
-- chore → Miscellaneous changes (excluding source code or tests)
+fix(networking): correct DNS SRV lookup
 
----
+Feature with body
 
-### Scope (Optional)
-
-Defines the affected area of the change:
-
-- k8s
-- tofu
-- monitoring
-- networking
-- security
-
----
-
-### Subject Guidelines
-
-- Use imperative mood (e.g., "add" not "added" or "adds").
-- No trailing period.
-- Max 72 characters.
-
----
-
-### Body (If Needed)
-
-Use a body if additional explanation is required:
-
-- Explain why the change was made.
-- Highlight significant modifications.
-- Use bullet points if listing multiple adjustments.
-
----
-
-### Breaking Changes (If Any)
-
-Use:
-
-```
-BREAKING CHANGE: <description>
-```
-
-Example:
-
-```
-BREAKING CHANGE: move configuration to new structure.
-```
-
----
-
-### Examples
-
-#### Single Change
-
-```
-feat(k8s): add Cilium network policy support
-```
-
-#### Multiple Related Changes in One Commit (Using a Body)
-
-```
 feat(k8s): add Cilium network policy support
 
-- Added default network policies to improve security
-- Fixed egress rule configuration to prevent unintended traffic blocks
-- Optimized policy selectors for better performance
-```
+- default deny-all ingress/egress
+- egress allow-list for kube-system
 
-#### Breaking Change
+Breaking change (footer variant)
 
-```
-refactor(k8s): restructure configuration handling
+refactor(tofu): rename output variables
 
-BREAKING CHANGE: moved all network policy definitions to a new directory.
-```
+BREAKING CHANGE: destroys and recreates all outputs; state import needed.
+
+Breaking change (shorthand !)
+
+feat!: switch authentication to JWT
+
+
+---
+
+What NOT to do
+
+Omit the type or the colon. Example wrong: update: make things faster → ignored.
+
+Capitalise type. Example wrong: Fix: → ignored (types are case-insensitive in the spec but release-please’s regex assumes lower-case).
+
+Forget the blank line before body or footer.
+
+Put a trailing period in the description.
+
+
+
+---
+
+Why these rules matter
+
+release-please’s versioning engine (DefaultVersioningStrategy) maps exactly feat, fix, BREAKING CHANGE/! to minor, patch, major bumps. 
+
+Every other type is only cosmetic unless you add ! or a BREAKING CHANGE footer.
+
+If a commit does not match the pattern ^(\w+)([\w\-]+)?(!)?:\s.+, release-please ignores it entirely.
+
+
+Follow this table and all commits will be parsed, changelogs will be rich, and semantic version bumps will be automatic.
+
