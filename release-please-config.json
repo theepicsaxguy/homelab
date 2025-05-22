@@ -11,7 +11,7 @@
       "release-type": "simple",
       "changelog-path": "CHANGELOG.md"
     }
-    // Optionally, add more paths here for future package-specific logic,
-    // but having "." ensures ALL commits are covered.
+    
+    
   }
 }
