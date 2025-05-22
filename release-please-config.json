@@ -1,0 +1,17 @@
+{
+  "changelog-type": "github",
+  "release-search-depth": 1000,
+  "commit-search-depth": 1500,
+  "separate-pull-requests": false,
+  "plugins": [
+    { "type": "node-workspace" }
+  ],
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "changelog-path": "CHANGELOG.md"
+    }
+    // Optionally, add more paths here for future package-specific logic,
+    // but having "." ensures ALL commits are covered.
+  }
+}
