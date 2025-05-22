@@ -44,7 +44,10 @@ csi:
       limits:
         cpu: 200m
         memory: 256Mi
-
+defaultBackupStore:
+  backupTarget: "s3://longhorn@us-west-1/"
+  backupTargetCredentialSecret: longhorn-minio-credentials
+  pollInterval: 180
 defaultSettings:
   createDefaultDiskLabeledNodes: true
   defaultReplicaCount: 3
