@@ -1,5 +1,62 @@
 # Changelog
 
+## 2.6.0 (2025-05-22)
+
+## What's Changed
+* chore(deps): update terraform proxmox to v0.78.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/646
+* Refactor-blog-and-configuration-files;-update-styles-and-assets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/647
+* refactor(k8s): update HTTPRoute configurations for frigate by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/648
+* chore(deps): update helm release argo-cd to v8.0.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/649
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/652
+* chore(deps): update dependency siderolabs/talos to v1.10.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/653
+* chore(deps): update registry.k8s.io/git-sync/git-sync docker tag to v4.4.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/654
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/651
+* Add transformer to kustomization files by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/655
+* Create common/rollout-transform.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/656
+* chore(deps): update all dependencies to v72.5.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/657
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/658
+* Update externalsecret.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/659
+* Update values.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/660
+* chore(deps): update helm release argo-cd to v8.0.4 by @renovate in https://github.com/theepicsaxguy/homelab/pull/661
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/662
+* Update service.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/663
+* Implemented dex for argocd by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/664
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.10 by @renovate in https://github.com/theepicsaxguy/homelab/pull/667
+* Create helm-charts.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/668
+* Update helm-charts.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/669
+* Create helm-chart.md by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/670
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/671
+* feat(k8s): add Immich application resources and configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/672
+* refactor(k8s): change creationPolicy to Merge for argocd-secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/674
+* fix(k8s): disable admin access in ArgoCD configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/675
+* refactor(k8s): update resource requests and limits for PostgreSQL instances by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/676
+* chore(deps): update helm release argo-cd to v8.0.6 by @renovate in https://github.com/theepicsaxguy/homelab/pull/677
+* Feat(k8s)--update-Frigate-configuration-and-add-upgrade-guide-for-Talos by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/678
+* Cleaned-up-configurations-by-removing-obsolete-variables  by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/650
+* fix(k8s): update backend port for immich server in HTTPRoute by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/679
+* feat(k8s): add authsecret for OIDC client credentials by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/680
+* chore(deps): update terraform kubernetes to ~> 2.37.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/682
+* chore(deps): update all dependencies to v72.5.2 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/681
+* chore(deps): update all dependencies to v72.5.3 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/683
+* Feat(k8s)  add external secret for min io longhorn backup by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/684
+* perf(k8s): increase resource requests and limits for jellyfin deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/685
+* Chore(k8s)  remove unused argo rollouts resources and configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/686
+* chore(deps): update helm release argo-cd to v8.0.7 by @renovate in https://github.com/theepicsaxguy/homelab/pull/687
+* chore: upgrade immich by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/688
+* chore(deps): update helm release argo-cd to v8.0.9 by @renovate in https://github.com/theepicsaxguy/homelab/pull/690
+* chore(deps): update all dependencies to v72.6.2 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/691
+* Update release-please.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/689
+* Update release-please.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/692
+* fix(longhorn): switch configMapGenerator behavior to merge for safer … by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/693
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/694
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/695
+* Chore(longhorn)  remove backup.yaml from config map generator by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/696
+* chore(release): update release-please configuration for better change… by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/697
+* chore(release): remove version from pull request header for consistency by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/698
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.5.0...v2.6.0
+
 ## [2.5.0](https://github.com/theepicsaxguy/homelab/compare/v2.4.0...v2.5.0) (2025-05-13)
 
 
