@@ -4,16 +4,23 @@ kind: Kustomization
 namespace: longhorn-system
 
 resources:
-- namespace.yaml
-- recurringjob.yaml
-- backup.yaml
-- http-route.yaml
-- externalsecret.yaml
+  - namespace.yaml
+  - recurringjob.yaml
+  - backup.yaml
+  - http-route.yaml
+  - externalsecret.yaml
+
+configMapGenerator:
+  - name: longhorn-default-resource
+    namespace: longhorn-system
+    behavior: merge
+    files:
+      - default-resource.yaml
 
 helmCharts:
-- name: longhorn
-  namespace: longhorn-system
-  releaseName: longhorn
-  repo: https://charts.longhorn.io
-  valuesFile: values.yaml
-  version: 1.8.1
+  - name: longhorn
+    namespace: longhorn-system
+    releaseName: longhorn
+    repo: https://charts.longhorn.io
+    valuesFile: values.yaml
+    version: 1.8.1
