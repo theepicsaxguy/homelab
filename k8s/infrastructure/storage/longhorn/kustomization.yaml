@@ -9,12 +9,6 @@ resources:
   - http-route.yaml
   - externalsecret.yaml
 
-configMapGenerator:
-  - name: longhorn-default-resource
-    namespace: longhorn-system
-    files:
-      - backup.yaml
-
 helmCharts:
   - name: longhorn
     namespace: longhorn-system
