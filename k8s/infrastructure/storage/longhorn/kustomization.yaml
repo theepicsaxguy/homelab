@@ -12,7 +12,6 @@ resources:
 configMapGenerator:
   - name: longhorn-default-resource
     namespace: longhorn-system
-    behavior: merge
     files:
       - backup.yaml
 
