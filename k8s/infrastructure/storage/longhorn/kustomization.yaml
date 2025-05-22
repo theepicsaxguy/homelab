@@ -6,7 +6,6 @@ namespace: longhorn-system
 resources:
   - namespace.yaml
   - recurringjob.yaml
-  - backup.yaml
   - http-route.yaml
   - externalsecret.yaml
 
@@ -15,7 +14,7 @@ configMapGenerator:
     namespace: longhorn-system
     behavior: merge
     files:
-      - default-resource.yaml
+      - backup.yaml
 
 helmCharts:
   - name: longhorn
