@@ -117,6 +117,5 @@ metadata:
   labels:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: immich
-    app.kubernetes.io/version: v1.133.0
   name: immich-immich-config
   namespace: immich

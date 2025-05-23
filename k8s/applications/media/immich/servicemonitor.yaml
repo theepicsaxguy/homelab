@@ -4,7 +4,6 @@ metadata:
   labels:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: server
-    app.kubernetes.io/version: v1.133.0
   name: immich-server
   namespace: immich
 spec:

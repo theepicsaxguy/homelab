@@ -5,7 +5,6 @@ metadata:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: machine-learning
     app.kubernetes.io/service: immich-machine-learning
-    app.kubernetes.io/version: v1.133.0
   name: immich-machine-learning
   namespace: immich
 spec:
@@ -27,7 +26,6 @@ metadata:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: server
     app.kubernetes.io/service: immich-server
-    app.kubernetes.io/version: v1.133.0
   name: immich-server
   namespace: immich
 spec:
