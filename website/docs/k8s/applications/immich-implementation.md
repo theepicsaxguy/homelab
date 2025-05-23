@@ -27,7 +27,7 @@ This document highlights the four critical issues that blocked a smooth Immich d
 ## 1. PostgreSQL: Vector Extensions Not Loaded
 
 **Why it failed:**
-By default, the Zalando operator won’t install `pgvector` (or `pgvecto_rs`) unless they’re explicitly declared in the CRD’s `preparedDatabases` block.
+By default, the Zalando operator won’t install `vectorchord` unless they’re explicitly declared in the CRD’s `preparedDatabases` block.
 
 **How we fixed it:**
 In `database.yaml`, specify each extension under `spec.preparedDatabases` so the operator creates them at startup:
@@ -38,7 +38,7 @@ spec:
   preparedDatabases:
     immich:
       extensions:
-        pgvector: public
+        vectorchord: public
 ```
 
 ---
@@ -90,4 +90,31 @@ resources:
   - pvc.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
+```
+
+---
+
+## 5. Removal of pgvector and Use of VectorChord
+
+**Why it changed:**
+The old `pgvector` extension was replaced with the `VectorChord` extension to enhance the PostgreSQL database setup for the Immich application.
+
+**How we fixed it:**
+In `database.yaml`, remove the `pgvector` extension and ensure `vectorchord` is the only extension listed under `spec.preparedDatabases`:
+
+```yaml
+# k8s/applications/media/immich/database.yaml
+spec:
+  preparedDatabases:
+    immich:
+      extensions:
+        vectorchord: public
+```
+
+In `values.yaml`, update the `DB_VECTOR_EXTENSION` environment variable to reference `vectorchord` instead of `pgvector`:
+
+```yaml
+# k8s/applications/media/immich/values.yaml
+env:
+  DB_VECTOR_EXTENSION: vectorchord
 ```
