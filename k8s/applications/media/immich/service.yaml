@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: machine-learning
+    app.kubernetes.io/service: immich-machine-learning
+    app.kubernetes.io/version: v1.119.0
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  ports:
+  - name: http
+    port: 3003
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: machine-learning
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/version: 7.4.3
+  name: immich-redis-headless
+  namespace: immich
+spec:
+  clusterIP: None
+  ports:
+  - name: tcp-redis
+    port: 6379
+    targetPort: redis
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: redis
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/version: 7.4.3
+  name: immich-redis-master
+  namespace: immich
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+  - name: tcp-redis
+    port: 6379
+    targetPort: redis
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: redis
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+    app.kubernetes.io/service: immich-server
+    app.kubernetes.io/version: v1.119.0
+  name: immich-server
+  namespace: immich
+spec:
+  ports:
+  - name: http
+    port: 2283
+    protocol: TCP
+    targetPort: http
+  - name: metrics-api
+    port: 8081
+    protocol: TCP
+    targetPort: metrics-api
+  - name: metrics-ms
+    port: 8082
+    protocol: TCP
+    targetPort: metrics-ms
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+  type: ClusterIP

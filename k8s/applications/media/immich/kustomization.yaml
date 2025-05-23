@@ -4,18 +4,18 @@ namespace: immich
 resources:
   - namespace.yaml
   - http-route.yaml
+  - authsecret.yaml
   - externalsecret.yaml
   - database.yaml
   - pvc.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
-  - authsecret.yaml
+  - networkpolicy.yaml
+  - poddisruptionbudget.yaml
+  - service.yaml
+  - servicemonitor.yaml
+  - statefulset.yaml
+  - deployment.yaml
+  - immich-config.yaml
 generatorOptions:
   disableNameSuffixHash: true
-helmCharts:
-  - name: immich
-    repo: oci://ghcr.io/immich-app/immich-charts
-    version: 0.9.3
-    releaseName: immich
-    namespace: immich
-    valuesFile: values.yaml

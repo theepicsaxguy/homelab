@@ -1,0 +1,17 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: redis
+    app.kubernetes.io/version: 7.4.3
+  name: immich-redis-master
+  namespace: immich
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: redis

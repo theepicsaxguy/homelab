@@ -1,0 +1,219 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: machine-learning
+    app.kubernetes.io/version: v1.119.0
+  name: immich-machine-learning
+  namespace: immich
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: machine-learning
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: immich
+        app.kubernetes.io/name: machine-learning
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - env:
+        - name: DB_DATABASE_NAME
+          value: immich
+        - name: DB_HOSTNAME
+          value: immich-postgresql
+        - name: DB_PASSWORD
+          value: immich
+        - name: DB_SSL
+          value: "true"
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              key: DB_URL
+              name: immich-db-url
+        - name: DB_USERNAME
+          value: immich
+        - name: DB_VECTOR_EXTENSION
+          value: pgvector
+        - name: IMMICH_CONFIG_FILE
+          value: /config/immich-config.yaml
+        - name: IMMICH_MACHINE_LEARNING_URL
+          value: http://immich-machine-learning:3003
+        - name: REDIS_HOSTNAME
+          value: immich-redis-master
+        - name: TRANSFORMERS_CACHE
+          value: /cache
+        - name: TZ
+          value: Europe/Stockholm
+        image: ghcr.io/immich-app/immich-machine-learning:v1.133.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        name: immich-machine-learning
+        ports:
+        - containerPort: 3003
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /cache
+          name: cache
+        - mountPath: /config
+          name: config
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      serviceAccountName: default
+      volumes:
+      - name: cache
+        emptyDir: {}
+      - name: config
+        projected:
+          sources:
+          - secret:
+              name: immich-config
+          - configMap:
+              name: immich-immich-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+    app.kubernetes.io/version: v1.119.0
+  name: immich-server
+  namespace: immich
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: immich
+      app.kubernetes.io/name: server
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config: bb6d2bc8a98e8170af8f63039c5f66ec0557b0590af9524da63e8a9e9d80f69f
+      labels:
+        app.kubernetes.io/instance: immich
+        app.kubernetes.io/name: server
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - env:
+        - name: DB_DATABASE_NAME
+          value: immich
+        - name: DB_HOSTNAME
+          value: immich-postgresql
+        - name: DB_PASSWORD
+          value: immich
+        - name: DB_SSL
+          value: "true"
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              key: DB_URL
+              name: immich-db-url
+        - name: DB_USERNAME
+          value: immich
+        - name: DB_VECTOR_EXTENSION
+          value: pgvector
+        - name: IMMICH_CONFIG_FILE
+          value: /config/immich-config.yaml
+        - name: IMMICH_MACHINE_LEARNING_URL
+          value: http://immich-machine-learning:3003
+        - name: IMMICH_TELEMETRY_INCLUDE
+          value: all
+        - name: REDIS_HOSTNAME
+          value: immich-redis-master
+        - name: TZ
+          value: Europe/Stockholm
+        image: ghcr.io/immich-app/immich-server:v1.133.0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        name: immich-server
+        ports:
+        - containerPort: 2283
+          name: http
+          protocol: TCP
+        - containerPort: 8081
+          name: metrics-api
+          protocol: TCP
+        - containerPort: 8082
+          name: metrics-ms
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        volumeMounts:
+        - mountPath: /config
+          name: config
+          readOnly: true
+        - mountPath: /usr/src/app/upload
+          name: library
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      serviceAccountName: default
+      volumes:
+      - name: config
+        projected:
+          sources:
+          - secret:
+              name: immich-config
+          - configMap:
+              name: immich-immich-config
+      - name: library
+        persistentVolumeClaim:
+          claimName: immich-library
+---
