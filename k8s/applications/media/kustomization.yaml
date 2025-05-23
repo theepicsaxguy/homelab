@@ -12,3 +12,4 @@ resources:
 - sabnzbd
 - whisperasr
 - immich
+- immich-redis
