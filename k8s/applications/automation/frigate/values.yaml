@@ -45,12 +45,12 @@ extraVolumes: []
 extraVolumeMounts: []
 
 # -- amount of shared memory to use for caching
-shmSize: 2Gi
+shmSize: 1Gi
 
 # -- use memory for tmpfs (mounted to /tmp)
 tmpfs:
   enabled: true
-  sizeLimit: 2Gi
+  sizeLimit: 1Gi
 
 # nameOverride -- Overrides the name of resources
 nameOverride: ""
@@ -271,10 +271,10 @@ persistence:
     accessMode: ReadWriteOnce
 
     # -- size/capacity of the PVC
-    size: 20Gi
+    size: 10Gi
 
     # -- Do not delete the pvc upon helm uninstall
-    skipuninstall: true
+    skipuninstall: false
 
 # -- Set resource limits/requests for the Pod(s)
 resources:
@@ -286,22 +286,27 @@ resources:
     memory: "1Gi"
 
 # -- Set Frigate Container Security Context
-securityContext:
-  privileged: false
-  runAsUser: 1000
-  runAsGroup: 1000
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: false
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # privileged: true
 
 # -- Set Pod level Security Context
-podSecurityContext:
-  fsGroup: 1000
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroupChangePolicy: "OnRootMismatch"
+# -- the container level securiy context defined above
+# -- will override it for frigate container
+podSecurityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+  # fsGroup: 1000
+  # privileged: true
 
 # -- Node Selector configuration
 nodeSelector: {}
