@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.6.1 (2025-05-23)
+
+## What's Changed
+* fix: Implement VectorChord for immich database by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/699
+* fix(k8s): replace Helm chart with Kubernetes manifests and update documentation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/702
+* fix(argocd): update resource requests and limits for repoServer by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/705
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/703
+* fix(k8s): increase resource limits and shared memory for Frigate and Immich by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/706
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.133.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/707
+* chore(deps): update helm release redis to v21 by @renovate in https://github.com/theepicsaxguy/homelab/pull/704
+* chore(ci): update permissions for release-please workflow by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/708
+* fix(k8s): reduce shared memory and PVC size for Frigate configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/709
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.6.0...v2.6.1
+
 ## 2.6.0 (2025-05-22)
 
 ## What's Changed
