@@ -3,27 +3,6 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/instance: immich
-    app.kubernetes.io/name: machine-learning
-    app.kubernetes.io/service: immich-machine-learning
-  name: immich-machine-learning
-  namespace: immich
-spec:
-  ports:
-  - name: http
-    port: 3003
-    protocol: TCP
-    targetPort: http
-  selector:
-    app.kubernetes.io/instance: immich
-    app.kubernetes.io/name: machine-learning
-  type: ClusterIP
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/instance: immich
     app.kubernetes.io/name: server
     app.kubernetes.io/service: immich-server
   name: immich-server
