@@ -4,6 +4,21 @@ metadata:
   name: immich-postgresql
   namespace: immich
 spec:
+  initContainers:
+  - name: install-vchord
+    image: debian:12-slim
+    command: ["/bin/bash", "-ec"]
+    args:
+      - |
+        apt-get update -qq
+        apt-get install -y --no-install-recommends wget ca-certificates dpkg
+        wget -qO /tmp/vchord.deb \
+          https://github.com/tensorchord/VectorChord/releases/download/0.3.0/postgresql-17-vchord_0.3.0-1_amd64.deb
+        dpkg -x /tmp/vchord.deb /vectorchord
+    volumeMounts:
+    - name: vchord-lib
+      mountPath: /vectorchord
+
   teamId: "immich"
   volume:
     size: 10Gi
@@ -18,8 +33,26 @@ spec:
     immich:
       extensions:
         pgvector: public
+        vectorchord: public
+
+  additionalVolumes:
+  - name: vchord-lib
+    mountPath: /usr/lib/postgresql/17/lib
+    targetContainers: [all]
+    volumeSource:
+      emptyDir: {}
+  - name: vchord-lib
+    mountPath: /usr/share/postgresql/17/extension
+    subPath: share
+    targetContainers: [all]
+    volumeSource:
+      emptyDir: {}
+
   postgresql:
     version: "17"
+    parameters:
+      shared_preload_libraries: "vchord,pgextwlist"
+
   enableConnectionPooler: false
   resources:
     requests:
