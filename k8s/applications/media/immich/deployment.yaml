@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: machine-learning
-    app.kubernetes.io/version: v1.119.0
+    app.kubernetes.io/version: v1.133.0
   name: immich-machine-learning
   namespace: immich
 spec:
@@ -109,7 +109,7 @@ metadata:
   labels:
     app.kubernetes.io/instance: immich
     app.kubernetes.io/name: server
-    app.kubernetes.io/version: v1.119.0
+    app.kubernetes.io/version: v1.133.0
   name: immich-server
   namespace: immich
 spec:
@@ -123,8 +123,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      annotations:
-        checksum/config: bb6d2bc8a98e8170af8f63039c5f66ec0557b0590af9524da63e8a9e9d80f69f
       labels:
         app.kubernetes.io/instance: immich
         app.kubernetes.io/name: server
