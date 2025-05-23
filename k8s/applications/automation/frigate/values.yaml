@@ -45,12 +45,12 @@ extraVolumes: []
 extraVolumeMounts: []
 
 # -- amount of shared memory to use for caching
-shmSize: 1Gi
+shmSize: 2Gi
 
 # -- use memory for tmpfs (mounted to /tmp)
 tmpfs:
   enabled: true
-  sizeLimit: 1Gi
+  sizeLimit: 2Gi
 
 # nameOverride -- Overrides the name of resources
 nameOverride: ""
@@ -238,8 +238,8 @@ persistence:
     # -- [access mode](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes) to use for the PVC
     accessMode: ReadWriteOnce
 
-    # -- size/capacity of the PVC
-    size: 100Mi
+    # -- Increased size for SQLite database and config
+    size: 300Mi
 
     # -- Do not delete the pvc upon helm uninstall
     skipuninstall: false
@@ -271,10 +271,10 @@ persistence:
     accessMode: ReadWriteOnce
 
     # -- size/capacity of the PVC
-    size: 10Gi
+    size: 20Gi
 
     # -- Do not delete the pvc upon helm uninstall
-    skipuninstall: false
+    skipuninstall: true
 
 # -- Set resource limits/requests for the Pod(s)
 resources:
@@ -286,27 +286,22 @@ resources:
     memory: "1Gi"
 
 # -- Set Frigate Container Security Context
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-  # privileged: true
+securityContext:
+  privileged: false
+  runAsUser: 1000
+  runAsGroup: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: false
 
 # -- Set Pod level Security Context
-# -- the container level securiy context defined above
-# -- will override it for frigate container
-podSecurityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-  # fsGroup: 1000
-  # privileged: true
+podSecurityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroupChangePolicy: "OnRootMismatch"
 
 # -- Node Selector configuration
 nodeSelector: {}
