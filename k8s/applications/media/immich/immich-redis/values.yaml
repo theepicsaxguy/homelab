@@ -1,0 +1,6 @@
+architecture: standalone
+
+auth:
+  enabled: false
+
+fullnameOverride: immich-redis

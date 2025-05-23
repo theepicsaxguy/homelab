@@ -17,7 +17,7 @@ This document highlights the four critical issues that blocked a smooth Immich d
 
 ## Overview of Issues & Resolutions
 
-1. **PostgreSQL Extensions Missing** → Operator CRD misconfigured
+1. **PostgreSQL Extensions Missing** → Operator CRD misconfigured (pgvector & vectorchord)
 2. **DB\_URL Secret Fragmentation** → Immich requires a single URI
 3. **ExternalSecret Authentication Failures** → Missing CA & RBAC
 4. **Resource Organization** → Inconsistent manifests
@@ -27,7 +27,7 @@ This document highlights the four critical issues that blocked a smooth Immich d
 ## 1. PostgreSQL: Vector Extensions Not Loaded
 
 **Why it failed:**
-By default, the Zalando operator won’t install `pgvector` (or `pgvecto_rs`) unless they’re explicitly declared in the CRD’s `preparedDatabases` block.
+By default, the Zalando operator won't install `pgvector` and `vectorchord` unless they're explicitly declared in the CRD's `preparedDatabases` block.
 
 **How we fixed it:**
 In `database.yaml`, specify each extension under `spec.preparedDatabases` so the operator creates them at startup:
@@ -39,6 +39,7 @@ spec:
     immich:
       extensions:
         pgvector: public
+        vectorchord: public
 ```
 
 ---
