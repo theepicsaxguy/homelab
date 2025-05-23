@@ -38,7 +38,7 @@ spec:
   preparedDatabases:
     immich:
       extensions:
-        pgvector: public
+        vectorchord: public
 ```
 
 ---
@@ -90,4 +90,31 @@ resources:
   - pvc.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
+```
+
+---
+
+## 5. Removal of pgvector and Use of VectorChord
+
+**Why it changed:**
+The old `pgvector` extension was replaced with the `VectorChord` extension to enhance the PostgreSQL database setup for the Immich application.
+
+**How we fixed it:**
+In `database.yaml`, remove the `pgvector` extension and ensure `vectorchord` is the only extension listed under `spec.preparedDatabases`:
+
+```yaml
+# k8s/applications/media/immich/database.yaml
+spec:
+  preparedDatabases:
+    immich:
+      extensions:
+        vectorchord: public
+```
+
+In `values.yaml`, update the `DB_VECTOR_EXTENSION` environment variable to reference `vectorchord` instead of `pgvector`:
+
+```yaml
+# k8s/applications/media/immich/values.yaml
+env:
+  DB_VECTOR_EXTENSION: vectorchord
 ```

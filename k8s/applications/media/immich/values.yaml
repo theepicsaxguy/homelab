@@ -1,6 +1,6 @@
 env:
   TZ: Europe/Stockholm
-  DB_VECTOR_EXTENSION: pgvector
+  DB_VECTOR_EXTENSION: vectorchord
   DB_URL:
     valueFrom:
       secretKeyRef:

@@ -32,7 +32,6 @@ spec:
   preparedDatabases:
     immich:
       extensions:
-        pgvector: public
         vectorchord: public
 
   additionalVolumes:
