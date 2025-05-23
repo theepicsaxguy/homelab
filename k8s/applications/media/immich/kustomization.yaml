@@ -4,15 +4,7 @@ namespace: immich
 resources:
   - namespace.yaml
   - http-route.yaml
-  - authsecret.yaml
-  - externalsecret.yaml
-  - database.yaml
-  - pvc.yaml
-  - zalando-k8s-store.yaml
-  - serviceaccount.yaml
-  - service.yaml
-  - servicemonitor.yaml
-  - deployment.yaml
-  - immich-config.yaml
+  - immich-redis
+  - immich-server
 generatorOptions:
   disableNameSuffixHash: true
