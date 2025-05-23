@@ -100,11 +100,18 @@ spec:
       volumes:
       - name: config
         projected:
+          defaultMode: 0440
           sources:
-          - secret:
-              name: immich-config
-          - configMap:
-              name: immich-immich-config
+            - configMap:
+                name: immich-immich-config
+                items:
+                  - key: immich-config.yaml
+                    path: immich-config.yaml
+            - secret:
+                name: immich-config
+                items:
+                  - key: immich.json
+                    path: immich.json
       - name: library
         persistentVolumeClaim:
           claimName: immich-library
