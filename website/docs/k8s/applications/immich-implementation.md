@@ -27,7 +27,7 @@ This document highlights the four critical issues that blocked a smooth Immich d
 ## 1. PostgreSQL: Vector Extensions Not Loaded
 
 **Why it failed:**
-By default, the Zalando operator won’t install `pgvector` (or `pgvecto_rs`) unless they’re explicitly declared in the CRD’s `preparedDatabases` block.
+By default, the Zalando operator won’t install `vectorchord` unless they’re explicitly declared in the CRD’s `preparedDatabases` block.
 
 **How we fixed it:**
 In `database.yaml`, specify each extension under `spec.preparedDatabases` so the operator creates them at startup:
