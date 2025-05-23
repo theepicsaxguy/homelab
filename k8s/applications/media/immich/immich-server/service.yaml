@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+    app.kubernetes.io/service: immich-server
+  name: immich-server
+  namespace: immich
+spec:
+  ports:
+  - name: http
+    port: 2283
+    protocol: TCP
+    targetPort: http
+  - name: metrics-api
+    port: 8081
+    protocol: TCP
+    targetPort: metrics-api
+  - name: metrics-ms
+    port: 8082
+    protocol: TCP
+    targetPort: metrics-ms
+  selector:
+    app.kubernetes.io/instance: immich
+    app.kubernetes.io/name: server
+  type: ClusterIP
