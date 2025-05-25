@@ -1,6 +1,6 @@
 installCRDs: true
 args:
-  --enable-environment-configs
+  - "--enable-external-secret-stores"
 resources:
   limits:
     cpu: 200m
