@@ -19,7 +19,7 @@ spec:
     immich:
       extensions:
         pgvector: public
-        vectorchord: public
+        vchord: public
   postgresql:
     version: "17"
     parameters:
