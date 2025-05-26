@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+---
+version: 1
+metadata:
+  name: Notifications
+entries:
+  - id: transport
+    model: authentik_events.notificationtransport
+    identifiers:
+      name: Slack
+    attrs:
+      mode: webhook_slack
+      webhook_url: !Env AUTHENTIK_BLUEPRINTS_NOTIFICATIONS_SLACK_WEBHOOK
+      send_once: true
+
+  - id: rule
+    model: authentik_events.notificationrule
+    identifiers:
+      name: slack-notify-exception-configuration-error
+    attrs:
+      transports:
+        - !KeyOf transport
+      severity: alert
+      group: !Find [authentik_core.group, [name, "authentik Admins"]]
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      order: 0
+      policy:
+        !Find [
+          authentik_policies.policy,
+          [name, "default-match-configuration-error"],
+        ]
+      target: !KeyOf rule
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      order: 1
+      policy:
+        !Find [
+          authentik_policies.policy,
+          [name, "default-match-policy-exception"],
+        ]
+      target: !KeyOf rule
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      order: 2
+      policy:
+        !Find [
+          authentik_policies.policy,
+          [name, "default-match-property-mapping-exception"],
+        ]
+      target: !KeyOf rule

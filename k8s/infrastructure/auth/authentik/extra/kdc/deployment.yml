@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kdc
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  template:
+    spec:
+      securityContext:
+        runAsUser: 1673
+        runAsGroup: 1673
+        fsGroup: 1673
+      containers:
+        - name: kdc
+          image: ghcr.io/authentik-community/krb5
+          envFrom:
+            - configMapRef:
+                name: kdc-config
+          ports:
+            - name: kdc-tcp
+              containerPort: 8888
+              protocol: TCP
+            - name: kdc-udp
+              containerPort: 8888
+              protocol: UDP
+            - name: kdc-kadmin
+              containerPort: 8749
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/krb5kdc
+            - name: secrets
+              mountPath: /secrets
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kdc-data
+        - name: secrets
+          secret:
+            secretName: kdc-secrets

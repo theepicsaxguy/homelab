@@ -1,0 +1,86 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Apps - Home assistant
+entries:
+  - id: application
+    model: authentik_core.application
+    identifiers:
+      slug: home-assistant
+    attrs:
+      name: Home assistant
+      group: Maison
+      description: Home automation
+      meta_launch_url: https://home.risson.space
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application
+      group: !Find [authentik_core.group, [name, "schmitt"]]
+    attrs:
+      order: 1
+
+  - id: provider-zigbee2mqtt
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s/k3s.fsn.as212024.net/services-external/zigbee2mqtt
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      client_id: zigbee2mqtt
+      redirect_uris:
+        - url: https://z2m.home.risson.space/oauth2/callback
+          matching_mode: strict
+
+      access_code_validity: minutes=1
+      access_token_validity: minutes=5
+      refresh_token_validity: days=30
+
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
+          ]
+
+  - id: application-zigbee2mqtt
+    model: authentik_core.application
+    identifiers:
+      slug: zigbee2mqtt
+    attrs:
+      name: Zigbee2MQTT
+      group: Maison
+      description: Gestion des appareils Zigbee
+      icon: https://www.zigbee2mqtt.io/logo.png
+      provider: !KeyOf provider-zigbee2mqtt
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application-zigbee2mqtt
+      user: !Find [authentik_core.user, [username, "risson"]]
+    attrs:
+      order: 1

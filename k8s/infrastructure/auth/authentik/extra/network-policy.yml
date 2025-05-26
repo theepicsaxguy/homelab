@@ -1,0 +1,27 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-egress-all
+spec:
+  endpointSelector: {}
+  egress:
+    - toEntities:
+        - all
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ingress-outpost-ldap
+spec:
+  endpointSelector:
+    matchLabels:
+      goauthentik.io/outpost-name: ldap-outpost
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: services-stalwart
+      toPorts:
+        - ports:
+            - port: "3389"
+              protocol: TCP

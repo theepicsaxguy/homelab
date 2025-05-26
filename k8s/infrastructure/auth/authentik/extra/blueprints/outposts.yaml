@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Outposts
+entries:
+  - model: authentik_blueprints.metaapplyblueprint
+    attrs:
+      identifiers:
+        name: Apps - ArchiveBox
+      required: true
+  - model: authentik_blueprints.metaapplyblueprint
+    attrs:
+      identifiers:
+        name: Apps - V-Core 3
+      required: true
+
+  - model: authentik_outposts.outpost
+    identifiers:
+      managed: goauthentik.io/outposts/embedded
+    attrs:
+      service_connection:
+        !Find [
+          authentik_outposts.outpostserviceconnection,
+          [name, "Local Kubernetes Cluster"],
+        ]
+      providers:
+        - !Find [
+            authentik_core.provider,
+            [name, "k8s/k3s.fsn.as212024.net/services-archivebox"],
+          ]
+        - !Find [authentik_core.provider, [name, "v-core-3"]]
+      config:
+        log_level: info
+        authentik_host: https://auth.lama-corp.space
+        object_naming_template: ak-outpost-%(name)s
+        kubernetes_disabled_components:
+          - deployment
+          - secret
+          - ingress
+        kubernetes_httproute_parent_refs:
+          - name: eg-http-public
+            namespace: core-eg
+            sectionName: https
+
+  - model: authentik_outposts.outpost
+    identifiers:
+      name: "LDAP Outpost"
+    attrs:
+      type: ldap
+      service_connection:
+        !Find [
+          authentik_outposts.outpostserviceconnection,
+          [name, "Local Kubernetes Cluster"],
+        ]
+      providers:
+        - !Find [
+            authentik_core.provider,
+            [name, "k8s/k3s.fsn.as212024.net/services-stalwart/ldap"],
+          ]
+      config:
+        log_level: info
+        authentik_host: https://auth.lama-corp.space

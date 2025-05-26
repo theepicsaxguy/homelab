@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Flows - Provider authorization one time consent
+entries:
+  - id: flow
+    model: authentik_flows.flow
+    identifiers:
+      slug: default-provider-authorization-one-time-consent
+    attrs:
+      name: Authorize Application
+      title: "Redirecting to %(app)s"
+      designation: authorization
+      policy_engine_mode: all
+      compatibility_mode: false
+
+  - id: stage-consent
+    model: authentik_stages_consent.consentstage
+    identifiers:
+      name: default-provider-authorization-permanent-consent
+      mode: permanent
+
+  - model: authentik_flows.flowstagebinding
+    identifiers:
+      target: !KeyOf flow
+      stage: !KeyOf stage-consent
+    attrs:
+      order: 0
