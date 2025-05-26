@@ -8,7 +8,7 @@ spec:
   volume:
     size: 10Gi
   numberOfInstances: 1
-  dockerImage: ghcr.io/theepicsaxguy/spilo-pgvector-vectorchord:1.0.1
+  dockerImage: ghcr.io/theepicsaxguy/spilo-pg17-pgvector-vchord:1.0.1
   users:
     immich:
       - superuser
