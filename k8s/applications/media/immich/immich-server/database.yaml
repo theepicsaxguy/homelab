@@ -24,7 +24,14 @@ spec:
     version: "17"
     parameters:
       # Include both vector and vchord for migration phase
-      shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vector,vchord"
+      shared_preload_libraries:
+        - bg_mon
+        - pg_stat_statements
+        - pgextwlist
+        - pg_auth_mon
+        - set_user
+        - vector
+        - vchord
   enableConnectionPooler: false
   resources:
     requests:
