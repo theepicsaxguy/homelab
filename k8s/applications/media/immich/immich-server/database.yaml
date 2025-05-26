@@ -8,7 +8,7 @@ spec:
   volume:
     size: 10Gi
   numberOfInstances: 1
-  dockerImage: ghcr.io/theepicsaxguy/spilo-pg17-pgvector-vchord:1.0.0
+  dockerImage: ghcr.io/theepicsaxguy/spilo-pgvector-vectorchord:1.0.1
   users:
     immich:
       - superuser
@@ -19,12 +19,11 @@ spec:
     immich:
       extensions:
         pgvector: public
-        vchord: public  # Corrected extension name
+        vectorchord: public
   postgresql:
     version: "17"
     parameters:
-      # Include both vector and vchord for migration phase
-      shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,vector,vchord"
+      shared_preload_libraries: "vchord,pgextwlist"
   enableConnectionPooler: false
   resources:
     requests:
