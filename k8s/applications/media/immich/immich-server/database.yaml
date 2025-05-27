@@ -8,7 +8,7 @@ spec:
   volume:
     size: 10Gi
   numberOfInstances: 1
-  dockerImage: ghcr.io/theepicsaxguy/spilo-pg17-pgvector-vchord:1.2.0
+  dockerImage: ghcr.io/theepicsaxguy/spilo-pg17-pgvector-vchord:1.2.1
   users:
     immich:
       - superuser
@@ -20,10 +20,12 @@ spec:
       extensions:
         pgvector: public
         vchord: public
+        pg_cron: public
   postgresql:
     version: "17"
     parameters:
-      shared_preload_libraries: "vchord,pgextwlist"
+      shared_preload_libraries: "vchord,pgextwlist,cron"
+      cron.database_name: "immich"
   enableConnectionPooler: false
   resources:
     requests:
