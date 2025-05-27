@@ -20,10 +20,12 @@ spec:
       extensions:
         pgvector: public
         vchord: public
+        pg_cron: public
   postgresql:
     version: "17"
     parameters:
-      shared_preload_libraries: "vchord,pgextwlist"
+      shared_preload_libraries: "vchord,pgextwlist,cron"
+      cron.database_name: "immich"
   enableConnectionPooler: false
   resources:
     requests:
