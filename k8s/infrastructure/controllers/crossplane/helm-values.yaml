@@ -1,0 +1,10 @@
+installCRDs: true
+args:
+  - "--enable-external-secret-stores"
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
