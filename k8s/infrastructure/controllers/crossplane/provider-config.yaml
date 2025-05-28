@@ -1,4 +1,4 @@
-apiVersion: cloudflare.upbound.io/v1beta1
+apiVersion: cloudflare.upbound.io/v1alpha1
 kind: ProviderConfig
 metadata:
   name: cloudflare-provider
