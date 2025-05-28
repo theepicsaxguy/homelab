@@ -8,7 +8,7 @@ entries:
   - id: provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.as212024.net/services-immich
+      name: k8s/k3s.fsn.pc-tips.se/services-immich
     attrs:
       authorization_flow:
         !Find [

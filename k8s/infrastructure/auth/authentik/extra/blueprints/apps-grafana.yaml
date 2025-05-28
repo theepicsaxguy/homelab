@@ -8,7 +8,7 @@ entries:
   - id: provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.as212024.net/infra-observability/grafana
+      name: k8s/k3s.fsn.pc-tips.se/infra-observability/grafana
     attrs:
       authorization_flow:
         !Find [
@@ -28,7 +28,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://grafana.as212024.net/login/generic_oauth
+        - url: https://grafana.pc-tips.se/login/generic_oauth
           matching_mode: strict
 
       access_code_validity: minutes=1
