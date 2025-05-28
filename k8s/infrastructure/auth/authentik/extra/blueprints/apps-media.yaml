@@ -29,7 +29,7 @@ entries:
       client_type: confidential
       client_id: bazarr
       redirect_uris:
-        - url: https://bazarr.lama-corp.space/oauth2/callback
+        - url: https://bazarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -88,7 +88,7 @@ entries:
       client_type: confidential
       client_id: lidarr
       redirect_uris:
-        - url: https://lidarr.lama-corp.space/oauth2/callback
+        - url: https://lidarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -147,7 +147,7 @@ entries:
       client_type: confidential
       client_id: prowlarr
       redirect_uris:
-        - url: https://prowlarr.lama-corp.space/oauth2/callback
+        - url: https://prowlarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -206,7 +206,7 @@ entries:
       client_type: confidential
       client_id: radarr
       redirect_uris:
-        - url: https://radarr.lama-corp.space/oauth2/callback
+        - url: https://radarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -265,7 +265,7 @@ entries:
       client_type: confidential
       client_id: readarr
       redirect_uris:
-        - url: https://readarr.lama-corp.space/oauth2/callback
+        - url: https://readarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -324,7 +324,7 @@ entries:
       client_type: confidential
       client_id: sonarr
       redirect_uris:
-        - url: https://sonarr.lama-corp.space/oauth2/callback
+        - url: https://sonarr.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -383,7 +383,7 @@ entries:
       client_type: confidential
       client_id: qbittorrent
       redirect_uris:
-        - url: https://qbittorrent.lama-corp.space/oauth2/callback
+        - url: https://qbittorrent.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -442,7 +442,7 @@ entries:
       client_type: confidential
       client_id: sabnzbd
       redirect_uris:
-        - url: https://sabnzbd.lama-corp.space/oauth2/callback
+        - url: https://sabnzbd.pc-tips.se/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -500,7 +500,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://jellyfin.lama-corp.space/sso/OID/redirect/authentik
+        - url: https://jellyfin.pc-tips.se/sso/OID/redirect/authentik
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -533,7 +533,7 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png
       provider: !KeyOf provider-jellyfin
       policy_engine_mode: any
-      meta_launch_url: https://jellyfin.lama-corp.space/sso/OID/start/authentik
+      meta_launch_url: https://jellyfin.pc-tips.se/sso/OID/start/authentik
 
   - model: authentik_policies.policybinding
     identifiers:
@@ -571,7 +571,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://jellyseerr.lama-corp.space/login/oidc/callback
+        - url: https://jellyseerr.pc-tips.se/login/oidc/callback
           matching_mode: strict
 
       access_code_validity: minutes=1

@@ -33,7 +33,7 @@ entries:
         - !Find [authentik_core.provider, [name, "v-core-3"]]
       config:
         log_level: info
-        authentik_host: https://auth.lama-corp.space
+        authentik_host: https://sso.pc-tips.se
         object_naming_template: ak-outpost-%(name)s
         kubernetes_disabled_components:
           - deployment
@@ -61,4 +61,4 @@ entries:
           ]
       config:
         log_level: info
-        authentik_host: https://auth.lama-corp.space
+        authentik_host: https://sso.pc-tips.se

@@ -201,14 +201,14 @@ redis:
     passwordKey: redis-password
 
 
-blueprints:
-  configMaps:
-    - authentik-blueprints
-  # -- List of config maps to mount blueprints from.
-  # Only keys in the configMap ending with `.yaml` will be discovered and applied.
-  # -- List of secrets to mount blueprints from.
-  # Only keys in the secret ending with `.yaml` will be discovered and applied.
-  secrets: []
+# blueprints:
+#   configMaps:
+#     - authentik-blueprints
+#   # -- List of config maps to mount blueprints from.
+#   # Only keys in the configMap ending with `.yaml` will be discovered and applied.
+#   # -- List of secrets to mount blueprints from.
+#   # Only keys in the secret ending with `.yaml` will be discovered and applied.
+#   secrets: []
 route:
     main:
       # -- enable an HTTPRoute resource for the authentik server.

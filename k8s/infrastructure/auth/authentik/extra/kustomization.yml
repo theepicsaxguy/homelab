@@ -2,9 +2,7 @@
 kind: Kustomization
 
 resources:
-  - network-policy.yml
   - secrets.yml
-  - kdc
 
 generatorOptions:
   disableNameSuffixHash: true
@@ -12,25 +10,12 @@ generatorOptions:
 configMapGenerator:
   - name: authentik-blueprints
     files:
-      - ./blueprints/apps-archivebox.yaml
       - ./blueprints/apps-argocd.yaml
       - ./blueprints/apps-grafana.yaml
-      - ./blueprints/apps-happydomain.yaml
-      - ./blueprints/apps-hedgedoc.yaml
       - ./blueprints/apps-home-assistant.yaml
       - ./blueprints/apps-immich.yaml
-      - ./blueprints/apps-mastodon.yaml
-      - ./blueprints/apps-matrix.yaml
-      - ./blueprints/apps-mattermost.yaml
       - ./blueprints/apps-media.yaml
-      - ./blueprints/apps-netbox.yaml
-      - ./blueprints/apps-nextcloud.yaml
-      - ./blueprints/apps-paperless-ngx-risson.yaml
-      - ./blueprints/apps-stirling-pdf.yaml
-      - ./blueprints/apps-v-core-3.yaml
-      - ./blueprints/apps-vault.yaml
       - ./blueprints/brands.yaml
-      - ./blueprints/events-vault-write.yaml
       - ./blueprints/flows-default-provider-authorization-one-time-consent.yaml
       - ./blueprints/notifications.yaml
       - ./blueprints/oauth-scopes.yaml

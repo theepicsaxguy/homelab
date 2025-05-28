@@ -28,9 +28,9 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://photos.lama-corp.space/auth/login
+        - url: https://photos.pc-tips.se/auth/login
           matching_mode: strict
-        - url: https://photos.lama-corp.space/user-settings
+        - url: https://photos.pc-tips.se/user-settings
           matching_mode: strict
         - url: app.immich:///oauth-callback
           matching_mode: strict
