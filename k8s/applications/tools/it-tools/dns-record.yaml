@@ -1,4 +1,4 @@
-apiVersion: dns.cloudflare.crossplane.io/v1alpha1
+apiVersion: dns.cloudflare.upbound.io/v1alpha1
 kind: Record
 metadata:
   name: ittools-cname
