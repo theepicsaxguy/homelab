@@ -6,3 +6,4 @@ resources:
 - argocd
 - cert-manager
 - external-secrets
+- crossplane

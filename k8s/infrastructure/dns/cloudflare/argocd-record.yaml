@@ -1,0 +1,15 @@
+apiVersion: dns.cloudflare.crossplane.io/v1alpha1
+kind: Record
+metadata:
+  name: argocd-cname
+  namespace: cloudflare-dns
+spec:
+  forProvider:
+    zone: pc-tips.se
+    name: argocd
+    type: CNAME
+    value: gauss-k8s.cfargotunnel.com
+    ttl: 3600
+    proxied: true
+  providerConfigRef:
+    name: cloudflare-provider
