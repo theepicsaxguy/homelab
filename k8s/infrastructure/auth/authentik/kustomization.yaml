@@ -7,6 +7,7 @@ resources:
   - httproute.yaml
   - outpost.yaml
   - referencegrant.yaml
+  - dns-record.yaml
 
 configMapGenerator:
   - name: authentik-blueprints

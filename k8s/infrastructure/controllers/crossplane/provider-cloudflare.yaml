@@ -2,6 +2,5 @@ apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-cloudflare
-  namespace: crossplane-system
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-cloudflare:v0.1.0
+  package: ghcr.io/cdloh/provider-cloudflare:v0.1.0-2.g05868cb

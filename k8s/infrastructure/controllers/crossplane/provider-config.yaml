@@ -1,8 +1,7 @@
-apiVersion: cloudflare.upbound.io/v1alpha1
+apiVersion: cloudflare.upbound.io/v1beta1
 kind: ProviderConfig
 metadata:
   name: cloudflare-provider
-  namespace: crossplane-system
 spec:
   credentials:
     source: Secret
