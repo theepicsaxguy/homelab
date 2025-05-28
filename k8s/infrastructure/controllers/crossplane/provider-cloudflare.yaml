@@ -4,4 +4,4 @@ metadata:
   name: provider-cloudflare
   namespace: crossplane-system
 spec:
-  package: xpkg.upbound.io/crossplane-contrib/provider-cloudflare:v0.1.0
+  package: ghcr.io/cdloh/provider-cloudflare:v0.1.0
