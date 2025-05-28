@@ -10,7 +10,6 @@ resources:
 - deployment
 - auth
 - database
-- dns
 
 generatorOptions:
   disableNameSuffixHash: true

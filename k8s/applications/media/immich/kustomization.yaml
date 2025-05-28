@@ -7,5 +7,6 @@ resources:
   - immich-redis
   - immich-server
   - immich-ml
+  - dns-record.yaml
 generatorOptions:
   disableNameSuffixHash: true

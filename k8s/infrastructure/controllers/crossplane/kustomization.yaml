@@ -6,7 +6,6 @@ resources:
   - external-secret-cloudflare-token.yaml
   - provider-cloudflare.yaml
   - provider-config.yaml
-  - network-policy.yaml
 
 helmCharts:
   - name: crossplane
@@ -14,4 +13,3 @@ helmCharts:
     version: v1.20.0
     releaseName: crossplane
     namespace: crossplane-system
-    valuesFile: helm-values.yaml
