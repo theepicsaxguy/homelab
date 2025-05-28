@@ -1,14 +1,14 @@
 apiVersion: dns.cloudflare.crossplane.io/v1alpha1
 kind: Record
 metadata:
-  name: root-cname
-  namespace: cloudflare-dns
+  name: ittools-cname
+  namespace: it-tools
 spec:
   forProvider:
     zone: pc-tips.se
-    name: "@"
+    name: ittools
     type: CNAME
-    value: gauss-k8s.cfargotunnel.com
+    value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
     ttl: 3600
     proxied: true
   providerConfigRef:

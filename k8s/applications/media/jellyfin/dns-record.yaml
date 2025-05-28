@@ -1,0 +1,15 @@
+apiVersion: dns.cloudflare.crossplane.io/v1alpha1
+kind: Record
+metadata:
+  name: jellyfin-cname
+  namespace: media
+spec:
+  forProvider:
+    zone: pc-tips.se
+    name: jellyfin
+    type: CNAME
+    value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
+    ttl: 3600
+    proxied: true
+  providerConfigRef:
+    name: cloudflare-provider
