@@ -1,0 +1,10 @@
+apiVersion: zone.cloudflare.upbound.io/v1beta1
+kind: Zone
+metadata:
+  name: pc-tips-se
+spec:
+  forProvider:
+    zone: pc-tips.se
+  providerConfigRef:
+    name: cloudflare-provider
+  managementPolicy: ObserveOnly
