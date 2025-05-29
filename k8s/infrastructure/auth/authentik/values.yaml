@@ -112,8 +112,8 @@ authentik:
     name: authentik
     existingSecret: "authentik-core-secrets" # Name of the K8s Secret
     # Keys within the 'authentik-core-secrets' K8s Secret for DB credentials
-    existingSecretUserKey: "postgresql-username"
-    existingSecretPasswordKey: "postgresql-password"
+    existingSecretUserKey: "username"
+    existingSecretPasswordKey: "password"
     port: "5432"
   redis:
     # -- set the redis hostname to talk to
