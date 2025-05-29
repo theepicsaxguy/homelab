@@ -3,11 +3,9 @@ name: Build and Push Docker Images
 on:
   push:
     paths:
-      - 'images/**.Dockerfile'
+      - 'images/**/Dockerfile'
     branches:
       - main
-  schedule:
-    - cron: '0 0 * * 1'  # Weekly at midnight on Monday
 
 jobs:
   detect-dockerfiles:
@@ -22,12 +20,13 @@ jobs:
       - name: Detect Dockerfiles
         id: detect
         run: |
-          DOCKERFILES=$(find images/ -name "*.Dockerfile")
+          DOCKERFILES=$(find images/ -name "Dockerfile")
           IMAGES=$(echo "$DOCKERFILES" | while read path; do
             dirname=$(dirname "$path")
-            echo "${dirname#images/}"
+            basename=$(basename "$dirname")
+            echo "$basename"
           done)
-          JSON_ARRAY=$(echo "$IMAGES" | jq -R -s -c 'split("\n")[:-1]')
+          JSON_ARRAY=$(echo "$IMAGES" | sort -u | jq -R -s -c 'split("\n")[:-1]')
           echo "images=$JSON_ARRAY" >> $GITHUB_OUTPUT
 
   build:
@@ -52,18 +51,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract base image tag
-        id: base-image-tag
+      - name: Extract base image and version tags
+        id: image-tags
         run: |
           DOCKERFILE=images/${{ matrix.image }}/Dockerfile
+
+          # Extract base image tag
           FROM_LINE=$(grep -m 1 "^FROM" "$DOCKERFILE")
           BASE_IMAGE=$(echo "$FROM_LINE" | awk '{print $2}')
           BASE_IMAGE_TAG=$(echo "$BASE_IMAGE" | cut -d':' -f2-)
           [ -z "$BASE_IMAGE_TAG" ] && BASE_IMAGE_TAG="latest"
-          echo "tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
+
+          # Extract image version
+          IMAGE_VERSION=$(grep "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
+          [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
+
+          echo "base_tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: images/${{ matrix.image }}
           file: images/${{ matrix.image }}/Dockerfile
@@ -71,4 +78,5 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.base-image-tag.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.image_version }}
