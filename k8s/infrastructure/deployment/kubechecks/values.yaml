@@ -56,7 +56,7 @@ deployment:
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
     - name: KUBECHECKS_SCHEMAS_LOCATION
-      value: "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json,https://raw.githubusercontent.com/cdloh/provider-cloudflare/refs/heads/main/package/crds/"
+      value: "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json,https://raw.githubusercontent.com/cdloh/provider-cloudflare/refs/heads/main/package/crds/, https://raw.githubusercontent.com/cdloh/provider-cloudflare/refs/heads/main/config/schema.json"
     - name: KUBECHECKS_GITHUB_APP_ID
       value: "1243453"
     - name: KUBECHECKS_GITHUB_INSTALLATION_ID
