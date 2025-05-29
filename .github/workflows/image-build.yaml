@@ -23,8 +23,8 @@ jobs:
           DOCKERFILES=$(find images/ -name "Dockerfile")
           IMAGES=$(echo "$DOCKERFILES" | while read path; do
             dirname=$(dirname "$path")
-            basename=$(basename "$dirname")
-            echo "$basename"
+            relative_path=$(realpath --relative-to=images/ "$dirname")
+            echo "$relative_path"
           done)
           JSON_ARRAY=$(echo "$IMAGES" | sort -u | jq -R -s -c 'split("\n")[:-1]')
           echo "images=$JSON_ARRAY" >> $GITHUB_OUTPUT
