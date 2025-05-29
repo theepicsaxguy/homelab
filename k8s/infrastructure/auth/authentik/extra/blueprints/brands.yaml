@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Brands
+entries:
+  - model: authentik_brands.brand
+    identifiers:
+      domain: pc-tips.se
+    attrs:
+      branding_title: PC Tips.
+      branding_logo: https://pc-tips.se/llama.png
+      branding_favicon: https://pc-tips.se/llama.png

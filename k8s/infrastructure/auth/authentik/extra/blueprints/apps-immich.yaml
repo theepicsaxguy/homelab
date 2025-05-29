@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Apps - Immich
+entries:
+  - id: provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s.pc-tips.se/services-immich
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      redirect_uris:
+        - url: https://photo.pc-tips.se/auth/login
+          matching_mode: strict
+        - url: https://photo.pc-tips.se/user-settings
+          matching_mode: strict
+        - url: app.immich:///oauth-callback
+          matching_mode: strict
+
+      access_code_validity: minutes=1
+      access_token_validity: minutes=5
+      refresh_token_validity: days=30
+
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+          ]
+
+  - id: application
+    model: authentik_core.application
+    identifiers:
+      slug: immich
+    attrs:
+      name: Photos
+      group: Stockage
+      meta_description: Gestion de photos, vidéos et albums
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png
+      provider: !KeyOf provider
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application
+      group: !Find [authentik_core.group, [name, "users"]]
+    attrs:
+      order: 1
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application
+      group: !Find [authentik_core.group, [name, "roots"]]
+    attrs:
+      order: 2

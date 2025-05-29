@@ -1,4 +1,29 @@
 grafana:
+  # OIDC Configuration for Authentik
+  grafana.ini:
+    auth.generic_oauth:
+      enabled: true
+      name: Authentik
+      client_id: $__env{GRAFANA_OAUTH_CLIENT_ID}
+      client_secret: $__env{GRAFANA_OAUTH_CLIENT_SECRET}
+      scopes: openid profile email
+      auth_url: https://authentik.pc-tips.se/application/o/grafana/authorize/
+      token_url: https://authentik.pc-tips.se/application/o/grafana/token/
+      api_url: https://authentik.pc-tips.se/application/o/grafana/userinfo/
+      login_attribute_path: preferred_username
+      groups_attribute_path: groups
+      name_attribute_path: name
+      email_attribute_path: email
+      role_attribute_path: contains(groups[*], 'roots') && 'Admin' || contains(groups[*], 'users') && 'Editor' || 'Viewer'
+      allow_sign_up: true
+      auto_login: false
+      use_pkce: true
+
+  # Environment variables from ExternalSecret
+  envFromSecrets:
+    - name: grafana-oauth-credentials
+      optional: false
+
   resources:
     requests:
       cpu: 200m
