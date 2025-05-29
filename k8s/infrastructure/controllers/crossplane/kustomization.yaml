@@ -6,6 +6,8 @@ resources:
   - external-secret-cloudflare-token.yaml
   - provider-cloudflare.yaml
   - provider-config.yaml
+  - account.yaml
+  - zone.yaml
 
 helmCharts:
   - name: crossplane
