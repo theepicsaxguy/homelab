@@ -98,27 +98,10 @@ global:
   # -- Environment variables to pass to all deployed Deployments. Does not apply to GeoIP
   # See configuration options at https://goauthentik.io/docs/installation/configuration/
   # @default -- `[]` (See [values.yaml])
-  env:
-    - name: AUTHENTIK_REDIS__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: auth.authentik-db.credentials
-          key: redis-password
+  env: []
 
-  volumes:
-    - name: db-creds
-      secret:
-        secretName: authentik-user.authentik-postgresql.credentials.postgresql.acid.zalan.do
-    - name: app-creds
-      secret:
-        secretName: auth.authentik-db.credentials
-  volumeMounts:
-    - name: db-creds
-      mountPath: /secrets/authentik
-      readOnly: true
-    - name: app-creds
-      mountPath: /secrets/app
-      readOnly: true
+  volumes: []
+  volumeMounts: []
 
   # -- envFrom to pass to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
@@ -133,7 +116,10 @@ global:
 
 
 authentik:
-  secret_key: file:///secrets/app/secret-key
+  # -- authentik configuration, will be templated as environment variables
+  secret_key: "file:///secrets/app/authentik-secret-key" # Explicitly point to the filename within the secret
+  secretKeyExistingSecret: "authentik-core-secrets"    # Tell the chart to use this K8s Secret for /secrets/app
+
   postgresql:
     host: authentik-postgresql
     name: authentik

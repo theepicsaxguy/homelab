@@ -28,7 +28,7 @@ entries:
       providers:
         - !Find [
             authentik_core.provider,
-            [name, "k8s/k3s.fsn.pc-tips.se/services-archivebox"],
+            [name, "k8s.pc-tips.se/services-archivebox"],
           ]
         - !Find [authentik_core.provider, [name, "v-core-3"]]
       config:
@@ -57,7 +57,7 @@ entries:
       providers:
         - !Find [
             authentik_core.provider,
-            [name, "k8s/k3s.fsn.pc-tips.se/services-stalwart/ldap"],
+            [name, "k8s.pc-tips.se/services-stalwart/ldap"],
           ]
       config:
         log_level: info

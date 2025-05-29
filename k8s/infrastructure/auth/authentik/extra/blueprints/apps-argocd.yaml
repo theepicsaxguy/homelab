@@ -8,7 +8,7 @@ entries:
   - id: provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/argocd
+      name: k8s.pc-tips.se/argocd
     attrs:
       authorization_flow:
         !Find [

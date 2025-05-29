@@ -8,7 +8,7 @@ entries:
   - id: provider-bazarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/bazarr
+      name: k8s.pc-tips.se/services-media/bazarr
     attrs:
       authorization_flow:
         !Find [
@@ -67,7 +67,7 @@ entries:
   - id: provider-lidarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/lidarr
+      name: k8s.pc-tips.se/services-media/lidarr
     attrs:
       authorization_flow:
         !Find [
@@ -126,7 +126,7 @@ entries:
   - id: provider-prowlarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/prowlarr
+      name: k8s.pc-tips.se/services-media/prowlarr
     attrs:
       authorization_flow:
         !Find [
@@ -185,7 +185,7 @@ entries:
   - id: provider-radarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/radarr
+      name: k8s.pc-tips.se/services-media/radarr
     attrs:
       authorization_flow:
         !Find [
@@ -244,7 +244,7 @@ entries:
   - id: provider-readarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/readarr
+      name: k8s.pc-tips.se/services-media/readarr
     attrs:
       authorization_flow:
         !Find [
@@ -303,7 +303,7 @@ entries:
   - id: provider-sonarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/sonarr
+      name: k8s.pc-tips.se/services-media/sonarr
     attrs:
       authorization_flow:
         !Find [
@@ -362,7 +362,7 @@ entries:
   - id: provider-qbittorrent
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/qbittorrent
+      name: k8s.pc-tips.se/services-media/qbittorrent
     attrs:
       authorization_flow:
         !Find [
@@ -421,7 +421,7 @@ entries:
   - id: provider-sabnzbd
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/sabnzbd
+      name: k8s.pc-tips.se/services-media/sabnzbd
     attrs:
       authorization_flow:
         !Find [
@@ -480,7 +480,7 @@ entries:
   - id: provider-jellyfin
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/jellyfin
+      name: k8s.pc-tips.se/services-media/jellyfin
     attrs:
       authorization_flow:
         !Find [
@@ -551,7 +551,7 @@ entries:
   - id: provider-jellyseerr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/services-media/jellyseerr
+      name: k8s.pc-tips.se/services-media/jellyseerr
     attrs:
       authorization_flow:
         !Find [

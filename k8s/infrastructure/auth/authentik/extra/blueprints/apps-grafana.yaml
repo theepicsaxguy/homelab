@@ -8,7 +8,7 @@ entries:
   - id: provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s/k3s.fsn.pc-tips.se/infra-observability/grafana
+      name: k8s.pc-tips.se/infra-observability/grafana
     attrs:
       authorization_flow:
         !Find [
