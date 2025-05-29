@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: OAuth Scopes
+entries:
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "OAuth mapping: OpenID 'email' with mailPrimaryAddress"
+    attrs:
+      scope_name: email
+      description: Email address
+      expression: |
+        return {
+          "email": request.user.attributes.get("mailPrimaryAddress", request.user.email),
+          "email_verified": True,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "OAuth mapping: OpenID 'roles' for Django"
+    attrs:
+      scope_name: roles
+      description: Roles
+      expression: |
+        return {
+          "roles": ["superuser", "staff"] if ak_is_group_member(request.user, name="roots") else []
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "OAuth mapping: OpenID 'username'"
+    attrs:
+      scope_name: username
+      description: Username
+      expression: |
+        return {
+          "username": request.user.username,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "OAuth mapping: OpenID 'user_pk'"
+    attrs:
+      scope_name: user_pk
+      description: User ID
+      expression: |
+        return {
+          "id": request.user.pk,
+        }

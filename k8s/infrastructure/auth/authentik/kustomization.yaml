@@ -2,39 +2,19 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
 resources:
-  - externalsecret.yaml
-  - database.yaml
-  - httproute.yaml
-  - outpost.yaml
-  - referencegrant.yaml
-  - dns-record.yaml
-
-configMapGenerator:
-  - name: authentik-blueprints
-    files:
-      - blueprints/pctips/flows-authenticator-email-setup.yaml
-      - blueprints/pctips/flows-enrollment-2-stage.yaml
-      - blueprints/pctips/flows-enrollment-email-verification.yaml
-      - blueprints/pctips/flows-login-2fa.yaml
-      - blueprints/pctips/flows-login-conditional-captcha.yaml
-      - blueprints/pctips/flows-recovery-email-verification.yaml
-      - blueprints/pctips/flows-unenrollment.yaml
-      - blueprints/pctips/sources-google-ldap-mappings.yaml
-      - blueprints/pctips/flows-argocd-oidc.yaml
-
+- database.yaml
+- httproute.yaml
+- outpost.yaml
+- referencegrant.yaml
+- dns-record.yaml
+- extra
 generatorOptions:
   disableNameSuffixHash: true
 
 helmCharts:
-  - name: authentik
-    repo: https://charts.goauthentik.io
-    version: 2025.4.1
-    releaseName: authentik
-    namespace: auth
-    valuesFile: values.yaml
-    valuesInline:
-      blueprints:
-        enabled: true
-        configMapName: authentik-blueprints
-
-
+- name: authentik
+  namespace: auth
+  releaseName: authentik
+  repo: https://charts.goauthentik.io
+  valuesFile: values.yaml
+  version: 2025.4.1

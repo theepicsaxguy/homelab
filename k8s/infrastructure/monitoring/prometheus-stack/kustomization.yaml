@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - alertmanager-http-route.yaml
   - grafana-http-route.yaml
+  - grafana-oauth-secret.yaml
   - prometheus-http-route.yaml
 
 helmCharts:

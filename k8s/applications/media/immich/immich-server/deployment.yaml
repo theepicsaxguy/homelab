@@ -39,8 +39,6 @@ spec:
               name: immich-db-url
         - name: DB_USERNAME
           value: immich
-        - name: DB_VECTOR_EXTENSION
-          value: pgvector
         - name: IMMICH_CONFIG_FILE
           value: /config/immich-config.yaml
         - name: IMMICH_MACHINE_LEARNING_URL
