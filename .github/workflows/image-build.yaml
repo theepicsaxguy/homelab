@@ -1,0 +1,74 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    paths:
+      - 'images/**.Dockerfile'
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly at midnight on Monday
+
+jobs:
+  detect-dockerfiles:
+    runs-on: ubuntu-latest
+    outputs:
+      images: ${{ steps.detect.outputs.images }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect Dockerfiles
+        id: detect
+        run: |
+          DOCKERFILES=$(find images/ -name "*.Dockerfile")
+          IMAGES=$(echo "$DOCKERFILES" | while read path; do
+            dirname=$(dirname "$path")
+            echo "${dirname#images/}"
+          done)
+          JSON_ARRAY=$(echo "$IMAGES" | jq -R -s -c 'split("\n")[:-1]')
+          echo "images=$JSON_ARRAY" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ubuntu-latest
+    needs: detect-dockerfiles
+    strategy:
+      matrix:
+        image: ${{ fromJson(needs.detect-dockerfiles.outputs.images) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract base image tag
+        id: base-image-tag
+        run: |
+          DOCKERFILE=images/${{ matrix.image }}/Dockerfile
+          FROM_LINE=$(grep -m 1 "^FROM" "$DOCKERFILE")
+          BASE_IMAGE=$(echo "$FROM_LINE" | awk '{print $2}')
+          BASE_IMAGE_TAG=$(echo "$BASE_IMAGE" | cut -d':' -f2-)
+          [ -z "$BASE_IMAGE_TAG" ] && BASE_IMAGE_TAG="latest"
+          echo "tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: images/${{ matrix.image }}
+          file: images/${{ matrix.image }}/Dockerfile
+          pull: true
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.base-image-tag.outputs.tag }}
