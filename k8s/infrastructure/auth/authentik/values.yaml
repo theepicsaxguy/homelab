@@ -40,8 +40,8 @@ global:
         name: authentik-core-secrets # Mounts all keys from this secret as env vars
     - secretRef:
         name: authentik-blueprint-secrets # For !Env in blueprints
-    - secretRef:
-        name: authentik-smtp-credentials # For email configuration
+    #- secretRef:
+     #   name: authentik-smtp-credentials 
 
   # -- Additional volumeMounts to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
