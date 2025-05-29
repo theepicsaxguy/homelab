@@ -30,7 +30,8 @@ entries:
       redirect_uris:
         - url: https://argocd.pc-tips.se/auth/callback
           matching_mode: strict
-
+      client_id: !Env argocd_client_id
+      client_secret: !Env argocd_client_secret
       access_code_validity: minutes=1
       access_token_validity: hours=1
       refresh_token_validity: days=30

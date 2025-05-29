@@ -98,7 +98,7 @@ global:
   # -- Environment variables to pass to all deployed Deployments. Does not apply to GeoIP
   # See configuration options at https://goauthentik.io/docs/installation/configuration/
   # @default -- `[]` (See [values.yaml])
-  env: []
+  env: []  # Clean slate - all config comes from ExternalSecrets via envFrom
 
   volumes: []
   volumeMounts: []
@@ -117,8 +117,8 @@ global:
 
 authentik:
   # -- authentik configuration, will be templated as environment variables
-  secret_key: "file:///secrets/app/authentik-secret-key" # Explicitly point to the filename within the secret
-  secretKeyExistingSecret: "authentik-core-secrets"    # Tell the chart to use this K8s Secret for /secrets/app
+  secret_key: "authentik-secret-key"  # Key name from secret, not file path
+  secretKeyExistingSecret: "authentik-core-secrets"
 
   postgresql:
     host: authentik-postgresql
@@ -129,23 +129,8 @@ authentik:
     existingSecretPasswordKey: "postgresql-password"
     port: "5432"
 
-  email:
-    # -- SMTP Server emails are sent from, fully optional
-    host: ""
-    # -- SMTP server port
-    port: "587"
-    # -- SMTP credentials, when left empty, no authentication will be done
-    username: ""
-    # -- SMTP credentials, when left empty, no authentication will be done
-    password: ""
-    # -- Use StartTLS. Enable either use_tls or use_ssl, they can't be enabled at the same time.
-    use_tls: false
-    # -- Use SSL. Enable either use_tls or use_ssl, they can't be enabled at the same time.
-    use_ssl: false
-    # -- Connection timeout
-    timeout: "30"
-    # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
-    from: ""
+  # Email configuration comes from authentik-smtp-credentials secret via envFrom
+  # See global.envFrom section above
 
 server:
   enabled: true
