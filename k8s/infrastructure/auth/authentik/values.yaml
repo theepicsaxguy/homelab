@@ -123,8 +123,13 @@ global:
   # -- envFrom to pass to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
   envFrom:
-  - secretRef:
-        name: auth.authentik.env
+    - secretRef:
+        name: authentik-core-secrets # Mounts all keys from this secret as env vars
+    - secretRef:
+        name: authentik-blueprint-secrets # For !Env in blueprints
+    - secretRef:
+        name: authentik-smtp-credentials # For email configuration
+
 
 
 authentik:
@@ -132,9 +137,12 @@ authentik:
   postgresql:
     host: authentik-postgresql
     name: authentik
-    user: file:///secrets/authentik/username
-    password: file:///secrets/authentik/password
+    existingSecret: "authentik-core-secrets" # Name of the K8s Secret
+    # Keys within the 'authentik-core-secrets' K8s Secret for DB credentials
+    existingSecretUserKey: "postgresql-username"
+    existingSecretPasswordKey: "postgresql-password"
     port: "5432"
+
   email:
     # -- SMTP Server emails are sent from, fully optional
     host: ""
@@ -196,8 +204,8 @@ redis:
   enabled: true
   auth:
     enabled: true
-    existingSecret: auth.authentik-db.credentials
-    passwordKey: redis-password
+    existingSecret: "authentik-core-secrets"
+    existingSecretPasswordKey: "redis-password"
 
 
 # blueprints:
