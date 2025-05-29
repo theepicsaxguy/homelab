@@ -13,6 +13,7 @@ resources:
 - http-route.yaml
 - deployment.yaml
 - jellyfin-config-pvc.yaml
+- dns-record.yaml
 
 labels:
 - includeSelectors: true

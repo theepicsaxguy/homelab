@@ -1,5 +1,36 @@
 # Changelog
 
+## 2.6.1 (2025-05-28)
+
+## What's Changed
+* fix: Implement VectorChord for immich database by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/699
+* fix(k8s): replace Helm chart with Kubernetes manifests and update documentation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/702
+* fix(argocd): update resource requests and limits for repoServer by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/705
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/703
+* fix(k8s): increase resource limits and shared memory for Frigate and Immich by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/706
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.133.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/707
+* chore(deps): update helm release redis to v21 by @renovate in https://github.com/theepicsaxguy/homelab/pull/704
+* chore(ci): update permissions for release-please workflow by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/708
+* fix(k8s): reduce shared memory and PVC size for Frigate configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/709
+* chore(deps): update helm release argo-cd to v8.0.10 by @renovate in https://github.com/theepicsaxguy/homelab/pull/711
+* fix(k8s): correct docker image and extension names in database configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/712
+* fix(k8s): update docker image and correct extension name in database config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/713
+* fix: correct database image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/714
+* fix(k8s): correct extension name for vchord in database configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/715
+* chore(deps): update helm release redis to v21.1.7 by @renovate in https://github.com/theepicsaxguy/homelab/pull/716
+* chore(deps): update helm release kube-prometheus-stack to v72.6.3 by @renovate in https://github.com/theepicsaxguy/homelab/pull/717
+* fix(k8s): update docker image for immich-postgresql to specific SHA by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/718
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.11 by @renovate in https://github.com/theepicsaxguy/homelab/pull/719
+* chore: Update database image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/720
+* chore: Update database.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/721
+* fix: Update database extensions by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/723
+* fix(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/722
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.134.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/724
+* chore(deps): update helm release redis to v21.1.8 by @renovate in https://github.com/theepicsaxguy/homelab/pull/725
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.6.0...v2.6.1
+
 ## 2.6.0 (2025-05-22)
 
 ## What's Changed

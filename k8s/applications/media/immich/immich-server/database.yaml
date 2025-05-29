@@ -7,23 +7,25 @@ spec:
   teamId: immich
   volume:
     size: 10Gi
+  dockerImage: ghcr.io/theepicsaxguy/spilo17-vchord:0.1.0
   numberOfInstances: 1
-  dockerImage: ghcr.io/theepicsaxguy/spilo-pg17-pgvector-vchord:1.0.1
   users:
     immich:
       - superuser
       - createdb
   databases:
     immich: immich
+  enableLogicalBackup: true
   preparedDatabases:
     immich:
       extensions:
-        pgvector: public
+        earthdistance: public
+        vector: public
         vchord: public
   postgresql:
     version: "17"
     parameters:
-      shared_preload_libraries: "vchord,pgextwlist"
+      shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,vchord.so"
   enableConnectionPooler: false
   resources:
     requests:
