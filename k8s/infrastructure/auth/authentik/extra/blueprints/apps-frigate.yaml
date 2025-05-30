@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Apps - Frigate
+entries:
+  - id: frigate_proxy_provider
+    model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: k8s.pc-tips.se/services-frigate
+    attrs:
+      # Standard flows
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      # External URL that users will access
+      external_host: https://frigate.pc-tips.se
+
+      # Internal service URL - Frigate service in frigate namespace
+      internal_host: http://frigate.frigate.svc.cluster.local:5000
+      internal_host_ssl_validation: false
+      skip_path_regex: ^/api/.*
+
+      # Pass user info headers to Frigate
+      basic_auth_enabled: false
+      mode: forward_single
+
+      # Session validity
+      access_token_validity: hours=4
+      refresh_token_validity: days=30
+
+  - id: frigate_application
+    model: authentik_core.application
+    identifiers:
+      slug: frigate
+    attrs:
+      name: Frigate
+      group: Home Automation
+      meta_description: AI-powered NVR with real-time object detection
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/frigate.png
+      provider: !KeyOf frigate_proxy_provider
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf frigate_application
+      group: !Find [authentik_core.group, [name, "users"]]
+    attrs:
+      order: 1
