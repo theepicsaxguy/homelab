@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable
+---
+version: 1
+metadata:
+  name: Apps - Jellyfin
+entries:
+  - id: jellyfin_oauth2_provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: jellyfin
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      redirect_uris:
+        - url: https://film.pc-tips.se/sso/OID/redirect/authentik
+          matching_mode: strict
+
+      # Token validity settings
+      access_code_validity: minutes=1
+      access_token_validity: minutes=10
+      refresh_token_validity: days=30
+
+      # Subject mode for consistent user identification
+      sub_mode: hashed_user_id
+
+      # Include standard OpenID Connect scopes
+      include_claims_in_id_token: true
+
+      # Property mappings for OpenID Connect claims
+      property_mappings:
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+
+  - id: jellyfin_application
+    model: authentik_core.application
+    identifiers:
+      slug: jellyfin
+    attrs:
+      name: Jellyfin
+      group: Media
+      meta_description: Media server for movies, TV shows, and music
+      meta_launch_url: https://film.pc-tips.se/sso/OID/start/authentik
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png
+      provider: !KeyOf jellyfin_oauth2_provider
+      policy_engine_mode: any
+
+  # Allow access to users group
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf jellyfin_application
+      group: !Find [authentik_core.group, [name, "users"]]
+    attrs:
+      order: 1

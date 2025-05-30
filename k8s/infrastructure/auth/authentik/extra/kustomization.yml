@@ -11,9 +11,11 @@ configMapGenerator:
   - name: authentik-blueprints
     files:
       - ./blueprints/apps-argocd.yaml
+      - ./blueprints/apps-frigate.yaml
       - ./blueprints/apps-grafana.yaml
       - ./blueprints/apps-home-assistant.yaml
       - ./blueprints/apps-immich.yaml
+      - ./blueprints/apps-jellyfin.yaml
       - ./blueprints/apps-media.yaml
       - ./blueprints/brands.yaml
       - ./blueprints/flows-default-provider-authorization-one-time-consent.yaml
