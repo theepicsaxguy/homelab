@@ -1,21 +1,12 @@
 # yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
 # yamllint disable
+# NOTE: Using embedded outpost approach - Authentik manages the outpost automatically
+# ExternalSecret for outpost token is managed separately in outpost-externalsecret.yaml
 ---
 version: 1
 metadata:
   name: Outposts
 entries:
-  - model: authentik_blueprints.metaapplyblueprint
-    attrs:
-      identifiers:
-        name: Apps - ArchiveBox
-      required: true
-  - model: authentik_blueprints.metaapplyblueprint
-    attrs:
-      identifiers:
-        name: Apps - V-Core 3
-      required: true
-
   - model: authentik_outposts.outpost
     identifiers:
       managed: goauthentik.io/outposts/embedded
@@ -25,20 +16,14 @@ entries:
           authentik_outposts.outpostserviceconnection,
           [name, "Local Kubernetes Cluster"],
         ]
-      providers:
-        - !Find [
-            authentik_core.provider,
-            [name, "k8s.pc-tips.se/services-archivebox"],
-          ]
-        - !Find [authentik_core.provider, [name, "v-core-3"]]
+      providers: []
       config:
         log_level: info
         authentik_host: https://sso.pc-tips.se
         object_naming_template: ak-outpost-%(name)s
         kubernetes_disabled_components:
-          - deployment
-          - secret
-          - ingress
+          - ingress  # Use HTTPRoute instead
+        kubernetes_namespace: auth
         kubernetes_httproute_parent_refs:
           - name: eg-http-public
             namespace: core-eg
@@ -54,11 +39,8 @@ entries:
           authentik_outposts.outpostserviceconnection,
           [name, "Local Kubernetes Cluster"],
         ]
-      providers:
-        - !Find [
-            authentik_core.provider,
-            [name, "k8s.pc-tips.se/services-stalwart/ldap"],
-          ]
+      providers: []
       config:
         log_level: info
         authentik_host: https://sso.pc-tips.se
+        kubernetes_namespace: auth
