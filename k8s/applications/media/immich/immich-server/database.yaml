@@ -15,7 +15,7 @@ spec:
       - createdb
   databases:
     immich: immich
-  enableLogicalBackup: true
+  enableLogicalBackup: false
   preparedDatabases:
     immich:
       extensions:
