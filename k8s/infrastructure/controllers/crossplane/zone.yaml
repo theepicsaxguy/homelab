@@ -1,4 +1,4 @@
-apiVersion: zone.cloudflare.upbound.io/v1beta1
+apiVersion: zone.cloudflare.upbound.io/v1alpha1
 kind: Zone
 metadata:
   name: pc-tips-se
