@@ -60,7 +60,8 @@ defaultSettings:
   autoDeletePodWhenVolumeDetachedUnexpectedly: true
   autoSalvage: true
   replicaZoneSoftAntiAffinity: false
-  concurrentReplicaRebuildPerNodeLimit: 2
+  concurrentReplicaRebuildPerNodeLimit: 1
+  replicaReplenishmentWaitInterval: 600
   backupstorePollInterval: 300
   replicaSoftAntiAffinity: false
 persistence:
@@ -68,7 +69,8 @@ persistence:
   defaultClassReplicaCount: 3
   reclaimPolicy: Delete
   defaultFsType: ext4
-  defaultDataLocality: disabled  # Determines how data is stored locally. 'strict-local' is no longer applicable.
+  snapshotMaxCount: 60
+  defaultDataLocality: best-effort  # Determines how data is stored locally. 'strict-local' is no longer applicable.
 
 resources:
   requests:
