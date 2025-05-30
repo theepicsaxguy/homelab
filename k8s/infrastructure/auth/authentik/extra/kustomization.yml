@@ -11,6 +11,7 @@ configMapGenerator:
   - name: authentik-blueprints
     files:
       - ./blueprints/apps-argocd.yaml
+      - ./blueprints/apps-frigate.yaml
       - ./blueprints/apps-grafana.yaml
       - ./blueprints/apps-home-assistant.yaml
       - ./blueprints/apps-immich.yaml

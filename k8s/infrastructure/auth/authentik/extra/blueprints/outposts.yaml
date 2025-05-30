@@ -44,3 +44,27 @@ entries:
         log_level: info
         authentik_host: https://sso.pc-tips.se
         kubernetes_namespace: auth
+
+  - model: authentik_outposts.outpost
+    identifiers:
+      name: "Proxy Outpost"
+    attrs:
+      type: proxy
+      service_connection:
+        !Find [
+          authentik_outposts.outpostserviceconnection,
+          [name, "Local Kubernetes Cluster"],
+        ]
+      providers:
+        - !Find [
+            authentik_core.provider,
+            [name, "k8s.pc-tips.se/services-frigate"],
+          ]
+      config:
+        log_level: info
+        authentik_host: https://sso.pc-tips.se
+        object_naming_template: ak-outpost-%(name)s
+        kubernetes_namespace: auth
+        kubernetes_replicas: 1
+        kubernetes_service_type: ClusterIP
+        kubernetes_disabled_components: []
