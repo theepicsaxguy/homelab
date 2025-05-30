@@ -6,7 +6,6 @@ resources:
 - httproute.yaml
 - outpost.yaml
 - referencegrant.yaml
-- dns-record.yaml
 - extra
 generatorOptions:
   disableNameSuffixHash: true
