@@ -8,6 +8,7 @@ resources:
   - provider-config.yaml
   - account.yaml
   - zone.yaml
+  - dns-records.yaml
 
 helmCharts:
   - name: crossplane
