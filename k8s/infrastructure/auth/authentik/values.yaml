@@ -37,30 +37,31 @@ global:
   # @default -- `[]` (See [values.yaml])
   envFrom:
     - secretRef:
-        name: authentik-core-secrets # Mounts all keys from this secret as env vars
+        name: authentik-core-secrets # This will load secret-key as AUTHENTIK_SECRET_KEY if you update the secret
     - secretRef:
         name: authentik-blueprint-secrets # For !Env in blueprints
     #- secretRef:
-     #   name: authentik-smtp-credentials 
+     #   name: authentik-smtp-credentials
 
   # -- Additional volumeMounts to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
-  volumeMounts: []
-    # - name: custom
-    #   mountPath: /custom
+  volumeMounts:
+    - name: db-creds
+      mountPath: /secrets/authentik
+      readOnly: true
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
-  volumes: []
-    # - name: custom
-    #   emptyDir: {}
+  volumes:
+    - name: db-creds
+      secret:
+        secretName: authentik-user.authentik-postgresql.credentials.postgresql.acid.zalan.do
 
 
 ## Authentik configuration
 authentik:
   # -- authentik configuration, will be templated as environment variables
-  secret_key: "authentik-secret-key"  # Key name from secret, not file path
-  secretKeyExistingSecret: "authentik-core-secrets"
+  secret_key: "env://AUTHENTIK_SECRET_KEY"
   # -- whether to create the authentik configuration secret
   enabled: true
   # -- Log level for server and worker
@@ -110,16 +111,12 @@ authentik:
   postgresql:
     host: authentik-postgresql
     name: authentik
-    existingSecret: "authentik-core-secrets" # Name of the K8s Secret
-    # Keys within the 'authentik-core-secrets' K8s Secret for DB credentials
-    existingSecretUserKey: "username"
-    existingSecretPasswordKey: "password"
+    user: file:///secrets/authentik/username
+    password: file:///secrets/authentik/password
     port: "5432"
-  redis:
-    # -- set the redis hostname to talk to
-    # @default -- `{{ .Release.Name }}-redis-master`
-    password: ""
 
+  redis:
+    password: "env://AUTHENTIK_REDIS__PASSWORD"
 
 blueprints:
   # -- List of config maps to mount blueprints from.
@@ -148,12 +145,6 @@ worker:
   enabled: true
 postgresql:
   enabled: false
-redis:
-  enabled: true
-  auth:
-    enabled: true
-    existingSecret: "authentik-core-secrets"
-    existingSecretPasswordKey: "redis-password"
 
   ## authentik server metrics service configuration
   metrics:
@@ -230,7 +221,14 @@ geoip:
     accountId: "account_id"
     # -- key in the secret containing the license key
     licenseKey: "license_key"
-
+redis:
+  # -- enable the Bitnami Redis chart. Refer to https://github.com/bitnami/charts/blob/main/bitnami/redis/ for possible values.
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: authentik-core-secrets
+    existingSecretPasswordKey: redis-password
 
 prometheus:
   rules:
