@@ -25,7 +25,7 @@ spec:
   groups:
   - default
   - group1
-  retain: 24  # Keep a day of hourly snapshots
+  retain: 6  # Keep a day of hourly snapshots
   concurrency: 2
   labels:
     type: scheduled
@@ -36,7 +36,7 @@ metadata:
   name: snapshot-cleanup
   namespace: longhorn-system
 spec:
-  cron: "15 2 * * *"  # Daily at 2:15 AM (after backup)
+  cron: "*/30 * * * *"  # Daily at 2:15 AM (after backup)
   task: "snapshot-cleanup"
   groups:
   - default
