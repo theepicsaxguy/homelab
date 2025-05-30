@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.6.2 (2025-05-30)
+
+## What's Changed
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.134.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/727
+* Add Crossplane and Cloudflare DNS configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/710
+* fix: changed crossplane provider by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/729
+* chore(deps): update helm release argo-cd to v8.0.11 by @renovate in https://github.com/theepicsaxguy/homelab/pull/726
+* fix: create images/spilo/Dockerfile by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/731
+* Create image-build.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/732
+* Update Dockerfile by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/733
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/734
+* fix: Add Cloudflare resources for zone and account by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/736
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/735
+* fix(ci): correct Dockerfile path detection and update image tags by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/737
+* chore(deps): update docker/build-push-action action to v6 by @renovate in https://github.com/theepicsaxguy/homelab/pull/738
+* chore(deps): update all dependencies to v72.6.4 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/740
+* fix(k8s): modified Dockerfile for spilo17-vchord image and update database.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/739
+* Add-blueprints-for-various-applications-and-services-in-Authentik by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/730
+* Fix duplicate Bitwarden ID in secrets.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/741
+* chore(deps): update helm release redis to v21.1.10 by @renovate in https://github.com/theepicsaxguy/homelab/pull/742
+* chore: Update secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/743
+* Update secrets.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/744
+* Update values.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/745
+* Fix Authentik PostgreSQL keys in values.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/746
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.13 by @renovate in https://github.com/theepicsaxguy/homelab/pull/747
+* Refactor(k8s)--update-authentik-secrets-configuration-for-clarity by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/748
+* refactor(k8s): update authentik blueprints and remove deprecated outpost by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/751
+* chore(deps): update helm release argo-cd to v8.0.13 by @renovate in https://github.com/theepicsaxguy/homelab/pull/749
+* refactor(k8s): clean up kustomization.yaml and update deployment strategy by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/752
+* chore(deps): update all dependencies to v72.7.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/750
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.6.1...v2.6.2
+
 ## 2.6.1 (2025-05-28)
 
 ## What's Changed
