@@ -1,13 +1,122 @@
+locals {
+  # Define base node configurations
+  nodes_config = {
+    "ctrl-00" = {
+      host_node     = "host3"
+      machine_type  = "controlplane"
+      ip            = "10.25.150.11"
+      mac_address   = "bc:24:11:e6:ba:07"
+      vm_id         = 8101
+      cpu           = 6
+      ram_dedicated = 7168
+      igpu          = false
+    }
+    "ctrl-01" = {
+      host_node     = "host3"
+      machine_type  = "controlplane"
+      ip            = "10.25.150.12"
+      mac_address   = "bc:24:11:44:94:5c"
+      vm_id         = 8102
+      cpu           = 6
+      ram_dedicated = 6144
+      igpu          = false
+    }
+    "ctrl-02" = {
+      host_node     = "host3"
+      machine_type  = "controlplane"
+      ip            = "10.25.150.13"
+      mac_address   = "bc:24:11:1e:1d:2f"
+      vm_id         = 8103
+      cpu           = 6
+      ram_dedicated = 6144
+    }
+    "work-00" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.21"
+      mac_address   = "bc:24:11:64:5b:cb"
+      vm_id         = 8201
+      cpu           = 8
+      ram_dedicated = 10240
+      disks = {
+        longhorn = {
+          device     = "/dev/sdb"
+          size       = "180G"
+          type       = "scsi"
+          mountpoint = "/var/lib/longhorn"
+        }
+      }
+    }
+    "work-01" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.22"
+      mac_address   = "bc:24:11:c9:22:c3"
+      vm_id         = 8202
+      cpu           = 8
+      ram_dedicated = 10240
+      disks = {
+        longhorn = {
+          device     = "/dev/sdb"
+          size       = "180G"
+          type       = "scsi"
+          mountpoint = "/var/lib/longhorn"
+        }
+      }
+    }
+    "work-02" = {
+      host_node     = "host3"
+      machine_type  = "worker"
+      ip            = "10.25.150.23"
+      mac_address   = "bc:24:11:6f:20:03"
+      vm_id         = 8203
+      cpu           = 8
+      ram_dedicated = 10240
+      disks = {
+        longhorn = {
+          device     = "/dev/sdb"
+          size       = "180G"
+          type       = "scsi"
+          mountpoint = "/var/lib/longhorn"
+        }
+      }
+    }
+  }
+
+  # Derive upgrade sequence from machine types
+  control_plane_nodes = [
+    for name, config in local.nodes_config : name
+    if config.machine_type == "controlplane"
+  ]
+  worker_nodes = [
+    for name, config in local.nodes_config : name
+    if config.machine_type == "worker"
+  ]
+
+  # Derive upgrade sequence automatically
+  upgrade_sequence = concat(sort(local.control_plane_nodes), sort(local.worker_nodes))
+
+  # Calculate current upgrade node
+  current_upgrade_node = (
+    var.upgrade_control.enabled &&
+    var.upgrade_control.index >= 0 &&
+    var.upgrade_control.index < length(local.upgrade_sequence)
+  ) ? local.upgrade_sequence[var.upgrade_control.index] : ""
+
+  # Prepare nodes configuration with upgrade flags
+  nodes_with_upgrade = {
+    for name, config in local.nodes_config : name => merge(config, {
+      update = var.upgrade_control.enabled && name == local.current_upgrade_node
+    })
+  }
+}
+
 module "talos" {
   source = "./talos"
 
   providers = {
     proxmox = proxmox
   }
-
-  # disk_owner = var.disk_owner
-  # storage_pool = var.storage_pool
-
 
   image = {
     version        = "v1.10.2"
@@ -34,93 +143,23 @@ module "talos" {
     kubernetes_version = "1.33.1" # renovate: github-releases=kubernetes/kubernetes
   }
 
-  nodes = {
-    "ctrl-00" = {
-      host_node     = "host3"
-      machine_type  = "controlplane"
-      ip            = "10.25.150.11"
-      mac_address   = "bc:24:11:e6:ba:07"
-      vm_id         = 8101
-      cpu           = 6
-      ram_dedicated = 7168
-      update        = false
-      igpu          = false
-    }
-    "ctrl-01" = {
-      host_node     = "host3"
-      machine_type  = "controlplane"
-      ip            = "10.25.150.12"
-      mac_address   = "bc:24:11:44:94:5c"
-      vm_id         = 8102
-      cpu           = 6
-      ram_dedicated = 6144
-      update        = false
-      igpu          = false
-    }
-    "ctrl-02" = {
-      host_node     = "host3"
-      machine_type  = "controlplane"
-      ip            = "10.25.150.13"
-      mac_address   = "bc:24:11:1e:1d:2f"
-      vm_id         = 8103
-      cpu           = 6
-      ram_dedicated = 6144
-      update        = false
-    }
-    "work-00" = {
-      host_node     = "host3"
-      machine_type  = "worker"
-      ip            = "10.25.150.21"
-      mac_address   = "bc:24:11:64:5b:cb"
-      vm_id         = 8201
-      cpu           = 8
-      ram_dedicated = 10240
-      update        = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
-    }
-    "work-01" = {
-      host_node     = "host3"
-      machine_type  = "worker"
-      ip            = "10.25.150.22"
-      mac_address   = "bc:24:11:c9:22:c3"
-      vm_id         = 8202
-      cpu           = 8
-      ram_dedicated = 10240
-      update        = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
-    }
-    "work-02" = {
-      host_node     = "host3"
-      machine_type  = "worker"
-      ip            = "10.25.150.23"
-      mac_address   = "bc:24:11:6f:20:03"
-      vm_id         = 8203
-      cpu           = 8
-      ram_dedicated = 10240
-      update        = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
-    }
-  }
+  nodes = local.nodes_with_upgrade
 }
 
+output "upgrade_info" {
+  value = {
+    state = {
+      enabled     = var.upgrade_control.enabled
+      index       = var.upgrade_control.index
+      total_nodes = length(local.upgrade_sequence)
+      sequence    = local.upgrade_sequence
+    }
+    current = var.upgrade_control.enabled ? {
+      node     = local.current_upgrade_node
+      progress = "${var.upgrade_control.index + 1}/${length(local.upgrade_sequence)}"
+      valid    = local.current_upgrade_node != ""
+      ip       = try(local.nodes_config[local.current_upgrade_node].ip, null)
+    } : null
+  }
+  description = "Structured upgrade state information for external automation and monitoring"
+}
