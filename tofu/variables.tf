@@ -10,38 +10,24 @@ variable "proxmox" {
   sensitive = true
 }
 
+variable "upgrade_control" {
+  description = "Controls sequential node upgrades. Set enabled=true and specify index to upgrade a specific node."
+  type = object({
+    enabled = bool
+    index   = number
+  })
+  default = {
+    enabled = false
+    index   = -1
+  }
+
+  validation {
+    condition     = var.upgrade_control.index >= -1
+    error_message = "Index must be -1 (disabled) or a valid node position (0+)."
+  }
+}
+
 # Storage pool and disk owner variables have been removed as they are unused
 
 
-variable "nodes" {
-  description = "Map of Talos nodes to create"
-  type = map(object({
-    host_node     = string
-    machine_type  = string # controlplane or worker
-    ip            = string
-    mac_address   = string
-    vm_id         = number
-    cpu           = number
-    ram_dedicated = number
-    update        = bool
-    igpu          = optional(bool, false)
-    disks = optional(map(object({
-      device     = string # e.g., /dev/sdb
-      size       = string # e.g., 150G
-      type       = string # e.g., scsi, virtio
-      mountpoint = string # e.g., /var/lib/longhorn
-    })), {})
-  }))
-  default = {}
-
-  validation {
-    condition = alltrue([
-      for node in values(var.nodes) :
-      alltrue([
-        for disk in values(node.disks) :
-        can(regex("^\\d+G$", disk.size))
-      ])
-    ])
-    error_message = "All disk sizes must be specified in gigabytes (e.g., '150G')."
-  }
-}
+# Node configuration is now managed through local variables in main.tf
