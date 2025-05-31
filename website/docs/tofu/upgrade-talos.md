@@ -1,125 +1,100 @@
 ---
-title: 'Upgrade Talos Cluster Version Using Tofu'
+title: Talos Upgrade Process
 ---
 
-This guide walks through how I safely upgrade my Talos Kubernetes cluster to a new version using Tofu. The process upgrades each node individually by setting `update = true`, and only updates the `version` once all nodes have been upgraded.
+## Overview
 
-:::info
-Never revert `update` to `false` before completing the upgrade across all nodes. Doing so will recreate that node using the older `version`.
-:::
+This upgrade process uses a controlled index-based approach to upgrade Talos nodes sequentially. The upgrade system ensures only one node is upgraded at a time, maintaining cluster stability.
 
-## Prerequisites
+## Upgrade Sequence
 
-- `tofu` CLI installed and authenticated
-- Existing Talos cluster deployed using Tofu and modules
-- The desired Talos version defined in `update_version` under `image`
-- Backup etcd snapshots or ensure application tolerance to node recreation
+The upgrade sequence is automatically derived from your node configuration:
 
-## Overview of workflow
+1. **Control Plane Nodes** (upgraded first for quorum safety)
+   - `ctrl-00` (index 0)
+   - `ctrl-01` (index 1)
+   - `ctrl-02` (index 2)
 
-1. Sequentially set `update = true` on each node, one at a time
-2. Run `tofu apply` after each change to upgrade that node
-3. After all nodes have `update = true` and are upgraded, change the `version` fields
-4. Reset all `update` flags to `false`
-5. Final `tofu apply` to persist the upgrade state
+2. **Worker Nodes** (upgraded after control plane)
+   - `work-00` (index 3)
+   - `work-01` (index 4)
+   - `work-02` (index 5)
 
-## Upgrade one node at a time
+## Simple Upgrade Process
 
-1. **Edit `main.tf`:** Set `update = true` for the *first* node.
+### Start Upgrade
 
-   ```hcl
-   "ctrl-00" = {
-     ...
-     update = true
-   }
+```bash
+tofu apply -var 'upgrade_control={enabled=true,index=0}'
+```
 
-2. **Apply the change:**
+### Check Progress
 
-   ```bash
-   tofu apply
-   ```
+```bash
+tofu output upgrade_info
+```
 
-3. **Verify the node is back online and healthy:**
+### Continue to Next Node
 
-   ```bash
-   talosctl -n 10.25.150.11 get machines
-   ```
+Use the exact command shown in the output above, or:
 
-4. **Repeat steps 1–3 for the next node, adding `update = true` without modifying previous ones.**
-   Do **not** set `update = false` on any already-upgraded nodes.
+```bash
+tofu apply -var 'upgrade_control={enabled=true,index=1}'
+```
 
-   Example after upgrading two nodes:
+### Finish Upgrade
 
-   ```hcl
-   "ctrl-00" = {
-     ...
-     update = true
-   }
+```bash
+tofu apply -var 'upgrade_control={enabled=false,index=-1}'
+```
 
-   "ctrl-01" = {
-     ...
-     update = true
-   }
-   ```
+## Detailed Steps
 
-5. **Continue until all nodes (control plane and worker) have `update = true`.**
+### Monitor Node Upgrade
 
-## Finalize the version change
+```bash
+# Check Talos version
+talosctl version --nodes 10.25.150.11
 
-6. **Edit `main.tf` and set the permanent Talos version:**
+# Check Kubernetes node status
+kubectl get nodes ctrl-00
 
-   ```hcl
-   image = {
-     version        = "v1.10.2"
-     update_version = "v1.10.2"
-     ...
-   }
+# Wait for node to be Ready
+kubectl wait --for=condition=Ready node/ctrl-00 --timeout=300s
+```
 
-   cluster = {
-     ...
-     talos_version = "v1.10.2"
-   }
-   ```
+### Update Base Version
 
-7. **Reset all nodes’ `update` flags back to `false`:**
+After completing all upgrades, update the base version in `main.tf`:
 
-   ```hcl
-   "ctrl-00" = {
-     ...
-     update = false
-   }
-   ```
+```hcl
+# Change: version = "v1.10.2" to version = "v1.10.3"
+```
 
-8. **Apply the final state:**
+## Emergency Rollback
 
-   ```bash
-   tofu apply
-   ```
+If issues occur during upgrade, disable upgrade mode immediately:
 
-## Verify the upgrade
+```bash
+tofu apply -var 'upgrade_control={enabled=false,index=-1}'
+```
 
-1. **Check Talos version on each node:**
+## Monitoring Commands
 
-   ```bash
-   talosctl version -n <node-ip>
-   ```
+```bash
+# Check all node versions
+talosctl version --nodes 10.25.150.11,10.25.150.12,10.25.150.13,10.25.150.21,10.25.150.22,10.25.150.23
 
-   Output should show `v1.10.2` for every node.
+# Check cluster health
+kubectl get nodes -o wide
 
-2. **Verify Kubernetes nodes:**
+# Check upgrade progress
+tofu output upgrade_info
+```
 
-   ```bash
-   kubectl get nodes -o wide
-   ```
+## Notes
 
-   Confirm all nodes are `Ready` and on the expected version.
-
-## Optional: Revert a node (rollback)
-
-If you need to rollback a specific node before finalizing the version:
-
-- Leave `version` untouched
-- Set that node’s `update = false`
-- Run `tofu apply`
-
-This recreates the node using the `version`, effectively rolling it back.
+- Never skip nodes in the sequence - always upgrade sequentially
+- Wait for each node to be fully Ready before proceeding
+- Control plane nodes are upgraded first to maintain quorum
+- The upgrade system prevents multiple nodes from upgrading simultaneously
