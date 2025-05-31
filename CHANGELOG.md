@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.6.3 (2025-05-31)
+
+## What's Changed
+* Refactor(k8s)  update http route backend reference and add frigate blueprints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/754
+* chore(deps): update helm release redis to v21.1.11 by @renovate in https://github.com/theepicsaxguy/homelab/pull/753
+* Update account.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/756
+* chore(deps): update all dependencies to v72.8.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/757
+* Update recurringjob.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/758
+* chore(deps): update helm release argo-cd to v8.0.14 by @renovate in https://github.com/theepicsaxguy/homelab/pull/759
+* fix(storage): increase PVC size from 10Gi to 20Gi by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/783
+* chore(k8s): remove obsolete torrent application resources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/782
+* fix(tofu): add lifecycle block to ignore specific disk changes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/785
+* Theepicsaxguy/issue775 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/784
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.6.2...v2.6.3
+
 ## 2.6.2 (2025-05-30)
 
 ## What's Changed
