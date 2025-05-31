@@ -60,7 +60,8 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 lifecycle {
     ignore_changes = [
-      disk[*].file_id,           # Ignore changes to all disk file IDs
+      disk[0].file_id,           # Ignore changes to the boot disk image
+      disk[1].file_id,           # Ignore changes to additional disk images
       vga,                       # Ignore VGA changes (these are computed)
       network_device[0].disconnected, # Ignore network disconnected state
       # Add any other attributes causing issues
