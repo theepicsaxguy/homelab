@@ -24,7 +24,7 @@ The upgrade sequence is automatically derived from your node configuration:
 
 ### Start Upgrade
 
-```bash
+```hcl
 tofu apply -var 'upgrade_control={enabled=true,index=0}'
 ```
 
