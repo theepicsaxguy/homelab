@@ -5,7 +5,9 @@ locals {
   ])
 
   version      = var.talos_image.version
-  schematic    = file("${path.root}/${var.talos_image.schematic_path}")
+  schematic    = templatefile("${path.root}/${var.talos_image.schematic_path}", {
+    needs_nvidia_extensions = local.needs_nvidia_extensions
+  })
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
 
   # Always compute update version and schematic path/content
