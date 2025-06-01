@@ -36,7 +36,7 @@ locals {
       vm_id         = 8201
       cpu           = 8
       ram_dedicated = 10240
-      igpu          = true
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -54,7 +54,7 @@ locals {
       vm_id         = 8202
       cpu           = 8
       ram_dedicated = 10240
-      igpu          = true
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -72,7 +72,7 @@ locals {
       vm_id         = 8203
       cpu           = 8
       ram_dedicated = 10240
-      igpu          = true
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
