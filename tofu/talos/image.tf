@@ -48,21 +48,32 @@ resource "talos_image_factory_schematic" "updated" {
 # Create a map of unique image downloads needed per host
 locals {
   # Create unique combinations of host_node + image_id
-  image_downloads = {
-    for combo in distinct([
-      for k, v in var.nodes : {
-        host_node = v.host_node
-        image_id  = v.update == true ? local.update_image_id : local.image_id
-        version   = v.update == true ? local.update_version : local.version
-        schematic = v.update == true ? (local.needs_update_image ? talos_image_factory_schematic.updated[0].id : null) : talos_image_factory_schematic.this.id
-        is_update = v.update == true
-      }
-      # Only include valid combinations
-      if (v.update == false) || (v.update == true && local.needs_update_image)
-    ]) : "${combo.host_node}_${combo.image_id}" => combo
-    # Filter out any entries where image_id or schematic is null
-    if combo.image_id != null && combo.schematic != null
-  }
+  image_downloads = merge(
+    {
+      for combo in distinct([
+        for v in var.nodes : {
+          host_node = v.host_node
+          image_id  = local.image_id
+          version   = local.version
+          schematic = talos_image_factory_schematic.this.id
+          is_update = false
+        }
+      ]) :
+      "${combo.host_node}_${combo.image_id}" => combo
+    },
+    local.update_image_id != null ? {
+      for combo in distinct([
+        for v in var.nodes : {
+          host_node = v.host_node
+          image_id  = local.update_image_id
+          version   = local.update_version
+          schematic = talos_image_factory_schematic.updated[0].id
+          is_update = true
+        }
+      ]) :
+      "${combo.host_node}_${combo.image_id}" => combo
+    } : {}
+  )
 }
 
 # Use for_each for efficient distribution to host nodes, downloading each unique image only once per host
@@ -88,9 +99,19 @@ locals {
   # Create a mapping from node name to the new download file resource
   node_to_download_file = {
     for k, v in var.nodes : k => {
-      # Determine which download file this node should use
-      download_key = "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"
-      file_id = contains(keys(local.image_downloads), "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}") ? proxmox_virtual_environment_download_file.this["${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"].id : null
+      # Determine which download file this node should use - calculate key once
+      download_key = (v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}"
+      file_id = contains(keys(local.image_downloads), (v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}") ? proxmox_virtual_environment_download_file.this[(v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}"].id : null
     }
+  }
+}
+
+resource "null_resource" "fail_on_invalid_update" {
+  for_each = {
+    for k, v in var.nodes : k => v
+    if v.update == true && !local.needs_update_image
+  }
+  provisioner "local-exec" {
+    command = "echo 'ERROR: Node ${each.key} (${each.value.name}) has .update set to true, but local.needs_update_image is false. This indicates an invalid configuration where an update is requested but no update image is scheduled for download. Please check var.talos_version_update and node configurations.' && exit 1"
   }
 }

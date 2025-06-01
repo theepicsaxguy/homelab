@@ -41,7 +41,11 @@ resource "proxmox_virtual_environment_vm" "this" {
     ssd          = true
     file_format  = "raw"
     size         = 40
-    file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"].id
+    file_id = proxmox_virtual_environment_download_file.this[
+      (each.value.update == true && local.update_image_id != null)
+        ? "${each.value.host_node}_${local.update_image_id}"
+        : "${each.value.host_node}_${local.image_id}"
+    ].id
   }
 
   # Create additional disks defined in the node configuration
