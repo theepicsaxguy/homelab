@@ -9,7 +9,6 @@ locals {
       vm_id         = 8101
       cpu           = 6
       ram_dedicated = 7168
-      igpu          = false
     }
     "ctrl-01" = {
       host_node     = "host3"
@@ -19,7 +18,6 @@ locals {
       vm_id         = 8102
       cpu           = 6
       ram_dedicated = 6144
-      igpu          = false
     }
     "ctrl-02" = {
       host_node     = "host3"
@@ -38,6 +36,7 @@ locals {
       vm_id         = 8201
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = true
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -55,6 +54,7 @@ locals {
       vm_id         = 8202
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = true
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -72,6 +72,7 @@ locals {
       vm_id         = 8203
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = true
       disks = {
         longhorn = {
           device     = "/dev/sdb"
