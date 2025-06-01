@@ -118,11 +118,7 @@ module "talos" {
     proxmox = proxmox
   }
 
-  image = {
-    version        = "v1.10.2"
-    update_version = "v1.10.3" # renovate: github-releases=siderolabs/talos
-    schematic      = file("${path.module}/talos/image/schematic.yaml")
-  }
+  talos_image = var.talos_image
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
