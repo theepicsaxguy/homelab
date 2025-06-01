@@ -41,7 +41,9 @@ resource "proxmox_virtual_environment_vm" "this" {
     ssd          = true
     file_format  = "raw"
     size         = 40
-    file_id      = each.value.update == true ? proxmox_virtual_environment_download_file.update[0].id : proxmox_virtual_environment_download_file.this.id
+    file_id = proxmox_virtual_environment_download_file.this[
+      "${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"
+    ].id
   }
 
   # Create additional disks defined in the node configuration
@@ -60,8 +62,6 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 lifecycle {
     ignore_changes = [
-      disk[0].file_id,           # Ignore changes to the boot disk image
-      disk[1].file_id,           # Ignore changes to additional disk images
       vga,                       # Ignore VGA changes (these are computed)
       network_device[0].disconnected, # Ignore network disconnected state
       # Add any other attributes causing issues

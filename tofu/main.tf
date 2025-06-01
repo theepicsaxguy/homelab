@@ -9,7 +9,6 @@ locals {
       vm_id         = 8101
       cpu           = 6
       ram_dedicated = 7168
-      igpu          = false
     }
     "ctrl-01" = {
       host_node     = "host3"
@@ -19,7 +18,6 @@ locals {
       vm_id         = 8102
       cpu           = 6
       ram_dedicated = 6144
-      igpu          = false
     }
     "ctrl-02" = {
       host_node     = "host3"
@@ -38,6 +36,7 @@ locals {
       vm_id         = 8201
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -55,6 +54,7 @@ locals {
       vm_id         = 8202
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -72,6 +72,7 @@ locals {
       vm_id         = 8203
       cpu           = 8
       ram_dedicated = 10240
+      igpu          = false
       disks = {
         longhorn = {
           device     = "/dev/sdb"
@@ -118,11 +119,7 @@ module "talos" {
     proxmox = proxmox
   }
 
-  image = {
-    version        = "v1.10.2"
-    update_version = "v1.10.3" # renovate: github-releases=siderolabs/talos
-    schematic      = file("${path.module}/talos/image/schematic.yaml")
-  }
+  talos_image = var.talos_image
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
@@ -138,7 +135,7 @@ module "talos" {
     endpoint           = "api.kube.pc-tips.se"
     gateway            = "10.25.150.1"  # Network gateway
     vip                = "10.25.150.10" # Control plane VIP
-    talos_version      = "v1.10.2"
+    talos_version      = "v1.10.3"
     proxmox_cluster    = "kube"
     kubernetes_version = "1.33.1" # renovate: github-releases=kubernetes/kubernetes
   }
