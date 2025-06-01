@@ -84,7 +84,7 @@ resources:
 
 service:
   ui:
-    type: ClusterIP
+    type: LoadBalancer
 
 longhornManager:
   priorityClass: system-cluster-critical

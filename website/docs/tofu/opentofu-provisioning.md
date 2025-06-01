@@ -298,7 +298,7 @@ kubectl drain node-name --ignore-daemonsets --delete-emptydir-data
 Apply updates via OpenTofu:
 
 ```bash
-tofu apply -target=module.talos.proxmox_virtual_environment_vm.this["node-name"]
+tofu apply -target='module.talos.proxmox_virtual_environment_vm.this["node-name"]'
 ```
 
 Return the node to service:
@@ -377,10 +377,10 @@ tofu apply -target=module.talos.proxmox_virtual_environment_vm.this["failed-node
 
 Our cluster implements several security measures:
 
-* API server endpoint protection via Gateway API
-* etcd encryption at rest enabled
-* Node authentication via Talos PKI
-* Network isolation with Cilium policies
+- API server endpoint protection via Gateway API
+- etcd encryption at rest enabled
+- Node authentication via Talos PKI
+- Network isolation with Cilium policies
 
 ### Sensitive Files
 
@@ -425,22 +425,22 @@ kubectl get pods -n kube-system
 
 Common causes of node join failures:
 
-* Network connectivity issues
-* Machine configuration errors
-* Bootstrap process failures
+- Network connectivity issues
+- Machine configuration errors
+- Bootstrap process failures
 
 #### API Server Availability
 
 When the API server is unreachable:
 
-* Verify control plane VIP status
-* Check etcd cluster health
-* Review API server container logs
+- Verify control plane VIP status
+- Check etcd cluster health
+- Review API server container logs
 
 #### Resource Management
 
 Monitor these aspects:
 
-* VM resource utilization
-* Storage availability and performance
-* Network connectivity and throughput
+- VM resource utilization
+- Storage availability and performance
+- Network connectivity and throughput

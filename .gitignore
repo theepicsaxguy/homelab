@@ -12,7 +12,7 @@ output
 
 *.tfvars
 *.tfvars.json
-
+!*.auto.tfvars
 *.lock.hcl
 
 override.tf

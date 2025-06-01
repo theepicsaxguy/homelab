@@ -36,6 +36,7 @@ data "talos_machine_configuration" "this" {
       node_ip      = each.value.ip
       cluster      = var.cluster
       disks        = each.value.disks
+      igpu         = each.value.igpu
     })
   ]
 }
