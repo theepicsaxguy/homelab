@@ -39,18 +39,16 @@ resource "talos_image_factory_schematic" "updated" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  # Use for_each to map directly to nodes, similar to vehagn-homelab.
-  # Each node will trigger a download for its specific image (base or update).
-  # If multiple nodes on the same host require the same image, Proxmox will handle it.
+  # Create one download per unique combination of host node and image
   for_each = {
-    for k, v in var.nodes :
-    # The key combines node name, host node, and the *selected* image ID to ensure uniqueness for for_each
-    # and to correctly identify the specific download resource.
-    "${k}_${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}" => {
-      host_node = v.host_node
-      version   = v.update == true ? local.update_version : local.version
-      schematic = v.update == true ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
-    }
+    for item in distinct([
+      for k, v in var.nodes : {
+        key       = "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"
+        host_node = v.host_node
+        version   = v.update == true ? local.update_version : local.version
+        schematic = v.update == true ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
+      }
+    ]) : item.key => item
   }
 
   node_name    = each.value.host_node
@@ -60,7 +58,7 @@ resource "proxmox_virtual_environment_download_file" "this" {
   file_name               = "talos-${each.value.schematic}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
   url                     = "${var.talos_image.factory_url}/image/${each.value.schematic}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
   decompression_algorithm = "gz"
-  overwrite               = false
+  overwrite               = true
 
   lifecycle {
     create_before_destroy = true
