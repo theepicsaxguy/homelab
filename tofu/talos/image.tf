@@ -1,4 +1,9 @@
 locals {
+  # Determine if any node in the cluster has igpu=true
+  needs_nvidia_extensions = anytrue([
+    for name, config in var.nodes : lookup(config, "igpu", false)
+  ])
+
   version      = var.talos_image.version
   schematic    = file("${path.root}/${var.talos_image.schematic_path}")
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
@@ -6,7 +11,10 @@ locals {
   # Always compute update version and schematic path/content
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
-  update_schematic      = file("${path.root}/${local.update_schematic_path}")
+  # Render the update schematic template (could be the same or different schematic)
+  update_schematic      = templatefile("${path.root}/${local.update_schematic_path}", {
+    needs_nvidia_extensions = local.needs_nvidia_extensions
+  })
 
   # These will now always be available because data.http.updated_schematic_id and talos_image_factory_schematic.updated will always exist.
   update_schematic_id = jsondecode(data.http.updated_schematic_id.response_body)["id"]
