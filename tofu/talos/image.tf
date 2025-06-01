@@ -10,7 +10,10 @@ locals {
   update_version        = local.needs_update_image ? coalesce(var.talos_image.update_version, var.talos_image.version) : null
   update_schematic_path = local.needs_update_image ? coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path) : null
   update_schematic      = local.needs_update_image ? file("${path.root}/${local.update_schematic_path}") : null
-  update_schematic_id   = local.needs_update_image ? jsondecode(data.http.updated_schematic_id[0].response_body)["id"] : null
+
+  # Safely access the response_body, using try() to prevent errors if updated_schematic_id has count 0
+  _update_schematic_response_body = local.needs_update_image ? try(data.http.updated_schematic_id[0].response_body, null) : null
+  update_schematic_id   = local.needs_update_image && local._update_schematic_response_body != null ? jsondecode(local._update_schematic_response_body)["id"] : null
 
   image_id        = "${local.schematic_id}_${local.version}"
   update_image_id = local.needs_update_image ? "${local.update_schematic_id}_${local.update_version}" : null
@@ -94,18 +97,6 @@ resource "proxmox_virtual_environment_download_file" "this" {
   }
 }
 
-# Migration helpers - create locals to map old resource references to new ones
-locals {
-  # Create a mapping from node name to the new download file resource
-  node_to_download_file = {
-    for k, v in var.nodes : k => {
-      # Determine which download file this node should use - calculate key once
-      download_key = (v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}"
-      file_id = contains(keys(local.image_downloads), (v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}") ? proxmox_virtual_environment_download_file.this[(v.update == true && local.update_image_id != null) ? "${v.host_node}_${local.update_image_id}" : "${v.host_node}_${local.image_id}"].id : null
-    }
-  }
-}
-
 resource "null_resource" "fail_on_invalid_update" {
   for_each = {
     for k, v in var.nodes : k => v
@@ -113,5 +104,19 @@ resource "null_resource" "fail_on_invalid_update" {
   }
   provisioner "local-exec" {
     command = "echo 'ERROR: Node ${each.key} (${each.value.name}) has .update set to true, but local.needs_update_image is false. This indicates an invalid configuration where an update is requested but no update image is scheduled for download. Please check var.talos_version_update and node configurations.' && exit 1"
+  }
+}
+
+# Debug outputs to understand the current state
+output "debug_image_state" {
+  value = {
+    needs_update_image = local.needs_update_image
+    image_id = local.image_id
+    update_image_id = local.update_image_id
+    update_schematic_id = local.update_schematic_id
+    nodes_with_update = [
+      for k, v in var.nodes : k if lookup(v, "update", false) == true
+    ]
+    image_downloads_keys = keys(local.image_downloads)
   }
 }
