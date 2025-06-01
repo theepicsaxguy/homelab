@@ -1,18 +1,18 @@
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: backup-daily
+  name: backup-regular
   namespace: longhorn-system
 spec:
-  cron: "0 1 * * *"  # Daily at 1 AM
+  cron: "0 */4 * * *"   # Every 4 hours (12AM, 4AM, 8AM, 12PM, 4PM, 8PM)
   task: "backup"
   groups:
-  - default
-  - group1
-  retain: 7  # Keep a week of backups
-  concurrency: 2
+    - default
+    - group1
+  retain: 18  # 3 days worth (6 backups/day × 3 days)
+  concurrency: 3
   labels:
-    type: scheduled
+    type: resource-friendly
 ---
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
@@ -20,11 +20,11 @@ metadata:
   name: snapshot-cleanup
   namespace: longhorn-system
 spec:
-  cron: "*/30 * * * *"  # Every 30 minutes
+  cron: "15 */6 * * *"
   task: "snapshot-cleanup"
   groups:
-  - default
-  - group1
+    - default
+    - group1
   concurrency: 2
   labels:
     type: maintenance
