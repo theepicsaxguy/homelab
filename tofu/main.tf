@@ -134,7 +134,7 @@ module "talos" {
     endpoint           = "api.kube.pc-tips.se"
     gateway            = "10.25.150.1"  # Network gateway
     vip                = "10.25.150.10" # Control plane VIP
-    talos_version      = "v1.10.2"
+    talos_version      = "v1.10.3"
     proxmox_cluster    = "kube"
     kubernetes_version = "1.33.1" # renovate: github-releases=kubernetes/kubernetes
   }
