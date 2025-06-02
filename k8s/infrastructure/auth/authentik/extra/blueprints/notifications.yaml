@@ -1,4 +1,7 @@
 # yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
 ---
 version: 1
 metadata:

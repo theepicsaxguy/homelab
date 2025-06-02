@@ -1,0 +1,2 @@
+# Authentik blueprints use custom YAML tags
+k8s/infrastructure/auth/authentik/extra/blueprints/
