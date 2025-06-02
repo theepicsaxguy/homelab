@@ -7,7 +7,7 @@ version: 1
 metadata:
   name: Apps - Immich
 entries:
-  - id: provider
+  - id: immich_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
       name: k8s.pc-tips.se/services-immich
@@ -56,7 +56,7 @@ entries:
             [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
           ]
 
-  - id: application
+  - id: immich_application
     model: authentik_core.application
     identifiers:
       slug: immich
@@ -65,18 +65,18 @@ entries:
       group: Stockage
       meta_description: Gestion de photos, vidéos et albums
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/immich.png
-      provider: !KeyOf provider
+      provider: !KeyOf immich_provider
       policy_engine_mode: any
 
   - model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application
+      target: !KeyOf immich_application
       group: !Find [authentik_core.group, [name, "users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application
+      target: !KeyOf immich_application
       group: !Find [authentik_core.group, [name, "roots"]]
     attrs:
       order: 2

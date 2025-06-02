@@ -7,7 +7,7 @@ version: 1
 metadata:
   name: Apps - Grafana
 entries:
-  - id: provider
+  - id: grafana_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
       name: k8s.pc-tips.se/infra-observability/grafana
@@ -52,7 +52,7 @@ entries:
             [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
           ]
 
-  - id: application
+  - id: grafana_application
     model: authentik_core.application
     identifiers:
       slug: grafana
@@ -61,18 +61,18 @@ entries:
       group: Infrastructure
       description: Observability Dashboards
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/grafana.png
-      provider: !KeyOf provider
+      provider: !KeyOf grafana_provider
       policy_engine_mode: any
 
   - model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application
+      target: !KeyOf grafana_application
       group: !Find [authentik_core.group, [name, "users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application
+      target: !KeyOf grafana_application
       group: !Find [authentik_core.group, [name, "roots"]]
     attrs:
       order: 2

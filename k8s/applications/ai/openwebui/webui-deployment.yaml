@@ -54,6 +54,25 @@ spec:
               key: WEBUI_SECRET_KEY
         - name: OLLAMA_BASE_URL
           value: "http://ollama-service.open-webui.svc.kube.pc-tips.se:11434"
+        # OAuth2 SSO integration
+        - name: OAUTH_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: openwebui-secret
+              key: OAUTH_CLIENT_ID
+        - name: OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: openwebui-secret
+              key: OAUTH_CLIENT_SECRET
+        - name: OAUTH_PROVIDER_NAME
+          value: "authentik"
+        - name: OPENID_PROVIDER_URL
+          value: "https://sso.pc-tips.se/application/o/openwebui/.well-known/openid-configuration"
+        - name: OPENID_REDIRECT_URI
+          value: "https://chat.pc-tips.se/oauth/oidc/callback"
+        - name: ENABLE_OAUTH_SIGNUP
+          value: "true"
         tty: true
         volumeMounts:
         - name: webui-volume

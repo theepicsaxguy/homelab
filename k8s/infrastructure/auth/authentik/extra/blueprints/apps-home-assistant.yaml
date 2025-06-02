@@ -7,7 +7,7 @@ version: 1
 metadata:
   name: Apps - Home assistant
 entries:
-  - id: application
+  - id: homeassistant_application
     model: authentik_core.application
     identifiers:
       slug: home-assistant
@@ -21,7 +21,7 @@ entries:
 
   - model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application
+      target: !KeyOf homeassistant_application
       group: !Find [authentik_core.group, [name, "schmitt"]]
     attrs:
       order: 1
