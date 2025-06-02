@@ -31,21 +31,22 @@ entries:
             namespace: core-eg
             sectionName: https
 
-  - model: authentik_outposts.outpost
-    identifiers:
-      name: "LDAP Outpost"
-    attrs:
-      type: ldap
-      service_connection:
-        !Find [
-          authentik_outposts.outpostserviceconnection,
-          [name, "Local Kubernetes Cluster"],
-        ]
-      providers: []
-      config:
-        log_level: info
-        authentik_host: https://sso.pc-tips.se
-        kubernetes_namespace: auth
+  # LDAP Outpost commented out due to validation error - requires at least one LDAP provider
+  # - model: authentik_outposts.outpost
+  #   identifiers:
+  #     name: "LDAP Outpost"
+  #   attrs:
+  #     type: ldap
+  #     service_connection:
+  #       !Find [
+  #         authentik_outposts.outpostserviceconnection,
+  #         [name, "Local Kubernetes Cluster"],
+  #       ]
+  #     providers: [] # This list needs to contain at least one LDAP provider if the outpost is enabled
+  #     config:
+  #       log_level: info
+  #       authentik_host: https://sso.pc-tips.se
+  #       kubernetes_namespace: auth
 
   - model: authentik_outposts.outpost
     identifiers:
