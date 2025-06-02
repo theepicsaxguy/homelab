@@ -1,5 +1,8 @@
-# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# Schema validation disabled - Authentik blueprints use custom YAML tags incompatible with JSON schema
 # yamllint disable
+# prettier-ignore
+# eslint-disable
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
 ---
 version: 1
 metadata:

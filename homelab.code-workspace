@@ -35,7 +35,8 @@
       "*.yml": "yaml",
       "*.tf": "terraform",
       "*.tfvars": "terraform",
-      "Tiltfile": "python"
+      "Tiltfile": "python",
+      "k8s/infrastructure/auth/authentik/extra/blueprints/*.yaml": "yaml"
     },
 
     // Editor settings
@@ -50,6 +51,11 @@
     // YAML settings
     "yaml.format.enable": true,
     "yaml.validate": true,
+    "yaml.customTags": [
+      "!Find sequence",
+      "!KeyOf scalar",
+      "!Env scalar"
+    ],
     "[yaml]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.formatOnSave": false
@@ -130,7 +136,11 @@
     "git.diagnosticsCommitHook.Enabled": true,
     "git.enableSmartCommit": true,
     "yaml.schemas": {
-      "https://json.schemastore.org/yamllint.json": "file:///root/homelab/k8s/infrastructure/controllers/argocd/charts/argo-cd-7.8.2/argo-cd/templates/aggregate-roles.yaml"
+      "https://json.schemastore.org/yamllint.json": "file:///root/homelab/k8s/infrastructure/controllers/argocd/charts/argo-cd-7.8.2/argo-cd/templates/aggregate-roles.yaml",
+      "https://goauthentik.io/blueprints/schema.json": [
+        "k8s/infrastructure/auth/authentik/extra/blueprints/*.yaml",
+        "file:///home/benjaminsanden/Documents/Projects/homelab/k8s/infrastructure/auth/authentik/extra/blueprints/apps-argocd.yaml"
+      ]
     },
     "github.copilot.chat.codesearch.enabled": true,
     "chat.promptFilesLocations": {
