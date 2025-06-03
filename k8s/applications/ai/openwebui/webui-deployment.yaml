@@ -67,6 +67,8 @@ spec:
               key: OAUTH_CLIENT_SECRET
         - name: OAUTH_PROVIDER_NAME
           value: "authentik"
+        - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+          value: "true"
         - name: OPENID_PROVIDER_URL
           value: "https://sso.pc-tips.se/application/o/openwebui/.well-known/openid-configuration"
         - name: OPENID_REDIRECT_URI
