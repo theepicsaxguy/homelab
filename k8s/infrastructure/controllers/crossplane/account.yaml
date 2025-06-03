@@ -8,7 +8,7 @@ spec:
       valueFrom:
         secretKeyRef:
           name: cloudflare-api-token
-          key: cloudflare_account_id
+          key: cloudflare-account-id
   providerConfigRef:
     name: cloudflare-provider
   managementPolicy: ObserveOnly
