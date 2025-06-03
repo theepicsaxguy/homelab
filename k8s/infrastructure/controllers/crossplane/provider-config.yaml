@@ -8,4 +8,4 @@ spec:
     secretRef:
       namespace: crossplane-system
       name: cloudflare-api-token
-      key: cloudflare_api_token
+      key: cloudflare-api-token
