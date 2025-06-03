@@ -8,6 +8,7 @@ spec:
       valueFrom:
         secretKeyRef:
           name: cloudflare-api-token
+          namespace: crossplane-system
           key: cloudflare-account-id
   providerConfigRef:
     name: cloudflare-provider
