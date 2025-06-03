@@ -3,8 +3,13 @@ kind: Account
 metadata:
   name: cloudflare-account
 spec:
-  #forProvider:
-    #accountId: "<your-account-id>"  # Replace with actual ID
+  forProvider:
+    accountId:
+      valueFrom:
+        secretKeyRef:
+          name: cloudflare-api-token
+          namespace: crossplane-system
+          key: cloudflare-account-id
   providerConfigRef:
     name: cloudflare-provider
   managementPolicy: ObserveOnly
