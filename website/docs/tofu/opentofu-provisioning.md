@@ -11,7 +11,7 @@ running Talos OS on Proxmox
 
 Before you begin deployment, ensure your SSH key is loaded:
 
-````bash
+```bash
 eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 ## Infrastructure Overview
 
