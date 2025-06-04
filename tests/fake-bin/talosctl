@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 # fake talosctl
 if [[ "$1" == "etcd" && "$2" == "snapshot" ]]; then
+  outfile=""
+  for ((i=1;i<=$#;i++)); do
+    if [[ "${!i}" == "--output" ]]; then
+      j=$((i+1))
+      outfile="${!j}"
+    fi
+  done
+  [[ -n "$outfile" ]] && echo "fake" > "$outfile"
   echo "snapshot saved"
 elif [[ "$1" == "health" ]]; then
   if [[ "$2" == "--wait" ]]; then

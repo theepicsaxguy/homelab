@@ -4,6 +4,11 @@ if [[ "$1" == "cordon" || "$1" == "drain" || "$1" == "uncordon" ]]; then
   echo "kubectl $@"
   exit 0
 elif [[ "$1" == "get" ]]; then
+  if [[ "$*" == *"volumes.longhorn.io"* ]]; then
+    echo "NAME   ROBUSTNESS"
+    echo "vol1   Healthy"
+    exit 0
+  fi
   echo "NAME   STATUS"
   echo "node1  Ready"
   exit 0

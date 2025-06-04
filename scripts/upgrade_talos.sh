@@ -29,6 +29,24 @@ kubectl cordon "$NODE"
 kubectl drain "$NODE" --ignore-daemonsets --delete-emptydir-data
 
 SNAPSHOT="etcd-snapshot-$NODE-$(date +%Y%m%d%H%M%S).db"
+# Ensure snapshot was created
+if [[ ! -s "$SNAPSHOT" ]]; then
+  echo "etcd snapshot failed" >&2
+  exit 1
+fi
+
+echo "Checking Longhorn volume health"
+if ! kubectl -n longhorn-system get volumes.longhorn.io >/tmp/longhorn_volumes; then
+  echo "Failed to query Longhorn volumes" >&2
+  exit 1
+fi
+# Fail if any volume robustness is not Healthy
+if grep -E "Degraded|Faulted" /tmp/longhorn_volumes >/dev/null; then
+  cat /tmp/longhorn_volumes >&2
+  echo "Longhorn volumes are not healthy" >&2
+  exit 1
+fi
+
 CONTROL=$(echo "$INFO" | jq -r '.state.sequence[0]')
 
 echo "Taking etcd snapshot on $CONTROL -> $SNAPSHOT"

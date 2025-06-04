@@ -33,15 +33,17 @@ Before upgrading the first node **and before moving on to each subsequent node**
 2. **Longhorn volumes are healthy** and fully replicated:
 
    ```bash
-   kubectl -n longhorn-system get volumes.longhorn.io
-   ```
+  kubectl -n longhorn-system get volumes.longhorn.io
+  ```
 
 3. **Cluster is healthy**:
 
-   ```bash
-   talosctl health --wait
-   kubectl get nodes
-   ```
+  ```bash
+  talosctl health --wait
+  kubectl get nodes
+  ```
+
+The `scripts/upgrade_talos.sh` helper runs these checks automatically and aborts if any volumes are degraded or the cluster is unhealthy.
 
 ## Simple Upgrade Process
 
@@ -61,8 +63,7 @@ image = {
 
 ### Start Upgrade
 
-Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node. Start over at step 1 for each node so numbering stays consistent.
-2. **Verify Longhorn volume health**:
+Run the helper script to automatically drain the node, snapshot etcd, verify Longhorn volume health, and apply OpenTofu:
 
    ```bash
    kubectl -n longhorn-system get volumes.longhorn.io -o json | jq '.items[].status.robustness'

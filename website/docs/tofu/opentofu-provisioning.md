@@ -51,7 +51,7 @@ Worker Nodes:
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
 ├── scripts/upgrade-k8s.sh    # Kubernetes upgrade helper
-├── scripts/upgrade_talos.sh  # Talos OS upgrade helper
+├── scripts/upgrade_talos.sh  # Talos OS upgrade helper (drains, snapshots etcd and checks Longhorn)
 ├── terraform.tfvars  # Variable definitions
 └── talos/            # Talos cluster module
     ├── config.tf     # Machine configs and bootstrap
