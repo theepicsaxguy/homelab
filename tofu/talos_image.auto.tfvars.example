@@ -3,6 +3,9 @@
 # Copy this file to talos_image.auto.tfvars and edit the values below.
 # All values must be literals (no variable interpolation).
 #
+  version = "v1.0.0"
+  update_version = "v1.0.0" # renovate: github-releases=siderolabs/talos
+#
 talos_image = {
   version = "v1.0.0"
   update_version = "v1.0.0" # renovate: github-releases=siderolabs/talos

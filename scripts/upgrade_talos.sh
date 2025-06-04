@@ -37,7 +37,6 @@ kubectl cordon "$NODE"
 kubectl drain "$NODE" --ignore-daemonsets --delete-emptydir-data
 
 SNAPSHOT="etcd-snapshot-$NODE-$(date +%Y%m%d%H%M%S).db"
-# Ensure snapshot was created
 if [[ ! -s "$SNAPSHOT" ]]; then
   echo "etcd snapshot failed" >&2
   exit 1
