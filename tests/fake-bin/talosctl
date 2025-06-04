@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# fake talosctl
+if [[ "$1" == "etcd" && "$2" == "snapshot" ]]; then
+  echo "snapshot saved"
+elif [[ "$1" == "health" ]]; then
+  if [[ "$2" == "--wait" ]]; then
+    echo "cluster healthy"
+  fi
+else
+  echo "talosctl $@"
+fi

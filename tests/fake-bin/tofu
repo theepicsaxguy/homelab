@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# fake tofu
+if [[ "$1" == "-chdir="*"" && "$2" == "output" && "$3" == "-json" && "$4" == "upgrade_info" ]]; then
+  cat <<JSON
+{
+  "sequence": ["ctrl-00", "ctrl-01"],
+  "state": {"sequence": ["ctrl-00", "ctrl-01"]}
+}
+JSON
+elif [[ "$1" == "apply" ]]; then
+  echo "tofu apply $@"
+else
+  echo "tofu $@"
+fi

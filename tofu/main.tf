@@ -73,10 +73,11 @@ locals {
   # Add default worker disks and merge with any overrides
   nodes_config = {
     for name, cfg in local.nodes_config_raw :
-    name => (
+    name => merge(
+      cfg,
       cfg.machine_type == "worker" ?
-      merge(cfg, { disks = merge(local.default_worker_disks, lookup(cfg, "disks", {})) }) :
-      cfg
+      { disks = merge(local.default_worker_disks, lookup(cfg, "disks", {})) } :
+      {}
     )
   }
 

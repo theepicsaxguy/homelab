@@ -20,9 +20,9 @@ The upgrade sequence is automatically derived from your node configuration:
    - `work-01` (index 4)
    - `work-02` (index 5)
 
-## Pre-Upgrade Checklist
+## Upgrade Checklist
 
-Before upgrading any node ensure:
+Before upgrading the first node **and before moving on to each subsequent node**, verify:
 
 1. **Recent etcd snapshot** exists. You can create one with:
 
@@ -61,26 +61,7 @@ image = {
 
 ### Start Upgrade
 
-Run the helper script to automatically drain the node, snapshot etcd, and apply the upgrade:
-
-```bash
-scripts/upgrade_talos.sh 0
-```
-
-### Check Progress
-
-```bash
-tofu output upgrade_info
-```
-
-### Safety Checks Before Continuing
-
-1. **Create an etcd snapshot** on a control-plane node:
-
-   ```bash
-   talosctl etcd snapshot -n ctrl-00 -o etcd-backup-$(date +%Y%m%d).db
-   ```
-
+Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node.
 2. **Verify Longhorn volume health**:
 
    ```bash

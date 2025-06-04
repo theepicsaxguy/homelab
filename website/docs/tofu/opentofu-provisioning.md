@@ -50,7 +50,7 @@ Worker Nodes:
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
-├── upgrade-k8s.sh    # Kubernetes upgrade helper
+├── scripts/upgrade-k8s.sh    # Kubernetes upgrade helper
 ├── scripts/upgrade_talos.sh  # Talos OS upgrade helper
 ├── terraform.tfvars  # Variable definitions
 └── talos/            # Talos cluster module
