@@ -21,7 +21,7 @@ Our infrastructure follows a strict GitOps approach with the following principle
 
 Our modern networking stack is built on:
 
-- **Cilium** (v1.17+)
+- **Cilium** (see https://github.com/cilium/cilium/releases)
   - CNI for network connectivity
   - Service mesh capabilities
   - Network policies

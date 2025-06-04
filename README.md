@@ -12,26 +12,12 @@ family.
 
 **Key Features:**
 
-- **Three-Stage Environment Progression:** Development → Staging → Production
+- **Namespace-Based Isolation:** All workloads run in a single cluster but are kept separate via dedicated namespaces
 - **Pure GitOps Workflow:** All changes go through Git for full traceability and easy rollback.
 - **Self-Healing Infrastructure:** Leveraging ArgoCD to automatically reconcile your state.
 - **Zero Trust Security:** Enforced at every layer so you never worry about unauthorized changes.
 - **Rapid Recovery:** Disaster recovery in just a few commands.
 
-<div align="center" style="display: flex; justify-content: center; gap: 20px; align-items: center;">
-  <a href="https://kubernetes.io">
-    <img src="docs/assets/kubernetes-logo.svg" height="100px" alt="Kubernetes Logo">
-  </a>
-  <a href="https://talos.dev">
-    <img src="docs/assets/talos-logo.svg" height="100px" alt="Talos Linux Logo">
-  </a>
-  <a href="https://opentofu.org">
-    <img src="docs/assets/tofu-on-light.svg" height="100px" alt="OpenTofu Logo">
-  </a>
-  <a href="https://www.proxmox.com">
-    <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px" alt="Proxmox Logo">
-  </a>
-</div>
 
 <p align="center">
   <em>Built with love, caffeine, and a whole lot of "not again!" moments.</em>
@@ -89,13 +75,11 @@ _\*\*For more details, check out our [Architecture Deep Dive](/docs/architecture
 
 ### Environment Strategy
 
-We run one Kubernetes cluster and use robust namespace isolation to separate:
-
-- **Development:** Fast, minimal resources for rapid iteration.
-- **Staging:** A production-like environment for realistic testing.
-- **Production:** Fully high-availability with strict security controls.
-
-This approach optimizes resource use without sacrificing isolation or reliability.
+All services run in a single Kubernetes cluster.  Infrastructure components and
+applications are organized into dedicated namespaces (such as
+`infrastructure-system` and `applications-system`) and synchronized via ArgoCD
+sync waves.  Configuration overlays allow resources to progress through
+different stages when needed without maintaining separate clusters.
 
 ### Technology Stack
 
@@ -105,9 +89,6 @@ This approach optimizes resource use without sacrificing isolation or reliabilit
 - **Kustomize**
 - **Bitwarden** (Secrets Management)
 
-<div align="center">
-  <em>Because modern tech should work as hard as you do.</em>
-</div>
 
 ---
 

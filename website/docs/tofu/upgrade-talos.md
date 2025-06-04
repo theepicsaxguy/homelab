@@ -28,8 +28,8 @@ Set the version to upgrade to in `main.tf`. The `update_version` is only used wh
 
 ```hcl
 image = {
-  version         = "v1.10.2"
-  update_version  = "v1.10.3" # renovate: github-releases=siderolabs/talos
+  version         = "<see https://github.com/siderolabs/talos/releases>"
+  update_version  = "<see https://github.com/siderolabs/talos/releases>" # renovate: github-releases=siderolabs/talos
   schematic       = file("${path.module}/talos/image/schematic.yaml")
 }
 ```
@@ -69,17 +69,17 @@ After all nodes have been upgraded, update your cluster configuration in `main.t
 ```hcl
 # Update the base image version to match update_version
 image = {
-  version         = "v1.10.3"  # Changed from v1.10.2
-  update_version  = "v1.10.3"
+  version         = "<see https://github.com/siderolabs/talos/releases>"  # Updated base image version
+  update_version  = "<see https://github.com/siderolabs/talos/releases>"
   schematic       = file("${path.module}/talos/image/schematic.yaml")
 }
 
 # Update the cluster Talos version
 cluster = {
   name               = "talos"
-  talos_version      = "v1.10.3"  # Changed from v1.10.2
+  talos_version      = "<see https://github.com/siderolabs/talos/releases>"
   proxmox_cluster    = "kube"
-  kubernetes_version = "1.33.1"
+  kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"
 }
 ```
 
@@ -103,7 +103,7 @@ kubectl wait --for=condition=Ready node/ctrl-00 --timeout=300s
 After completing all upgrades, update the base version in `main.tf`:
 
 ```hcl
-# Change: version = "v1.10.2" to version = "v1.10.3"
+# Update version references to the new release
 ```
 
 ## Emergency Rollback

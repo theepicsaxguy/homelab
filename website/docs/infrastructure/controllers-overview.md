@@ -42,8 +42,7 @@ This document outlines the core infrastructure controllers deployed in our Kuber
 
 ### Longhorn
 
-- **Version**: 1.8.0+
-- **Features**:
+**Features**:
   - Distributed block storage
   - Volume replication
   - Backup capabilities
@@ -143,10 +142,10 @@ Warning Alerts:
 
 ```yaml
 Controllers:
-  argocd: 2.10.x
-  cert-manager: 1.17.x
-  external-secrets: 0.9.x
-  longhorn: 1.8.x
+  argocd: <see https://github.com/argoproj/argo-cd/releases>
+  cert-manager: <see https://github.com/cert-manager/cert-manager/releases>
+  external-secrets: <see https://github.com/external-secrets/external-secrets/releases>
+  longhorn: <see https://github.com/longhorn/longhorn/releases>
 ```
 
 ## Security Configuration

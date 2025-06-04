@@ -240,7 +240,7 @@ After successful recovery:
 
 ## Additional Resources
 
-- [Longhorn Backup and Restore Documentation](https://longhorn.io/docs/1.6.0/snapshots-and-backups/backup-and-restore/volume-restore/)
+- [Longhorn Backup and Restore Documentation](https://longhorn.io/docs/snapshots-and-backups/backup-and-restore/volume-restore/)
 - [CNCF GitOps Disaster Recovery Patterns](https://github.com/cncf/tag-app-delivery/blob/main/gitops/disaster-recovery.md)
 - [Longhorn Community Automation Discussion](https://github.com/longhorn/longhorn/issues/1867)
 

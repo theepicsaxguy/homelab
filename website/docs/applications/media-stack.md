@@ -13,7 +13,6 @@ This document details our self-hosted media services stack, including configurat
 ### Jellyfin
 
 - **Purpose**: Primary media streaming server
-- **Version**: Latest stable release
 - **Features**:
   - Hardware-accelerated transcoding (Intel QuickSync)
   - Direct play optimization
@@ -24,7 +23,6 @@ This document details our self-hosted media services stack, including configurat
 
 #### Sonarr
 - **Purpose**: TV series management and automation
-- **Version**: Latest v4 release
 - **Key Features**:
   - Series monitoring
   - Release quality profiles
@@ -32,7 +30,6 @@ This document details our self-hosted media services stack, including configurat
 
 #### Radarr
 - **Purpose**: Movie collection management
-- **Version**: Latest v4 release
 - **Key Features**:
   - Movie monitoring
   - Quality profiles
@@ -40,7 +37,6 @@ This document details our self-hosted media services stack, including configurat
 
 #### Prowlarr
 - **Purpose**: Unified indexer management
-- **Version**: Latest stable release
 - **Features**:
   - Centralized indexer configuration
   - Integration with *arr applications
