@@ -23,7 +23,7 @@ fi
 
 INDEX="$1"
 INFO=$(tofu -chdir="$(dirname "$0")/.." output -json upgrade_info)
-NODE=$(echo "$INFO" | jq -r ".state.sequence[$INDEX]")
+NODE=$(echo "$INFO" | jq -r ".value.state.sequence[$INDEX]")
 
 if [[ -z "$NODE" || "$NODE" == "null" ]]; then
   echo "Invalid upgrade index: $INDEX" >&2
@@ -37,7 +37,7 @@ kubectl cordon "$NODE"
 kubectl drain "$NODE" --ignore-daemonsets --delete-emptydir-data
 
 SNAPSHOT="etcd-snapshot-$NODE-$(date +%Y%m%d%H%M%S).db"
-CONTROL=$(echo "$INFO" | jq -r '.sequence[0]')
+CONTROL=$(echo "$INFO" | jq -r '.value.state.sequence[0]')
 
 echo "Taking etcd snapshot on $CONTROL -> $SNAPSHOT"
 talosctl etcd snapshot --nodes "$CONTROL" --output "$SNAPSHOT"

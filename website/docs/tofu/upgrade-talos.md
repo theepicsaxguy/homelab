@@ -4,17 +4,18 @@ title: Talos Upgrade Process
 
 ## Overview
 
-This upgrade process uses a controlled index-based approach to upgrade Talos nodes sequentially. The upgrade system ensures only one node is upgraded at a time, maintaining cluster stability.
+This upgrade process uses a controlled index-based approach to upgrade Talos nodes sequentially. The upgrade system
+ensures only one node is upgraded at a time, maintaining cluster stability.
 
-Before starting, copy `tofu/talos_image.auto.tfvars.example` to
-`tofu/talos_image.auto.tfvars` and set your desired Talos versions. The helper
-scripts check for this file and abort if it is missing.
+Before starting, copy `tofu/talos_image.auto.tfvars.example` to `tofu/talos_image.auto.tfvars` and set your desired
+Talos versions. The helper scripts check for this file and abort if it is missing.
 
 ## Upgrade Sequence
 
 The upgrade sequence is automatically derived from your node configuration:
 
 1. **Control Plane Nodes** (upgraded first for quorum safety)
+
    - `ctrl-00` (index 0)
    - `ctrl-01` (index 1)
    - `ctrl-02` (index 2)
@@ -37,17 +38,20 @@ Before upgrading the first node **and before moving on to each subsequent node**
 2. **Longhorn volumes are healthy** and fully replicated:
 
    ```bash
-  kubectl -n longhorn-system get volumes.longhorn.io
-  ```
+   kubectl -n longhorn-system get volumes.longhorn.io
+   ```
+
+````
 
 3. **Cluster is healthy**:
 
-  ```bash
-  talosctl health --wait
-  kubectl get nodes
-  ```
+```bash
+talosctl health --wait
+kubectl get nodes
+````
 
-The `scripts/upgrade_talos.sh` helper runs these checks automatically and aborts if any volumes are degraded or the cluster is unhealthy.
+The `scripts/upgrade-talos.sh` helper runs these checks automatically and aborts if any volumes are degraded or the
+cluster is unhealthy.
 
 ## Simple Upgrade Process
 
@@ -63,14 +67,15 @@ image = {
 }
 ```
 
-> **Note:** You may commit and push this change if you're using GitOps automation, or run it locally via CLI if applying manually.
+> **Note:** You may commit and push this change if you're using GitOps automation, or run it locally via CLI if applying
+> manually.
 
 ### Start Upgrade
 
 Run the helper script to automatically drain the node, snapshot etcd, verify Longhorn volume health, and apply OpenTofu:
 
 ```bash
-scripts/upgrade_talos.sh 0
+scripts/upgrade-talos.sh 0
 ```
 
 ### Check Progress
@@ -79,14 +84,15 @@ scripts/upgrade_talos.sh 0
 tofu output upgrade_info
 ```
 
-Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node. Start over at step 1 for each node so numbering stays consistent.
+Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node. Start over at step 1 for each
+node so numbering stays consistent.
 
 ### Continue to Next Node
 
 Use the exact command shown in the output above, or:
 
 ```bash
-scripts/upgrade_talos.sh 1
+scripts/upgrade-talos.sh 1
 ```
 
 ### Finish Upgrade
