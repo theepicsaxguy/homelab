@@ -3,7 +3,18 @@ locals {
   needs_nvidia_extensions = anytrue([
     for name, config in var.nodes : lookup(config, "igpu", false)
   ])
+  download_keys = distinct([
+    for n in var.nodes : "${n.host_node}|${try(n.update, false) ? local.update_version : local.version}|${tostring(try(n.update, false))}"
+  ])
 
+  downloads_map = {
+    for key in local.download_keys :
+    key => {
+      host_node = split("|", key)[0]
+      version   = split("|", key)[1]
+      update    = split("|", key)[2]
+    }
+  }
   version      = var.talos_image.version
   schematic    = templatefile("${path.root}/${var.talos_image.schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
@@ -49,27 +60,32 @@ resource "talos_image_factory_schematic" "updated" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  # Create one download per unique combination of host node and image
-  for_each = {
-    for item in distinct([
-      for k, v in var.nodes : {
-        key       = "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"
-        host_node = v.host_node
-        version   = v.update == true ? local.update_version : local.version
-        schematic = v.update == true ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
-      }
-    ]) : item.key => item
-  }
+  for_each = local.downloads_map
 
   node_name    = each.value.host_node
   content_type = "iso"
   datastore_id = var.talos_image.proxmox_datastore
 
-  file_name               = "talos-${each.value.schematic}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
-  url                     = "${var.talos_image.factory_url}/image/${each.value.schematic}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
+  file_name    = "talos-${each.value.host_node}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
+  url = (
+    each.value.update == "true"
+    ? format("%s/image/%s/%s/%s-%s.raw.gz",
+        var.talos_image.factory_url,
+        talos_image_factory_schematic.updated.id,
+        local.update_version,
+        var.talos_image.platform,
+        var.talos_image.arch
+      )
+    : format("%s/image/%s/%s/%s-%s.raw.gz",
+        var.talos_image.factory_url,
+        talos_image_factory_schematic.this.id,
+        local.version,
+        var.talos_image.platform,
+        var.talos_image.arch
+      )
+  )
   decompression_algorithm = "gz"
   overwrite               = false
-
 }
 
 # Debug outputs to understand the current state
