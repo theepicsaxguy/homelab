@@ -84,3 +84,9 @@ entries:
       group: !Find [authentik_core.group, [name, "ArgoCD Admins"]]
     attrs:
       order: 1
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf argocd_application
+      group: !Find [authentik_core.group, [name, "ArgoCD Viewers"]]
+    attrs:
+      order: 2
