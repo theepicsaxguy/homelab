@@ -50,7 +50,7 @@ spec:
 ### 2. DNS (CoreDNS)
 
 - Internal domain: kube.pc-tips.se
-- External forwarding to 1.1.1.1, 8.8.8.8
+- External forwarding to 10.25.150.1, 1.1.1.1, 8.8.8.8
 - Caching enabled
 
 ### 3. Gateway API
@@ -64,6 +64,7 @@ Three gateway types:
 ### 4. Security
 
 - **Cert-Manager:**
+
   - Cloudflare DNS validation
   - Internal CA for cluster services
   - Automatic certificate renewal
