@@ -60,4 +60,5 @@ output "upgrade_info" {
     health = data.talos_cluster_health.upgrade
   }
   description = "Structured upgrade state information for external automation and monitoring"
+  sensitive   = true
 }
