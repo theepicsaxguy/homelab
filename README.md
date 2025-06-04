@@ -12,7 +12,7 @@ family.
 
 **Key Features:**
 
-- **Three-Stage Environment Progression:** Development → Staging → Production
+- **Namespace-Based Isolation:** All workloads run in a single cluster but are kept separate via dedicated namespaces
 - **Pure GitOps Workflow:** All changes go through Git for full traceability and easy rollback.
 - **Self-Healing Infrastructure:** Leveraging ArgoCD to automatically reconcile your state.
 - **Zero Trust Security:** Enforced at every layer so you never worry about unauthorized changes.
@@ -75,13 +75,11 @@ _\*\*For more details, check out our [Architecture Deep Dive](/docs/architecture
 
 ### Environment Strategy
 
-We run one Kubernetes cluster and use robust namespace isolation to separate:
-
-- **Development:** Fast, minimal resources for rapid iteration.
-- **Staging:** A production-like environment for realistic testing.
-- **Production:** Fully high-availability with strict security controls.
-
-This approach optimizes resource use without sacrificing isolation or reliability.
+All services run in a single Kubernetes cluster.  Infrastructure components and
+applications are organized into dedicated namespaces (such as
+`infrastructure-system` and `applications-system`) and synchronized via ArgoCD
+sync waves.  Configuration overlays allow resources to progress through
+different stages when needed without maintaining separate clusters.
 
 ### Technology Stack
 
