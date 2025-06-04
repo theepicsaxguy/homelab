@@ -222,7 +222,7 @@ Ready to join the revolution? Here’s your starter pack:
 
 - **Follow GitOps:** All changes must be tracked in Git.
 - **Keep It Lean:** Help us keep the main docs uncluttered—details go in the dedicated docs.
-- **Be Respectful:** Follow our [Code of Conduct](CONTRIBUTING.md).
+- **Be Respectful:** Follow our [Code of Conduct](.github/CODE_OF_CONDUCT.md).
 
 ---
 
