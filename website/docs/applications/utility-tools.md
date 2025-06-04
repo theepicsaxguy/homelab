@@ -57,19 +57,28 @@ Gateway Configuration:
       host: it-tools.pc-tips.se
       service: it-tools
       port: 80
-      auth: true  # Authentik SSO required
+      backendRefs:
+        - name: authentik-proxy
+          namespace: auth
+          port: 9000  # Authentik SSO
   
   - Whoami:
       host: whoami.pc-tips.se
       service: whoami
       port: 80
-      auth: true
+      backendRefs:
+        - name: authentik-proxy
+          namespace: auth
+          port: 9000
   
   - Unrar:
       host: internal only
       service: unrar
       port: 80
-      auth: false  # Internal service only
+      backendRefs:
+        - name: unrar
+          port: 80
+          # Internal service only
 ```
 
 ## Security Configuration

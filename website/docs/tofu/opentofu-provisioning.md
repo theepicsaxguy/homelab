@@ -164,12 +164,12 @@ We embed essential services in the Talos config:
    module "talos" {
      # ...
      image = {
-       version = "v1.9.5" # Target Talos version for OS images
+       version = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for OS images
        # ...
      }
      cluster = {
-       talos_version      = "v1.9.5" # Target Talos version for machine configs
-       kubernetes_version = "v1.29.3"  # Target Kubernetes version
+       talos_version      = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for machine configs
+       kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target Kubernetes version
        # ...
      }
      # ...
@@ -224,8 +224,8 @@ proxmox = {
 cluster = {
   name               = "talos"        # Cluster name
   endpoint           = "api.kube.pc-tips.se"  # API endpoint
-  kubernetes_version = "1.33.0"       # Kubernetes version
-  talos_version     = "v1.10.1"      # Talos version
+  kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"       # Kubernetes version
+  talos_version     = "<see https://github.com/siderolabs/talos/releases>"      # Talos version
   gateway           = "10.25.150.1"   # Network gateway
   vip               = "10.25.150.10"  # Control plane VIP
 }
@@ -313,8 +313,8 @@ To upgrade Kubernetes and Talos versions, update the configuration:
 
 ```hcl
 cluster = {
-  kubernetes_version = "1.33.0"  # Target K8s version
-  talos_version     = "v1.10.1" # Target Talos version
+  kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target K8s version
+  talos_version     = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version
 }
 ```
 
