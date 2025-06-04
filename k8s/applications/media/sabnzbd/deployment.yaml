@@ -14,33 +14,40 @@ spec:
         app: sabnzbd
     spec:
       containers:
-      - name: sabnzbd
-        image: ghcr.io/linuxserver/sabnzbd:4.5.1
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        env:
-        - name: PUID
-          value: "2501"
-        - name: PGID
-          value: "2501"
-        - name: TZ
-          value: "Europe/Stockholm"
-        - name: HOST_WHITELIST_ENTRIES
-          value: "sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
-        volumeMounts:
-        - name: sabnzbd-config
-          mountPath: /config
-        - name: media-share
-          mountPath: /app/data
-        - name: sabnzbd-incomplete
-          mountPath: /downloads/incomplete
+        - name: sabnzbd
+          image: ghcr.io/linuxserver/sabnzbd:4.5.1
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PUID
+              value: '2501'
+            - name: PGID
+              value: '2501'
+            - name: TZ
+              value: 'Europe/Stockholm'
+            - name: HOST_WHITELIST_ENTRIES
+              value: 'sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se'
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: media-share
+              mountPath: /app/data
+            - name: sabnzbd-incomplete
+              mountPath: /downloads/incomplete
       volumes:
-      - name: sabnzbd-config
-        persistentVolumeClaim:
-          claimName: sabnzbd-config
-      - name: media-share
-        persistentVolumeClaim:
-          claimName: media-share
-      - name: sabnzbd-incomplete
-        emptyDir: {}
+        - name: sabnzbd-config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: media-share
+          persistentVolumeClaim:
+            claimName: media-share
+        - name: sabnzbd-incomplete
+          emptyDir: {}
