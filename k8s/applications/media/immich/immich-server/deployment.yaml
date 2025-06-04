@@ -94,11 +94,11 @@ spec:
               name: library
           resources:
             requests:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 100m
+              memory: 128Mi
             limits:
-              cpu: 2000m
-              memory: 2Gi
+              cpu: 500m
+              memory: 512Mi
       dnsPolicy: ClusterFirst
       enableServiceLinks: true
       serviceAccountName: default

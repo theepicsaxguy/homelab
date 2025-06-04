@@ -16,18 +16,18 @@ spec:
       containers:
         - name: mosquitto
           image: eclipse-mosquitto:2.0
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           volumeMounts:
             - name: config
               mountPath: /mosquitto/config
           ports:
             - containerPort: 1883
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
       volumes:
         - name: config
           projected:
