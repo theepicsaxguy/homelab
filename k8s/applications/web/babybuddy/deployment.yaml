@@ -17,21 +17,28 @@ spec:
         app: babybuddy
     spec:
       securityContext:
-        fsGroup: 1000            # ensure PVC files are owned by PUID/PGID
+        fsGroup: 1000
       containers:
         - name: babybuddy
           image: ghcr.io/linuxserver/babybuddy:2.7.1
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           ports:
             - containerPort: 8000
               name: http
           env:
             - name: PUID
-              value: "1000"
+              value: '1000'
             - name: PGID
-              value: "1000"
+              value: '1000'
             - name: TZ
-              value: "Europe/Stockholm"
+              value: 'Europe/Stockholm'
           envFrom:
             - secretRef:
                 name: es-babybuddy-secret-key

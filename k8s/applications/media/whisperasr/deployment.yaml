@@ -17,10 +17,17 @@ spec:
         - name: whisperasr
           image: onerahmet/openai-whisper-asr-webservice:v1.8.2
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           ports:
             - containerPort: 9000
           env:
             - name: ASR_MODEL
-              value: "small"
+              value: 'small'
             - name: ASR_ENGINE
-              value: "faster_whisper"
+              value: 'faster_whisper'
