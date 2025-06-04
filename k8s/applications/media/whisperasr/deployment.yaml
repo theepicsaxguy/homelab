@@ -21,6 +21,13 @@ spec:
             - containerPort: 9000
           env:
             - name: ASR_MODEL
-              value: "small"
+              value: 'small'
             - name: ASR_ENGINE
-              value: "faster_whisper"
+              value: 'faster_whisper'
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
