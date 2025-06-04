@@ -18,20 +18,6 @@ family.
 - **Zero Trust Security:** Enforced at every layer so you never worry about unauthorized changes.
 - **Rapid Recovery:** Disaster recovery in just a few commands.
 
-<div align="center" style="display: flex; justify-content: center; gap: 20px; align-items: center;">
-  <a href="https://kubernetes.io">
-    <img src="docs/assets/kubernetes-logo.svg" height="100px" alt="Kubernetes Logo">
-  </a>
-  <a href="https://talos.dev">
-    <img src="docs/assets/talos-logo.svg" height="100px" alt="Talos Linux Logo">
-  </a>
-  <a href="https://opentofu.org">
-    <img src="docs/assets/tofu-on-light.svg" height="100px" alt="OpenTofu Logo">
-  </a>
-  <a href="https://www.proxmox.com">
-    <img src="docs/assets/proxmox-logo-stacked-color.svg" height="100px" alt="Proxmox Logo">
-  </a>
-</div>
 
 <p align="center">
   <em>Built with love, caffeine, and a whole lot of "not again!" moments.</em>
@@ -105,9 +91,6 @@ This approach optimizes resource use without sacrificing isolation or reliabilit
 - **Kustomize**
 - **Bitwarden** (Secrets Management)
 
-<div align="center">
-  <em>Because modern tech should work as hard as you do.</em>
-</div>
 
 ---
 

@@ -259,7 +259,7 @@ spec:
     spec:
       containers:
         - name: app-container
-          image: 'nginx:latest'
+          image: 'your-app-image:{{ .Values.appVersion }}'
           ports:
             - containerPort: 80
 ```

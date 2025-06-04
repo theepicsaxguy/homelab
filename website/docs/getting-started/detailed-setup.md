@@ -29,8 +29,8 @@ proxmox = {
 }
 
 image = {
-  version           = "v1.9.5"           # Current Talos version
-  update_version    = "v1.10.1"          # Target Talos version for updates
+  version           = "<see https://github.com/siderolabs/talos/releases>"           # Current Talos version
+  update_version    = "<see https://github.com/siderolabs/talos/releases>"          # Target Talos version for updates
   schematic         = "standard"
   platform          = "proxmox"
   arch              = "amd64"
@@ -60,9 +60,9 @@ proxmox = {
 }
 
 image = {
-  version           = "v1.9.4"
+  version           = "<see https://github.com/siderolabs/talos/releases>"
   schematic         = "standard"
-  update_version    = "v1.9.4"
+  update_version    = "<see https://github.com/siderolabs/talos/releases>"
   update_schematic  = "standard"
   platform          = "proxmox"
   arch              = "amd64"
