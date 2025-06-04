@@ -8,6 +8,18 @@ version: 1
 metadata:
   name: Apps - ArgoCD
 entries:
+  - id: argocd-admin-group
+    model: authentik_core.group
+    identifiers:
+      name: ArgoCD Admins
+    attrs:
+      name: ArgoCD Admins
+  - id: argocd-viewer-group
+    model: authentik_core.group
+    identifiers:
+      name: ArgoCD Viewers
+    attrs:
+      name: ArgoCD Viewers
   - id: argocd_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -69,6 +81,12 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf argocd_application
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "ArgoCD Admins"]]
     attrs:
       order: 1
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf argocd_application
+      group: !Find [authentik_core.group, [name, "ArgoCD Viewers"]]
+    attrs:
+      order: 2
