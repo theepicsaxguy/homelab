@@ -8,6 +8,14 @@ for cmd in tofu jq kubectl talosctl; do
   fi
 done
 
+# Ensure talos image variables are present
+TFVARS_DIR="$(dirname "$0")/../tofu"
+if [[ ! -f "$TFVARS_DIR/talos_image.auto.tfvars" ]]; then
+  echo "Missing $TFVARS_DIR/talos_image.auto.tfvars" >&2
+  echo "Copy talos_image.auto.tfvars.example and adjust versions" >&2
+  exit 1
+fi
+
 if [[ $# -ne 1 ]]; then
   echo "Usage: $0 <upgrade-index>" >&2
   exit 1

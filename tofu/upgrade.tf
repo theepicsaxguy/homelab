@@ -21,12 +21,6 @@ locals {
     var.upgrade_control.index < length(local.upgrade_sequence)
   ) ? local.upgrade_sequence[var.upgrade_control.index] : ""
 
-  # Prepare nodes configuration with upgrade flags
-  nodes_with_upgrade = {
-    for name, config in local.nodes_config : name => merge(config, {
-      update = var.upgrade_control.enabled && name == local.current_upgrade_node
-    })
-  }
 }
 
 # Health verification after apply

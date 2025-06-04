@@ -82,6 +82,15 @@ locals {
     )
   }
 
+  # Mark a single node for upgrade when upgrade_control is enabled
+  # This merges the computed nodes_config with an update flag
+  nodes_with_upgrade = {
+    for name, config in local.nodes_config :
+    name => merge(config, {
+      update = var.upgrade_control.enabled && name == local.current_upgrade_node
+    })
+  }
+
 }
 
 module "talos" {

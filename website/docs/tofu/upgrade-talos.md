@@ -6,6 +6,10 @@ title: Talos Upgrade Process
 
 This upgrade process uses a controlled index-based approach to upgrade Talos nodes sequentially. The upgrade system ensures only one node is upgraded at a time, maintaining cluster stability.
 
+Before starting, copy `tofu/talos_image.auto.tfvars.example` to
+`tofu/talos_image.auto.tfvars` and set your desired Talos versions. The helper
+scripts check for this file and abort if it is missing.
+
 ## Upgrade Sequence
 
 The upgrade sequence is automatically derived from your node configuration:

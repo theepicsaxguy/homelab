@@ -210,7 +210,10 @@ We embed essential services in the Talos config:
 
 ### Configuration
 
-Create `terraform.tfvars` with your environment settings:
+Create `terraform.tfvars` with your environment settings. Then copy
+`tofu/talos_image.auto.tfvars.example` to `tofu/talos_image.auto.tfvars` and
+adjust the Talos version details. This file is required so OpenTofu can load the
+image configuration automatically:
 
 ```hcl
 proxmox = {
