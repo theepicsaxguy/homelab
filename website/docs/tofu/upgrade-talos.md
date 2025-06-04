@@ -61,8 +61,7 @@ image = {
 
 ### Start Upgrade
 
-Run the helper script to automatically drain the node, snapshot etcd, and apply
-OpenTofu:
+Run the helper script to automatically drain the node, snapshot etcd, and apply the upgrade:
 
 ```bash
 scripts/upgrade_talos.sh 0
