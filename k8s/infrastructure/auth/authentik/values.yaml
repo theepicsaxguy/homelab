@@ -37,9 +37,9 @@ global:
   # @default -- `[]` (See [values.yaml])
   envFrom:
     - secretRef:
-        name: authentik-core-secrets # This will load secret-key as AUTHENTIK_SECRET_KEY if you update the secret
+        name: authentik-core-secrets
     - secretRef:
-        name: authentik-blueprint-secrets # For !Env in blueprints
+        name: authentik-blueprint-secrets
     #- secretRef:
      #   name: authentik-smtp-credentials
 
