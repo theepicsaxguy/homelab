@@ -29,7 +29,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: bazarr
+      client_id: !Env BAZARR_CLIENT_ID
+      client_secret: !Env BAZARR_CLIENT_SECRET
       redirect_uris:
         - url: https://bazarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -88,7 +89,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: lidarr
+      client_id: !Env LIDARR_CLIENT_ID
+      client_secret: !Env LIDARR_CLIENT_SECRET
       redirect_uris:
         - url: https://lidarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -147,7 +149,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: prowlarr
+      client_id: !Env PROWLARR_CLIENT_ID
+      client_secret: !Env PROWLARR_CLIENT_SECRET
       redirect_uris:
         - url: https://prowlarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -206,7 +209,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: radarr
+      client_id: !Env RADARR_CLIENT_ID
+      client_secret: !Env RADARR_CLIENT_SECRET
       redirect_uris:
         - url: https://radarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -265,7 +269,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: readarr
+      client_id: !Env READARR_CLIENT_ID
+      client_secret: !Env READARR_CLIENT_SECRET
       redirect_uris:
         - url: https://readarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -324,7 +329,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: sonarr
+      client_id: !Env SONARR_CLIENT_ID
+      client_secret: !Env SONARR_CLIENT_SECRET
       redirect_uris:
         - url: https://sonarr.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -383,7 +389,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: qbittorrent
+      client_id: !Env QBITTORRENT_CLIENT_ID
+      client_secret: !Env QBITTORRENT_CLIENT_SECRET
       redirect_uris:
         - url: https://qbittorrent.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -442,7 +449,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: sabnzbd
+      client_id: !Env SABNZBD_CLIENT_ID
+      client_secret: !Env SABNZBD_CLIENT_SECRET
       redirect_uris:
         - url: https://sabnzbd.pc-tips.se/oauth2/callback
           matching_mode: strict
@@ -505,6 +513,8 @@ entries:
       redirect_uris:
         - url: https://jellyseerr.pc-tips.se/login/oidc/callback
           matching_mode: strict
+      client_id: !Env JELLYSEERR_CLIENT_ID
+      client_secret: !Env JELLYSEERR_CLIENT_SECRET
 
       access_code_validity: minutes=1
       access_token_validity: hours=1

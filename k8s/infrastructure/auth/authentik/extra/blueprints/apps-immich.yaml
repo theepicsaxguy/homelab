@@ -29,6 +29,8 @@ entries:
         ]
 
       client_type: confidential
+      client_id: !Env IMMICH_CLIENT_ID
+      client_secret: !Env IMMICH_CLIENT_SECRET
       redirect_uris:
         - url: https://photo.pc-tips.se/auth/login
           matching_mode: strict
