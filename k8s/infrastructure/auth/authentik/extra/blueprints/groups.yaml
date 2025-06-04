@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Groups - Applications
+entries:
+  - id: argocd-admins
+    model: authentik_core.group
+    identifiers:
+      name: ArgoCD Admins
+    attrs:
+      name: ArgoCD Admins
+  - id: argocd-viewers
+    model: authentik_core.group
+    identifiers:
+      name: ArgoCD Viewers
+    attrs:
+      name: ArgoCD Viewers
+  - id: grafana-admins
+    model: authentik_core.group
+    identifiers:
+      name: Grafana Admins
+    attrs:
+      name: Grafana Admins
+  - id: grafana-users
+    model: authentik_core.group
+    identifiers:
+      name: Grafana Users
+    attrs:
+      name: Grafana Users
+  - id: frigate-users
+    model: authentik_core.group
+    identifiers:
+      name: Frigate Users
+    attrs:
+      name: Frigate Users
+  - id: home-assistant-users
+    model: authentik_core.group
+    identifiers:
+      name: Home Assistant Users
+    attrs:
+      name: Home Assistant Users
+  - id: immich-users
+    model: authentik_core.group
+    identifiers:
+      name: Immich Users
+    attrs:
+      name: Immich Users
+  - id: jellyfin-users
+    model: authentik_core.group
+    identifiers:
+      name: Jellyfin Users
+    attrs:
+      name: Jellyfin Users
+  - id: media-users
+    model: authentik_core.group
+    identifiers:
+      name: Media Users
+    attrs:
+      name: Media Users
+  - id: openwebui-users
+    model: authentik_core.group
+    identifiers:
+      name: Open WebUI Users
+    attrs:
+      name: Open WebUI Users

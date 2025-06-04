@@ -7,6 +7,18 @@ version: 1
 metadata:
   name: Apps - Grafana
 entries:
+  - id: grafana-admin-group
+    model: authentik_core.group
+    identifiers:
+      name: Grafana Admins
+    attrs:
+      name: Grafana Admins
+  - id: grafana-user-group
+    model: authentik_core.group
+    identifiers:
+      name: Grafana Users
+    attrs:
+      name: Grafana Users
   - id: grafana_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -69,12 +81,12 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf grafana_application
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Grafana Users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf grafana_application
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Grafana Admins"]]
     attrs:
       order: 2

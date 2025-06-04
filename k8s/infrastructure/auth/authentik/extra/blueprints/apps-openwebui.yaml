@@ -8,6 +8,12 @@ version: 1
 metadata:
   name: Apps - Open WebUI
 entries:
+  - id: openwebui-user-group
+    model: authentik_core.group
+    identifiers:
+      name: Open WebUI Users
+    attrs:
+      name: Open WebUI Users
   - id: openwebui_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -70,7 +76,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf openwebui_application
-      group: !Find [authentik_core.group, [name, "users"]] # Or your desired user group
+      group: !Find [authentik_core.group, [name, "Open WebUI Users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
