@@ -20,6 +20,29 @@ The upgrade sequence is automatically derived from your node configuration:
    - `work-01` (index 4)
    - `work-02` (index 5)
 
+## Pre-Upgrade Checklist
+
+Before upgrading any node ensure:
+
+1. **Recent etcd snapshot** exists. You can create one with:
+
+   ```bash
+   talosctl etcd snapshot -n ctrl-00 -o etcd-backup-$(date +%Y%m%d).db
+   ```
+
+2. **Longhorn volumes are healthy** and fully replicated:
+
+   ```bash
+   kubectl -n longhorn-system get volumes.longhorn.io
+   ```
+
+3. **Cluster is healthy**:
+
+   ```bash
+   talosctl health --wait
+   kubectl get nodes
+   ```
+
 ## Simple Upgrade Process
 
 ### Configure Version
@@ -38,8 +61,11 @@ image = {
 
 ### Start Upgrade
 
-```hcl
-tofu apply -var 'upgrade_control={enabled=true,index=0}'
+Run the helper script to automatically drain the node, snapshot etcd, and apply
+OpenTofu:
+
+```bash
+scripts/upgrade_talos.sh 0
 ```
 
 ### Check Progress
@@ -48,12 +74,33 @@ tofu apply -var 'upgrade_control={enabled=true,index=0}'
 tofu output upgrade_info
 ```
 
+### Safety Checks Before Continuing
+
+1. **Create an etcd snapshot** on a control-plane node:
+
+   ```bash
+   talosctl etcd snapshot -n ctrl-00 -o etcd-backup-$(date +%Y%m%d).db
+   ```
+
+2. **Verify Longhorn volume health**:
+
+   ```bash
+   kubectl -n longhorn-system get volumes.longhorn.io -o json | jq '.items[].status.robustness'
+   ```
+
+3. **Ensure cluster health**:
+
+   ```bash
+   talosctl health --wait
+   kubectl get nodes
+   ```
+
 ### Continue to Next Node
 
 Use the exact command shown in the output above, or:
 
 ```bash
-tofu apply -var 'upgrade_control={enabled=true,index=1}'
+scripts/upgrade_talos.sh 1
 ```
 
 ### Finish Upgrade
