@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Users
+entries:
+  - id: user-argocd-admin
+    model: authentik_core.user
+    identifiers:
+      username: argocd-admin
+    attrs:
+      username: argocd-admin
+      name: ArgoCD Admin
+      email: !Env ARGOCD_ADMIN_EMAIL
+      password: !Env ARGOCD_ADMIN_PASSWORD
+      groups:
+        - !Find [authentik_core.group, [name, "ArgoCD Admins"]]
+  - id: user-grafana-viewer
+    model: authentik_core.user
+    identifiers:
+      username: grafana-viewer
+    attrs:
+      username: grafana-viewer
+      name: Grafana Viewer
+      email: !Env GRAFANA_VIEWER_EMAIL
+      password: !Env GRAFANA_VIEWER_PASSWORD
+      groups:
+        - !Find [authentik_core.group, [name, "Grafana Users"]]

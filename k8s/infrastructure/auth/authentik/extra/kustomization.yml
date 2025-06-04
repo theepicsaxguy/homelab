@@ -18,6 +18,8 @@ configMapGenerator:
       - ./blueprints/apps-jellyfin.yaml
       - ./blueprints/apps-media.yaml
       - ./blueprints/apps-openwebui.yaml
+      - ./blueprints/groups.yaml
+      - ./blueprints/users.yaml
       - ./blueprints/brands.yaml
       - ./blueprints/flows-default-provider-authorization-one-time-consent.yaml
       - ./blueprints/notifications.yaml
