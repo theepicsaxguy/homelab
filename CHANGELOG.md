@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.7.0 (2025-06-04)
+
+## What's Changed
+* chore(deps): update all dependencies to v72.9.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/786
+* Refactor(tofu)  update talos image configuration and http data sources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/788
+* refactor(storage): update backup job to run every 4 hours by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/789
+* Refactor(auth)  update yaml schemas and linting configurations for authentik blueprints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/790
+* feat(auth): add OAuth2 SSO integration for Open WebUI and update blueprints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/791
+* chore(deps): update all dependencies to v72.9.1 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/792
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/793
+* Update zone.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/796
+* chore(deps): update terraform proxmox to v0.78.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/795
+* Update webui-deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/797
+* chore: disable default login by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/798
+* chore(deps): update all dependencies to v73 (major) by @renovate in https://github.com/theepicsaxguy/homelab/pull/799
+* Fix documentation sidebar spelling by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/800
+* Remove hardcoded versions from docs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/804
+* Fix README environment description by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/803
+* Update authentik blueprints for env-based OAuth credentials by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/801
+* chore(deps): update all dependencies to v73.1.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/805
+* Fix workspace schema paths by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/808
+* Add Codex agent guide by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/807
+* chore(deps): update helm release authentik to v2025.6.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/809
+* fix(ci): monitor Dockerfile updates by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/811
+* feat(auth): add groups and users blueprints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/812
+* fix(network): align coredns forwarders by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/813
+* k8s(apps): verify resource constraints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/817
+* docs(website): fix template links by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/816
+* docs(tofu): fix heading spacing by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/815
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.6.3...v2.7.0
+
 ## 2.6.3 (2025-05-31)
 
 ## What's Changed
