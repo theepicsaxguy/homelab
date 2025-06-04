@@ -4,11 +4,14 @@ title: Provision Kubernetes with OpenTofu and Talos
 
 # Kubernetes Provisioning with OpenTofu
 
-This guide explains our infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster running Talos OS on Proxmox## Deployment Process
+This guide explains our infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster
+running Talos OS on Proxmox
+
+## Deployment Process
 
 Before you begin deployment, ensure your SSH key is loaded:
 
-```bash
+````bash
 eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 ## Infrastructure Overview
 
@@ -32,15 +35,15 @@ Worker Nodes:
     - cilium networking
     - CSI support
     - GPU support (optional)
-```
+````
 
 ### Network Architecture
 
-| Network     | CIDR           | Purpose                    |
-|-------------|---------------|----------------------------|
-| Node        | 10.25.150.0/24| Kubernetes node networking |
-| Pod         | 10.25.0.0/16  | Container networking       |
-| Service     | 10.26.0.0/16  | Kubernetes services        |
+| Network | CIDR           | Purpose                    |
+| ------- | -------------- | -------------------------- |
+| Node    | 10.25.150.0/24 | Kubernetes node networking |
+| Pod     | 10.25.0.0/16   | Container networking       |
+| Service | 10.26.0.0/16   | Kubernetes services        |
 
 ## Project Structure
 
@@ -153,9 +156,12 @@ We embed essential services in the Talos config:
 
 ## Version Upgrades
 
-1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions might be specified in multiple places:
+1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions might be specified in multiple
+   places:
+
    - For the Talos image factory (e.g., `module "talos" { image = { version = "vX.Y.Z" } }`)
-   - For the machine configurations and cluster secrets (e.g., `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
+   - For the machine configurations and cluster secrets (e.g.,
+     `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
    - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
 
    Example snippet from `main.tf` (actual structure may vary based on module inputs):
@@ -176,7 +182,8 @@ We embed essential services in the Talos config:
    }
    ```
 
-2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise, `tofu apply` will handle changes to version properties.
+2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise,
+   `tofu apply` will handle changes to version properties.
 
 3. Run:
 
@@ -388,8 +395,8 @@ The deployment generates several sensitive files that must be secured:
 
 ```yaml
 output/:
-  - kube-config.yaml           # Cluster access configuration
-  - talos-config.yaml         # Talos management configuration
+  - kube-config.yaml # Cluster access configuration
+  - talos-config.yaml # Talos management configuration
   - talos-machine-config-*.yaml # Node configurations
 ```
 
