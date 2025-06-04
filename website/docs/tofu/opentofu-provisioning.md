@@ -50,7 +50,8 @@ Worker Nodes:
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
-├── upgrade-k8s.sh    # Kubernetes upgrade helper
+├── scripts/upgrade-k8s.sh    # Kubernetes upgrade helper
+├── scripts/upgrade_talos.sh  # Talos OS upgrade helper (drains, snapshots etcd and checks Longhorn)
 ├── terraform.tfvars  # Variable definitions
 └── talos/            # Talos cluster module
     ├── config.tf     # Machine configs and bootstrap
@@ -209,7 +210,10 @@ We embed essential services in the Talos config:
 
 ### Configuration
 
-Create `terraform.tfvars` with your environment settings:
+Create `terraform.tfvars` with your environment settings. Then copy
+`tofu/talos_image.auto.tfvars.example` to `tofu/talos_image.auto.tfvars` and
+adjust the Talos version details. This file is required so OpenTofu can load the
+image configuration automatically:
 
 ```hcl
 proxmox = {
