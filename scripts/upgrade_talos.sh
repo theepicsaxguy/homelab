@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+for cmd in tofu jq kubectl talosctl; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Required tool '$cmd' is not installed" >&2
+    exit 1
+  fi
+done
+
 if [[ $# -ne 1 ]]; then
   echo "Usage: $0 <upgrade-index>" >&2
   exit 1

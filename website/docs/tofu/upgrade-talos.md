@@ -61,7 +61,7 @@ image = {
 
 ### Start Upgrade
 
-Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node.
+Repeat the [Upgrade Checklist](#upgrade-checklist) before continuing to the next node. Start over at step 1 for each node so numbering stays consistent.
 2. **Verify Longhorn volume health**:
 
    ```bash

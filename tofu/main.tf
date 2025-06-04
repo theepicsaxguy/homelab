@@ -71,6 +71,7 @@ locals {
   }
 
   # Add default worker disks and merge with any overrides
+  # Values defined under nodes_config_raw.disks take precedence
   nodes_config = {
     for name, cfg in local.nodes_config_raw :
     name => merge(
