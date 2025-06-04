@@ -22,7 +22,7 @@ kubectl cordon "$NODE"
 kubectl drain "$NODE" --ignore-daemonsets --delete-emptydir-data
 
 SNAPSHOT="etcd-snapshot-$NODE-$(date +%Y%m%d%H%M%S).db"
-CONTROL=$(echo "$INFO" | jq -r '.sequence[0]')
+CONTROL=$(echo "$INFO" | jq -r '.state.sequence[0]')
 
 echo "Taking etcd snapshot on $CONTROL -> $SNAPSHOT"
 talosctl etcd snapshot --nodes "$CONTROL" --output "$SNAPSHOT"
