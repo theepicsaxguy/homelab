@@ -23,93 +23,100 @@ spec:
     spec:
       automountServiceAccountToken: true
       containers:
-      - env:
-        - name: DB_DATABASE_NAME
-          value: immich
-        - name: DB_HOSTNAME
-          value: immich-postgresql
-        - name: DB_PASSWORD
-          value: immich
-        - name: DB_SSL
-          value: "true"
-        - name: DB_URL
-          valueFrom:
-            secretKeyRef:
-              key: DB_URL
-              name: immich-db-url
-        - name: DB_USERNAME
-          value: immich
-        - name: IMMICH_CONFIG_FILE
-          value: /config/immich-config.yaml
-        - name: IMMICH_MACHINE_LEARNING_URL
-          value: http://immich-machine-learning:3003
-        - name: IMMICH_TELEMETRY_INCLUDE
-          value: all
-        - name: REDIS_HOSTNAME
-          value: immich-redis-master
-        - name: TZ
-          value: Europe/Stockholm
-        image: ghcr.io/immich-app/immich-server:v1.134.0
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /api/server/ping
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-        name: immich-server
-        ports:
-        - containerPort: 2283
-          name: http
-          protocol: TCP
-        - containerPort: 8081
-          name: metrics-api
-          protocol: TCP
-        - containerPort: 8082
-          name: metrics-ms
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /api/server/ping
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-        startupProbe:
-          failureThreshold: 30
-          httpGet:
-            path: /api/server/ping
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          timeoutSeconds: 1
-        volumeMounts:
-        - mountPath: /config
-          name: config
-          readOnly: true
-        - mountPath: /usr/src/app/upload
-          name: library
+        - env:
+            - name: DB_DATABASE_NAME
+              value: immich
+            - name: DB_HOSTNAME
+              value: immich-postgresql
+            - name: DB_PASSWORD
+              value: immich
+            - name: DB_SSL
+              value: 'true'
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  key: DB_URL
+                  name: immich-db-url
+            - name: DB_USERNAME
+              value: immich
+            - name: IMMICH_CONFIG_FILE
+              value: /config/immich-config.yaml
+            - name: IMMICH_MACHINE_LEARNING_URL
+              value: http://immich-machine-learning:3003
+            - name: IMMICH_TELEMETRY_INCLUDE
+              value: all
+            - name: REDIS_HOSTNAME
+              value: immich-redis-master
+            - name: TZ
+              value: Europe/Stockholm
+          image: ghcr.io/immich-app/immich-server:v1.134.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/server/ping
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+          name: immich-server
+          ports:
+            - containerPort: 2283
+              name: http
+              protocol: TCP
+            - containerPort: 8081
+              name: metrics-api
+              protocol: TCP
+            - containerPort: 8082
+              name: metrics-ms
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/server/ping
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /api/server/ping
+              port: http
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /config
+              name: config
+              readOnly: true
+            - mountPath: /usr/src/app/upload
+              name: library
       dnsPolicy: ClusterFirst
       enableServiceLinks: true
       serviceAccountName: default
       volumes:
-      - name: config
-        projected:
-          defaultMode: 0440
-          sources:
-            - configMap:
-                name: immich-immich-config
-                items:
-                  - key: immich-config.yaml
-                    path: immich-config.yaml
-            - secret:
-                name: immich-config
-                items:
-                  - key: immich.json
-                    path: immich.json
-      - name: library
-        persistentVolumeClaim:
-          claimName: immich-library
+        - name: config
+          projected:
+            defaultMode: 0440
+            sources:
+              - configMap:
+                  name: immich-immich-config
+                  items:
+                    - key: immich-config.yaml
+                      path: immich-config.yaml
+              - secret:
+                  name: immich-config
+                  items:
+                    - key: immich.json
+                      path: immich.json
+        - name: library
+          persistentVolumeClaim:
+            claimName: immich-library
