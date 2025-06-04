@@ -48,7 +48,8 @@ entries:
         ]
 
       client_type: confidential
-      client_id: zigbee2mqtt
+      client_id: !Env ZIGBEE2MQTT_CLIENT_ID
+      client_secret: !Env ZIGBEE2MQTT_CLIENT_SECRET
       redirect_uris:
         - url: https://z2m.pc-tips.se/oauth2/callback
           matching_mode: strict
