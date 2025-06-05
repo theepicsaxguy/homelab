@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: argocd-token-generator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: '1'
+spec:
+  template:
+    spec:
+      serviceAccountName: argocd-token-generator
+      restartPolicy: OnFailure
+      containers:
+        - name: token-generator
+          image: argoproj/argocd:v2.12.3
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              until argocd account list --server ${ARGOCD_SERVER} --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" >/dev/null 2>&1; do
+                sleep 10
+              done
+              TOKEN=$(argocd account generate-token --account kubechecks --server ${ARGOCD_SERVER} --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+              kubectl create secret generic argocd-kubechecks-token --from-literal=token="$TOKEN" --dry-run=client -o yaml | kubectl apply -f -
+          env:
+            - name: ARGOCD_SERVER
+              value: argocd-server.argocd.svc.cluster.local:443

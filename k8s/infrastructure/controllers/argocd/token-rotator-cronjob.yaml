@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: argocd-token-rotator
+  namespace: argocd
+spec:
+  schedule: '0 2 * * 0'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: argocd-token-generator
+          restartPolicy: OnFailure
+          containers:
+            - name: token-rotator
+              image: argoproj/argocd:v2.12.3
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -e
+                  NEW_TOKEN=$(argocd account generate-token --account kubechecks --server ${ARGOCD_SERVER} --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+                  kubectl patch secret argocd-kubechecks-token --type='json' -p="[{\"op\":\"replace\",\"path\":\"/data/token\",\"value\":\"$(echo -n ${NEW_TOKEN} | base64 -w 0)\"}]"
+              env:
+                - name: ARGOCD_SERVER
+                  value: argocd-server.argocd.svc.cluster.local:443
