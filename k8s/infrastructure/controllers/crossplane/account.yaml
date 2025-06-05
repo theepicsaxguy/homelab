@@ -4,6 +4,7 @@ metadata:
   name: cloudflare-account
 spec:
   forProvider:
+    name: pc-tips
     accountId:
       valueFrom:
         secretKeyRef:
