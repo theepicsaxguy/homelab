@@ -6,7 +6,8 @@ description: Overview and configuration of the self-hosted media services
 
 # Media Services Stack
 
-This document details our self-hosted media services stack, including configuration, resource allocation, and best practices.
+This document details our self-hosted media services stack, including configuration, resource allocation, and best
+practices.
 
 ## Core Applications
 
@@ -19,9 +20,10 @@ This document details our self-hosted media services stack, including configurat
   - Multi-user support
   - HDR tone mapping
 
-### Management Suite (*arr Stack)
+### Management Suite (\*arr Stack)
 
 #### Sonarr
+
 - **Purpose**: TV series management and automation
 - **Key Features**:
   - Series monitoring
@@ -29,6 +31,7 @@ This document details our self-hosted media services stack, including configurat
   - Automated download management
 
 #### Radarr
+
 - **Purpose**: Movie collection management
 - **Key Features**:
   - Movie monitoring
@@ -36,23 +39,30 @@ This document details our self-hosted media services stack, including configurat
   - Custom formats support
 
 #### Prowlarr
+
 - **Purpose**: Unified indexer management
 - **Features**:
   - Centralized indexer configuration
-  - Integration with *arr applications
+  - Integration with \*arr applications
   - Stats and history tracking
 
 ## Infrastructure Configuration
+
+### Deployment Configuration
+
+The \*arr applications share a common Kustomize base located in `k8s/applications/media/arr/base`. This base injects
+node selectors, security settings, environment variables, and shared volume mounts via a JSON patch. Each individual
+application kustomization references this base and only defines its unique image and resource requirements.
 
 ### Storage Layout
 
 ```yaml
 Storage Classes:
-  media-storage:        # For media files
+  media-storage: # For media files
     type: Longhorn
     replication: 1
     size: 2Ti
-  metadata-storage:     # For application data
+  metadata-storage: # For application data
     type: Longhorn
     replication: 2
     size: 100Gi
@@ -61,11 +71,11 @@ Storage Classes:
 ### Resource Allocation
 
 | Application | CPU Request | CPU Limit | Memory Request | Memory Limit | Storage     |
-|------------|-------------|-----------|----------------|--------------|-------------|
-| Jellyfin   | 2           | 4         | 2Gi           | 4Gi         | 2Ti (media) |
-| Sonarr     | 500m        | 1         | 512Mi         | 1Gi         | 10Gi        |
-| Radarr     | 500m        | 1         | 512Mi         | 1Gi         | 10Gi        |
-| Prowlarr   | 250m        | 500m      | 256Mi         | 512Mi       | 5Gi         |
+| ----------- | ----------- | --------- | -------------- | ------------ | ----------- |
+| Jellyfin    | 2           | 4         | 2Gi            | 4Gi          | 2Ti (media) |
+| Sonarr      | 500m        | 1         | 512Mi          | 1Gi          | 10Gi        |
+| Radarr      | 500m        | 1         | 512Mi          | 1Gi          | 10Gi        |
+| Prowlarr    | 250m        | 500m      | 256Mi          | 512Mi        | 5Gi         |
 
 ### Network Configuration
 
@@ -79,9 +89,10 @@ Storage Classes:
 ### Jellyfin Optimizations
 
 1. **Hardware Acceleration**
+
    ```yaml
    devices:
-     - /dev/dri/renderD128  # Intel QuickSync device
+     - /dev/dri/renderD128 # Intel QuickSync device
    ```
 
 2. **Storage Performance**
@@ -89,9 +100,10 @@ Storage Classes:
    - SSD storage class for metadata
    - Optimized read patterns
 
-### *arr Stack Optimizations
+### \*arr Stack Optimizations
 
 1. **Database Performance**
+
    - SQLite on SSD storage
    - Regular VACUUM scheduling
    - Proper journal modes
@@ -119,12 +131,13 @@ alerts:
     warning: 75%
   transcoding:
     queue_length: >10
-    duration: >30m
+    duration: >30
 ```
 
 ## Known Issues & Solutions
 
 1. **Library Scan Impact**
+
    - **Issue**: High CPU usage during scans
    - **Solution**: Implemented scheduled scans during off-peak hours
    - **Status**: Managed via CronJob
@@ -144,11 +157,13 @@ alerts:
 ## Troubleshooting Guide
 
 1. **Transcoding Issues**
+
    - Verify GPU access permissions
    - Check transcode temporary directory
    - Monitor GPU utilization
 
 2. **Download Issues**
+
    - Validate indexer connectivity
    - Check download client settings
    - Verify storage permissions
