@@ -1,3 +1,4 @@
+---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -12,7 +13,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: "*.pc-tips.se"
+      hostname: 'placeholder-wildcard'
       tls:
         certificateRefs:
           - kind: Secret
@@ -23,7 +24,7 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: pc-tips.se
+      hostname: 'placeholder-base'
       tls:
         certificateRefs:
           - kind: Secret

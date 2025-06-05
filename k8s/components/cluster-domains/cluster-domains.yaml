@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-domains
+  namespace: gateway
+data:
+  baseDomain: pc-tips.se
+  wildcardDomain: '*.pc-tips.se'
+  ssoDomain: sso.pc-tips.se
+  grafanaDomain: grafana.pc-tips.se
+  argocdDomain: argocd.pc-tips.se
+  ittoolsDomain: ittools.pc-tips.se
+  proxmoxDomain: proxmox.pc-tips.se
+  truenasDomain: truenas.pc-tips.se
+  omadaDomain: omada.pc-tips.se
+  clusterDomain: kube.pc-tips.se
