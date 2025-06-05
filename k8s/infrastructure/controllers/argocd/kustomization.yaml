@@ -2,18 +2,24 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - namespace.yaml
-  - http-route.yaml
-  - http-route-api.yaml
-  - argocd-tls.yaml
-  - rolebinding.yaml
-  - role.yaml
-  - externalsecret.yaml
+- namespace.yaml
+- http-route.yaml
+- http-route-api.yaml
+- argocd-tls.yaml
+- rolebinding.yaml
+- role.yaml
+- externalsecret.yaml
+- token-generator-job.yaml
+- token-generator-sa.yaml
+- token-generator-role.yaml
+- token-generator-rolebinding.yaml
+- token-pushsecret.yaml
+- token-rotator-cronjob.yaml
 
 helmCharts:
-  - name: argo-cd
-    repo: https://argoproj.github.io/argo-helm
-    version: 8.0.14
-    releaseName: "argocd"
-    namespace: argocd
-    valuesFile: values.yaml
+- name: argo-cd
+  namespace: argocd
+  releaseName: argocd
+  repo: https://argoproj.github.io/argo-helm
+  valuesFile: values.yaml
+  version: 8.0.14
