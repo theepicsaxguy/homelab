@@ -14,6 +14,7 @@ spec:
       helm:
         valueFiles:
           - '$values/k8s/infrastructure/monitoring/prometheus-stack/values.yaml'
+        skipCrds: true
     - repoURL: https://github.com/theepicsaxguy/homelab
       targetRevision: main
       ref: values
