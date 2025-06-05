@@ -17,8 +17,6 @@ spec:
       labels:
         app: bazarr
     spec:
-      nodeSelector:
-        topology.kubernetes.io/zone: host3
       containers:
         - name: bazarr
           image: ghcr.io/hotio/bazarr:release-1.5.1
@@ -28,22 +26,20 @@ spec:
               protocol: TCP
           env:
             - name: PUID
-              value: "2501"
+              value: '2501'
             - name: VPN_ENABLED
-              value: "false"
+              value: 'false'
             - name: PGID
-              value: "2501"
+              value: '2501'
             - name: TZ
-              value: "Etc/UTC"
+              value: 'Etc/UTC'
             - name: UMASK
-              value: "002"
+              value: '002'
             - name: WEBUI_PORTS
-              value: "6767/tcp,6767/udp"
+              value: '6767/tcp,6767/udp'
           volumeMounts:
             - name: bazarr-config
               mountPath: /config
-            - name: data
-              mountPath: /app/data
           resources:
             requests:
               cpu: 50m
@@ -55,6 +51,3 @@ spec:
         - name: bazarr-config
           persistentVolumeClaim:
             claimName: bazarr-config
-        - name: data
-          persistentVolumeClaim:
-            claimName: media-share

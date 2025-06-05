@@ -17,38 +17,15 @@ spec:
       labels:
         app: prowlarr
     spec:
-      nodeSelector:
-        topology.kubernetes.io/zone: host3
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 2501
-        runAsGroup: 2501
-        fsGroup: 2501
-        fsGroupChangePolicy: OnRootMismatch
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: prowlarr
           image: ghcr.io/onedr0p/prowlarr:1.32.2
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ "ALL" ]
           ports:
             - name: http
               containerPort: 9696
-          envFrom:
-            - configMapRef:
-                name: common-env
-                optional: true
           volumeMounts:
             - name: prowlarr-config
               mountPath: /config
-            - name: data
-              mountPath: /app/data
-            - name: tmp
-              mountPath: /tmp
           resources:
             requests:
               cpu: 50m
@@ -60,8 +37,3 @@ spec:
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
-        - name: data
-          persistentVolumeClaim:
-            claimName: media-share
-        - name: tmp
-          emptyDir: { }
