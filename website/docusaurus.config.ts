@@ -47,7 +47,7 @@ const config: Config = {
           },
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/theepicsaxguy/homelab/tree/main/website/',
+          editUrl: 'https://github.com/theepicsaxguy/homelab/edit/main/website/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
