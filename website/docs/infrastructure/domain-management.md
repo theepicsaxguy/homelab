@@ -9,8 +9,8 @@ uses a **cluster-domains** ConfigMap under `k8s/components/cluster-domains` to d
 and common FQDNs. Gateway manifests contain placeholder values (`placeholder-wildcard`, `placeholder-base`, and
 `placeholder-cluster`) for hostnames and certificate SANs. Other services like **cloudflared** and the TLS passthrough
 gateway reference additional placeholders (`$(ittoolsDomain)`, `$(proxmoxDomain)`, `$(truenasDomain)`, and
-`$(omadaDomain)`), which are substituted from the same ConfigMap. Kustomize replacements or variable substitution inject
-the final domain names during a build.
+`$(omadaDomain)`). A transformer inside the component automatically substitutes these placeholders during
+`kustomize build`.
 
 Include the component in any kustomization that needs these domains:
 

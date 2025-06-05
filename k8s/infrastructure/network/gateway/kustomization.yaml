@@ -2,110 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- namespace.yaml
-- cert-pc-tips.yaml
-- gw-external.yaml
-- gw-internal.yaml
-- gw-tls-passthrough.yaml
+  - namespace.yaml
+  - cert-pc-tips.yaml
+  - gw-external.yaml
+  - gw-internal.yaml
+  - gw-tls-passthrough.yaml
 
 components:
-- ../../../components/cluster-domains
-
-replacements:
-- source:
-    fieldPath: data.wildcardDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.listeners.[name=https-gateway].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: external
-  - fieldPaths:
-    - spec.listeners.[name=https-gateway].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-- source:
-    fieldPath: data.baseDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.listeners.[name=https-domain-gateway].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: external
-  - fieldPaths:
-    - spec.listeners.[name=https-domain-gateway].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-- source:
-    fieldPath: data.wildcardDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.dnsNames.0
-    select:
-      kind: Certificate
-      name: cert-pc-tips
-- source:
-    fieldPath: data.baseDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.dnsNames.1
-    select:
-      kind: Certificate
-      name: cert-pc-tips
-- source:
-    fieldPath: data.clusterDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.dnsNames.2
-    select:
-      kind: Certificate
-      name: cert-pc-tips
-- source:
-    fieldPath: data.proxmoxDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.listeners.[name=proxmox].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: tls-passthrough
-- source:
-    fieldPath: data.truenasDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.listeners.[name=truenas].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: tls-passthrough
-- source:
-    fieldPath: data.omadaDomain
-    kind: ConfigMap
-    name: cluster-domains
-  targets:
-  - fieldPaths:
-    - spec.listeners.[name=omada].hostname
-    select:
-      group: gateway.networking.k8s.io
-      kind: Gateway
-      name: tls-passthrough
+  - ../../../components/cluster-domains

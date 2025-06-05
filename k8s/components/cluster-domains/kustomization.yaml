@@ -3,3 +3,6 @@ kind: Component
 
 resources:
   - cluster-domains.yaml
+
+transformers:
+  - domain-transformer.yaml
