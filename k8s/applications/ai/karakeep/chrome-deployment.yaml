@@ -30,7 +30,7 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
-              drop: ["ALL"]
+              drop: ['ALL']
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -45,8 +45,8 @@ spec:
             - --hide-scrollbars
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: '100m'
+              memory: '256Mi'
             limits:
-              cpu: 300m
-              memory: 512Mi
+              cpu: '300m'
+              memory: '512Mi'

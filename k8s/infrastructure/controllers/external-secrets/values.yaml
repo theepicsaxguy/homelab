@@ -9,7 +9,7 @@ extendedMetricLabels: false
 
 # -- If set external secrets are only reconciled in the
 # provided namespace
-scopedNamespace: ""
+scopedNamespace: ''
 
 # -- Must be used with scopedNamespace. If true, create scoped RBAC roles under the scoped namespace
 # and implicitly disable cluster stores and cluster external secrets
@@ -40,11 +40,11 @@ concurrent: 1
 log:
   level: info
   timeEncoding: epoch
-service:
-  # -- Set the ip family policy to configure dual-stack see [Configure dual-stack](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services)
-  ipFamilyPolicy: ""
-  # -- Sets the families that should be supported and the order in which they should be applied to ClusterIP as well. Can be IPv4 and/or IPv6.
-  ipFamilies: []
+  service:
+    # -- Set the ip family policy to configure dual-stack
+    ipFamilyPolicy: ''
+    # -- Which address families to use for ClusterIP
+    ipFamilies: []
 
 serviceAccount:
   # -- Specifies whether a service account should be created.
@@ -57,7 +57,7 @@ serviceAccount:
   extraLabels: {}
   # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template.
-  name: ""
+  name: ''
 
 rbac:
   # -- Specifies whether role and rolebinding resources should be created.
@@ -109,21 +109,20 @@ securityContext:
   seccompProfile:
     type: RuntimeDefault
 
-
 resources:
   requests:
-    cpu: 50m
-    memory: 64Mi
+    cpu: 80m
+    memory: 100Mi
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 80m
+    memory: 100Mi
 
 serviceMonitor:
   # -- Specifies whether to create a ServiceMonitor resource for collecting Prometheus metrics
   enabled: false
 
   # -- namespace where you want to install ServiceMonitors
-  namespace: ""
+  namespace: ''
 
   # -- Additional labels
   additionalLabels: {}
@@ -137,7 +136,7 @@ serviceMonitor:
   # -- Let prometheus add an exported_ prefix to conflicting labels
   honorLabels: false
 
-  # -- Metric relabel configs to apply to samples before ingestion. [Metric Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#metric_relabel_configs)
+    # -- Metric relabel configs before ingestion
   metricRelabelings: []
   # - action: replace
   #   regex: (.*)
@@ -146,7 +145,7 @@ serviceMonitor:
   #   - exported_namespace
   #   targetLabel: namespace
 
-  # -- Relabel configs to apply to samples before ingestion. [Relabeling](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+    # -- Relabel configs before ingestion
   relabelings: []
   # - sourceLabels: [__meta_kubernetes_pod_node_name]
   #   separator: ;
@@ -156,7 +155,6 @@ serviceMonitor:
   #   action: replace
 
 metrics:
-
   listen:
     port: 8080
 
@@ -179,7 +177,7 @@ topologySpreadConstraints: []
 affinity: {}
 
 # -- Pod priority class name.
-priorityClassName: ""
+priorityClassName: ''
 
 # -- Pod disruption budget - for more details see https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
 podDisruptionBudget:
@@ -193,24 +191,24 @@ hostNetwork: false
 webhook:
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 130m
+      memory: 150Mi
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 130m
+      memory: 150Mi
   annotations: {}
-  # -- Specifies whether a webhook deployment be created. If set to false, crds.conversion.enabled should also be set to false otherwise the kubeapi will be hammered because the conversion is looking for a webhook endpoint.
+    # -- Set to false if you manage the webhook separately
   create: true
   # -- Specifices the time to check if the cert is valid
-  certCheckInterval: "5m"
+  certCheckInterval: '5m'
   # -- Specifices the lookaheadInterval for certificate validity
-  lookaheadInterval: ""
+  lookaheadInterval: ''
   replicaCount: 1
   # -- Specifices Log Params to the Webhook
   log:
     level: info
     timeEncoding: epoch
-  # -- Specifies the amount of historic ReplicaSets k8s should keep (see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#clean-up-policy)
+    # -- Number of historic ReplicaSets to keep
   revisionHistoryLimit: 10
 
   certDir: /tmp/certs
@@ -222,16 +220,16 @@ webhook:
     repository: oci.external-secrets.io/external-secrets/external-secrets
     pullPolicy: IfNotPresent
     # -- The image tag to use. The default is the chart appVersion.
-    tag: ""
+    tag: ''
     # -- The flavour of tag you want to use
-    flavour: ""
+    flavour: ''
   imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
+  nameOverride: ''
+  fullnameOverride: ''
   # -- The port the webhook will listen to
   port: 10250
   rbac:
-  # -- Specifies whether role and rolebinding resources should be created.
+    # -- Specifies whether role and rolebinding resources should be created.
     create: true
   serviceAccount:
     # -- Specifies whether a service account should be created.
@@ -244,7 +242,7 @@ webhook:
     extraLabels: {}
     # -- The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template.
-    name: ""
+    name: ''
   nodeSelector: {}
 
   certManager:
@@ -266,12 +264,12 @@ webhook:
       # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.IssuerSpec
       issuerRef:
         group: cert-manager.io
-        kind: "Issuer"
-        name: "my-issuer"
+        kind: 'Issuer'
+        name: 'my-issuer'
       # -- Set the requested duration (i.e. lifetime) of the Certificate. See
       # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
       # One year by default.
-      duration: "8760h"
+      duration: '8760h'
       # -- Set the revisionHistoryLimit on the Certificate. See
       # https://cert-manager.io/docs/reference/api-docs/#cert-manager.io/v1.CertificateSpec
       # Defaults to 0 (ignored).
@@ -282,7 +280,7 @@ webhook:
       # Note that renewBefore should be greater than .webhook.lookaheadInterval
       # since the webhook will check this far in advance that the certificate is
       # valid.
-      renewBefore: ""
+      renewBefore: ''
       # -- Add extra annotations to the Certificate resource.
       annotations: {}
 
@@ -290,10 +288,11 @@ webhook:
 
   topologySpreadConstraints: []
 
-  affinity: {}
+  affinity:
+    {}
 
     # -- Pod priority class name.
-  priorityClassName: ""
+  priorityClassName: ''
 
   # -- Pod disruption budget - for more details see https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
   podDisruptionBudget:
@@ -302,7 +301,6 @@ webhook:
     # maxUnavailable: 1
 
   metrics:
-
     listen:
       port: 8080
 
@@ -316,31 +314,35 @@ webhook:
       # -- Additional service annotations
       annotations: {}
 
-
   readinessProbe:
     # -- Address for readiness probe
-    address: ""
+    address: ''
     # -- ReadinessProbe port for kubelet
     port: 8081
 
-
     ## -- Extra environment variables to add to container.
-  extraEnv: []
+  extraEnv:
+    []
 
     ## -- Map of extra arguments to pass to container.
-  extraArgs: {}
+  extraArgs:
+    {}
 
     ## -- Extra volumes to pass to pod.
-  extraVolumes: []
+  extraVolumes:
+    []
 
     ## -- Extra volumes to mount to the container.
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    []
 
     # -- Annotations to add to Secret
-  secretAnnotations: {}
+  secretAnnotations:
+    {}
 
     # -- Annotations to add to Deployment
-  deploymentAnnotations: {}
+  deploymentAnnotations:
+    {}
 
     # -- Annotations to add to Pod
   podAnnotations: {}
@@ -348,7 +350,8 @@ webhook:
   podLabels: {}
 
   podSecurityContext:
-    enabled: true
+    enabled:
+      true
       # fsGroup: 2000
 
   securityContext:
@@ -375,37 +378,37 @@ webhook:
     type: ClusterIP
     # -- If the webhook service type is LoadBalancer, you can assign a specific load balancer IP here.
     # Check the documentation of your load balancer provider to see if/how this should be used.
-    loadBalancerIP: ""
+    loadBalancerIP: ''
 
 certController:
   resources:
     requests:
-      cpu: 50m
-      memory: 64Mi
+      cpu: 60m
+      memory: 85Mi
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 60m
+      memory: 85Mi
   # -- Specifies whether a certificate controller deployment be created.
   create: true
-  requeueInterval: "5m"
+  requeueInterval: '5m'
   replicaCount: 1
   # -- Specifices Log Params to the Certificate Controller
   log:
     level: info
     timeEncoding: epoch
-  # -- Specifies the amount of historic ReplicaSets k8s should keep (see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#clean-up-policy)
+  # -- Number of historic ReplicaSets to keep
   revisionHistoryLimit: 10
 
   image:
     repository: oci.external-secrets.io/external-secrets/external-secrets
     pullPolicy: IfNotPresent
-    tag: ""
-    flavour: ""
+    tag: ''
+    flavour: ''
   imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
+  nameOverride: ''
+  fullnameOverride: ''
   rbac:
-  # -- Specifies whether role and rolebinding resources should be created.
+    # -- Specifies whether role and rolebinding resources should be created.
     create: true
   serviceAccount:
     # -- Specifies whether a service account should be created.
@@ -418,7 +421,7 @@ certController:
     extraLabels: {}
     # -- The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template.
-    name: ""
+    name: ''
   nodeSelector: {}
 
   tolerations: []
@@ -428,10 +431,11 @@ certController:
   affinity: {}
 
   # -- Run the certController on the host network
-  hostNetwork: false
+  hostNetwork:
+    false
 
     # -- Pod priority class name.
-  priorityClassName: ""
+  priorityClassName: ''
 
   # -- Pod disruption budget - for more details see https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
   podDisruptionBudget:
@@ -440,7 +444,6 @@ certController:
     # maxUnavailable: 1
 
   metrics:
-
     listen:
       port: 8080
 
@@ -456,25 +459,29 @@ certController:
 
   readinessProbe:
     # -- Address for readiness probe
-    address: ""
+    address: ''
     # -- ReadinessProbe port for kubelet
     port: 8081
 
     ## -- Extra environment variables to add to container.
-  extraEnv: []
+  extraEnv:
+    []
 
     ## -- Map of extra arguments to pass to container.
-  extraArgs: {}
-
+  extraArgs:
+    {}
 
     ## -- Extra volumes to pass to pod.
-  extraVolumes: []
+  extraVolumes:
+    []
 
     ## -- Extra volumes to mount to the container.
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    []
 
     # -- Annotations to add to Deployment
-  deploymentAnnotations: {}
+  deploymentAnnotations:
+    {}
 
     # -- Annotations to add to Pod
   podAnnotations: {}
@@ -482,7 +489,8 @@ certController:
   podLabels: {}
 
   podSecurityContext:
-    enabled: true
+    enabled:
+      true
       # fsGroup: 2000
 
   securityContext:
@@ -497,8 +505,6 @@ certController:
     seccompProfile:
       type: RuntimeDefault
 
-
-
 # -- Specifies `dnsPolicy` to deployment
 dnsPolicy: ClusterFirst
 
@@ -507,5 +513,3 @@ dnsConfig: {}
 
 # -- Any extra pod spec on the deployment
 podSpecExtra: {}
-
-
