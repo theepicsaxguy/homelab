@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:6.0
+          image: mongo:8.0
           ports:
             - containerPort: 27017
               name: mongo
