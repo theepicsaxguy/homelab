@@ -52,7 +52,6 @@ spec:
                 secretKeyRef:
                   name: openwebui-secret
                   key: WEBUI_SECRET_KEY
-            # OAuth2 SSO integration
             - name: OAUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:

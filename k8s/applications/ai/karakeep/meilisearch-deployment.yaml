@@ -14,8 +14,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000 # Consider making this configurable to avoid UID conflicts
-        runAsGroup: 1000 # Consider making this configurable to avoid GID conflicts
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
