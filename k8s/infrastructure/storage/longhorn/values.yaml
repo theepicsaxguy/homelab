@@ -10,42 +10,42 @@ csi:
         cpu: 100m
         memory: 128Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 100m
+        memory: 128Mi
   provisioner:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 55m
+        memory: 68Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 55m
+        memory: 68Mi
   attacher:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 50m
+        memory: 64Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 50m
+        memory: 64Mi
   resizer:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 45m
+        memory: 60Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 45m
+        memory: 60Mi
   snapshotter:
     resources:
       requests:
-        cpu: 100m
-        memory: 128Mi
+        cpu: 60m
+        memory: 70Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 60m
+        memory: 70Mi
 defaultBackupStore:
-  backupTarget: "s3://longhorn@us-west-1/"
+  backupTarget: 's3://longhorn@us-west-1/'
   backupTargetCredentialSecret: longhorn-minio-credentials
   pollInterval: 180
 defaultSettings:
@@ -70,17 +70,15 @@ persistence:
   reclaimPolicy: Delete
   defaultFsType: ext4
   snapshotMaxCount: 60
-  defaultDataLocality: best-effort  # Determines how data is stored locally. 'strict-local' is no longer applicable.
+  defaultDataLocality: best-effort
 
 resources:
   requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
     cpu: 100m
     memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
-
-
 
 service:
   ui:
@@ -88,6 +86,13 @@ service:
 
 longhornManager:
   priorityClass: system-cluster-critical
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
 
 longhornDriver:
   priorityClass: system-cluster-critical
@@ -100,11 +105,10 @@ metrics:
     enabled: true
     additionalLabels: {}
     annotations: {}
-    interval: "30s" # Default scrape interval. Override if needed.
-    scrapeTimeout: "10s" # Default scrape timeout for Prometheus metrics
+    interval: '30s' # Default scrape interval. Override if needed.
+    scrapeTimeout: '10s' # Default scrape timeout for Prometheus metrics
     relabelings: []
     metricRelabelings: []
-
 # ---
 # PodSecurityContext/PodSecurity Admission Compliance
 # The Longhorn Helm chart does not expose direct securityContext fields for DaemonSet/Jobs.

@@ -20,108 +20,112 @@ spec:
         runAsGroup: 508
         runAsNonRoot: true
         fsGroup: 508
-        fsGroupChangePolicy: "OnRootMismatch"
+        fsGroupChangePolicy: 'OnRootMismatch'
         seccompProfile:
           type: RuntimeDefault
       containers:
-      - name: omada-controller
-        image: mbentley/omada-controller:5.15
-        imagePullPolicy: Always
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-        resources:
-          requests: {cpu: 100m, memory: 512Mi}
-          limits:   {cpu: 750m, memory: 2Gi}
-        ports:
-        - containerPort: 8088
-          name: manage-http
-          protocol: TCP
-        - containerPort: 8043
-          name: manage-https
-          protocol: TCP
-        - containerPort: 8843
-          name: porta-https
-          protocol: TCP
-        - containerPort: 27001
-          name: app-discovery
-          protocol: UDP
-        - containerPort: 29810
-          name: discovery
-          protocol: UDP
-        - containerPort: 29811
-          name: discovery-v1
-          protocol: TCP
-        - containerPort: 29813
-          name: upgrade-v1
-          protocol: TCP
-        - containerPort: 29814
-          name: manager-v1
-          protocol: TCP
-        - containerPort: 29815
-          name: transfer-v2
-          protocol: TCP
-        - containerPort: 29816
-          name: rtty
-          protocol: TCP
-        env:
-        - name: ROOTLESS
-          value: "true"
-        - name: MANAGE_HTTP_PORT
-          value: "8088"
-        - name: MANAGE_HTTPS_PORT
-          value: "8043"
-        - name: PORTAL_HTTP_PORT
-          value: "8088"
-        - name: PORTAL_HTTPS_PORT
-          value: "8843"
-        - name: PORT_APP_DISCOVERY
-          value: "27001"
-        - name: PORT_ADOPT_V1
-          value: "29812"
-        - name: PORT_UPGRADE_V1
-          value: "29813"
-        - name: PORT_MANAGER_V1
-          value: "29811"
-        - name: PORT_MANAGER_V2
-          value: "29814"
-        - name: PORT_DISCOVERY
-          value: "29810"
-        - name: PORT_TRANSFER_V2
-          value: "29815"
-        - name: PORT_RTTY
-          value: "29816"
-        - name: SHOW_SERVER_LOGS
-          value: "true"
-        - name: SHOW_MONGODB_LOGS
-          value: "false"
-        - name: TZ
-          value: Etc/UTC
-        - name: SKIP_USERMOD
-          value: "true"
-        volumeMounts:
-          - name: omada-data
-            mountPath: /opt/tplink/EAPController/data
-          - name: omada-logs
-            mountPath: /opt/tplink/EAPController/logs
-          - name: omada-certs
-            mountPath: /cert
-            readOnly: true
+        - name: omada-controller
+          image: mbentley/omada-controller:5.15
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '512Mi'
+            limits:
+              cpu: '750m'
+              memory: '2Gi'
+          ports:
+            - containerPort: 8088
+              name: manage-http
+              protocol: TCP
+            - containerPort: 8043
+              name: manage-https
+              protocol: TCP
+            - containerPort: 8843
+              name: porta-https
+              protocol: TCP
+            - containerPort: 27001
+              name: app-discovery
+              protocol: UDP
+            - containerPort: 29810
+              name: discovery
+              protocol: UDP
+            - containerPort: 29811
+              name: discovery-v1
+              protocol: TCP
+            - containerPort: 29813
+              name: upgrade-v1
+              protocol: TCP
+            - containerPort: 29814
+              name: manager-v1
+              protocol: TCP
+            - containerPort: 29815
+              name: transfer-v2
+              protocol: TCP
+            - containerPort: 29816
+              name: rtty
+              protocol: TCP
+          env:
+            - name: ROOTLESS
+              value: 'true'
+            - name: MANAGE_HTTP_PORT
+              value: '8088'
+            - name: MANAGE_HTTPS_PORT
+              value: '8043'
+            - name: PORTAL_HTTP_PORT
+              value: '8088'
+            - name: PORTAL_HTTPS_PORT
+              value: '8843'
+            - name: PORT_APP_DISCOVERY
+              value: '27001'
+            - name: PORT_ADOPT_V1
+              value: '29812'
+            - name: PORT_UPGRADE_V1
+              value: '29813'
+            - name: PORT_MANAGER_V1
+              value: '29811'
+            - name: PORT_MANAGER_V2
+              value: '29814'
+            - name: PORT_DISCOVERY
+              value: '29810'
+            - name: PORT_TRANSFER_V2
+              value: '29815'
+            - name: PORT_RTTY
+              value: '29816'
+            - name: SHOW_SERVER_LOGS
+              value: 'true'
+            - name: SHOW_MONGODB_LOGS
+              value: 'false'
+            - name: TZ
+              value: Etc/UTC
+            - name: SKIP_USERMOD
+              value: 'true'
+          volumeMounts:
+            - name: omada-data
+              mountPath: /opt/tplink/EAPController/data
+            - name: omada-logs
+              mountPath: /opt/tplink/EAPController/logs
+            - name: omada-certs
+              mountPath: /cert
+              readOnly: true
       volumes:
-      - name: omada-data
-        persistentVolumeClaim:
-          claimName: omada-data-pvc
-      - name: omada-logs
-        persistentVolumeClaim:
-          claimName: omada-logs-pvc
-      - name: omada-certs
-        secret:
-          secretName: cert-omada
-          items:
-            - key: tls.crt
-              path: tls.crt
-            - key: tls.key
-              path: tls.key
+        - name: omada-data
+          persistentVolumeClaim:
+            claimName: omada-data-pvc
+        - name: omada-logs
+          persistentVolumeClaim:
+            claimName: omada-logs-pvc
+        - name: omada-certs
+          secret:
+            secretName: cert-omada
+            items:
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
       restartPolicy: Always

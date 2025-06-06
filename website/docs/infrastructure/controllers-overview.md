@@ -43,10 +43,11 @@ This document outlines the core infrastructure controllers deployed in our Kuber
 ### Longhorn
 
 **Features**:
-  - Distributed block storage
-  - Volume replication
-  - Backup capabilities
-  - Storage overprovisioning
+
+- Distributed block storage
+- Volume replication
+- Backup capabilities
+- Storage overprovisioning
 
 ## Resource Management
 
@@ -72,12 +73,12 @@ High-Availability Profile:
 
 ### Controller-Specific Resources
 
-| Controller | CPU Request | Memory Request | CPU Limit | Memory Limit |
-|------------|-------------|----------------|-----------|--------------|
-| ArgoCD Server | 500m | 512Mi | 2000m | 1Gi |
-| cert-manager | 100m | 256Mi | 500m | 512Mi |
-| External Secrets | 100m | 256Mi | 500m | 512Mi |
-| Longhorn Manager | 250m | 512Mi | 1000m | 1Gi |
+| Controller       | CPU Request | Memory Request | CPU Limit | Memory Limit |
+| ---------------- | ----------- | -------------- | --------- | ------------ |
+| ArgoCD Server    | 500m        | 512Mi          | 2000m     | 1Gi          |
+| cert-manager     | 75m         | 96Mi           | 75m       | 96Mi         |
+| External Secrets | 80m         | 100Mi          | 80m       | 100Mi        |
+| Longhorn Manager | 250m        | 256Mi          | 250m      | 256Mi        |
 
 ## High Availability
 
@@ -88,7 +89,7 @@ Replication:
   argocd-server: 2
   cert-manager: 2
   external-secrets: 2
-  longhorn-manager: 3  # One per node
+  longhorn-manager: 3 # One per node
 
 Pod Disruption Budget:
   minAvailable: 1
@@ -172,11 +173,13 @@ Ingress Rules:
 ### Common Issues
 
 1. **Controller Pod Crashes**
+
    - Check resource limits
    - Review recent changes
    - Monitor system resources
 
 2. **Sync Failures**
+
    - Verify Git repository access
    - Check network connectivity
    - Review controller logs

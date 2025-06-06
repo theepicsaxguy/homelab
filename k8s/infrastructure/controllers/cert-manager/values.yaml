@@ -11,11 +11,11 @@ extraArgs:
 
 resources:
   limits:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 75m
+    memory: 96Mi
   requests:
-    cpu: 10m
-    memory: 64Mi
+    cpu: 75m
+    memory: 96Mi
 
 webhook:
   securePort: 10250
@@ -25,20 +25,19 @@ webhook:
     - --secure-port=10250
   resources:
     limits:
-      cpu: 100m
-      memory: 64Mi
+      cpu: 125m
+      memory: 144Mi
     requests:
-      cpu: 10m
-      memory: 32Mi
+      cpu: 125m
+      memory: 144Mi
   securityContext:
     runAsNonRoot: true
-
 
 cainjector:
   resources:
     limits:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 40m
+      memory: 72Mi
     requests:
-      cpu: 10m
-      memory: 64Mi
+      cpu: 40m
+      memory: 72Mi
