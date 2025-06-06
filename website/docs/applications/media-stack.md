@@ -72,7 +72,7 @@ Storage Classes:
 
 | Application | CPU Request | CPU Limit | Memory Request | Memory Limit | Storage     |
 | ----------- | ----------- | --------- | -------------- | ------------ | ----------- |
-| Jellyfin    | 2           | 4         | 2Gi            | 4Gi          | 2Ti (media) |
+| Jellyfin    | 2           | 4         | 2Gi            | 5Gi          | 2Ti (media) |
 | Sonarr      | 500m        | 1         | 512Mi          | 1Gi          | 10Gi        |
 | Radarr      | 500m        | 1         | 512Mi          | 1Gi          | 10Gi        |
 | Prowlarr    | 250m        | 500m      | 256Mi          | 512Mi        | 5Gi         |

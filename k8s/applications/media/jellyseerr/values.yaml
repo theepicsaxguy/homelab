@@ -9,8 +9,8 @@ image:
   # sha: ""
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: "jellyseerr"
+nameOverride: ''
+fullnameOverride: 'jellyseerr'
 
 # -- Deployment strategy
 strategy:
@@ -30,15 +30,17 @@ serviceAccount:
   annotations: {}
   # -- The name of the service account to use.
   # -- If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: ''
 
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -60,22 +62,18 @@ persistence:
     accessModes:
       - ReadWriteOnce
     # -- Config name
-    name: "jellyseerr-config"
+    name: 'jellyseerr-config'
     # -- Name of the permanent volume to reference in the claim.
     # Can be used to bind to existing volumes.
-    volumeName: "jellyseerr-config"
+    volumeName: 'jellyseerr-config'
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources:
+  requests:
+    cpu: '150m'
+    memory: '256Mi'
+  limits:
+    cpu: '600m'
+    memory: '768Mi'
 
 # -- Additional volumes on the output Deployment definition.
 volumes: []

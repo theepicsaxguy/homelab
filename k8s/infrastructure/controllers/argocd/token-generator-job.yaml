@@ -18,11 +18,21 @@ spec:
             - -c
             - |
               set -e
-              until argocd account list --server ${ARGOCD_SERVER} --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" >/dev/null 2>&1; do
+              until argocd account list --server ${ARGOCD_SERVER} --insecure \
+                --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" >/dev/null 2>&1; do
                 sleep 10
               done
-              TOKEN=$(argocd account generate-token --account kubechecks --server ${ARGOCD_SERVER} --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
-              kubectl create secret generic argocd-kubechecks-token --from-literal=token="$TOKEN" --dry-run=client -o yaml | kubectl apply -f -
+              TOKEN=$(argocd account generate-token --account kubechecks --server ${ARGOCD_SERVER} --insecure \
+                --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+              kubectl create secret generic argocd-kubechecks-token --from-literal=token="$TOKEN" \
+                --dry-run=client -o yaml | kubectl apply -f -
           env:
             - name: ARGOCD_SERVER
               value: argocd-server.argocd.svc.cluster.local:443
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

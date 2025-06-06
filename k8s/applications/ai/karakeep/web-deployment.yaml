@@ -23,14 +23,14 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
-              drop: ["ALL"]
+              drop: ['ALL']
           resources:
             requests:
-              cpu: 50m
-              memory: 256Mi
+              cpu: '50m'
+              memory: '256Mi'
             limits:
-              cpu: 400m
-              memory: 1Gi
+              cpu: '400m'
+              memory: '1Gi'
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
