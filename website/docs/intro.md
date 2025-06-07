@@ -6,6 +6,10 @@ title: Homelab Kubernetes Configuration Guide
 
 This guide explains our homelab Kubernetes setup, designed to help IT admins understand, run, and maintain the system.
 
+## Searching the docs
+
+The site now includes local search powered by a lightweight plugin. Use the search bar at the top of any page to quickly find topics without relying on an external service.
+
 # Core Design Principles
 
 1. **GitOps as Source of Truth**
