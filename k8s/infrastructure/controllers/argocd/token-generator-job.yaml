@@ -12,7 +12,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: token-generator
-          image: quay.io/argoproj/argocd:v2.14.13
+          image: quay.io/argoproj/argocd:v3.0.5
           command:
             - /bin/bash
             - -c
