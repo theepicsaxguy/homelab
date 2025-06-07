@@ -61,6 +61,14 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+  plugins: [
+    [
+      '@cmfcmf/docusaurus-search-local',
+      {
+        hashed: true,
+      },
+    ],
+  ],
 
   themeConfig: {
     // Replace with your project's social card
