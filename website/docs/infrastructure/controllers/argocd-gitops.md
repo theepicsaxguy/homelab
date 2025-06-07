@@ -6,7 +6,8 @@ description: ArgoCD configuration and GitOps workflow management
 
 # ArgoCD Configuration Guide
 
-This guide explains our GitOps deployment strategy using ArgoCD ApplicationSets for managing the complete cluster lifecycle.
+This guide explains our GitOps deployment strategy using ArgoCD ApplicationSets for managing the complete cluster
+lifecycle.
 
 ## Deployment Structure
 
@@ -15,35 +16,35 @@ This guide explains our GitOps deployment strategy using ArgoCD ApplicationSets 
 ```yaml
 ApplicationSets:
   infrastructure:
-    wave: 1  # Bootstrap components
+    wave: 1 # Bootstrap components
     components:
-      - crds/               # Custom Resource Definitions
-      - network/            # Cilium, CoreDNS
-      - storage/           # Longhorn
-      - auth/              # Authentik
-      - monitoring/        # Prometheus Stack
+      - crds/ # Custom Resource Definitions
+      - network/ # Cilium, CoreDNS
+      - storage/ # Longhorn
+      - auth/ # Authentik
+      - monitoring/ # Prometheus Stack
 
   applications:
-    wave: 2  # Application deployments
+    wave: 2 # Application deployments
     components:
-      - media/            # Media services
-      - automation/       # Home automation
-      - tools/            # Utility applications
-      - external/         # External services
+      - media/ # Media services
+      - automation/ # Home automation
+      - tools/ # Utility applications
+      - external/ # External services
 ```
 
 ## Deployment Waves
 
 ### Sync Wave Ordering
 
-| Wave | Component Type  | Description                        | Timeout |
-|------|----------------|-----------------------------------|---------|
-| -1   | CRDs          | Custom Resource Definitions        | 5m      |
-| 0    | Core          | Cilium, CoreDNS, cert-manager     | 10m     |
-| 1    | Storage       | Longhorn                          | 10m     |
-| 2    | Auth          | Authentik                         | 10m     |
-| 3    | Monitoring    | Prometheus Stack                   | 10m     |
-| 4    | Applications  | Media, Tools, External Services    | 15m     |
+| Wave | Component Type | Description                     | Timeout |
+| ---- | -------------- | ------------------------------- | ------- |
+| -1   | CRDs           | Custom Resource Definitions     | 5m      |
+| 0    | Core           | Cilium, CoreDNS, cert-manager   | 10m     |
+| 1    | Storage        | Longhorn                        | 10m     |
+| 2    | Auth           | Authentik                       | 10m     |
+| 3    | Monitoring     | Prometheus Stack                | 10m     |
+| 4    | Applications   | Media, Tools, External Services | 15m     |
 
 ### Wave Configuration
 
@@ -74,7 +75,7 @@ metadata:
   name: cilium
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
+    argocd.argoproj.io/sync-wave: '0'
 spec:
   project: infrastructure
   source:
@@ -183,11 +184,13 @@ argocd app get cilium
 ### Common Issues
 
 1. **Sync Failures**
+
    - Verify Git repository access
    - Check resource dependencies
    - Review application logs
 
 2. **Health Check Failures**
+
    - Check resource state
    - Verify network policies
    - Inspect pod logs
@@ -213,21 +216,25 @@ argocd app resources cilium
 ## Best Practices
 
 1. **Wave Management**
+
    - Use appropriate sync waves
    - Define clear dependencies
    - Set realistic timeouts
 
 2. **Resource Organization**
+
    - Group related resources
    - Use consistent naming
    - Label resources properly
 
 3. **Health Checks**
+
    - Define appropriate probes
    - Set meaningful thresholds
    - Monitor critical paths
 
 4. **Security**
    - Use RBAC properly
+   - Grant pod log access only to roles that need it (`logs, get`)
    - Secure sensitive configs
    - Monitor access logs
