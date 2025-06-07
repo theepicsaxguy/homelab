@@ -1,45 +1,62 @@
-# Codex Agent Guidelines for the homelab Repository
+# Codex Agent Guidelines for the Homelab Repository
 
-This document provides repo-specific instructions for Codex agents contributing to this project.
+## Repository Structure
 
-## Repository Overview
+- **k8s/**: Kubernetes manifests (subdirectories: `infrastructure/`, `applications/`)
+- **tofu/**: OpenTofu/Terraform configs for infrastructure provisioning.
+- **website/**: Docusaurus site (includes `package.json`, TypeScript in `src/`, docs in `docs/`)
+- **.github/**: GitHub Actions, commit message policy, automation configs.
 
-- **k8s/** – Kubernetes manifests organised into `infrastructure/` and `applications/`.
-- **tofu/** – OpenTofu/Terraform configuration for infrastructure provisioning.
-- **website/** – Docusaurus documentation site (`package.json`, TypeScript sources in `src/` and docs under `docs/`).
-- **scripts/** – Utility scripts such as `fix_kustomize.sh`.
-- **.github/** – GitHub Actions workflows, commit conventions and other automation settings.
+---
 
-## Style Conventions
+## Style Requirements
 
-- **Prettier** (`.prettierrc`)
-  - `printWidth: 120`
-  - `singleQuote: true`
-  - `trailingComma: es5`
-  - `proseWrap: always`
-- **YAML** (`.yamllint.yml`)
-  - Indentation: 2 spaces
-  - Max line length: 120
-  - Ignore `k8s/infrastructure/auth/authentik/extra/blueprints/` when linting
-- **Commit Messages** (`.github/commit-convention.md`)
-  - Use Conventional Commits: `type(scope): description` in imperative mood, ≤72 characters, no trailing period.
-  - Common scopes include `k8s`, `infra`, `apps`, `docs`, `tofu`, `monitoring`, `network`, `storage`.
-  - Breaking changes: append `!` after the scope or add a `BREAKING CHANGE:` footer.
-- **Pull Request Titles** follow the same `type(scope): description` format.
+- **Commit Messages:** Follow [Conventional Commits](.github/commit-convention.md), e.g.:
+  - Format: `type(scope): message`
+  - Examples: `fix(k8s): fix replica count error`, `feat(apps)!: update API endpoint usage`
+- **Pull Request Titles:** Must follow the same format as commits.
+
+---
 
 ## Contribution Workflow
 
-1. **Formatting** – Run `npx prettier -w <files>` on Markdown/TypeScript/YAML/JSON changes.
-2. **YAML Validation** – Use `yamllint` with `.yamllint.yml`. For Kubernetes kustomizations, run
-   `scripts/fix_kustomize.sh` after editing `kustomization.yaml` files.
-3. **Website** – If editing TypeScript or docs in `website/`, run `npm install` once then `npm run typecheck`.
-4. **OpenTofu** – Format with `tofu fmt` and validate with `tofu validate` in the `tofu/` directory.
-5. **Documentation** – Significant infrastructure changes should be documented under `website/docs/`.
-6. **Generated Files** – Do not edit rendered Helm charts or other generated output. Modify source templates instead.
+- **Website:**
+  - Run `npm install` and `npm run typecheck` after modifying docs or TypeScript.
+- **OpenTofu:**
+  - Run `tofu fmt` and `tofu validate` before committing changes.
+- **Documentation Updates:**
+  - Update relevant docs in `website/docs/` for infrastructure changes.
+- **Generated Files:**
+  - Avoid editing rendered Helm charts; update their kustomization sources instead.
+
+---
+
+## Testing and Build Verification
+
+- **Kubernetes Manifests:**
+  - Run `kustomize build --enable-helm <dir>` for each modified directory.
+- **Local Testing:**
+  - Ensure all relevant linter and type-check commands pass:
+    - Example: `npm run lint`, `tofu validate`, etc.
+- **Expected Outcomes:**
+  - Provide logs or summaries in your PR body.
+
+---
 
 ## Pull Request Expectations
 
 - Keep changes minimal and focused.
-- Update relevant documentation when altering infrastructure or applications.
-- Ensure commit messages and PR titles follow the conventions above.
-- Provide a brief testing summary in the PR body (commands run and results).
+- PR titles and commit messages must follow the designated formats.
+- Document testing steps and outcomes in the PR description.
+
+---
+
+## Project-Wide Rules
+
+1. **Documentation Standards:**
+   - Use plain language and document limitations transparently.
+2. **Comments and Code Quality:**
+   - Avoid inline comments; use separate documentation files.
+   - Follow DRY principles and single-responsibility guidelines.
+3. **File Changes:**
+   - Prefer modifying existing files over creating new ones unless necessary.

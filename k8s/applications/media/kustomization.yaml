@@ -8,6 +8,7 @@ resources:
 - arr
 - media-share-pvc.yaml
 - nfs-pv.yaml
+- externalsecret.yaml
 - jellyseerr
 - sabnzbd
 - whisperasr

@@ -23,6 +23,9 @@ spec:
           ports:
             - name: http
               containerPort: 8989
+          envFrom:
+            - secretRef:
+                name: jellyseerr-jellyfin
           volumeMounts:
             - name: sonarr-config
               mountPath: /config

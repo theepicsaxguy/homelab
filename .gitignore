@@ -36,3 +36,4 @@ node_modules/
 package-lock.json
 validation_errors.json
 k8s/argocd/charts/
+k8s/.env
