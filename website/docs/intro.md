@@ -8,7 +8,7 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
 
 ## Searching the docs
 
-The site now includes local search powered by a lightweight plugin. Use the search bar at the top of any page to quickly find topics without relying on an external service.
+Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-search-local` plugin. Use the search bar at the top of any page to quickly find topics, and your search terms will be highlighted on the destination page.
 
 # Core Design Principles
 

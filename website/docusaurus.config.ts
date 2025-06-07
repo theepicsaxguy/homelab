@@ -61,11 +61,13 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
-  plugins: [
+  themes: [
     [
-      '@cmfcmf/docusaurus-search-local',
+      require.resolve('@easyops-cn/docusaurus-search-local'),
       {
         hashed: true,
+        docsRouteBasePath: '/',
+        highlightSearchTermsOnTargetPage: true,
       },
     ],
   ],
