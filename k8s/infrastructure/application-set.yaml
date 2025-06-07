@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/part-of: infrastructure
     app.kubernetes.io/managed-by: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: '0'
+    argocd.argoproj.io/sync-wave: '-10'
 spec:
   generators:
     - git:
@@ -52,5 +52,6 @@ spec:
         syncOptions:
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
+          - ServerSideApply=true
           - PruneLast=true
           - RespectIgnoreDifferences=true
