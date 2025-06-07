@@ -32,6 +32,8 @@ metadata:
   namespace: argocd
 ```
 
+The job uses `quay.io/argoproj/argocd:v2.12.3` for the ArgoCD CLI to avoid DockerHub pull issues.
+
 The `PushSecret` uploads the token to Bitwarden under the key `argocd-kubechecks-api-token`.
 
 ## Consuming the token
