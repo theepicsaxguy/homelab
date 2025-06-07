@@ -9,12 +9,7 @@ resources:
 - rolebinding.yaml
 - role.yaml
 - externalsecret.yaml
-- token-generator-job.yaml
-- token-generator-sa.yaml
-- token-generator-role.yaml
-- token-generator-rolebinding.yaml
 - token-pushsecret.yaml
-- token-rotator-cronjob.yaml
 
 helmCharts:
 - name: argo-cd
