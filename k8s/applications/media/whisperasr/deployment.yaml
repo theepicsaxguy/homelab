@@ -31,3 +31,6 @@ spec:
               value: 'small'
             - name: ASR_ENGINE
               value: 'faster_whisper'
+          envFrom:
+            - secretRef:
+                name: jellyseerr-jellyfin
