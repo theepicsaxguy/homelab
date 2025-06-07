@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: media
 
 resources:
+  - externalsecret.yaml
   - http-route.yaml
 
 helmCharts:
