@@ -104,7 +104,8 @@ We use NFS for shared media files:
 3. Set resource limits
 4. Configure security contexts
 5. Use automated sync with ArgoCD
-6. Use the `Recreate` strategy for any Deployment that mounts a PVC
+6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
+7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
 
 ## OpenWebUI Notes
 
