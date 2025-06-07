@@ -12,7 +12,7 @@ spec:
     - protocol: TLS
       port: 443
       name: proxmox
-      hostname: "proxmox.pc-tips.se"
+      hostname: 'placeholder-proxmox'
       tls:
         mode: Passthrough
       allowedRoutes:
@@ -21,7 +21,7 @@ spec:
     - protocol: TLS
       port: 443
       name: truenas
-      hostname: "truenas.pc-tips.se"
+      hostname: 'placeholder-truenas'
       tls:
         mode: Passthrough
       allowedRoutes:
@@ -30,10 +30,9 @@ spec:
     - protocol: TLS
       port: 443
       name: omada
-      hostname: "omada.pc-tips.se"
+      hostname: 'placeholder-omada'
       tls:
         mode: Passthrough
       allowedRoutes:
         namespaces:
           from: All
-

@@ -3,7 +3,8 @@ title: 'Disaster Recovery: Talos + Longhorn
 '
 ---
 
-This guide walks you through the complete disaster recovery process for a Talos Kubernetes cluster with Longhorn persistent storage, restoring both infrastructure and data from S3 backups.
+This guide walks you through the complete disaster recovery process for a Talos Kubernetes cluster with Longhorn
+persistent storage, restoring both infrastructure and data from S3 backups.
 
 ## Prerequisites
 
@@ -49,8 +50,11 @@ tofu apply
 Deploy the essential infrastructure components in the correct order:
 
 ```bash
-# Deploy networking (Cilium)
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
+# Deploy networking components individually
+kustomize build --enable-helm infrastructure/network/cilium | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/cloudflared | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/gateway | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/coredns | kubectl apply -f -
 
 # Deploy CRDs
 kubectl apply -k infrastructure/crds
@@ -67,7 +71,7 @@ kubectl create secret generic bitwarden-access-token \
   --from-literal=token=<your-token>
 
 # Reapply networking to ensure complete configuration
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/gateway | kubectl apply -f -
 
 # Deploy Longhorn storage
 kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -f -
@@ -76,7 +80,8 @@ kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -
 kustomize build --enable-helm infrastructure/ | kubectl apply -f -
 ```
 
-**⚠️ Important**: Do not deploy applications with persistent volumes yet. This phase only sets up the core infrastructure.
+**⚠️ Important**: Do not deploy applications with persistent volumes yet. This phase only sets up the core
+infrastructure.
 
 ---
 
@@ -85,10 +90,12 @@ kustomize build --enable-helm infrastructure/ | kubectl apply -f -
 ### 2.1 Verify Longhorn Health and S3 Connectivity
 
 1. **Access Longhorn UI**
+
    - Use the LoadBalancer IP or configured domain (if ACME cert is approved)
    - Navigate to the Longhorn dashboard
 
 2. **Prepare Nodes for Restore**
+
    - Go to **Node** section
    - **Disable scheduling** on all nodes to prevent automatic PVC creation during restore
 
@@ -151,7 +158,8 @@ After all volumes are restored:
 
 ### 4.3 Alternative: Automated Restoration
 
-For large-scale deployments with many volumes, consider using automation scripts or the Longhorn API. Reference implementation details can be found in [Longhorn Issue #1867](https://github.com/longhorn/longhorn/issues/1867).
+For large-scale deployments with many volumes, consider using automation scripts or the Longhorn API. Reference
+implementation details can be found in [Longhorn Issue #1867](https://github.com/longhorn/longhorn/issues/1867).
 
 ---
 
@@ -253,7 +261,10 @@ After successful recovery:
 tofu destroy && tofu apply
 
 # Infrastructure deployment
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/cilium | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/cloudflared | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/gateway | kubectl apply -f -
+kustomize build --enable-helm infrastructure/network/coredns | kubectl apply -f -
 
 # Status monitoring
 kubectl get pvc,pods -A
