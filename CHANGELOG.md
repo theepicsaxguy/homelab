@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.8.0 (2025-06-07)
+
+## What's Changed
+* Add CODE_OF_CONDUCT and fix README link by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/818
+* fix(k8s): specify cloudflare account name by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/820
+* fix(network): update cilium helm repo by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/822
+* refactor(k8s): share arr deployment config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/821
+* k8s: automate kubechecks argocd token by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/825
+* k8s(authentik): update external secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/828
+* chore(deps): update all dependencies to v73.2.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/827
+* fix(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/826
+* k8s(resources): tune workloads and add pedrobot db by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/829
+* chore(deps): update mongo docker tag to v8 by @renovate in https://github.com/theepicsaxguy/homelab/pull/830
+* fix(k8s): use Recreate strategy for PVC deployments by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/831
+* fix(k8s): update argocd token generator image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/832
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/834
+* chore(deps): update helm release argo-cd to v8.0.15 by @renovate in https://github.com/theepicsaxguy/homelab/pull/833
+* k8s(controllers): embed token generator by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/837
+* fix(k8s): update sync-wave annotations and enable ServerSideApply by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/838
+* feat(k8s): enhance Jellyfin integration with ExternalSecret and environment variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/839
+* fix(k8s): update .gitignore and token-pushsecret.yaml for consistency by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/840
+* fix(k8s): set grafana oauth secret ids by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/841
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.7.0...v2.8.0
+
 ## 2.7.0 (2025-06-04)
 
 ## What's Changed
