@@ -1,45 +1,53 @@
 # Codex Agent Guidelines for the homelab Repository
 
-This document provides repo-specific instructions for Codex agents contributing to this project.
+This guide details the standards and workflows for Codex agents contributing to this repository.
 
-## Repository Overview
+## Repository Structure
 
-- **k8s/** – Kubernetes manifests organised into `infrastructure/` and `applications/`.
-- **tofu/** – OpenTofu/Terraform configuration for infrastructure provisioning.
-- **website/** – Docusaurus documentation site (`package.json`, TypeScript sources in `src/` and docs under `docs/`).
-- **scripts/** – Utility scripts such as `fix_kustomize.sh`.
-- **.github/** – GitHub Actions workflows, commit conventions and other automation settings.
+- **k8s/**: Kubernetes manifests, organized into `infrastructure/` and `applications/`.
+- **tofu/**: OpenTofu/Terraform configs for provisioning infrastructure.
+- **website/**: Docusaurus documentation site (`package.json`, TypeScript source in `src/`, documentation in `docs/`).
+- **scripts/**: Utility scripts (e.g. `fix_kustomize.sh`).
+- **.github/**: GitHub Actions workflows, commit message policy, and automation.
 
-## Style Conventions
+## Style Requirements
 
-- **Prettier** (`.prettierrc`)
-  - `printWidth: 120`
-  - `singleQuote: true`
-  - `trailingComma: es5`
-  - `proseWrap: always`
-- **YAML** (`.yamllint.yml`)
-  - Indentation: 2 spaces
-  - Max line length: 120
-  - Ignore `k8s/infrastructure/auth/authentik/extra/blueprints/` when linting
-- **Commit Messages** (`.github/commit-convention.md`)
-  - Use Conventional Commits: `type(scope): description` in imperative mood, ≤72 characters, no trailing period.
-  - Common scopes include `k8s`, `infra`, `apps`, `docs`, `tofu`, `monitoring`, `network`, `storage`.
-  - Breaking changes: append `!` after the scope or add a `BREAKING CHANGE:` footer.
-- **Pull Request Titles** follow the same `type(scope): description` format.
+- **Commit Messages**: Follow [Conventional Commits](.github/commit-convention.md):
+  - Format: `type(scope): message` (imperative mood, ≤72 characters, no trailing periods).
+  - Common scopes: `k8s`, `infra`, `apps`, `docs`, `tofu`, `monitoring`, `network`, `storage`.
+  - For breaking changes, add `!` or a `BREAKING CHANGE:` footer.
+- **Pull Request Titles**: Use the same format as commits.
 
-## Contribution Workflow
+## Contribution Process
 
-1. **Formatting** – Run `npx prettier -w <files>` on Markdown/TypeScript/YAML/JSON changes.
-2. **YAML Validation** – Use `yamllint` with `.yamllint.yml`. For Kubernetes kustomizations, run
-   `scripts/fix_kustomize.sh` after editing `kustomization.yaml` files.
-3. **Website** – If editing TypeScript or docs in `website/`, run `npm install` once then `npm run typecheck`.
-4. **OpenTofu** – Format with `tofu fmt` and validate with `tofu validate` in the `tofu/` directory.
-5. **Documentation** – Significant infrastructure changes should be documented under `website/docs/`.
-6. **Generated Files** – Do not edit rendered Helm charts or other generated output. Modify source templates instead.
+- **Website**: After editing TypeScript/docs under `website/`, run `npm install` and `npm run typecheck`.
+- **OpenTofu**: Run `tofu fmt` and `tofu validate` inside the `tofu/` directory before pushing changes.
+- **Documentation**: Document notable infrastructure changes in `website/docs/`.
+- **Generated Files**: Do not alter rendered Helm charts or generated files; edit the source kustomization instead.
 
 ## Pull Request Expectations
 
-- Keep changes minimal and focused.
-- Update relevant documentation when altering infrastructure or applications.
-- Ensure commit messages and PR titles follow the conventions above.
-- Provide a brief testing summary in the PR body (commands run and results).
+- Keep changes focused and minimal.
+- Always update relevant docs if you change infrastructure or applications.
+- Ensure all commit messages and PR titles meet conventions.
+- Summarize testing in your PR body (commands and outcomes).
+
+## Project-Wide Rules
+
+1. **Documentation**:
+   For any changes (beyond simple bug fixes), update documentation using the provided templates.
+2. **Kubernetes Manifests**:
+   Run `kustomize build --enable-helm (dir)` in each directory you modify; ensure all builds succeed before submitting a PR.
+3. **Comments**:
+   Do not add inline code comments—explanations belong in documentation files.
+4. **Code Quality**:
+   Improve any code you touch; always leave things better than you found them.
+5. **Best Practices**:
+   Apply DRY principles. Code should be maintainable and adhere to single-responsibility guidelines.
+6. **Files**:
+   Whenever possible, modify existing files. Only create new files if necessary, maintaining the established structure.
+7. **Documentation Style**:
+   Write documentation plainly, without jargon or marketing language. Be honest about limitations or known issues, using a conversational tone.
+
+**Note:**
+You can use the internet for Helm charts and `kustomize build`. All builds must pass before submitting your pull request.
