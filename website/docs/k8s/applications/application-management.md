@@ -10,7 +10,7 @@ Applications live in `/k8s/applications/` organized by function:
 
 - `ai/` - AI tools like OpenWebUI, KaraKeep
 - `automation/` - Home automation (Frigate, MQTT)
-- `media/` - Media servers and tools (Jellyfin, *arr stack)
+- `media/` - Media servers and tools (Jellyfin, \*arr stack)
 - `network/` - Network apps (AdGuard Home, Omada)
 - `tools/` - Utility apps (IT-Tools, Whoami, Unrar)
 - `web/` - Web applications (BabyBuddy, Pedrobot)
@@ -21,15 +21,19 @@ Applications live in `/k8s/applications/` organized by function:
 We use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the process:
 
 1. Add your app files to a category folder (e.g., `/k8s/applications/media/myapp/`)
-2. For most applications, ensure they are discoverable by the main ApplicationSet in `/k8s/applications/application-set.yaml` (which scans subdirectories).
-3. For applications in the `external/` category (like HAOS, Proxmox, TrueNAS), these are managed by a separate ApplicationSet located at `/k8s/applications/external/application-set.yaml`. This ApplicationSet specifically scans paths like `k8s/apps/external/*`.
+2. For most applications, ensure they are discoverable by the main ApplicationSet in
+   `/k8s/applications/application-set.yaml` (which scans subdirectories).
+3. For applications in the `external/` category (like HAOS, Proxmox, TrueNAS), these are managed by a separate
+   ApplicationSet located at `/k8s/applications/external/application-set.yaml`. This ApplicationSet specifically scans
+   paths like `k8s/apps/external/*`.
 4. ArgoCD detects the change and deploys automatically.
 
 ### Key Files
 
 - `kustomization.yaml` - Groups apps in each category
 - `project.yaml` - Sets ArgoCD permissions and controls
-- `application-set.yaml` - Main deployment configuration (additional ApplicationSets may exist for specific categories like `external`)
+- `application-set.yaml` - Main deployment configuration (additional ApplicationSets may exist for specific categories
+  like `external`)
 
 ## Application Structure
 
@@ -50,21 +54,30 @@ myapp/
 Here's how KaraKeep (`/k8s/applications/ai/karakeep/`) is structured:
 
 1. **Basic Setup**
+
    - Uses namespace: `karakeep`
    - Configures non-sensitive settings via ConfigMap
    - Manages versions through Kustomize
 
 2. **Security**
+
    - Runs as non-root
    - Drops unnecessary privileges
    - Uses default security profiles
+   - Default UID and GID for Meilisearch are set to `1000`. Adjust `runAsUser` and `runAsGroup` in
+     `meilisearch-deployment.yaml` if those IDs conflict with your environment.
 
 3. **Storage**
-   - Uses Longhorn for app data via PersistentVolumeClaims (e.g., `data-pvc`, `meilisearch-pvc`), which use the default StorageClass (Longhorn).
-   - While a shared NFS media store exists for other media applications, KaraKeep primarily uses its dedicated PVCs for its operational data.
+
+   - Uses Longhorn for app data via PersistentVolumeClaims (e.g., `data-pvc`, `meilisearch-pvc`), which use the default
+     StorageClass (Longhorn).
+   - While a shared NFS media store exists for other media applications, KaraKeep primarily uses its dedicated PVCs for
+     its operational data.
 
 4. **Network Access**
-   - The primary web interface is exposed via a `LoadBalancer` service (e.g., `karakeep-web-svc` with IP `10.25.150.230`). Internal components like Meilisearch or Chrome might use `ClusterIP` services.
+
+   - The primary web interface is exposed via a `LoadBalancer` service (e.g., `karakeep-web-svc` with IP
+     `10.25.150.230`). Internal components like Meilisearch or Chrome might use `ClusterIP` services.
    - External access through Gateway API
    - Custom IPs via Cilium
 
@@ -91,5 +104,12 @@ We use NFS for shared media files:
 3. Set resource limits
 4. Configure security contexts
 5. Use automated sync with ArgoCD
+6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
+7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
+
+## OpenWebUI Notes
+
+OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC. The
+`OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.

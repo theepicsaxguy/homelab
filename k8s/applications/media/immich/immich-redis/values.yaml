@@ -4,3 +4,12 @@ auth:
   enabled: false
 
 fullnameOverride: immich-redis
+
+primary:
+  resources:
+    requests:
+      cpu: 80m
+      memory: 100Mi
+    limits:
+      cpu: 150m
+      memory: 256Mi

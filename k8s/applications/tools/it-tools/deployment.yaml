@@ -30,27 +30,27 @@ spec:
           emptyDir: {}
 
       containers:
-      - name: it-tools
-        image: corentinth/it-tools:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 80
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop: ["ALL"]
-        resources:
-          requests:
-            cpu: 50m
-            memory: 128Mi
-          limits:
-            cpu: 200m
-            memory: 256Mi
-        volumeMounts:
-          - name: nginx-logs
-            mountPath: /var/log/nginx
-          - name: nginx-cache
-            mountPath: /var/cache/nginx
-          - name: nginx-run
-            mountPath: /run
+        - name: it-tools
+          image: corentinth/it-tools:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          resources:
+            requests:
+              cpu: '75m'
+              memory: '100Mi'
+            limits:
+              cpu: '250m'
+              memory: '256Mi'
+          volumeMounts:
+            - name: nginx-logs
+              mountPath: /var/log/nginx
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /run

@@ -14,7 +14,7 @@ spec:
       app.kubernetes.io/instance: immich
       app.kubernetes.io/name: machine-learning
   strategy:
-    type: RollingUpdate
+    type: Recreate
   template:
     metadata:
       labels:
@@ -53,11 +53,11 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: '150m'
+              memory: '256Mi'
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: '750m'
+              memory: '1Gi'
           livenessProbe:
             failureThreshold: 3
             httpGet:

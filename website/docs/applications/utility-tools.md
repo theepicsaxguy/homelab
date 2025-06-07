@@ -42,10 +42,10 @@ This document covers the utility tools and applications deployed in our cluster 
 ### Resource Allocation
 
 | Application | CPU Request | CPU Limit | Memory Request | Memory Limit |
-|------------|-------------|-----------|----------------|--------------|
-| IT Tools    | 100m        | 500m      | 128Mi         | 256Mi       |
-| Whoami      | 50m         | 100m      | 64Mi          | 128Mi       |
-| Unrar       | 100m        | 500m      | 128Mi         | 256Mi       |
+| ----------- | ----------- | --------- | -------------- | ------------ |
+| IT Tools    | 75m         | 250m      | 100Mi          | 256Mi        |
+| Whoami      | 25m         | 100m      | 24Mi           | 48Mi         |
+| Unrar       | 50m         | 200m      | 64Mi           | 128Mi        |
 
 ### Network Access
 
@@ -60,8 +60,8 @@ Gateway Configuration:
       backendRefs:
         - name: authentik-proxy
           namespace: auth
-          port: 9000  # Authentik SSO
-  
+          port: 9000 # Authentik SSO
+
   - Whoami:
       host: whoami.pc-tips.se
       service: whoami
@@ -70,7 +70,7 @@ Gateway Configuration:
         - name: authentik-proxy
           namespace: auth
           port: 9000
-  
+
   - Unrar:
       host: internal only
       service: unrar
@@ -135,11 +135,13 @@ readinessProbe:
 ### Common Issues
 
 1. **Authentication Failures**
+
    - Verify Authentik proxy configuration
    - Check service account tokens
    - Validate network policies
 
 2. **Performance Issues**
+
    - Review resource utilization
    - Check node capacity
    - Validate network connectivity
@@ -159,11 +161,13 @@ readinessProbe:
 ## Best Practices
 
 1. **Resource Management**
+
    - Set appropriate resource limits
    - Monitor usage patterns
    - Implement HPA when needed
 
 2. **Security**
+
    - Regular security updates
    - Minimal permission model
    - Network isolation

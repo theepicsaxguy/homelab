@@ -30,20 +30,24 @@ spec:
       containers:
         - name: unrar
           image: linuxserver/unrar:7.1.6
-          command: ["/bin/sh"]
-          args: ["-c", "while true; do find /mnt/data -name '*.rar' -exec unrar x -o+ {} $(dirname {}) \\; && sleep 300; done"]
+          command: ['/bin/sh']
+          args:
+            [
+              '-c',
+              "while true; do find /mnt/data -name '*.rar' -exec unrar x -o+ {} $(dirname {}) \\; && sleep 300; done",
+            ]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: [ "ALL" ]
+              drop: ['ALL']
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: '50m'
+              memory: '64Mi'
             limits:
-              cpu: 200m
-              memory: 128Mi
+              cpu: '200m'
+              memory: '128Mi'
           volumeMounts:
             - name: tmp
               mountPath: /tmp

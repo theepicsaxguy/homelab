@@ -20,7 +20,7 @@ spec:
         runAsGroup: 2501
         fsGroup: 2501
         fsGroupChangePolicy: OnRootMismatch
-        supplementalGroups: [ 44, 104 ]
+        supplementalGroups: [44, 104]
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -30,14 +30,14 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
-              drop: [ "ALL" ]
+              drop: ['ALL']
           resources:
             requests:
-              cpu: 2000m
-              memory: 2Gi
+              cpu: '2000m'
+              memory: '2Gi'
             limits:
-              cpu: 4000m
-              memory: 5Gi
+              cpu: '4000m'
+              memory: '5Gi'
           envFrom:
             - configMapRef:
                 name: jellyfin-env

@@ -18,11 +18,11 @@ spec:
           image: eclipse-mosquitto:2.0
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: '50m'
+              memory: '80Mi'
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: '150m'
+              memory: '300Mi'
           volumeMounts:
             - name: config
               mountPath: /mosquitto/config

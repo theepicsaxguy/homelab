@@ -4,6 +4,8 @@ metadata:
   name: meilisearch
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: meilisearch
@@ -14,8 +16,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000  # Consider making this configurable to avoid UID conflicts
-        runAsGroup: 1000 # Consider making this configurable to avoid GID conflicts
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
@@ -27,17 +29,17 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
-              drop: ["ALL"]
+              drop: ['ALL']
           resources:
             requests:
-              cpu: 200m
-              memory: 250Mi
+              cpu: '200m'
+              memory: '250Mi'
             limits:
-              cpu: 1000m
-              memory: 500Mi
+              cpu: '1000m'
+              memory: '500Mi'
           env:
             - name: MEILI_NO_ANALYTICS
-              value: "true"
+              value: 'true'
           volumeMounts:
             - mountPath: /meili_data
               name: meilisearch
