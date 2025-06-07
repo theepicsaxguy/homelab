@@ -14,7 +14,7 @@ spec:
       app.kubernetes.io/instance: immich
       app.kubernetes.io/name: server
   strategy:
-    type: RollingUpdate
+    type: Recreate
   template:
     metadata:
       labels:
