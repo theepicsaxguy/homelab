@@ -21,20 +21,9 @@ configs:
 
 ## Automatic token generation
 
-A `Job` and `CronJob` within the `argocd` namespace create and rotate the token. The job stores the token in a temporary
-secret which is then pushed to Bitwarden using a `PushSecret`:
-
-```yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: argocd-token-generator
-  namespace: argocd
-```
-
-The job uses `quay.io/argoproj/argocd:v2.12.3` for the ArgoCD CLI to avoid DockerHub pull issues.
-
-The `PushSecret` uploads the token to Bitwarden under the key `argocd-kubechecks-api-token`.
+ServiceAccount and RBAC rules, along with a post-install Job and weekly CronJob, are now templated via the Argo CD Helm
+chart using the `extraObjects` field. Each upgrade triggers the one-shot job to create or refresh the token, which is
+then stored in a Secret. The CronJob rotates the token weekly.
 
 ## Consuming the token
 
