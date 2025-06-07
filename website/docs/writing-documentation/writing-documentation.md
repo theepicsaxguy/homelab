@@ -20,6 +20,7 @@ adhere to the following guidelines.
 - Before submitting a PR, ensure your Markdown is well-formatted. If you have local Markdown linting tools configured,
   please run them.
 - For new documentation pages, ensure they are appropriately linked from relevant sections in the main documentation (e.g., `website/docs/intro.md` or other logical overview pages) so that users can discover them.
+- Place your new file in the folder that best matches its topic (e.g., `infrastructure/` or `k8s/`). The sidebar indexes each folder automatically, so you do not need to edit `sidebars.ts`.
 
 ## Set up your local environment (Recommended)
 
