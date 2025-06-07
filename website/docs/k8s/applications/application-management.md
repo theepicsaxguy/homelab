@@ -104,6 +104,7 @@ We use NFS for shared media files:
 3. Set resource limits
 4. Configure security contexts
 5. Use automated sync with ArgoCD
+6. Use the `Recreate` strategy for any Deployment that mounts a PVC
 
 ## OpenWebUI Notes
 
