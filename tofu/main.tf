@@ -1,6 +1,16 @@
 locals {
-  # Define base node configurations
-  nodes_config = {
+  # Default disk setup for worker nodes
+  default_worker_disks = {
+    longhorn = {
+      device     = "/dev/sdb"
+      size       = "180G"
+      type       = "scsi"
+      mountpoint = "/var/lib/longhorn"
+    }
+  }
+
+  # Define base node configurations (without worker disk duplication)
+  nodes_config_raw = {
     "ctrl-00" = {
       host_node     = "host3"
       machine_type  = "controlplane"
@@ -37,14 +47,6 @@ locals {
       cpu           = 8
       ram_dedicated = 10240
       igpu          = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
     }
     "work-01" = {
       host_node     = "host3"
@@ -55,14 +57,6 @@ locals {
       cpu           = 8
       ram_dedicated = 10240
       igpu          = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
     }
     "work-02" = {
       host_node     = "host3"
@@ -73,43 +67,30 @@ locals {
       cpu           = 8
       ram_dedicated = 10240
       igpu          = false
-      disks = {
-        longhorn = {
-          device     = "/dev/sdb"
-          size       = "180G"
-          type       = "scsi"
-          mountpoint = "/var/lib/longhorn"
-        }
-      }
     }
   }
 
-  # Derive upgrade sequence from machine types
-  control_plane_nodes = [
-    for name, config in local.nodes_config : name
-    if config.machine_type == "controlplane"
-  ]
-  worker_nodes = [
-    for name, config in local.nodes_config : name
-    if config.machine_type == "worker"
-  ]
+  # Add default worker disks and merge with any overrides
+  # Values defined under nodes_config_raw.disks take precedence
+  nodes_config = {
+    for name, cfg in local.nodes_config_raw :
+    name => merge(
+      cfg,
+      cfg.machine_type == "worker" ?
+      { disks = merge(local.default_worker_disks, lookup(cfg, "disks", {})) } :
+      {}
+    )
+  }
 
-  # Derive upgrade sequence automatically
-  upgrade_sequence = concat(sort(local.control_plane_nodes), sort(local.worker_nodes))
-
-  # Calculate current upgrade node
-  current_upgrade_node = (
-    var.upgrade_control.enabled &&
-    var.upgrade_control.index >= 0 &&
-    var.upgrade_control.index < length(local.upgrade_sequence)
-  ) ? local.upgrade_sequence[var.upgrade_control.index] : ""
-
-  # Prepare nodes configuration with upgrade flags
+  # Mark a single node for upgrade when upgrade_control is enabled
+  # This merges the computed nodes_config with an update flag
   nodes_with_upgrade = {
-    for name, config in local.nodes_config : name => merge(config, {
+    for name, config in local.nodes_config :
+    name => merge(config, {
       update = var.upgrade_control.enabled && name == local.current_upgrade_node
     })
   }
+
 }
 
 module "talos" {
@@ -143,20 +124,3 @@ module "talos" {
   nodes = local.nodes_with_upgrade
 }
 
-output "upgrade_info" {
-  value = {
-    state = {
-      enabled     = var.upgrade_control.enabled
-      index       = var.upgrade_control.index
-      total_nodes = length(local.upgrade_sequence)
-      sequence    = local.upgrade_sequence
-    }
-    current = var.upgrade_control.enabled ? {
-      node     = local.current_upgrade_node
-      progress = "${var.upgrade_control.index + 1}/${length(local.upgrade_sequence)}"
-      valid    = local.current_upgrade_node != ""
-      ip       = try(local.nodes_config[local.current_upgrade_node].ip, null)
-    } : null
-  }
-  description = "Structured upgrade state information for external automation and monitoring"
-}
