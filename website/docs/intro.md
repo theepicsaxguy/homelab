@@ -9,20 +9,24 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
 # Core Design Principles
 
 1. **GitOps as Source of Truth**
+
    - All cluster states live in this Git repo
    - ArgoCD syncs cluster state with Git definitions
    - Changes require Git commits for audit tracking
 
 2. **Declarative Configuration**
+
    - Uses Kubernetes YAML, Kustomize, and Terraform
    - Tools manage state based on defined specs
 
 3. **Automated Operations**
+
    - ArgoCD ApplicationSets handle deployments
    - Cert-Manager runs certificate lifecycle
    - CI/CD pipelines automate testing and deployment
 
 4. **Security First**
+
    - Non-root container execution
    - Network policies control traffic
    - External secrets management
@@ -68,3 +72,8 @@ This guide explains our homelab Kubernetes setup, designed to help IT admins und
   - CI/CD workflow setup
   - Dependabot settings
   - Repo maintenance
+
+## Website Updates
+
+The site used to include a small blog for notes and experiments. To keep the focus on documentation, the blog has been
+removed. You'll now find all relevant updates here in the docs.
