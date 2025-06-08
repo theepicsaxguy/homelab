@@ -11,7 +11,7 @@ spec:
   selector:
     app: babybuddy
   ports:
-    - port: 3000
+    - port: 8000
       targetPort: http
       protocol: TCP
       name: http
