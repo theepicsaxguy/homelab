@@ -23,7 +23,7 @@ envFrom:
 
 service:
   port:
-    port: 8000
+    port: 3000
 ingress:
   enabled: false
 
