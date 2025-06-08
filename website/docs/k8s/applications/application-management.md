@@ -112,4 +112,9 @@ We use NFS for shared media files:
 OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC. The
 `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
 
+## BabyBuddy Notes
+
+BabyBuddy runs on port `3000`. Update your service and readiness probes to point
+to this port if you override the default configuration.
+
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
