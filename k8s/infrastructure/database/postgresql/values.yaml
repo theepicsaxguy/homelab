@@ -126,7 +126,7 @@ configKubernetes:
   # use finalizers to ensure all managed resources are deleted prior to the postgresql CR
   # this avoids stale resources in case the operator misses a delete event or is not running
   # during deletion
-  enable_finalizers: false
+  enable_finalizers: true
   # enables initContainers to run actions before Spilo is started
   enable_init_containers: true
   # toggles if child resources should have an owner reference to the postgresql CR
@@ -138,7 +138,7 @@ configKubernetes:
   # toggles PDB to set to MinAvailabe 0 or 1
   enable_pod_disruption_budget: true
   # toogles readiness probe for database pods
-  enable_readiness_probe: false
+  enable_readiness_probe: true
   # toggles if operator should delete secrets on cluster deletion
   enable_secrets_deletion: true
   # enables sidecar containers to run alongside Spilo in the same pod
@@ -375,11 +375,11 @@ configLogicalBackup:
   # S3 Access Key ID
   logical_backup_s3_access_key_id: ""
   # S3 bucket to store backup results
-  logical_backup_s3_bucket: "my-bucket-url"
+  logical_backup_s3_bucket: "homelab-postgres-backups"
   # S3 bucket prefix to use
   logical_backup_s3_bucket_prefix: "spilo"
   # S3 region of bucket
-  logical_backup_s3_region: ""
+  logical_backup_s3_region: "us-east-1"
   # S3 endpoint url when not using AWS
   logical_backup_s3_endpoint: ""
   # S3 Secret Access Key
@@ -389,7 +389,7 @@ configLogicalBackup:
   # S3 retention time for stored backups for example "2 week" or "7 days"
   logical_backup_s3_retention_time: ""
   # backup schedule in the cron format
-  logical_backup_schedule: "30 00 * * *"
+  logical_backup_schedule: "0 3 * * *"
   # secret to be used as reference for env variables in cronjob
   logical_backup_cronjob_environment_secret: ""
 
