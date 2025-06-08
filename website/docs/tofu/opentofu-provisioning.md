@@ -91,25 +91,26 @@ Define nodes in `/tofu/main.tf` with:
 
 ```hcl
 module "talos" {
+  talos_image = {
+    version        = "<see https://github.com/siderolabs/talos/releases>"
+    schematic_path = "${path.root}/tofu/talos/image/schematic.yaml.tftpl"
+    # update_version and update_schematic_path can be set as needed
+  }
+
   nodes = {
     "node1" = {
-      host_node    = "proxmox1"
-      machine_type = "controlplane"
-      ip           = "10.0.0.1" # Example IP
-      cpu          = 4
+      host_node     = "proxmox1"
+      machine_type  = "controlplane"
+      ip            = "10.0.0.1" # Example IP
+      cpu           = 4
       ram_dedicated = 8192
       disks = {
-        # Example: a primary disk for the OS (often handled by the image cloning)
-        # and an additional disk for Longhorn.
-        # The exact structure depends on your module's variables.tf.
-        # This example assumes a structure like the one found in the repository:
-        longhorn = { # Key for the disk, e.g., 'longhorn' or 'data'
-          device     = "/dev/sdb" # Or another available device
+        longhorn = {
+          device     = "/dev/sdb"
           size       = "180G"
-          type       = "scsi"     # Or 'virtio', 'sata'
-          mountpoint = "/var/lib/longhorn" # If applicable for Talos config
+          type       = "scsi"
+          mountpoint = "/var/lib/longhorn"
         }
-        # os_disk = { ... } # If explicitly defining the OS disk
       }
     }
   }
@@ -167,19 +168,20 @@ We embed essential services in the Talos config:
    Example snippet from `main.tf` (actual structure may vary based on module inputs):
 
    ```hcl
-   module "talos" {
-     # ...
-     image = {
-       version = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for OS images
-       # ...
-     }
-     cluster = {
-       talos_version      = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for machine configs
-       kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target Kubernetes version
-       # ...
-     }
-     # ...
-   }
+  module "talos" {
+    # ...
+    talos_image = {
+      version        = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for OS images
+      schematic_path = "${path.root}/tofu/talos/image/schematic.yaml.tftpl"
+      # update_version and update_schematic_path when performing upgrades
+    }
+    cluster = {
+      talos_version      = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for machine configs
+      kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target Kubernetes version
+      # ...
+    }
+    # ...
+  }
    ```
 
 2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise,

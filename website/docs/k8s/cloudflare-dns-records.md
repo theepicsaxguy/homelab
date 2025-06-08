@@ -37,7 +37,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
 1. **Deploy Crossplane**: Install the Crossplane Helm chart into `crossplane-system`.
 2. **Fetch Cloudflare token**: Create an `ExternalSecret` to sync the API token into a Secret.
 3. **Install Cloudflare provider**: Apply the `Provider` and `ProviderConfig` manifests.
-4. **Declare DNS records**: Add `dns-record.yaml` and update `kustomization.yaml` in each service repo.
+4. **Declare DNS records**: Edit `dns-records.yaml` under `k8s/infrastructure/controllers/crossplane/` to add new `Record` entries.
 5. **Apply and verify**: Deploy manifests and confirm records in Crossplane and Cloudflare.
 
 ## Deploy Crossplane and configure the Cloudflare provider
@@ -53,16 +53,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
 
 ## Apply DNS records for each service
 
-Each application repository should include:
-
-1. A `dns-record.yaml` manifest declaring a `Record` (type `CNAME`) with:
-   - `metadata.name` and `metadata.namespace` matching the service.
-   - `spec.forProvider.name` as the hostname (e.g., `frigate`).
-   - `spec.forProvider.value` as the Cloudflare Tunnel target.
-
-2. An update to `kustomization.yaml` adding `dns-record.yaml` to the resources list.
-
-Repeat for Immich, Jellyfin, Jellyseerr, Baby Buddy, IT Tools, Authentik, etc., adjusting names and namespaces per service.
+DNS records are defined centrally. Update `k8s/infrastructure/controllers/crossplane/dns-records.yaml` with a new `Record` block for each service. ArgoCD reconciles the file and provisions the records in Cloudflare.
 
 ## Verify the configuration
 

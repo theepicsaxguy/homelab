@@ -46,35 +46,20 @@ tofu apply
 
 ### 1.2 Deploy Core Infrastructure Components
 
-Deploy the essential infrastructure components in the correct order:
+Redeploy ArgoCD first, then allow it to reconcile the remaining infrastructure.
 
 ```bash
-# Deploy networking (Cilium)
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
+# Install ArgoCD so it can restore the cluster state
+kustomize build --enable-helm k8s/infrastructure/controllers/argocd | kubectl apply -f -
 
-# Deploy CRDs
-kubectl apply -k infrastructure/crds
+# Wait for ArgoCD to become ready
+kubectl -n argocd rollout status deployment/argocd-server
 
-# Deploy External Secrets Operator
-kustomize build --enable-helm infrastructure/controllers/external-secrets/ | kubectl apply -f -
-
-# Deploy Cert Manager
-kustomize build --enable-helm infrastructure/controllers/cert-manager | kubectl apply -f -
-
-# Configure Bitwarden access token for External Secrets
-kubectl create secret generic bitwarden-access-token \
-  --namespace external-secrets \
-  --from-literal=token=<your-token>
-
-# Reapply networking to ensure complete configuration
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
-
-# Deploy Longhorn storage
-kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -f -
-
-# Deploy remaining infrastructure components
-kustomize build --enable-helm infrastructure/ | kubectl apply -f -
+# Sync the infrastructure ApplicationSet
+argocd app sync infra-application-set --prune
 ```
+
+This restores networking, storage, and other controllers from the Git repository rather than applying each component manually.
 
 **⚠️ Important**: Do not deploy applications with persistent volumes yet. This phase only sets up the core infrastructure.
 
@@ -116,9 +101,6 @@ Redeploy your applications using your GitOps workflow. This creates the PVCs tha
 ```bash
 # Using ArgoCD
 argocd app sync <your-app>
-
-# Or direct kubectl application
-kubectl apply -f k8s/applications/
 ```
 
 **Expected State**: Applications will be in pending state, waiting for persistent volumes. This is normal at this stage.
@@ -253,7 +235,7 @@ After successful recovery:
 tofu destroy && tofu apply
 
 # Infrastructure deployment
-kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
+argocd app sync infra-application-set --prune
 
 # Status monitoring
 kubectl get pvc,pods -A

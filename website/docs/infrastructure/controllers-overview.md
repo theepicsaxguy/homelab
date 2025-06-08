@@ -75,7 +75,7 @@ High-Availability Profile:
 
 | Controller       | CPU Request | Memory Request | CPU Limit | Memory Limit |
 | ---------------- | ----------- | -------------- | --------- | ------------ |
-| ArgoCD Server    | 500m        | 512Mi          | 2000m     | 1Gi          |
+| ArgoCD Server    | 50m         | 64Mi           | 2000m     | 1Gi          |
 | cert-manager     | 75m         | 96Mi           | 75m       | 96Mi         |
 | External Secrets | 80m         | 100Mi          | 80m       | 100Mi        |
 | Longhorn Manager | 250m        | 256Mi          | 250m      | 256Mi        |

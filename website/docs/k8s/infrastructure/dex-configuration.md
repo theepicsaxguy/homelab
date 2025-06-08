@@ -64,13 +64,9 @@ configs:
 
 4. Correct the variable reference for `clientID` to `$dex.authentik.clientId`.
 
-## Deleting `values-oidc.yaml`
+## Legacy `values-oidc.yaml`
 
-The `values-oidc.yaml` file is no longer needed with the DEX configuration. Delete the file located in `k8s/infrastructure/controllers/argocd/`.
-
-## Updating `kustomization.yaml`
-
-Remove the reference to `values-oidc.yaml` in `k8s/infrastructure/controllers/argocd/kustomization.yaml` if it exists.
+Earlier revisions included a separate `values-oidc.yaml` file. That file has since been removed from the repository, so no cleanup is required.
 
 ## Adding Secret Entry for `dex.authentik.clientId`
 
@@ -90,4 +86,4 @@ Replace `<appropriate-remote-key>` with the actual remote key for `dex.authentik
 
 ## Summary
 
-By following these steps, you will enable DEX in ArgoCD, update the `values.yaml` file, delete the unnecessary `values-oidc.yaml` file, update the `kustomization.yaml` file, and add the secret entry for `dex.authentik.clientId`.
+By following these steps, you will enable DEX in ArgoCD, update the `values.yaml` file, and add the secret entry for `dex.authentik.clientId`.

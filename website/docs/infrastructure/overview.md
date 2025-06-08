@@ -80,13 +80,8 @@ infrastructure/
 
 ```yaml
 Deployment Flow:
-1. CRDs (Wave -1)
-2. Core Infrastructure (Wave 0)
-3. Controllers (Wave 1)
-4. Storage (Wave 2)
-5. Networking (Wave 3)
-6. Authentication (Wave 4)
-7. Applications (Wave 5+)
+1. Infrastructure (Wave -10)
+2. Applications (Wave 0)
 ```
 
 ### Version Control
