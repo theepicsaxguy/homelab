@@ -1,4 +1,3 @@
-# FILE: k8s/applications/web/babybuddy/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -51,18 +50,18 @@ spec:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 6
           readinessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 5
+            initialDelaySeconds: 20
+            periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 6
       volumes:
         - name: config
           persistentVolumeClaim:
