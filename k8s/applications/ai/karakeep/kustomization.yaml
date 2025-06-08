@@ -18,6 +18,7 @@ resources:
 - meilisearch-deployment.yaml
 - meilisearch-service.yaml
 - meilisearch-pvc.yaml
+- meilisearch-backup-cronjob.yaml
 - data-pvc.yaml
 - http-route.yaml
 - karakeep-secrets-external.yaml

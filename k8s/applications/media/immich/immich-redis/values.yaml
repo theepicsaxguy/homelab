@@ -6,6 +6,9 @@ auth:
 fullnameOverride: immich-redis
 
 primary:
+  persistence:
+    enabled: true
+    size: 1Gi
   resources:
     requests:
       cpu: 80m

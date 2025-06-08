@@ -123,6 +123,8 @@ readinessProbe:
   periodSeconds: 10
 ```
 
+All other deployments now include similar probes to keep services responsive.
+
 ### Resource Monitoring
 
 - CPU and memory utilization
