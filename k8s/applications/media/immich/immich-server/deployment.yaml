@@ -63,9 +63,9 @@ spec:
             httpGet:
               path: /api/server/ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
           name: immich-server
           ports:
             - containerPort: 2283
@@ -82,17 +82,17 @@ spec:
             httpGet:
               path: /api/server/ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
           startupProbe:
             failureThreshold: 30
             httpGet:
               path: /api/server/ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
           volumeMounts:
             - mountPath: /config
               name: config

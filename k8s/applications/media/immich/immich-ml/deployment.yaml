@@ -63,9 +63,9 @@ spec:
             httpGet:
               path: /ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
           name: immich-machine-learning
           ports:
             - containerPort: 3003
@@ -76,17 +76,17 @@ spec:
             httpGet:
               path: /ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
           startupProbe:
             failureThreshold: 60
             httpGet:
               path: /ping
               port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
           volumeMounts:
             - mountPath: /cache
               name: cache

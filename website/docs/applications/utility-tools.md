@@ -112,15 +112,17 @@ livenessProbe:
   httpGet:
     path: /health
     port: 80
-  initialDelaySeconds: 10
-  periodSeconds: 30
+  initialDelaySeconds: 15
+  periodSeconds: 15
+  timeoutSeconds: 10
 
 readinessProbe:
   httpGet:
     path: /ready
     port: 80
-  initialDelaySeconds: 5
-  periodSeconds: 10
+  initialDelaySeconds: 15
+  periodSeconds: 15
+  timeoutSeconds: 10
 ```
 
 All other deployments now include similar probes to keep services responsive.

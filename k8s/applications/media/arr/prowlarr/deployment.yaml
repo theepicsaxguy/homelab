@@ -40,17 +40,17 @@ spec:
             httpGet:
               path: /
               port: 9696
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 9696
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 5
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
       volumes:
         - name: prowlarr-config
