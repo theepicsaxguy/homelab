@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mongodb-backup
+  namespace: pedro-bot
+spec:
+  schedule: "0 4 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: mongo-backup
+              image: mongo:8.0
+              command: ["/bin/sh","-c"]
+              args:
+                - mongodump --uri=mongodb://mongodb:27017/pedro-bot --archive=/backup/mongodb-$(date +%F).gz --gzip
+              volumeMounts:
+                - mountPath: /backup
+                  name: backup
+          volumes:
+            - name: backup
+              persistentVolumeClaim:
+                claimName: mongo-data

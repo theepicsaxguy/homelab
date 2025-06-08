@@ -105,6 +105,20 @@ spec:
               value: Etc/UTC
             - name: SKIP_USERMOD
               value: 'true'
+          livenessProbe:
+            tcpSocket:
+              port: 8088
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8088
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
           volumeMounts:
             - name: omada-data
               mountPath: /opt/tplink/EAPController/data

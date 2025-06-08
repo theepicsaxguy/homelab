@@ -14,6 +14,7 @@ spec:
       - createdb
   databases:
     authentik: authentik_user
+  enableLogicalBackup: true
   postgresql:
     version: "17"
   enableConnectionPooler: false
