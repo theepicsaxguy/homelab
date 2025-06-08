@@ -31,7 +31,7 @@ spec:
               cpu: '300m'
               memory: '512Mi'
           ports:
-            - containerPort: 3000
+            - containerPort: 8000  # Changed from 3000 to 8000
               name: http
           env:
             - name: PUID
@@ -40,6 +40,8 @@ spec:
               value: '1000'
             - name: TZ
               value: 'Europe/Stockholm'
+            - name: CSRF_TRUSTED_ORIGINS
+              value: 'https://bebis.pc-tips.se,http://bebis.pc-tips.se'
           envFrom:
             - secretRef:
                 name: es-babybuddy-secret-key
@@ -49,16 +51,16 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 3000
-            initialDelaySeconds: 120    # Give more time for Django to fully start
-            periodSeconds: 30           # Check less frequently
-            timeoutSeconds: 10          # Allow longer response time
-            failureThreshold: 3         # Be more tolerant
+              port: 8000  # Changed from 3000 to 8000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
-              port: 3000
-            initialDelaySeconds: 60     # Give time for migrations/setup
+              port: 8000  # Changed from 3000 to 8000
+            initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 5
