@@ -56,14 +56,14 @@ spec:
               path: /
               port: 3000
             initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 3000
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 5
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3

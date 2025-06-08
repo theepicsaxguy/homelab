@@ -34,15 +34,15 @@ spec:
             tcpSocket:
               port: 27017
             initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             tcpSocket:
               port: 27017
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 5
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
   volumeClaimTemplates:
     - metadata:
