@@ -173,9 +173,6 @@ extraObjects:
       - apiGroups: ['']
         resources: ['secrets']
         verbs: ['create', 'update', 'patch', 'get']
-      - apiGroups: ['']
-        resources: ['serviceaccounts/token']
-        verbs: ['create']
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
@@ -211,9 +208,10 @@ extraObjects:
                 - -c
                 - |
                   set -e
-                  TOKEN=$(argocd account generate-token --account kubechecks \
-                          --server argocd-server.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.server.service.httpsTargetPort }} \
-                          --insecure --auth-token "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+                  if kubectl get secret argocd-kubechecks-token -n {{ .Release.Namespace }} -o jsonpath='{.data.token}' 2>/dev/null | base64 -d | grep -q '^[A-Za-z0-9+/]'; then
+                    exit 0
+                  fi
+                  TOKEN="argocd-token-$(openssl rand -hex 32)"
                   kubectl create secret generic argocd-kubechecks-token \
                     --from-literal=token="$TOKEN" --dry-run=client -o yaml | kubectl apply -f -
               resources:
