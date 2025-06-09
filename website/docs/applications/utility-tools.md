@@ -107,6 +107,8 @@ policies:
 
 ### Health Checks
 
+Unrar now includes a liveness probe to verify its extraction loop is running.
+
 ```yaml
 livenessProbe:
   httpGet:

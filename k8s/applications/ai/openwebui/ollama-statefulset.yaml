@@ -47,6 +47,22 @@ spec:
         - name: ollama-volume
           mountPath: /home/ollama/.ollama
         tty: true
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 11434
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 11434
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 1
   volumeClaimTemplates:
   - metadata:
       name: ollama-volume
