@@ -16,6 +16,7 @@ resources:
   requests:
     cpu: 75m
     memory: 96Mi
+replicaCount: 2
 
 webhook:
   securePort: 10250
@@ -32,6 +33,7 @@ webhook:
       memory: 144Mi
   securityContext:
     runAsNonRoot: true
+  replicaCount: 2
 
 cainjector:
   resources:
@@ -41,3 +43,4 @@ cainjector:
     requests:
       cpu: 40m
       memory: 72Mi
+  replicaCount: 2
