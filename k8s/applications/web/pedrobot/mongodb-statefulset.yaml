@@ -14,9 +14,23 @@ spec:
       labels:
         app: mongodb
     spec:
+      initContainers:
+        - name: init-replica-set
+          image: mongo:8.0
+          command:
+            - sh
+            - -c
+            - |
+              if [ "$(hostname)" = "mongodb-0" ]; then
+                until mongosh --host mongodb-0.mongodb --eval 'db.runCommand({ ping: 1 })' >/dev/null 2>&1; do
+                  sleep 2
+                done
+                mongosh --host mongodb-0.mongodb --eval 'try { rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongodb-0.mongodb:27017" }, { _id: 1, host: "mongodb-1.mongodb:27017" }]}) } catch (e) { print(e); }'
+              fi
       containers:
         - name: mongodb
           image: mongo:8.0
+          command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
           ports:
             - containerPort: 27017
               name: mongo

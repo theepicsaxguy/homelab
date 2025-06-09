@@ -114,7 +114,7 @@ OpenWebUI provides a chat interface backed by local AI models. The deployment in
 `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
 
 Chrome and Ollama now define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
-Mosquitto and Unrar use similar probes. Pedro Bot now relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar are free to run on any available node.
+Mosquitto and Unrar use similar probes. Pedro Bot now relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar are free to run on any available node. The MongoDB backend runs as a two-node replica set to avoid downtime if one pod fails.
 
 ## BabyBuddy Notes
 

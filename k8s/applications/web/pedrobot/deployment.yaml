@@ -26,7 +26,7 @@ spec:
                 name: es-pedro-bot-secrets
           env:
             - name: MONGO_URI
-              value: mongodb://mongodb:27017/pedro-bot
+              value: mongodb://mongodb-0.mongodb:27017,mongodb-1.mongodb:27017/pedro-bot?replicaSet=rs0
           resources:
             requests:
               cpu: '100m'

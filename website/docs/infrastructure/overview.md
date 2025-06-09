@@ -162,7 +162,7 @@ kubectl logs -n <namespace> <pod> -f
    - Component redundancy
    - Data replication
    - Primary databases run with two instances
-   - MongoDB replica set not yet configured
+   - Pedro Bot now uses a two-node MongoDB replica set
    - Failure domain isolation
 
 ## Monitoring & Alerting

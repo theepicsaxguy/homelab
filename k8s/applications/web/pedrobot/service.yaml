@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mongodb
 spec:
-  type: ClusterIP
+  clusterIP: None
   selector:
     app: mongodb
   ports:
