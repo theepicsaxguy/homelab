@@ -95,6 +95,7 @@ Kube Prometheus Stack provides:
 - PostgreSQL backend
 - Proxy outpost for app protection
 - Configuration via Git
+- Worker liveness probe timeout set to 5 seconds to avoid restarts
 
 ## Best Practices
 
