@@ -34,6 +34,10 @@ graph LR
     C -.-> F[Authentik Server]
 ```
 
+## Database Reliability
+
+The Authentik database now runs two PostgreSQL instances via the Zalando operator. The manifest sets `numberOfInstances: 2` in `database.yaml`. This offers pod-level failover using Longhorn storage. It's not a multi-region cluster, but it prevents outages from a single pod failure.
+
 ## Configuration Guide
 
 ### 1. Protecting a New Application
