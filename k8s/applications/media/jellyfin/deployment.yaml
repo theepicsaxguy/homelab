@@ -73,5 +73,5 @@ spec:
           persistentVolumeClaim:
             claimName: media-share
         - name: cache
-          emptyDir:
-            medium: Memory
+          persistentVolumeClaim:
+            claimName: jellyfin-cache
