@@ -32,7 +32,7 @@ spec:
           args:
             [
               '-c',
-              "while true; do find /mnt/data -name '*.rar' -exec unrar x -o+ {} $(dirname {}) \\; && sleep 300; done",
+              "touch /tmp/healthy; while true; do find /mnt/data -name '*.rar' -exec unrar x -o+ {} $(dirname {}) \\; ; touch /tmp/healthy; sleep 300; done",
             ]
           securityContext:
             allowPrivilegeEscalation: false
@@ -56,7 +56,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - "ps -eo args | grep -E '^unrar x' | grep -v grep"
+                - "find /tmp/healthy -mmin -le 10"
             initialDelaySeconds: 60
             periodSeconds: 60
             timeoutSeconds: 10
