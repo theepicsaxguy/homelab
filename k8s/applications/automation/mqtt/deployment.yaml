@@ -28,6 +28,20 @@ spec:
               mountPath: /mosquitto/config
           ports:
             - containerPort: 1883
+          livenessProbe:
+            tcpSocket:
+              port: 1883
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 1883
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
       volumes:
         - name: config
           projected:

@@ -17,8 +17,6 @@ spec:
       labels:
         app: unrar
     spec:
-      nodeSelector:
-        topology.kubernetes.io/zone: host3
       securityContext:
         runAsNonRoot: true
         runAsUser: 2501
@@ -53,6 +51,16 @@ spec:
               mountPath: /tmp
             - name: unrar-data
               mountPath: /mnt/data
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "pgrep -f 'unrar x'"
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: tmp
           emptyDir: {}
