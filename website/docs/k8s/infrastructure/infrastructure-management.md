@@ -104,5 +104,6 @@ Kube Prometheus Stack provides:
 3. Use internal CA for service mesh
 4. Monitor with Prometheus
 5. Implement proper backup strategies
+6. Run databases with at least two instances to avoid single points of failure
 
 Need help? Check component examples in `/k8s/infrastructure/` for reference implementations.
