@@ -90,3 +90,5 @@ node drain. Most of our applications run a single replica, so each namespace
 defines a simple PDB with `maxUnavailable: 0`. When you drain a node hosting
 one of these pods, the operation waits until another replica is available or the
 PDB is removed. This prevents accidental outages during routine maintenance.
+Multi-replica services like CoreDNS, Argo CD, and the monitoring stack also
+have PDBs defined to ensure at least one instance stays online during upgrades.
