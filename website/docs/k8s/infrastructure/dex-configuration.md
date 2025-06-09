@@ -41,7 +41,7 @@ dex:
   enabled: true
 ```
 
-3. Replace the existing `oidc.config` with the new configuration under `configs.cm`:
+3. Update `configs.cm` with the following `oidc.config` definition:
 
 ```yaml
 configs:
@@ -66,7 +66,7 @@ configs:
 
 ## Deleting `values-oidc.yaml`
 
-The `values-oidc.yaml` file is no longer needed with the DEX configuration. Delete the file located in `k8s/infrastructure/controllers/argocd/`.
+Omit the `values-oidc.yaml` file from `k8s/infrastructure/controllers/argocd/`.
 
 ## Updating `kustomization.yaml`
 
@@ -90,4 +90,4 @@ Replace `<appropriate-remote-key>` with the actual remote key for `dex.authentik
 
 ## Summary
 
-By following these steps, you will enable DEX in ArgoCD, update the `values.yaml` file, delete the unnecessary `values-oidc.yaml` file, update the `kustomization.yaml` file, and add the secret entry for `dex.authentik.clientId`.
+By following these steps, you will enable DEX in ArgoCD, update `values.yaml`, remove any reference to `values-oidc.yaml`, update the `kustomization.yaml` file, and add the secret entry for `dex.authentik.clientId`.

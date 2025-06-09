@@ -13,7 +13,7 @@ To avoid sync errors in Argo CD:
 
 1. The CRDs are installed through a dedicated `crds` kustomization that references the upstream YAML files.
 2. The Helm release is configured with `includeCRDs: false` and the Argo CD Application sets `skipCrds: true`.
-3. The Application uses `ServerSideApply` so Argo CD no longer adds the `last-applied-configuration` annotation.
+3. The Application uses `ServerSideApply`, so Argo CD doesn't add the `last-applied-configuration` annotation.
 
 This approach keeps the deployment idempotent and avoids manual patching of CRDs.
 

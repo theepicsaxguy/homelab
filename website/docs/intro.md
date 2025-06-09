@@ -79,5 +79,4 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 ## Website Updates
 
-The site used to include a small blog for notes and experiments. To keep the focus on documentation, the blog has been
-removed. You'll now find all relevant updates here in the docs.
+All updates are available in the documentation. There is no separate blog.

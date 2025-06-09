@@ -29,7 +29,6 @@ Our modern networking stack is built on:
 
 - **Gateway API**
   - Modern ingress management
-  - Replaces traditional Ingress resources
   - Enhanced traffic routing capabilities
 
 ### Gateway Classes and Structure
