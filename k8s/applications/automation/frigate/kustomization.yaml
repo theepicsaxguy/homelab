@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - externalsecret.yaml
   - http-route.yaml
+  - pdb.yaml
 
 configMapGenerator:
 - name: frigate-env

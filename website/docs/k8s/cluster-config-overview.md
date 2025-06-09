@@ -82,3 +82,11 @@ kubectl uncordon node-name
 - Monitor node health after maintenance
 - Ensure cluster has capacity for workload redistribution
 - Consider impact on stateful applications
+
+### Pod Disruption Budgets
+
+PodDisruptionBudgets (PDBs) keep critical pods running during a voluntary
+node drain. Most of our applications run a single replica, so each namespace
+defines a simple PDB with `maxUnavailable: 0`. When you drain a node hosting
+one of these pods, the operation waits until another replica is available or the
+PDB is removed. This prevents accidental outages during routine maintenance.
