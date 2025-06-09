@@ -46,7 +46,8 @@ myapp/
 ├── deployment.yaml      # Container settings
 ├── service.yaml         # Network exposure
 ├── pvc.yaml            # Storage (if needed)
-└── http-route.yaml     # External access
+├── http-route.yaml     # External access
+└── values.yaml         # Helm values (only if the app uses a Helm chart)
 ```
 
 ### Example: KaraKeep Configuration
@@ -117,7 +118,6 @@ Mosquitto and Unrar use similar probes. Pedro Bot now relies on PersistentVolume
 
 ## BabyBuddy Notes
 
-BabyBuddy runs on port `3000`. Update your service and readiness probes to point
-to this port if you override the default configuration.
+BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. We removed an unused `values.yaml` file to avoid confusion. Update your service and readiness probes to point to this port if you override the default configuration.
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
