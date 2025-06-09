@@ -116,6 +116,10 @@ OpenWebUI provides a chat interface backed by local AI models. The deployment in
 Chrome and Ollama now define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
 Mosquitto and Unrar use similar probes. Pedro Bot now relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar are free to run on any available node.
 
+## Karakeep Notes
+
+Karakeep now authenticates through Authentik using OIDC. The client ID and secret live in Bitwarden and sync to a Kubernetes secret via ExternalSecrets. Password logins are disabled so users sign in only with Authentik.
+
 ## BabyBuddy Notes
 
 BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. We removed an unused `values.yaml` file to avoid confusion. Update your service and readiness probes to point to this port if you override the default configuration.
