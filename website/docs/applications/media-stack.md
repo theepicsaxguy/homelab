@@ -99,6 +99,7 @@ Storage Classes:
    - Direct volume mounts for media
    - SSD storage class for metadata
    - Optimized read patterns
+   - Metadata cache stored on a persistent volume
 
 ### \*arr Stack Optimizations
 
@@ -151,7 +152,7 @@ alerts:
 
 - [ ] Integration with Home Assistant for automation
 - [ ] Implementation of cross-node GPU sharing
-- [ ] Enhanced metadata caching layer
+- [x] Enhanced metadata caching layer
 - [ ] Backup strategy improvements
 
 ## Troubleshooting Guide
