@@ -1,0 +1,58 @@
+# k8s/infrastructure/auth/authentik/extra/blueprints/apps-karakeep.yaml
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Apps - Karakeep
+entries:
+  - id: karakeep-provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s.pc-tips.se/ai-karakeep
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      client_type: confidential
+      redirect_uris:
+        - url: https://karakeep.pc-tips.se/api/auth/callback/custom
+          matching_mode: strict
+      client_id: !Env KARAKEEP_CLIENT_ID
+      client_secret: !Env KARAKEEP_CLIENT_SECRET
+      access_code_validity: minutes=1
+      refresh_token_validity: days=30
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'openid'"]]
+        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'profile'"]]
+        - !Find [authentik_core.propertymapping, [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"]]
+
+  - id: karakeep-application
+    model: authentik_core.application
+    identifiers:
+      slug: karakeep
+    attrs:
+      name: Karakeep
+      group: AI
+      meta_description: "A self-hostable bookmark-everything app with AI-based automatic tagging."
+      icon: https://raw.githubusercontent.com/karakeep/karakeep/main/public/logo_512.png
+      provider: !KeyOf karakeep-provider
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf karakeep-application
+      group: !Find [authentik_core.group, [name, "users"]]
+    attrs:
+      order: 1
+
