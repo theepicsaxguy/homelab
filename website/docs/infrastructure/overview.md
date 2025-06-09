@@ -161,6 +161,8 @@ kubectl logs -n <namespace> <pod> -f
 3. **High Availability**
    - Component redundancy
    - Data replication
+   - Primary databases run with two instances
+   - MongoDB replica set not yet configured
    - Failure domain isolation
 
 ## Monitoring & Alerting

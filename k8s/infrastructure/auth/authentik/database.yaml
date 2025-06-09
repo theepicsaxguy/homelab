@@ -7,7 +7,7 @@ spec:
   teamId: "auth"
   volume:
     size: 10Gi
-  numberOfInstances: 1
+  numberOfInstances: 2
   users:
     authentik_user:
       - superuser

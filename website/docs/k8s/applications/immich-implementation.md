@@ -33,14 +33,17 @@ By default, the Zalando operator won't install `pgvector` and `vectorchord` unle
 In `database.yaml`, specify each extension under `spec.preparedDatabases` so the operator creates them at startup:
 
 ```yaml
-# k8s/applications/media/immich/database.yaml
+# k8s/applications/media/immich/immich-server/database.yaml
 spec:
+  numberOfInstances: 2
   preparedDatabases:
     immich:
       extensions:
         pgvector: public
         vectorchord: public
 ```
+
+This setup runs two database pods for basic failover. It still relies on shared storage and isn't a multi-region solution, but it avoids a single point of failure in normal operations.
 
 ---
 
