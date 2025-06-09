@@ -121,7 +121,7 @@ livenessProbe:
   timeoutSeconds: 10
 ```
 
-All other deployments now include similar probes to keep services responsive.
+All deployments include similar probes to keep services responsive.
 
 ### Resource Monitoring
 

@@ -113,15 +113,15 @@ We use NFS for shared media files:
 OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC. The
 `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
 
-Chrome and Ollama now define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
-Mosquitto and Unrar use similar probes. Pedro Bot now relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar are free to run on any available node.
+Chrome and Ollama define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
+Mosquitto and Unrar use similar probes. Pedro Bot relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar can run on any available node.
 
 ## Karakeep Notes
 
-Karakeep now authenticates through Authentik using OIDC. The client ID and secret live in Bitwarden and sync to a Kubernetes secret via ExternalSecrets. Password logins are disabled so users sign in only with Authentik.
+Karakeep authenticates through Authentik using OIDC. The client ID and secret live in Bitwarden and sync to a Kubernetes secret via ExternalSecrets. Password logins are disabled so users sign in only with Authentik.
 
 ## BabyBuddy Notes
 
-BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. We removed an unused `values.yaml` file to avoid confusion. Update your service and readiness probes to point to this port if you override the default configuration.
+BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. The deployment does not include a `values.yaml` file, avoiding confusion. Update your service and readiness probes to point to this port if you override the default configuration.
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
