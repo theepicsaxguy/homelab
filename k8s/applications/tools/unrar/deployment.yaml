@@ -56,7 +56,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - "find /tmp/healthy -mmin -le 10"
+                - "pgrep -x unrar >/dev/null || find /tmp/healthy -mmin -le 30"
             initialDelaySeconds: 60
             periodSeconds: 60
             timeoutSeconds: 10
