@@ -144,6 +144,12 @@ server:
 
 worker:
   enabled: true
+  livenessProbe:
+    timeoutSeconds: 5
+  readinessProbe:
+    timeoutSeconds: 5
+  startupProbe:
+    timeoutSeconds: 5
 postgresql:
   enabled: false
 
