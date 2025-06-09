@@ -178,7 +178,7 @@ The following directory structure represents the standard layout for application
       teamId: "<team>"
       volume:
         size: <size>
-      numberOfInstances: 1
+      numberOfInstances: 2
       resources:
         requests:
           cpu: 100m
