@@ -31,6 +31,14 @@ This page explains how GitHub Actions, Dependabot, and pre-commit hooks keep thi
 - **Note:**
   - Uses a simple versioning scheme (`release-type: simple`). Suitable for single-package projects.
 
+### Docker Image Build (`image-build.yaml`)
+
+- **File:** `.github/workflows/image-build.yaml`
+- **Purpose:** Detects Dockerfiles and pushes updated images to GHCR.
+- **Permissions:**
+  - `contents: read` (clone the repository)
+  - `packages: write` (upload images)
+
 ### Validation & CI (Implied Workflows)
 
 - **What:** While specific workflow YAMLs for all validation steps aren't detailed here, the presence of scripts like `hooks/validate-external-secrets.sh` suggests CI integration for validation. The repository aims to automatically lint and validate configurations.
