@@ -107,23 +107,17 @@ policies:
 
 ### Health Checks
 
-Unrar now includes a liveness probe to verify its extraction loop is running.
+Unrar now uses a simple file-based check. The container updates `/tmp/healthy` during every cycle and the probe verifies that the timestamp is recent.
 
 ```yaml
 livenessProbe:
-  httpGet:
-    path: /health
-    port: 80
-  initialDelaySeconds: 15
-  periodSeconds: 15
-  timeoutSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /ready
-    port: 80
-  initialDelaySeconds: 15
-  periodSeconds: 15
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - "find /tmp/healthy -mmin -le 10"
+  initialDelaySeconds: 60
+  periodSeconds: 60
   timeoutSeconds: 10
 ```
 
