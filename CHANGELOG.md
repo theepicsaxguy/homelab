@@ -1,5 +1,56 @@
 # Changelog
 
+## 2.8.0 (2025-06-09)
+
+## What's Changed
+* Add CODE_OF_CONDUCT and fix README link by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/818
+* fix(k8s): specify cloudflare account name by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/820
+* fix(network): update cilium helm repo by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/822
+* refactor(k8s): share arr deployment config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/821
+* k8s: automate kubechecks argocd token by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/825
+* k8s(authentik): update external secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/828
+* chore(deps): update all dependencies to v73.2.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/827
+* fix(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/826
+* k8s(resources): tune workloads and add pedrobot db by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/829
+* chore(deps): update mongo docker tag to v8 by @renovate in https://github.com/theepicsaxguy/homelab/pull/830
+* fix(k8s): use Recreate strategy for PVC deployments by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/831
+* fix(k8s): update argocd token generator image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/832
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/834
+* chore(deps): update helm release argo-cd to v8.0.15 by @renovate in https://github.com/theepicsaxguy/homelab/pull/833
+* k8s(controllers): embed token generator by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/837
+* fix(k8s): update sync-wave annotations and enable ServerSideApply by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/838
+* feat(k8s): enhance Jellyfin integration with ExternalSecret and environment variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/839
+* fix(k8s): update .gitignore and token-pushsecret.yaml for consistency by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/840
+* fix(k8s): set grafana oauth secret ids by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/841
+* feat(website): enable local search by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/842
+* feat(website): organize sidebar categories by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/843
+* feat(website)!: remove blog by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/844
+* fix(website): replace local search plugin by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/845
+* docs(readme): fix links and quick start by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/846
+* chore(deps): update helm release redis to v21.2.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/847
+* feat(k8s): add probes and backups by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/849
+* fix(k8s): set babybuddy port to 3000 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/850
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/851
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/852
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/853
+* fix(k8s): relax probe intervals by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/854
+* docs(website): expose changelog by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/855
+* fix(k8s): generate ArgoCD token without CLI by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/856
+* feat(k8s): add probes and pvc updates by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/858
+* chore(deps): update helm release argo-cd to v8.0.16 by @renovate in https://github.com/theepicsaxguy/homelab/pull/857
+* feat(k8s): add pod disruption budgets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/860
+* fix(unrar): improve liveness probe by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/862
+* chore(k8s): remove unused babybuddy values file by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/861
+* fix(k8s): limit kubechecks cpu by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/859
+* ci(image-build): set minimal permissions by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/863
+* feat(jellyfin): persist cache volume by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/865
+* fix(k8s): make unrar liveness probe resilient to long extractions by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/864
+* fix(pedrobot): separate mongo backup storage by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/866
+* chore(deps): update getmeili/meilisearch docker tag to v1.15.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/870
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.7.0...v2.8.0
+
 ## 2.7.0 (2025-06-04)
 
 ## What's Changed
