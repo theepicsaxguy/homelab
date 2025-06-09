@@ -18,13 +18,13 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
   Deploys Crossplane into the `crossplane-system` namespace to enable its CRDs and controllers.
 
 - **ExternalSecret**
-  Retrieves the Cloudflare API token from a Bitwarden-backed `ClusterSecretStore` into a Kubernetes Secret.
+  Retrieves the Cloudflare API token from a Bitwarden-backed `ClusterSecretStore` and templates a Kubernetes Secret containing a `creds` field with JSON credentials.
 
 - **Provider**
   Installs the Crossplane Cloudflare provider package.
 
 - **ProviderConfig**
-  References the synced Secret to supply credentials to the provider.
+  References the synced Secret's `creds` key to supply credentials to the provider.
 
 ## Prerequisites
 
@@ -46,10 +46,10 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
    Apply the official Crossplane Helm chart into `crossplane-system` via your GitOps tool.
 
 2. **Configure external secrets**
-   Define an `ExternalSecret` pointing to the Bitwarden-backed `ClusterSecretStore` to sync `cloudflare_api_token` into a Kubernetes Secret named `cloudflare-api-token`.
+   Define an `ExternalSecret` pointing to the Bitwarden-backed `ClusterSecretStore` to sync `cloudflare_api_token` and `cloudflare_account_id` into a Kubernetes Secret named `cloudflare-api-token`. The secret includes a `creds` key containing `{ "api_token": "...", "account_id": "..." }`.
 
 3. **Install provider and credentials**
-   Apply the Crossplane `Provider` for Cloudflare and a `ProviderConfig` that references `cloudflare-api-token`.
+   Apply the Crossplane `Provider` for Cloudflare and a `ProviderConfig` that references the `creds` key in `cloudflare-api-token`.
 
 ## Apply DNS records for each service
 
