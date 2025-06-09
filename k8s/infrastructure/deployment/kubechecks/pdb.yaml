@@ -3,7 +3,7 @@ kind: PodDisruptionBudget
 metadata:
   name: kubechecks-pdb
 spec:
-  maxUnavailable: 0
+  minAvailable: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: kubechecks
