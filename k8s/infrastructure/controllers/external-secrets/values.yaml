@@ -36,6 +36,7 @@ createOperator: true
 # -- Specifies the number of concurrent ExternalSecret Reconciles external-secret executes at
 # a time.
 concurrent: 1
+replicaCount: 2
 # -- Specifices Log Params to the External Secrets Operator
 log:
   level: info
@@ -203,7 +204,7 @@ webhook:
   certCheckInterval: '5m'
   # -- Specifices the lookaheadInterval for certificate validity
   lookaheadInterval: ''
-  replicaCount: 1
+  replicaCount: 2
   # -- Specifices Log Params to the Webhook
   log:
     level: info
@@ -391,7 +392,7 @@ certController:
   # -- Specifies whether a certificate controller deployment be created.
   create: true
   requeueInterval: '5m'
-  replicaCount: 1
+  replicaCount: 2
   # -- Specifices Log Params to the Certificate Controller
   log:
     level: info

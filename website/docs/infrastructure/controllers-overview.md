@@ -97,8 +97,13 @@ High-Availability Profile:
 ```yaml
 Replication:
   argocd-server: 2
-  cert-manager: 2
-  external-secrets: 2
+  argocd-repo-server: 2
+  argocd-applicationset: 2
+  cert-manager-controller: 2
+  cert-manager-webhook: 2
+  cert-manager-cainjector: 2
+  external-secrets-operator: 2
+  external-secrets-webhook: 2
   longhorn-manager: 3 # One per node
 
 Pod Disruption Budget:

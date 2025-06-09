@@ -84,6 +84,7 @@ redis:
       memory: 1Gi
 
 server:
+  replicas: 2
   extensions:
     enabled: true
   service:
@@ -99,6 +100,7 @@ server:
       memory: 1Gi
 
 repoServer:
+  replicas: 2
   containerSecurityContext:
     readOnlyRootFilesystem: true
   volumes:
@@ -140,6 +142,7 @@ repoServer:
           name: cmp-tmp
 
 applicationSet:
+  replicas: 2
   resources:
     requests:
       cpu: 50m
