@@ -57,8 +57,8 @@ spec:
             failureThreshold: 3
       volumes:
         - name: logs
-          hostPath:
-            path: /var/log/pedro-bot
+          persistentVolumeClaim:
+            claimName: pedro-bot-logs
         - name: data
-          hostPath:
-            path: /etc/pedro-bot
+          persistentVolumeClaim:
+            claimName: pedro-bot-data
