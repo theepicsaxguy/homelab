@@ -107,7 +107,7 @@ policies:
 
 ### Health Checks
 
-Unrar now uses a simple file-based check. The container updates `/tmp/healthy` during every cycle and the probe verifies that the timestamp is recent.
+The unrar deployment checks for a running extraction process and falls back to a timestamp check on `/tmp/healthy`. This prevents needless restarts when large archives take a while.
 
 ```yaml
 livenessProbe:
@@ -115,7 +115,7 @@ livenessProbe:
     command:
       - /bin/sh
       - -c
-      - "find /tmp/healthy -mmin -le 10"
+      - "pgrep -x unrar >/dev/null || find /tmp/healthy -mmin -le 30"
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 10
