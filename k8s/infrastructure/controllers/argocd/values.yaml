@@ -101,6 +101,9 @@ server:
 
 repoServer:
   replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
   containerSecurityContext:
     readOnlyRootFilesystem: true
   volumes:
@@ -143,6 +146,9 @@ repoServer:
 
 applicationSet:
   replicas: 2
+  pdb:
+    enabled: true
+    minAvailable: 1
   resources:
     requests:
       cpu: 50m
