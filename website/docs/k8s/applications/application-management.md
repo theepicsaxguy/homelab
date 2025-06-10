@@ -107,6 +107,7 @@ We use NFS for shared media files:
 5. Use automated sync with ArgoCD
 6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
 7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
+8. Pin container images to explicit versions and set `imagePullPolicy: IfNotPresent`.
 
 ## OpenWebUI Notes
 

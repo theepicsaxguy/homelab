@@ -91,9 +91,9 @@ deployment:
   replicaCount: 1
 
   image:
-    pullPolicy: Always
-    name: "ghcr.io/zapier/kubechecks"
-    tag: "latest"
+    pullPolicy: IfNotPresent
+    name: "ghcr.io/zapier/kubechecks" # renovate: docker=ghcr.io/zapier/kubechecks
+    tag: "v2.4.2"
 
   imagePullSecrets: []
   nodeSelector: {}
