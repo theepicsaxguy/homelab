@@ -19,7 +19,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: pedro-bot
-          image: your-registry/pedro-bot:latest
+          image: ghcr.io/theepicsaxguy/pedro-bot/pedro-bot:1.0.1
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
