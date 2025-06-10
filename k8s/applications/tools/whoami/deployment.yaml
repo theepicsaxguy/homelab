@@ -26,7 +26,8 @@ spec:
           type: RuntimeDefault
       containers:
         - name: whoami
-          image: ghcr.io/traefik/whoami:latest
+          image: ghcr.io/traefik/whoami:v1.11.0 # renovate: docker=ghcr.io/traefik/whoami
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

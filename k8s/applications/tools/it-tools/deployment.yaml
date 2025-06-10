@@ -31,8 +31,8 @@ spec:
 
       containers:
         - name: it-tools
-          image: corentinth/it-tools:latest
-          imagePullPolicy: Always
+          image: corentinth/it-tools:2024.10.22-7ca5933 # renovate: docker=corentinth/it-tools
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           securityContext:

@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: sabnzbd
-          image: ghcr.io/linuxserver/sabnzbd:4.5.1
-          imagePullPolicy: Always
+          image: ghcr.io/linuxserver/sabnzbd:4.5.1 # renovate: docker=ghcr.io/linuxserver/sabnzbd
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: '100m'

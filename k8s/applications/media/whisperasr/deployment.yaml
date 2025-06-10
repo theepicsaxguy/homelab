@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: whisperasr
-          image: onerahmet/openai-whisper-asr-webservice:v1.8.2
-          imagePullPolicy: Always
+          image: onerahmet/openai-whisper-asr-webservice:v1.8.2 # renovate: docker=onerahmet/openai-whisper-asr-webservice
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: '500m'
