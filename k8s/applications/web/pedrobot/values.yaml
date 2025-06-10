@@ -1,7 +1,7 @@
 image:
-  repository: your-registry/pedro-bot
+  repository: ghcr.io/theepicsaxguy/pedro-bot/pedro-bot
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: "1.0.1"
 
 envFrom:
   - secretRef:
