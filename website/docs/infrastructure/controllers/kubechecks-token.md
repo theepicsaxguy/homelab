@@ -19,18 +19,18 @@ configs:
     accounts.kubechecks: apiKey
 ```
 
-## Automatic token generation
+## Provide a static token
 
-The Helm chart includes a small Job under `extraObjects` that creates the token using the Kubernetes API. It first checks for the `argocd-kubechecks-token` Secret. If it is missing, the Job generates a new value with `openssl rand -hex 32` and stores it in the Secret. The token is also pushed to Bitwarden through a `PushSecret` resource. The Job runs on every upgrade so the token is recreated if needed.
+A fixed token is stored in Bitwarden. An `ExternalSecret` merges it into `argocd-secret` so the ArgoCD API can authenticate Kubechecks requests. The same secret UID is referenced by the Kubechecks deployment.
 
 ## Consuming the token
 
-The `ExternalSecret` for Kubechecks references the pushed secret:
+The `ExternalSecret` for Kubechecks references the same secret:
 
 ```yaml
 - secretKey: argocd_api_token
   remoteRef:
-    key: argocd-kubechecks-api-token
+    key: 0d2a2732-db70-49b7-b64a-b29400a92230
 ```
 
 This approach keeps the API token out of the cluster while still being fully declarative.
