@@ -19,7 +19,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: pedro-bot
-          image: ghcr.io/theepicsaxguy/pedro-bot/pedro-bot:1.0.1
+          image: ghcr.io/theepicsaxguy/pedro-bot/pedro-bot:1.0.2 # renovate: docker=ghcr.io/theepicsaxguy/pedro-bot/pedro-bot
           imagePullPolicy: IfNotPresent
           envFrom:
             - secretRef:
