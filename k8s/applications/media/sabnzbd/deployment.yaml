@@ -18,7 +18,7 @@ spec:
       containers:
         - name: sabnzbd
           image: ghcr.io/linuxserver/sabnzbd:4.5.1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: '100m'
