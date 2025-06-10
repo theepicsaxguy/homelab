@@ -9,7 +9,7 @@ resources:
   - rolebinding.yaml
   - role.yaml
   - externalsecret.yaml
-  - token-pushsecret.yaml
+  - argocd-kubechecks-token-secret.yaml
   - pdb.yaml
 
 helmCharts:
