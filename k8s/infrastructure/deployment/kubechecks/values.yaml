@@ -92,7 +92,7 @@ deployment:
 
   image:
     pullPolicy: IfNotPresent
-    name: "ghcr.io/zapier/kubechecks"
+    name: "ghcr.io/zapier/kubechecks" # renovate: docker=ghcr.io/zapier/kubechecks
     tag: "v2.4.2"
 
   imagePullSecrets: []

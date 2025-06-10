@@ -20,7 +20,7 @@ spec:
             claimName: data-pvc
       containers:
         - name: web
-          image: ghcr.io/karakeep-app/karakeep
+          image: ghcr.io/karakeep-app/karakeep # renovate: docker=ghcr.io/karakeep-app/karakeep
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
