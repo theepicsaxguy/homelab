@@ -4,6 +4,8 @@ title: Contributing Guide
 
 Welcome! This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to our standards for pull requests.
 
+For community expectations, please read our [Code of Conduct](https://github.com/theepicsaxguy/homelab/blob/main/.github/CODE_OF_CONDUCT.md). If you just need a quick reference on the workflow, see the [short contributing guide](https://github.com/theepicsaxguy/homelab/blob/main/.github/CONTRIBUTING.md).
+
 ## Local Development Setup
 
 To ensure your changes are valid, you'll need a few tools.
@@ -47,7 +49,7 @@ Before opening a pull request, please run these checks on any files you've modif
        - `fix(network): correct cilium network policy`
        - `docs(contributing): clarify PR process`
        - `chore(deps): update helm chart for argocd`
-   - For full details, see the [commit convention guide](../../.github/commit-convention.md).
+   - For full details, see the [commit convention guide](https://github.com/theepicsaxguy/homelab/blob/main/.github/commit-convention.md).
 4. **Open the Pull Request:** Push your branch and open a PR against the `main` branch. In the description, briefly explain the "what" and "why" of your change. If it resolves an issue, include `Fixes #123`.
 
 ## What Makes a Good Contribution?
