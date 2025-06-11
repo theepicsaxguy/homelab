@@ -65,6 +65,8 @@ Here's how KaraKeep (`/k8s/applications/ai/karakeep/`) is structured:
    - Runs as non-root
    - Drops unnecessary privileges
    - Uses default security profiles
+   - Helm charts explicitly set `runAsUser`, `runAsGroup`, and `fsGroup` to `1000`
+     with `seccompProfile: RuntimeDefault` and `allowPrivilegeEscalation: false`.
    - Default UID and GID for Meilisearch are set to `1000`. Adjust `runAsUser` and `runAsGroup` in
      `meilisearch-deployment.yaml` if those IDs conflict with your environment.
 
