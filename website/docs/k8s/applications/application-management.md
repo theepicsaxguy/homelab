@@ -105,7 +105,7 @@ We use NFS for shared media files:
 1. Use Kustomize for configuration
 2. Store secrets in Bitwarden
 3. Set resource limits
-4. Configure security contexts and keep the root filesystem read-only unless the app needs writes
+4. Configure security contexts and keep the root filesystem read-only. If the container relies on s6-overlay (Frigate does), mount /run as an emptyDir volume so writes stay ephemeral
 5. Use automated sync with ArgoCD
 6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
 7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
