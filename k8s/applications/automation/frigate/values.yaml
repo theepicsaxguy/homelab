@@ -299,6 +299,7 @@ securityContext:
     add:
       - CHOWN
       - FOWNER
+      - SETGID
 
 # -- Set Pod level Security Context
 # -- the container level securiy context defined above
