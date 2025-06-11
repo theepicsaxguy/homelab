@@ -122,6 +122,7 @@ Mosquitto and Unrar use similar probes. Pedro Bot relies on PersistentVolumeClai
 ## Karakeep Notes
 
 Karakeep authenticates through Authentik using OIDC. The client ID and secret live in Bitwarden and sync to a Kubernetes secret via ExternalSecrets. Password logins are disabled so users sign in only with Authentik.
+The container keeps its root filesystem read-only. Temporary paths like `/run` and `/tmp` come from `emptyDir` volumes so s6-overlay can write runtime files.
 
 ## BabyBuddy Notes
 
