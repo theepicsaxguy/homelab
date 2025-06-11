@@ -1,24 +1,20 @@
-# Contributing Guide
+# How to Contribute
 
-We welcome your pull requests! This short guide explains the workflow we use.
+We're excited you want to contribute! This homelab project thrives on community input. To ensure a smooth process for everyone, please read these guidelines.
 
-## Workflow
+## Philosophy
 
-1. **Fork and branch.** Create a branch in your fork for each change.
-2. **Make your edits.** Keep commits focused and follow the [commit message style](./commit-convention.md).
-3. **Run checks.**
-   - If you changed docs or TypeScript, run `npm install` and `npm run typecheck` in `website/`.
-   - If you touched Kubernetes manifests, run `kustomize build --enable-helm <dir>` for each changed directory.
-   - For OpenTofu configs, run `tofu fmt` and `tofu validate`.
-4. **Push and open a PR.** Use the same Conventional Commit format in the PR title.
+- **GitOps is Law:** All changes to the cluster must be made through Git. No manual `kubectl apply` for permanent changes.
+- **Automate Everything:** If it can be scripted or managed by a controller, it should be.
+- **Security is Not an Afterthought:** We use non-root containers, network policies, and externalized secrets by default.
 
-## Your First Contribution
+## Getting Started
 
-A simple way to start is updating a container image.
+The best way to contribute is to find an area you can improve.
 
-1. Fork this repo and create a branch called `update-it-tools`.
-2. Edit `k8s/applications/tools/it-tools/deployment.yaml` and update the image tag.
-3. Commit with `chore(deps): update it-tools docker tag to v2024.10.23`.
-4. Open a pull request against `main`.
+1. **Read the Full Guide:** For detailed information on our commit conventions, PR process, and local setup, please see the [full contributing guide on our website](https://homelab.orkestack.com/docs/contributing).
+2. **Find an Issue:** Check out the issues labeled [`good first issue`](https://github.com/theepicsaxguy/homelab/labels/good%20first%20issue) for easy entry points.
+3. **Report a Bug:** If you found a problem, please open a [bug report](https://github.com/theepicsaxguy/homelab/issues/new?template=bug_report.md).
+4. **Suggest a Feature:** Have an idea for a new app or improvement? Let's discuss it in a [feature request](https://github.com/theepicsaxguy/homelab/issues/new?template=feature_request.md).
 
-Thanks for helping improve the project!
+We appreciate your help in making this project better.

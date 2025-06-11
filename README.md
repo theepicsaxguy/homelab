@@ -86,7 +86,7 @@ This project thrives on community input. Whether you're fixing a typo or adding 
 
 1. **Read the Docs:** Start with the [Contributing Guide](.github/CONTRIBUTING.md) to learn the workflow and standards.
 2. **Find an Issue:** Look for items labeled [good first issue](https://github.com/theepicsaxguy/homelab/labels/good%20first%20issue) to get started quickly.
-3. **Suggest an Idea:** Open a feature request and let's talk about it.
+3. **Suggest an Idea:** Have a feature request? [**Open an issue**](https://github.com/theepicsaxguy/homelab/issues/new?template=feature_request.md) and let's talk about it.
 
 For questions, open an issue or start a discussion. Dive deeper at [homelab.orkestack.com](https://homelab.orkestack.com) and start your self-healing Kubernetes journey.
 
