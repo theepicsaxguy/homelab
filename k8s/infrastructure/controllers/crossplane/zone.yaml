@@ -7,4 +7,3 @@ spec:
     zone: pc-tips.se
   providerConfigRef:
     name: cloudflare-provider
-  managementPolicy: ObserveOnly
