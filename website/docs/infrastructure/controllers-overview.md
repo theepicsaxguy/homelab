@@ -57,6 +57,7 @@ This document outlines the core infrastructure controllers deployed in our Kuber
   - Schema validation
   - GitHub integration
   - Custom webhook support
+  - Writable `/tmp` mount to support repo clones
 
 ## Resource Management
 
