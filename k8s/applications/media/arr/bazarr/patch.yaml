@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bazarr
+  namespace: media
+spec:
+  template:
+    spec:
+      containers:
+      - name: bazarr
+        securityContext:
+          allowPrivilegeEscalation: true

@@ -6,3 +6,5 @@ resources:
   - svc.yaml
   - http-route.yaml
   - deployment.yaml
+patchesStrategicMerge:
+  - patch.yaml

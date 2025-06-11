@@ -291,7 +291,7 @@ resources:
 
 # -- Set Frigate Container Security Context
 securityContext:
-  allowPrivilegeEscalation: false
+  allowPrivilegeEscalation: true
   readOnlyRootFilesystem: true
   capabilities:
     drop:
