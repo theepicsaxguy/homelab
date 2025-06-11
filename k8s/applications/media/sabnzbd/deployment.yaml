@@ -37,9 +37,6 @@ spec:
               value: 'Europe/Stockholm'
             - name: HOST_WHITELIST_ENTRIES
               value: 'sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se'
-          envFrom:
-            - secretRef:
-                name: jellyseerr-jellyfin
           volumeMounts:
             - name: sabnzbd-config
               mountPath: /config

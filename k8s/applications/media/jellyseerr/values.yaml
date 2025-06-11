@@ -21,7 +21,7 @@ extraEnv: []
 # -- Environment variables from secrets or configmaps to add to the jellyseerr pods
 extraEnvFrom:
   - secretRef:
-      name: jellyseerr-jellyfin
+      name: jellyseerr-secrets
 
 serviceAccount:
   # -- Specifies whether a service account should be created
