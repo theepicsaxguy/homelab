@@ -1,5 +1,48 @@
 # Changelog
 
+## 2.9.0 (2025-06-11)
+
+## What's Changed
+* feat(infra): enable HA replicas by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/868
+* fix(k8s): template Cloudflare provider credentials by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/871
+* fix(auth): increase worker probe timeout by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/872
+* fix(k8s): enable HA for critical databases by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/874
+* feat(k8s): add pdbs for critical services by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/875
+* chore update omada by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/876
+* feat(k8s): integrate Karakeep with Authentik by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/877
+* docs: remove historical references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/878
+* chore(deps): update helm release argo-cd to v8.0.17 by @renovate in https://github.com/theepicsaxguy/homelab/pull/880
+* refactor(k8s): simplify kubechecks token sync by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/879
+* fix(k8s): specify pedrobot image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/881
+* chore(deps): update helm release cert-manager to v1.18.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/882
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.14 by @renovate in https://github.com/theepicsaxguy/homelab/pull/884
+* fix(k8s): pin image versions and policies by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/885
+* fix(k8s): update pedrobot image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/883
+* chore(deps): update helm release redis to v21.2.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/887
+* fix(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/888
+* chore(deps): update helm release redis to v21.2.3 by @renovate in https://github.com/theepicsaxguy/homelab/pull/889
+* chore(deps): update cloudflare/cloudflared docker tag to v2025.6.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/890
+* refactor(k8s): consolidate arr configs and scope secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/891
+* fix(argocd): drop unused kubechecks token by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/897
+* docs: replace example domains with placeholders by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/896
+* fix(k8s): remove unsupported fields from cloudflare crds by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/898
+* fix(k8s): enforce read-only root filesystem by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/894
+* fix(k8s): update zone reference for ittools by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/900
+* fix(network): run CoreDNS as non-root by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/892
+* feat(k8s): enforce securityContext on helm charts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/901
+* feat(k8s): enforce securityContext on helm charts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/903
+* docs(monitoring): update CRD management details by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/904
+* fix(k8s): mount tmp dir for kubechecks by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/905
+* docs: refresh README and add contributing guide by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/906
+* fix(k8s): add tmp and run volumes for karakeep by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/907
+* fix(k8s): mount tmpfs for frigate /run by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/908
+* fix(k8s): enable privilege escalation for bazarr and frigate by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/909
+* docs(contributing): fix broken links by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/911
+* chore(deps): update getmeili/meilisearch docker tag to v1.15.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/910
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.8.0...v2.9.0
+
 ## 2.8.0 (2025-06-09)
 
 ## What's Changed
