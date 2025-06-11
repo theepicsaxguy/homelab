@@ -52,6 +52,7 @@ spec:
 - Internal domain: kube.your.domain.tld
 - External forwarding to 10.25.150.1, 1.1.1.1, 8.8.8.8
 - Caching enabled
+- Runs as a non-root user (UID/GID 1000) with NET_BIND_SERVICE capability
 
 ### 3. Gateway API
 
