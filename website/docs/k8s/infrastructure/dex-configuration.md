@@ -49,7 +49,7 @@ configs:
     dex.config: |
       connectors:
       - config:
-          issuer: https://sso.pc-tips.se/application/o/argocd/
+          issuer: https://sso.your.domain.tld/application/o/argocd/
           clientID: $dex.authentik.clientId
           clientSecret: $dex.authentik.clientSecret
           insecureEnableGroups: true

@@ -13,7 +13,7 @@ This document covers the utility tools and applications deployed in our cluster 
 ### IT Tools
 
 - **Purpose**: Collection of utilities for IT operations
-- **Access**: https://it-tools.pc-tips.se (via Authentik SSO)
+- **Access**: https://it-tools.your.domain.tld (via Authentik SSO)
 - **Features**:
   - String manipulation
   - Encoding/decoding
@@ -54,7 +54,7 @@ All tools are exposed through Cilium Gateway API with the following configuratio
 ```yaml
 Gateway Configuration:
   - IT Tools:
-      host: it-tools.pc-tips.se
+      host: it-tools.your.domain.tld
       service: it-tools
       port: 80
       backendRefs:
@@ -63,7 +63,7 @@ Gateway Configuration:
           port: 9000 # Authentik SSO
 
   - Whoami:
-      host: whoami.pc-tips.se
+      host: whoami.your.domain.tld
       service: whoami
       port: 80
       backendRefs:
