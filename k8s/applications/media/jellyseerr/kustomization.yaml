@@ -9,6 +9,6 @@ resources:
 helmCharts:
 - name: jellyseerr-chart
   repo: oci://ghcr.io/fallenbagel/jellyseerr
-  version: 2.4.0
+  version: 2.5.0
   releaseName: jellyseerr
   valuesFile: values.yaml
