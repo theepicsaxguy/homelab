@@ -55,5 +55,3 @@ Before opening a pull request, please run these checks on any files you've modif
 - **Small, Focused PRs:** It's much easier to review a PR that updates one Helm chart than a PR that updates ten.
 - **Follow the Pattern:** When adding a new application, look at an existing one (like `it-tools` or `jellyfin`) and copy its structure.
 - **Update Documentation:** If your change affects how something works, please update the relevant documentation in `/website/docs`.
-
----
