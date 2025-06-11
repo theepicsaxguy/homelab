@@ -5,12 +5,5 @@ metadata:
 spec:
   forProvider:
     name: pc-tips
-    accountId:
-      valueFrom:
-        secretKeyRef:
-          name: cloudflare-api-token
-          namespace: crossplane-system
-          key: cloudflare-account-id
   providerConfigRef:
     name: cloudflare-provider
-  managementPolicy: ObserveOnly
