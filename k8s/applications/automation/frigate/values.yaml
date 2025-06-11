@@ -296,6 +296,9 @@ securityContext:
   capabilities:
     drop:
       - ALL
+    add:
+      - CHOWN
+      - FOWNER
 
 # -- Set Pod level Security Context
 # -- the container level securiy context defined above
