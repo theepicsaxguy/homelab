@@ -40,9 +40,13 @@ gpu:
     runtimeClassName:
 
 # -- declare extra volumes to use for Frigate
-extraVolumes: []
+extraVolumes:
+  - name: run-tmpfs
+    emptyDir: {}
 # -- declare additional volume mounts
-extraVolumeMounts: []
+extraVolumeMounts:
+  - name: run-tmpfs
+    mountPath: /run
 
 # -- amount of shared memory to use for caching
 shmSize: 1Gi
