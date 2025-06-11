@@ -103,7 +103,7 @@ We use NFS for shared media files:
 1. Use Kustomize for configuration
 2. Store secrets in Bitwarden
 3. Set resource limits
-4. Configure security contexts
+4. Configure security contexts: run pods as non-root, drop all capabilities, block privilege escalation, and use the RuntimeDefault seccomp profile.
 5. Use automated sync with ArgoCD
 6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
 7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
