@@ -69,7 +69,7 @@ The following directory structure represents the standard layout for application
         - name: external
           namespace: gateway
       hostnames:
-        - "<app-name>.pc-tips.se"
+        - "<app-name>.your.domain.tld"
       rules:
         - matches:
             - path:

@@ -16,7 +16,7 @@ Authentik is deployed with two main components:
    - Core authentication service
    - User management interface
    - Policy configuration
-   - Accessible at https://sso.pc-tips.se
+   - Accessible at https://sso.your.domain.tld
 
 2. **Proxy Outpost**
    - Authentication proxy (ports 9000/9443)
@@ -40,11 +40,11 @@ graph LR
 
 #### Step 1: Authentik Configuration
 
-1. Access Authentik admin interface (https://sso.pc-tips.se)
+1. Access Authentik admin interface (https://sso.your.domain.tld)
 2. Create a new Proxy Provider:
    ```yaml
    name: my-application
-   external_host: app.pc-tips.se
+   external_host: app.your.domain.tld
    internal_host: http://my-service.namespace.svc:8080
    mode: forward_single
    ```
@@ -71,7 +71,7 @@ spec:
     - name: external  # or internal based on access needs
       namespace: gateway
   hostnames:
-    - "app.pc-tips.se"
+    - "app.your.domain.tld"
   rules:
     - matches:
         - path:
@@ -135,7 +135,7 @@ kubectl -n auth get ciliumnetworkpolicies
 
 3. Test Authentication Flow:
 ```bash
-curl -v https://app.pc-tips.se
+curl -v https://app.your.domain.tld
 # Should redirect to SSO
 ```
 
@@ -172,7 +172,7 @@ spec:
     - name: external
       namespace: gateway
   hostnames:
-    - "webapp.pc-tips.se"
+    - "webapp.your.domain.tld"
   rules:
     - matches:
         - path:
@@ -198,7 +198,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "api.internal.pc-tips.se"
+    - "api.internal.your.domain.tld"
   rules:
     - matches:
         - path:
