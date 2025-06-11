@@ -111,7 +111,7 @@ deployment:
     capabilities:
       drop:
         - ALL
-    readOnlyRootFilesystem: false
+    readOnlyRootFilesystem: true
 
   envFrom: []
 
