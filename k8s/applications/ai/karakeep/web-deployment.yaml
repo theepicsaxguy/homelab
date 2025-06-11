@@ -23,7 +23,7 @@ spec:
           image: ghcr.io/karakeep-app/karakeep # renovate: docker=ghcr.io/karakeep-app/karakeep
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ['ALL']
           resources:
