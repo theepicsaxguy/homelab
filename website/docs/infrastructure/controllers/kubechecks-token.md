@@ -1,13 +1,13 @@
 ---
 sidebar_position: 3
 title: Kubechecks ArgoCD Token
-description: Declarative generation of the Kubechecks ArgoCD API key
+description: Manual creation of the Kubechecks ArgoCD API key
 ---
 
 # Kubechecks ArgoCD API Token
 
-Kubechecks requires an ArgoCD API token for authentication. The account is defined in `argocd-cm` so ArgoCD does not
-store a token automatically.
+Kubechecks requires an ArgoCD API token for authentication. The account is defined in `argocd-cm`, but the token itself is
+created manually through the ArgoCD UI or CLI.
 
 ## Declare the account
 
@@ -21,11 +21,11 @@ configs:
 
 ## Provide a static token
 
-A fixed token is stored in Bitwarden. An `ExternalSecret` merges it into `argocd-secret` so the ArgoCD API can authenticate Kubechecks requests. The same secret UID is referenced by the Kubechecks deployment.
+Generate a token in ArgoCD for the `kubechecks` account and save it to Bitwarden. The Kubechecks deployment pulls this token directly from Bitwarden via `kubechecks-secret-external.yaml`.
 
 ## Consuming the token
 
-The `ExternalSecret` for Kubechecks references the same secret:
+`kubechecks-secret-external.yaml` pulls the Bitwarden item into a Kubernetes secret:
 
 ```yaml
 - secretKey: argocd_api_token
@@ -33,4 +33,4 @@ The `ExternalSecret` for Kubechecks references the same secret:
     key: 0d2a2732-db70-49b7-b64a-b29400a92230
 ```
 
-This approach keeps the API token out of the cluster while still being fully declarative.
+The secret is referenced by the Kubechecks Helm chart so the token never lives in the repository.
