@@ -12,7 +12,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: meili-backup
-              image: getmeili/meilisearch:v1.15.0
+              image: getmeili/meilisearch:v1.15.1
               command: ["/bin/sh","-c"]
               args:
                 - meilisearch --dump-dir /backup --dump
