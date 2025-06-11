@@ -6,7 +6,7 @@ namespace: immich
 helmCharts:
   - name: redis
     releaseName: immich-redis
-    version: 21.2.2
+    version: 21.2.3
     repo: https://charts.bitnami.com/bitnami
     valuesFile: values.yaml
     includeCRDs: false
