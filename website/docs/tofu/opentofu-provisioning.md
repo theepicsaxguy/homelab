@@ -230,7 +230,7 @@ proxmox = {
 
 cluster = {
   name               = "talos"        # Cluster name
-  endpoint           = "api.kube.pc-tips.se"  # API endpoint
+  endpoint           = "api.kube.your.domain.tld"  # API endpoint
   kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"       # Kubernetes version
   talos_version     = "<see https://github.com/siderolabs/talos/releases>"      # Talos version
   gateway           = "10.25.150.1"   # Network gateway

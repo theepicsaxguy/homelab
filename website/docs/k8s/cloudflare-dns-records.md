@@ -70,4 +70,4 @@ Repeat for Immich, Jellyfin, Jellyseerr, Baby Buddy, IT Tools, Authentik, etc., 
   Run `kubectl get records.dns.cloudflare.upbound.io -A` and confirm each record’s status is `READY`.
 
 - **Cloudflare dashboard**
-  In Cloudflare UI, go to **DNS → pc-tips.se** and verify that CNAME entries point to the correct Tunnel hostnames.
+  In Cloudflare UI, go to **DNS → your.domain.tld** and verify that CNAME entries point to the correct Tunnel hostnames.

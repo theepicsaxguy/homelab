@@ -51,7 +51,7 @@ spec:
           key: token
           name: bitwarden-access-token
           namespace: external-secrets
-      url: https://bitwarden.pc-tips.se
+      url: https://bitwarden.your.domain.tld
 ```
 
 ## Usage Examples
@@ -182,7 +182,7 @@ spec:
       app.kubernetes.io/name: external-secrets
   egress:
     - toFQDNs:
-        - matchName: bitwarden.pc-tips.se
+        - matchName: bitwarden.your.domain.tld
       toPorts:
         - ports:
             - port: "443"
@@ -245,5 +245,5 @@ kubectl get externalsecret -A
 # Test Bitwarden access
 kubectl -n external-secrets exec -it \
   $(kubectl -n external-secrets get pod -l app.kubernetes.io/name=external-secrets -o name) \
-  -- curl -v https://bitwarden.pc-tips.se
+  -- curl -v https://bitwarden.your.domain.tld
 ```

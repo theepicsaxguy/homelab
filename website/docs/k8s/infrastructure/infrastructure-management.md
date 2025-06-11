@@ -49,7 +49,7 @@ spec:
 
 ### 2. DNS (CoreDNS)
 
-- Internal domain: kube.pc-tips.se
+- Internal domain: kube.your.domain.tld
 - External forwarding to 10.25.150.1, 1.1.1.1, 8.8.8.8
 - Caching enabled
 
