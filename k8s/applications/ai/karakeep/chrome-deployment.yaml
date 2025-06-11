@@ -28,7 +28,7 @@ spec:
           image: gcr.io/zenika-hub/alpine-chrome:124
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
           volumeMounts:
