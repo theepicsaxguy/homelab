@@ -25,21 +25,12 @@ spec:
               containerPort: 6767
               protocol: TCP
           env:
-            - name: PUID
-              value: '2501'
             - name: VPN_ENABLED
               value: 'false'
-            - name: PGID
-              value: '2501'
-            - name: TZ
-              value: 'Etc/UTC'
             - name: UMASK
               value: '002'
             - name: WEBUI_PORTS
               value: '6767/tcp,6767/udp'
-          envFrom:
-            - secretRef:
-                name: jellyseerr-jellyfin
           volumeMounts:
             - name: bazarr-config
               mountPath: /config

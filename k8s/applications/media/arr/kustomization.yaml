@@ -4,7 +4,12 @@ kind: Kustomization
 configMapGenerator:
 - literals:
   - TZ="Europe/Oslo"
+  - PUID="2501"
+  - PGID="2501"
   name: common-env
+
+generatorOptions:
+  disableNameSuffixHash: true
 
 namespace: media
 
@@ -13,3 +18,9 @@ resources:
 - radarr
 - sonarr
 - bazarr
+
+patches:
+  - path: base/patch.yaml
+    target:
+      kind: Deployment
+      labelSelector: app in (bazarr, prowlarr, radarr, sonarr)
