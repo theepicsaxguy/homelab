@@ -105,7 +105,7 @@ We use NFS for shared media files:
 1. Use Kustomize for configuration
 2. Store secrets in Bitwarden
 3. Set resource limits
-4. Configure security contexts and keep the root filesystem read-only. s6-overlay containers like Frigate must run as root (`runAsUser: 0`), should mount `/run` as an emptyDir so writes stay ephemeral, and need the `CHOWN` and `FOWNER` capabilities so startup scripts can change log ownership
+4. Configure security contexts and keep the root filesystem read-only. s6-overlay containers like Frigate must run as root (`runAsUser: 0`), should mount `/run` as an emptyDir so writes stay ephemeral, and need the `CHOWN`, `FOWNER`, and `SETGID` capabilities so startup scripts can change permissions
 5. Use automated sync with ArgoCD
 6. Use the `Recreate` strategy for any Deployment that mounts a PVC.
 7. Be aware that `Recreate` causes downtime during updates, so plan a short maintenance window.
