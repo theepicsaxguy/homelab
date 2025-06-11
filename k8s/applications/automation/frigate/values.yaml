@@ -292,7 +292,7 @@ resources:
 # -- Set Frigate Container Security Context
 securityContext:
   allowPrivilegeEscalation: true
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
   capabilities:
     drop:
       - ALL
@@ -300,6 +300,7 @@ securityContext:
       - CHOWN
       - FOWNER
       - SETGID
+      - SETUID
 
 # -- Set Pod level Security Context
 # -- the container level securiy context defined above
