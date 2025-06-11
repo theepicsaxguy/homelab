@@ -74,6 +74,8 @@ deployment:
   volumeMounts:
     - name: home
       mountPath: /home/kubechecks
+    - name: home
+      mountPath: /tmp
 
   annotations: {}
   podAnnotations: {}
