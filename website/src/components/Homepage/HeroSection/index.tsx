@@ -8,10 +8,10 @@ export function HeroSection(): JSX.Element {
   useEffect(() => {
     const typed = new Typed('#typed', {
       strings: [
-        'Run Kubernetes at home like a pro.',
-        'GitOps-driven infrastructure automation.',
-        'Production-grade homelab setup.',
-        'Self-hosted cloud native stack.'
+        'Automating my Kubernetes cluster with GitOps.',
+        'Learning enterprise patterns on personal hardware.',
+        'Documenting the entire process, mistakes included.',
+        'An open invitation to explore and collaborate.'
       ],
       typeSpeed: 50,
       backSpeed: 30,
@@ -29,8 +29,8 @@ export function HeroSection(): JSX.Element {
       <div className="container">
         <div className={styles.heroContent}>
           <h1 className={styles.heroTitle}>
-            Your Home Infrastructure,
-            <span className={styles.gradientText}>Enterprise Grade</span>
+            An Over-Engineered
+            <span className={styles.gradientText}> Homelab Journey</span>
           </h1>
           <div className={styles.typedWrapper}>
             <span id="typed"></span>
@@ -40,14 +40,14 @@ export function HeroSection(): JSX.Element {
               to="/docs/quick-start"
               className={styles.primaryButton}
             >
-              Get Started →
+              Explore the Docs →
             </Link>
-            {/* <Link
-              to="#demo"
+            <Link
+              to="https://github.com/theepicsaxguy/homelab"
               className={styles.secondaryButton}
             >
-              Watch Demo
-            </Link> */}
+              View on GitHub
+            </Link>
           </div>
           {/* Add stats section */}
         </div>
