@@ -36,14 +36,14 @@ spec:
               path: /
               port: 9000
             initialDelaySeconds: 30
-            periodSeconds: 15
+            periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 9000
-            initialDelaySeconds: 20
-            periodSeconds: 15
+            initialDelaySeconds: 60
+            periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
