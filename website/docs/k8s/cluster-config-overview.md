@@ -89,8 +89,10 @@ node drain. Most of our applications run a single replica, so each namespace
 defines a simple PDB with `maxUnavailable: 0`. When you drain a node hosting
 one of these pods, the operation waits until another replica is available or the
 PDB is removed. This prevents accidental outages during routine maintenance.
-Multi-replica services like CoreDNS, Argo CD, and the monitoring stack also
+Multi-replica services like CoreDNS and the monitoring stack also
 have PDBs defined to ensure at least one instance stays online during upgrades.
+Argo CD runs in high availability mode, and the Helm chart automatically
+creates PDBs for each component.
 The Cloudflare tunnel runs as a DaemonSet and uses `maxUnavailable: 1` so that
 only one pod restarts at a time. Startup and readiness probes hold the update
 until the new pod is ready.

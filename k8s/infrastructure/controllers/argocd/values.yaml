@@ -58,6 +58,7 @@ crds:
   keep: false
 
 controller:
+  replicas: 1
   resources:
     requests:
       cpu: 100m
@@ -75,16 +76,13 @@ dex:
     limits:
       memory: 128Mi
 
-redis:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 64Mi
-    limits:
-      memory: 1Gi
+redis-ha:
+  enabled: true
 
 server:
-  replicas: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
   extensions:
     enabled: true
   service:
@@ -100,7 +98,9 @@ server:
       memory: 1Gi
 
 repoServer:
-  replicas: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
   pdb:
     enabled: true
     minAvailable: 1
