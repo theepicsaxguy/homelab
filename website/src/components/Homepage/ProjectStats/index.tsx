@@ -26,12 +26,10 @@ export function ProjectStats(): JSX.Element {
 
   useEffect(() => {
     async function fetchStats(): Promise<void> {
-      const repo = await fetch(
-        'https://api.github.com/repos/theepicsaxguy/homelab',
-      ).then((r) => r.json());
-      const commit = await fetch(
-        'https://api.github.com/repos/theepicsaxguy/homelab/commits?per_page=1',
-      ).then((r) => r.json());
+      const [repo, commit] = await Promise.all([
+        fetch('https://api.github.com/repos/theepicsaxguy/homelab').then((r) => r.json()),
+        fetch('https://api.github.com/repos/theepicsaxguy/homelab/commits?per_page=1').then((r) => r.json()),
+      ]);
       setStats({
         stars: repo.stargazers_count.toString(),
         forks: repo.forks_count.toString(),
