@@ -52,8 +52,9 @@ practices.
 
 The \*arr applications share a common Kustomize base located in `k8s/applications/media/arr/base`. This base injects
 node selectors, security settings, environment variables, and shared volume mounts via a JSON patch. Each individual
-application kustomization references this base and only defines its unique image and resource requirements.
-Bazarr requires a small exception here: the container's `allowPrivilegeEscalation`
+application kustomization references this base and only defines its unique image and resource requirements. The base
+also mounts ephemeral volumes at `/tmp` and `/run` so the applications can write temporary data despite the
+read-only root filesystem. Bazarr requires a small exception here: the container's `allowPrivilegeEscalation`
 flag must be enabled so its s6-init scripts can drop privileges correctly.
 
 ### Storage Layout
