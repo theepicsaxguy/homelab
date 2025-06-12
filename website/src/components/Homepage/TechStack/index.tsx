@@ -4,7 +4,12 @@ interface Technology {
   name: string;
   logo: string;
 }
-const techConfigs = [
+interface TechConfig {
+  name: string;
+  repo?: string;
+  org?: string;
+}
+const techConfigs: TechConfig[] = [
   { name: 'Kubernetes', repo: 'kubernetes/kubernetes' },
   { name: 'Talos', repo: 'siderolabs/talos' },
   { name: 'ArgoCD', repo: 'argoproj/argo-cd' },
