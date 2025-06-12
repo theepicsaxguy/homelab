@@ -7,19 +7,19 @@ export function CTASection(): JSX.Element {
   return (
     <section className={styles.cta}>
       <div className="container">
-        <h2 className={styles.title}>Ready to Transform Your Homelab?</h2>
+        <h2 className={styles.title}>Dive In and Explore</h2>
         <div className={styles.buttons}>
           <Link
-            to="https://github.com/theepicsaxguy/homelab"
+            to="/docs/quick-start"
             className={styles.primaryButton}
           >
-            Star on GitHub
+            Quick Start Guide
           </Link>
           <Link
-            to="/docs/architecture"
+            to="https://github.com/theepicsaxguy/homelab"
             className={styles.secondaryButton}
           >
-            Read the Docs
+            Browse the Code on GitHub
           </Link>
         </div>
       </div>

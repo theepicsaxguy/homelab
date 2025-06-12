@@ -1,0 +1,25 @@
+.statsSection {
+  padding: 4rem 0;
+  background: var(--ifm-background-surface-color);
+}
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.statItem {
+  padding: 1rem;
+}
+.statValue {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--ifm-color-primary);
+}
+.statLabel {
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-top: 0.5rem;
+}
