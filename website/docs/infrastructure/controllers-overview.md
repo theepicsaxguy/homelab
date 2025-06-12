@@ -58,6 +58,7 @@ This document outlines the core infrastructure controllers deployed in our Kuber
   - GitHub integration
   - Custom webhook support
   - Writable `/tmp` mount to support repo clones
+  - Optional OpenAI summaries (currently disabled)
 
 ### Velero
 
