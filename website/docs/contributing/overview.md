@@ -4,6 +4,8 @@ title: Contributing Guide
 
 Welcome! This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to my standards for pull requests.
 
+I'm currently the only person maintaining this repository, and I'd be happy to have help. Whether it's fixing a typo, updating a Helm chart, or adding a new application, your contributions are welcome. To keep things organized, I've adopted some standard open-source practices like conventional commits.
+
 For community expectations, please read my [Code of Conduct](https://github.com/theepicsaxguy/homelab/blob/main/.github/CODE_OF_CONDUCT.md). If you just need a quick reference on the workflow, see the [short contributing guide](https://github.com/theepicsaxguy/homelab/blob/main/.github/CONTRIBUTING.md).
 
 ## Local Development Setup
