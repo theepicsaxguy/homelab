@@ -6,7 +6,7 @@ Contributions are welcome and appreciated. This project thrives on community inp
 
 - **GitOps is Law:** All changes to the cluster must be made through Git. No manual `kubectl apply` for permanent changes.
 - **Automate Everything:** If it can be scripted or managed by a controller, it should be.
-- **Security is Not an Afterthought:** We use non-root containers, network policies, and externalized secrets by default.
+- **Security is Not an Afterthought:** I use non-root containers, network policies, and externalized secrets by default.
 
 ## Getting Started
 

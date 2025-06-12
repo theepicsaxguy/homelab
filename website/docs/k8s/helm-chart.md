@@ -2,7 +2,7 @@
 title: helmchart Application Deployment
 ---
 
-This document provides a standardized reference for deploying applications in our Kubernetes cluster. It outlines the essential file structure, configuration parameters, and optional components needed for consistent application deployment.
+This document provides a standardized reference for deploying applications in my Kubernetes cluster. It outlines the essential file structure, configuration parameters, and optional components needed for consistent application deployment.
 
 :::info
 All applications should follow this base template. Optional components can be added based on specific application requirements such as database integration, authentication, or custom configurations.

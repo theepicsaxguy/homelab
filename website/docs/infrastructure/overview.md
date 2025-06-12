@@ -6,11 +6,11 @@ description: Overview of the cluster's infrastructure components and organizatio
 
 # Infrastructure Overview
 
-This document provides a comprehensive overview of our cluster's core infrastructure components, which are managed using GitOps principles through ArgoCD.
+This document provides a comprehensive overview of my cluster's core infrastructure components, which are managed using GitOps principles through ArgoCD.
 
 ## Directory Structure
 
-Our infrastructure follows a structured organization:
+My infrastructure follows a structured organization:
 
 ```
 infrastructure/

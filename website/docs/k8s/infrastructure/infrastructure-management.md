@@ -2,7 +2,7 @@
 title: 'Deploy and Manage Infrastructure Services'
 ---
 
-This guide explains how we deploy and manage core Kubernetes infrastructure using GitOps with ArgoCD.
+This guide explains how I deploy and manage core Kubernetes infrastructure using GitOps with ArgoCD.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ Infrastructure components live in `/k8s/infrastructure/` organized by function:
 
 ## Deployment Process
 
-We use ArgoCD ApplicationSet to manage infrastructure:
+I use ArgoCD ApplicationSet to manage infrastructure:
 
 1. Components are defined in category folders
 2. ApplicationSet watches these folders

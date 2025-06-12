@@ -6,7 +6,7 @@ description: Overview and configuration of the self-hosted media services
 
 # Media Services Stack
 
-This document details our self-hosted media services stack, including configuration, resource allocation, and best
+This document details my self-hosted media services stack, including configuration, resource allocation, and best
 practices.
 
 ## Core Applications
