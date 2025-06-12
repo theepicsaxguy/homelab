@@ -59,6 +59,7 @@ This document outlines the core infrastructure controllers deployed in our Kuber
   - Custom webhook support
   - Writable `/tmp` mount to support repo clones
   - Optional OpenAI summaries (currently disabled)
+  - Loads Cloudflare provider CRDs so kubeconform validates Crossplane resources
 
 ### Velero
 
