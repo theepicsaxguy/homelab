@@ -32,7 +32,7 @@ configs:
           args: [kustomize build --enable-helm]
   params:
     controller.diff.server.side: true
-    server.insecure: true
+    server.insecure: false
   rbac:
     create: true
     policy.csv: |

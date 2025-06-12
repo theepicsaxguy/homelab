@@ -19,6 +19,7 @@ This document outlines the core infrastructure controllers deployed in my Kubern
   - Progressive delivery
   - Resource health monitoring
   - Multi-cluster management
+  - TLS-only API access
 
 ### cert-manager
 
@@ -48,6 +49,7 @@ This document outlines the core infrastructure controllers deployed in my Kubern
 - Volume replication
 - Backup capabilities
 - Storage overprovisioning
+- PodSecurity patch applied for restricted containers
 
 ### Kubechecks
 
@@ -185,6 +187,8 @@ Controllers:
 - Namespace isolation
 - Service account restrictions
 - Security context constraints
+- Longhorn DaemonSet patched to run as non-root
+- ArgoCD API served only over TLS
 
 ### Network Policies
 

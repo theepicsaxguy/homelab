@@ -45,13 +45,13 @@ deployment:
           name: kubechecks-combined-secret
           key: argocd_api_token
     - name: KUBECHECKS_ARGOCD_API_INSECURE
-      value: "true"
+      value: "false"
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
       value: "argocd-server.argocd.svc.kube.pc-tips.se"
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
-      value: "true"
+      value: "false"
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE
-      value: "true"
+      value: "false"
     - name: KUBECHECKS_LOG_LEVEL
       value: "debug"
     - name: KUBECHECKS_SCHEMAS_LOCATION
