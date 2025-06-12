@@ -11,3 +11,4 @@ resources:
   - ns.yaml
   - tunnel-credentials.yaml
   - daemon-set.yaml
+  - pdb.yaml
