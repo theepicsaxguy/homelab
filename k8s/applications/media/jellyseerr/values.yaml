@@ -81,14 +81,18 @@ resources:
     memory: '768Mi'
 
 # -- Additional volumes on the output Deployment definition.
-volumes: []
+volumes:
+  - name: tmp
+    emptyDir: {}
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # -- Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true

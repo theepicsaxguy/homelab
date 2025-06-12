@@ -47,3 +47,13 @@
   value:
     name: tmp
     emptyDir: {}
+- op: add
+  path: /spec/template/spec/volumes/-
+  value:
+    name: run
+    emptyDir: {}
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts/-
+  value:
+    name: run
+    mountPath: /run
