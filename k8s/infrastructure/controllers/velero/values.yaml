@@ -1,0 +1,49 @@
+upgradeCRDs: true
+deployNodeAgent: true
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.10.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+  - name: velero-plugin-for-longhorn
+    image: longhornio/velero-plugin-longhorn:v1.9.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+rbac:
+  create: true
+  clusterAdministrator: true
+serviceAccount:
+  server:
+    create: true
+credentials:
+  useSecret: true
+  existingSecret: velero-minio-credentials
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero
+      default: true
+      config:
+        region: us-east-1
+        s3ForcePathStyle: "true"
+        s3Url: http://longhorn-minio-service.longhorn-system.svc:9000
+  volumeSnapshotLocation:
+    - name: default
+      provider: longhorn.io/longhorn
+features: "EnableCSI"
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

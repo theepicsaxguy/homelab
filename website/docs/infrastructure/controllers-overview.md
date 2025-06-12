@@ -59,6 +59,16 @@ This document outlines the core infrastructure controllers deployed in our Kuber
   - Custom webhook support
   - Writable `/tmp` mount to support repo clones
 
+### Velero
+
+- **Purpose**: Cluster backup and restore
+- **Version**: Latest stable (automated by Renovate)
+- **Features**:
+  - Object storage backups via Minio
+  - Volume snapshots through Longhorn
+  - Node-agent deployment for filesystem backup
+  - Prometheus metrics
+
 ## Resource Management
 
 ### Base Resource Configuration
