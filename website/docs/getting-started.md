@@ -18,6 +18,11 @@ For a minimal demo or test setup, see the [quick‑start version](./quick-start.
 - `terraform.tfvars` file with your cluster's details (see below for example).
 - Access to this Git repository.
 
+:::info
+This repository uses `orkestack.com` and `pc-tips.se` for example domains.
+If you fork it, search for these domains and replace them with your own.
+:::
+
 ## Overview of steps
 
 1. Configure cluster variables.

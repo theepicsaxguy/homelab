@@ -5,20 +5,29 @@
 This is my personal homelab, managed entirely with GitOps. I built it to learn enterprise patterns and run self-hosted apps on a stable Kubernetes foundation. Everything here is the blueprint I use to automate and maintain my cluster. I'm sharing it to document what I've learned and to help anyone on a similar path.
 [Quick Start →](https://homelab.orkestack.com/docs/quick-start)
 
+## 🔧 Core Technologies
+
+- **Orchestration:** Kubernetes on Talos Linux
+- **Infrastructure as Code:** OpenTofu
+- **GitOps:** Argo CD
+- **Secrets:** Bitwarden
+- **DNS & Security:** Cloudflare
+
 ---
 
 ## 🚀 Quick Start
 
-Clone this repository and follow the steps in the [Quick Start guide](https://homelab.orkestack.com/docs/quick-start).
+1. Make sure you have Proxmox access with your SSH key and install `opentofu`, `talosctl`, `kubectl`, and `argocd`. A little Kubernetes and Git know-how helps.
+2. Clone this repository and follow the steps in the [Quick Start guide](https://homelab.orkestack.com/docs/quick-start).
 
 ---
 
 ## ❓ Why This Homelab?
 
-- **Declarative & Auditable:** Every piece of the lab—from the OS to the apps—is defined here. You get a full, versioned audit trail.
-- **Automated From Day One:** Provisioning, deployments, secrets, and versioning run without manual babysitting.
-- **Secure by Default:** Non-root containers, network policies, externalized secrets, and SSO baked in.
-- **Built for Real-World Use:** Enterprise ideas adapted for the homelab so you learn skills that translate to work.
+- **Everything as Code:** I describe the entire lab in this repo. That gives me a full audit trail and lets me rebuild from scratch.
+- **Automated from Day One:** Provisioning, deployments, and secrets run on autopilot.
+- **Secure by Default:** Non-root containers, network policies, and single sign-on are baked in from the start.
+- **Real-World Learning:** I'm applying enterprise ideas at home so I can tinker and pick up new skills.
 
 ## 👥 Who Is This For?
 
@@ -61,21 +70,11 @@ More details are in [Architecture](https://homelab.orkestack.com/docs/architectu
 
 ---
 
-## 📋 Prerequisites
-
-- Proxmox access with your SSH key
-- Tools: `opentofu`, `talosctl`, `kubectl`, `argocd`
-- Basic knowledge of Kubernetes and Git
-
----
-
 ## 🛣️ Roadmap
 
-| Milestone | Target |
-|-----------|-------|
-| Hybrid cloud backups | Q3 2024 |
-| Node autoscaling | Q4 2024 |
-| Additional monitoring dashboards | Q1 2025 |
+- [ ] Hybrid cloud backups
+- [ ] Node autoscaling
+- [ ] Additional monitoring dashboards
 
 ---
 
