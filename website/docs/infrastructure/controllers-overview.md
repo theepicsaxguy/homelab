@@ -107,8 +107,8 @@ High-Availability Profile:
 
 ```yaml
 Replication:
-  argocd-server: 2
-  argocd-repo-server: 2
+  argocd-server: autoscaled (min 2)
+  argocd-repo-server: autoscaled (min 2)
   argocd-applicationset: 2
   cert-manager-controller: 2
   cert-manager-webhook: 2

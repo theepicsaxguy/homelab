@@ -9,7 +9,6 @@ resources:
   - rolebinding.yaml
   - role.yaml
   - externalsecret.yaml
-  - pdb.yaml
 
 helmCharts:
 - name: argo-cd
