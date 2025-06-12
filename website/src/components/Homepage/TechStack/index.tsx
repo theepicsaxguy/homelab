@@ -5,13 +5,40 @@ interface Technology {
   logo: string;
 }
 const technologies: Technology[] = [
-  { name: 'Kubernetes', logo: 'kubernetes.svg' },
-  { name: 'Talos', logo: 'talos.svg' },
-  { name: 'ArgoCD', logo: 'argocd.svg' },
-  { name: 'OpenTofu', logo: 'opentofu.svg' },
-  { name: 'Prometheus', logo: 'prometheus.svg' },
-  { name: 'Grafana', logo: 'grafana.svg' },
-  { name: 'Proxmox', logo: 'proxmox.svg' }
+  {
+    name: 'Kubernetes',
+    logo:
+      'https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes.svg',
+  },
+  {
+    name: 'Talos',
+    logo:
+      'https://raw.githubusercontent.com/siderolabs/talos/master/website/static/img/talos-logo.svg',
+  },
+  {
+    name: 'ArgoCD',
+    logo:
+      'https://raw.githubusercontent.com/argoproj/argo-cd/master/docs/assets/logo.png',
+  },
+  {
+    name: 'OpenTofu',
+    logo:
+      'https://raw.githubusercontent.com/opentofu/artwork/main/horizontal/color/opentofu-horizontal-color.svg',
+  },
+  {
+    name: 'Prometheus',
+    logo:
+      'https://raw.githubusercontent.com/cncf/artwork/master/projects/prometheus/icon/color/prometheus-icon-color.svg',
+  },
+  {
+    name: 'Grafana',
+    logo:
+      'https://raw.githubusercontent.com/grafana/grafana/main/public/img/grafana_icon.svg',
+  },
+  {
+    name: 'Proxmox',
+    logo: 'https://www.proxmox.com/images/proxmox_logo.png',
+  },
 ];
 export function TechStack(): JSX.Element {
   return (
@@ -22,7 +49,7 @@ export function TechStack(): JSX.Element {
           {technologies.map((tech, idx) => (
             <div key={idx} className={styles.techItem}>
               <img
-                src={`/img/tech/${tech.logo}`}
+                src={tech.logo}
                 alt={tech.name}
                 className={styles.techLogo}
                 loading="lazy"
