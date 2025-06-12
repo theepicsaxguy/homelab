@@ -2,9 +2,9 @@
 title: Contributing Guide
 ---
 
-Welcome! This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to our standards for pull requests.
+Welcome! This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to my standards for pull requests.
 
-For community expectations, please read our [Code of Conduct](https://github.com/theepicsaxguy/homelab/blob/main/.github/CODE_OF_CONDUCT.md). If you just need a quick reference on the workflow, see the [short contributing guide](https://github.com/theepicsaxguy/homelab/blob/main/.github/CONTRIBUTING.md).
+For community expectations, please read my [Code of Conduct](https://github.com/theepicsaxguy/homelab/blob/main/.github/CODE_OF_CONDUCT.md). If you just need a quick reference on the workflow, see the [short contributing guide](https://github.com/theepicsaxguy/homelab/blob/main/.github/CONTRIBUTING.md).
 
 ## Local Development Setup
 
@@ -42,7 +42,7 @@ Before opening a pull request, please run these checks on any files you've modif
 
 1. **Open an Issue (For Big Changes):** If you're planning to add a new application or make a significant architectural change, please [open an issue](https://github.com/theepicsaxguy/homelab/issues/new?template=feature_request.md) first. For small changes like version bumps or typo fixes, you can go straight to a PR.
 2. **Create a Branch:** Start your work from an up-to-date `main` branch in your fork.
-3. **Commit Your Changes:** We use **Conventional Commits** to automate releases and generate changelogs. Please follow this format strictly. Your PR title must also follow this format.
+3. **Commit Your Changes:** I use **Conventional Commits** to automate releases and generate changelogs. Please follow this format strictly. Your PR title must also follow this format.
    - **Format:** `type(scope): description`
    - **Examples:**
        - `feat(k8s): add new monitoring stack`

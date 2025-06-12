@@ -6,7 +6,7 @@ description: Comprehensive guide for Authentik SSO configuration and integration
 
 # Authentik SSO Integration Guide
 
-This guide covers the setup and management of Authentik Single Sign-On (SSO) in our Kubernetes cluster.
+This guide covers the setup and management of Authentik Single Sign-On (SSO) in my Kubernetes cluster.
 
 ## Architecture Overview
 

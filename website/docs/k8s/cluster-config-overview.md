@@ -6,11 +6,11 @@ description: Overview of the Kubernetes cluster architecture and configuration m
 
 # Kubernetes Cluster Configuration
 
-This guide provides an overview of our Kubernetes cluster architecture and configuration management approach using GitOps with ArgoCD.
+This guide provides an overview of my Kubernetes cluster architecture and configuration management approach using GitOps with ArgoCD.
 
 ## Architecture Overview
 
-Our infrastructure follows a strict GitOps approach with the following principles:
+My infrastructure follows a strict GitOps approach with the following principles:
 
 - Base configurations containing common settings and defaults
 - Environment-specific overlays for customized deployments
@@ -19,7 +19,7 @@ Our infrastructure follows a strict GitOps approach with the following principle
 
 ## Network Architecture
 
-Our modern networking stack is built on:
+My modern networking stack is built on:
 
 - **Cilium** (see https://github.com/cilium/cilium/releases)
   - CNI for network connectivity
@@ -85,7 +85,7 @@ kubectl uncordon node-name
 ### Pod Disruption Budgets
 
 PodDisruptionBudgets (PDBs) keep critical pods running during a voluntary
-node drain. Most of our applications run a single replica, so each namespace
+node drain. Most of my applications run a single replica, so each namespace
 defines a simple PDB with `maxUnavailable: 0`. When you drain a node hosting
 one of these pods, the operation waits until another replica is available or the
 PDB is removed. This prevents accidental outages during routine maintenance.

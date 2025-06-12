@@ -4,7 +4,7 @@ title: Homelab Kubernetes Configuration Guide
 
 # Overview
 
-This guide explains our homelab Kubernetes setup, designed to help IT admins understand, run, and maintain the system.
+This guide explains my homelab Kubernetes setup, designed to help IT admins understand, run, and maintain the system.
 
 ## Searching the docs
 

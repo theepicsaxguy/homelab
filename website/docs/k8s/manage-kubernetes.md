@@ -31,7 +31,7 @@ Your `/k8s` directory organizes Kubernetes manifests by purpose:
 
 ## Core Technologies
 
-We use several tools and operators to support this workflow:
+I use several tools and operators to support this workflow:
 
 - **ArgoCD**: Watches Git for changes and syncs them to the cluster.
   - **ApplicationSets:** Dynamically creates ArgoCD Applications based on your directory layout.

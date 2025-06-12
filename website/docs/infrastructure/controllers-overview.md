@@ -6,7 +6,7 @@ description: Core infrastructure controllers and their configuration
 
 # Infrastructure Controllers
 
-This document outlines the core infrastructure controllers deployed in our Kubernetes cluster.
+This document outlines the core infrastructure controllers deployed in my Kubernetes cluster.
 
 ## Core Controllers
 
