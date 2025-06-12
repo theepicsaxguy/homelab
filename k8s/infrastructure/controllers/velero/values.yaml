@@ -1,5 +1,6 @@
 upgradeCRDs: true
 deployNodeAgent: true
+snapshotsEnabled: true
 initContainers:
   - name: velero-plugin-for-aws
     image: velero/velero-plugin-for-aws:v1.12.1
@@ -7,8 +8,8 @@ initContainers:
     volumeMounts:
       - mountPath: /target
         name: plugins
-  - name: velero-plugin-for-longhorn
-    image: longhornio/velero-plugin-longhorn:v1.9.0
+  - name: velero-plugin-for-csi
+    image: velero/velero-plugin-for-csi:v0.6.2
     imagePullPolicy: IfNotPresent
     volumeMounts:
       - mountPath: /target
