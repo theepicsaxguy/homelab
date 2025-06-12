@@ -35,7 +35,8 @@ configuration:
         s3Url: http://longhorn-minio-service.longhorn-system.svc:9000
   volumeSnapshotLocation:
     - name: default
-      provider: longhorn.io/longhorn
+      provider: csi
+      config: {}
 features: "EnableCSI"
 resources:
   requests:
