@@ -1,5 +1,39 @@
 # Changelog
 
+## 2.10.0 (2025-06-12)
+
+## What's Changed
+* fix(k8s): run frigate as root for s6-overlay by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/912
+* chore(deps): update ghcr.io/prometheus-community/charts/kube-prometheus-stack docker tag to v73.2.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/913
+* fix(frigate): allow chown on log tmpfs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/915
+* chore(deps): update all dependencies to v73.2.2 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/916
+* fix(frigate): allow group changes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/917
+* fix(frigate): allow setuid and writable root by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/918
+* fix(k8s): address container startup issues by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/919
+* feat(k8s): add velero backup controller by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/920
+* chore(deps): update velero/velero-plugin-for-aws docker tag to v1.10.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/921
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/922
+* feat(k8s): add cloudflared probes and pdb by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/923
+* feat(k8s): enable ha mode for argocd by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/924
+* fix(k8s): update velero plugin configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/926
+* chore(deps): update helm release velero to v10 - autoclosed by @renovate in https://github.com/theepicsaxguy/homelab/pull/925
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/927
+* chore(k8s): comment out openai summary for kubechecks by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/928
+* fix(kubechecks): add cloudflare schemas by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/929
+* fix(k8s): declare CSI snapshot location by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/932
+* chore(deps): update velero/velero-plugin-for-csi docker tag to v0.7.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/931
+* docs: rewrite documentation in first person by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/933
+* feat(website): reshape homepage for project showcase by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/934
+* docs(contributing): clarify maintainer role by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/935
+* chore(website): remove unused SocialProof component by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/936
+* docs(readme): move domain note to setup docs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/937
+* chore(scripts): remove unused fix_kustomize script by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/939
+* fix(website): remove local logos and use external docs link by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/938
+* fix(website): fetch repo stats and logos from GitHub by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/940
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.9.0...v2.10.0
+
 ## 2.9.0 (2025-06-11)
 
 ## What's Changed
