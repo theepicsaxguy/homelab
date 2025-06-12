@@ -1,6 +1,6 @@
 # How to Contribute
 
-Contributions are welcome and appreciated. This project thrives on community input. To keep things running smoothly, please follow these guidelines.
+Contributions are welcome and appreciated. I'm currently the only person maintaining this repository, and I'd be happy to have help. Whether it's fixing a typo, updating a Helm chart, or adding a new application, your contributions are welcome. To keep things organized, I've adopted some standard open-source practices like conventional commits. Please follow these guidelines so everything stays tidy.
 
 ## Philosophy
 
