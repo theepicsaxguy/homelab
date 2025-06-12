@@ -1,7 +1,7 @@
 // src/components/Homepage/FeatureGrid/index.tsx
 import React, { JSX } from 'react';
 import { SiKubernetes, SiGitlab, SiTerraform } from 'react-icons/si';
-import { FaCloud, FaDocker, FaNetworkWired } from 'react-icons/fa';
+import { FaLock } from 'react-icons/fa';
 import styles from './styles.module.css';
 
 interface Feature {
@@ -14,32 +14,26 @@ const features: Feature[] = [
   {
     title: 'Kubernetes at the Core',
     icon: <SiKubernetes className={styles.featureIcon} />,
-    description: 'Built on Talos Linux, providing a secure and automated foundation for container orchestration.',
+    description:
+      "I use Talos Linux for a minimal, secure, and API-driven Kubernetes foundation. It's immutable and built for automation.",
   },
   {
     title: 'GitOps Workflow',
     icon: <SiGitlab className={styles.featureIcon} />,
-    description: 'Infrastructure and applications managed declaratively through Git using ArgoCD.',
+    description:
+      'This repository is the single source of truth. ArgoCD ensures the cluster state matches what\'s defined here in Git.',
   },
   {
     title: 'Infrastructure as Code',
     icon: <SiTerraform className={styles.featureIcon} />,
-    description: 'Automated provisioning with OpenTofu, ensuring reproducible and version-controlled infrastructure.',
+    description:
+      'Proxmox VMs are provisioned with OpenTofu, making the entire hardware setup reproducible and version-controlled.',
   },
   {
-    title: 'Modern DevOps Stack',
-    icon: <FaCloud className={styles.featureIcon} />,
-    description: 'Integrated monitoring, logging, and security tools for a production-grade environment.',
-  },
-  {
-    title: 'Container Management',
-    icon: <FaDocker className={styles.featureIcon} />,
-    description: 'Streamlined container deployment and management with Docker and Kubernetes.',
-  },
-  {
-    title: 'Network Automation',
-    icon: <FaNetworkWired className={styles.featureIcon} />,
-    description: 'Automated network configuration and management for your entire homelab.',
+    title: 'Secure by Default',
+    icon: <FaLock className={styles.featureIcon} />,
+    description:
+      'I prioritize security with non-root containers, network policies, and secrets managed outside of Git using the External Secrets Operator.',
   },
 ];
 
@@ -48,8 +42,8 @@ export function FeatureGrid(): JSX.Element {
     <section className={styles.features}>
       <div className="container">
         <h2 className={styles.title}>
-          Everything You Need for a
-          <span className={styles.gradientText}> Modern Homelab</span>
+          The Philosophy Behind This
+          <span className={styles.gradientText}> Homelab</span>
         </h2>
         <div className={styles.featureGrid}>
           {features.map((feature, idx) => (

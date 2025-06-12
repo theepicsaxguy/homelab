@@ -6,7 +6,7 @@ description: Core infrastructure controllers and their configuration
 
 # Infrastructure Controllers
 
-This document outlines the core infrastructure controllers deployed in our Kubernetes cluster.
+This document outlines the core infrastructure controllers deployed in my Kubernetes cluster.
 
 ## Core Controllers
 
@@ -59,6 +59,7 @@ This document outlines the core infrastructure controllers deployed in our Kuber
   - Custom webhook support
   - Writable `/tmp` mount to support repo clones
   - Optional OpenAI summaries (currently disabled)
+  - Loads Cloudflare provider CRDs so kubeconform validates Crossplane resources
 
 ### Velero
 

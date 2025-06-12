@@ -3,7 +3,7 @@ title: Writing documentation for this project
 ---
 
 Contributing documentation is a valuable way for users of all experience levels to improve and support this homelab
-project. We appreciate all contributions, from fixing simple typos to adding substantial new content or creating
+project. I appreciate all contributions, from fixing simple typos to adding substantial new content or creating
 entirely new topics.
 
 To ensure a smooth process for reviewing and merging your documentation contributions (Pull Requests - PRs), please
@@ -12,10 +12,10 @@ adhere to the following guidelines.
 - Ideally, when making documentation contributions, you should fork and clone the
   [homelab repository](https://github.com/theepicsaxguy/homelab). While much writing and editing can be done directly
   within the GitHub UI, local editing allows for more robust spell-checking and formatting.
-- Please refer to our [Documentation style guide](./style-guide.mdx). This guide contains important conventions
+- Please refer to my [Documentation style guide](./style-guide.mdx). This guide contains important conventions
   regarding terminology, formatting of titles and headers, use of code blocks, and much more.
 - Remember to use the [documentation templates](./templates/index.md) when appropriate. They are pre-structured to align
-  with our style guidelines, simplify the writing process (helping to avoid the "blank page" challenge), and maintain
+  with my style guidelines, simplify the writing process (helping to avoid the "blank page" challenge), and maintain
   consistency in document structure and headings.
 - Before submitting a PR, ensure your Markdown is well-formatted. If you have local Markdown linting tools configured,
   please run them.

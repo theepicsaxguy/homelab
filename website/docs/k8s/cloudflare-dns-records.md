@@ -2,7 +2,7 @@
 title: 'External DNS records with Crossplane and Cloudflare'
 ---
 
-This document explains how we deploy Crossplane with the Cloudflare provider to declaratively manage external CNAME DNS records in our GitOps workflow.
+This document explains how I deploy Crossplane with the Cloudflare provider to declaratively manage external CNAME DNS records in my GitOps workflow.
 
 ## About external DNS records with Crossplane and Cloudflare
 

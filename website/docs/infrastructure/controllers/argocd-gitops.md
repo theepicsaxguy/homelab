@@ -6,7 +6,7 @@ description: ArgoCD configuration and GitOps workflow management
 
 # ArgoCD Configuration Guide
 
-This guide explains our GitOps deployment strategy using ArgoCD ApplicationSets for managing the complete cluster lifecycle.
+This guide explains my GitOps deployment strategy using ArgoCD ApplicationSets for managing the complete cluster lifecycle.
 
 ## Deployment Structure
 
