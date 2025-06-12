@@ -4,7 +4,7 @@ title: Provision Kubernetes with OpenTofu and Talos
 
 # Kubernetes Provisioning with OpenTofu
 
-This guide explains our infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster
+This guide explains my infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster
 running Talos OS on Proxmox
 
 ## Deployment Process
@@ -68,7 +68,7 @@ Worker Nodes:
 
 ## Proxmox Provider
 
-We use `bpg/proxmox` to manage VMs declaratively. This enables:
+I use `bpg/proxmox` to manage VMs declaratively. This enables:
 
 - Version-controlled infrastructure
 - Automated deployments
@@ -76,7 +76,7 @@ We use `bpg/proxmox` to manage VMs declaratively. This enables:
 
 ## Talos OS
 
-Talos is our node OS because it offers:
+Talos is my node OS because it offers:
 
 - Minimal attack surface
 - Atomic upgrades
@@ -136,7 +136,7 @@ module "talos" {
 
 ### Core Services
 
-We embed essential services in the Talos config:
+I embed essential services in the Talos config:
 
 - Cilium (CNI)
 - CoreDNS
@@ -382,7 +382,7 @@ tofu apply -target=module.talos.proxmox_virtual_environment_vm.this["failed-node
 
 ### Core Security Features
 
-Our cluster implements several security measures:
+My cluster implements several security measures:
 
 - API server endpoint protection via Gateway API
 - etcd encryption at rest enabled

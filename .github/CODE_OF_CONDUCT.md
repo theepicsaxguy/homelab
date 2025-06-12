@@ -1,23 +1,20 @@
 # Contributor Covenant Code of Conduct
 
-## Our Pledge
+## My Pledge
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone. We commit to acting and
-interacting in ways that contribute to an open, welcoming, diverse, inclusive,
-and healthy community.
+I pledge to make participation in this community a harassment-free experience for everyone. I commit to acting and interacting in ways that contribute to an open, welcoming, diverse, inclusive, and healthy community.
 
-## Our Standards
+## Standards
 
-Examples of behavior that contributes to a positive environment for our
+Examples of behavior that contribute to a positive environment for the
 community include:
 
 - Demonstrating empathy and kindness toward other people
 - Being respectful of differing opinions, viewpoints, and experiences
 - Giving and gracefully accepting constructive feedback
-- Accepting responsibility and apologizing to those affected by our mistakes,
+- Accepting responsibility and apologizing to those affected by my mistakes,
   and learning from the experience
-- Focusing on what is best not just for us as individuals, but for the overall
+- Focusing on what is best not just for me as an individual, but for the overall
   community
 
 Examples of unacceptable behavior include:
@@ -33,15 +30,14 @@ Examples of unacceptable behavior include:
 
 ## Enforcement Responsibilities
 
-Community leaders are responsible for clarifying and enforcing our standards of
-acceptable behavior and will take appropriate and fair corrective action in
-response to any behavior that they deem inappropriate, threatening, offensive,
-or harmful.
+I am responsible for clarifying and enforcing these standards of acceptable
+behavior and will take appropriate and fair corrective action in response to any
+behavior deemed inappropriate, threatening, offensive, or harmful.
 
-Community leaders have the right and responsibility to remove, edit, or reject
-comments, commits, code, wiki edits, issues, and other contributions that are
-not aligned to this Code of Conduct, and will communicate reasons for moderation
-decisions when appropriate.
+I have the right and responsibility to remove, edit, or reject comments, commits,
+code, wiki edits, issues, and other contributions that are not aligned to this
+Code of Conduct, and will communicate reasons for moderation decisions when
+appropriate.
 
 ## Scope
 

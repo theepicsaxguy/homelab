@@ -2,7 +2,7 @@
 title: Deploy and Manage Applications
 ---
 
-This guide explains how to deploy and manage applications on our Kubernetes cluster using GitOps with ArgoCD.
+This guide explains how I deploy and manage applications on my Kubernetes cluster using GitOps with ArgoCD.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ Applications live in `/k8s/applications/` organized by function:
 
 ## How Application Deployment Works
 
-We use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the process:
+I use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the process:
 
 1. Add your app files to a category folder (e.g., `/k8s/applications/media/myapp/`)
 2. For most applications, ensure they are discoverable by the main ApplicationSet in
@@ -93,7 +93,7 @@ Here's how KaraKeep (`/k8s/applications/ai/karakeep/`) is structured:
 
 ### Media Storage
 
-We use NFS for shared media files:
+I use NFS for shared media files:
 
 - Location: `172.20.20.103:/mnt/wd1/media_share`
 - Access: ReadWriteMany
