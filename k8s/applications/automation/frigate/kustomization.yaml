@@ -2,23 +2,23 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: frigate
 resources:
-  - namespace.yaml
-  - externalsecret.yaml
-  - http-route.yaml
-  - pdb.yaml
+- namespace.yaml
+- externalsecret.yaml
+- http-route.yaml
+- pdb.yaml
 
 configMapGenerator:
-- name: frigate-env
-  literals:
-    - TZ=Europe/Stockholm
+- literals:
+  - TZ=Europe/Stockholm
+  name: frigate-env
 
 helmCharts:
-  - name: frigate
-    repo: https://blakeblackshear.github.io/blakeshome-charts/
-    version: 7.8.0
-    releaseName: frigate
-    namespace: frigate
-    valuesFile: values.yaml
+- name: frigate
+  namespace: frigate
+  releaseName: frigate
+  repo: https://blakeblackshear.github.io/blakeshome-charts/
+  valuesFile: values.yaml
+  version: 7.8.0
 
 
 generatorOptions:

@@ -20,7 +20,7 @@ resources:
 - bazarr
 
 patches:
-  - path: base/patch.yaml
-    target:
-      kind: Deployment
-      labelSelector: app in (bazarr, prowlarr, radarr, sonarr)
+- path: base/patch.yaml
+  target:
+    kind: Deployment
+    labelSelector: app in (bazarr, prowlarr, radarr, sonarr)
