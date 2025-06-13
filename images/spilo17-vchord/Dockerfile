@@ -6,5 +6,11 @@ ARG VCHORD_VERSION=0.3.0
 ARG IMAGE_VERSION=0.1.0
 
 
-RUN curl -o vchord.deb -fsSL https://github.com/tensorchord/VectorChord/releases/download/${VCHORD_VERSION}/postgresql-17-vchord_${VCHORD_VERSION}-1_amd64.deb && \
-    dpkg -i vchord.deb && rm -f vchord.deb
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gnupg wget \
+    && wget -qO /usr/share/keyrings/vectorchord.gpg https://apt.tensorchord.dev/VectorChord/gpg.key \
+    && echo "deb [signed-by=/usr/share/keyrings/vectorchord.gpg] https://apt.tensorchord.dev/VectorChord stable main" > /etc/apt/sources.list.d/vectorchord.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-17-vchord=${VCHORD_VERSION}-1 \
+    && apt-get purge -y --auto-remove gnupg wget \
+    && rm -rf /var/lib/apt/lists/*

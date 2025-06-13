@@ -60,13 +60,6 @@ resource "proxmox_virtual_environment_vm" "this" {
       size         = tonumber(replace(disk.value.size, "G", ""))
     }
   }
-lifecycle {
-    ignore_changes = [
-      vga,                       # Ignore VGA changes (these are computed)
-      network_device[0].disconnected, # Ignore network disconnected state
-      # Add any other attributes causing issues
-    ]
-  }
   boot_order = ["scsi0"]
 
   operating_system {

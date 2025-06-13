@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubechecks
+  namespace: kubechecks
+spec:
+  template:
+    spec:
+      volumes:
+        - name: internal-ca
+          secret:
+            secretName: internal-ca-cert
+      containers:
+        - name: kubechecks
+          volumeMounts:
+            - name: internal-ca
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              subPath: ca.crt
+              readOnly: true

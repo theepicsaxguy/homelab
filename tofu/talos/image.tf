@@ -4,8 +4,8 @@ locals {
     for name, config in var.nodes : lookup(config, "igpu", false)
   ])
 
-  version      = var.talos_image.version
-  schematic    = templatefile("${path.root}/${var.talos_image.schematic_path}", {
+  version = var.talos_image.version
+  schematic = templatefile("${path.root}/${var.talos_image.schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
@@ -14,7 +14,7 @@ locals {
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
   # Render the update schematic template (could be the same or different schematic)
-  update_schematic      = templatefile("${path.root}/${local.update_schematic_path}", {
+  update_schematic = templatefile("${path.root}/${local.update_schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
 

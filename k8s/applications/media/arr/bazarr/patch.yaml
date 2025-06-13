@@ -9,4 +9,4 @@ spec:
       containers:
       - name: bazarr
         securityContext:
-          allowPrivilegeEscalation: true
+          allowPrivilegeEscalation: false

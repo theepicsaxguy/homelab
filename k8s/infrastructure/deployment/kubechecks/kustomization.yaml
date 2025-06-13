@@ -5,6 +5,8 @@ namespace: kubechecks
 resources:
   - namespace.yaml
   - kubechecks-secret-external.yaml
+  - ca-secret.yaml
+  - k8s-secret-store.yaml
   - http-route.yaml
   - pdb.yaml
 
@@ -15,6 +17,13 @@ helmCharts:
     releaseName: kubechecks
     namespace: kubechecks
     valuesFile: values.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: kubechecks
+      namespace: kubechecks
+    path: patch-ca-mount.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
