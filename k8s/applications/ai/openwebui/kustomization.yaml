@@ -8,4 +8,3 @@ resources:
 - http-route.yaml
 - webui-pvc.yaml
 - openwebui-secrets-external.yaml
-
