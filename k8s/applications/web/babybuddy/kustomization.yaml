@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - babybuddy-external-secret.yaml
-  - pvc.yaml
-  - deployment.yaml
+  - statefulset.yaml
   - service.yaml
   - http-route.yaml

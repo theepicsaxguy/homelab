@@ -12,10 +12,6 @@ imagePullSecrets: []
 nameOverride: ''
 fullnameOverride: 'jellyseerr'
 
-# -- Deployment strategy
-strategy:
-  type: Recreate
-
 # -- Environment variables to add to the jellyseerr pods
 extraEnv: []
 # -- Environment variables from secrets or configmaps to add to the jellyseerr pods

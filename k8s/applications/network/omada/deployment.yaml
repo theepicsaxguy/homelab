@@ -1,12 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: omada-controller
   namespace: omada
 spec:
+  serviceName: "omada-svc"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: omada-controller

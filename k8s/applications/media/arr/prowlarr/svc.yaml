@@ -4,6 +4,7 @@ metadata:
   name: prowlarr
   namespace: media
 spec:
+  clusterIP: None
   type: ClusterIP
   selector:
     app: prowlarr

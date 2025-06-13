@@ -1,12 +1,11 @@
-kind: Deployment
+kind: StatefulSet
 apiVersion: apps/v1
 metadata:
   name: jellyfin
   namespace: media
 spec:
+  serviceName: "jellyfin"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: jellyfin

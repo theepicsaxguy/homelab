@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: unrar
   namespace: unrar
   labels:
     app: unrar
 spec:
+  serviceName: "unrar"
   replicas: 1
   selector:
     matchLabels:
       app: unrar
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:

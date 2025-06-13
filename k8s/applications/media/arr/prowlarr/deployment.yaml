@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: prowlarr
   namespace: media
   labels:
     app: prowlarr
 spec:
+  serviceName: "prowlarr"
   replicas: 1
   selector:
     matchLabels:
       app: prowlarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:

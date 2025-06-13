@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: sonarr
   namespace: media
   labels:
     app: sonarr
 spec:
+  serviceName: "sonarr"
   replicas: 1
   selector:
     matchLabels:
       app: sonarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:

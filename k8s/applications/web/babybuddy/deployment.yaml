@@ -1,14 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: babybuddy
   namespace: babybuddy
   labels:
     app: babybuddy
 spec:
+  serviceName: "babybuddy"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: babybuddy

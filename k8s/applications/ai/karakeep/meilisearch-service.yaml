@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: meilisearch
 spec:
+  clusterIP: None
   selector:
     app: meilisearch
   ports:

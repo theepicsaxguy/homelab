@@ -3,9 +3,8 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
-- webui-deployment.yaml
+- webui-statefulset.yaml
 - webui-service.yaml
 - http-route.yaml
-- webui-pvc.yaml
 - openwebui-secrets-external.yaml
 

@@ -11,15 +11,13 @@ configMapGenerator:
 
 resources:
 - namespace.yaml
-- web-deployment.yaml
+- web-statefulset.yaml
 - web-service.yaml
 - chrome-deployment.yaml
 - chrome-service.yaml
-- meilisearch-deployment.yaml
+- meilisearch-statefulset.yaml
 - meilisearch-service.yaml
-- meilisearch-pvc.yaml
 - meilisearch-backup-cronjob.yaml
-- data-pvc.yaml
 - http-route.yaml
 - karakeep-secrets-external.yaml
 

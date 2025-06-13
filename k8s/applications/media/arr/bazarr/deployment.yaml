@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: bazarr
   namespace: media
   labels:
     app: bazarr
 spec:
+  serviceName: "bazarr"
   replicas: 1
   selector:
     matchLabels:
       app: bazarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:

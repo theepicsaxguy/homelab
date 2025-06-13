@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: radarr
   namespace: media
   labels:
     app: radarr
 spec:
+  serviceName: "radarr"
   replicas: 1
   selector:
     matchLabels:
       app: radarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:

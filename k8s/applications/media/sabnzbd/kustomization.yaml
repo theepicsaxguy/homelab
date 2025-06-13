@@ -5,7 +5,6 @@ namespace: media
 
 resources:
   - http-route.yaml
-  - deployment.yaml
+  - statefulset.yaml
   - svc.yaml
-  - pvc.yaml
 

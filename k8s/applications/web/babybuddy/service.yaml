@@ -7,6 +7,7 @@ metadata:
   labels:
     app: babybuddy
 spec:
+  clusterIP: None
   type: ClusterIP
   selector:
     app: babybuddy

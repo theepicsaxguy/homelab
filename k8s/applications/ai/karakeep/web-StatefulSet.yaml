@@ -1,11 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: web
 spec:
+  serviceName: "web"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: karakeep-web

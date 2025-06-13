@@ -4,6 +4,7 @@ metadata:
   name: jellyfin
   namespace: media
 spec:
+  clusterIP: None
   type: ClusterIP
   selector:
     app: jellyfin

@@ -5,12 +5,11 @@ resources:
   - authsecret.yaml
   - externalsecret.yaml
   - database.yaml
-  - pvc.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
   - service.yaml
   - servicemonitor.yaml
-  - deployment.yaml
+  - statefulset.yaml
   - immich-config.yaml
 generatorOptions:
   disableNameSuffixHash: true
