@@ -11,7 +11,7 @@ configMapGenerator:
 
 resources:
 - namespace.yaml
-- web-statefulset.yaml
+- web-StatefulSet.yaml
 - web-service.yaml
 - chrome-deployment.yaml
 - chrome-service.yaml
