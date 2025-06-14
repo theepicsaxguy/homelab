@@ -14,7 +14,7 @@ spec:
       name: openwebui-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "metadata-storage"
+      storageClassName: "longhorn"
       resources:
         requests:
           storage: 5Gi

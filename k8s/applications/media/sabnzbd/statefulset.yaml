@@ -14,7 +14,7 @@ spec:
       name: sabnzbd-config
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "metadata-storage"
+      storageClassName: "longhorn"
       resources:
         requests:
           storage: 5Gi
