@@ -2,9 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# -- upgrade strategy type (e.g. Recreate or RollingUpdate)
-# strategyType: Recreate  <-- REMOVE OR COMMENT OUT THIS LINE
-
 image:
   # -- Docker registry/repository to pull the image from
   repository: ghcr.io/blakeblackshear/frigate

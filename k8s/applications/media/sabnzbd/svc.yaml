@@ -7,7 +7,6 @@ metadata:
     app: sabnzbd
     kubernetes.io/name: "sabnzbd"
 spec:
-  clusterIP: None
   type: LoadBalancer
   selector:
     app: sabnzbd

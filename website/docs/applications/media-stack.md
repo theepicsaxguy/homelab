@@ -193,21 +193,38 @@ alerts:
 # Disable auto-sync for media applications in ArgoCD
 argocd app set media-stack --sync-policy none
 
+# Replace <app-name> with the specific application (e.g., bazarr, sonarr)
+# First, find the name of the PersistentVolume (PV) bound to your application's config claim.
+export PVC_NAME=<app-name>-config
+export PV_NAME=$(kubectl get pvc $PVC_NAME -n media -o jsonpath='{.spec.volumeName}')
+echo "Found PV Name: $PV_NAME for PVC: $PVC_NAME"
+
+# If the above command returned a PV_NAME, proceed.
+# Protect the PV from deletion by setting its reclaim policy to Retain
+kubectl patch pv $PV_NAME -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+
 # Scale down the existing deployment
 kubectl scale deployment <app-name> --replicas=0 -n media
 
-# Protect the PV from deletion
-kubectl patch pv $(kubectl get pv | grep <app-name>-config | awk '{print $1}') -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+# Delete the old PersistentVolumeClaim. The PV will enter a "Released" state.
+kubectl delete pvc $PVC_NAME -n media
+
+# Clear the claimRef from the PV to make it "Available"
+# This allows a new PVC to bind to it.
+kubectl patch pv $PV_NAME --type json -p='[{"op": "remove", "path": "/spec/claimRef"}]'
 ```
 
 #### 2. Migration
 
 ```bash
 # Apply the StatefulSet changes through ArgoCD
+# This will create a new PVC (e.g., config-<app-name>-0)
+# Replace <app-name> with the specific application (e.g., bazarr, sonarr)
 argocd app sync media-stack --resource-by-key StatefulSet:<app-name> -n media
 
-# Verify the StatefulSet is running and using the correct PVC
-kubectl get statefulset,pvc -n media
+# Verify the StatefulSet is running and the new PVC (e.g., config-<app-name>-0)
+# has bound to the original (now "Available") PersistentVolume.
+kubectl get statefulset,pvc -n media -l app.kubernetes.io/name=<app-name>
 kubectl logs statefulset/<app-name> -n media
 ```
 

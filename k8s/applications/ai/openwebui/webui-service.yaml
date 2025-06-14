@@ -6,7 +6,6 @@ metadata:
   annotations:
     io.cilium/lb-ipam-ips: 10.25.150.229
 spec:
-  clusterIP: None
   type: LoadBalancer  # Use LoadBalancer if you're on a cloud that supports it
   selector:
     app: open-webui

@@ -6,5 +6,4 @@ namespace: unrar
 
 resources:
 - statefulset.yaml # <-- CHANGE THIS LINE
-- svc.yaml # <-- ADD THIS LINE
 - namespace.yaml
