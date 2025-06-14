@@ -224,7 +224,7 @@ argocd app sync media-stack --resource-by-key StatefulSet:<app-name> -n media
 
 # Verify the StatefulSet is running and the new PVC (e.g., config-<app-name>-0)
 # has bound to the original (now "Available") PersistentVolume.
-kubectl get statefulset,pvc -n media -l app.kubernetes.io/name=<app-name>
+kubectl get statefulset,pvc -n media -l app=<app-name>
 kubectl logs statefulset/<app-name> -n media
 ```
 
