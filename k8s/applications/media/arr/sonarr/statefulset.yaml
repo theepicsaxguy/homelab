@@ -23,7 +23,7 @@ spec:
             - name: http
               containerPort: 8989
           volumeMounts:
-            - name: sonarr-config
+            - name: config
               mountPath: /config
           resources:
             requests:
@@ -48,7 +48,12 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
-      volumes:
-        - name: sonarr-config
-          persistentVolumeClaim:
-            claimName: sonarr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 10Gi

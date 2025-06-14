@@ -22,5 +22,5 @@ resources:
 patches:
   - path: base/patch.yaml
     target:
-      kind: Deployment
+      kind: StatefulSet
       labelSelector: app in (bazarr, prowlarr, radarr, sonarr)
