@@ -65,7 +65,7 @@ Storage Classes:
     type: Longhorn
     replication: 1
     size: 2Ti
-  metadata-storage: # For application data
+  longhorn: # For application data
     type: Longhorn
     replication: 2
     size: 100Gi
