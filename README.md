@@ -78,6 +78,14 @@ More details are in [Architecture](https://homelab.orkestack.com/docs/architectu
 
 ---
 
+## ⚠ Limitations
+
+These docs describe how my cluster works today. Hardware or configuration changes
+could make some steps outdated. Treat them as a reference to adapt rather than a
+drop‑in manual.
+
+---
+
 ## 🤝 Contributing
 
 You can contribute! I'm currently the sole maintainer and would welcome collaboration on anything from typo fixes to new applications.
