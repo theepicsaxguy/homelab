@@ -1,23 +1,28 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: web
 spec:
+  serviceName: "web"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: karakeep-web
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 5Gi
   template:
     metadata:
       labels:
         app: karakeep-web
     spec:
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: data-pvc
         - name: tmp
           emptyDir: {}
         - name: run
@@ -30,6 +35,13 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
+            - name: run
+              mountPath: /run
           resources:
             requests:
               cpu: '50m'
@@ -57,13 +69,6 @@ spec:
               value: http://chrome:9222
             - name: DATA_DIR
               value: /data
-          volumeMounts:
-            - mountPath: /data
-              name: data
-            - mountPath: /tmp
-              name: tmp
-            - mountPath: /run
-              name: run
           envFrom:
             - secretRef:
                 name: karakeep-secrets

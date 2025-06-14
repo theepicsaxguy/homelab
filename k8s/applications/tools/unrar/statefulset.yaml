@@ -1,17 +1,25 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: unrar
   namespace: unrar
   labels:
     app: unrar
 spec:
+  serviceName: "unrar"
   replicas: 1
   selector:
     matchLabels:
       app: unrar
-  strategy:
-    type: Recreate
+  volumeClaimTemplates:
+  - metadata:
+      name: unrar-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 10Gi
   template:
     metadata:
       labels:
@@ -64,6 +72,3 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
-        - name: unrar-data
-          persistentVolumeClaim:
-            claimName: unrar-data

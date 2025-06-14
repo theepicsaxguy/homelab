@@ -1,15 +1,23 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: open-webui-deployment
   namespace: open-webui
 spec:
+  serviceName: "open-webui-service"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: open-webui
+  volumeClaimTemplates:
+  - metadata:
+      name: openwebui-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 5Gi
   template:
     metadata:
       labels:
@@ -24,9 +32,6 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       volumes:
-        - name: webui-volume
-          persistentVolumeClaim:
-            claimName: open-webui-pvc
         - name: tmp
           emptyDir: {}
       containers:
@@ -37,6 +42,11 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
+          volumeMounts:
+            - name: openwebui-data
+              mountPath: /app/backend/data
+            - name: tmp
+              mountPath: /tmp
           ports:
             - containerPort: 8080
           resources:
@@ -75,11 +85,6 @@ spec:
             - name: ENABLE_OAUTH_SIGNUP
               value: 'true'
           tty: true
-          volumeMounts:
-            - name: webui-volume
-              mountPath: /app/backend/data
-            - name: tmp
-              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /

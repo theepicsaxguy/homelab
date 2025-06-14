@@ -3,9 +3,8 @@ kind: Kustomization
 namespace: omada
 
 resources:
-- deployment.yaml
+- statefulset.yaml
 - svc.yaml
 - tls-route.yaml
 - namespace.yaml
-- pvc.yaml
 - cert-omada.yaml

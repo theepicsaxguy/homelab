@@ -1,14 +1,13 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: babybuddy
   namespace: babybuddy
   labels:
     app: babybuddy
 spec:
+  serviceName: "babybuddy"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: babybuddy
@@ -31,7 +30,7 @@ spec:
               cpu: '300m'
               memory: '512Mi'
           ports:
-            - containerPort: 8000  # Changed from 3000 to 8000
+            - containerPort: 8000
               name: http
           env:
             - name: PUID
@@ -46,7 +45,7 @@ spec:
             - secretRef:
                 name: es-babybuddy-secret-key
           volumeMounts:
-            - name: config
+            - name: config # Must match metadata.name in volumeClaimTemplates
               mountPath: /config
           livenessProbe:
             httpGet:
@@ -64,7 +63,12 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 5
-      volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: babybuddy-config
+  volumeClaimTemplates:
+  - metadata:
+      name: config # This name is used in volumeMounts
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn" # Assuming 'longhorn' is your desired StorageClass, adjust if needed
+      resources:
+        requests:
+          storage: 1Gi # Adjust size as needed, check original PVC for size

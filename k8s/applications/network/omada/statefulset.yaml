@@ -1,15 +1,31 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: omada-controller
   namespace: omada
 spec:
+  serviceName: "omada-svc"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: omada-controller
+  volumeClaimTemplates:
+  - metadata:
+      name: omada-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 5Gi
+  - metadata:
+      name: omada-logs
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 2Gi
   template:
     metadata:
       labels:
@@ -128,12 +144,6 @@ spec:
               mountPath: /cert
               readOnly: true
       volumes:
-        - name: omada-data
-          persistentVolumeClaim:
-            claimName: omada-data-pvc
-        - name: omada-logs
-          persistentVolumeClaim:
-            claimName: omada-logs-pvc
         - name: omada-certs
           secret:
             secretName: cert-omada

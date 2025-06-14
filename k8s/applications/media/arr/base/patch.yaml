@@ -29,7 +29,7 @@
 - op: add
   path: /spec/template/spec/containers/0/volumeMounts/-
   value:
-    name: data
+    name: media
     mountPath: /app/data
 - op: add
   path: /spec/template/spec/containers/0/volumeMounts/-
@@ -37,23 +37,10 @@
     name: tmp
     mountPath: /tmp
 - op: add
-  path: /spec/template/spec/volumes/-
+  path: /spec/template/spec/volumes
   value:
-    name: data
-    persistentVolumeClaim:
-      claimName: media-share
-- op: add
-  path: /spec/template/spec/volumes/-
-  value:
-    name: tmp
-    emptyDir: {}
-- op: add
-  path: /spec/template/spec/volumes/-
-  value:
-    name: run
-    emptyDir: {}
-- op: add
-  path: /spec/template/spec/containers/0/volumeMounts/-
-  value:
-    name: run
-    mountPath: /run
+    - name: media
+      persistentVolumeClaim:
+        claimName: media-share
+    - name: tmp
+      emptyDir: {}

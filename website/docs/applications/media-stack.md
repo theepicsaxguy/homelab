@@ -176,3 +176,91 @@ alerts:
    - Review resource utilization
    - Check network connectivity
    - Validate storage performance
+
+## Migration Guide: Deployment to StatefulSet
+
+### Prerequisites
+
+- Backup all PVCs before starting
+- Have access to `kubectl` for manual intervention if needed
+- Schedule a maintenance window
+
+### Step-by-Step Migration Process
+
+#### 1. Preparation
+
+```bash
+# Disable auto-sync for media applications in ArgoCD
+argocd app set media-stack --sync-policy none
+
+# Replace <app-name> with the specific application (e.g., bazarr, sonarr)
+# First, find the name of the PersistentVolume (PV) bound to your application's config claim.
+export PVC_NAME=<app-name>-config
+export PV_NAME=$(kubectl get pvc $PVC_NAME -n media -o jsonpath='{.spec.volumeName}')
+echo "Found PV Name: $PV_NAME for PVC: $PVC_NAME"
+
+# If the above command returned a PV_NAME, proceed.
+# Protect the PV from deletion by setting its reclaim policy to Retain
+kubectl patch pv $PV_NAME -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+
+# Scale down the existing deployment
+kubectl scale deployment <app-name> --replicas=0 -n media
+
+# Delete the old PersistentVolumeClaim. The PV will enter a "Released" state.
+kubectl delete pvc $PVC_NAME -n media
+
+# Clear the claimRef from the PV to make it "Available"
+# This allows a new PVC to bind to it.
+kubectl patch pv $PV_NAME --type json -p='[{"op": "remove", "path": "/spec/claimRef"}]'
+```
+
+#### 2. Migration
+
+```bash
+# Apply the StatefulSet changes through ArgoCD
+# This will create a new PVC (e.g., config-<app-name>-0)
+# Replace <app-name> with the specific application (e.g., bazarr, sonarr)
+argocd app sync media-stack --resource-by-key StatefulSet:<app-name> -n media
+
+# Verify the StatefulSet is running and the new PVC (e.g., config-<app-name>-0)
+# has bound to the original (now "Available") PersistentVolume.
+kubectl get statefulset,pvc -n media -l app=<app-name>
+kubectl logs statefulset/<app-name> -n media
+```
+
+#### 3. Verification
+
+- Check the application logs for successful startup
+- Verify all data is present and accessible
+- Test basic functionality
+- Confirm the application can write to its config volume
+
+#### 4. Cleanup
+
+```bash
+# Once verified, delete the old deployment
+kubectl delete deployment <app-name> -n media
+
+# Re-enable auto-sync
+argocd app set media-stack --sync-policy automated
+```
+
+### Troubleshooting
+
+If issues occur during migration:
+
+1. **Data Access Issues**
+   - Verify PVC mounting and permissions
+   - Check StatefulSet events: `kubectl describe statefulset <app-name> -n media`
+
+2. **Application Startup Problems**
+   - Review container logs
+   - Verify environment variables and configs
+
+3. **Recovery Plan**
+   If needed, revert to deployment:
+
+   ```bash
+   kubectl scale statefulset <app-name> --replicas=0 -n media
+   kubectl scale deployment <app-name> --replicas=1 -n media
+   ```

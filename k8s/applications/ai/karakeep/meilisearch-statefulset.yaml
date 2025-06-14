@@ -1,14 +1,22 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: meilisearch
 spec:
+  serviceName: "meilisearch"
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: meilisearch
+  volumeClaimTemplates:
+    - metadata:
+        name: meilisearch-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "metadata-storage"
+        resources:
+          requests:
+            storage: 5Gi
   template:
     metadata:
       labels:
@@ -42,7 +50,7 @@ spec:
               value: 'true'
           volumeMounts:
             - mountPath: /meili_data
-              name: meilisearch
+              name: meilisearch-data
           envFrom:
             - secretRef:
                 name: karakeep-secrets
@@ -64,7 +72,3 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
-      volumes:
-        - name: meilisearch
-          persistentVolumeClaim:
-            claimName: meilisearch-pvc

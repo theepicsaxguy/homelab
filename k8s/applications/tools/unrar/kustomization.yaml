@@ -5,6 +5,6 @@ kind: Kustomization
 namespace: unrar
 
 resources:
-- deployment.yaml
-- pvc.yaml
+- statefulset.yaml
 - namespace.yaml
+- svc.yaml

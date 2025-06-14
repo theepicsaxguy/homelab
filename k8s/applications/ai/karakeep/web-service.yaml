@@ -5,6 +5,7 @@ metadata:
   annotations:
     io.cilium/lb-ipam-ips: 10.25.150.230
 spec:
+  clusterIP: None
   selector:
     app: karakeep-web
   ports:
