@@ -42,11 +42,11 @@ spec:
             - name: http
               containerPort: 8096
           volumeMounts:
-            - name: config
+            - name: config # Must match metadata.name in volumeClaimTemplates
               mountPath: /config
             - name: media
               mountPath: /app/data
-            - name: cache
+            - name: cache # Must match metadata.name in volumeClaimTemplates
               mountPath: /cache
           livenessProbe:
             httpGet:
@@ -65,12 +65,24 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: jellyfin-config
-        - name: media
+        # Removed config and cache PVCs, they are now in volumeClaimTemplates
+        - name: media # This PVC must exist independently
           persistentVolumeClaim:
             claimName: media-share
-        - name: cache
-          persistentVolumeClaim:
-            claimName: jellyfin-cache
+  volumeClaimTemplates:
+  - metadata:
+      name: config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn" # Verify StorageClass
+      resources:
+        requests:
+          storage: 10Gi # Verify size
+  - metadata:
+      name: cache
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn" # Verify StorageClass
+      resources:
+        requests:
+          storage: 50Gi # Verify size

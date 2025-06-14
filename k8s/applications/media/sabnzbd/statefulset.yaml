@@ -9,6 +9,15 @@ spec:
   selector:
     matchLabels:
       app: sabnzbd
+  volumeClaimTemplates:
+  - metadata:
+      name: sabnzbd-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 5Gi
   template:
     metadata:
       labels:
@@ -60,9 +69,6 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: sabnzbd-config
-          persistentVolumeClaim:
-            claimName: sabnzbd-config
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share

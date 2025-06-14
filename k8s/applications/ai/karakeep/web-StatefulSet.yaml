@@ -8,15 +8,21 @@ spec:
   selector:
     matchLabels:
       app: karakeep-web
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 5Gi
   template:
     metadata:
       labels:
         app: karakeep-web
     spec:
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: data-pvc
         - name: tmp
           emptyDir: {}
         - name: run

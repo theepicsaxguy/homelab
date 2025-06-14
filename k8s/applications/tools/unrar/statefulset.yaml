@@ -11,6 +11,15 @@ spec:
   selector:
     matchLabels:
       app: unrar
+  volumeClaimTemplates:
+  - metadata:
+      name: unrar-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 10Gi
   template:
     metadata:
       labels:
@@ -63,6 +72,3 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
-        - name: unrar-data
-          persistentVolumeClaim:
-            claimName: unrar-data
