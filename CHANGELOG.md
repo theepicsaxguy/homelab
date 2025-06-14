@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.1 (2025-06-14)
+
+## What's Changed
+* refactor(k8s): remove LoadBalancer type from web service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/952
+* refactor(k8s): remove velero-plugin-for-csi from initContainers by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/954
+* refactor(k8s): update storageClassName to longhorn for stateful sets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/955
+* fix(k8s): remove unsupported cloudflared pdb by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/956
+* docs: clarify limitations and DR scope by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/943
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/930
+* fix(k8s): allow velero node-agent on baseline clusters by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/957
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.0.0...v3.0.1
+
 ## 3.0.0 (2025-06-14)
 
 ## What's Changed
