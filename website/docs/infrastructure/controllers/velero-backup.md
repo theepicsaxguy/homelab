@@ -14,5 +14,6 @@ Velero manages cluster backups and restores. The configuration deploys the Helm 
 - Backups are stored in the `velero` bucket on the cluster's Minio instance.
 - Snapshots are handled by the Velero CSI plugin.
 - Metrics are exposed via a ServiceMonitor for Prometheus.
+- The `velero` namespace is labeled `pod-security.kubernetes.io/enforce: privileged` so the node-agent can mount required host paths.
 
 Once ArgoCD syncs the manifests, verify pods are running in `velero` before creating backups.
