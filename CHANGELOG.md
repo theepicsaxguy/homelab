@@ -1,5 +1,19 @@
 # Changelog
 
+## 3.0.0 (2025-06-14)
+
+## What's Changed
+* Create FUNDING.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/941
+* style(kustomization): format YAML resources for consistency by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/946
+* chore(deps): update all dependencies to v74 (major) by @renovate in https://github.com/theepicsaxguy/homelab/pull/944
+* chore(deps): update all dependencies to v74.2.1 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/949
+* refactor(k8s): migrate deployments to statefulsets and update services by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/948
+* docs(migration)!: !add guide for migrating stateful applications to S… by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/950
+* docs(migration)!: !add guide for migrating stateful applications to StatefulSets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/951
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v2.10.0...v3.0.0
+
 ## 2.10.0 (2025-06-12)
 
 ## What's Changed
