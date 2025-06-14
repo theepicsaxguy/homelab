@@ -62,7 +62,7 @@ const sidebars = {
         type: "generated-index",
         title: "Breaking Changes",
         description: "Important breaking changes and migration guides for the homelab setup.",
-        slug: "/category/breaking-changes",
+        slug: "/breaking-changes",
       },
       items: ["breaking-changes/stateful-migration"], // This ID refers to docs/breaking-changes/stateful-migration.md
     },
