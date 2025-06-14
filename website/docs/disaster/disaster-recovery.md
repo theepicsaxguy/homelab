@@ -3,7 +3,7 @@ title: 'Disaster Recovery: Talos + Longhorn
 '
 ---
 
-This guide walks you through the complete disaster recovery process for a Talos Kubernetes cluster with Longhorn persistent storage, restoring both infrastructure and data from S3 backups.
+This walkthrough shows how I rebuild my Talos cluster and Longhorn volumes from S3 backups. It's specific to my environment, so adapt the steps for yours.
 
 ## Prerequisites
 
