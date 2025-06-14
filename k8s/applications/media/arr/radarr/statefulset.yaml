@@ -1,50 +1,41 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: bazarr
+  name: radarr
   namespace: media
   labels:
-    app: bazarr
+    app: radarr
 spec:
+  serviceName: "radarr"
   replicas: 1
   selector:
     matchLabels:
-      app: bazarr
-  strategy:
-    type: Recreate
+      app: radarr
   template:
     metadata:
       labels:
-        app: bazarr
+        app: radarr
     spec:
       containers:
-        - name: bazarr
-          image: ghcr.io/hotio/bazarr:release-1.5.1
+        - name: radarr
+          image: ghcr.io/onedr0p/radarr:5.19.3
           ports:
             - name: http
-              containerPort: 6767
-              protocol: TCP
-          env:
-            - name: VPN_ENABLED
-              value: 'false'
-            - name: UMASK
-              value: '002'
-            - name: WEBUI_PORTS
-              value: '6767/tcp,6767/udp'
+              containerPort: 7878
           volumeMounts:
-            - name: bazarr-config
+            - name: config
               mountPath: /config
           resources:
             requests:
               cpu: 50m
-              memory: 192Mi
+              memory: 128Mi
             limits:
               cpu: 1000m
               memory: 256Mi
           livenessProbe:
             httpGet:
               path: /
-              port: 6767
+              port: 7878
             initialDelaySeconds: 20
             periodSeconds: 15
             timeoutSeconds: 10
@@ -52,12 +43,17 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 6767
+              port: 7878
             initialDelaySeconds: 15
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
-      volumes:
-        - name: bazarr-config
-          persistentVolumeClaim:
-            claimName: bazarr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 10Gi

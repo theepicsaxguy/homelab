@@ -8,6 +8,7 @@ metadata:
   name: immich-server
   namespace: immich
 spec:
+  clusterIP: None
   ports:
   - name: http
     port: 2283

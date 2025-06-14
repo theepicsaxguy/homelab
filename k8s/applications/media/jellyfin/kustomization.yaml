@@ -11,8 +11,7 @@ namespace: media
 resources:
 - svc.yaml
 - http-route.yaml
-- deployment.yaml
-- jellyfin-config-pvc.yaml
+- statefulset.yaml
 
 labels:
 - includeSelectors: true

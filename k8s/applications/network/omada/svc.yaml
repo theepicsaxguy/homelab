@@ -6,7 +6,7 @@ metadata:
   annotations:
     io.cilium/lb-ipam-ips: 10.25.150.226
 spec:
-  type: LoadBalancer
+  clusterIP: None
   selector:
     app: omada-controller
   ports:

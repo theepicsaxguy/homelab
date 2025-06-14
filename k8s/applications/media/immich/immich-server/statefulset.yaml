@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/instance: immich
@@ -7,14 +7,22 @@ metadata:
   name: immich-server
   namespace: immich
 spec:
+  serviceName: "immich-server"
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app.kubernetes.io/instance: immich
       app.kubernetes.io/name: server
-  strategy:
-    type: Recreate
+  volumeClaimTemplates:
+  - metadata:
+      name: library
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "metadata-storage"
+      resources:
+        requests:
+          storage: 100Gi
   template:
     metadata:
       labels:
@@ -117,6 +125,3 @@ spec:
                   items:
                     - key: immich.json
                       path: immich.json
-        - name: library
-          persistentVolumeClaim:
-            claimName: immich-library

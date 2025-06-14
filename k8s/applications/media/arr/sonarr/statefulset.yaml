@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: sonarr
   namespace: media
   labels:
     app: sonarr
 spec:
+  serviceName: "sonarr"
   replicas: 1
   selector:
     matchLabels:
       app: sonarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -24,7 +23,7 @@ spec:
             - name: http
               containerPort: 8989
           volumeMounts:
-            - name: sonarr-config
+            - name: config
               mountPath: /config
           resources:
             requests:
@@ -49,7 +48,12 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
-      volumes:
-        - name: sonarr-config
-          persistentVolumeClaim:
-            claimName: sonarr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 10Gi

@@ -1,17 +1,16 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: prowlarr
   namespace: media
   labels:
     app: prowlarr
 spec:
+  serviceName: "prowlarr"
   replicas: 1
   selector:
     matchLabels:
       app: prowlarr
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -24,7 +23,7 @@ spec:
             - name: http
               containerPort: 9696
           volumeMounts:
-            - name: prowlarr-config
+            - name: config
               mountPath: /config
           resources:
             requests:
@@ -49,7 +48,12 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
-      volumes:
-        - name: prowlarr-config
-          persistentVolumeClaim:
-            claimName: prowlarr-config
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 5Gi

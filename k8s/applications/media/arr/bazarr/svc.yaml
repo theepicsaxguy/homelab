@@ -4,6 +4,7 @@ metadata:
   name: bazarr
   namespace: media
 spec:
+  clusterIP: None
   type: ClusterIP
   selector:
     app: bazarr

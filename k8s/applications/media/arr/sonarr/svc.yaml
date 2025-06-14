@@ -4,6 +4,7 @@ metadata:
   name: sonarr
   namespace: media
 spec:
+  clusterIP: None
   type: ClusterIP
   selector:
     app: sonarr
