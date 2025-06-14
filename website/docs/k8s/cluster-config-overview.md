@@ -92,7 +92,5 @@ PDB is removed. This prevents accidental outages during routine maintenance.
 Multi-replica services like CoreDNS and the monitoring stack also
 have PDBs defined to ensure at least one instance stays online during upgrades.
 Argo CD runs in high availability mode, and the Helm chart automatically
-creates PDBs for each component.
-The Cloudflare tunnel runs as a DaemonSet and uses `maxUnavailable: 1` so that
-only one pod restarts at a time. Startup and readiness probes hold the update
-until the new pod is ready.
+creates PDBs for each component. The Cloudflare tunnel doesn't use a PDB; its
+DaemonSet rolls out pods one at a time with `maxUnavailable: 1`.
