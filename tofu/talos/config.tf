@@ -10,22 +10,22 @@ data "talos_client_configuration" "this" {
 }
 
 data "talos_machine_configuration" "this" {
-  for_each         = var.nodes
-  cluster_name     = var.cluster.name
-  cluster_endpoint = "https://${var.cluster.endpoint}:6443"
-  talos_version    = var.cluster.talos_version
-  machine_type     = each.value.machine_type
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  for_each           = var.nodes
+  cluster_name       = var.cluster.name
+  cluster_endpoint   = "https://${var.cluster.endpoint}:6443"
+  talos_version      = var.cluster.talos_version
+  machine_type       = each.value.machine_type
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
   kubernetes_version = var.cluster.kubernetes_version
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-      hostname       = each.key
-      node_name      = each.value.host_node
-      cluster_name   = var.cluster.proxmox_cluster
-      node_ip        = each.value.ip
-      cluster        = var.cluster
-      cilium_values  = var.cilium.values
-      cilium_install = var.cilium.install
+      hostname        = each.key
+      node_name       = each.value.host_node
+      cluster_name    = var.cluster.proxmox_cluster
+      node_ip         = each.value.ip
+      cluster         = var.cluster
+      cilium_values   = var.cilium.values
+      cilium_install  = var.cilium.install
       coredns_install = var.coredns.install
     })
     ] : [

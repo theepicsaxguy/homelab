@@ -4,12 +4,11 @@ kind: Kustomization
 namespace: immich
 
 helmCharts:
-  - name: redis
-    releaseName: immich-redis
-    version: 21.2.3
-    repo: https://charts.bitnami.com/bitnami
-    valuesFile: values.yaml
-    includeCRDs: false
+- name: redis
+  releaseName: immich-redis
+  repo: https://charts.bitnami.com/bitnami
+  valuesFile: values.yaml
+  version: 21.2.3
 
 generatorOptions:
   disableNameSuffixHash: true
