@@ -232,8 +232,7 @@ Perform application-specific data validation:
 After successful recovery:
 
 1. **Update Monitoring**: Ensure all monitoring and alerting is functional
-2. **Test Backups**: Verify new backup jobs are running correctly
-   - Automated CronJobs handle MongoDB and Meilisearch snapshots. The MongoDB job writes backups to a separate `mongo-backup` volume. Confirm recent successful runs with `kubectl get jobs -n <namespace>`.
+2. **Test Backups**: Ensure Longhorn and Velero snapshots run successfully.
 3. **Document Changes**: Record any configuration changes made during recovery
 4. **Schedule DR Test**: Plan the next disaster recovery test
 
