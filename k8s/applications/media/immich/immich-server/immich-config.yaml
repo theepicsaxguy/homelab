@@ -97,8 +97,15 @@ data:
         import: true
     newVersionCheck:
       enabled: true
-    passwordLogin:
+    oauth:
       enabled: true
+      issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
+      scope: "openid email profile"
+      autoLaunch: true
+      autoRegister: true
+      buttonText: "Login with SSO"
+    passwordLogin:
+      enabled: false
     reverseGeocoding:
       enabled: true
     storageTemplate:
