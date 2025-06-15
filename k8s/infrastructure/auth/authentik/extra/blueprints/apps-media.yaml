@@ -63,7 +63,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-bazarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -123,7 +123,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-lidarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -183,7 +183,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-prowlarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -243,7 +243,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-radarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -303,7 +303,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-readarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -363,7 +363,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-sonarr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -423,7 +423,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-qbittorrent
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -483,7 +483,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-sabnzbd
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
 
@@ -550,12 +550,12 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-jellyseerr
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-jellyseerr
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 2

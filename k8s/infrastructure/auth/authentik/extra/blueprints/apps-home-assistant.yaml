@@ -22,7 +22,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf homeassistant_application
-      group: !Find [authentik_core.group, [name, "schmitt"]]
+      group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
     attrs:
       order: 1
 
@@ -84,6 +84,6 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-zigbee2mqtt
-      user: !Find [authentik_core.user, [username, "risson"]]
+      group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
     attrs:
       order: 1

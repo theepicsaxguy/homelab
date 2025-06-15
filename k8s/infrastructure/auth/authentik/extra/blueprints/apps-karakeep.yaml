@@ -52,7 +52,7 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf karakeep-application
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Karakeep Users"]]
     attrs:
       order: 1
 

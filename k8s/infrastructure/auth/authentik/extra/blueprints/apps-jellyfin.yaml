@@ -34,7 +34,7 @@ entries:
           matching_mode: strict
       client_id: !Env JELLYFIN_CLIENT_ID
       client_secret: !Env JELLYFIN_CLIENT_SECRET
-      
+
       # Token validity settings
       access_code_validity: minutes=1
       access_token_validity: minutes=10
@@ -78,6 +78,6 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf jellyfin_application
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Jellyfin Users"]]
     attrs:
       order: 1
