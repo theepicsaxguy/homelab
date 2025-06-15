@@ -1,3 +1,4 @@
+# k8s/infrastructure/auth/authentik/extra/blueprints/apps-immich.yaml
 # yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
 # yamllint disable-file
 # prettier-ignore-start
@@ -73,12 +74,12 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf immich_application
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Immich Users"]]
     attrs:
       order: 1
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf immich_application
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Immich Users"]]
     attrs:
       order: 2

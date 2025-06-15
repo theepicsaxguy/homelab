@@ -14,7 +14,7 @@ grafana:
       groups_attribute_path: groups
       name_attribute_path: name
       email_attribute_path: email
-      role_attribute_path: contains(groups[*], 'roots') && 'Admin' || contains(groups[*], 'users') && 'Editor' || 'Viewer'
+      role_attribute_path: contains(groups[*], 'Grafana Admins') && 'Admin' || contains(groups[*], 'Grafana Users') && 'Editor' || 'Viewer'
       allow_sign_up: true
       auto_login: false
       use_pkce: true

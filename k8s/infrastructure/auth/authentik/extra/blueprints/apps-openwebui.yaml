@@ -82,6 +82,6 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf openwebui_application
-      group: !Find [authentik_core.group, [name, "roots"]]
+      group: !Find [authentik_core.group, [name, "Open WebUI Users"]]
     attrs:
       order: 2
