@@ -14,7 +14,7 @@ spec:
   clusterIP: None
   ports:
   - name: http
-    port: 5055 # The service port should target the container's port
+    port: 80
     targetPort: http
   selector:
     app: jellyseerr
