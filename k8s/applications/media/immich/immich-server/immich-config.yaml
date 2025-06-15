@@ -98,7 +98,7 @@ data:
     newVersionCheck:
       enabled: true
     passwordLogin:
-      enabled: false
+      enabled: true
     reverseGeocoding:
       enabled: true
     storageTemplate:
