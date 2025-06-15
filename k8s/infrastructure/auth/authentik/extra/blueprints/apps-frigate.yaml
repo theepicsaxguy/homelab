@@ -55,6 +55,6 @@ entries:
   - model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf frigate_application
-      group: !Find [authentik_core.group, [name, "users"]]
+      group: !Find [authentik_core.group, [name, "Frigate Users"]]
     attrs:
       order: 1

@@ -27,7 +27,7 @@ entries:
       description: Roles
       expression: |
         return {
-          "roles": ["superuser", "staff"] if ak_is_group_member(request.user, name="roots") else []
+          "roles": ["superuser", "staff"] if ak_is_group_member(request.user, name="authentik Admins") else []
         }
 
   - model: authentik_providers_oauth2.scopemapping

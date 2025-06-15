@@ -67,3 +67,9 @@ entries:
       name: Open WebUI Users
     attrs:
       name: Open WebUI Users
+  - id: karakeep-users
+    model: authentik_core.group
+    identifiers:
+      name: Karakeep Users
+    attrs:
+      name: Karakeep Users
