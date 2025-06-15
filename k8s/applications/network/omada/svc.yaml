@@ -46,10 +46,6 @@ spec:
     port: 29810
     targetPort: 29810
     protocol: UDP
-  - name: udp-management
-    protocol: UDP
-    port: 19810
-    targetPort: 19810
   - name: transfer-v2
     port: 29815
     targetPort: 29815
