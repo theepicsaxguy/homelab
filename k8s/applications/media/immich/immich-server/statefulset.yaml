@@ -53,16 +53,6 @@ spec:
               value: http://immich-machine-learning:3003
             - name: IMMICH_TELEMETRY_INCLUDE
               value: all
-            - name: OAUTH_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: immich-oidc-credentials
-                  key: clientId
-            - name: OAUTH_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: immich-oidc-credentials
-                  key: clientSecret
             - name: REDIS_HOSTNAME
               value: immich-redis-master
             - name: TZ
@@ -125,8 +115,8 @@ spec:
           projected:
             defaultMode: 0440
             sources:
-              - configMap:
-                  name: immich-immich-config
+              - secret:
+                  name: immich-immich-config-secret
                   items:
                     - key: immich-config.yaml
                       path: immich-config.yaml
