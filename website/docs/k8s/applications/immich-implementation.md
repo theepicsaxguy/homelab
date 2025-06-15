@@ -60,3 +60,27 @@ resources:
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
 ```
+
+### OAuth Configuration via ExternalSecret
+
+Immich expects the OAuth client details inside its config file. The `immich-config-external-secret.yaml` resource pulls these values from Bitwarden and renders the full configuration as a Secret:
+
+```yaml
+# k8s/applications/media/immich/immich-server/immich-config-external-secret.yaml
+spec:
+  template:
+    data:
+      immich-config.yaml: |
+        ...
+        oauth:
+          enabled: true
+          issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
+          scope: "openid email profile"
+          autoLaunch: true
+          autoRegister: true
+          buttonText: "Login with SSO"
+          clientId: "{{ .clientId }}"
+          clientSecret: "{{ .clientSecret }}"
+```
+
+This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
