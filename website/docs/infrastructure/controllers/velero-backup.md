@@ -17,3 +17,14 @@ Velero manages cluster backups and restores. The configuration deploys the Helm 
 - The `velero` namespace is labeled `pod-security.kubernetes.io/enforce: privileged` so the node-agent can mount required host paths.
 
 Once ArgoCD syncs the manifests, verify pods are running in `velero` before creating backups.
+
+## Credentials Format
+
+The `velero-minio-credentials` secret must expose three values:
+
+- `MINIO_ACCESS_KEY`
+- `MINIO_SECRET_KEY`
+- `MINIO_ENDPOINT`
+
+These values come from Bitwarden. The `ExternalSecret` assembles them into a
+`cloud` file so Velero can read standard AWS-style credentials.
