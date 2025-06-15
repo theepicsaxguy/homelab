@@ -74,7 +74,7 @@ spec:
         ...
         oauth:
           enabled: true
-          issuerUrl: "https://sso.pc-tips.se/application/o/photo/"
+          issuerUrl: "https://sso.pc-tips.se/application/o/immich/"
           scope: "openid email profile"
           autoLaunch: true
           autoRegister: true
