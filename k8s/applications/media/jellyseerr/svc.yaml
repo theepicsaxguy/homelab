@@ -14,7 +14,7 @@ spec:
   clusterIP: None
   ports:
   - name: http
-    port: 80
+    port: 5055
     targetPort: http
   selector:
     app: jellyseerr
