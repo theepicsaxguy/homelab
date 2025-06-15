@@ -17,7 +17,6 @@ resources:
 - chrome-service.yaml
 - meilisearch-statefulset.yaml
 - meilisearch-service.yaml
-- meilisearch-backup-cronjob.yaml
 - http-route.yaml
 - karakeep-secrets-external.yaml
 
