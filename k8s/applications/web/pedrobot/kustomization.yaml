@@ -9,4 +9,3 @@ resources:
 - service.yaml
 - http-route.yaml
 - mongodb-statefulset.yaml
-- mongodb-backup-cronjob.yaml
