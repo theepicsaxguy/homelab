@@ -42,11 +42,11 @@ spec:
             - name: http
               containerPort: 8096
           volumeMounts:
-            - name: config # Must match metadata.name in volumeClaimTemplates
+            - name: config
               mountPath: /config
             - name: media
               mountPath: /app/data
-            - name: cache # Must match metadata.name in volumeClaimTemplates
+            - name: cache
               mountPath: /cache
           livenessProbe:
             httpGet:
@@ -65,8 +65,7 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        # Removed config and cache PVCs, they are now in volumeClaimTemplates
-        - name: media # This PVC must exist independently
+        - name: media
           persistentVolumeClaim:
             claimName: media-share
   volumeClaimTemplates:
@@ -74,15 +73,15 @@ spec:
       name: config
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn" # Verify StorageClass
+      storageClassName: "longhorn"
       resources:
         requests:
-          storage: 10Gi # Verify size
+          storage: 10Gi
   - metadata:
       name: cache
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn" # Verify StorageClass
+      storageClassName: "longhorn"
       resources:
         requests:
-          storage: 50Gi # Verify size
+          storage: 10Gi
