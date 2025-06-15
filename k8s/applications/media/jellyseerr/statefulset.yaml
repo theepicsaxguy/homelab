@@ -1,0 +1,94 @@
+# FILE: statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jellyseerr
+  namespace: media
+  labels:
+    app: jellyseerr
+spec:
+  # The serviceName must match the name of the headless Service
+  serviceName: "jellyseerr"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyseerr
+  template:
+    metadata:
+      labels:
+        app: jellyseerr # This label must match the selector
+    spec:
+      serviceAccountName: jellyseerr
+      # Aligned securityContext with jellyfin for consistency
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2501
+        runAsGroup: 2501
+        fsGroup: 2501
+        fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups: [44, 104]
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: jellyseerr
+        image: ghcr.io/fallenbagel/jellyseerr:2.6.0
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - secretRef:
+            # IMPORTANT: Ensure a secret named 'jellyseerr-secrets' exists in the 'media' namespace.
+            name: jellyseerr-secrets
+        ports:
+        - name: http
+          containerPort: 5055
+          protocol: TCP
+        # Aligned probes with jellyfin for more robust health checking
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 10
+          failureThreshold: 3
+        resources:
+          requests:
+            cpu: 150m
+            memory: 256Mi
+          limits:
+            cpu: 600m
+            memory: 768Mi
+        # Aligned securityContext with jellyfin for consistency
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ['ALL']
+        volumeMounts:
+        - name: config # This name must match the volumeClaimTemplate's metadata.name
+          mountPath: /app/config
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp # The /tmp volume can still be an emptyDir
+        emptyDir: {}
+
+  # The PVC is now defined here. The StatefulSet controller will create it automatically.
+  volumeClaimTemplates:
+  - metadata:
+      name: config # This name is referenced in the volumeMounts above
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      # IMPORTANT: Set this to your desired StorageClass, e.g., "longhorn"
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 5Gi
