@@ -1,5 +1,35 @@
 # Changelog
 
+## 3.1.0 (2025-06-15)
+
+## What's Changed
+* refactor(k8s): remove LoadBalancer type from web service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/952
+* refactor(k8s): remove velero-plugin-for-csi from initContainers by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/954
+* refactor(k8s): update storageClassName to longhorn for stateful sets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/955
+* fix(k8s): remove unsupported cloudflared pdb by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/956
+* docs: clarify limitations and DR scope by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/943
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/930
+* fix(k8s): allow velero node-agent on baseline clusters by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/957
+* chore(k8s): remove outdated backup cronjobs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/958
+* fix(k8s): use minio keys for velero by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/959
+* fix(k8s): remove redundant Omada PVC and port by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/960
+* chore(k8s): restructure jellyseerr deployment configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/961
+* fix(k8s): update volume mounts and claims for jellyfin StatefulSet by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/962
+* fix(k8s): update StatefulSet configuration and remove unused PVCs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/963
+* Chore(k8s)--remove-unused-PVCs-and-patch-files-for-media-applications by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/964
+* fix(k8s): update PVC configuration for immich server and jellyseerr service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/965
+* fix(k8s): update container port for jellyseerr StatefulSet by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/966
+* fix(k8s): update container ports for jellyseerr and bazarr services by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/967
+* fix(k8s): update immich OIDC credentials and configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/968
+* feat(k8s): configure immich OAuth via secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/969
+* Fix(k8s)--remove-unused-storageTemplate-configuration-from-immich-secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/970
+* Fix(k8s)--remove-unused-storageTemplate-configuration-from-immich-secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/971
+* fix(immich): align oidc issuer with blueprint by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/972
+* feat(k8s): enhance immich configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/973
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.0.0...v3.1.0
+
 ## 3.0.0 (2025-06-14)
 
 ## What's Changed
