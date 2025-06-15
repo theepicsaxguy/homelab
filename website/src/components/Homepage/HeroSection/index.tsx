@@ -37,7 +37,7 @@ export function HeroSection(): JSX.Element {
           </div>
           <div className={styles.ctaButtons}>
             <Link
-              href="https://homelab.orkestack.com/docs/intro"
+              href="/docs/intro"
               className={styles.primaryButton}
             >
               Explore the Docs →

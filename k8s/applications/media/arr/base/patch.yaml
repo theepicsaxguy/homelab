@@ -37,10 +37,17 @@
     name: tmp
     mountPath: /tmp
 - op: add
+  path: /spec/template/spec/containers/0/volumeMounts/-
+  value:
+    name: run
+    mountPath: /run
+- op: add
   path: /spec/template/spec/volumes
   value:
     - name: media
       persistentVolumeClaim:
         claimName: media-share
     - name: tmp
+      emptyDir: {}
+    - name: run
       emptyDir: {}

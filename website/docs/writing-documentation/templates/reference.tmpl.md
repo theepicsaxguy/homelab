@@ -1,5 +1,6 @@
 ---
 title: 'Markdown template: Reference topic'
+
 ---
 
 Write a few sentences introducing the subject of this reference document (e.g., "This document lists the configuration
