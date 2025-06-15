@@ -70,17 +70,21 @@ Immich expects the OAuth client details inside its config file. The `immich-conf
 spec:
   template:
     data:
-      immich-config.yaml: |
-        ...
-        oauth:
-          enabled: true
-          issuerUrl: "https://sso.pc-tips.se/application/o/immich/"
-          scope: "openid email profile"
-          autoLaunch: true
-          autoRegister: true
-          buttonText: "Login with SSO"
-          clientId: "{{ .clientId }}"
-          clientSecret: "{{ .clientSecret }}"
+        immich-config.yaml: |
+          ...
+          server:
+            externalDomain: photo.pc-tips.se
+          oauth:
+            enabled: true
+            issuerUrl: "https://sso.pc-tips.se/application/o/immich/"
+            scope: "openid email profile"
+            autoLaunch: true
+            autoRegister: true
+            buttonText: "Login with SSO"
+            clientId: "{{ .clientId }}"
+            clientSecret: "{{ .clientSecret }}"
+          passwordLogin:
+            enabled: false
 ```
 
 This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
