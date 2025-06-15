@@ -1,0 +1,22 @@
+---
+# FILE: service.yaml
+# This is a "headless" service, required by the StatefulSet.
+# It provides a stable network identity (jellyseerr-0.jellyseerr.media.svc.cluster.local).
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyseerr
+  namespace: media
+  labels:
+    app: jellyseerr
+spec:
+  # By setting clusterIP to None, we make this a headless service.
+  clusterIP: None
+  ports:
+  - name: http
+    port: 5055 # The service port should target the container's port
+    targetPort: http
+  selector:
+    app: jellyseerr
+  type: ClusterIP
+

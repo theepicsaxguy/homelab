@@ -5,10 +5,6 @@ namespace: media
 
 resources:
 - http-route.yaml
-
-helmCharts:
-- name: jellyseerr-chart
-  releaseName: jellyseerr
-  repo: oci://ghcr.io/fallenbagel/jellyseerr
-  valuesFile: values.yaml
-  version: 2.5.0
+- statefulset.yaml
+- svc.yaml
+- service-account.yaml
