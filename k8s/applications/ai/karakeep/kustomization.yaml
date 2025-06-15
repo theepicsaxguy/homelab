@@ -34,6 +34,6 @@ replacements:
       index: 1
     select:
       group: apps
-      kind: Deployment
+      kind: StatefulSet
       name: web
       version: v1

@@ -37,7 +37,7 @@ spec:
               drop: ['ALL']
           volumeMounts:
             - name: data
-              mountPath: /app/data
+              mountPath: /data
             - name: tmp
               mountPath: /tmp
             - name: run
