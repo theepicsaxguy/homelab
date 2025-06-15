@@ -1,5 +1,6 @@
 ---
 title: 'Markdown template: Procedural topic'
+
 ---
 
 Provide a brief (1-2 sentence) description of the task this document will guide the user through.
