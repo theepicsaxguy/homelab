@@ -39,7 +39,7 @@ spec:
             name: jellyseerr-secrets
         ports:
         - name: http
-          containerPort: 5055
+          containerPort: 80
           protocol: TCP
         # Aligned probes with jellyfin for more robust health checking
         livenessProbe:
