@@ -11,8 +11,8 @@ primary:
     size: 1Gi
   resources:
     requests:
-      cpu: 80m
-      memory: 100Mi
+      cpu: 100m
+      memory: 128Mi
     limits:
-      cpu: 150m
-      memory: 256Mi
+      cpu: 200m
+      memory: 512Mi
