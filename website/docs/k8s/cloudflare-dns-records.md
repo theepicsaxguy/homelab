@@ -29,7 +29,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
 ## Prerequisites
 
 - A Kubernetes cluster with `kubectl` access.
-- A `ClusterSecretStore` containing a valid Cloudflare API token under the key `cloudflare_api_token`.
+- A `ClusterSecretStore` containing a valid Cloudflare API token under the key `infra-cloudflare-api-token`.
 - GitOps tooling (Argo CD, Flux, etc.) configured to apply this repository.
 
 ## Overview of steps
@@ -46,7 +46,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
    Apply the official Crossplane Helm chart into `crossplane-system` via your GitOps tool.
 
 2. **Configure external secrets**
-   Define an `ExternalSecret` pointing to the Bitwarden-backed `ClusterSecretStore` to sync `cloudflare_api_token` and `cloudflare_account_id` into a Kubernetes Secret named `cloudflare-api-token`. The secret includes a `creds` key containing `{ "api_token": "...", "account_id": "..." }`.
+   Define an `ExternalSecret` pointing to the Bitwarden-backed `ClusterSecretStore` to sync `infra-cloudflare-api-token` and `infra-cloudflare-account-id` into a Kubernetes Secret named `cloudflare-api-token`. The secret includes a `creds` key containing `{ "api_token": "...", "account_id": "..." }`.
 
 3. **Install provider and credentials**
    Apply the Crossplane `Provider` for Cloudflare and a `ProviderConfig` that references the `creds` key in `cloudflare-api-token`.
