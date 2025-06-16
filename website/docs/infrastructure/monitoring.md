@@ -24,11 +24,11 @@ Ensure the secret keys reference the correct Bitwarden entries before deploying:
 data:
   - secretKey: clientId
     remoteRef:
-      key: e0653cbf-e89e-4c7f-bf15-b2f4014daf64
+      key: app-grafana-oauth-client-id
       property: value
   - secretKey: clientSecret
     remoteRef:
-      key: 56041409-832c-4d56-8688-b2f4014dc3cc
+      key: app-grafana-oauth-client-secret
       property: value
 ```
 
