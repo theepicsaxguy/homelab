@@ -103,6 +103,7 @@ spec:
           projected:
             sources:
               - secret:
-                  name: immich-config
-              - configMap:
-                  name: immich-immich-config
+                  name: immich-immich-config-secret
+                  items:
+                    - key: immich-config.yaml
+                      path: immich-config.yaml
