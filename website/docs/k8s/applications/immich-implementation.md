@@ -73,7 +73,7 @@ spec:
         immich-config.yaml: |
           ...
           server:
-            externalDomain: photo.pc-tips.se
+            externalDomain: https://photo.pc-tips.se
           oauth:
             enabled: true
             issuerUrl: "https://sso.pc-tips.se/application/o/immich/"
