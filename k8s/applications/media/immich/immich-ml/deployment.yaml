@@ -53,11 +53,11 @@ spec:
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu: '150m'
-              memory: '256Mi'
+              cpu: '200m'
+              memory: '512Mi'
             limits:
-              cpu: '750m'
-              memory: '1Gi'
+              cpu: '1000m'
+              memory: '2Gi'
           livenessProbe:
             failureThreshold: 3
             httpGet:
