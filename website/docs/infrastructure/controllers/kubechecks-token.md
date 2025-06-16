@@ -30,7 +30,7 @@ Generate a token in ArgoCD for the `kubechecks` account and save it to Bitwarden
 ```yaml
 - secretKey: argocd_api_token
   remoteRef:
-    key: 0d2a2732-db70-49b7-b64a-b29400a92230
+    key: app-kubechecks-argocd-api-token
 ```
 
 The secret is referenced by the Kubechecks Helm chart so the token never lives in the repository.
