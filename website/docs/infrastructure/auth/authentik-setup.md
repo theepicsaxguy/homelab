@@ -34,6 +34,15 @@ graph LR
     C -.-> F[Authentik Server]
 ```
 
+## Blueprint Users
+
+Two sample accounts are bootstrapped via Authentik blueprints to show how group membership controls access:
+
+- **admin-user** – belongs to every user group and sits in the ArgoCD and Grafana admin groups.
+- **standard-user** – a regular account added to the same user groups without admin privileges.
+
+Passwords and emails come from ExternalSecrets entries referenced in `authentik-blueprint-secrets`.
+
 ## Configuration Guide
 
 ### 1. Protecting a New Application

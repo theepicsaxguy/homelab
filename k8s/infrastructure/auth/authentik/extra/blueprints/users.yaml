@@ -7,25 +7,46 @@ version: 1
 metadata:
   name: Users
 entries:
-  - id: user-argocd-admin
+  - id: user-admin
     model: authentik_core.user
     identifiers:
-      username: argocd-admin
+      username: admin-user
     attrs:
-      username: argocd-admin
-      name: ArgoCD Admin
-      email: !Env ARGOCD_ADMIN_EMAIL
-      password: !Env ARGOCD_ADMIN_PASSWORD
+      username: admin-user
+      name: Admin User
+      email: !Env ADMIN_EMAIL
+      password: !Env ADMIN_PASSWORD
       groups:
+        # admin-level groups
         - !Find [authentik_core.group, [name, "ArgoCD Admins"]]
-  - id: user-grafana-viewer
+        - !Find [authentik_core.group, [name, "Grafana Admins"]]
+        # membership in every user group
+        - !Find [authentik_core.group, [name, "ArgoCD Viewers"]]
+        - !Find [authentik_core.group, [name, "Grafana Users"]]
+        - !Find [authentik_core.group, [name, "Frigate Users"]]
+        - !Find [authentik_core.group, [name, "Home Assistant Users"]]
+        - !Find [authentik_core.group, [name, "Immich Users"]]
+        - !Find [authentik_core.group, [name, "Jellyfin Users"]]
+        - !Find [authentik_core.group, [name, "Media Users"]]
+        - !Find [authentik_core.group, [name, "Open WebUI Users"]]
+        - !Find [authentik_core.group, [name, "Karakeep Users"]]
+
+  - id: user-standard
     model: authentik_core.user
     identifiers:
-      username: grafana-viewer
+      username: standard-user
     attrs:
-      username: grafana-viewer
-      name: Grafana Viewer
-      email: !Env GRAFANA_VIEWER_EMAIL
-      password: !Env GRAFANA_VIEWER_PASSWORD
+      username: standard-user
+      name: Standard User
+      email: !Env USER_EMAIL
+      password: !Env USER_PASSWORD
       groups:
+        - !Find [authentik_core.group, [name, "ArgoCD Viewers"]]
         - !Find [authentik_core.group, [name, "Grafana Users"]]
+        - !Find [authentik_core.group, [name, "Frigate Users"]]
+        - !Find [authentik_core.group, [name, "Home Assistant Users"]]
+        - !Find [authentik_core.group, [name, "Immich Users"]]
+        - !Find [authentik_core.group, [name, "Jellyfin Users"]]
+        - !Find [authentik_core.group, [name, "Media Users"]]
+        - !Find [authentik_core.group, [name, "Open WebUI Users"]]
+        - !Find [authentik_core.group, [name, "Karakeep Users"]]
