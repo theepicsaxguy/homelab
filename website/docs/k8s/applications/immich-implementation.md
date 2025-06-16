@@ -88,3 +88,4 @@ spec:
 ```
 
 This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
+The machine-learning deployment mounts the same Secret so both components read identical settings.
