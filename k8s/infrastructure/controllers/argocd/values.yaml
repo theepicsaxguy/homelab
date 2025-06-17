@@ -7,11 +7,6 @@ configs:
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: '--enable-helm'
     accounts.kubechecks: apiKey
-    resource.inclusions: |
-      - apiGroups:
-          - discovery.k8s.io
-        kinds:
-          - EndpointSlice
     # OIDC Configuration
     dex.config: |
       connectors:
