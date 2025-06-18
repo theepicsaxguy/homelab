@@ -239,7 +239,9 @@ I embed essential services in the Talos config:
 
 ### Configuration
 
-Create `terraform.tfvars` with your environment settings:
+Create `terraform.tfvars` with your environment settings. The internal
+cluster domain defaults to `kube.pc-tips.se` and can be changed in
+`tofu/locals.tf`:
 
 ```hcl
 proxmox = {

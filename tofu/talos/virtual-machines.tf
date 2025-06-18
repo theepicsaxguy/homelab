@@ -76,7 +76,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   initialization {
     datastore_id = each.value.datastore_id
     dns {
-      domain  = "kube.pc-tips.se"
+      domain  = var.cluster_domain
       servers = ["10.25.150.1"]
     }
     ip_config {
