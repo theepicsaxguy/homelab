@@ -47,6 +47,7 @@ This document outlines the core infrastructure controllers deployed in my Kubern
 - Distributed block storage
 - Volume replication
 - Backup capabilities
+- Default reclaim policy set to `Retain`
 - Storage overprovisioning
 
 ### Kubechecks

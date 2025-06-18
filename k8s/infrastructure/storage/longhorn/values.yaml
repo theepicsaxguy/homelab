@@ -67,7 +67,7 @@ defaultSettings:
 persistence:
   defaultClass: true
   defaultClassReplicaCount: 3
-  reclaimPolicy: Delete
+  reclaimPolicy: Retain
   defaultFsType: ext4
   snapshotMaxCount: 60
   defaultDataLocality: best-effort
