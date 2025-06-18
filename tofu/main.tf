@@ -125,9 +125,11 @@ module "talos" {
     install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
   }
 
+  cluster_domain = local.cluster_domain
+
   cluster = {
     name               = "talos"
-    endpoint           = "api.kube.pc-tips.se"
+    endpoint           = "api.${local.cluster_domain}"
     gateway            = "10.25.150.1"  # Network gateway
     vip                = "10.25.150.10" # Control plane VIP
     talos_version      = "v1.10.3"
