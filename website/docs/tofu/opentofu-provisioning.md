@@ -137,6 +137,7 @@ disks = {
   - QEMU guest agent
   - iSCSI tools
 - Automatically downloaded to Proxmox
+- Downloads are deduplicated using a map keyed by host node and image version, so each Proxmox node pulls a version only once
 
 ## Machine Configuration
 
