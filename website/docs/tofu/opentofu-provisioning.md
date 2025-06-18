@@ -56,12 +56,15 @@ Worker Nodes:
 ├── upgrade-k8s.sh    # Kubernetes upgrade helper
 ├── terraform.tfvars  # Variable definitions
 └── talos/            # Talos cluster module
-    ├── config.tf     # Machine configs and bootstrap
-    ├── image.tf      # OS image management
+    ├── config-secrets.tf   # Machine secrets
+    ├── config-client.tf    # Client configuration
+    ├── config-machine.tf   # Machine configs and apply
+    ├── config-cluster.tf   # Bootstrap and health checks
+    ├── image.tf            # OS image management
     ├── virtual-machines.tf  # Proxmox VM definitions
-    └── manifests/    # Kubernetes bootstrap manifests
-    ├── machine-config/     # Config templates
-    └── inline-manifests/   # Core component YAMLs
+    └── manifests/          # Kubernetes bootstrap manifests
+        ├── machine-config/     # Config templates
+        └── inline-manifests/   # Core component YAMLs
 ```
 
 # Core Components
