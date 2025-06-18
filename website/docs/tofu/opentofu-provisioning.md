@@ -49,7 +49,8 @@ Worker Nodes:
 
 ```
 /tofu/
-├── main.tf           # Main configuration and node definitions
+├── main.tf           # Module configuration and outputs
+├── locals.tf         # Node settings and helper locals
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
@@ -220,12 +221,12 @@ I embed essential services in the Talos config:
 
 ### Add/Remove Nodes
 
-1. Modify `nodes` in `main.tf`
+1. Modify `nodes_config` in `locals.tf`
 2. Run `tofu apply`
 
 ### Change Resources
 
-1. Update node specs in `main.tf`
+1. Update node specs in `locals.tf`
 2. Run `tofu apply`
 
 > Note: Resource changes may require VM restarts
