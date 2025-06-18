@@ -8,7 +8,8 @@ This upgrade process uses a controlled index-based approach to upgrade Talos nod
 
 ## Upgrade Sequence
 
-The upgrade sequence is automatically derived from your node configuration:
+The upgrade sequence is automatically derived from your node configuration (stored in `nodes.auto.tfvars`).
+OpenTofu loads this file automatically when you run commands from the `tofu` directory.
 
 1. **Control Plane Nodes** (upgraded first for quorum safety)
    - `ctrl-00` (index 0)
