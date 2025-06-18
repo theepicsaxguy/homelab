@@ -51,6 +51,23 @@ variable "nodes" {
     condition     = length([for n in values(var.nodes) : n if n.machine_type == "controlplane"]) > 0
     error_message = "You must define at least one node with machine_type \"controlplane\"."
   }
+
+  validation {
+    condition     = length(distinct([for n in values(var.nodes) : n.ip])) == length(var.nodes)
+    error_message = "Node IP addresses must be unique."
+  }
+
+  validation {
+    condition     = length(distinct([for n in values(var.nodes) : n.vm_id])) == length(var.nodes)
+    error_message = "Node VM IDs must be unique."
+  }
+
+  validation {
+    condition = alltrue([
+      for n in values(var.nodes) : can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", n.mac_address))
+    ])
+    error_message = "MAC addresses must use the format 00:11:22:33:44:55."
+  }
 }
 
 variable "cilium" {
