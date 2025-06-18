@@ -49,7 +49,8 @@ Worker Nodes:
 
 ```
 /tofu/
-├── main.tf           # Main configuration and node definitions
+├── main.tf           # Core configuration
+├── nodes.auto.tfvars # Node definitions
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
@@ -207,7 +208,7 @@ I embed essential services in the Talos config:
    }
    ```
 
-2. Set `update = true` for affected nodes if your OpenTofu module supports this flag for triggering upgrades. Otherwise,
+2. Set `update = true` for affected nodes in `tofu/nodes.auto.tfvars` if your OpenTofu module supports this flag for triggering upgrades. Otherwise,
    `tofu apply` will handle changes to version properties.
 
 3. Run:
@@ -220,12 +221,12 @@ I embed essential services in the Talos config:
 
 ### Add/Remove Nodes
 
-1. Modify `nodes` in `main.tf`
+1. Modify the map in `tofu/nodes.auto.tfvars`
 2. Run `tofu apply`
 
 ### Change Resources
 
-1. Update node specs in `main.tf`
+1. Update node specs in `tofu/nodes.auto.tfvars`
 2. Run `tofu apply`
 
 > Note: Resource changes may require VM restarts
