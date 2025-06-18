@@ -197,6 +197,9 @@ argocd app get cilium
    - Check resource limits
    - Verify dependencies
 
+4. **Empty Applications**
+   - Remove leftover `argocd.argoproj.io/namespace-resource-allowlist` annotations on AppProjects
+
 ### Debug Commands
 
 ```bash
