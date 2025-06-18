@@ -2,7 +2,7 @@
 configs:
   cm:
     create: true
-    application.resourceTrackingMethod: annotation+label
+    application.resourceTrackingMethod: label
     admin.enabled: false
     url: https://argocd.pc-tips.se
     kustomize.buildOptions: '--enable-helm'
