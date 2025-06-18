@@ -40,3 +40,29 @@ variable "talos_image" {
     proxmox_datastore     = optional(string, "local")
   })
 }
+
+variable "nodes_config" {
+  description = "Configuration map for cluster nodes"
+  type = map(object({
+    machine_type  = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    ram_dedicated = optional(number)
+    cpu           = optional(number)
+    igpu          = optional(bool)
+    host_node     = optional(string)
+    disks = optional(map(object({
+      device      = string
+      size        = string
+      type        = string
+      mountpoint  = string
+      unit_number = optional(number)
+    })))
+  }))
+  default = {}
+  validation {
+    condition     = length(var.nodes_config) > 0
+    error_message = "nodes_config must not be empty. Ensure nodes.auto.tfvars is loaded."
+  }
+}
