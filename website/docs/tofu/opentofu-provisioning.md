@@ -49,11 +49,12 @@ Worker Nodes:
 
 ```
 /tofu/
-├── main.tf           # Main configuration and node definitions
+├── main.tf           # Core configuration
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
 ├── upgrade-k8s.sh    # Kubernetes upgrade helper
+├── nodes.auto.tfvars # Node definitions
 ├── terraform.tfvars  # Variable definitions
 └── talos/            # Talos cluster module
     ├── config.tf     # Machine configs and bootstrap
@@ -212,13 +213,17 @@ I embed essential services in the Talos config:
 
 ### Add/Remove Nodes
 
-1. Modify `nodes` in `main.tf`
+1. Modify `nodes_config` in `nodes.auto.tfvars`
 2. Run `tofu apply`
+   - OpenTofu automatically loads `nodes.auto.tfvars` when you run the command in the `tofu` directory.
+   - If you invoke `tofu` from elsewhere, pass `-var-file=nodes.auto.tfvars`.
 
 ### Change Resources
 
-1. Update node specs in `main.tf`
+1. Update node specs in `nodes.auto.tfvars`
 2. Run `tofu apply`
+   - OpenTofu automatically loads `nodes.auto.tfvars` when executed from this directory.
+   - If run from elsewhere, include `-var-file=nodes.auto.tfvars`.
 
 > Note: Resource changes may require VM restarts
 
@@ -254,7 +259,7 @@ cluster = {
   vip               = "10.25.150.10"  # Control plane VIP
 }
 
-nodes = {
+nodes_config = {
   "ctrl-00" = {
     host_node     = "host3"
     machine_type  = "controlplane"
