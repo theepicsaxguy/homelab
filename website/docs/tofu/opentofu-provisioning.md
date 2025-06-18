@@ -87,34 +87,31 @@ Talos is my node OS because it offers:
 
 ### Node Specs
 
-Define nodes in `/tofu/main.tf` with:
+- Node definitions now pull from two local maps—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
 
 ```hcl
 module "talos" {
   nodes = {
-    "node1" = {
-      host_node    = "proxmox1"
-      machine_type = "controlplane"
-      ip           = "10.0.0.1" # Example IP
-      cpu          = 4
-      ram_dedicated = 8192
-      disks = {
-        # Example: a primary disk for the OS (often handled by the image cloning)
-        # and an additional disk for Longhorn.
-        # The exact structure depends on your module's variables.tf.
-        # This example assumes a structure like the one found in the repository:
-        longhorn = { # Key for the disk, e.g., 'longhorn' or 'data'
-          device     = "/dev/sdb" # Or another available device
-          size       = "180G"
-          type       = "scsi"     # Or 'virtio', 'sata'
-          mountpoint = "/var/lib/longhorn" # If applicable for Talos config
-        }
-        # os_disk = { ... } # If explicitly defining the OS disk
-      }
+    "ctrl-00" = {
+      machine_type  = "controlplane"
+      ip            = "10.0.0.1"
+      mac_address   = "00:00:00:00:00:01"
+      vm_id         = 8101
+      ram_dedicated = 7168 # overrides the control plane default
+    }
+    "work-00" = {
+      machine_type = "worker"
+      ip           = "10.0.0.2"
+      mac_address  = "00:00:00:00:00:02"
+      vm_id        = 8201
+      # inherits disk and resource values from defaults_worker
     }
   }
 }
 ```
+
+The defaults keep shared settings like CPU, RAM, and disk layout in one place.
+If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
 ### Custom Images
 
