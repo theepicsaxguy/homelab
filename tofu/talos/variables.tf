@@ -74,20 +74,6 @@ variable "coredns" {
 #     vm_id     = number
 #   })
 # }
-variable "inline_manifests" {
-  description = "Inline manifests to apply after bootstrap with dependencies"
-  type = list(object({
-    name         = string
-    content      = string
-    dependencies = optional(list(string), [])
-  }))
-  default = []
-}
 
-variable "download_node" {
-  description = "Proxmox node to use for downloading Talos images"
-  type        = string
-  default     = "host3" # For backward compatibility
-}
 
 
