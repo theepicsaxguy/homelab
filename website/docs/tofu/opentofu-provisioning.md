@@ -111,6 +111,7 @@ module "talos" {
 ```
 
 The defaults keep shared settings like CPU, RAM, and disk layout in one place.
+If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
 ### Custom Images
 

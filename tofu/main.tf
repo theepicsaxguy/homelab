@@ -94,7 +94,10 @@ locals {
   nodes_with_upgrade = {
     for name, config in local.nodes_config :
     name => merge(
-      lookup(local.node_defaults, config.machine_type, {}),
+      try(
+        local.node_defaults[config.machine_type],
+        error("machine_type '${config.machine_type}' has no defaults")
+      ),
       config,
       {
         update = var.upgrade_control.enabled && name == local.current_upgrade_node
