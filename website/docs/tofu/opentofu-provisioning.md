@@ -53,15 +53,14 @@ Worker Nodes:
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
-├── upgrade-k8s.sh    # Kubernetes upgrade helper
 ├── terraform.tfvars  # Variable definitions
+├── talos_image.auto.tfvars  # Talos image settings
 └── talos/            # Talos cluster module
     ├── config.tf     # Machine configs and bootstrap
     ├── image.tf      # OS image management
     ├── virtual-machines.tf  # Proxmox VM definitions
-    └── manifests/    # Kubernetes bootstrap manifests
-    ├── machine-config/     # Config templates
-    └── inline-manifests/   # Core component YAMLs
+    ├── machine-config/      # Config templates
+    └── inline-manifests/    # Core component YAMLs
 ```
 
 All provider version constraints live in this root `providers.tf` file. The
