@@ -1,6 +1,6 @@
 locals {
   # Common configuration for worker nodes
-  worker_defaults = {
+  defaults_worker = {
     host_node     = "host3"
     machine_type  = "worker"
     cpu           = 8
@@ -17,7 +17,7 @@ locals {
   }
 
   # Common configuration for control plane nodes
-  controlplane_defaults = {
+  defaults_controlplane = {
     host_node     = "host3"
     machine_type  = "controlplane"
     cpu           = 6
@@ -25,8 +25,8 @@ locals {
   }
 
   node_defaults = {
-    worker       = local.worker_defaults
-    controlplane = local.controlplane_defaults
+    worker       = local.defaults_worker
+    controlplane = local.defaults_controlplane
   }
 
   # Define per-node settings
@@ -94,7 +94,7 @@ locals {
   nodes_with_upgrade = {
     for name, config in local.nodes_config :
     name => merge(
-      local.node_defaults[config.machine_type],
+      lookup(local.node_defaults, config.machine_type, {}),
       config,
       {
         update = var.upgrade_control.enabled && name == local.current_upgrade_node

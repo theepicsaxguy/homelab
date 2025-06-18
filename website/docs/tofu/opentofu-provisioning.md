@@ -87,7 +87,7 @@ Talos is my node OS because it offers:
 
 ### Node Specs
 
-Node definitions now pull from two local maps—`worker_defaults` and `controlplane_defaults`. Each node only declares what differs from these defaults.
+- Node definitions now pull from two local maps—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
 
 ```hcl
 module "talos" {
@@ -104,7 +104,7 @@ module "talos" {
       ip           = "10.0.0.2"
       mac_address  = "00:00:00:00:00:02"
       vm_id        = 8201
-      # inherits disk and resource values from worker_defaults
+      # inherits disk and resource values from defaults_worker
     }
   }
 }
