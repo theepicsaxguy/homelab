@@ -8,10 +8,11 @@ locals {
     igpu          = false
     disks = {
       longhorn = {
-        device     = "/dev/sdb"
-        size       = "180G"
-        type       = "scsi"
-        mountpoint = "/var/lib/longhorn"
+        device      = "/dev/sdb"
+        size        = "180G"
+        type        = "scsi"
+        mountpoint  = "/var/lib/longhorn"
+        unit_number = 1
       }
     }
   }
