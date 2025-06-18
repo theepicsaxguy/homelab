@@ -87,7 +87,7 @@ Talos is my node OS because it offers:
 
 ### Node Specs
 
-- Node definitions now pull from two local maps—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
+- Node definitions now pull from two variables—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
 
 ```hcl
 module "talos" {

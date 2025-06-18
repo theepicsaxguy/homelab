@@ -1,33 +1,7 @@
 locals {
-  # Common configuration for worker nodes
-  defaults_worker = {
-    host_node     = "host3"
-    machine_type  = "worker"
-    cpu           = 8
-    ram_dedicated = 10240
-    igpu          = false
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "180G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
-  }
-
-  # Common configuration for control plane nodes
-  defaults_controlplane = {
-    host_node     = "host3"
-    machine_type  = "controlplane"
-    cpu           = 6
-    ram_dedicated = 6144
-  }
-
   node_defaults = {
-    worker       = local.defaults_worker
-    controlplane = local.defaults_controlplane
+    worker       = var.defaults_worker
+    controlplane = var.defaults_controlplane
   }
 
   # Define per-node settings
