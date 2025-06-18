@@ -253,6 +253,20 @@ nodes = {
 }
 ```
 
+### Talos image version
+
+Set the OS image version in `tofu/talos_image.auto.tfvars`:
+
+```hcl
+talos_image = {
+  version        = "v1.10.3"
+  update_version = "v1.10.3"
+  schematic_path = "talos/image/schematic.yaml.tftpl"
+}
+```
+
+Change these version strings to match the Talos release you want to use.
+
 ### 3. Deployment Steps
 
 1. Load your SSH key for Proxmox access:
