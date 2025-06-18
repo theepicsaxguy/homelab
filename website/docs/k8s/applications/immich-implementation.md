@@ -89,3 +89,12 @@ spec:
 
 This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
 The machine-learning deployment mounts the same Secret so both components read identical settings.
+
+### Resource Requests
+
+Both pods need enough memory to process photos without crashing. A good starting point is:
+
+| Component | CPU Request | Memory Request | CPU Limit | Memory Limit |
+| --------- | ----------- | -------------- | --------- | ------------ |
+| immich-server | 500m | 512Mi | 2000m | 2Gi |
+| immich-machine-learning | 200m | 1Gi | 1000m | 4Gi |
