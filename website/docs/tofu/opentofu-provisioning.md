@@ -113,6 +113,23 @@ module "talos" {
 The defaults keep shared settings like CPU, RAM, and disk layout in one place.
 If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
+### Disk Layout
+
+Additional disks are defined per node in a `disks` map. Each disk now requires a
+`unit_number` which determines the Proxmox interface, for example `scsi1`:
+
+```hcl
+disks = {
+  longhorn = {
+    device      = "/dev/sdb"
+    size        = "180G"
+    type        = "scsi"
+    mountpoint  = "/var/lib/longhorn"
+    unit_number = 1
+  }
+}
+```
+
 ### Custom Images
 
 - Built via Talos Image Factory
