@@ -24,6 +24,11 @@ variable "cluster" {
   })
 }
 
+variable "cluster_domain" {
+  description = "Internal cluster domain"
+  type        = string
+}
+
 
 variable "nodes" {
   description = "Configuration for cluster nodes"

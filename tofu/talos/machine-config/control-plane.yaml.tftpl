@@ -41,17 +41,17 @@ cluster:
   coreDNS:
     disabled: true
   allowSchedulingOnControlPlanes: false
-  clusterName: kube.pc-tips.se
+  clusterName: ${cluster_domain}
   apiServer:
     # extraArgs:
-    #   oidc-issuer-url: https://authelia.kube.pc-tips.se
+    #   oidc-issuer-url: https://authelia.${cluster_domain}
     #   oidc-client-id: kubectl
     #   oidc-username-claim: preferred_username
     #   oidc-username-prefix: 'authelia:'
     #   oidc-groups-claim: groups
     #   oidc-groups-prefix: 'authelia:'
   network:
-    dnsDomain: kube.pc-tips.se
+    dnsDomain: ${cluster_domain}
     cni:
       name: none
   proxy:
