@@ -210,6 +210,22 @@ kubectl -n argocd logs -l app.kubernetes.io/name=argocd-application-controller
 argocd app resources cilium
 ```
 
+## Resource Tracking
+
+Argo CD identifies resources by the labels and annotations it adds during
+deployment. Two modes exist:
+
+- **label** — Only the `app.kubernetes.io/instance` label is required. This is
+  the simpler option and works well for most clusters.
+- **annotation+label** — Adds the label and the
+  `argocd.argoproj.io/tracking-id` annotation. Both must be present for Argo CD
+  to manage the object.
+
+If you switch from `label` to `annotation+label`, existing resources that only
+have the label will be ignored because the annotation is missing. Server-side
+apply cannot fix this, as it happens after resource discovery. Changing back to
+`label` brings those resources under management again.
+
 ## Best Practices
 
 1. **Wave Management**
