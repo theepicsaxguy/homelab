@@ -64,6 +64,9 @@ Worker Nodes:
     └── inline-manifests/   # Core component YAMLs
 ```
 
+All provider version constraints live in this root `providers.tf` file. The
+subdirectory modules inherit those settings so updates happen in one place.
+
 # Core Components
 
 ## Proxmox Provider
