@@ -46,6 +46,11 @@ variable "nodes" {
       unit_number = number
     })), {})
   }))
+
+  validation {
+    condition     = length([for n in values(var.nodes) : n if n.machine_type == "controlplane"]) > 0
+    error_message = "You must define at least one node with machine_type \"controlplane\"."
+  }
 }
 
 variable "cilium" {
