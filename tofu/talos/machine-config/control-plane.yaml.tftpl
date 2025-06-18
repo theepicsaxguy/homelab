@@ -64,18 +64,10 @@ cluster:
   inlineManifests:
   - name: cilium-values
     contents: |
-      ---
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: cilium-values
-        namespace: kube-system
-      data:
-        values.yaml: |-
-          ${indent(10, cilium_values)}
+      ${indent(6, file("${path.module}/inline-manifests/cilium-values.yaml"))}
   - name: cilium-bootstrap
     contents: |
-      ${indent(6, cilium_install)}
+      ${indent(6, file("${path.module}/inline-manifests/cilium-install.yaml"))}
   - name: coredns-bootstrap
     contents: |
-      ${indent(6, coredns_install)}
+      ${indent(6, file("${path.module}/inline-manifests/coredns-install.yaml"))}

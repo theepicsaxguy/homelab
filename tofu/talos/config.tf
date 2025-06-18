@@ -19,14 +19,11 @@ data "talos_machine_configuration" "this" {
   kubernetes_version = var.cluster.kubernetes_version
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-      hostname        = each.key
-      node_name       = each.value.host_node
-      cluster_name    = var.cluster.proxmox_cluster
-      node_ip         = each.value.ip
-      cluster         = var.cluster
-      cilium_values   = var.cilium.values
-      cilium_install  = var.cilium.install
-      coredns_install = var.coredns.install
+      hostname     = each.key
+      node_name    = each.value.host_node
+      cluster_name = var.cluster.proxmox_cluster
+      node_ip      = each.value.ip
+      cluster      = var.cluster
     })
     ] : [
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {

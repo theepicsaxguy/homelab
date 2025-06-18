@@ -62,6 +62,9 @@ Worker Nodes:
     └── manifests/    # Kubernetes bootstrap manifests
     ├── machine-config/     # Config templates
     └── inline-manifests/   # Core component YAMLs
+        ├── cilium-install.yaml
+        ├── cilium-values.yaml
+        └── coredns-install.yaml
 ```
 
 # Core Components
