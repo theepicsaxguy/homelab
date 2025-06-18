@@ -57,7 +57,10 @@ Worker Nodes:
 ├── terraform.tfvars  # Variable definitions
 ├── talos_image.auto.tfvars  # Talos image settings
 └── talos/            # Talos cluster module
-    ├── config.tf     # Machine configs and bootstrap
+    ├── config-secrets.tf     # Machine secrets
+    ├── config-client.tf      # Client configuration
+    ├── config-machine.tf     # Machine configs
+    ├── config-cluster.tf     # Bootstrap and health checks
     ├── image.tf      # OS image management
     ├── virtual-machines.tf  # Proxmox VM definitions
     ├── machine-config/      # Config templates
