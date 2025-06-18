@@ -12,10 +12,6 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.8.1"
     }
-    restapi = {
-      source  = "Mastercard/restapi"
-      version = "2.0.1"
-    }
   }
 }
 
@@ -30,16 +26,6 @@ provider "proxmox" {
   }
 }
 
-provider "restapi" {
-  uri                  = var.proxmox.endpoint
-  insecure             = var.proxmox.insecure
-  write_returns_object = true
-
-  headers = {
-    "Content-Type"  = "application/json"
-    "Authorization" = "PVEAPIToken=${var.proxmox.api_token}"
-  }
-}
 
 provider "kubernetes" {
   host                   = module.talos.kube_config.kubernetes_client_configuration.host
