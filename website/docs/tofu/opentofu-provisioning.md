@@ -115,6 +115,12 @@ If a node's `machine_type` doesn't match a key in the defaults table, the plan f
 
 > Note: At least one node must have `machine_type` set to `controlplane`. OpenTofu validates this during `tofu plan`.
 
+OpenTofu also enforces a few sanity checks:
+
+- IP addresses must be unique across nodes.
+- VM IDs must be unique.
+- `mac_address` values must follow the `00:11:22:33:44:55` format.
+
 ### Disk Layout
 
 Additional disks are defined per node in a `disks` map. Each disk now requires a
