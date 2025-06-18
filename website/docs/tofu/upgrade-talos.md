@@ -24,7 +24,7 @@ The upgrade sequence is automatically derived from your node configuration:
 
 ### Configure Version
 
-Set the version to upgrade to in `main.tf`. The `update_version` is only used when `update = true` is set for a node:
+Set the version to upgrade to in `main.tf`. The `update_version` is only used when `update = true` is set for a node in `tofu/nodes.auto.tfvars`:
 
 ```hcl
 image = {
