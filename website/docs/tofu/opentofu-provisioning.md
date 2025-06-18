@@ -113,6 +113,8 @@ module "talos" {
 The defaults keep shared settings like CPU, RAM, and disk layout in one place.
 If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
+> Note: At least one node must have `machine_type` set to `controlplane`. OpenTofu validates this during `tofu plan`.
+
 ### Disk Layout
 
 Additional disks are defined per node in a `disks` map. Each disk now requires a
