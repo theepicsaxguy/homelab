@@ -51,7 +51,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     for_each = each.value.disks
     content {
       datastore_id = each.value.datastore_id
-      interface    = "${disk.value.type}${disk.key == "longhorn" ? "1" : index(keys(each.value.disks), disk.key) + 1}"
+      interface    = "${disk.value.type}${disk.value.unit_number}"
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
