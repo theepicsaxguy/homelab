@@ -40,3 +40,14 @@ variable "talos_image" {
     proxmox_datastore     = optional(string, "local")
   })
 }
+
+variable "nodes_config" {
+  description = "Per-node configuration map"
+  type = map(object({
+    machine_type  = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    ram_dedicated = optional(number)
+  }))
+}
