@@ -24,6 +24,18 @@ locals {
   # These are now always computed
   image_id        = "${local.schematic_id}_${local.version}"
   update_image_id = "${local.update_schematic_id}_${local.update_version}"
+
+  image_downloads = {
+    for key, v in {
+      for node in var.nodes :
+      "${node.host_node}_${node.update ? local.update_image_id : local.image_id}" => node
+    } :
+    key => {
+      host_node = v.host_node
+      version   = v.update ? local.update_version : local.version
+      schematic = v.update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
+    }
+  }
 }
 
 data "http" "schematic_id" {
@@ -49,17 +61,7 @@ resource "talos_image_factory_schematic" "updated" {
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
-  # Create one download per unique combination of host node and image
-  for_each = {
-    for item in distinct([
-      for k, v in var.nodes : {
-        key       = "${v.host_node}_${v.update == true ? local.update_image_id : local.image_id}"
-        host_node = v.host_node
-        version   = v.update == true ? local.update_version : local.version
-        schematic = v.update == true ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
-      }
-    ]) : item.key => item
-  }
+  for_each = local.image_downloads
 
   node_name    = each.value.host_node
   content_type = "iso"
