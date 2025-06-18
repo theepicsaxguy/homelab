@@ -72,13 +72,3 @@ resource "proxmox_virtual_environment_download_file" "this" {
 
 }
 
-# Debug outputs to understand the current state
-output "debug_image_state" {
-  value = {
-    image_id                   = local.image_id
-    update_image_id            = local.update_image_id
-    update_schematic_id        = local.update_schematic_id
-    nodes_with_update          = [for k, v in var.nodes : k if lookup(v, "update", false) == true]
-    proxmox_download_file_keys = keys(proxmox_virtual_environment_download_file.this)
-  }
-}
