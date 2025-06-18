@@ -75,20 +75,6 @@ variable "nodes" {
   }
 }
 
-variable "cilium" {
-  description = "Cilium configuration"
-  type = object({
-    values  = string
-    install = string
-  })
-}
-
-variable "coredns" {
-  description = "CoreDNS configuration"
-  type = object({
-    install = string
-  })
-}
 
 # variable "storage_pool" {
 #   type        = string
