@@ -49,7 +49,8 @@ Worker Nodes:
 
 ```
 /tofu/
-├── main.tf           # Main configuration and node definitions
+├── main.tf           # Module invocation and outputs
+├── locals.tf         # Node definitions and defaults
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
@@ -90,8 +91,8 @@ Talos is my node OS because it offers:
 - Node definitions now pull from two local maps—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
 
 ```hcl
-module "talos" {
-  nodes = {
+locals {
+  nodes_config = {
     "ctrl-00" = {
       machine_type  = "controlplane"
       ip            = "10.0.0.1"
@@ -107,6 +108,10 @@ module "talos" {
       # inherits disk and resource values from defaults_worker
     }
   }
+}
+
+module "talos" {
+  nodes = local.nodes_with_upgrade
 }
 ```
 
@@ -212,12 +217,12 @@ I embed essential services in the Talos config:
 
 ### Add/Remove Nodes
 
-1. Modify `nodes` in `main.tf`
+1. Edit `nodes_config` in `locals.tf`
 2. Run `tofu apply`
 
 ### Change Resources
 
-1. Update node specs in `main.tf`
+1. Adjust node specs in `locals.tf`
 2. Run `tofu apply`
 
 > Note: Resource changes may require VM restarts
