@@ -50,4 +50,12 @@ variable "nodes_config" {
     vm_id         = number
     ram_dedicated = optional(number)
   }))
+
+  validation {
+    condition = alltrue([
+      for n in values(var.nodes_config) :
+      contains(["worker", "controlplane"], n.machine_type)
+    ])
+    error_message = "machine_type must be worker or controlplane."
+  }
 }

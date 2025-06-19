@@ -32,4 +32,10 @@ provider "kubernetes" {
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
+  config_sensitive_attrs = [
+    "host",
+    "client_certificate",
+    "client_key",
+    "cluster_ca_certificate",
+  ]
 }
