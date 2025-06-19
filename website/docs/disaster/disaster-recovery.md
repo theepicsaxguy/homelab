@@ -36,11 +36,7 @@ Rebuild your cluster infrastructure using OpenTofu:
 ```bash
 # Clean up existing resources
 tofu destroy
-
-# Apply image factory configurations first
-tofu apply -target=module.talos.talos_image_factory_schematic.this -target=module.talos.talos_image_factory_schematic.updated
-
-# Deploy the complete infrastructure
+# Deploy the infrastructure
 tofu apply
 ```
 
