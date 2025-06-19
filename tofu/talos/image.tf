@@ -24,11 +24,19 @@ locals {
 }
 
 locals {
+  image_key = {
+    for name, node in var.nodes :
+    name => "${node.host_node}_${lookup(node, "update", false) ? local.update_image_id : local.image_id}"
+  }
+
   image_downloads = {
-    for node in var.nodes : "${node.host_node}_${node.update ? "update" : "base"}" => {
-      host_node = node.host_node
-      version   = node.update ? local.update_version : local.version
-      schematic = node.update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
+    for key, nodes in {
+      for name, node in var.nodes :
+      local.image_key[name] => node...
+      } : key => {
+      host_node = nodes[0].host_node
+      version   = lookup(nodes[0], "update", false) ? local.update_version : local.version
+      schematic = lookup(nodes[0], "update", false) ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
     }
   }
 }
@@ -39,7 +47,6 @@ resource "talos_image_factory_schematic" "this" {
   schematic = local.schematic
 }
 
-# Always create update schematic resource
 resource "talos_image_factory_schematic" "updated" {
   schematic = local.update_schematic
 }

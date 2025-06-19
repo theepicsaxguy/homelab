@@ -151,7 +151,8 @@ disks = {
   - QEMU guest agent
   - iSCSI tools
 - Automatically downloaded to Proxmox
-- Downloads are deduplicated using a map keyed by host node and image version, so each Proxmox node pulls a version only once
+- Downloads are deduplicated per Proxmox node and image variant. A helper local builds `<host>_<image-id>` keys so VMs and downloads stay in sync.
+- The Talos module exports this mapping as `image_key` for use in future automation.
 
 ## Machine Configuration
 

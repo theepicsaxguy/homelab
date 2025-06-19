@@ -42,7 +42,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_format  = "raw"
     size         = 40
     file_id = proxmox_virtual_environment_download_file.this[
-      "${each.value.host_node}_${each.value.update ? "update" : "base"}"
+      local.image_key[each.key]
     ].id
   }
 
