@@ -34,6 +34,9 @@ image = {
 }
 ```
 
+When you bump `update_version`, the VM is recreated. OpenTofu creates the
+replacement before destroying the old VM.
+
 > **Note:** You may commit and push this change if you're using GitOps automation, or run it locally via CLI if applying manually.
 
 ### Start Upgrade
@@ -73,6 +76,9 @@ image = {
   update_version  = "<see https://github.com/siderolabs/talos/releases>"
   schematic       = file("${path.module}/talos/image/schematic.yaml")
 }
+
+OpenTofu will roll out new VMs when this version changes, ensuring the
+replacement is running before the original is removed.
 
 # Update the cluster Talos version
 cluster = {

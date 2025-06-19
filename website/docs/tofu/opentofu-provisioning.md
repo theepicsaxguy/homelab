@@ -299,6 +299,9 @@ talos_image = {
 
 Change these version strings to match the Talos release you want to use.
 
+Changing `update_version` forces a VM replacement. OpenTofu keeps the new
+machine running before the old one is removed so you don't lose capacity.
+
 ### 3. Deployment Steps
 
 1. Load your SSH key for Proxmox access:

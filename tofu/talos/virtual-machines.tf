@@ -64,8 +64,16 @@ resource "proxmox_virtual_environment_vm" "this" {
     ignore_changes = [
       vga,                            # Ignore VGA changes (these are computed)
       network_device[0].disconnected, # Ignore network disconnected state
-      # Add any other attributes causing issues
+      disk[0].file_id,                # Decouple VM from minor base-image hash changes
     ]
+
+    # Replace the VM deliberately when the wanted Talos image version changes
+    replace_triggered_by = [
+      terraform_data.image_version
+    ]
+
+    # Ensure the new VM is up before the old one is destroyed
+    create_before_destroy = true
   }
   boot_order = ["scsi0"]
 
