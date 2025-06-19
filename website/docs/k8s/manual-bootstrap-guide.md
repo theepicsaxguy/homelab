@@ -30,7 +30,7 @@ kubectl apply -k k8s/infrastructure/crds
 Install Cilium networking (must be done before other components):
 
 ```shell
-kubectl kustomize --enable-helm k8s/infrastructure/network/cilium | kubectl apply -f -
+kustomize build --enable-helm k8s/infrastructure/network/cilium | kubectl apply -f -
 
 # Wait for Cilium to be ready
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=cilium -n kube-system --timeout=90s
