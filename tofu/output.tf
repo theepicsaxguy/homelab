@@ -26,3 +26,7 @@ output "talos_config" {
   value     = module.talos.client_configuration.talos_config
   sensitive = true
 }
+
+output "image_key" {
+  value = module.talos.image_key
+}
