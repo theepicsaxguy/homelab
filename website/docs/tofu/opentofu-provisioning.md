@@ -49,10 +49,10 @@ Worker Nodes:
 
 ```
 /tofu/
-├── main.tf           # Core configuration
+├── main.tf           # Core configuration and file generation
 ├── nodes.auto.tfvars # Node definitions
 ├── variables.tf      # Input variables
-├── output.tf         # Generated outputs (kubeconfig, etc.)
+├── output.tf         # Output values only
 ├── providers.tf      # Provider configs (Proxmox, Talos)
 ├── terraform.tfvars  # Variable definitions
 ├── talos_image.auto.tfvars  # Talos image settings
