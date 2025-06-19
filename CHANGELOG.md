@@ -1,5 +1,63 @@
 # Changelog
 
+## 3.2.0 (2025-06-19)
+
+## What's Changed
+* feat(auth): add users to all groups by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/974
+* fix(k8s): adjust immich resources and domain url by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/976
+* docs(k8s): add secret management guide by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/979
+* fix(k8s): read immich config from secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/980
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/981
+* chore(deps): update helm release redis to v21.2.4 by @renovate in https://github.com/theepicsaxguy/homelab/pull/984
+* chore(deps): update helm release authentik to v2025.6.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/985
+* chore(deps): update all dependencies to v75 (major) by @renovate in https://github.com/theepicsaxguy/homelab/pull/983
+* chore(deps): update cloudflare/cloudflared docker tag to v2025.6.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/986
+* chore(deps): update helm release argo-cd to v8.1.0 - autoclosed by @renovate in https://github.com/theepicsaxguy/homelab/pull/982
+* chore(deps): update all dependencies to v75.2.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/988
+* fix(argocd): include EndpointSlice in resource list by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/989
+* Update values.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/990
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/991
+* chore(deps): update helm release external-secrets to v0.18.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/992
+* fix(argocd): use label tracking by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/993
+* feat(storage): set longhorn reclaim policy to retain by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/994
+* fix(k8s): remove namespace allowlist annotation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/995
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/996
+* chore(deps): update all dependencies to v75.3.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/997
+* fix(k8s): raise immich pod resources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/998
+* refactor(tofu): drop restapi provider by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/999
+* refactor(tofu): remove unused talos variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1000
+* fix(tofu): replace self references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1001
+* style(tofu): add newline at EOF by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1003
+* fix(tofu): update provider constraint comment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1004
+* refactor(talos): remove debug output by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1005
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1007
+* feat(tofu): use defaults for node configs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1006
+* feat(tofu): add disk unit numbers by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1008
+* feat(tofu): enforce control plane node validation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1009
+* chore(deps): update all dependencies to v75.3.2 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1010
+* chore(deps): update all dependencies to v1.135.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1011
+* refactor(talos): deduplicate image downloads by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1012
+* refactor(talos): split locals for clarity by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1013
+* feat(tofu): add node validation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1014
+* chore(deps): update helm release redis to v21.2.5 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1015
+* refactor(tofu): expose node defaults as variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1016
+* feat(tofu): centralize cluster domain by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1018
+* refactor(tofu): centralize provider version constraints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1020
+* docs(tofu): remove upgrade helper from diagram by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1021
+* feat(tofu): move node configs to tfvars by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1027
+* refactor(talos): split config into dedicated files by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1028
+* chore(deps): update all dependencies to v75.3.3 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1032
+* refactor(tofu): move upgrade locals to dedicated file by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1031
+* fix(talos): deduplicate image downloads by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1033
+* fix(tofu): use schematic resource id by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1034
+* chore(website): remove obsolete sidebar file by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1036
+* fix(talos): make image downloads map keys static by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1037
+* chore(deps): update all dependencies to v75.3.5 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1039
+* fix(tofu): handle optional update flag by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1040
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.1.0...v3.2.0
+
 ## 3.1.0 (2025-06-15)
 
 ## What's Changed
