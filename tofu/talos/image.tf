@@ -25,7 +25,7 @@ locals {
 
 locals {
   image_downloads = {
-    for node in var.nodes : "${node.host_node}_${node.update ? local.update_image_id : local.image_id}" => {
+    for name, node in var.nodes : "${name}_${node.update ? "update" : "base"}" => {
       host_node = node.host_node
       version   = node.update ? local.update_version : local.version
       schematic = node.update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
