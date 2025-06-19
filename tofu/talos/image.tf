@@ -25,18 +25,10 @@ locals {
 
 locals {
   image_downloads = {
-    for pair in toset([
-      for node in var.nodes : {
-        host_node = node.host_node
-        image_id  = node.update ? local.update_image_id : local.image_id
-        version   = node.update ? local.update_version : local.version
-        schematic = node.update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
-      }
-    ]) :
-    "${pair.host_node}_${pair.image_id}" => {
-      host_node = pair.host_node
-      version   = pair.version
-      schematic = pair.schematic
+    for node in var.nodes : "${node.host_node}_${node.update ? local.update_image_id : local.image_id}" => {
+      host_node = node.host_node
+      version   = node.update ? local.update_version : local.version
+      schematic = node.update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id
     }
   }
 }
