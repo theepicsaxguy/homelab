@@ -36,7 +36,7 @@ This design marries an immutable Talos OS, Kubernetes, and GitOps to create a re
 
 ## Dive deeper
 
-- Provisioning flow: [Talos with opentofu](./tofu/opentofu-provisioning.md)
+- Provisioning flow: [Talos with OpenTofu](./tofu/opentofu-provisioning.md)
 - Configuration flow: [Manage Kubernetes with GitOps](./k8s/manage-kubernetes.md)
 - Application strategy: [Deploy and manage applications](./k8s/applications/application-management.md)
 
