@@ -8,6 +8,15 @@ description: Step by step instructions for setting up the homelab environment
 
 This guide provides step-by-step instructions for setting up your homelab environment using OpenTofu and Talos Linux.
 
+## Prerequisites
+
+- Proxmox access with your SSH key
+- `opentofu` 1.6+ — [install](https://opentofu.org/docs/install/)
+- `talosctl` 1.7+ — [install](https://www.talos.dev/v1.7/getting-started/installation/)
+- `kubectl` 1.28+ — [install](https://kubernetes.io/docs/tasks/tools/)
+- `kustomize` 5.0+ — [install](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+- This repository cloned locally
+
 ## Initial Setup
 
 First, navigate to the OpenTofu directory:
