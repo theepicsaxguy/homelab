@@ -10,14 +10,14 @@ locals {
   schematic = templatefile("${path.root}/${var.talos_image.schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
-  schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
+  schematic_id = talos_image_factory_schematic.this.id
 
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
   update_schematic = templatefile("${path.root}/${local.update_schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
-  update_schematic_id = jsondecode(data.http.updated_schematic_id.response_body)["id"]
+  update_schematic_id = talos_image_factory_schematic.updated.id
 
   image_id        = "${local.schematic_id}_${local.version}"
   update_image_id = "${local.update_schematic_id}_${local.update_version}"
@@ -33,18 +33,7 @@ locals {
   }
 }
 
-data "http" "schematic_id" {
-  url          = "${var.talos_image.factory_url}/schematics"
-  method       = "POST"
-  request_body = local.schematic
-}
 
-# Always fetch update schematic ID
-data "http" "updated_schematic_id" {
-  url          = "${var.talos_image.factory_url}/schematics"
-  method       = "POST"
-  request_body = local.update_schematic
-}
 
 resource "talos_image_factory_schematic" "this" {
   schematic = local.schematic
