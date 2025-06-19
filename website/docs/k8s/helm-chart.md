@@ -105,8 +105,10 @@ The following directory structure represents the standard layout for application
       data:
         - secretKey: <key-name>
           remoteRef:
-            key: <bitwarden-secret-id>
+            key: <bitwarden-secret-name>
     ```
+
+Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{service-or-app}-{description}` pattern described in [Secret Management](./secret-management.md).
 
 ## Optional Components
 
