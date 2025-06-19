@@ -13,7 +13,7 @@ locals {
         local.node_defaults[config.machine_type],
         error("machine_type '${config.machine_type}' has no defaults")
       ),
-      config,
+      { for k, v in config : k => v if v != null },
       {
         update = var.upgrade_control.enabled && name == local.current_upgrade_node
       }
