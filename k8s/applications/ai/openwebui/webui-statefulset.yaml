@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: open-webui-deployment
+  name: open-webui
   namespace: open-webui
 spec:
   serviceName: "open-webui-service"
@@ -17,7 +17,7 @@ spec:
       storageClassName: "longhorn"
       resources:
         requests:
-          storage: 5Gi
+          storage: 10Gi
   template:
     metadata:
       labels:
