@@ -79,7 +79,7 @@ spec:
   project: infrastructure
   source:
     path: k8s/infrastructure/network/cilium
-    repoURL: https://github.com/pc-cdn/homelab.git
+    repoURL: https://github.com/theepicsaxguy/homelab.git
     targetRevision: main
   destination:
     namespace: network
@@ -103,7 +103,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://github.com/pc-cdn/homelab.git
+        repoURL: https://github.com/theepicsaxguy/homelab.git
         revision: HEAD
         directories:
           - path: k8s/applications/media/*
@@ -114,7 +114,7 @@ spec:
       project: applications
       source:
         path: '{{path}}'
-        repoURL: https://github.com/pc-cdn/homelab.git
+        repoURL: https://github.com/theepicsaxguy/homelab.git
       destination:
         namespace: media
         server: https://kubernetes.default.svc
