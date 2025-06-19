@@ -1,6 +1,6 @@
 # Manage Kubernetes Configuration with GitOps
 
-Once your Kubernetes cluster is provisioned (see [Provision the Talos Kubernetes cluster with Terraform](../tofu/opentofu-provisioning.md)), all ongoing configurations, applications, and core services are managed using a GitOps workflow powered by ArgoCD.
+Once your Kubernetes cluster is provisioned (see [Provision the Talos Kubernetes cluster with OpenTofu](../tofu/opentofu-provisioning.md)), all ongoing configurations, applications, and core services are managed using a GitOps workflow powered by ArgoCD.
 
 ---
 
