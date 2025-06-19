@@ -1,6 +1,7 @@
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = var.nodes
 
+
   node_name = each.value.host_node
 
   name        = each.key
@@ -23,9 +24,9 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   memory {
-  dedicated = each.value.ram_dedicated   # minimum (guaranteed)
-  shared    = each.value.ram_dedicated   # maximum = minimum ⇒ no ballooning
-  floating  = 0                          # explicit: don’t over-commit
+    dedicated = each.value.ram_dedicated # minimum (guaranteed)
+    shared    = each.value.ram_dedicated # maximum = minimum ⇒ no ballooning
+    floating  = 0                        # explicit: don’t over-commit
   }
 
 
@@ -65,11 +66,20 @@ resource "proxmox_virtual_environment_vm" "this" {
     }
   }
   lifecycle {
-    ignore_changes = [
-      vga,                            # Ignore VGA changes (these are computed)
-      network_device[0].disconnected, # Ignore network disconnected state
-      # Add any other attributes causing issues
+    ignore_changes = lookup(each.value, "freeze", false) ? [
+      vga,
+      network_device[0].disconnected,
+      disk[0].file_id,
+      ] : [
+      vga,
+      network_device[0].disconnected,
     ]
+
+    replace_triggered_by = lookup(each.value, "freeze", false) ? [] : [
+      terraform_data.image_version
+    ]
+
+    create_before_destroy = true
   }
   boot_order = ["scsi0"]
 

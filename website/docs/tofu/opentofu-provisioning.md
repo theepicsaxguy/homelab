@@ -279,6 +279,7 @@ nodes = {
     cpu           = 6
     ram_dedicated = 6144
     update        = false
+    freeze        = false
     igpu          = false
   }
   # Additional nodes...
@@ -380,6 +381,12 @@ tofu plan -target=module.talos
 # Apply updates
 tofu apply -target=module.talos
 ```
+
+#### Freeze a Node
+
+Set `freeze = true` in `tofu/nodes.auto.tfvars` to keep a node on its current
+image. Use this only as a short-term hold; clear the flag when you're ready to
+roll the node forward.
 
 ### Recovery Operations
 
