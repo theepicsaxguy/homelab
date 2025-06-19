@@ -7,16 +7,25 @@ locals {
 
 locals {
   version = var.talos_image.version
-  schematic = templatefile("${path.root}/${var.talos_image.schematic_path}", {
+  # 1 — render once
+  schematic_raw = templatefile("${path.root}/${var.talos_image.schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
+  # 2 — parse → whitespace & key-ordering disappear
+  schematic_obj = yamldecode(local.schematic_raw)
+  # 3 — re-emit canonical YAML; hash now stable
+  schematic     = yamlencode(local.schematic_obj)
+
   schematic_id = talos_image_factory_schematic.this.id
 
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
-  update_schematic = templatefile("${path.root}/${local.update_schematic_path}", {
+  update_schematic_raw = templatefile("${path.root}/${local.update_schematic_path}", {
     needs_nvidia_extensions = local.needs_nvidia_extensions
   })
+  update_schematic_obj = yamldecode(local.update_schematic_raw)
+  update_schematic     = yamlencode(local.update_schematic_obj)
+
   update_schematic_id = talos_image_factory_schematic.updated.id
 
   image_id        = "${local.schematic_id}_${local.version}"
