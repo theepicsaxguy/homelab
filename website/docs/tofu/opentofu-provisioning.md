@@ -189,7 +189,7 @@ I embed essential services in the Talos config:
 1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions might be specified in multiple
    places:
 
-   - For the Talos image factory (e.g., `module "talos" { image = { version = "vX.Y.Z" } }`)
+   - For the Talos image factory (e.g., `module "talos" { talos_image = { version = "vX.Y.Z" } }`)
    - For the machine configurations and cluster secrets (e.g.,
      `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
    - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
@@ -199,7 +199,7 @@ I embed essential services in the Talos config:
    ```hcl
    module "talos" {
      # ...
-     image = {
+     talos_image = {
        version = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for OS images
        # ...
      }

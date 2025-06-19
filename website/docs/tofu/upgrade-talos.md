@@ -24,10 +24,10 @@ The upgrade sequence is automatically derived from your node configuration:
 
 ### Configure Version
 
-Set the version to upgrade to in `main.tf`. The `update_version` is only used when `update = true` is set for a node in `tofu/nodes.auto.tfvars`:
+Set the version to upgrade to in `main.tf` under the `talos_image` block. The `update_version` is only used when `update = true` is set for a node in `tofu/nodes.auto.tfvars`:
 
 ```hcl
-image = {
+talos_image = {
   version         = "<see https://github.com/siderolabs/talos/releases>"
   update_version  = "<see https://github.com/siderolabs/talos/releases>" # renovate: github-releases=siderolabs/talos
   schematic       = file("${path.module}/talos/image/schematic.yaml")
@@ -67,8 +67,8 @@ tofu apply -var 'upgrade_control={enabled=false,index=-1}'
 After all nodes have been upgraded, update your cluster configuration in `main.tf`:
 
 ```hcl
-# Update the base image version to match update_version
-image = {
+# Update the base `talos_image` version to match `update_version`
+talos_image = {
   version         = "<see https://github.com/siderolabs/talos/releases>"  # Updated base image version
   update_version  = "<see https://github.com/siderolabs/talos/releases>"
   schematic       = file("${path.module}/talos/image/schematic.yaml")

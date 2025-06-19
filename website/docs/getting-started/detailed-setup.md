@@ -37,7 +37,7 @@ proxmox = {
   api_token    = "USER@pam!ID=TOKEN"  # Your Proxmox API token
 }
 
-image = {
+talos_image = {
   version           = "<see https://github.com/siderolabs/talos/releases>"           # Current Talos version
   update_version    = "<see https://github.com/siderolabs/talos/releases>"          # Target Talos version for updates
   schematic         = "standard"
@@ -68,7 +68,7 @@ proxmox = {
   api_token    = "root@pam!token_id=your_token_secret"
 }
 
-image = {
+talos_image = {
   version           = "<see https://github.com/siderolabs/talos/releases>"
   schematic         = "standard"
   update_version    = "<see https://github.com/siderolabs/talos/releases>"
