@@ -29,10 +29,15 @@ locals {
     name => "${node.host_node}_${lookup(node, "update", false) ? local.update_image_id : local.image_id}"
   }
 
+  image_download_key = {
+    for name, node in var.nodes :
+    name => "${node.host_node}_${lookup(node, "update", false)}"
+  }
+
   image_downloads = {
     for key, nodes in {
       for name, node in var.nodes :
-      local.image_key[name] => node...
+      local.image_download_key[name] => node...
       } : key => {
       host_node = nodes[0].host_node
       version   = lookup(nodes[0], "update", false) ? local.update_version : local.version

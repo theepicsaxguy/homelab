@@ -88,13 +88,7 @@ Preview the changes that will be applied:
 tofu plan
 ```
 
-First, generate the Talos image schematics:
-
-```console
-tofu apply -target=module.talos.talos_image_factory_schematic.this -target=module.talos.talos_image_factory_schematic.updated
-```
-
-Then apply the full configuration to deploy your cluster:
+Deploy the configuration to build your cluster:
 
 ```console
 tofu apply
