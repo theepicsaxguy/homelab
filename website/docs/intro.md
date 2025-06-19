@@ -20,7 +20,7 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 2. **Declarative Configuration**
 
-   - Uses Kubernetes YAML, Kustomize, and Terraform
+   - Uses Kubernetes YAML, Kustomize, and OpenTofu
    - Tools manage state based on defined specs
 
 3. **Automated Operations**
