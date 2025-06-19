@@ -38,6 +38,7 @@ This page explains how GitHub Actions, Dependabot, and pre-commit hooks keep thi
 - **Permissions:**
   - `contents: read` (clone the repository)
   - `packages: write` (upload images)
+- **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
 
 ### Validation & CI (Implied Workflows)
 
