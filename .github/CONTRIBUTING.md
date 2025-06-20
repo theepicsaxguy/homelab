@@ -18,3 +18,11 @@ The best way to contribute is to find an area you can improve.
 4. **Suggest a Feature:** Have an idea for a new app or improvement? Let's discuss it in a [feature request](https://github.com/theepicsaxguy/homelab/issues/new?template=feature_request.md).
 
 Your help in improving this project is greatly valued.
+
+## Required Checks
+
+Before opening a pull request, make sure your changes pass the basic checks. A detailed rundown lives in the [full contributing guide](https://homelab.orkestack.com/docs/contributing/overview), but here's the quick version:
+
+- **Kubernetes manifests:** `kustomize build --enable-helm <dir>` for each modified directory.
+- **OpenTofu:** Run `tofu fmt` and `tofu validate` in the `tofu/` folder.
+- **Website and docs:** From `website/`, run `npm install`, `npm run typecheck`, and `npm run lint`.
