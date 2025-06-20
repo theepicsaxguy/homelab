@@ -1,3 +1,8 @@
+# Example configuration file for cloudflared
+# This file is now templated via ExternalSecret in cloudflared-config-external-secret.yaml
+# The actual values for 'tunnel' and domain are retrieved from Bitwarden
+# Original hardcoded values: tunnel: gauss-k8s, domain: pc-tips.se
+
 tunnel: gauss-k8s
 credentials-file: /etc/cloudflared/credentials/credentials.json
 metrics: 0.0.0.0:2000
