@@ -60,7 +60,7 @@ spec:
       hostNetwork: true
       containers:
       - name: cilium-install
-        image: quay.io/cilium/cilium-cli-ci:latest
+        image: quay.io/cilium/cilium-cli:v0.18.4
         env:
         - name: KUBERNETES_SERVICE_HOST
           valueFrom:
