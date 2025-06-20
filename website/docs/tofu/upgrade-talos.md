@@ -32,7 +32,7 @@ Set the version to upgrade to in `main.tf` under the `talos_image` block. The
 talos_image = {
   version         = "<see https://github.com/siderolabs/talos/releases>"
   update_version  = "<see https://github.com/siderolabs/talos/releases>" # renovate: github-releases=siderolabs/talos
-  schematic       = file("${path.module}/talos/image/schematic.yaml")
+  schematic_path  = "talos/image/schematic.yaml.tftpl"
 }
 ```
 
@@ -73,7 +73,7 @@ After all nodes have been upgraded, update your cluster configuration in `main.t
 talos_image = {
   version         = "<see https://github.com/siderolabs/talos/releases>"  # Updated base image version
   update_version  = "<see https://github.com/siderolabs/talos/releases>"
-  schematic       = file("${path.module}/talos/image/schematic.yaml")
+  schematic_path  = "talos/image/schematic.yaml.tftpl"
 }
 
 # Update the cluster Talos version
