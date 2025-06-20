@@ -45,7 +45,8 @@ myapp/
 ├── namespace.yaml        # Kubernetes namespace
 ├── deployment.yaml      # Container settings
 ├── service.yaml         # Network exposure
-├── pvc.yaml            # Storage (if needed)
+├── pvc.yaml            # Storage for Deployments (optional)
+├── statefulset.yaml     # Stateful workloads with volumeClaimTemplates
 ├── http-route.yaml     # External access
 └── values.yaml         # Helm values (only if the app uses a Helm chart)
 ```

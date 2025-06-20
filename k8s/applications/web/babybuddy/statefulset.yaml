@@ -45,12 +45,12 @@ spec:
             - secretRef:
                 name: es-babybuddy-secret-key
           volumeMounts:
-            - name: config # Must match metadata.name in volumeClaimTemplates
+            - name: config
               mountPath: /config
           livenessProbe:
             httpGet:
               path: /
-              port: 8000  # Changed from 3000 to 8000
+              port: 8000
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
@@ -58,17 +58,17 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 8000  # Changed from 3000 to 8000
+              port: 8000
             initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 5
   volumeClaimTemplates:
   - metadata:
-      name: config # This name is used in volumeMounts
+      name: config
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn" # Assuming 'longhorn' is your desired StorageClass, adjust if needed
+      storageClassName: "longhorn"
       resources:
         requests:
-          storage: 1Gi # Adjust size as needed, check original PVC for size
+          storage: 1Gi
