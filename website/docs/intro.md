@@ -74,7 +74,7 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 - [Pipeline Configuration](./github/github-configuration.md)
   - CI/CD workflow setup
-  - Dependabot settings
+  - Renovate and Dependabot settings
   - Repo maintenance
 
 ## Website Updates
