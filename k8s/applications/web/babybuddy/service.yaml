@@ -1,4 +1,3 @@
-# FILE: k8s/applications/web/babybuddy/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
