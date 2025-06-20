@@ -71,7 +71,7 @@ const config: Config = {
     headTags: [
       {
         tagName: 'link',
-        attributes: { rel: 'preconnect', href: 'https://example.com' },
+        attributes: { rel: 'preconnect', href: 'https://homelab.orkestack.com' },
       },
     ],
     image: 'img/logo.png',
