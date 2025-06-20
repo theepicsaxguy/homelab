@@ -49,7 +49,6 @@ variable "nodes_config" {
     mac_address   = string
     vm_id         = number
     ram_dedicated = optional(number)
-    freeze        = optional(bool, false)
   }))
 
   validation {

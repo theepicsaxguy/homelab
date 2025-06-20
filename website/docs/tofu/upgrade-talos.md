@@ -26,8 +26,7 @@ The upgrade sequence is automatically derived from your node configuration:
 
 Set the version to upgrade to in `main.tf` under the `talos_image` block. The
 `update_version` value only applies when `update = true` is set for a node in
-`tofu/nodes.auto.tfvars`. Nodes with `freeze = true` keep their current image
-during the rollout:
+`tofu/nodes.auto.tfvars`.
 
 ```hcl
 talos_image = {
