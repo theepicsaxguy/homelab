@@ -1,3 +1,7 @@
+resource "terraform_data" "image_version" {
+  input = var.talos_image.version
+}
+
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = var.nodes
 
@@ -66,16 +70,12 @@ resource "proxmox_virtual_environment_vm" "this" {
     }
   }
   lifecycle {
-    ignore_changes = lookup(each.value, "freeze", false) ? [
-      vga,
-      network_device[0].disconnected,
-      disk[0].file_id,
-      ] : [
+    ignore_changes = [
       vga,
       network_device[0].disconnected,
     ]
 
-    replace_triggered_by = lookup(each.value, "freeze", false) ? [] : [
+    replace_triggered_by = [
       terraform_data.image_version
     ]
 
@@ -84,7 +84,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   boot_order = ["scsi0"]
 
   operating_system {
-    type = "l26" # Linux Kernel 2.6 - 6.X.
+    type = "l26"
   }
 
   initialization {

@@ -43,7 +43,6 @@ variable "nodes" {
     ram_dedicated = number
     update        = optional(bool, false)
     igpu          = optional(bool, false)
-    freeze        = optional(bool, false)
     disks = optional(map(object({
       device      = string
       size        = string
@@ -90,19 +89,6 @@ variable "coredns" {
     install = string
   })
 }
-
-# variable "storage_pool" {
-#   type        = string
-#   description = "Default Proxmox storage pool to use for VM disks."
-# }
-
-# variable "disk_owner" {
-#   description = "Where to create the data disks VM"
-#   type = object({
-#     node_name = string
-#     vm_id     = number
-#   })
-# }
 
 
 
