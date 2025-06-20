@@ -64,6 +64,16 @@ const config: Config = {
       disableSwitch: false,
       respectPrefersColorScheme: false,
     },
+    metadata: [
+      { name: 'keywords', content: 'kubernetes, homelab' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ],
+    headTags: [
+      {
+        tagName: 'link',
+        attributes: { rel: 'preconnect', href: 'https://homelab.orkestack.com' },
+      },
+    ],
     image: 'img/logo.png',
     navbar: {
       title: 'Homelab',
