@@ -73,6 +73,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     ignore_changes = [
       vga,
       network_device[0].disconnected,
+      disk[0].file_id,
     ]
 
     replace_triggered_by = [
