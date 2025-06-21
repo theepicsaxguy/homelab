@@ -15,6 +15,15 @@ spec:
       server: '*'
     - namespace: 'truenas'
       server: '*'
+    - namespace: '*'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
+  resourceInclusions:
+  - apiGroups:
+    - 'discovery.k8s.io'
+    kinds:
+    - 'EndpointSlice'
+    clusters:
+    - '*'
