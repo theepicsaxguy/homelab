@@ -12,3 +12,6 @@ configMapGenerator:
 - literals:
   - TZ=Europe/Stockholm
   name: haos-env
+
+generatorOptions:
+  disableNameSuffixHash: true
