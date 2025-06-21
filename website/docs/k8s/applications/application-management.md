@@ -129,4 +129,8 @@ The container keeps its root filesystem read-only. Temporary paths like `/run` a
 
 BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. The deployment does not include a `values.yaml` file, avoiding confusion. Update your service and readiness probes to point to this port if you override the default configuration.
 
+## Home Assistant Notes
+
+Home Assistant stores its configuration on a `StatefulSet` volume so it survives restarts. The Zigbee module mounts `/dev/ttyACM1` while ZwaveJS2MQTT uses `/dev/ttyACM0`. Gateway routes send traffic to port `8123`. App data lives under `/tmp/home-assistant` and media under `/tmp/media` on the host.
+
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
