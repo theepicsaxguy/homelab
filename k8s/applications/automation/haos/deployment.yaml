@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: mosquitto
-        image: eclipse-mosquitto # Changed from arm64v8/ specific image
+        image: eclipse-mosquitto 
         ports:
         - containerPort: 1883
         - containerPort: 9001
