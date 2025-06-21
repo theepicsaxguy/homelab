@@ -14,8 +14,8 @@ spec:
     targetPort: 8123
   - name: ws
     protocol: TCP
-    port: 5580       # Matter Server Port
-    targetPort: 5580 # Matter Server container port
+    port: 5580       
+    targetPort: 5580 
 ---
 apiVersion: v1
 kind: Service
@@ -25,7 +25,7 @@ metadata:
 spec:
   selector:
     app: mosquitto
-  type: NodePort
+  type: ClusterIP
   ports:
   - name: mqtt
     protocol: TCP

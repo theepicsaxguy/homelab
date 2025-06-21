@@ -129,4 +129,12 @@ The container keeps its root filesystem read-only. Temporary paths like `/run` a
 
 BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. The deployment does not include a `values.yaml` file, avoiding confusion. Update your service and readiness probes to point to this port if you override the default configuration.
 
+## Home Assistant Notes
+
+Home Assistant runs as a StatefulSet. Configuration, media, and data paths each
+use their own persistent volume created through `volumeClaimTemplates`. The
+bundled Mosquitto broker exposes a `ClusterIP` service so it's reachable only
+inside the cluster. The BlueZ sidecar still runs privileged for Bluetooth
+access, so weigh that risk before enabling it.
+
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.

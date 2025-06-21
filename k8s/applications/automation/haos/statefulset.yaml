@@ -27,7 +27,6 @@ spec:
       - name: matter-server
         image: ghcr.io/home-assistant-libs/python-matter-server:stable
         securityContext:
-          # Needed for Bluetooth via dbus
           allowPrivilegeEscalation: true
           capabilities:
             add:
@@ -38,7 +37,7 @@ spec:
           - --paa-root-cert-dir=/data/credentials
           - --bluetooth-adapter=0
         ports:
-        - containerPort: 5580 # Expose container port
+        - containerPort: 5580
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
         envFrom:
@@ -66,13 +65,10 @@ spec:
           name: media-volume
         - mountPath: /run/dbus
           name: d-bus
-        #   readOnly: true
         - mountPath: /dev/ttyUSB1
           name: zigbee
         - name: data-volume
           mountPath: /data
-        #- mountPath: /dev/video0
-        #  name: cam
         securityContext:
           privileged: false
           allowPrivilegeEscalation: false
@@ -82,27 +78,33 @@ spec:
           seccompProfile:
             type: RuntimeDefault
       volumes:
-      - name: media-volume
-        hostPath:
-          path: /tmp/media
-      #  hostPath:
-      #    path: /tmp/home-assistant
-      #    type: DirectoryOrCreate
       - name: d-bus
         hostPath:
           path: /run/dbus
-      - name: data-volume
-        hostPath:
-          path: /tmp/media
       - name: zigbee
         hostPath:
           path: /dev/ttyACM0
-      #- name: cam
-      #  hostPath:
-      #    path: /dev/video0
   volumeClaimTemplates:
   - metadata:
       name: config
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: media-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: data-volume
     spec:
       accessModes:
       - ReadWriteOnce

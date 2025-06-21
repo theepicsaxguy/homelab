@@ -15,31 +15,7 @@ spec:
     spec:
       containers:
       - name: mosquitto
-        image: arm64v8/eclipse-mosquitto
-        securityContext:
-          privileged: true
-        ports:
-        - containerPort: 1883
-        - containerPoapiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: mosquitto
-  namespace: home-assistant
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: mosquitto
-  template:
-    metadata:
-      labels:
-        app: mosquitto
-    spec:
-      containers:
-      - name: mosquitto
-        image: arm64v8/eclipse-mosquitto
-        securityContext:
-          privileged: true
+        image: eclipse-mosquitto 
         ports:
         - containerPort: 1883
         - containerPort: 9001
