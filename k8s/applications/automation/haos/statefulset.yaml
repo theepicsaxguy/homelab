@@ -1,0 +1,114 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: home-assistant
+  name: home-assistant
+  labels:
+    app: home-assistant
+spec:
+  serviceName: home-assistant
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: bluez
+        image: ghcr.io/mysticrenji/bluez-service:v1.0.0
+        securityContext:
+          privileged: true
+      - name: matter-server
+        image: ghcr.io/home-assistant-libs/python-matter-server:stable
+        securityContext:
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        imagePullPolicy: Always
+        args:
+          - --storage-path=/data
+          - --paa-root-cert-dir=/data/credentials
+          - --bluetooth-adapter=0
+        ports:
+        - containerPort: 5580
+      - name: home-assistant
+        image: homeassistant/home-assistant:2025.6.1
+        envFrom:
+        - configMapRef:
+            name: haos-env
+        resources:
+          requests:
+            memory: "256Mi"
+          limits:
+            memory: "512Mi"
+        ports:
+        - containerPort: 8123
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8123
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8123
+        volumeMounts:
+        - mountPath: /config
+          name: config
+        - mountPath: /media
+          name: media-volume
+        - mountPath: /run/dbus
+          name: d-bus
+        - mountPath: /dev/ttyUSB1
+          name: zigbee
+        - name: data-volume
+          mountPath: /data
+        securityContext:
+          privileged: false
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+      volumes:
+      - name: d-bus
+        hostPath:
+          path: /run/dbus
+      - name: zigbee
+        hostPath:
+          path: /dev/ttyACM0
+  volumeClaimTemplates:
+  - metadata:
+      name: config
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: media-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: data-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
