@@ -1,0 +1,228 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: home-assistant
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: home-assistant
+  name: home-assistant
+spec:
+  selector:
+    app: home-assistant
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8123
+  - name: ws
+    protocol: TCP
+    port: 5580       # Matter Server Port
+    targetPort: 5580 # Matter Server container port
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: home-assistant
+  name: home-assistant
+  labels:
+    app: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      containers:
+      - name: bluez
+        image: ghcr.io/mysticrenji/bluez-service:v1.0.0
+        securityContext:
+          privileged: true
+      - name: matter-server
+        image: ghcr.io/home-assistant-libs/python-matter-server:stable
+        securityContext:
+          # Needed for Bluetooth via dbus
+          allowPrivilegeEscalation: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        imagePullPolicy: Always
+        args:
+          - --storage-path=/data
+          - --paa-root-cert-dir=/data/credentials
+          - --bluetooth-adapter=0
+        ports:
+        - containerPort: 5580 # Expose container port
+      - name: home-assistant
+        image: homeassistant/home-assistant:2025.6.1
+        resources:
+          requests:
+            memory: "256Mi"
+          limits:
+            memory: "512Mi"
+        ports:
+        - containerPort: 8123
+        volumeMounts:
+        - mountPath: /config
+          name: config
+        - mountPath: /config/configuration.yaml
+          subPath: configuration.yaml
+          name: configmap-file
+        - mountPath: /config/automations.yaml
+          subPath: automations.yaml
+          name: configmap-file
+        - mountPath: /media
+          name: media-volume          
+        - mountPath: /run/dbus
+          name: d-bus
+        #   readOnly: true
+        - mountPath: /dev/ttyUSB1
+          name: zigbee
+        - name: data-volume
+          mountPath: /data
+        #- mountPath: /dev/video0
+        #  name: cam
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - NET_ADMIN
+              - NET_RAW
+              - SYS_ADMIN
+      hostNetwork: true
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: home-assistant-pvc
+      - name: media-volume
+        hostPath:
+          path: /tmp/media
+      - name: configmap-file
+        configMap:
+          name: home-assistant-configmap
+      #  hostPath:
+      #    path: /tmp/home-assistant
+      #    type: DirectoryOrCreate
+      - name: d-bus
+        hostPath:
+          path: /run/dbus
+      - name: data-volume
+        hostPath:
+          path: /tmp/media
+      - name: zigbee
+        hostPath:
+          path: /dev/ttyACM0
+      #- name: cam
+      #  hostPath:
+      #    path: /dev/video0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: home-assistant
+  name: zwavejs2mqtt
+spec:
+  selector:
+    app: zwavejs2mqtt
+  type: NodePort
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8091
+    targetPort: 8091
+    nodePort: 30091
+  - name: ws
+    protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: home-assistant
+  name: zwavejs2mqtt
+  labels:
+    app: zwavejs2mqtt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zwavejs2mqtt
+  template:
+    metadata:
+      labels:
+        app: zwavejs2mqtt
+    spec:
+      containers:
+      - name: zwavejs2mqtt
+        image: zwavejs/zwavejs2mqtt:10.7.0
+        ports:
+        - containerPort: 8091
+        - containerPort: 3000
+        volumeMounts:
+        - mountPath: /usr/src/app/store
+          name: configuration
+        - mountPath: /dev/ttyACM0
+          name: zwave
+        securityContext:
+          privileged: true
+      volumes:
+      - name: configuration
+        persistentVolumeClaim:
+            claimName: zwavejs2mqtt-pvc
+#        hostPath:
+#          path: /tmp/zwavejs2mqtt
+#          type: DirectoryOrCreate
+      - name: zwave
+        hostPath:
+          path: /dev/ttyACM0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mosquitto
+  namespace: home-assistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      containers:
+      - name: mosquitto
+        image: arm64v8/eclipse-mosquitto
+        securityContext:
+          privileged: true
+        ports:
+        - containerPort: 1883
+        - containerPort: 9001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: home-assistant
+  name: mosquitto-service
+spec:
+  selector:
+    app: mosquitto-service
+  type: NodePort
+  ports:
+  - name: mqtt
+    protocol: TCP
+    port: 1883
+    targetPort: 1883
+  - name: mqtt1
+    protocol: TCP
+    port: 9001
+    targetPort: 9001 
