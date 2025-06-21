@@ -1,23 +1,126 @@
-
 # Loads default set of integrations. Do not remove.
 default_config:
 
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+    - /hacsfiles/Bubble-Card/bubble-pop-up-fix.js
 
 # Text to speech
 tts:
   - platform: google_translate
 
+# Core includes
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+# HTTP / reverse‑proxy settings
 http:
+  ip_ban_enabled: true
   use_x_forwarded_for: true
   trusted_proxies:
     - 127.0.0.1
-    - 10.10.0.0/16
+    - 10.25.150.0/24
+    - !secret proxy_ip
+    - !secret auth
+    - !secret proxy_subnet
+    - !secret cloudflare_subnet
 
-#bluetooth:
+# Authentication header forwarded by reverse proxy
+auth_header:
+  username_header: X-ak-hass-user
+  debug: true
+
+# Components
+powercalc: !include components/powercalc.yaml
+wake_on_lan:
+swedish_calendar:
+#google_assistant: !include components/google_assistant.yaml
+spotcast: !include components/spotcast.yaml
+#tts: !include components/tts.yaml
+
+# Shell commands
+shell_command:
+  push_to_git: cd /config/shell_command && bash ./Gitpush.sh
+  pull_git: cd /config/shell_command && bash ./Gitpull.sh
+
+# Bluetooth integration
+bluetooth:
+
+# Recorder
+recorder:
+  db_url: !secret hadbconfig
+  purge_keep_days: 10
+  commit_interval: 5
+  include:
+    domains:
+      - sensor
+      - switch
+      - media_player
+      - light
+      - binary_sensor
+      - cover
+      - remote
+    entity_globs:
+      - device_tracker.wilmisen_*
+      - device_tracker.samsung_s21_*
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date_time
+    event_types:
+      - browser_mod
+    entity_globs:
+      - input_number.flux_dum_*
+      - sensor.watchman_*
+
+# Logger
+logger:
+  default: critical
+  logs:
+    # log level for HA core
+    homeassistant.core: warning
+    # log level for MQTT integration
+    homeassistant.components.mqtt: warning
+
+# History
+history:
+  include:
+    domains:
+      - sensor
+      - switch
+      - media_player
+      - light
+      - binary_sensor
+      - cover
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date_time
+
+# Home Assistant core settings
+homeassistant:
+  packages: !include_dir_named packages
+  media_dirs:
+    local: /media
+  customize: !include conf/customize.yaml
+  latitude: !secret zone_home_latitude
+  longitude: !secret zone_home_longitude
+  elevation: !secret zone_home_elevation
+  unit_system: metric
+  temperature_unit: C
+  time_zone: Europe/Stockholm
+  language: en
+  country: SE
+  currency: SEK
+#  auth_mfa_modules:
+#    - type: totp
+
+# Lovelace
+lovelace:
+  mode: storage
