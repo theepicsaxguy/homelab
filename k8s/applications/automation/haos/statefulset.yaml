@@ -21,7 +21,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: bluez
-        image: ghcr.io/mysticrenji/bluez-service:v1.0.0
+        image: ghcr.io/mysticrenji/bluez-service:v1.1.0
         securityContext:
           privileged: true
       - name: matter-server
