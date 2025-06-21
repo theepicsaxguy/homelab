@@ -1,24 +1,5 @@
 ---
 apiVersion: v1
-kind: Namespace
-metadata:   
-  name: home-assistant
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: home-assistant-pvc
-  labels:
-    app: home-assistant
-  namespace: home-assistant
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 9Gi 
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: zwavejs2mqtt-pvc
@@ -31,4 +12,3 @@ spec:
   resources:
     requests:
       storage: 500Mi
-
