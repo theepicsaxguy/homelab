@@ -1,5 +1,45 @@
 # Changelog
 
+## 3.3.0 (2025-06-21)
+
+## What's Changed
+* feat(images): add dockerignore for spilo17-vchord by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1041
+* docs(getting-started): list required CLI tools by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1042
+* refactor(tofu): stabilize image downloads by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1044
+* docs: update OpenTofu references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1045
+* docs(k8s): remove Bitwarden item notes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1052
+* docs(k8s): reference secret name by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1050
+* docs(k8s): use kustomize build in manual bootstrap guide by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1049
+* docs(k8s): update repository URL in argocd guide by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1048
+* docs: update OpenTofu references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1047
+* docs: update OpenTofu references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1046
+* fix(tofu): ignore null node overrides by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1053
+* Refactor(tofu)--improve-schematic-processing-in-image-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1056
+* docs: rename image blocks by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1054
+* feat(tofu): make node freeze opt-in by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1057
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1058
+* chore(deps): update helm release velero to v10.0.6 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1059
+* refactor(tofu): remove freeze attribute from node configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1060
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.135.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1061
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1062
+* feat(k8s): expand immich library volume to 40Gi by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1063
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.135.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1064
+* fix: Update prompts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1065
+* chore(deps): update all dependencies to v1.135.3 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1066
+* docs(website): remove seo page by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1067
+* chore(repo): enable esm for commitlint by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1068
+* docs: update schematic variable names by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1069
+* docs(github): clarify updater tools by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1070
+* refactor(k8s): embed babybuddy pvc in statefulset by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1071
+* docs(contributing): add required checks summary by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1072
+* fix(talos): pin cilium-cli version by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1074
+* fix(k8s): clarify frigate route names by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1075
+* feat(infra): add CNAME record for HAOS in Cloudflare DNS by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1078
+* refactor(k8s): simplify home-assistant service definition by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1079
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.2.0...v3.3.0
+
 ## 3.2.0 (2025-06-19)
 
 ## What's Changed
