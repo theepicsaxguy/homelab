@@ -82,27 +82,33 @@ spec:
           seccompProfile:
             type: RuntimeDefault
       volumes:
-      - name: media-volume
-        hostPath:
-          path: /tmp/media
-      #  hostPath:
-      #    path: /tmp/home-assistant
-      #    type: DirectoryOrCreate
       - name: d-bus
         hostPath:
           path: /run/dbus
-      - name: data-volume
-        hostPath:
-          path: /tmp/media
       - name: zigbee
         hostPath:
           path: /dev/ttyACM0
-      #- name: cam
-      #  hostPath:
-      #    path: /dev/video0
   volumeClaimTemplates:
   - metadata:
       name: config
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: media-volume
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 9Gi
+  - metadata:
+      name: data-volume
     spec:
       accessModes:
       - ReadWriteOnce

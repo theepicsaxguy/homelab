@@ -25,7 +25,7 @@ metadata:
 spec:
   selector:
     app: mosquitto
-  type: NodePort
+  type: ClusterIP
   ports:
   - name: mqtt
     protocol: TCP
