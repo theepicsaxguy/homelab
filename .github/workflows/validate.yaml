@@ -1,0 +1,89 @@
+name: Validate Configuration
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - 'tofu/**'
+      - 'k8s/**'
+      - 'website/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changes
+        id: changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ github.event.pull_request.base.ref }}"
+          FILES=$(git diff --name-only "origin/${{ github.event.pull_request.base.ref }}"...HEAD)
+          echo "$FILES"
+          if echo "$FILES" | grep -E '(^|/).*\.tf$|^tofu/' >/dev/null; then
+            echo "tf=true" >> "$GITHUB_OUTPUT"
+          fi
+          k8s_dirs=$(echo "$FILES" | grep '^k8s/' | awk -F/ '{print $1"/"$2}' | sort -u | tr '\n' ' ')
+          if [ -n "$k8s_dirs" ]; then
+            echo "k8s_dirs=$k8s_dirs" >> "$GITHUB_OUTPUT"
+          fi
+          if echo "$FILES" | grep '^website/' >/dev/null; then
+            echo "website=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install OpenTofu
+        if: steps.changes.outputs.tf == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L https://github.com/opentofu/opentofu/releases/latest/download/tofu_linux_amd64 -o tofu
+          chmod +x tofu
+          sudo mv tofu /usr/local/bin/
+
+      - name: Tofu format and validate
+        if: steps.changes.outputs.tf == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tofu fmt -check
+          tofu validate
+
+      - name: Install kustomize
+        if: steps.changes.outputs.k8s_dirs != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L https://github.com/kubernetes-sigs/kustomize/releases/latest/download/kustomize_linux_amd64.tar.gz | tar xz
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Kustomize build
+        if: steps.changes.outputs.k8s_dirs != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in ${{ steps.changes.outputs.k8s_dirs }}; do
+            kustomize build --enable-helm "$dir"
+          done
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.website == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Website typecheck and lint
+        if: steps.changes.outputs.website == 'true'
+        working-directory: website
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install
+          npm run typecheck
+          npm run lint

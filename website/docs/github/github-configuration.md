@@ -40,20 +40,16 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
   - `packages: write` (upload images)
 - **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
 
-### Validation & CI (Implied Workflows)
+### Validation Workflow (`validate.yaml`)
 
-- **What:** While specific workflow YAMLs for all validation steps aren't detailed here, CI jobs automatically lint and validate configurations.
-- **Purpose:** Automatically lint and validate configurations (Kubernetes, Helm charts, scripts) on every push or PR.
-- **When triggered:**
-  - Every push to `main`
-  - Every pull request to `main`
-- **Jobs may include:**
-  - YAML and script linting
-  - Kustomize and ArgoCD validation (typically using `kustomize build` and ArgoCD CLI tools)
-  - Helm chart checks (typically using `helm lint` or `helm template`)
-- **Why:**
-  - **Automation:** Prevents errors and broken configs from reaching production.
-  - **Quality gate:** Fails builds if code doesn’t meet standards.
+- **File:** `.github/workflows/validate.yaml`
+- **Purpose:** Run targeted checks when a pull request modifies infrastructure, Kubernetes manifests, or documentation.
+- **When triggered:** Every pull request.
+- **Checks performed:**
+  - `tofu fmt -check` and `tofu validate` for any `.tf` files or updates in `tofu/`.
+  - `kustomize build --enable-helm` for each changed directory under `k8s/`.
+  - `npm install`, `npm run typecheck`, and `npm run lint` when files in `website/` change.
+- **Why:** Stops misformatted code and broken manifests from merging.
 
 ---
 
