@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: home-assistant
+  name: home-assistant
+spec:
+  selector:
+    app: home-assistant
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8123
+    targetPort: 8123
+  - name: ws
+    protocol: TCP
+    port: 5580       # Matter Server Port
+    targetPort: 5580 # Matter Server container port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: home-assistant
+  name: mosquitto-service
+spec:
+  selector:
+    app: mosquitto
+  type: NodePort
+  ports:
+  - name: mqtt
+    protocol: TCP
+    port: 1883
+    targetPort: 1883
+  - name: mqtt1
+    protocol: TCP
+    port: 9001
+    targetPort: 9001 
