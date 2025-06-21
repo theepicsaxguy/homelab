@@ -219,7 +219,7 @@ metadata:
   name: mosquitto-service
 spec:
   selector:
-    app: mosquitto-service
+    app: mosquitto
   type: NodePort
   ports:
   - name: mqtt
