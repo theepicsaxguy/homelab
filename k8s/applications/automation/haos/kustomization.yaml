@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: home-assistant
 resources:
 - namespace.yaml
-- externalsecret.yaml
+- home-assistant-external-secret.yaml
 - http-route.yaml
 - pvc.yaml
 - deployment.yaml

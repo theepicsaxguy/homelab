@@ -19,5 +19,5 @@ spec:
       backendRefs:
         - name: home-assistant
           namespace: home-assistant
-          port: 80
+          port: 8123
 

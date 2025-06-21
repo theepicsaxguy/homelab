@@ -86,7 +86,7 @@ spec:
         - mountPath: /run/dbus
           name: d-bus
         #   readOnly: true
-        - mountPath: /dev/ttyUSB1
+        - mountPath: /dev/ttyACM1
           name: zigbee
         - name: data-volume
           mountPath: /data
@@ -112,10 +112,10 @@ spec:
           path: /run/dbus
       - name: data-volume
         hostPath:
-          path: /tmp/media
+          path: /tmp/home-assistant
       - name: zigbee
         hostPath:
-          path: /dev/ttyACM0
+          path: /dev/ttyACM1
       #- name: cam
       #  hostPath:
       #    path: /dev/video0
