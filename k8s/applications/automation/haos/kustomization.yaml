@@ -5,8 +5,9 @@ resources:
 - namespace.yaml
 - externalsecret.yaml
 - http-route.yaml
-- pvc.yaml
+- statefulset.yaml
 - deployment.yaml
+- svc.yaml
 
 configMapGenerator:
 - literals:
