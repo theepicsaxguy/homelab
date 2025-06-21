@@ -60,6 +60,9 @@ spec:
         - containerPort: 5580 # Expose container port
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
+        envFrom:
+        - configMapRef:
+            name: haos-env
         resources:
           requests:
             memory: "256Mi"
