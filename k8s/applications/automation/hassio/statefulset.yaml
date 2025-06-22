@@ -16,28 +16,17 @@ spec:
       labels:
         app: home-assistant
     spec:
+      # --- START OF CHANGE ---
+      # Add this security context to run the pod as a specific non-root user
+      # and ensure the volume permissions are set correctly.
       securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      # --- END OF CHANGE ---
       containers:
-      # - name: matter-server
-      #   image: ghcr.io/home-assistant-libs/python-matter-server:stable
-      #   securityContext:
-      #     allowPrivilegeEscalation: false
-      #     capabilities:
-      #       drop:
-      #         - ALL
-      #     seccompProfile:
-      #       type: RuntimeDefault
-      #     runAsNonRoot: true
-
-      #   imagePullPolicy: Always
-      #   args:
-      #     - --storage-path=/data
-      #     - --paa-root-cert-dir=/data/credentials
-      #     - --bluetooth-adapter=0
-      #   ports:
-      #   - containerPort: 5580
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
         envFrom:
@@ -63,30 +52,24 @@ spec:
           name: config
         - mountPath: /media
           name: media-volume
-        # - mountPath: /dev/ttyUSB1
-        #   name: usb-device
-        # - mountPath: /run/dbus
-        #   name: d-bus
         - name: data-volume
           mountPath: /data
+        # --- START OF CHANGE ---
+        # The container-level securityContext can now be simplified or removed,
+        # but we'll keep it for defense-in-depth.
+        # The pod-level context already enforces runAsNonRoot implicitly
+        # by setting runAsUser.
         securityContext:
           privileged: false
           allowPrivilegeEscalation: false
           capabilities:
             drop:
             - ALL
+          # This runAsNonRoot: true is now correctly satisfied by the pod-level securityContext
+          runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
-          runAsNonRoot: true
-      #volumes:
-      # - name: d-bus
-      #   hostPath:
-      #     path: /run/dbus
-      #     type: Directory
-      # - name: usb-device
-      #   hostPath:
-      #     path: /dev/ttyUSB1
-      #     type: File
+        # --- END OF CHANGE ---
   volumeClaimTemplates:
   - metadata:
       name: config
