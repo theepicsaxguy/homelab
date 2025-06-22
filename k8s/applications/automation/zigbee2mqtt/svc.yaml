@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zigbee2mqtt
+  name: zigbee2mqtt
+spec:
+  ports:
+    - name: zigbee2mqtt
+      port: 8080
+      targetPort: http
+      protocol: TCP
+  selector:
+    app: zigbee2mqtt
+status:
+  loadBalancer: {}
