@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: home-assistant-config
+  namespace: home-assistant
+data:
+  configuration.yaml: |
+    default_config:
+
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    automation: !include automations.yaml
+
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+  automations.yaml: ""
+  known_devices.yaml: ""

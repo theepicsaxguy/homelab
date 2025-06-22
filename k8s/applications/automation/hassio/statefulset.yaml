@@ -23,9 +23,9 @@ spec:
       containers:
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
-        envFrom:
-        - configMapRef:
-            name: haos-env
+        env:
+        - name: TZ
+          value: "Europe/Stockholm"
         resources:
           requests:
             memory: "256Mi"
@@ -42,6 +42,9 @@ spec:
             path: /
             port: 8123
         volumeMounts:
+        - mountPath: /config/configuration.yaml
+          name: ha-config
+          subPath: configuration.yaml
         - mountPath: /config
           name: config
         - mountPath: /media
@@ -56,6 +59,10 @@ spec:
             - ALL
           seccompProfile:
             type: RuntimeDefault
+      volumes:
+      - name: ha-config
+        configMap:
+          name: home-assistant-config
   volumeClaimTemplates:
   - metadata:
       name: config
