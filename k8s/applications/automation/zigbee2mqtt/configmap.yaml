@@ -12,26 +12,37 @@ data:
     permit_join: true
     # Home Assistant integration (MQTT discovery)
     homeassistant: true
-    # Docker-Compose makes the MQTT-Server available using "mqtt" hostname
-    # MQTT server URL
+
+    # MQTT settings. User and password will be injected from the ExternalSecret.
     mqtt:
       base_topic: zigbee2mqtt
-      server: "mqtt://mosquitto.mqtt" # mqtt://<name_of_pod>.<name_of_namespace> (mosquitto)
-    # Zigbee Adapter path
+      server: "mqtt://core-mosquitto:1883"
+
+    # Serial device configuration
     serial:
-      port: /dev/ttyACM0
-    # Enable the Zigbee2MQTT frontend
+      port: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
+      adapter: deconz
+
+    # Frontend configuration
     frontend:
       port: 8080
-    # Let Zigbee2MQTT generate a new network key on first start
-    advanced:
-      #network_key: GENERATE
-      #log_output: ["console"]
-      log_level: debug
-      log_output:
-      - console
-      - file
 
+    # Advanced configuration
+    advanced:
+      log_level: info
+      channel: 25
+      availability:
+        active:
+          timeout: 30
+        passive:
+          timeout: 2500
+
+    # Point to external files on the persistent volume for easier management.
+    # You must create these files in the /data directory on your PVC.
+    devices: devices.yaml
+    groups: groups.yaml
+    version: 4
     ## Map devices to persistent /data directory
-    devices: /data/devices.yaml
-    groups: /data/groups.yaml
+    devices: devices.yaml
+    groups: groups.yaml
+

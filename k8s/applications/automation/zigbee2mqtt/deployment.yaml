@@ -1,34 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: zigbee2mqtt
+  namespace: zigbee2mqtt
   labels:
     app: zigbee2mqtt
-  name: zigbee2mqtt
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: zigbee2mqtt
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: zigbee2mqtt
     spec:
+      initContainers:
+        - name: seed-z2m-config
+          image: busybox:1.36
+          command: ["sh", "-c", "if [ ! -f /data/configuration.yaml ]; then cp /config-template/configuration.yaml /data/configuration.yaml; fi"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config-template
+              mountPath: /config-template
       containers:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt:2.4.0
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
-              value: Europe/Berlin
-            - name: "ZIGBEE2MQTT_DATA"
-              value: "/data"
-            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER # optional - can also be configured in the configuration.yaml in the configmap
-              value: "mqtt://mosquitto"
-          securityContext:
-            privileged: true
+              value: Europe/Stockholm
+          envFrom:
+            - secretRef:
+                name: zigbee2mqtt-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           ports:
             - name: http
               containerPort: 8080
@@ -36,34 +48,36 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-            - name: ttyacm
-              mountPath: /dev/ttyACM0
+            # - name: zigbee-stick
+            #   mountPath: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
           livenessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 0
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
             failureThreshold: 3
-            timeoutSeconds: 1
-            periodSeconds: 10
           readinessProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 0
-            failureThreshold: 3
-            timeoutSeconds: 1
+            initialDelaySeconds: 15
             periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
           startupProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 0
             failureThreshold: 30
-            timeoutSeconds: 1
-            periodSeconds: 5
+            periodSeconds: 10
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
-        - name: ttyacm
-          hostPath:
-            path: /dev/ttyACM0
-            type: File
+        - name: config-template
+          configMap:
+            name: zigbee2mqtt-config
+        # This securely passes the host's USB device to the container without privileged mode.
+        # - name: zigbee-stick
+        #   hostPath:
+        #     path: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
+        #     type: CharDevice
