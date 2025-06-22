@@ -8,7 +8,7 @@ resources:
 - svc.yaml
 - pvc.yaml
 - configmap.yaml
-
+- external-secret.yaml
 configMapGenerator:
 - literals:
   - TZ=Europe/Stockholm

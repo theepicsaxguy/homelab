@@ -22,10 +22,10 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
-              value: Europe/Berlin
+              value: Europe/Stockholm
             - name: "ZIGBEE2MQTT_DATA"
               value: "/data"
-            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER # optional - can also be configured in the configuration.yaml in the configmap
+            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
               value: "mqtt://mosquitto"
           securityContext:
             privileged: true
@@ -36,8 +36,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-            - name: ttyacm
-              mountPath: /dev/ttyACM0
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -63,7 +61,3 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
-        - name: ttyacm
-          hostPath:
-            path: /dev/ttyACM0
-            type: File
