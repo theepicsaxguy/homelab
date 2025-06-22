@@ -57,6 +57,8 @@ spec:
           capabilities:
             drop:
             - ALL
+            add:
+            - NET_RAW
           seccompProfile:
             type: RuntimeDefault
       volumes:

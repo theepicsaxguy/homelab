@@ -8,11 +8,7 @@ resources:
 - svc.yaml
 - pvc.yaml
 - configmap.yaml
-
-configMapGenerator:
-- literals:
-  - TZ=Europe/Stockholm
-  name: zigbee2mqtt-env
+- external-secret.yaml
 
 generatorOptions:
   disableNameSuffixHash: true

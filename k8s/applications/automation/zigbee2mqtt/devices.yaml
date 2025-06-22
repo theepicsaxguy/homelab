@@ -1,0 +1,79 @@
+'0x001788010b7de2d0':
+  friendly_name: Dimmer - Sovrum
+'0x001788010c3c4ac6':
+  friendly_name: Hall Spot 1
+'0x001788010c3f38fc':
+  friendly_name: Hall Spot 2
+'0x0017880109dbef72':
+  friendly_name: Hall Spot 3
+'0x001788010b49c259':
+  friendly_name: Slinga - Vardagsrum
+'0x001788010bb23082':
+  friendly_name: Sänglampa - Vänster
+'0x001788010bb22013':
+  friendly_name: Sänglampa - Höger
+'0x001788010b49c14e':
+  friendly_name: Kök Slinga
+'0x00178801091676cf':
+  friendly_name: Kök Sensor
+  no_occupancy_since:
+    - undefined: 80
+  temperature_precision: ''
+'0x00124b00288fd6f4':
+  friendly_name: Sensor Vardagsrum
+'0x001788010c007004':
+  friendly_name: Sovrum Tak
+  disabled: false
+  homeassistant:
+    name: Sovrum Tak
+  optimistic: true
+'0x001788010bb57244':
+  friendly_name: Garderob spot 1
+'0x001788010c3c4a93':
+  friendly_name: Garderob spot 2
+'0x001788010c42f956':
+  friendly_name: Garderob spot 3
+'0x00124b0029350008':
+  friendly_name: Ytterdörr
+'0x6c5cb1fffe23203e':
+  friendly_name: Kontor
+  occupancy_timeout: 60
+  illuminance_below_threshold_check: false
+'0x3425b4fffe93dc1b':
+  friendly_name: Brevlåda
+  illuminance_below_threshold_check: false
+  occupancy_timeout: 60
+'0x00124b002a522366':
+  friendly_name: Vagga
+'0x00124b002acb6a05':
+  friendly_name: Dörr Kontor
+'0xe0798dfffebb5204':
+  friendly_name: Lampor Badrum
+'0xa4c138ef833293d4':
+  friendly_name: Garderob rörelse
+'0xa4c138a1359d39ba':
+  friendly_name: Badrum
+'0x54ef4410006bb0ed':
+  friendly_name: Rullgardin Sovrum
+'0x00158d000836b7b9':
+  friendly_name: Sovrum Sensor
+  occupancy_timeout: 120
+  no_occupancy_since:
+    - undefined: 10
+    - undefined: 60
+'0xe0798dfffecdff95':
+  friendly_name: Vardagsrum lampa
+'0xf082c0fffe6f134b':
+  friendly_name: Kontor Tak
+'0x001788010c0010d6':
+  friendly_name: Kök Tak
+'0x4c5bb3fffed7935d':
+  friendly_name: Vask
+'0x4c5bb3fffe2f34d4':
+  friendly_name: Skafferi
+'0xd44867fffe5efcc6':
+  friendly_name: Matskål
+'0x0c2a6ffffe3d1011':
+  friendly_name: Skötbord
+'0x3425b4fffe98fe8f':
+  friendly_name: vardagsrum-kontroll
