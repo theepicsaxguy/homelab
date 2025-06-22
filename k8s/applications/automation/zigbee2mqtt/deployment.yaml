@@ -17,7 +17,7 @@ spec:
     spec:
       initContainers:
         - name: seed-z2m-config
-          image: busybox:1.36
+          image: busybox:1.37
           command: ["sh", "-c", "if [ ! -f /data/configuration.yaml ]; then cp /config-template/configuration.yaml /data/configuration.yaml; fi"]
           volumeMounts:
             - name: data
