@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: haos
+  name: zigbee2mqtt
   namespace: zigbee2mqtt
 spec:
   parentRefs:
@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "haos.pc-tips.se"
+    - "zigbee2mqtt.pc-tips.se"
   rules:
     - matches:
         - path:

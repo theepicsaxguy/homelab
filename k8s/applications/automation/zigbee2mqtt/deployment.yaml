@@ -34,6 +34,8 @@ spec:
               containerPort: 8080
               protocol: TCP
           volumeMounts:
+            - name: data
+              mountPath: /data
             - name: ttyacm
               mountPath: /dev/ttyACM0
           livenessProbe:
@@ -58,6 +60,9 @@ spec:
             timeoutSeconds: 1
             periodSeconds: 5
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: zigbee2mqtt-data
         - name: ttyacm
           hostPath:
             path: /dev/ttyACM0
