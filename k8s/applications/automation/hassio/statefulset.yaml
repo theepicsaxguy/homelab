@@ -16,16 +16,10 @@ spec:
       labels:
         app: home-assistant
     spec:
-      # --- START OF CHANGE ---
-      # Add this security context to run the pod as a specific non-root user
-      # and ensure the volume permissions are set correctly.
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      # --- END OF CHANGE ---
       containers:
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
@@ -54,22 +48,14 @@ spec:
           name: media-volume
         - name: data-volume
           mountPath: /data
-        # --- START OF CHANGE ---
-        # The container-level securityContext can now be simplified or removed,
-        # but we'll keep it for defense-in-depth.
-        # The pod-level context already enforces runAsNonRoot implicitly
-        # by setting runAsUser.
         securityContext:
           privileged: false
           allowPrivilegeEscalation: false
           capabilities:
             drop:
             - ALL
-          # This runAsNonRoot: true is now correctly satisfied by the pod-level securityContext
-          runAsNonRoot: true
           seccompProfile:
             type: RuntimeDefault
-        # --- END OF CHANGE ---
   volumeClaimTemplates:
   - metadata:
       name: config

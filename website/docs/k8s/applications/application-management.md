@@ -135,7 +135,9 @@ Home Assistant runs as a StatefulSet. Configuration, media, and data paths each
 use their own persistent volume created through `volumeClaimTemplates`. It
 connects to the shared `mosquitto` service in the `mqtt` namespace—configure the
 integration to use `mosquitto.mqtt.svc.cluster.local` and your Bitwarden
-credentials. The BlueZ sidecar now drops all capabilities and runs
+credentials. The main container starts as `root` so its init system can run, but
+Kubernetes sets the volume group to `1000` so Home Assistant can drop
+privileges. The BlueZ sidecar now drops all capabilities and runs
 unprivileged, reducing risk.
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
