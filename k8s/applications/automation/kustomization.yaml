@@ -5,5 +5,5 @@ resources:
 - project.yaml
 - frigate
 - mqtt
-- haos/
+- hassio/
 - zigbee2mqtt/
