@@ -11,6 +11,10 @@ spec:
       server: '*'
     - namespace: 'mqtt'
       server: '*'
+    - namespace: 'home-assistant'
+      server: '*'
+    - namespace: 'zigbee2mqtt'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

@@ -7,5 +7,6 @@ resources:
 - externalsecret.yaml
 - deployment.yaml
 - service.yaml
+- haos/
 generatorOptions:
   disableNameSuffixHash: true

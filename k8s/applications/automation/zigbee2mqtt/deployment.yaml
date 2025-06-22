@@ -34,13 +34,6 @@ spec:
               containerPort: 8080
               protocol: TCP
           volumeMounts:
-            - name: zigbee2mqtt-data
-              mountPath: /data
-            - name: zigbee2mqtt-config
-              mountPath: /app/configuration.yaml
-              subPath: configuration.yaml
-            - name: zigbee2mqtt-udev
-              mountPath: /run/udev
             - name: ttyacm
               mountPath: /dev/ttyACM0
           livenessProbe:
@@ -65,15 +58,7 @@ spec:
             timeoutSeconds: 1
             periodSeconds: 5
       volumes:
-        - name: zigbee2mqtt-data
-          persistentVolumeClaim:
-            claimName: zigbee2mqtt-data
-        - name: zigbee2mqtt-udev
-          hostPath:
-            path: /run/udev
         - name: ttyacm
           hostPath:
             path: /dev/ttyACM0
-        - name: zigbee2mqtt-config
-          configMap:
-            name: zigbee2mqtt-config
+            type: File

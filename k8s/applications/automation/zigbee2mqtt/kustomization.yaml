@@ -12,7 +12,7 @@ resources:
 configMapGenerator:
 - literals:
   - TZ=Europe/Stockholm
-  name: haos-env
+  name: zigbee2mqtt-env
 
 generatorOptions:
   disableNameSuffixHash: true
