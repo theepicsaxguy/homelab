@@ -132,9 +132,10 @@ BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. T
 ## Home Assistant Notes
 
 Home Assistant runs as a StatefulSet. Configuration, media, and data paths each
-use their own persistent volume created through `volumeClaimTemplates`. The
-bundled Mosquitto broker exposes a `ClusterIP` service so it's reachable only
-inside the cluster. The BlueZ sidecar still runs privileged for Bluetooth
-access, so weigh that risk before enabling it.
+use their own persistent volume created through `volumeClaimTemplates`. It
+connects to the shared `mosquitto` service in the `mqtt` namespace—configure the
+integration to use `mosquitto.mqtt.svc.cluster.local` and your Bitwarden
+credentials. The BlueZ sidecar now drops all capabilities and runs
+unprivileged, reducing risk.
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.
