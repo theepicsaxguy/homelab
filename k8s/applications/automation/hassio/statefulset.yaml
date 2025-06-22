@@ -20,24 +20,24 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-      - name: bluez
-        image: ghcr.io/mysticrenji/bluez-service:v1.1.0
-        securityContext:
-          privileged: true
-      - name: matter-server
-        image: ghcr.io/home-assistant-libs/python-matter-server:stable
-        securityContext:
-          allowPrivilegeEscalation: true
-          capabilities:
-            add:
-              - SYS_ADMIN
-        imagePullPolicy: Always
-        args:
-          - --storage-path=/data
-          - --paa-root-cert-dir=/data/credentials
-          - --bluetooth-adapter=0
-        ports:
-        - containerPort: 5580
+      # - name: matter-server
+      #   image: ghcr.io/home-assistant-libs/python-matter-server:stable
+      #   securityContext:
+      #     allowPrivilegeEscalation: false
+      #     capabilities:
+      #       drop:
+      #         - ALL
+      #     seccompProfile:
+      #       type: RuntimeDefault
+      #     runAsNonRoot: true
+
+      #   imagePullPolicy: Always
+      #   args:
+      #     - --storage-path=/data
+      #     - --paa-root-cert-dir=/data/credentials
+      #     - --bluetooth-adapter=0
+      #   ports:
+      #   - containerPort: 5580
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
         envFrom:
@@ -63,10 +63,10 @@ spec:
           name: config
         - mountPath: /media
           name: media-volume
-        - mountPath: /run/dbus
-          name: d-bus
-        - mountPath: /dev/ttyUSB1
-          name: zigbee
+        # - mountPath: /dev/ttyUSB1
+        #   name: usb-device
+        # - mountPath: /run/dbus
+        #   name: d-bus
         - name: data-volume
           mountPath: /data
         securityContext:
@@ -77,13 +77,16 @@ spec:
             - ALL
           seccompProfile:
             type: RuntimeDefault
-      volumes:
-      - name: d-bus
-        hostPath:
-          path: /run/dbus
-      - name: zigbee
-        hostPath:
-          path: /dev/ttyACM0
+          runAsNonRoot: true
+      #volumes:
+      # - name: d-bus
+      #   hostPath:
+      #     path: /run/dbus
+      #     type: Directory
+      # - name: usb-device
+      #   hostPath:
+      #     path: /dev/ttyUSB1
+      #     type: File
   volumeClaimTemplates:
   - metadata:
       name: config

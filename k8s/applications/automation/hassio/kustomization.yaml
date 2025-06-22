@@ -3,10 +3,8 @@ kind: Kustomization
 namespace: home-assistant
 resources:
 - namespace.yaml
-- externalsecret.yaml
 - http-route.yaml
 - statefulset.yaml
-- deployment.yaml
 - svc.yaml
 
 configMapGenerator:
