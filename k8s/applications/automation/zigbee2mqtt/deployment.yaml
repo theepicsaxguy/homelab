@@ -1,16 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: zigbee2mqtt
+  namespace: zigbee2mqtt
   labels:
     app: zigbee2mqtt
-  name: zigbee2mqtt
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: zigbee2mqtt
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
@@ -23,12 +22,16 @@ spec:
           env:
             - name: TZ
               value: Europe/Stockholm
-            - name: "ZIGBEE2MQTT_DATA"
-              value: "/data"
-            - name: ZIGBEE2MQTT_CONFIG_MQTT_SERVER
-              value: "mqtt://mosquitto"
-          securityContext:
-            privileged: true
+          envFrom:
+            - secretRef:
+                name: zigbee2mqtt-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
           ports:
             - name: http
               containerPort: 8080
@@ -36,28 +39,35 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            # - name: zigbee-stick
+            #   mountPath: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
           livenessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 0
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
             failureThreshold: 3
-            timeoutSeconds: 1
-            periodSeconds: 10
           readinessProbe:
-            tcpSocket:
-              port: 8080
-            initialDelaySeconds: 0
-            failureThreshold: 3
-            timeoutSeconds: 1
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
             periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
           startupProbe:
             tcpSocket:
               port: 8080
-            initialDelaySeconds: 0
             failureThreshold: 30
-            timeoutSeconds: 1
-            periodSeconds: 5
+            periodSeconds: 10
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
+        # This securely passes the host's USB device to the container without privileged mode.
+        # - name: zigbee-stick
+        #   hostPath:
+        #     path: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
+        #     type: CharDevice
