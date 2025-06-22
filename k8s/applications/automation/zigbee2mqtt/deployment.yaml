@@ -15,6 +15,15 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      initContainers:
+        - name: seed-z2m-config
+          image: busybox:1.36
+          command: ["sh", "-c", "if [ ! -f /data/configuration.yaml ]; then cp /config-template/configuration.yaml /data/configuration.yaml; fi"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config-template
+              mountPath: /config-template
       containers:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt:2.4.0
@@ -64,6 +73,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: zigbee2mqtt-data
+        - name: config-template
+          configMap:
+            name: zigbee2mqtt-config
         # This securely passes the host's USB device to the container without privileged mode.
         # - name: zigbee-stick
         #   hostPath:
