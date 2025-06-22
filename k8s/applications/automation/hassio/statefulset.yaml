@@ -20,35 +20,24 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-      - name: bluez
-        image: ghcr.io/mysticrenji/bluez-service:v1.1.0
-        securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-          seccompProfile:
-            type: RuntimeDefault
-          runAsNonRoot: true
-      - name: matter-server
-        image: ghcr.io/home-assistant-libs/python-matter-server:stable
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-              - ALL
-          seccompProfile:
-            type: RuntimeDefault
-          runAsNonRoot: true
+      # - name: matter-server
+      #   image: ghcr.io/home-assistant-libs/python-matter-server:stable
+      #   securityContext:
+      #     allowPrivilegeEscalation: false
+      #     capabilities:
+      #       drop:
+      #         - ALL
+      #     seccompProfile:
+      #       type: RuntimeDefault
+      #     runAsNonRoot: true
 
-        imagePullPolicy: Always
-        args:
-          - --storage-path=/data
-          - --paa-root-cert-dir=/data/credentials
-          - --bluetooth-adapter=0
-        ports:
-        - containerPort: 5580
+      #   imagePullPolicy: Always
+      #   args:
+      #     - --storage-path=/data
+      #     - --paa-root-cert-dir=/data/credentials
+      #     - --bluetooth-adapter=0
+      #   ports:
+      #   - containerPort: 5580
       - name: home-assistant
         image: homeassistant/home-assistant:2025.6.1
         envFrom:
@@ -89,7 +78,7 @@ spec:
           seccompProfile:
             type: RuntimeDefault
           runAsNonRoot: true
-      volumes:
+      #volumes:
       # - name: d-bus
       #   hostPath:
       #     path: /run/dbus
