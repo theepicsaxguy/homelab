@@ -49,6 +49,10 @@ spec:
           name: config
         - mountPath: /media
           name: media-volume
+        - name: hassio-secrets
+          mountPath: /config/secrets.yaml
+          subPath: secrets.yaml
+          readOnly: true
         - name: data-volume
           mountPath: /data
         securityContext:
@@ -65,6 +69,9 @@ spec:
       - name: ha-config
         configMap:
           name: home-assistant-config
+      - name: hassio-secrets
+        secret:
+          secretName: hassio-secrets
   volumeClaimTemplates:
   - metadata:
       name: config
