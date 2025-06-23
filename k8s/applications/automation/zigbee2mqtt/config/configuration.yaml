@@ -11,6 +11,7 @@ mqtt:
 # Serial device configuration
 serial:
   port: 'tcp://10.0.10.160:20108'
+  adapter: deconz
 # Frontend configuration
 frontend:
   enabled: true
