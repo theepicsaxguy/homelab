@@ -17,7 +17,7 @@ spec:
       storageClassName: "longhorn"
       resources:
         requests:
-          storage: 5Gi
+          storage: 1i
   - metadata:
       name: omada-logs
     spec:
@@ -25,7 +25,7 @@ spec:
       storageClassName: "longhorn"
       resources:
         requests:
-          storage: 2Gi
+          storage: 1Gi
   template:
     metadata:
       labels:
