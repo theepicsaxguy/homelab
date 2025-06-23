@@ -1,14 +1,22 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: zigbee2mqtt
+
+configMapGenerator:
+- name: zigbee2mqtt-config
+  files:
+  - config/configuration.yaml
+  - config/devices.yaml
+  - config/groups.yaml
+
 resources:
 - namespace.yaml
 - http-route.yaml
 - deployment.yaml
 - svc.yaml
 - pvc.yaml
-- configmap.yaml
 - external-secret.yaml
+
 
 generatorOptions:
   disableNameSuffixHash: true
