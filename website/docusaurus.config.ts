@@ -18,8 +18,8 @@ const config: Config = {
   organizationName: 'theepicsaxguy', // Usually your GitHub org/user name.
   projectName: 'homelab', // Usually your repo name.
 
-  onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -34,15 +34,13 @@ const config: Config = {
       'classic',
       {
         docs: {
-          sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/theepicsaxguy/homelab/tree/main/packages/create-docusaurus/templates/shared/',
+          sidebarPath: 'sidebars.ts',
+          editUrl: 'https://github.com/theepicsaxguy/homelab/edit/main/website/',
         },
-        blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
+        blog: false,
       } satisfies Preset.Options,
     ],
   ],
@@ -117,7 +115,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} theepicsaxguy, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} theepicsaxguy. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
