@@ -1,33 +1,23 @@
-# Let new devices join our zigbee network
-permit_join: true
-# Home Assistant integration (MQTT discovery)
-homeassistant: true
-
-# MQTT settings. User and password will be injected from the ExternalSecret.
+homeassistant:
+  enabled: true
 mqtt:
-  base_topic: zigbee2mqtt
-  server: "mqtt://mosquitto:1883"
-
-# Serial device configuration
+  server: mqtt://mosquitto:1883
+  user: addons
+  password: password
 serial:
-  port: 'tcp://10.0.10.160:20108'
+  port: tcp://10.0.10.160:20108
   adapter: deconz
-# Frontend configuration
 frontend:
   enabled: true
   package: zigbee2mqtt-windfront
   port: 8080
 
-# Advanced configuration
-advanced:
-  log_level: info
-  channel: 25
-  availability:
-    active:
-      timeout: 30
-    passive:
-      timeout: 2500
-
+availability:
+  enabled: true
+  active:
+    timeout: 30
+  passive:
+    timeout: 2500
 version: 4
 ## Map devices to persistent /data directory
 devices: devices.yaml
