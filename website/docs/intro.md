@@ -76,7 +76,3 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
   - CI/CD workflow setup
   - Renovate and Dependabot settings
   - Repo maintenance
-
-## Website Updates
-
-All updates are available in the documentation. There is no separate blog.
