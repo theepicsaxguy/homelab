@@ -5,6 +5,14 @@ namespace: media
 
 resources:
   - http-route.yaml
+  - externalsecret.yaml
   - statefulset.yaml
   - svc.yaml
+
+configMapGenerator:
+  - name: sabnzbd-seed
+    options:
+      disableNameSuffixHash: true
+    files:
+      - sabnzbd.ini.tpl
 
