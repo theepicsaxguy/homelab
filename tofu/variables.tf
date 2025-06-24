@@ -44,6 +44,7 @@ variable "talos_image" {
 variable "nodes_config" {
   description = "Per-node configuration map"
   type = map(object({
+    host_node     = optional(string) #  "The Proxmox node to schedule this VM on. If omitted, defaults to the `name` specified in the `var.proxmox` provider configuration."
     machine_type  = string
     ip            = string
     mac_address   = string

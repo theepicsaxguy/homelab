@@ -1,3 +1,5 @@
+# tofu/main.tf
+
 locals {
   node_defaults = {
     worker       = var.defaults_worker
@@ -15,7 +17,10 @@ locals {
       ),
       { for k, v in config : k => v if v != null },
       {
-        update = var.upgrade_control.enabled && name == local.current_upgrade_node
+        # Use nonsensitive() to prevent the sensitivity of var.proxmox
+        # from tainting the entire nodes_with_upgrade map.
+        host_node = coalesce(config.host_node, nonsensitive(var.proxmox.name))
+        update    = var.upgrade_control.enabled && name == local.current_upgrade_node
       }
     )
   }
@@ -53,4 +58,3 @@ module "talos" {
 
   nodes = local.nodes_with_upgrade
 }
-
