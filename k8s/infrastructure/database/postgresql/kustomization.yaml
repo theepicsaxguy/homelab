@@ -4,6 +4,7 @@ namespace: postgres-operator
 
 resources:
   - namespace.yaml
+  - externalsecret.yaml
 
 helmCharts:
   - name: postgres-operator
