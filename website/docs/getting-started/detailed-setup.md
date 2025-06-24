@@ -36,16 +36,6 @@ proxmox = {
   username     = "root@pam"           # Your Proxmox username
   api_token    = "USER@pam!ID=TOKEN"  # Your Proxmox API token
 }
-
-talos_image = {
-  version           = "<see https://github.com/siderolabs/talos/releases>"           # Current Talos version
-  update_version    = "<see https://github.com/siderolabs/talos/releases>"          # Target Talos version for updates
-  schematic_path    = "talos/image/schematic.yaml.tftpl"
-  platform          = "proxmox"
-  arch              = "amd64"
-  proxmox_datastore = "local"            # Your Proxmox datastore name
-  factory_url       = "https://factory.talos.dev"
-}
 ```
 
 Initialize the OpenTofu configuration:
@@ -66,17 +56,6 @@ proxmox = {
   insecure     = false
   username     = "root"
   api_token    = "root@pam!token_id=your_token_secret"
-}
-
-talos_image = {
-  version           = "<see https://github.com/siderolabs/talos/releases>"
-  schematic_path    = "talos/image/schematic.yaml.tftpl"
-  update_version    = "<see https://github.com/siderolabs/talos/releases>"
-  update_schematic_path = "talos/image/schematic.yaml.tftpl"
-  platform          = "proxmox"
-  arch              = "amd64"
-  proxmox_datastore = "local"
-  factory_url       = "https://factory.talos.dev"
 }
 ```
 

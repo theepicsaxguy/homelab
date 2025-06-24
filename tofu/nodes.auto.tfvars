@@ -29,14 +29,20 @@ nodes_config = {
     ip           = "10.25.150.22"
     mac_address  = "bc:24:11:c9:22:c3"
     vm_id        = 8202
-    memory = {
-      dedicated = 12046
-    }
   }
   "work-02" = {
     machine_type = "worker"
     ip           = "10.25.150.23"
     mac_address  = "bc:24:11:6f:20:03"
     vm_id        = 8203
+    disks = {
+      longhorn = {
+        device      = "/dev/sdb"
+        size        = "180G"
+        type        = "scsi"
+        mountpoint  = "/var/lib/longhorn"
+        unit_number = 1
+      }
+    }
   }
 }
