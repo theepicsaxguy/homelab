@@ -25,7 +25,7 @@ spec:
     spec:
       initContainers:
         - name: seed-config
-          image: alpine:3.20
+          image: alpine:3.22
           envFrom:
             - secretRef: {name: sabnzbd-secrets}
           command: ["/bin/sh","-c"]
