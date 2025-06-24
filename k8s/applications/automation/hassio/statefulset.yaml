@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: home-assistant
-        image: homeassistant/home-assistant:2025.6.2
+        image: homeassistant/home-assistant:2025.6.3
         env:
         - name: TZ
           value: "Europe/Stockholm"
