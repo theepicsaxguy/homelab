@@ -1,31 +1,32 @@
-# tofu/main.tf
-
 locals {
   node_defaults = {
     worker       = var.defaults_worker
     controlplane = var.defaults_controlplane
   }
 
-
-  # Prepare nodes configuration with upgrade flags
   nodes_with_upgrade = {
-    for name, config in var.nodes_config :
-    name => merge(
+    for name, config in var.nodes_config : name => merge(
       try(
         local.node_defaults[config.machine_type],
         error("machine_type '${config.machine_type}' has no defaults")
       ),
       { for k, v in config : k => v if v != null },
       {
-        # Use nonsensitive() to prevent the sensitivity of var.proxmox
-        # from tainting the entire nodes_with_upgrade map.
+        disks = {
+          for disk_name, disk_defaults in try(local.node_defaults[config.machine_type].disks, {}) :
+          disk_name => merge(
+            disk_defaults,
+            coalesce(lookup(coalesce(config.disks, {}), disk_name, null), {})
+          )
+        }
+      },
+      {
         host_node = coalesce(config.host_node, nonsensitive(var.proxmox.name))
         update    = var.upgrade_control.enabled && name == local.current_upgrade_node
       }
     )
   }
 }
-
 module "talos" {
   source = "./talos"
 
