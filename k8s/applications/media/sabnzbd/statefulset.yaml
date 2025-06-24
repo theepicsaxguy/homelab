@@ -23,6 +23,21 @@ spec:
       labels:
         app: sabnzbd
     spec:
+      initContainers:
+        - name: seed-config
+          image: alpine:3.20
+          envFrom:
+            - secretRef: {name: sabnzbd-secrets}
+          command: ["/bin/sh","-c"]
+          args:
+            - |
+              set -e
+              if [ ! -f /config/sabnzbd.ini ]; then
+                envsubst < /seed/sabnzbd.ini.tpl > /config/sabnzbd.ini
+              fi
+          volumeMounts:
+            - {name: seed,           mountPath: /seed}
+            - {name: sabnzbd-config, mountPath: /config}
       containers:
         - name: sabnzbd
           image: ghcr.io/linuxserver/sabnzbd:4.5.1 # renovate: docker=ghcr.io/linuxserver/sabnzbd
@@ -69,6 +84,8 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
+        - name: seed
+          configMap: {name: sabnzbd-seed}
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
