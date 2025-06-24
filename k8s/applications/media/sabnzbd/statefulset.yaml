@@ -26,6 +26,14 @@ spec:
       resources:
         requests:
           storage: 40Gi
+  - metadata:
+      name: complete
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 40Gi
   template:
     metadata:
       labels:
@@ -69,6 +77,8 @@ spec:
               mountPath: /app/data
             - name: incomplete
               mountPath: /downloads/incomplete
+            - name: complete
+              mountPath: /downloads/complete
           livenessProbe:
             httpGet:
               path: /api?mode=version
