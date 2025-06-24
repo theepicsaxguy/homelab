@@ -8,11 +8,4 @@ resources:
   - externalsecret.yaml
   - statefulset.yaml
   - svc.yaml
-
-configMapGenerator:
-  - name: sabnzbd-seed
-    options:
-      disableNameSuffixHash: true
-    files:
-      - sabnzbd.ini.tpl
-
+  - configmap-script.yaml

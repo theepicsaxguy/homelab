@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-init-script
+  namespace: media
+data:
+  configure.sh: |
+    #!/bin/sh
+    set -e
+
+    CONFIG_FILE="/config/sabnzbd.ini"
+
+    # Only run if the config file doesn't exist
+    if [ -f "$CONFIG_FILE" ]; then
+        echo "--- Configuration file already exists, skipping creation. ---"
+        exit 0
+    fi
+
+    echo "--- Creating default SABnzbd configuration ---"
+
+    # Use a 'heredoc' to write the configuration file.
+    cat > $CONFIG_FILE << EOF
+    [misc]
+    api_key = ${SAB_API_KEY}
+    host_whitelist = sabnzbd, sabnzbd.media, sabnzbd.media.svc, sabnzbd.media.svc.cluster.local, sabnzbd.pc-tips.se
+
+    [servers]
+    [[server0]]
+    name = PrimaryUsenet
+    host = ${USENET_HOST}
+    port = 563
+    username = ${USENET_USERNAME}
+    password = ${USENET_PASSWORD}
+    enable = 1
+    ssl = 1
+    EOF
+
+    echo "--- Configuration complete, final config file: ---"
+    cat $CONFIG_FILE
