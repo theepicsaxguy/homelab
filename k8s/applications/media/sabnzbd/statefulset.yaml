@@ -18,6 +18,14 @@ spec:
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: incomplete
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 40Gi
   template:
     metadata:
       labels:
@@ -59,7 +67,7 @@ spec:
               mountPath: /config
             - name: media-share
               mountPath: /app/data
-            - name: sabnzbd-incomplete
+            - name: incomplete
               mountPath: /downloads/incomplete
           livenessProbe:
             httpGet:
@@ -85,5 +93,3 @@ spec:
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
-        - name: sabnzbd-incomplete
-          emptyDir: {}

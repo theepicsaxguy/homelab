@@ -8,4 +8,11 @@ resources:
   - externalsecret.yaml
   - statefulset.yaml
   - svc.yaml
-  - configmap-script.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: sabnzbd-init-script
+    files:
+      - config/configure.sh
