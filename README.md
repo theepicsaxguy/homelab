@@ -2,16 +2,39 @@
 
 [![CI](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml/badge.svg)](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml) ![License](https://img.shields.io/github/license/theepicsaxguy/homelab)
 
-This is my personal homelab, managed entirely with GitOps. I built it to learn enterprise patterns and run self-hosted apps on a stable Kubernetes foundation. Everything here is the blueprint I use to automate and maintain my cluster. I'm sharing it to document what I've learned and to help anyone on a similar path.
-[Quick Start →](https://homelab.orkestack.com/docs/quick-start)
+After rebuilding my homelab one too many times, I committed to managing it entirely with GitOps. This repository is the result: a blueprint for a resilient, production-inspired Kubernetes cluster.
 
-## Core Technologies
+I'm sharing it to document my own journey and to help others build a stable, maintainable homelab without repeating my mistakes.
+ **[Explore the Documentation](https://homelab.orkestack.com/)** │ **[See the Architecture](https://homelab.orkestack.com/docs/architecture)** │ **[Get Started](https://homelab.orkestack.com/docs/quick-start)**
 
-- **Orchestration:** Kubernetes on Talos Linux
-- **Infrastructure as Code:** OpenTofu
-- **GitOps:** Argo CD
-- **Secrets:** Bitwarden
-- **DNS & Security:** Cloudflare
+## The Stack
+
+ This lab is built on a foundation of powerful, open-source tools that work together to create a fully automated system.
+
+| Category           | Tool                                                                                               | Description                                                   |
+| ------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| **Hypervisor**     | [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment)                               | Manages the bare‑metal server and virtual machines.           |
+| **OS**             | [Talos Linux](https://www.talos.dev/)                                                              | Minimal, secure, API‑managed operating system for Kubernetes. |
+| **Infrastructure** | [OpenTofu](https://opentofu.org/)                                                                  | Declaratively provisions all infrastructure (IaC).            |
+| **GitOps Engine**  | [Argo CD](https://argo-cd.readthedocs.io/en/stable/)                                               | Deploys and manages every app from this Git repo.             |
+| **Networking**     | [Cilium](https://cilium.io/)                                                                       | eBPF‑based networking, security, and observability.           |
+| **Storage**        | [Longhorn](https://longhorn.io/)                                                                   | Distributed block‑storage for stateful workloads.             |
+| **Secrets**        | [External Secrets](https://external-secrets.io/latest/)                                            | Syncs secrets from Bitwarden into Kubernetes.                 |
+| **Authentication** | [Authentik](https://goauthentik.io/)                                                               | Single Sign‑On (SSO) across all services.                     |
+| **Certificates**   | [cert‑manager](https://cert-manager.io/)                                                           | Automates TLS certificate issuance and renewal.               |
+| **API Gateway**    | [Gateway API](https://gateway-api.sigs.k8s.io/)                                                    | Next‑generation Kubernetes ingress and traffic management.    |
+| **Database**       | [Zalando Postgres Operator](https://opensource.zalando.com/postgres-operator/docs/quickstart.html) | Manages highly‑available PostgreSQL clusters.                 |
+| **CI / Checks**    | [Kubechecks](https://github.com/zapier/kubechecks)                                                 | Validates Argo CD changes before rollout.                     |
+| **Tunnel**         | [Cloudflared](https://github.com/cloudflare/cloudflared)                                           | Creates secure Cloudflare tunnels for private services.       |
+
+---
+
+## Hardware
+
+| Name   | Device                      | CPU                   | RAM           | Storage           | Purpose         |
+|--------|-----------------------------|-----------------------|---------------|-------------------|-----------------|
+| Host3  | Dell Precision Tower 7810   | 2× Xeon E5-2650 v3    | 78 GB DDR4    | 1x 1TB SSD - 1x 1TB Nvme SSD  | Hypervisor      |
+| NAS    | Supermicro X8DTU            | Xeon E5620            | 16 GB DDR3    | 2x 3TB HDD Mirror   | Shared storage  |
 
 ---
 
@@ -29,7 +52,7 @@ This is my personal homelab, managed entirely with GitOps. I built it to learn e
 - **Secure by Default:** Non-root containers, network policies, and single sign-on are baked in from the start.
 - **Real-World Learning:** I'm applying enterprise ideas at home so I can tinker and pick up new skills.
 
-## 👥 Who Is This For?
+## Who Is This For?
 
 - **The Learner:** Understand how a production-grade Kubernetes stack really works.
 - **The Tinkerer:** Deploy self-hosted apps on a stable base without endless upkeep.
@@ -37,33 +60,17 @@ This is my personal homelab, managed entirely with GitOps. I built it to learn e
 
 ---
 
-## Architecture Overview
+## Folder Structure
 
-```mermaid
-flowchart TD
-    subgraph "You (The User)"
-        A[1. Commit to Git]
-    end
-
-    subgraph "Automation Pipeline"
-        B(GitHub Actions) -- 2. Validates & Tests --> C
-        C{release-please} -- 3. Creates Release PR --> D
-        D[Merge to `main`]
-    end
-
-    subgraph "Kubernetes Cluster (The Magic)"
-        E[ArgoCD] -- 4. Syncs Changes --> F
-        F(Core Infrastructure) -- Manages --> G[Applications]
-        G -- Deploys on --> H[Talos Linux Nodes]
-    end
-
-    subgraph "External World"
-        I[Cloudflare] -- Protects & Routes --> F & G
-        J[Bitwarden] -- Provides Secrets --> F & G
-    end
-
-    A --> B
-    D --> E
+```shell
+.
+├── 📂 website                # Documentation site
+├── 📂 k8s                 # Kubernetes manifests
+│   ├── 📂 applications            # Applications
+│   ├── 📂 infrastructure           # Infrastructure components
+├── 📂 images                 # custom containers
+└── 📂 tofu                # Tofu configuration
+    └── 📂 talos       # Talos configuration
 ```
 
 More details are in [Architecture](https://homelab.orkestack.com/docs/architecture).
@@ -78,7 +85,7 @@ More details are in [Architecture](https://homelab.orkestack.com/docs/architectu
 
 ---
 
-## ⚠ Limitations
+## Limitations
 
 These docs describe how my cluster works today. Hardware or configuration changes
 could make some steps outdated. Treat them as a reference to adapt rather than a

@@ -11,33 +11,37 @@ spec:
       app: sabnzbd
   volumeClaimTemplates:
   - metadata:
-      name: sabnzbd-config
+      name: config
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: incomplete
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 40Gi
   template:
     metadata:
       labels:
         app: sabnzbd
     spec:
       initContainers:
-        - name: seed-config
-          image: alpine:3.22
+        - name: configure-sabnzbd
+          image: alpine:3.20
           envFrom:
-            - secretRef: {name: sabnzbd-secrets}
-          command: ["/bin/sh","-c"]
-          args:
-            - |
-              set -e
-              if [ ! -f /config/sabnzbd.ini ]; then
-                envsubst < /seed/sabnzbd.ini.tpl > /config/sabnzbd.ini
-              fi
+            - secretRef:
+                name: sabnzbd-secrets
+          # The command now simply executes the mounted script
+          command: ["/bin/sh", "/config-script/configure.sh"]
           volumeMounts:
-            - {name: seed,           mountPath: /seed}
-            - {name: sabnzbd-config, mountPath: /config}
+            - {name: config, mountPath: /config}
+            - {name: config-script, mountPath: /config-script}
       containers:
         - name: sabnzbd
           image: ghcr.io/linuxserver/sabnzbd:4.5.1 # renovate: docker=ghcr.io/linuxserver/sabnzbd
@@ -58,14 +62,12 @@ spec:
               value: '2501'
             - name: TZ
               value: 'Europe/Stockholm'
-            - name: HOST_WHITELIST_ENTRIES
-              value: 'sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se'
           volumeMounts:
-            - name: sabnzbd-config
+            - name: config
               mountPath: /config
             - name: media-share
               mountPath: /app/data
-            - name: sabnzbd-incomplete
+            - name: incomplete
               mountPath: /downloads/incomplete
           livenessProbe:
             httpGet:
@@ -84,10 +86,10 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: seed
-          configMap: {name: sabnzbd-seed}
+        - name: config-script
+          configMap:
+            name: sabnzbd-init-script
+            defaultMode: 0755
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
-        - name: sabnzbd-incomplete
-          emptyDir: {}
