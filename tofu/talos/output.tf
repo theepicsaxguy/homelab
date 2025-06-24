@@ -11,7 +11,3 @@ output "kube_config" {
   value     = talos_cluster_kubeconfig.this
   sensitive = true
 }
-
-output "image_key" {
-  value = local.image_key
-}

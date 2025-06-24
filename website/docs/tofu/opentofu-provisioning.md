@@ -5,7 +5,7 @@ title: Provision Kubernetes with OpenTofu and Talos
 # Kubernetes Provisioning with OpenTofu
 
 This guide explains my infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster
-running Talos OS on Proxmox
+running Talos OS on Proxmox.
 
 ## Deployment Process
 
@@ -13,6 +13,8 @@ Before you begin deployment, ensure your SSH key is loaded:
 
 ```bash
 eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
+```
+
 ## Infrastructure Overview
 
 ### Node Architecture
@@ -35,7 +37,7 @@ Worker Nodes:
     - cilium networking
     - CSI support
     - GPU support (optional)
-````
+```
 
 ### Network Architecture
 
@@ -55,7 +57,6 @@ Worker Nodes:
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
 ├── terraform.tfvars  # Variable definitions
-├── talos_image.auto.tfvars  # Talos image settings
 └── talos/            # Talos cluster module
     ├── config-secrets.tf     # Machine secrets
     ├── config-client.tf      # Client configuration
@@ -93,31 +94,39 @@ Talos is my node OS because it offers:
 
 ### Node Specs
 
-- Node definitions now pull from two variables—`defaults_worker` and `defaults_controlplane`. Each node only declares what differs from these defaults.
+Node definitions now pull from two base variables—`defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This new structure simplifies configuration and reduces repetition.
+
+If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
+
+A key improvement is that `host_node` is now optional. If you omit it, the virtual machine will be scheduled on the Proxmox node specified in your main provider configuration (`var.proxmox.name`). This is ideal for single-host setups.
 
 ```hcl
-module "talos" {
-  nodes = {
-    "ctrl-00" = {
-      machine_type  = "controlplane"
-      ip            = "10.0.0.1"
-      mac_address   = "00:00:00:00:00:01"
-      vm_id         = 8101
-      ram_dedicated = 7168 # overrides the control plane default
-    }
-    "work-00" = {
-      machine_type = "worker"
-      ip           = "10.0.0.2"
-      mac_address  = "00:00:00:00:00:02"
-      vm_id        = 8201
-      # inherits disk and resource values from defaults_worker
-    }
+# tofu/nodes.auto.tfvars example
+nodes_config = {
+  # This controlplane node inherits its CPU and RAM from defaults_controlplane
+  "ctrl-00" = {
+    machine_type  = "controlplane"
+    ip            = "10.25.150.11"
+    mac_address   = "bc:24:11:XX:XX:X1"
+    vm_id         = 8101
+  }
+  # This worker inherits all its specs from defaults_worker
+  "work-00" = {
+    machine_type = "worker"
+    ip           = "10.25.150.21"
+    mac_address  = "bc:24:11:XX:XX:X2"
+    vm_id        = 8201
+  }
+  # This worker inherits defaults but overrides the dedicated RAM
+   "work-01" = {
+    machine_type  = "worker"
+    ip            = "10.25.150.22"
+    mac_address   = "bc:24:11:XX:XX:X3"
+    vm_id         = 8202
+    ram_dedicated = 12240 # Override default worker RAM
   }
 }
 ```
-
-The defaults keep shared settings like CPU, RAM, and disk layout in one place.
-If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
 > Note: At least one node must have `machine_type` set to `controlplane`. OpenTofu validates this during `tofu plan`.
 
@@ -129,17 +138,19 @@ OpenTofu also enforces a few sanity checks:
 
 ### Disk Layout
 
-Additional disks are defined per node in a `disks` map. Each disk now requires a
-`unit_number` which determines the Proxmox interface, for example `scsi1`:
+Additional disks can be defined per node in a `disks` map. This allows you to override the default disk configuration for specific nodes. For example, you can assign a larger Longhorn volume to a particular worker. Each disk now requires a `unit_number` which determines the Proxmox interface, for example `scsi1`:
 
 ```hcl
-disks = {
-  longhorn = {
-    device      = "/dev/sdb"
-    size        = "180G"
-    type        = "scsi"
-    mountpoint  = "/var/lib/longhorn"
-    unit_number = 1
+# Example of a worker node with an overridden disk size
+"work-02" = {
+  machine_type = "worker"
+  ip           = "10.25.150.23"
+  mac_address  = "bc:24:11:XX:XX:X4"
+  vm_id        = 8203
+  disks = {
+    longhorn = {
+      size = "500G" # This overrides the default size
+    }
   }
 }
 ```
@@ -152,7 +163,6 @@ disks = {
   - iSCSI tools
 - Automatically downloaded to Proxmox
 - Downloads are deduplicated per Proxmox node and image variant. A helper local builds `<host>_<image-id>` keys so VMs and downloads stay in sync.
-- The Talos module exports this mapping as `image_key` for use in future automation.
 
 ## Machine Configuration
 
@@ -271,33 +281,15 @@ cluster = {
 
 nodes = {
   "ctrl-00" = {
-    host_node     = "host3"
+    # host_node is optional and defaults to proxmox.name
     machine_type  = "controlplane"
     ip            = "10.25.150.11"
     mac_address   = "bc:24:11:XX:XX:XX"
     vm_id         = 8101
-    cpu           = 6
-    ram_dedicated = 6144
-    update        = false
-    igpu          = false
   }
   # Additional nodes...
 }
 ```
-
-### Talos image version
-
-Set the OS image version in `tofu/talos_image.auto.tfvars`:
-
-```hcl
-talos_image = {
-  version        = "v1.10.3"
-  update_version = "v1.10.3"
-  schematic_path = "talos/image/schematic.yaml.tftpl"
-}
-```
-
-Change these version strings to match the Talos release you want to use.
 
 ### 3. Deployment Steps
 

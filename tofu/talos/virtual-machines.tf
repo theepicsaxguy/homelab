@@ -29,8 +29,6 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   memory {
     dedicated = each.value.ram_dedicated # minimum (guaranteed)
-    shared    = each.value.ram_dedicated # maximum = minimum ⇒ no ballooning
-    floating  = 0                        # explicit: don’t over-commit
   }
 
 
