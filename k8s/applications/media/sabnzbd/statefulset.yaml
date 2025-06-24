@@ -41,7 +41,7 @@ spec:
     spec:
       initContainers:
         - name: configure-sabnzbd
-          image: alpine:3.20
+          image: alpine:3.22
           envFrom:
             - secretRef:
                 name: sabnzbd-secrets
