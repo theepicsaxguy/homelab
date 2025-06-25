@@ -114,8 +114,7 @@ I use NFS for shared media files:
 
 ## OpenWebUI Notes
 
-OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC. The
-`OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
+OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC and merges accounts by email so users can sign in with any provider. The `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
 
 Chrome and Ollama define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
 Mosquitto and Unrar use similar probes. Pedro Bot relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar can run on any available node.

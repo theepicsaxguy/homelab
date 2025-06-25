@@ -94,6 +94,8 @@ spec:
               value: '60'
             - name: USER_AGENT
               value: 'OpenWebUI/0.6.15'
+            - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+              value: 'true'
           tty: true
           livenessProbe:
             httpGet:
