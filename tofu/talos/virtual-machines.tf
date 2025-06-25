@@ -77,8 +77,6 @@ resource "proxmox_virtual_environment_vm" "this" {
     replace_triggered_by = [
       terraform_data.image_version
     ]
-
-    create_before_destroy = true
   }
   boot_order = ["scsi0"]
 

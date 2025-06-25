@@ -13,6 +13,18 @@ generatorOptions:
   disableNameSuffixHash: true
 
 configMapGenerator:
-  - name: sabnzbd-init-script
-    files:
-      - config/configure.sh
+  - name: sabnzbd-env-config
+    literals:
+      # [misc] section
+      - SABNZBD__MISC__HOST_WHITELIST="sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
+      - SABNZBD__MISC__PORT="8080"
+      - SABNZBD__MISC__CACHE_LIMIT="256M"
+      - SABNZBD__MISC__DOWNLOAD_DIR="/downloads/incomplete"
+      - SABNZBD__MISC__COMPLETE_DIR="/app/data/downloads"
+      # [[news.newshosting.com]] section
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__NAME="news.newshosting.com"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__DISPLAYNAME="news.newshosting.com"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__PORT="563"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__CONNECTIONS="30"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL="1"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__ENABLE="1"
