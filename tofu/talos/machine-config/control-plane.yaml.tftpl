@@ -43,13 +43,11 @@ cluster:
   allowSchedulingOnControlPlanes: false
   clusterName: ${cluster_domain}
   apiServer:
-    # extraArgs:
-    #   oidc-issuer-url: https://authelia.${cluster_domain}
-    #   oidc-client-id: kubectl
-    #   oidc-username-claim: preferred_username
-    #   oidc-username-prefix: 'authelia:'
-    #   oidc-groups-claim: groups
-    #   oidc-groups-prefix: 'authelia:'
+    extraArgs:
+      oidc-issuer-url: https://sso.${cluster_domain}/application/o/kubectl/
+      oidc-client-id: kubectl
+      oidc-username-claim: preferred_username
+      oidc-groups-claim: groups
   network:
     dnsDomain: ${cluster_domain}
     cni:

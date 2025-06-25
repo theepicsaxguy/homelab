@@ -34,6 +34,21 @@ graph LR
     C -.-> F[Authentik Server]
 ```
 
+## Kubernetes API Authentication
+
+Cluster logins go through Authentik using a dedicated OAuth2 provider:
+
+```yaml
+apiServer:
+  extraArgs:
+    oidc-issuer-url: https://sso.your.domain.tld/application/o/kubectl/
+    oidc-client-id: kubectl
+    oidc-username-claim: preferred_username
+    oidc-groups-claim: groups
+```
+
+Add your users to the **Kubectl Users** group in Authentik to grant access.
+
 ## Blueprint Users
 
 Two sample accounts are bootstrapped via Authentik blueprints to show how group membership controls access:

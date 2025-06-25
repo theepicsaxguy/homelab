@@ -30,6 +30,7 @@ entries:
         - !Find [authentik_core.group, [name, "Media Users"]]
         - !Find [authentik_core.group, [name, "Open WebUI Users"]]
         - !Find [authentik_core.group, [name, "Karakeep Users"]]
+        - !Find [authentik_core.group, [name, "Kubectl Users"]]
 
   - id: user-standard
     model: authentik_core.user
@@ -50,3 +51,4 @@ entries:
         - !Find [authentik_core.group, [name, "Media Users"]]
         - !Find [authentik_core.group, [name, "Open WebUI Users"]]
         - !Find [authentik_core.group, [name, "Karakeep Users"]]
+        - !Find [authentik_core.group, [name, "Kubectl Users"]]

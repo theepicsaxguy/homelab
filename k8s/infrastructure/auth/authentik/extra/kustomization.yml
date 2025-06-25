@@ -19,6 +19,7 @@ configMapGenerator:
       - ./blueprints/apps-media.yaml
       - ./blueprints/apps-openwebui.yaml
       - ./blueprints/apps-karakeep.yaml
+      - ./blueprints/apps-kubernetes.yaml
       - ./blueprints/groups.yaml
       - ./blueprints/users.yaml
       - ./blueprints/brands.yaml
