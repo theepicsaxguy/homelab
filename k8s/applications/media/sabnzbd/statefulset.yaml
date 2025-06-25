@@ -18,38 +18,11 @@ spec:
       resources:
         requests:
           storage: 5Gi
-  - metadata:
-      name: incomplete
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
-      resources:
-        requests:
-          storage: 40Gi
-  - metadata:
-      name: complete
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
-      resources:
-        requests:
-          storage: 40Gi
   template:
     metadata:
       labels:
         app: sabnzbd
     spec:
-      initContainers:
-        - name: configure-sabnzbd
-          image: alpine:3.22
-          envFrom:
-            - secretRef:
-                name: sabnzbd-secrets
-          # The command now simply executes the mounted script
-          command: ["/bin/sh", "/config-script/configure.sh"]
-          volumeMounts:
-            - {name: config, mountPath: /config}
-            - {name: config-script, mountPath: /config-script}
       containers:
         - name: sabnzbd
           image: ghcr.io/linuxserver/sabnzbd:4.5.1 # renovate: docker=ghcr.io/linuxserver/sabnzbd
@@ -63,6 +36,11 @@ spec:
               memory: '512Mi'
           ports:
             - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: sabnzbd-secrets
+            - configMapRef:
+                name: sabnzbd-env-config
           env:
             - name: PUID
               value: '2501'
@@ -75,10 +53,8 @@ spec:
               mountPath: /config
             - name: media-share
               mountPath: /app/data
-            - name: incomplete
+            - name: incomplete-downloads
               mountPath: /downloads/incomplete
-            - name: complete
-              mountPath: /downloads/complete
           livenessProbe:
             httpGet:
               path: /api?mode=version
@@ -96,10 +72,8 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: config-script
-          configMap:
-            name: sabnzbd-init-script
-            defaultMode: 0755
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
+        - name: incomplete-downloads
+          emptyDir: {}

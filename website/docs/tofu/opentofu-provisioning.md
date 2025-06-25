@@ -413,7 +413,7 @@ Rebuild using OpenTofu:
 tofu taint 'module.talos.proxmox_virtual_environment_vm.this["failed-node"]'
 
 # Recreate node
-tofu apply -target=module.talos.proxmox_virtual_environment_vm.this["failed-node"]
+tofu apply -target='module.talos.proxmox_virtual_environment_vm.this["failed-node"]'
 ```
 
 ## Security Implementation
