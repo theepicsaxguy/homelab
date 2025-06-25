@@ -73,3 +73,9 @@ entries:
       name: Karakeep Users
     attrs:
       name: Karakeep Users
+  - id: kubectl-users
+    model: authentik_core.group
+    identifiers:
+      name: Kubectl Users
+    attrs:
+      name: Kubectl Users
