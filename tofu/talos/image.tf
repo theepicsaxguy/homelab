@@ -1,23 +1,27 @@
 # tofu/talos/image.tf
 
-locals {
-  # Determine if any node in the cluster has igpu=true
-  needs_nvidia_extensions = anytrue([
-     for _, node in var.nodes : lookup(node, "igpu", false)
-   ])
- }
+# tofu/talos/image.tf
 
 locals {
   version = var.talos_image.version
 
-  schematic = templatefile("${path.root}/${var.talos_image.schematic_path}", {
-    needs_nvidia_extensions = local.needs_nvidia_extensions
+  schematic_this = templatefile("${path.root}/${var.talos_image.schematic_path}", {
+    needs_nvidia_extensions = false
+  })
+
+  schematic_gpu = templatefile("${path.root}/${var.talos_image.schematic_path}", {
+    needs_nvidia_extensions = true
   })
 
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
-  update_schematic = templatefile("${path.root}/${local.update_schematic_path}", {
-    needs_nvidia_extensions = local.needs_nvidia_extensions
+
+  update_schematic_this = templatefile("${path.root}/${local.update_schematic_path}", {
+    needs_nvidia_extensions = false
+  })
+
+  update_schematic_gpu = templatefile("${path.root}/${local.update_schematic_path}", {
+    needs_nvidia_extensions = true
   })
 }
 
@@ -27,7 +31,6 @@ locals {
     name => "${node.host_node}_${lookup(node, "update", false)}"
   }
 
-  # This local is now NON-SENSITIVE and valid for for_each.
   image_downloads = {
     for key, nodes in {
       for name, node in var.nodes :
@@ -36,16 +39,25 @@ locals {
       host_node = nodes[0].host_node
       version   = lookup(nodes[0], "update", false) ? local.update_version : local.version
       is_update = lookup(nodes[0], "update", false)
+      igpu      = lookup(nodes[0], "igpu", false)
     }
   }
 }
 
 resource "talos_image_factory_schematic" "this" {
-  schematic = local.schematic
+  schematic = local.schematic_this
 }
 
 resource "talos_image_factory_schematic" "updated" {
-  schematic = local.update_schematic
+  schematic = local.update_schematic_this
+}
+
+resource "talos_image_factory_schematic" "gpu" {
+  schematic = local.schematic_gpu
+}
+
+resource "talos_image_factory_schematic" "gpu_updated" {
+  schematic = local.update_schematic_gpu
 }
 
 resource "proxmox_virtual_environment_download_file" "this" {
@@ -55,9 +67,8 @@ resource "proxmox_virtual_environment_download_file" "this" {
   content_type = "iso"
   datastore_id = var.talos_image.proxmox_datastore
 
-  # The sensitive schematic ID is used here, which is allowed.
-  file_name = "talos-${each.value.is_update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
-  url       = "${var.talos_image.factory_url}/image/${each.value.is_update ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
+  file_name = "talos-${each.value.is_update ? (each.value.igpu ? talos_image_factory_schematic.gpu_updated.id : talos_image_factory_schematic.updated.id) : (each.value.igpu ? talos_image_factory_schematic.gpu.id : talos_image_factory_schematic.this.id)}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
+  url       = "${var.talos_image.factory_url}/image/${each.value.is_update ? (each.value.igpu ? talos_image_factory_schematic.gpu_updated.id : talos_image_factory_schematic.updated.id) : (each.value.igpu ? talos_image_factory_schematic.gpu.id : talos_image_factory_schematic.this.id)}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
 
   decompression_algorithm = "gz"
   overwrite               = false
