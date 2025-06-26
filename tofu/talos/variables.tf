@@ -49,7 +49,16 @@ variable "nodes" {
       type        = string
       mountpoint  = string
       unit_number = number
-    })), {})
+    })), {}),
+    gpu_devices = optional(list(string), []),
+    gpu_device_meta = optional(
+      map(object({
+        id            = string
+        subsystem_id  = string
+        iommu_group   = number
+      })),
+      {}
+    )
   }))
 
   validation {

@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ns.yaml
+helmCharts:
+  - name: node-feature-discovery
+    repo: https://kubernetes-sigs.github.io/node-feature-discovery/charts
+    version: 0.17.3
+    releaseName: nfd
+    includeCRDs: true
+    namespace: node-feature-discovery
+    valuesInline:
+      worker:
+        config:
+          core:
+            sleepInterval: 60s
+          sources: ["cpu","pci","usb","gpu","system"]
