@@ -51,13 +51,49 @@ variable "nodes_config" {
     vm_id         = number
     ram_dedicated = optional(number)
     igpu          = optional(bool)
-    disks         = optional(map(object({
+    disks = optional(map(object({
       device      = optional(string)
       size        = optional(string)
       type        = optional(string)
       mountpoint  = optional(string)
       unit_number = optional(number)
-    })))
+    }))),
+    gpu_devices = optional(list(string), []),
+    #   map keyed by the same BDF strings you list in `gpu_devices`
+    gpu_device_meta = optional(
+      map(object({
+        id           = string
+        subsystem_id = string
+        iommu_group  = number
+      })),
+      {}
+    ),
+    datastore_id                = optional(string),
+    description                 = optional(string),
+    tags                        = optional(list(string)),
+    on_boot                     = optional(bool),
+    machine                     = optional(string),
+    scsi_hardware               = optional(string),
+    bios                        = optional(string),
+    agent_enabled               = optional(bool),
+    cpu_type                    = optional(string),
+    network_bridge              = optional(string),
+    network_vlan_id             = optional(number),
+    root_disk_interface         = optional(string),
+    root_disk_iothread          = optional(bool),
+    root_disk_cache             = optional(string),
+    root_disk_discard           = optional(string),
+    root_disk_ssd               = optional(bool),
+    root_disk_file_format       = optional(string),
+    root_disk_size              = optional(number),
+    additional_disk_iothread    = optional(bool),
+    additional_disk_cache       = optional(string),
+    additional_disk_discard     = optional(string),
+    additional_disk_ssd         = optional(bool),
+    additional_disk_file_format = optional(string),
+    boot_order                  = optional(list(string)),
+    os_type                     = optional(string),
+    dns_servers                 = optional(list(string))
   }))
 
   validation {
@@ -66,5 +102,27 @@ variable "nodes_config" {
       contains(["worker", "controlplane"], n.machine_type)
     ])
     error_message = "machine_type must be worker or controlplane."
+  }
+
+  validation {
+    condition = alltrue([
+      for name, node in var.nodes_config :
+      !coalesce(node.igpu, false) || (
+        coalesce(node.igpu, false) &&
+        length(lookup(node, "gpu_devices", [])) > 0
+      )
+    ])
+    error_message = "If 'igpu' is true, 'gpu_devices' must contain at least one PCI address."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for _, n in var.nodes_config :
+      [
+        for bdf in lookup(n, "gpu_devices", []) :
+        contains(keys(lookup(n, "gpu_device_meta", {})), bdf)
+      ]
+    ]))
+    error_message = "Every BDF in gpu_devices must exist in gpu_device_meta."
   }
 }

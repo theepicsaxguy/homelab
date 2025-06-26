@@ -28,7 +28,7 @@ machine:
     modules: # These modules will be loaded on all worker nodes
       - name: nvme_tcp # NVMe over TCP, generally useful for storage
       - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
-%{ if igpu } # Only load NVIDIA modules if igpu is true for this node
+%{ if igpu }
       - name: nvidia
       - name: nvidia_uvm
       - name: nvidia_drm

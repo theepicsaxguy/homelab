@@ -35,8 +35,7 @@ data "talos_machine_configuration" "this" {
 resource "talos_machine_configuration_apply" "this" {
   depends_on = [
     proxmox_virtual_environment_vm.this,
-    talos_image_factory_schematic.this,
-    talos_image_factory_schematic.updated,
+    talos_image_factory_schematic.main,
   ]
   for_each                    = var.nodes
   node                        = each.value.ip

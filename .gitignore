@@ -38,3 +38,5 @@ validation_errors.json
 k8s/argocd/charts/
 k8s/.env
 .env
+GEMINI.md
+.aider*
