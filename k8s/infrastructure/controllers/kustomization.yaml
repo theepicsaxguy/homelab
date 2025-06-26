@@ -7,4 +7,6 @@ resources:
 - cert-manager
 - external-secrets
 - crossplane
+- node-feature-discovery
+- nvidia-gpu
 - velero

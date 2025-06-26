@@ -16,18 +16,3 @@ helmCharts:
           core:
             sleepInterval: 0s
           sources: ["cpu","pci","usb","gpu","system"]
-
-# https://kubernetes-sigs.github.io/node-feature-discovery/v0.16/deployment/helm.html
-helmCharts:
-  - name: node-feature-discovery
-    repo: https://kubernetes-sigs.github.io/node-feature-discovery/charts
-    version: 0.17.3
-    releaseName: nfd
-    includeCRDs: true
-    namespace: node-feature-discovery
-    valuesInline:
-      worker:
-        config:
-          core:
-            sleepInterval: 0s
-          sources: ["cpu","pci","usb","system"]
