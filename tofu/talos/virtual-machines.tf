@@ -101,10 +101,37 @@ resource "proxmox_virtual_environment_vm" "this" {
   dynamic "hostpci" {
     for_each = zipmap(range(length(each.value.gpu_devices)), each.value.gpu_devices)
     content {
-      device = "hostpci${hostpci.key}"
-      pcie   = true
-      rombar = true
-      id = hostpci.value
+      device  = "hostpci${hostpci.key}"
+      mapping = "gpu-${each.key}-${hostpci.key}"
+      pcie    = true
+      rombar  = true
     }
   }
+}
+
+locals {
+  gpu_mappings = flatten([
+    for node_name, node_cfg in var.nodes : [
+      for idx, bdf in node_cfg.gpu_devices : {
+        name = "gpu-${node_name}-${idx}"    # must match VM block
+        node = node_cfg.host_node
+        path = bdf                           # 0000:03:00.X
+        id   = lookup({                      # vendor:device
+          "0000:03:00.0" = "10de:13ba",
+          "0000:03:00.1" = "10de:0fbb",
+        }, bdf, null)
+      }
+    ]
+  ])
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
+  for_each = { for m in local.gpu_mappings : m.name => m }
+  name = each.value.name
+  map  = [{
+    node        = each.value.node
+    path        = each.value.path
+    id          = each.value.id          # <-- **vendor:device**, NOT BDF
+    iommu_group = 50
+  }]
 }
