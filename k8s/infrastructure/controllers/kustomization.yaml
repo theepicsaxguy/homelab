@@ -8,5 +8,5 @@ resources:
 - external-secrets
 - crossplane
 - node-feature-discovery
-- nvidia-gpu
+- nvidia-device-plugin
 - velero

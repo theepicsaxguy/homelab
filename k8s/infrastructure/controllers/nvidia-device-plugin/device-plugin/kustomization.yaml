@@ -5,7 +5,7 @@ helmCharts:
   - name: nvidia-device-plugin
     repo: https://nvidia.github.io/k8s-device-plugin
     version: 0.17.2
-    namespace: nvidia-gpu-operator
+    namespace: nvidia-device-plugin
     releaseName: nvidia-device-plugin
     includeCRDs: false
     valuesFile: values.yaml

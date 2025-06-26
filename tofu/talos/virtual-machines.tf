@@ -99,10 +99,11 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   dynamic "hostpci" {
-    for_each = zipmap(range(length(each.value.gpu_devices)), each.value.gpu_devices)
+    # Use a map of index -> bdf to ensure a stable numeric key for hostpciX
+    for_each = { for i, bdf in each.value.gpu_devices : i => bdf }
     content {
-      device  = "hostpci${hostpci.key}"
-      mapping = "gpu-${each.key}-${hostpci.key}"
+      device  = "hostpci${hostpci.key}"             # e.g., hostpci0, hostpci1
+      mapping = "gpu-${each.key}-${hostpci.key}"    # This must match the name generated in `gpu_mappings`
       pcie    = true
       rombar  = true
     }
@@ -110,26 +111,31 @@ resource "proxmox_virtual_environment_vm" "this" {
 }
 
 locals {
+  # (New) Map of physical GPU device metadata, keyed by BDF address.
+  # This data should be gathered from the Proxmox host using `lspci` and `readlink`.
   gpu_device_meta = {
     "0000:03:00.0" = {
-      id            = "10de:13ba"
-      subsystem_id  = "10de:1097"
-      iommu_group   = 50
-    }
+      id           = "10de:13ba" # Example: NVIDIA Corporation GM107GL [Quadro K2200]
+      subsystem_id = "10de:1097"
+      iommu_group  = 50
+    },
     "0000:03:00.1" = {
-      id            = "10de:0fbc"
-      subsystem_id  = "10de:1097"
-      iommu_group   = 50
+      id           = "10de:0fbc" # Example: NVIDIA Corporation GM107 High Definition Audio
+      subsystem_id = "10de:1097"
+      iommu_group  = 50
     }
+    # Add other physical GPU devices here
   }
-
+  # (Corrected) Generate mappings by looking up metadata from the map above.
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
       for idx, bdf in node_cfg.gpu_devices : {
-        name = "gpu-${node_name}-${idx}"    # must match VM block
-        node = node_cfg.host_node
-        path = bdf # Add path here
-        meta = local.gpu_device_meta[bdf]
+        name         = "gpu-${node_name}-${idx}" # Unique name for the mapping alias
+        node         = node_cfg.host_node
+        path         = bdf
+        id           = local.gpu_device_meta[bdf].id
+        subsystem_id = local.gpu_device_meta[bdf].subsystem_id
+        iommu_group  = local.gpu_device_meta[bdf].iommu_group
       }
     ]
   ])
@@ -141,8 +147,8 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
   map  = [{
     node          = each.value.node
     path          = each.value.path
-    id            = each.value.meta.id
-    subsystem_id  = each.value.meta.subsystem_id
-    iommu_group   = each.value.meta.iommu_group
+    id            = each.value.id
+    subsystem_id  = each.value.subsystem_id
+    iommu_group   = each.value.iommu_group
   }]
 }
