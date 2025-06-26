@@ -49,7 +49,7 @@ nodes_config = {
     machine_type = "worker"
     ip           = "10.25.150.24"
     mac_address  = "bc:24:11:7f:20:04"
-    vm_id        = 8203
+    vm_id        = 8204
     igpu         = true
     gpu_devices  = ["0000:03:00.0", "0000:03:00.1"]
   }
