@@ -4,7 +4,7 @@ kind: Kustomization
 helmCharts:
   - name: nvidia-device-plugin
     repo: https://nvidia.github.io/k8s-device-plugin
-    version: 0.17.2
+    version: 0.17.0          # 0.17.2 is not published – 0.17.0 is
     namespace: nvidia-gpu-operator
     releaseName: nvidia-device-plugin
     includeCRDs: false

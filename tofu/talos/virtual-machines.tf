@@ -100,9 +100,8 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   dynamic "hostpci" {
     for_each = lookup(each.value, "gpu_devices", [])
-    content {
+     content {
       device = "hostpci${hostpci.key}"
-      host   = hostpci.value
       pcie   = true
       rombar = true
     }

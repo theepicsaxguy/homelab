@@ -3,9 +3,9 @@
 locals {
   # Determine if any node in the cluster has igpu=true
   needs_nvidia_extensions = anytrue([
-    for _, node in var.nodes : lookup(node, "igpu", false)
-  ])
-}
+     for _, node in var.nodes : lookup(node, "igpu", false)
+   ])
+ }
 
 locals {
   version = var.talos_image.version

@@ -51,14 +51,14 @@ variable "nodes_config" {
     vm_id         = number
     ram_dedicated = optional(number)
     igpu          = optional(bool)
-    disks         = optional(map(object({
+    disks = optional(map(object({
       device      = optional(string)
       size        = optional(string)
       type        = optional(string)
       mountpoint  = optional(string)
       unit_number = optional(number)
     }))),
-    gpu_devices   = optional(list(string), [])
+    gpu_devices = optional(list(string), [])
   }))
 
   validation {

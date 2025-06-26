@@ -4,4 +4,5 @@ kind: Namespace
 metadata:
   name: nvidia-gpu-operator        # keep operator & plugin in one NS
   labels:
-    pod-security.kubernetes.io/enforce: privileged
+    labels:     pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: "latest"

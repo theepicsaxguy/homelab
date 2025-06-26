@@ -28,12 +28,21 @@ machine:
     modules: # These modules will be loaded on all worker nodes
       - name: nvme_tcp # NVMe over TCP, generally useful for storage
       - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
-%{ if igpu }
-      - name: nvidia
-      - name: nvidia_uvm
+%{ if igpu }-
+      - name: nvidia-
+      - name: nvidia_uvm-
+      - name: nvidia_drm-
       - name: nvidia_modeset
-      - name: nvidia_drm
-%{ endif }
++%{ if igpu }+
++      - name: nvidia+
++      - name: nvidia_uvm+
++      - name: nvidia_modeset+
++      - name: nvidia_drm+
++  systemExtensions:+
++    officialExtensions:+
++%{ if igpu }+
++      - siderolabs/nonfree-kmod-nvidia-production+
++      - siderolabs/nvidia-container-toolkit-production%{ endif }
 
   network:
     hostname: ${hostname}
