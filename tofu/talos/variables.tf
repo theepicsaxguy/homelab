@@ -49,7 +49,8 @@ variable "nodes" {
       type        = string
       mountpoint  = string
       unit_number = number
-    })), {})
+    })), {}),
+    gpu_devices = optional(list(string), [])
   }))
 
   validation {

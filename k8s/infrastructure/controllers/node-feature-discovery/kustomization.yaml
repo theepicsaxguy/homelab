@@ -19,3 +19,4 @@ helmCharts:
         config:
           core:
             sleepInterval: 0s
+          sources: ["cpu","pci","usb","gpu","system"]

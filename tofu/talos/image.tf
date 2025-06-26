@@ -3,7 +3,7 @@
 locals {
   # Determine if any node in the cluster has igpu=true
   needs_nvidia_extensions = anytrue([
-    for name, config in var.nodes : lookup(config, "igpu", false)
+    for _, node in var.nodes : lookup(node, "igpu", false)
   ])
 }
 

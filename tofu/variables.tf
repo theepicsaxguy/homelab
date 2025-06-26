@@ -57,7 +57,8 @@ variable "nodes_config" {
       type        = optional(string)
       mountpoint  = optional(string)
       unit_number = optional(number)
-    })))
+    }))),
+    gpu_devices   = optional(list(string), [])
   }))
 
   validation {

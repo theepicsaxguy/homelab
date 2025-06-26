@@ -2,5 +2,3 @@ gfd:
   enabled: true                 # auto-label GPU features
 timeSlicing:
   enabled: false                # set true if you need GPU sharing
-nodeSelector:
-  nvidia.com/gpu.present: "true"
