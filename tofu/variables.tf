@@ -58,8 +58,33 @@ variable "nodes_config" {
       mountpoint  = optional(string)
       unit_number = optional(number)
     }))),
-    gpu_devices  = optional(list(string), []),
-    datastore_id = optional(string)
+    gpu_devices                 = optional(list(string), []),
+    datastore_id                = optional(string),
+    description                 = optional(string),
+    tags                        = optional(list(string)),
+    on_boot                     = optional(bool),
+    machine                     = optional(string),
+    scsi_hardware               = optional(string),
+    bios                        = optional(string),
+    agent_enabled               = optional(bool),
+    cpu_type                    = optional(string),
+    network_bridge              = optional(string),
+    network_vlan_id             = optional(number),
+    root_disk_interface         = optional(string),
+    root_disk_iothread          = optional(bool),
+    root_disk_cache             = optional(string),
+    root_disk_discard           = optional(string),
+    root_disk_ssd               = optional(bool),
+    root_disk_file_format       = optional(string),
+    root_disk_size              = optional(number),
+    additional_disk_iothread    = optional(bool),
+    additional_disk_cache       = optional(string),
+    additional_disk_discard     = optional(string),
+    additional_disk_ssd         = optional(bool),
+    additional_disk_file_format = optional(string),
+    boot_order                  = optional(list(string)),
+    os_type                     = optional(string),
+    dns_servers                 = optional(list(string))
   }))
 
   validation {

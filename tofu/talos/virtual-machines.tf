@@ -9,22 +9,22 @@ resource "proxmox_virtual_environment_vm" "this" {
   node_name = each.value.host_node
 
   name        = each.key
-  description = each.value.machine_type == "controlplane" ? "Talos Control Plane" : "Talos Worker"
-  tags        = each.value.machine_type == "controlplane" ? ["k8s", "control-plane"] : ["k8s", "worker"]
-  on_boot     = true
+  description = lookup(each.value, "description", each.value.machine_type == "controlplane" ? "Talos Control Plane" : "Talos Worker")
+  tags        = lookup(each.value, "tags", each.value.machine_type == "controlplane" ? ["k8s", "control-plane"] : ["k8s", "worker"])
+  on_boot     = lookup(each.value, "on_boot", true)
   vm_id       = each.value.vm_id
 
-  machine       = "q35"
-  scsi_hardware = "virtio-scsi-single"
-  bios          = "seabios"
+  machine       = lookup(each.value, "machine", "q35")
+  scsi_hardware = lookup(each.value, "scsi_hardware", "virtio-scsi-single")
+  bios          = lookup(each.value, "bios", "seabios")
 
   agent {
-    enabled = true
+    enabled = lookup(each.value, "agent_enabled", true)
   }
 
   cpu {
     cores = each.value.cpu
-    type  = "host"
+    type  = lookup(each.value, "cpu_type", "host")
   }
 
   memory {
@@ -34,20 +34,20 @@ resource "proxmox_virtual_environment_vm" "this" {
 
 
   network_device {
-    bridge      = "vmbr0"
-    vlan_id     = 150
+    bridge      = lookup(each.value, "network_bridge", "vmbr0")
+    vlan_id     = lookup(each.value, "network_vlan_id", 150)
     mac_address = each.value.mac_address
   }
 
   disk {
     datastore_id = each.value.datastore_id
-    interface    = "scsi0"
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
-    file_format  = "raw"
-    size         = 40
+    interface    = lookup(each.value, "root_disk_interface", "scsi0")
+    iothread     = lookup(each.value, "root_disk_iothread", true)
+    cache        = lookup(each.value, "root_disk_cache", "writethrough")
+    discard      = lookup(each.value, "root_disk_discard", "on")
+    ssd          = lookup(each.value, "root_disk_ssd", true)
+    file_format  = lookup(each.value, "root_disk_file_format", "raw")
+    size         = lookup(each.value, "root_disk_size", 40)
     file_id = proxmox_virtual_environment_download_file.iso[
       "${each.value.host_node}-${lookup(each.value,"update",false) ? "upd" : "inst"}-${lookup(each.value,"igpu",false) ? "gpu" : "std"}"
     ].id
@@ -59,11 +59,11 @@ resource "proxmox_virtual_environment_vm" "this" {
     content {
       datastore_id = each.value.datastore_id
       interface    = "${disk.value.type}${disk.value.unit_number}"
-      iothread     = true
-      cache        = "writethrough"
-      discard      = "on"
-      ssd          = true
-      file_format  = "raw"
+      iothread     = lookup(each.value, "additional_disk_iothread", true)
+      cache        = lookup(each.value, "additional_disk_cache", "writethrough")
+      discard      = lookup(each.value, "additional_disk_discard", "on")
+      ssd          = lookup(each.value, "additional_disk_ssd", true)
+      file_format  = lookup(each.value, "additional_disk_file_format", "raw")
       size         = tonumber(replace(disk.value.size, "G", ""))
     }
   }
@@ -78,17 +78,17 @@ resource "proxmox_virtual_environment_vm" "this" {
       terraform_data.image_version
     ]
   }
-  boot_order = ["scsi0"]
+  boot_order = lookup(each.value, "boot_order", ["scsi0"])
 
   operating_system {
-    type = "l26"
+    type = lookup(each.value, "os_type", "l26")
   }
 
   initialization {
     datastore_id = each.value.datastore_id
     dns {
       domain  = var.cluster_domain
-      servers = ["10.25.150.1"]
+      servers = lookup(each.value, "dns_servers", ["10.25.150.1"])
     }
     ip_config {
       ipv4 {
