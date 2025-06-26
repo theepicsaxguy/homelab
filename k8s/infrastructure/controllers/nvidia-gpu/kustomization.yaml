@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - ns.yaml
   - device-plugin
-  - gpu-operator
+  
