@@ -26,21 +26,18 @@ locals {
 }
 
 locals {
-  image_download_key = {
+  # one stable key per host+schematic-type
+  #   <host>-<inst|upd>-<gpu|std>
+  image_download_groups = {
     for name, node in var.nodes :
-    name => "${node.host_node}_${lookup(node, "update", false)}"
+    "${node.host_node}-${lookup(node,"update",false) ? "upd" : "inst"}-${lookup(node,"igpu",false) ? "gpu" : "std"}" => {
+      host_node    = node.host_node
+      schematic_id = lookup(node,"igpu",false) ? (lookup(node,"update",false) ? talos_image_factory_schematic.gpu_updated.id : talos_image_factory_schematic.gpu.id) : (lookup(node,"update",false) ? talos_image_factory_schematic.updated.id : talos_image_factory_schematic.this.id)
+    } ...
   }
 
   image_downloads = {
-    for key, nodes in {
-      for name, node in var.nodes :
-      local.image_download_key[name] => node...
-    } : key => {
-      host_node = nodes[0].host_node
-      version   = lookup(nodes[0], "update", false) ? local.update_version : local.version
-      is_update = lookup(nodes[0], "update", false)
-      igpu      = lookup(nodes[0], "igpu", false)
-    }
+    for k, v in local.image_download_groups : k => v[0]
   }
 }
 
@@ -60,15 +57,14 @@ resource "talos_image_factory_schematic" "gpu_updated" {
   schematic = local.update_schematic_gpu
 }
 
-resource "proxmox_virtual_environment_download_file" "this" {
-  for_each = local.image_downloads
-
+resource "proxmox_virtual_environment_download_file" "iso" {
+  for_each     = local.image_downloads
   node_name    = each.value.host_node
   content_type = "iso"
   datastore_id = var.talos_image.proxmox_datastore
 
-  file_name = "talos-${each.value.is_update ? (each.value.igpu ? talos_image_factory_schematic.gpu_updated.id : talos_image_factory_schematic.updated.id) : (each.value.igpu ? talos_image_factory_schematic.gpu.id : talos_image_factory_schematic.this.id)}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
-  url       = "${var.talos_image.factory_url}/image/${each.value.is_update ? (each.value.igpu ? talos_image_factory_schematic.gpu_updated.id : talos_image_factory_schematic.updated.id) : (each.value.igpu ? talos_image_factory_schematic.gpu.id : talos_image_factory_schematic.this.id)}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
+  file_name = "talos-${each.value.schematic_id}-${var.talos_image.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
+  url       = "${var.talos_image.factory_url}/image/${each.value.schematic_id}/${var.talos_image.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
 
   decompression_algorithm = "gz"
   overwrite               = false

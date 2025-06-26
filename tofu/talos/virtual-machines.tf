@@ -48,8 +48,8 @@ resource "proxmox_virtual_environment_vm" "this" {
     ssd          = true
     file_format  = "raw"
     size         = 40
-    file_id = proxmox_virtual_environment_download_file.this[
-      local.image_download_key[each.key]
+    file_id = proxmox_virtual_environment_download_file.iso[
+      "${each.value.host_node}-${lookup(each.value,"update",false) ? "upd" : "inst"}-${lookup(each.value,"igpu",false) ? "gpu" : "std"}"
     ].id
   }
 
