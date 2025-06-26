@@ -1,0 +1,7 @@
+# ns.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nvidia-gpu-operator        # keep operator & plugin in one NS
+  labels:
+    pod-security.kubernetes.io/enforce: privileged
