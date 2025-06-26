@@ -58,7 +58,8 @@ variable "nodes_config" {
       mountpoint  = optional(string)
       unit_number = optional(number)
     }))),
-    gpu_devices = optional(list(string), [])
+    gpu_devices  = optional(list(string), []),
+    datastore_id = optional(string)
   }))
 
   validation {
