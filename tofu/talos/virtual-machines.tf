@@ -110,16 +110,26 @@ resource "proxmox_virtual_environment_vm" "this" {
 }
 
 locals {
+  gpu_device_meta = {
+    "0000:03:00.0" = {
+      id            = "10de:13ba"
+      subsystem_id  = "10de:1097"
+      iommu_group   = 50
+    }
+    "0000:03:00.1" = {
+      id            = "10de:0fbc"
+      subsystem_id  = "10de:1097"
+      iommu_group   = 50
+    }
+  }
+
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
       for idx, bdf in node_cfg.gpu_devices : {
         name = "gpu-${node_name}-${idx}"    # must match VM block
         node = node_cfg.host_node
-        path = bdf                           # 0000:03:00.X
-        id   = lookup({                      # vendor:device
-          "0000:03:00.0" = "10de:13ba",
-          "0000:03:00.1" = "10de:0fbb",
-        }, bdf, null)
+        path = bdf # Add path here
+        meta = local.gpu_device_meta[bdf]
       }
     ]
   ])
@@ -129,9 +139,10 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
   for_each = { for m in local.gpu_mappings : m.name => m }
   name = each.value.name
   map  = [{
-    node        = each.value.node
-    path        = each.value.path
-    id          = each.value.id          # <-- **vendor:device**, NOT BDF
-    iommu_group = 50
+    node          = each.value.node
+    path          = each.value.path
+    id            = each.value.meta.id
+    subsystem_id  = each.value.meta.subsystem_id
+    iommu_group   = each.value.meta.iommu_group
   }]
 }

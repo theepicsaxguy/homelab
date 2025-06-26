@@ -15,29 +15,28 @@ The `proxmox_virtual_environment_hardware_mapping_pci` resource in the Proxmox T
 
 ## Finding Your GPU Device Information
 
-To create the necessary PCI mappings, you need two pieces of information for each GPU device you intend to pass through:
+To create the necessary PCI mappings, you need three pieces of information for each GPU device you intend to pass through:
 
 1.  **PCI Vendor:Device ID**: This uniquely identifies the type of PCI device.
-2.  **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
+2.  **Subsystem Vendor:Device ID**: This identifies the specific board partner or manufacturer of the device.
+3.  **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
 
-### 1. Finding PCI Vendor:Device IDs
+### 1. Finding PCI Vendor:Device IDs and Subsystem IDs
 
-On your Proxmox host, use the `lspci` command with the `-nn` flag to get the numeric IDs. Filter for your GPU devices (e.g., `03:00.0` and `03:00.1`):
+On your Proxmox host, use the `lspci` command with the `-nnv` and `-s` flags to get the numeric IDs and subsystem information. Replace `03:00.0` with your device's BDF:
 
 ```bash
-lspci -nn | grep -E "03:00.[01]"
+lspci -nnv -s 03:00.0 | grep -i subsystem
 ```
 
 **Example Output:**
 
 ```
 03:00.0 VGA compatible controller [0300]: NVIDIA Corporation GM107GL [Quadro K2200] [10de:13ba] (rev a2)
-03:00.1 Audio device [0403]: NVIDIA Corporation GM107 High Definition Audio Controller [GeForce 940MX] [10de:0fbc] (rev a1)
+        Subsystem: NVIDIA Corporation GM107GL [Quadro K2200] [10de:1097]
 ```
 
-From this output, you can extract the `Vendor:Device` IDs:
-*   `0000:03:00.0` (GPU): `10de:13ba`
-*   `0000:03:00.1` (Audio): `10de:0fbb` (Note: The `lspci` output might show `0fbc` but the correct ID for the audio function is often `0fbb` for this chip, as confirmed by device databases).
+From this output, you can extract the `Vendor:Device` ID (`10de:13ba`) and the `Subsystem Vendor:Device` ID (`10de:1097`). Repeat for all your GPU devices.
 
 ### 2. Finding IOMMU Groups
 
@@ -45,39 +44,46 @@ On your Proxmox host, use `readlink -f` to find the IOMMU group for each PCI dev
 
 ```bash
 readlink -f /sys/bus/pci/devices/0000:03:00.0/iommu_group
-readlink -f /sys/bus/pci/devices/0000:03:00.1/iommu_group
 ```
 
 **Example Output:**
 
 ```
 /sys/kernel/iommu_groups/50
-/sys/kernel/iommu_groups/50
 ```
 
-In this example, the IOMMU group for both devices is `50`.
+In this example, the IOMMU group for the device is `50`.
 
 ## OpenTofu Configuration
 
 Once you have the necessary IDs and IOMMU groups, you can configure your OpenTofu code.
 
-### 1. Define `gpu_mappings` in `locals`
+### 1. Define `gpu_device_meta` and `gpu_mappings` in `locals`
 
-Add a `locals` block (or extend an existing one) in your `tofu/talos/virtual-machines.tf` (or a suitable `locals.tf` file) to define the GPU mappings. This block will dynamically generate the necessary data for the PCI mapping resources.
+Add a `locals` block (or extend an existing one) in your `tofu/talos/virtual-machines.tf` (or a suitable `locals.tf` file) to define the GPU metadata and mappings. This block will dynamically generate the necessary data for the PCI mapping resources.
 
 ```terraform
 locals {
+  gpu_device_meta = {
+    "0000:03:00.0" = {
+      id            = "10de:13ba",     # Replace with your GPU's Vendor:Device ID
+      subsystem_id  = "10de:1097",     # Replace with your GPU's Subsystem Vendor:Device ID
+      iommu_group   = 50               # Replace with your IOMMU group
+    }
+    "0000:03:00.1" = {
+      id            = "10de:0fbc",     # Replace with your GPU's Audio Vendor:Device ID
+      subsystem_id  = "10de:1097",     # Replace with your GPU's Audio Subsystem Vendor:Device ID
+      iommu_group   = 50               # Replace with your IOMMU group
+    }
+  }
+
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
       for idx, bdf in node_cfg.gpu_devices : {
         name = "gpu-${node_name}-${idx}"    # Unique name for the mapping
         node = node_cfg.host_node           # The Proxmox node where the device is located
         path = bdf                          # The BDF of the PCI device (e.g., "0000:03:00.0")
-        id   = lookup({                     # Map BDF to Vendor:Device ID
-          "0000:03:00.0" = "10de:13ba",     # Replace with your GPU's Vendor:Device ID
-          "0000:03:00.1" = "10de:0fbb",     # Replace with your GPU's Audio Vendor:Device ID
-        }, bdf, null)
-        iommu_group = 50                    # Replace with your IOMMU group
+        meta = local.gpu_device_meta[bdf]
       }
     ]
   ])
@@ -94,10 +100,11 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
 
   name = each.value.name
   map  = [{
-    node        = each.value.node
-    path        = each.value.path
-    id          = each.value.id
-    iommu_group = each.value.iommu_group
+    node          = each.value.node
+    path          = each.value.path
+    id            = each.value.meta.id
+    subsystem_id  = each.value.meta.subsystem_id
+    iommu_group   = each.value.meta.iommu_group
   }]
 }
 ```
