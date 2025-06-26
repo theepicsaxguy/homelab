@@ -68,4 +68,15 @@ variable "nodes_config" {
     ])
     error_message = "machine_type must be worker or controlplane."
   }
+
+  validation {
+    condition = alltrue([
+      for name, node in var.nodes_config :
+      !coalesce(node.igpu, false) || (
+        coalesce(node.igpu, false) &&
+        length(lookup(node, "gpu_devices", [])) > 0
+      )
+    ])
+    error_message = "If 'igpu' is true, 'gpu_devices' must contain at least one PCI address."
+  }
 }

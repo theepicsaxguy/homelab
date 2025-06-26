@@ -99,11 +99,12 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   dynamic "hostpci" {
-    for_each = each.value.gpu_devices
+    for_each = zipmap(range(length(each.value.gpu_devices)), each.value.gpu_devices)
     content {
-      device = hostpci.value
+      device = "hostpci${hostpci.key}"
       pcie   = true
       rombar = true
+      id = hostpci.value
     }
   }
 }

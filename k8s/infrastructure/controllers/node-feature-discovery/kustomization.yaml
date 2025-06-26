@@ -14,5 +14,5 @@ helmCharts:
       worker:
         config:
           core:
-            sleepInterval: 0s
+            sleepInterval: 60s
           sources: ["cpu","pci","usb","gpu","system"]
