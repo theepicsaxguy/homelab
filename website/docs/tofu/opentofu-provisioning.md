@@ -92,7 +92,7 @@ Talos is my node OS because it offers:
 
 ## VM Configuration
 
-VM configuration now uses `lookup(each.value, ..., <default>)` for various settings (e.g., `bios`, `cpu`, `memory`, `disk_size`). This allows for per-node overrides in `nodes.auto.tfvars` while providing sensible defaults.
+VM configuration uses `lookup(each.value, ..., <default>)` for various settings (e.g., `bios`, `cpu`, `memory`, `disk_size`). This allows for per-node overrides in `nodes.auto.tfvars` while providing sensible defaults.
 
 #### GPU Mapping
 
@@ -100,11 +100,11 @@ For GPU-capable nodes (`igpu = true`), the `dynamic "hostpci"` block iterates ov
 
 #### `variables.tf` Updates
 
-The `variables.tf` file has been updated to include `gpu_devices` (a list of PCI BDFs) in both the `nodes` and `nodes_config` input types. Validation has been added to ensure that if `igpu = true`, the `gpu_devices` list is non-empty.
+The nodes and nodes_config input types in variables.tf include the gpu_devices attribute, which accepts a list of PCI BDFs. A validation rule ensures that if igpu is true, the gpu_devices list is not empty.
 
 ### Node Specs
 
-Node definitions now pull from two base variables—`defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This new structure simplifies configuration and reduces repetition.
+Node definitions pull from two base variables—`defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This structure simplifies configuration and reduces repetition.
 
 If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
@@ -180,14 +180,14 @@ Talos OS images are built via the Talos Image Factory and include core extension
 
 #### Talos Image Pipeline
 
-The Talos image pipeline has been refactored to support conditional inclusion of NVIDIA GPU extensions. This is managed through a set of new OpenTofu `locals`:
+The Talos image pipeline supports conditional inclusion of NVIDIA GPU extensions. A set of OpenTofu locals manages this functionality:
 
 *   `has_gpu_nodes`: A boolean indicating if any node in the configuration is GPU-capable.
 *   `schematic_configs`: A map that defines different image schematics (e.g., `std_inst` for standard installation, `gpu_inst` for GPU-enabled installation, and their update counterparts `std_upd`, `gpu_upd`).
 *   `get_schematic_key`: A helper to determine the correct schematic key for each node based on its GPU capability and update status.
 *   `image_download_groups` and `image_downloads`: These locals manage the grouping and flattening of image downloads, ensuring that the correct image variant is downloaded for each node.
 
-The `talos_image_factory_schematic` resource now uses a `for_each` loop over `local.schematic_configs`, allowing for dynamic image generation based on node requirements. The `proxmox_virtual_environment_download_file` resource has been updated to use `each.value.schematic_id` to ensure the correct image is downloaded.
+The `talos_image_factory_schematic` resource uses a `for_each` loop over `local.schematic_configs`, allowing for dynamic image generation based on node requirements. The `proxmox_virtual_environment_download_file` resource uses `each.value.schematic_id` to ensure the correct image is downloaded.
 
 GPU-enabled images include the `siderolabs/nonfree-kmod-nvidia-lts` and `siderolabs/nvidia-container-toolkit-lts` extensions.
 

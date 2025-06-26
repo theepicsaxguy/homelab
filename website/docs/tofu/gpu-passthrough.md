@@ -56,7 +56,7 @@ In this example, the IOMMU group for the device is `50`.
 
 ## OpenTofu Configuration
 
-Once you have the necessary IDs and IOMMU groups, you can configure your OpenTofu code.
+After you have the necessary IDs and IOMMU groups, you can configure your OpenTofu code.
 
 ### 1. Define `gpu_device_meta` and `gpu_mappings` in `locals`
 
