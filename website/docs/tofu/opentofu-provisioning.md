@@ -189,7 +189,7 @@ The Talos image pipeline supports conditional inclusion of NVIDIA GPU extensions
 
 The `talos_image_factory_schematic` resource uses a `for_each` loop over `local.schematic_configs`, allowing for dynamic image generation based on node requirements. The `proxmox_virtual_environment_download_file` resource uses `each.value.schematic_id` to ensure the correct image is downloaded.
 
-GPU-enabled images include the `siderolabs/nonfree-kmod-nvidia-lts` and `siderolabs/nvidia-container-toolkit-lts` extensions.
+GPU-enabled images include the `siderolabs/nonfree-kmod-nvidia-lts` and `siderolabs/nvidia-container-toolkit-lts` extensions, which provide support for NVIDIA's proprietary drivers.
 
 
 ## Machine Configuration

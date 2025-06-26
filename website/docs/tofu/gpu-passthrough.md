@@ -58,41 +58,98 @@ In this example, the IOMMU group for the device is `50`.
 
 After you have the necessary IDs and IOMMU groups, you can configure your OpenTofu code.
 
-### 1. Define `gpu_device_meta` and `gpu_mappings` in `locals`
+### 1. Extend `nodes_config` and `nodes` in `variables.tf`
 
-Add a `locals` block (or extend an existing one) in your `tofu/talos/virtual-machines.tf` (or a suitable `locals.tf` file) to define the GPU metadata and mappings. This block will dynamically generate the necessary data for the PCI mapping resources.
+The `nodes_config` variable in `tofu/variables.tf` and the `nodes` variable in `tofu/talos/variables.tf` have been extended to include `gpu_devices` (a list of BDF strings) and `gpu_device_meta` (a map keyed by BDF strings, containing `id`, `subsystem_id`, and `iommu_group`). This ensures that GPU metadata is part of the node's definition.
+
+```terraform
+variable "nodes_config" {
+  type = map(object({
+    # ... existing attrs
+    gpu_devices      = optional(list(string), [])
+    gpu_device_meta  = optional(
+      map(object({
+        id            = string
+        subsystem_id  = string
+        iommu_group   = number
+      })),
+      {}
+    )
+  }))
+  # ... existing validations
+  validation {
+    condition = alltrue(flatten([
+      for _, n in var.nodes_config :
+      [
+        for bdf in lookup(n, "gpu_devices", []) :
+        contains(keys(lookup(n, "gpu_device_meta", {})), bdf)
+      ]
+    ]))
+    error_message = "Every BDF in gpu_devices must exist in gpu_device_meta."
+  }
+}
+
+variable "nodes" {
+  type = map(object({
+    # ... existing attributes
+    gpu_devices     = optional(list(string), [])
+    gpu_device_meta = optional(
+      map(object({
+        id            = string
+        subsystem_id  = string
+        iommu_group   = number
+      })),
+      {}
+    )
+  }))
+  # ...
+}
+```
+
+### 2. Add Metadata to `nodes.auto.tfvars`
+
+For each node that has GPU devices, you will now add the `gpu_devices` list and the `gpu_device_meta` map directly to its configuration in `tofu/nodes.auto.tfvars`.
+
+```terraform
+"work-03" = {
+  machine_type = "worker"
+  # ...
+  igpu         = true
+  gpu_devices  = ["0000:03:00.0", "0000:03:00.1"]
+  gpu_device_meta = {
+    "0000:03:00.0" = {
+      id            = "10de:13ba"
+      subsystem_id  = "10de:1097"
+      iommu_group   = 50
+    }
+    "0000:03:00.1" = {
+      id            = "10de:0fbc"
+      subsystem_id  = "10de:1097"
+      iommu_group   = 50
+    }
+  }
+}
+```
+
+### 3. Update `gpu_mappings` in `virtual-machines.tf`
+
+The `gpu_mappings` local in `tofu/talos/virtual-machines.tf` now directly accesses the `gpu_device_meta` from the node configuration. The hard-coded `gpu_device_meta` local has been removed.
 
 ```terraform
 locals {
-  gpu_device_meta = {
-    "0000:03:00.0" = {
-      id            = "10de:13ba",     # Replace with your GPU's Vendor:Device ID
-      subsystem_id  = "10de:1097",     # Replace with your GPU's Subsystem Vendor:Device ID
-      iommu_group   = 50               # Replace with your IOMMU group
-    }
-    "0000:03:00.1" = {
-      id            = "10de:0fbc",     # Replace with your GPU's Audio Vendor:Device ID
-      subsystem_id  = "10de:1097",     # Replace with your GPU's Audio Subsystem Vendor:Device ID
-      iommu_group   = 50               # Replace with your IOMMU group
-    }
-  }
-
+  gpu_mapping_alias_prefix = "gpu"
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
       for idx, bdf in node_cfg.gpu_devices : {
-        name = "gpu-${node_name}-${idx}"    # Unique name for the mapping
-        node = node_cfg.host_node           # The Proxmox node where the device is located
-        path = bdf                          # The BDF of the PCI device (e.g., "0000:03:00.0")
-        meta = local.gpu_device_meta[bdf]
+        name         = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
+        node         = node_cfg.host_node
+        path         = bdf
+        meta         = lookup(node_cfg, "gpu_device_meta", {})[bdf]
       }
     ]
   ])
 }
 ```
-
-### 2. Create `proxmox_virtual_environment_hardware_mapping_pci` Resources
-
-Use the `gpu_mappings` local to create `proxmox_virtual_environment_hardware_mapping_pci` resources. These resources will create the PCI aliases in Proxmox.
 
 ```terraform
 resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
@@ -109,16 +166,18 @@ resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
 }
 ```
 
-### 3. Reference the Alias in the VM `hostpci` Block
+### 4. Reference the Alias in the VM `hostpci` Block
 
 Finally, modify the `dynamic "hostpci"` block within your `proxmox_virtual_environment_vm` resource to reference these aliases using the `mapping` attribute instead of the raw `id`.
 
 ```terraform
 dynamic "hostpci" {
-  for_each = zipmap(range(length(each.value.gpu_devices)), each.value.gpu_devices)
+  for_each = each.value.igpu && length(each.value.gpu_devices) > 0 ? {
+    for i, bdf in each.value.gpu_devices : i => bdf
+  } : {}
   content {
     device  = "hostpci${hostpci.key}"
-    mapping = "gpu-${each.key}-${hostpci.key}" # Matches the 'name' in gpu_mappings
+    mapping = "${local.gpu_mapping_alias_prefix}-${each.key}-${hostpci.key}"
     pcie    = true
     rombar  = true
   }

@@ -13,12 +13,12 @@ This document outlines the core infrastructure controllers deployed in my Kubern
 ### Node Feature Discovery
 
 - **Purpose**: Hardware feature and system configuration detection
-- **Further Reading**: [GPU Support in Kubernetes](./gpu-support.md)
+- **Further Reading**: [GPU Support in Kubernetes](./controllers/gpu-support.md)
 
 ### NVIDIA GPU Operator
 
 - **Purpose**: Automates management of NVIDIA software components for GPU-enabled nodes
-- **Further Reading**: [GPU Support in Kubernetes](./gpu-support.md)
+- **Further Reading**: [GPU Support in Kubernetes](./controllers/gpu-support.md)
 
 ### ArgoCD
 

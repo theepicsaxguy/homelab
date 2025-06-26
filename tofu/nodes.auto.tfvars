@@ -54,5 +54,17 @@ nodes_config = {
     datastore_id  = "rpool2"
     igpu          = true
     gpu_devices   = ["0000:03:00.0", "0000:03:00.1"]
+    gpu_device_meta = {
+      "0000:03:00.0" = {
+        id           = "10de:13ba"
+        subsystem_id = "10de:1097"
+        iommu_group  = 50
+      }
+      "0000:03:00.1" = {
+        id           = "10de:0fbc"
+        subsystem_id = "10de:1097"
+        iommu_group  = 50
+      }
+    }
   }
 }
