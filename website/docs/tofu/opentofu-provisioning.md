@@ -92,6 +92,16 @@ Talos is my node OS because it offers:
 
 ## VM Configuration
 
+VM configuration now uses `lookup(each.value, ..., <default>)` for various settings (e.g., `bios`, `cpu`, `memory`, `disk_size`). This allows for per-node overrides in `nodes.auto.tfvars` while providing sensible defaults.
+
+#### GPU Mapping
+
+For GPU-capable nodes (`igpu = true`), the `dynamic "hostpci"` block iterates over the `gpu_devices` list, creating PCI passthrough devices. Each device is mapped using a unique alias in the format `gpu-<node>-<idx>` instead of raw PCI IDs. This mapping is handled by the `proxmox_virtual_environment_hardware_mapping_pci` resource, which creates the necessary PCI alias mappings in Proxmox using vendor/device IDs, subsystem IDs, and IOMMU groups.
+
+#### `variables.tf` Updates
+
+The `variables.tf` file has been updated to include `gpu_devices` (a list of PCI BDFs) in both the `nodes` and `nodes_config` input types. Validation has been added to ensure that if `igpu = true`, the `gpu_devices` list is non-empty.
+
 ### Node Specs
 
 Node definitions now pull from two base variables—`defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This new structure simplifies configuration and reduces repetition.
@@ -125,6 +135,15 @@ nodes_config = {
     vm_id         = 8202
     ram_dedicated = 12240 # Override default worker RAM
   }
+  # This worker is GPU-capable
+  "work-03" = {
+    machine_type = "worker"
+    ip           = "10.25.150.24"
+    mac_address  = "bc:24:11:XX:XX:X5"
+    vm_id        = 8204
+    igpu         = true
+    gpu_devices  = ["0000:01:00.0", "0000:01:00.1"] # Example BDFs for GPU and HDMI Audio
+  }
 }
 ```
 
@@ -157,12 +176,21 @@ Additional disks can be defined per node in a `disks` map. This allows you to ov
 
 ### Custom Images
 
-- Built via Talos Image Factory
-- Includes core extensions:
-  - QEMU guest agent
-  - iSCSI tools
-- Automatically downloaded to Proxmox
-- Downloads are deduplicated per Proxmox node and image variant. A helper local builds `<host>_<image-id>` keys so VMs and downloads stay in sync.
+Talos OS images are built via the Talos Image Factory and include core extensions like the QEMU guest agent and iSCSI tools. These images are automatically downloaded to Proxmox and deduplicated per Proxmox node and image variant.
+
+#### Talos Image Pipeline
+
+The Talos image pipeline has been refactored to support conditional inclusion of NVIDIA GPU extensions. This is managed through a set of new OpenTofu `locals`:
+
+*   `has_gpu_nodes`: A boolean indicating if any node in the configuration is GPU-capable.
+*   `schematic_configs`: A map that defines different image schematics (e.g., `std_inst` for standard installation, `gpu_inst` for GPU-enabled installation, and their update counterparts `std_upd`, `gpu_upd`).
+*   `get_schematic_key`: A helper to determine the correct schematic key for each node based on its GPU capability and update status.
+*   `image_download_groups` and `image_downloads`: These locals manage the grouping and flattening of image downloads, ensuring that the correct image variant is downloaded for each node.
+
+The `talos_image_factory_schematic` resource now uses a `for_each` loop over `local.schematic_configs`, allowing for dynamic image generation based on node requirements. The `proxmox_virtual_environment_download_file` resource has been updated to use `each.value.schematic_id` to ensure the correct image is downloaded.
+
+GPU-enabled images include the `siderolabs/nonfree-kmod-nvidia-lts` and `siderolabs/nvidia-container-toolkit-lts` extensions.
+
 
 ## Machine Configuration
 
