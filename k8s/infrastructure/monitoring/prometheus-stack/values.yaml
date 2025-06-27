@@ -70,3 +70,10 @@ alertmanager:
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
+
+prometheus-node-exporter:
+  tolerations:
+    - key: "gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"

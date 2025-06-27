@@ -68,6 +68,7 @@ variable "nodes_config" {
       })),
       {}
     ),
+    gpu_node_exclusive          = optional(bool, true)
     datastore_id                = optional(string),
     description                 = optional(string),
     tags                        = optional(list(string)),
