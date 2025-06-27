@@ -20,14 +20,15 @@ data "talos_machine_configuration" "this" {
     })
     ] : [
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-      hostname       = each.key
-      node_name      = each.value.host_node
-      cluster_name   = var.cluster.proxmox_cluster
-      node_ip        = each.value.ip
-      cluster        = var.cluster
-      cluster_domain = var.cluster_domain
-      disks          = each.value.disks
-      igpu           = each.value.igpu
+      hostname           = each.key
+      node_name          = each.value.host_node
+      cluster_name       = var.cluster.proxmox_cluster
+      node_ip            = each.value.ip
+      cluster            = var.cluster
+      cluster_domain     = var.cluster_domain
+      disks              = each.value.disks
+      igpu               = each.value.igpu
+      gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
     })
   ]
 }
