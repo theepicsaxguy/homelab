@@ -22,6 +22,12 @@ machine:
           - rw
 %{ endfor }
 %{ endif }
+  taints:
+%{ if igpu && gpu_node_exclusive }
+    - key: gpu
+      value: "true"
+      effect: NoSchedule
+%{ endif }
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:

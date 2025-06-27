@@ -58,7 +58,8 @@ variable "nodes" {
         iommu_group   = number
       })),
       {}
-    )
+    ),
+    gpu_node_exclusive = optional(bool, true)
   }))
 
   validation {
