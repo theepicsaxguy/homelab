@@ -116,10 +116,10 @@ locals {
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
       for idx, bdf in node_cfg.gpu_devices : {
-        name         = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
-        node         = node_cfg.host_node
-        path         = bdf
-        meta         = lookup(node_cfg, "gpu_device_meta", {})[bdf]
+        name = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
+        node = node_cfg.host_node
+        path = bdf
+        meta = lookup(node_cfg, "gpu_device_meta", {})[bdf]
       }
     ]
   ])

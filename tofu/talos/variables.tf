@@ -43,6 +43,7 @@ variable "nodes" {
     ram_dedicated = number
     update        = optional(bool, false)
     igpu          = optional(bool, false)
+    gpu_node_exclusive = optional(bool, true)
     disks = optional(map(object({
       device      = string
       size        = string

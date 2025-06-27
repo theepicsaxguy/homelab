@@ -39,6 +39,12 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
+nodeAgent:
+  tolerations:
+    - key: "gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
 metrics:
   enabled: true
   serviceMonitor:

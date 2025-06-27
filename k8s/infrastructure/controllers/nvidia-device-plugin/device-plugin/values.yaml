@@ -1,3 +1,9 @@
+daemonset:
+  tolerations:
+    - key: "gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
 gfd:
   enabled: true                 # auto-label GPU features
 timeSlicing:

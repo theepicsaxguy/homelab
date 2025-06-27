@@ -17,9 +17,9 @@ The `proxmox_virtual_environment_hardware_mapping_pci` resource in the Proxmox T
 
 To create the necessary PCI mappings, you need three pieces of information for each GPU device you intend to pass through:
 
-1.  **PCI Vendor:Device ID**: This uniquely identifies the type of PCI device.
-2.  **Subsystem Vendor:Device ID**: This identifies the specific board partner or manufacturer of the device.
-3.  **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
+1. **PCI Vendor:Device ID**: This uniquely identifies the type of PCI device.
+2. **Subsystem Vendor:Device ID**: This identifies the specific board partner or manufacturer of the device.
+3. **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
 
 ### 1. Finding PCI Vendor:Device IDs and Subsystem IDs
 
@@ -182,6 +182,31 @@ dynamic "hostpci" {
     rombar  = true
   }
 }
+```
+
+### 5. Talos Machine Configuration (`worker.yaml.tftpl`)
+
+The Talos machine configuration template (`tofu/talos/machine-config/worker.yaml.tftpl`) needs to include the `nodeTaints` field under the `machine.kubelet` block to apply node taints. Previously, `taints` was incorrectly placed directly under `machine`, leading to YAML unmarshalling errors. The correct placement, as per Talos documentation, is under `machine.kubelet`.
+
+```yaml
+machine:
+  sysctls:
+    vm.nr_hugepages: "1024"
+%{ if igpu && gpu_node_exclusive ~}
+{ endif }
+  nodeTaints:
+    gpu: "true:NoSchedule"
+%{ endif ~}
+  kernel:
+    modules: # These modules will be loaded on all worker nodes
+      - name: nvme_tcp # NVMe over TCP, generally useful for storage
+      - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
+%{ if igpu }
+      - name: nvidia
+      - name: nvidia_uvm
+      - name: nvidia_drm
+      - name: nvidia_modeset
+%{ endif }
 ```
 
 By following these steps, your OpenTofu configuration will correctly create the necessary PCI mapping aliases in Proxmox, allowing for GPU passthrough even when using API tokens for authentication.

@@ -22,6 +22,10 @@ machine:
           - rw
 %{ endfor }
 %{ endif }
+    %{ if igpu && gpu_node_exclusive }
+  nodeTaints:
+    gpu: "true:NoSchedule"
+%{ endif }
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:
@@ -41,6 +45,10 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+%{ if igpu }
+    gpu: "true"
+%{ endif }
+
 
 %{ if length(disks) > 0 }
   disks:
