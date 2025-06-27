@@ -41,6 +41,10 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+%{ if igpu }
+    gpu: "true"
+%{ endif }
+
 
 %{ if length(disks) > 0 }
   disks:

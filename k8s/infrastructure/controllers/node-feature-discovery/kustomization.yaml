@@ -12,6 +12,11 @@ helmCharts:
     namespace: node-feature-discovery
     valuesInline:
       worker:
+        tolerations:
+          - key: "gpu"
+            operator: "Equal"
+            value: "true"
+            effect: "NoSchedule"
         config:
           core:
             sleepInterval: 60s

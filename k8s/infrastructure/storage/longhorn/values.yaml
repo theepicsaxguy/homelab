@@ -86,6 +86,11 @@ service:
 
 longhornManager:
   priorityClass: system-cluster-critical
+  tolerations:
+    - key: "gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
   resources:
     requests:
       cpu: 250m
