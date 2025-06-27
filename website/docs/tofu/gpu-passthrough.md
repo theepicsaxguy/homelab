@@ -17,9 +17,9 @@ The `proxmox_virtual_environment_hardware_mapping_pci` resource in the Proxmox T
 
 To create the necessary PCI mappings, you need three pieces of information for each GPU device you intend to pass through:
 
-1.  **PCI Vendor:Device ID**: This uniquely identifies the type of PCI device.
-2.  **Subsystem Vendor:Device ID**: This identifies the specific board partner or manufacturer of the device.
-3.  **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
+1. **PCI Vendor:Device ID**: This uniquely identifies the type of PCI device.
+2. **Subsystem Vendor:Device ID**: This identifies the specific board partner or manufacturer of the device.
+3. **IOMMU Group**: This is the IOMMU group the device belongs to, which is required by Proxmox for passthrough.
 
 ### 1. Finding PCI Vendor:Device IDs and Subsystem IDs
 
@@ -193,11 +193,9 @@ machine:
   sysctls:
     vm.nr_hugepages: "1024"
 %{ if igpu && gpu_node_exclusive ~}
-  kubelet:
-    nodeTaints:
-      - key: gpu
-        value: "true"
-        effect: NoSchedule
+{ endif }
+  nodeTaints:
+    gpu: "true:NoSchedule"
 %{ endif ~}
   kernel:
     modules: # These modules will be loaded on all worker nodes
