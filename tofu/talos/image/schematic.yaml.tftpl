@@ -1,6 +1,10 @@
 customization:
   systemExtensions:
     officialExtensions:
-    - siderolabs/qemu-guest-agent
-    - siderolabs/iscsi-tools
-    - siderolabs/util-linux-tools${needs_nvidia_extensions ? "\n    - siderolabs/nonfree-kmod-nvidia\n    - siderolabs/nvidia-container-toolkit" : ""}
+      - siderolabs/qemu-guest-agent
+      - siderolabs/iscsi-tools
+      - siderolabs/util-linux-tools
+%{ if needs_nvidia_extensions }
+      - siderolabs/nonfree-kmod-nvidia
+      - siderolabs/nvidia-container-toolkit
+%{ endif }
