@@ -1,6 +1,8 @@
 - op: add
   path: /machine/kernel/modules
   value:
+    - name: nvme_tcp
+    - name: vfio_pci
     - name: nvidia
     - name: nvidia_uvm
     - name: nvidia_drm
