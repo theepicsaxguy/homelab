@@ -3,8 +3,6 @@ kind: Namespace
 metadata:
   name: zigbee2mqtt
   labels:
-    # ENFORCE privileged because this pod needs hardware access via hostPath to /dev.
-    pod-security.kubernetes.io/enforce: privileged
-    # AUDIT and WARN against baseline to still get feedback on best practices.
+    pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/audit: baseline
     pod-security.kubernetes.io/warn: baseline

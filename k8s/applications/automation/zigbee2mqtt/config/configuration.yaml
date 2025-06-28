@@ -2,8 +2,6 @@ homeassistant:
   enabled: true
 mqtt:
   server: mqtt://mosquitto:1883
-  user: addons
-  password: password
 serial:
   port: tcp://10.0.10.160:20108
   adapter: deconz
