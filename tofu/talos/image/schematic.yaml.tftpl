@@ -5,6 +5,6 @@ customization:
       - siderolabs/iscsi-tools
       - siderolabs/util-linux-tools
 %{ if needs_nvidia_extensions }
-      - siderolabs/nonfree-kmod-nvidia:550.90.07-v1.10.3
-      - siderolabs/nvidia-container-toolkit:3.13.0-v1.10.3
+      - siderolabs/nvidia-container-toolkit-lts
+      - siderolabs/nonfree-kmod-nvidia-lts
 %{ endif }
