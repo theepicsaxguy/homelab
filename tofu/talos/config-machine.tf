@@ -33,7 +33,7 @@ data "talos_machine_configuration" "this" {
         gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
       })
     ],
-    lookup(each.value, "gpu_node_exclusive", false) ? [
+    lookup(each.value, "igpu", false) ? [
       file("${path.module}/patches/gpu-modules.yaml"),
       file("${path.module}/patches/gpu-runtime.yaml")
     ] : []

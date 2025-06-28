@@ -193,29 +193,9 @@ machine:
   sysctls:
     vm.nr_hugepages: "1024"
 %{ if igpu && gpu_node_exclusive ~}
-{ endif }
   nodeTaints:
-    - key: "gpu"
-      value: "true"
-      effect: "NoSchedule"
+    gpu: "true:NoSchedule"
 %{ endif ~}
-  runtime:
-    name: containerd
-    config:
-      defaultRuntimeName: nvidia
-      runtimes:
-        - name: nvidia
-          path: nvidia-container-runtime
-  kernel:
-    modules: # These modules will be loaded on all worker nodes
-      - name: nvme_tcp # NVMe over TCP, generally useful for storage
-      - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
-%{ if igpu }
-      - name: nvidia
-      - name: nvidia_uvm
-      - name: nvidia_drm
-      - name: nvidia_modeset
-%{ endif }
 ```
 
 By following these steps, your OpenTofu configuration will correctly create the necessary PCI mapping aliases in Proxmox, allowing for GPU passthrough even when using API tokens for authentication.
