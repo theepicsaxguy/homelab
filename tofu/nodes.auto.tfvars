@@ -53,6 +53,7 @@ nodes_config = {
     ram_dedicated = 4168
     datastore_id  = "rpool2"
     igpu          = true
+    gpu_node_exclusive = true
     gpu_devices   = ["0000:03:00.0", "0000:03:00.1"]
     gpu_device_meta = {
       "0000:03:00.0" = {

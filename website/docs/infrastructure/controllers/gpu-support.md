@@ -21,5 +21,7 @@ Key components and configurations:
 *   **NVIDIA Device Plugin**: Deployed via a Helm chart, it allows Kubernetes to expose NVIDIA GPUs as a schedulable resource.
 *   **RuntimeClass `nvidia`**: A `RuntimeClass` named `nvidia` is created to enable pods to utilize the NVIDIA container runtime, which is necessary for GPU acceleration.
 *   **Kustomization**: The `nvidia-gpu` components are included in the controllers `kustomization.yaml` under `k8s/infrastructure/controllers/nvidia-gpu/`.
+*   **Containerd Runtime Configuration**: Worker nodes load the `nvidia-container-runtime` so GPU workloads can run without extra Pod tweaks.
+*   **GPU Node Taint**: The GPU worker can be marked with a `gpu=true:NoSchedule` taint, reserving it for GPU-aware pods.
 
 This setup ensures that GPU-enabled nodes are properly identified and that applications requiring GPU resources can be scheduled and executed efficiently within the Kubernetes cluster.

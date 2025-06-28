@@ -22,10 +22,19 @@ machine:
           - rw
 %{ endfor }
 %{ endif }
-    %{ if igpu && gpu_node_exclusive }
+  %{ if igpu && gpu_node_exclusive }
   nodeTaints:
-    gpu: "true:NoSchedule"
-%{ endif }
+    - key: "gpu"
+      value: "true"
+      effect: "NoSchedule"
+  %{ endif }
+  runtime:
+    name: containerd
+    config:
+      defaultRuntimeName: nvidia
+      runtimes:
+        - name: nvidia
+          path: nvidia-container-runtime
   sysctls:
     vm.nr_hugepages: "1024"
   kernel:
