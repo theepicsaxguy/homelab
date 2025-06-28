@@ -1,0 +1,15 @@
+- op: add
+  path: /machine/files
+  value:
+    - op: create
+      path: /etc/cri/conf.d/20-customization.part
+      permissions: 0o644
+      content: |
+        [plugins]
+          [plugins."io.containerd.cri.v1.runtime"]
+            [plugins."io.containerd.cri.v1.runtime".containerd]
+              default_runtime_name = "nvidia"
+              [plugins."io.containerd.cri.v1.runtime".containerd.runtimes.nvidia]
+                runtime_type = "io.containerd.runc.v2"
+                [plugins."io.containerd.cri.v1.runtime".containerd.runtimes.nvidia.options]
+                  BinaryName = "/usr/bin/nvidia-container-runtime"
