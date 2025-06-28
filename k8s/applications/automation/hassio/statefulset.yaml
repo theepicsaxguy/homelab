@@ -28,9 +28,9 @@ spec:
           value: "Europe/Stockholm"
         resources:
           requests:
-            memory: "256Mi"
-          limits:
             memory: "512Mi"
+          limits:
+            memory: "1Gi"
         ports:
         - containerPort: 8123
         livenessProbe:
@@ -61,8 +61,6 @@ spec:
           capabilities:
             drop:
             - ALL
-            add:
-            - NET_RAW
           seccompProfile:
             type: RuntimeDefault
       volumes:
