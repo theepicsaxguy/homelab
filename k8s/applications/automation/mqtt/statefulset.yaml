@@ -1,9 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mosquitto
   namespace: mqtt
+  labels:
+    app: mosquitto
 spec:
+  serviceName: mosquitto
   replicas: 1
   selector:
     matchLabels:
@@ -26,6 +29,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /mosquitto/config
+            - name: data
+              mountPath: /mosquitto/data
           ports:
             - containerPort: 1883
           livenessProbe:
@@ -50,3 +55,12 @@ spec:
                   name: mosquitto-config
               - secret:
                   name: mosquitto-password
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 1Gi

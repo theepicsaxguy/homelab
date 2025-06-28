@@ -141,9 +141,9 @@ so Home Assistant can drop privileges. The BlueZ sidecar now drops all
 capabilities and runs unprivileged, reducing risk.
 ## Zigbee2MQTT Notes
 
-Zigbee2MQTT accesses the Zigbee adapter on the host. The container runs
-in privileged mode and mounts `/dev/ttyACM0`. Label the `zigbee2mqtt`
-namespace with `pod-security.kubernetes.io/enforce=privileged` so the pod can start.
+Zigbee2MQTT manages the Zigbee adapter without privileged mode. The
+`zigbee2mqtt` namespace is labeled `pod-security.kubernetes.io/enforce=baseline` so
+it adheres to the cluster's standard policies.
 
 
 Need help? Check the application examples in `/k8s/applications/` for reference implementations.

@@ -48,8 +48,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-            # - name: zigbee-stick
-            #   mountPath: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -76,8 +74,3 @@ spec:
         - name: config-template
           configMap:
             name: zigbee2mqtt-config
-        # This securely passes the host's USB device to the container without privileged mode.
-        # - name: zigbee-stick
-        #   hostPath:
-        #     path: /dev/serial/by-id/usb-dresden_elektronik_ingenieurtechnik_GmbH_ConBee_II_DE2426266-if00
-        #     type: CharDevice

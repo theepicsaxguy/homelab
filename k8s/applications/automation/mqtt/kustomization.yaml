@@ -5,7 +5,7 @@ resources:
 - namespace.yaml
 - configmap.yaml
 - externalsecret.yaml
-- deployment.yaml
+- statefulset.yaml
 - service.yaml
 generatorOptions:
   disableNameSuffixHash: true
