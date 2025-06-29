@@ -186,27 +186,16 @@ dynamic "hostpci" {
 
 ### 5. Talos Machine Configuration (`worker.yaml.tftpl`)
 
-The Talos machine configuration template (`tofu/talos/machine-config/worker.yaml.tftpl`) needs to include the `nodeTaints` field under the `machine.kubelet` block to apply node taints. Previously, `taints` was incorrectly placed directly under `machine`, leading to YAML unmarshalling errors. The correct placement, as per Talos documentation, is under `machine.kubelet`.
+The Talos machine configuration template (`tofu/talos/machine-config/worker.yaml.tftpl`) must include a `nodeTaints` section in the `machine` block. Earlier versions placed `taints` elsewhere, which caused YAML unmarshalling errors.
 
 ```yaml
 machine:
   sysctls:
     vm.nr_hugepages: "1024"
 %{ if igpu && gpu_node_exclusive ~}
-{ endif }
   nodeTaints:
     gpu: "true:NoSchedule"
 %{ endif ~}
-  kernel:
-    modules: # These modules will be loaded on all worker nodes
-      - name: nvme_tcp # NVMe over TCP, generally useful for storage
-      - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
-%{ if igpu }
-      - name: nvidia
-      - name: nvidia_uvm
-      - name: nvidia_drm
-      - name: nvidia_modeset
-%{ endif }
 ```
 
 By following these steps, your OpenTofu configuration will correctly create the necessary PCI mapping aliases in Proxmox, allowing for GPU passthrough even when using API tokens for authentication.
