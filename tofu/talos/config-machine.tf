@@ -6,6 +6,7 @@ data "talos_machine_configuration" "this" {
   machine_type       = each.value.machine_type
   machine_secrets    = talos_machine_secrets.this.machine_secrets
   kubernetes_version = var.cluster.kubernetes_version
+
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
       hostname        = each.key
@@ -18,19 +19,25 @@ data "talos_machine_configuration" "this" {
       cilium_install  = var.cilium.install
       coredns_install = var.coredns.install
     })
-    ] : [
-    templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-      hostname           = each.key
-      node_name          = each.value.host_node
-      cluster_name       = var.cluster.proxmox_cluster
-      node_ip            = each.value.ip
-      cluster            = var.cluster
-      cluster_domain     = var.cluster_domain
-      disks              = each.value.disks
-      igpu               = each.value.igpu
-      gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
-    })
-  ]
+  ] : concat(
+    [
+      templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
+        hostname           = each.key
+        node_name          = each.value.host_node
+        cluster_name       = var.cluster.proxmox_cluster
+        node_ip            = each.value.ip
+        cluster            = var.cluster
+        cluster_domain     = var.cluster_domain
+        disks              = each.value.disks
+        igpu               = each.value.igpu
+        gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
+      })
+    ],
+    lookup(each.value, "igpu", false) ? [
+      file("${path.module}/patches/gpu-modules.yaml"),
+      file("${path.module}/patches/gpu-runtime.yaml")
+    ] : []
+  )
 }
 
 resource "talos_machine_configuration_apply" "this" {

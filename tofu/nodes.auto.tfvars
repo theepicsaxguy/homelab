@@ -46,14 +46,15 @@ nodes_config = {
     }
   }
   "work-03" = {
-    machine_type  = "worker"
-    ip            = "10.25.150.24"
-    mac_address   = "bc:24:11:7f:20:04"
-    vm_id         = 8204
-    ram_dedicated = 4168
-    datastore_id  = "rpool2"
-    igpu          = true
-    gpu_devices   = ["0000:03:00.0", "0000:03:00.1"]
+    machine_type       = "worker"
+    ip                 = "10.25.150.24"
+    mac_address        = "bc:24:11:7f:20:04"
+    vm_id              = 8204
+    ram_dedicated      = 4168
+    datastore_id       = "rpool2"
+    igpu               = true
+    gpu_node_exclusive = true
+    gpu_devices        = ["0000:03:00.0", "0000:03:00.1"]
     gpu_device_meta = {
       "0000:03:00.0" = {
         id           = "10de:13ba"
