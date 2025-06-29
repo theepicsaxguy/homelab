@@ -4,7 +4,9 @@ namespace: home-assistant
 resources:
 - namespace.yaml
 - http-route.yaml
-- statefulset.yaml
-- svc.yaml
-- configmap.yaml
 - external-secret.yaml
+- init-script.yaml
+- hass-configuration.yaml
+- serviceaccount.yaml
+- svc.yaml
+- statefulset.yaml
