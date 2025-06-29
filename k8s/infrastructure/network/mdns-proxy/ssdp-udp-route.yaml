@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: UDPRoute
+metadata:
+  name: ssdp
+  namespace: network-system
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+      sectionName: ssdp
+  rules:
+    - backendRefs:
+        - name: mdns-repeater
+          port: 1900

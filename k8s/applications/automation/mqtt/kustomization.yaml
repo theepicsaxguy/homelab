@@ -7,5 +7,6 @@ resources:
 - externalsecret.yaml
 - statefulset.yaml
 - service.yaml
+- tcp-route.yaml
 generatorOptions:
   disableNameSuffixHash: true
