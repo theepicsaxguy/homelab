@@ -1,119 +1,129 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: home-assistant
-  name: home-assistant
   labels:
-    app: home-assistant
+    app.kubernetes.io/instance: home-assistant
+    app.kubernetes.io/name: home-assistant
+  name: home-assistant
+  namespace: home-assistant
 spec:
-  serviceName: home-assistant
   replicas: 1
   selector:
     matchLabels:
-      app: home-assistant
+      app.kubernetes.io/instance: home-assistant
+      app.kubernetes.io/name: home-assistant
+  serviceName: home-assistant
   template:
     metadata:
+      annotations:
+        checksum/hass-configuration: 41d81c4dd388f2b621ca87786005ab0fccf7bbdc6c9653dd4866983af679c63c
+        checksum/init-script: 495e927a6986fb8e0bd38f54c81c5cb25cabad179b8c61e53db1ed6405f8007b
       labels:
-        app: home-assistant
+        app.kubernetes.io/instance: home-assistant
+        app.kubernetes.io/name: home-assistant
     spec:
-      securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
       containers:
-      - name: home-assistant
-        image: homeassistant/home-assistant:2025.6.3
-        env:
+      - env:
         - name: TZ
-          value: "Europe/Stockholm"
+          value: Europe/Stockholm
+        image: ghcr.io/home-assistant/home-assistant:2025.6.3
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 20
+          successThreshold: 1
+          timeoutSeconds: 2
+        name: home-assistant
+        ports:
+        - containerPort: 8123
+          name: http
+          protocol: TCP
+        - containerPort: 8124
+          name: sia
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
         resources:
           requests:
             memory: "1Gi"
           limits:
             memory: "3Gi"
-        ports:
-        - containerPort: 8123
-        startupProbe:
-          httpGet:
-            path: /
-            port: 8123
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8123
-          initialDelaySeconds: 60
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8123
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+        securityContext: {}
         volumeMounts:
-        - mountPath: /config/configuration.yaml
-          name: ha-config
-          subPath: configuration.yaml
         - mountPath: /config
-          name: config
-        - mountPath: /media
-          name: media-volume
+          name: home-assistant
         - name: hassio-secrets
           mountPath: /config/secrets.yaml
           subPath: secrets.yaml
           readOnly: true
-        - name: data-volume
-          mountPath: /data
+      initContainers:
+      - args:
+        - |
+          set -e
+          echo "Cloning Panasonic CC custom component..."
+          git clone https://github.com/sockless-coding/panasonic_cc.git /git/panasonic_cc
+          mkdir -p /config/custom_components
+          echo "Copying component to /config/custom_components/panasonic_cc"
+          cp -r /git/panasonic_cc/custom_components/panasonic_cc /config/custom_components/
+          echo "Setting permissions..."
+          chown -R 568:568 /config/custom_components/panasonic_cc
+          echo "Panasonic CC init complete."
+        command:
+        - /bin/sh
+        - -c
+        image: alpine/git
+        name: init-panasonic-cc
+        volumeMounts:
+        - mountPath: /config
+          name: home-assistant
+      - args:
+        - /bin/sh /mnt/init/init.sh
+        command:
+        - /bin/sh
+        - -c
+        #env: null
+        image: mikefarah/yq:4
+        name: setup-config
         securityContext:
-          privileged: false
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-            add:
-            - NET_RAW
-            - CHOWN
-            - FOWNER
-            - DAC_OVERRIDE
-          seccompProfile:
-            type: RuntimeDefault
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /mnt/init/init.sh
+          name: init-volume
+          subPath: init.sh
+        - mountPath: /config-templates
+          name: config-volume
+        - mountPath: /config
+          name: home-assistant
+      securityContext:
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 568
+        runAsUser: 568
+      serviceAccountName: home-assistant
       volumes:
-      - name: ha-config
-        configMap:
-          name: home-assistant-config
+      - configMap:
+          name: init-script
+        name: init-volume
+      - configMap:
+          name: hass-configuration
+        name: config-volume
       - name: hassio-secrets
         secret:
           secretName: hassio-secrets
   volumeClaimTemplates:
   - metadata:
-      name: config
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: longhorn
-      resources:
-        requests:
-          storage: 9Gi
-  - metadata:
-      name: media-volume
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: longhorn
-      resources:
-        requests:
-          storage: 9Gi
-  - metadata:
-      name: data-volume
+      name: home-assistant
     spec:
       accessModes:
       - ReadWriteOnce

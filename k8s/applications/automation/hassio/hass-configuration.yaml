@@ -1,0 +1,39 @@
+apiVersion: v1
+data:
+  configuration.yaml: |
+    # Loads default set of integrations. Do not remove.
+    default_config:
+    # Load custom packages
+    packages: !include_dir_named packages
+
+    # Include secrets for use in other configurations
+    secrets: !include secrets.yaml
+
+    # Load frontend themes from the themes folder
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    # HTTP settings for when behind a reverse proxy
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+
+    # MQTT integration connecting to the in-cluster broker
+    mqtt:
+      broker: mosquitto.mqtt.svc.kube.pc-tips.se
+      port: 1883
+      username: !secret mqtt_user
+      password: !secret mqtt_password
+      discovery: true
+      discovery_prefix: homeassistant
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml
+kind: ConfigMap
+metadata:
+  name: hass-configuration
+  namespace: home-assistant
