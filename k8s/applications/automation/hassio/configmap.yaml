@@ -19,5 +19,13 @@ data:
         - 10.0.0.0/8
         - 172.16.0.0/12
         - 192.168.0.0/16
+
+    mqtt:
+      broker: mqtt.pc-tips.se
+      port: 1883
+      username: !secret mqtt_user
+      password: !secret mqtt_password
+      discovery: true
+      discovery_prefix: homeassistant
   automations.yaml: ""
   known_devices.yaml: ""

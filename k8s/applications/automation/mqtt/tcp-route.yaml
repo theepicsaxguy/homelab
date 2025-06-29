@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: mqtt
+  namespace: mqtt
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+      sectionName: mqtt-tcp
+  rules:
+    - backendRefs:
+        - name: mosquitto
+          port: 1883

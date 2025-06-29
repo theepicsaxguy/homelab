@@ -107,6 +107,7 @@ resource "proxmox_virtual_environment_vm" "this" {
       mapping = "${local.gpu_mapping_alias_prefix}-${each.key}-${hostpci.key}"
       pcie    = true
       rombar  = true
+      xvga   = tonumber(hostpci.key) == 0
     }
   }
 }
