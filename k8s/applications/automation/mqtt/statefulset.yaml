@@ -16,6 +16,23 @@ spec:
       labels:
         app: mosquitto
     spec:
+      initContainers:
+        - name: create-mqtt-password
+          image: eclipse-mosquitto:2.0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              cp -a /configmap/. /mosquitto/config/
+              mosquitto_passwd -b -c /mosquitto/config/password.txt "$MQTT_USER" "$MQTT_PASSWORD"
+          envFrom:
+            - secretRef:
+                name: mosquitto-password
+          volumeMounts:
+            - name: mosquitto-configmap
+              mountPath: /configmap
+            - name: mosquitto-config
+              mountPath: /mosquitto/config
       containers:
         - name: mosquitto
           image: eclipse-mosquitto:2.0
@@ -27,7 +44,7 @@ spec:
               cpu: '150m'
               memory: '300Mi'
           volumeMounts:
-            - name: config
+            - name: mosquitto-config
               mountPath: /mosquitto/config
             - name: data
               mountPath: /mosquitto/data
@@ -48,13 +65,11 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 3
       volumes:
-        - name: config
-          projected:
-            sources:
-              - configMap:
-                  name: mosquitto-config
-              - secret:
-                  name: mosquitto-password
+        - name: mosquitto-config
+          emptyDir: {}
+        - name: mosquitto-configmap
+          configMap:
+            name: mosquitto-config
   volumeClaimTemplates:
     - metadata:
         name: data

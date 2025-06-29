@@ -86,15 +86,3 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - protocol: UDP
-      port: 5353
-      name: mdns
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: UDP
-      port: 1900
-      name: ssdp
-      allowedRoutes:
-        namespaces:
-          from: All
