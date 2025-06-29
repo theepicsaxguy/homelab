@@ -8,8 +8,15 @@ resources:
 helmCharts:
   - name: cilium
     repo: https://helm.cilium.io
-    version: 1.17.5 # renovate: github-releases=cilium/cilium
-    releaseName: 'cilium'
-    includeCRDs: true
+    version: 1.17.5
+    releaseName: cilium
     namespace: kube-system
+    includeCRDs: true
     valuesFile: values.yaml
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: cilium-config
+      namespace: kube-system
+    path: multicast-configmap.yaml
