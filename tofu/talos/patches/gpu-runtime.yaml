@@ -11,7 +11,5 @@
                 runtime_type = "io.containerd.runc.v2"
                 [plugins."io.containerd.cri.v1.runtime".containerd.runtimes.nvidia.options]
                   BinaryName = "/usr/bin/nvidia-container-runtime"
-    - op: add
-      path: /machine/kernel/options/-
-      value: "nvidia.NVreg_EnableGpuFirmware=0"
+    
 
