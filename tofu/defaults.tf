@@ -17,7 +17,7 @@ variable "defaults_worker" {
   default = {
     machine_type  = "worker"
     cpu           = 8
-    ram_dedicated = 12240
+    ram_dedicated = 13312
     igpu          = false
     disks = {
       longhorn = {

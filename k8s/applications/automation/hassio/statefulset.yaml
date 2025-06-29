@@ -32,7 +32,7 @@ spec:
           requests:
             memory: "1Gi"
           limits:
-            memory: "2Gi"
+            memory: "3Gi"
         ports:
         - containerPort: 8123
         startupProbe:
