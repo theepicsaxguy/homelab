@@ -11,22 +11,22 @@ spec:
       app: jellyfin
   template:
     spec:
-      runtimeClassName: nvidia
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              preference:
-                matchExpressions:
-                  - key: gpu
-                    operator: In
-                    values:
-                      - "true"
-      tolerations:
+     # runtimeClassName: nvidia
+   #   affinity:
+    #    nodeAffinity:
+          # preferredDuringSchedulingIgnoredDuringExecution:
+        #    - weight: 1
+        #      preference:
+           #     matchExpressions:
+            #      - key: gpu
+             #       operator: In
+              #      values:
+              #        - "true"
+  #    tolerations:
         - key: "gpu"
-          operator: "Equal"
-          value: "true"
-          effect: "NoSchedule"
+     #     operator: "Equal"
+      #    value: "true"
+    #      effect: "NoSchedule"
       securityContext:
         runAsNonRoot: true
         runAsUser: 2501
