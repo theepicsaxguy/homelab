@@ -23,7 +23,7 @@ spec:
               #      values:
               #        - "true"
   #    tolerations:
-        - key: "gpu"
+   #     - key: "gpu"
      #     operator: "Equal"
       #    value: "true"
     #      effect: "NoSchedule"
