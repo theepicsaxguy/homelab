@@ -68,10 +68,9 @@ resource "proxmox_virtual_environment_download_file" "iso" {
   node_name    = each.value.host_node
   content_type = "iso"
   datastore_id = var.talos_image.proxmox_datastore
-
   file_name = "talos-${each.value.schematic_id}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
   url       = "${var.talos_image.factory_url}/image/${each.value.schematic_id}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
-
+  upload_timeout      = 800
   decompression_algorithm = "gz"
   overwrite               = false
 }

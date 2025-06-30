@@ -17,6 +17,12 @@ resource "proxmox_virtual_environment_vm" "this" {
   machine       = lookup(each.value, "machine", "q35")
   scsi_hardware = lookup(each.value, "scsi_hardware", "virtio-scsi-single")
   bios          = lookup(each.value, "bios", "seabios")
+  dynamic "vga" {
+    for_each = each.value.igpu ? [1] : []
+    content {
+      type = "virtio"
+    }
+  }
 
   agent {
     enabled = lookup(each.value, "agent_enabled", true)
@@ -49,7 +55,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_format  = lookup(each.value, "root_disk_file_format", "raw")
     size         = lookup(each.value, "root_disk_size", 40)
     file_id = proxmox_virtual_environment_download_file.iso[
-      "${each.value.host_node}-${lookup(each.value,"update",false) ? "upd" : "inst"}-${lookup(each.value,"igpu",false) ? "gpu" : "std"}"
+      "${each.value.host_node}-${lookup(each.value, "update", false) ? "upd" : "inst"}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"
     ].id
   }
 
@@ -69,7 +75,6 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
   lifecycle {
     ignore_changes = [
-      vga,
       network_device[0].disconnected,
       disk[0].file_id,
     ]
@@ -107,7 +112,7 @@ resource "proxmox_virtual_environment_vm" "this" {
       mapping = "${local.gpu_mapping_alias_prefix}-${each.key}-${hostpci.key}"
       pcie    = true
       rombar  = true
-      xvga   = tonumber(hostpci.key) == 0
+      xvga    = tonumber(hostpci.key) == 0
     }
   }
 }
@@ -116,12 +121,12 @@ locals {
   gpu_mapping_alias_prefix = "gpu"
   gpu_mappings = flatten([
     for node_name, node_cfg in var.nodes : [
-      for idx, bdf in node_cfg.gpu_devices : {
+      for idx, bdf in lookup(node_cfg, "gpu_devices", []) : {
         name = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
         node = node_cfg.host_node
         path = bdf
-        meta = lookup(node_cfg, "gpu_device_meta", {})[bdf]
-      }
+        meta = lookup(node_cfg.gpu_device_meta, bdf, null)
+      } if lookup(node_cfg, "igpu", false) && lookup(node_cfg, "gpu_device_meta", null) != null && contains(keys(node_cfg.gpu_device_meta), bdf)
     ]
   ])
 }

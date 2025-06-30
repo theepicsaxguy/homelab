@@ -11,21 +11,22 @@ spec:
       app: jellyfin
   template:
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              preference:
-                matchExpressions:
-                  - key: gpu
-                    operator: In
-                    values:
-                      - "true"
-      tolerations:
-        - key: "gpu"
-          operator: "Equal"
-          value: "true"
-          effect: "NoSchedule"
+     # runtimeClassName: nvidia
+   #   affinity:
+    #    nodeAffinity:
+          # preferredDuringSchedulingIgnoredDuringExecution:
+        #    - weight: 1
+        #      preference:
+           #     matchExpressions:
+            #      - key: gpu
+             #       operator: In
+              #      values:
+              #        - "true"
+  #    tolerations:
+   #     - key: "gpu"
+     #     operator: "Equal"
+      #    value: "true"
+    #      effect: "NoSchedule"
       securityContext:
         runAsNonRoot: true
         runAsUser: 2501
@@ -50,6 +51,7 @@ spec:
             limits:
               cpu: '4000m'
               memory: '5Gi'
+              nvidia.com/gpu: 1
           envFrom:
             - configMapRef:
                 name: jellyfin-env
