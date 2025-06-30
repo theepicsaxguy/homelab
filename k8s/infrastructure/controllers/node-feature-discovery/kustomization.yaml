@@ -21,3 +21,14 @@ helmCharts:
           core:
             sleepInterval: 60s
             featureSources: ["cpu","pci","usb","gpu","system"]
+      extraRules:
+        - name: nvidia-gpu-rule
+          labels:
+            nvidia.com/gpu: "true"
+          matchFeatures:
+            - feature: pci.device
+              matchExpressions:
+                # Match NVIDIA Corporation vendor ID
+                vendor: {op: In, value: ["10de"]}
+                # Match VGA compatible controller (0300) or 3D controller (0302)
+                class: {op: In, value: ["0300", "0302"]}
