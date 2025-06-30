@@ -68,7 +68,7 @@ spec:
           subPath: secrets.yaml
           readOnly: true
       initContainers:
-      ## Example how to install a custom component decleratively
+      ## Example how to install a custom component declaratively
 
       # - args:
       #   - |
