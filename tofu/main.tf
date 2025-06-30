@@ -21,8 +21,9 @@ locals {
         }
       },
       {
-        host_node = coalesce(config.host_node, nonsensitive(var.proxmox.name))
-        update    = var.upgrade_control.enabled && name == local.current_upgrade_node
+        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox.name))
+        update       = var.upgrade_control.enabled && name == local.current_upgrade_node
+        datastore_id = coalesce(lookup(config, "datastore_id", null), var.proxmox_datastore)
       }
     )
   }
@@ -33,6 +34,8 @@ module "talos" {
   providers = {
     proxmox = proxmox
   }
+
+  proxmox_datastore = var.proxmox_datastore
 
   talos_image = var.talos_image
 
