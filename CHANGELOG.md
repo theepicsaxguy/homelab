@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.4.0 (2025-06-30)
+
+## What's Changed
+* Refactor(tofu)--update-variable-definitions-and-remove-unused-outputs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1117
+* feat(auth): configure kubectl oidc via authentik by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1118
+* feat(openwebui): merge oauth accounts by email by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1120
+* refactor(k8s): update webui statefulset to include static-files volume by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1122
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1123
+* feat(k8s): enhance GPU support and configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1124
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1125
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1126
+* feat(k8s): add GPU tolerations and taints for enhanced scheduling by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1127
+* feat(k8s): persist mosquitto data and tighten policies by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1129
+* chore(deps): update onerahmet/openai-whisper-asr-webservice docker tag to v1.9.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1130
+* feat(k8s): configure GPU node runtime and taints by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1128
+* fix(k8s): update security context to run as root user by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1131
+* Feat(mdns proxy)  add m dns repeater and related udp routes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1132
+* Feat(k8s)--restructure-Home-Assistant-configuration-and-initialization-scripts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1133
+* fix(k8s): align home-assistant ports and capabilities by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1136
+* refactor(gpu): simplify passthrough and add nfd by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1137
+* chore(deps): update all dependencies to v75.6.2 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1139
+* fix: added custom gpu rules NFD by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1138
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1140
+* Pr/theepicsaxguy/1135 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1141
+* fix(tofu): update ram_dedicated for worker node configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1142
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.3.0...v3.4.0
+
 ## 3.3.0 (2025-06-24)
 
 ## What's Changed
