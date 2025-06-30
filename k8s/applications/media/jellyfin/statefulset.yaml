@@ -47,9 +47,10 @@ spec:
             requests:
               cpu: '2000m'
               memory: '2Gi'
-            limits:
-              cpu: '4000m'
-              memory: '5Gi'
+          limits:
+            cpu: '4000m'
+            memory: '5Gi'
+            nvidia.com/gpu: 1
           envFrom:
             - configMapRef:
                 name: jellyfin-env

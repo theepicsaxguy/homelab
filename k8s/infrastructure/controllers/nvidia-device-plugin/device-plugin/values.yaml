@@ -4,6 +4,8 @@ daemonset:
       operator: "Equal"
       value: "true"
       effect: "NoSchedule"
+  nodeSelector:
+    nvidia.com/gpu: "true"
 gfd:
   enabled: true                 # auto-label GPU features
 timeSlicing:

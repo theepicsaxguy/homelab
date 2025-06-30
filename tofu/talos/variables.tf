@@ -33,16 +33,16 @@ variable "cluster_domain" {
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    host_node     = string
-    machine_type  = string
-    datastore_id  = optional(string, "velocity")
-    ip            = string
-    mac_address   = string
-    vm_id         = number
-    cpu           = number
-    ram_dedicated = number
-    update        = optional(bool, false)
-    igpu          = optional(bool, false)
+    host_node          = string
+    machine_type       = string
+    datastore_id       = optional(string, "velocity")
+    ip                 = string
+    mac_address        = string
+    vm_id              = number
+    cpu                = number
+    ram_dedicated      = number
+    update             = optional(bool, false)
+    igpu               = optional(bool, false)
     gpu_node_exclusive = optional(bool, true)
     disks = optional(map(object({
       device      = string
@@ -51,15 +51,7 @@ variable "nodes" {
       mountpoint  = string
       unit_number = number
     })), {}),
-    gpu_devices = optional(list(string), []),
-    gpu_device_meta = optional(
-      map(object({
-        id            = string
-        subsystem_id  = string
-        iommu_group   = number
-      })),
-      {}
-    )
+    gpu_devices = optional(list(string), [])
   }))
 
   validation {

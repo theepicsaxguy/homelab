@@ -19,25 +19,19 @@ data "talos_machine_configuration" "this" {
       cilium_install  = var.cilium.install
       coredns_install = var.coredns.install
     })
-  ] : concat(
-    [
-      templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-        hostname           = each.key
-        node_name          = each.value.host_node
-        cluster_name       = var.cluster.proxmox_cluster
-        node_ip            = each.value.ip
-        cluster            = var.cluster
-        cluster_domain     = var.cluster_domain
-        disks              = each.value.disks
-        igpu               = each.value.igpu
-        gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
-      })
-    ],
-    lookup(each.value, "igpu", false) ? [
-      file("${path.module}/patches/gpu-modules.yaml"),
-      file("${path.module}/patches/gpu-runtime.yaml")
-    ] : []
-  )
+    ] : [
+    templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
+      hostname           = each.key
+      node_name          = each.value.host_node
+      cluster_name       = var.cluster.proxmox_cluster
+      node_ip            = each.value.ip
+      cluster            = var.cluster
+      cluster_domain     = var.cluster_domain
+      disks              = each.value.disks
+      igpu               = each.value.igpu
+      gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
+    })
+  ]
 }
 
 resource "talos_machine_configuration_apply" "this" {
