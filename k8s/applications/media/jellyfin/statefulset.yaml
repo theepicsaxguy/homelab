@@ -11,6 +11,7 @@ spec:
       app: jellyfin
   template:
     spec:
+      runtimeClassName: nvidia
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -50,6 +51,7 @@ spec:
             limits:
               cpu: '4000m'
               memory: '5Gi'
+              nvidia.com/gpu: 1
           envFrom:
             - configMapRef:
                 name: jellyfin-env

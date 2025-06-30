@@ -73,25 +73,27 @@ spec:
           subPath: secrets.yaml
           readOnly: true
       initContainers:
-      - args:
-        - |
-          set -e
-          echo "Cloning Panasonic CC custom component..."
-          git clone https://github.com/sockless-coding/panasonic_cc.git /git/panasonic_cc
-          mkdir -p /config/custom_components
-          echo "Copying component to /config/custom_components/panasonic_cc"
-          cp -r /git/panasonic_cc/custom_components/panasonic_cc /config/custom_components/
-          echo "Setting permissions..."
-          chown -R 568:568 /config/custom_components/panasonic_cc
-          echo "Panasonic CC init complete."
-        command:
-        - /bin/sh
-        - -c
-        image: alpine/git
-        name: init-panasonic-cc
-        volumeMounts:
-        - mountPath: /config
-          name: home-assistant
+      ## Example how to install a custom component declaratively
+
+      # - args:
+      #   - |
+      #     set -e
+      #     echo "Cloning Panasonic CC custom component..."
+      #     git clone https://github.com/sockless-coding/panasonic_cc.git /git/panasonic_cc
+      #     mkdir -p /config/custom_components
+      #     echo "Copying component to /config/custom_components/panasonic_cc"
+      #     cp -r /git/panasonic_cc/custom_components/panasonic_cc /config/custom_components/
+      #     echo "Setting permissions..."
+      #     chown -R 568:568 /config/custom_components/panasonic_cc
+      #     echo "Panasonic CC init complete."
+      #   command:
+      #   - /bin/sh
+      #   - -c
+      #   image: alpine/git
+      #   name: init-panasonic-cc
+      #   volumeMounts:
+      #   - mountPath: /config
+      #     name: home-assistant
       - args:
         - /bin/sh /mnt/init/init.sh
         command:
