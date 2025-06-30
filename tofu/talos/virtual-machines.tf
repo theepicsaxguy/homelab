@@ -17,6 +17,12 @@ resource "proxmox_virtual_environment_vm" "this" {
   machine       = lookup(each.value, "machine", "q35")
   scsi_hardware = lookup(each.value, "scsi_hardware", "virtio-scsi-single")
   bios          = lookup(each.value, "bios", "seabios")
+  dynamic "vga" {
+    for_each = each.value.igpu ? [1] : []
+    content {
+      type = "virtio"
+    }
+  }
 
   agent {
     enabled = lookup(each.value, "agent_enabled", true)
@@ -69,7 +75,6 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
   lifecycle {
     ignore_changes = [
-      vga,
       network_device[0].disconnected,
       disk[0].file_id,
     ]

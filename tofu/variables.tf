@@ -115,7 +115,7 @@ variable "nodes_config" {
     ])
     error_message = "If 'igpu' is true, 'gpu_devices' must contain at least one PCI address."
   }
-    validation {
+  validation {
     condition = alltrue(flatten([
       for _, n in var.nodes_config :
       [

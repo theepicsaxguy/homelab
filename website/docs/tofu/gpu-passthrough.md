@@ -40,3 +40,13 @@ dynamic "hostpci" {
 ```
 
 Talos loads the NVIDIA drivers through system extensions, and Node Feature Discovery labels the node so the device plugin runs only on GPU nodes.
+
+### VGA Configuration for Console Access
+
+To ensure a working noVNC console for management while the dedicated GPU is passed through, the VM's VGA adapter is set to `virtio`. This allows the primary GPU to be used exclusively by the guest OS for workloads.
+
+```terraform
+vga {
+  type = "virtio"
+}
+```
