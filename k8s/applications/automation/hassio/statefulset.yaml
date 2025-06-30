@@ -59,7 +59,12 @@ spec:
             memory: "1Gi"
           limits:
             memory: "3Gi"
-        securityContext: {}
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN     # allows interface promiscuous mode & multicast group joins
+              - NET_RAW       # allows open/listen on raw sockets (ARP, SSDP, mDNS, etc.)
+              - NET_BROADCAST # allows sending broadcast packets
         volumeMounts:
         - mountPath: /config
           name: home-assistant

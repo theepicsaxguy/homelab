@@ -7,4 +7,4 @@ Home Assistant is an open-source home automation platform that focuses on local 
 
 ## Important considerations
 
-- **Pod Security Context:** The Home Assistant pod's security context has been configured to drop all capabilities and does not include `NET_RAW`. This adheres to the `baseline:latest` PodSecurity policy.
+- **Pod Security Context:** The container now adds `NET_ADMIN`, `NET_RAW`, and `NET_BROADCAST` so Home Assistant can discover devices on the local network.
