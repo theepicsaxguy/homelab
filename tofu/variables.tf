@@ -127,3 +127,10 @@ variable "nodes_config" {
     error_message = "Every BDF in gpu_devices must exist in gpu_device_meta."
   }
 }
+
+variable "proxmox_datastore" {
+  description = "Default Proxmox datastore for all nodes"
+  type        = string
+  default     = "velocity"
+}
+

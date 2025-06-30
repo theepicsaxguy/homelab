@@ -29,13 +29,18 @@ variable "cluster_domain" {
   type        = string
 }
 
+variable "proxmox_datastore" {
+  description = "Proxmox datastore to use for VM disks"
+  type        = string
+  default     = "velocity"
+}
 
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
     host_node     = string
     machine_type  = string
-    datastore_id  = optional(string, "velocity")
+    datastore_id  = optional(string)
     ip            = string
     mac_address   = string
     vm_id         = number
