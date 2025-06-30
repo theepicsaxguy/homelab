@@ -14,6 +14,7 @@ spec:
       labels:
         app: ollama
     spec:
+      runtimeClassName: nvidia
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000

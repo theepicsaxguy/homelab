@@ -58,7 +58,16 @@ variable "nodes_config" {
       mountpoint  = optional(string)
       unit_number = optional(number)
     }))),
-    gpu_devices                 = optional(list(string), []),
+    gpu_devices = optional(list(string), []),
+    #   map keyed by the same BDF strings you list in `gpu_devices`
+    gpu_device_meta = optional(
+      map(object({
+        id           = string
+        subsystem_id = string
+        iommu_group  = number
+      })),
+      {}
+    ),
     gpu_node_exclusive          = optional(bool, true)
     datastore_id                = optional(string),
     description                 = optional(string),
@@ -106,5 +115,14 @@ variable "nodes_config" {
     ])
     error_message = "If 'igpu' is true, 'gpu_devices' must contain at least one PCI address."
   }
-
+    validation {
+    condition = alltrue(flatten([
+      for _, n in var.nodes_config :
+      [
+        for bdf in lookup(n, "gpu_devices", []) :
+        contains(keys(lookup(n, "gpu_device_meta", {})), bdf)
+      ]
+    ]))
+    error_message = "Every BDF in gpu_devices must exist in gpu_device_meta."
+  }
 }

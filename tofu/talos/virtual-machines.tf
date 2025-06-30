@@ -99,10 +99,41 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   dynamic "hostpci" {
-    for_each = each.value.igpu ? toset(each.value.gpu_devices) : []
+    for_each = each.value.igpu && length(each.value.gpu_devices) > 0 ? {
+      for i, bdf in each.value.gpu_devices : i => bdf
+    } : {}
     content {
-      device = hostpci.value
-      pcie   = true
+      device  = "hostpci${hostpci.key}"
+      mapping = "${local.gpu_mapping_alias_prefix}-${each.key}-${hostpci.key}"
+      pcie    = true
+      rombar  = true
+      xvga    = tonumber(hostpci.key) == 0
     }
   }
+}
+
+locals {
+  gpu_mapping_alias_prefix = "gpu"
+  gpu_mappings = flatten([
+    for node_name, node_cfg in var.nodes : [
+      for idx, bdf in lookup(node_cfg, "gpu_devices", []) : {
+        name = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
+        node = node_cfg.host_node
+        path = bdf
+        meta = lookup(node_cfg.gpu_device_meta, bdf, null)
+      } if lookup(node_cfg, "igpu", false) && lookup(node_cfg, "gpu_device_meta", null) != null && contains(keys(node_cfg.gpu_device_meta), bdf)
+    ]
+  ])
+}
+
+resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
+  for_each = { for m in local.gpu_mappings : m.name => m }
+  name = each.value.name
+  map  = [{
+    node          = each.value.node
+    path          = each.value.path
+    id            = each.value.meta.id
+    subsystem_id  = each.value.meta.subsystem_id
+    iommu_group   = each.value.meta.iommu_group
+  }]
 }
