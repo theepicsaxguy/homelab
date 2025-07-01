@@ -26,7 +26,7 @@ spec:
               mountPath: /config-template
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:2.4.0
+          image: koenkk/zigbee2mqtt:2.5.0
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
