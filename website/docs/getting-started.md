@@ -42,13 +42,39 @@ If you fork it, search for these domains and replace them with your own.
    ```
 
 2. **Configure cluster variables:**
-   Edit or create the `terraform.tfvars` file to define your cluster nodes:
+   Edit or create the `config.auto.tfvars` file to define your cluster nodes:
 
    ```hcl
-   # terraform.tfvars
-   cluster_name     = "homelab"
-   controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
-   worker_ips       = ["10.25.150.20", "10.25.150.21"]
+   // tofu/config.auto.tfvars example
+
+   cluster_name   = "talos"
+   cluster_domain = "kube.pc-tips.se"
+
+   # Network settings
+   # All nodes must be on the same L2 network
+   network = {
+     gateway     = "10.25.150.1"
+     vip         = "10.25.150.10" # Control plane Virtual IP
+     cidr_prefix = 24
+     dns_servers = ["10.25.150.1"]
+     bridge      = "vmbr0"
+     vlan_id     = 150
+   }
+
+   # Proxmox settings
+   proxmox_cluster = "host3"
+
+   # Software versions
+   versions = {
+     talos      = "v1.10.3"
+     kubernetes = "1.33.2"
+   }
+
+   # OIDC settings (optional)
+   oidc = {
+     issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
+     client_id  = "kubectl"
+   }
    ```
 
    :::info
