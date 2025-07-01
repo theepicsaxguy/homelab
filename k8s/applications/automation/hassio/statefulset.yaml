@@ -112,11 +112,6 @@ spec:
           name: config-volume
         - mountPath: /config
           name: home-assistant
-      securityContext:
-        fsGroup: 568
-        fsGroupChangePolicy: OnRootMismatch
-        runAsGroup: 568
-        runAsUser: 568
       serviceAccountName: home-assistant
       volumes:
       - configMap:
