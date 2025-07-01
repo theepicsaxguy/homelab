@@ -45,20 +45,31 @@ module "talos" {
   }
 
   coredns = {
-    install = file("${path.module}/talos/inline-manifests/coredns-install.yaml")
+    # CHANGE: Convert the coredns manifest to a template
+    install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
+      cluster_domain = var.cluster_domain
+      dns_forwarders = join(" ", var.network.dns_servers)
+    })
   }
 
-  cluster_domain = local.cluster_domain
+  cluster_domain = var.cluster_domain
 
+  # CHANGE: Replace the hardcoded cluster block with variables
   cluster = {
-    name               = "talos"
-    endpoint           = "api.${local.cluster_domain}"
-    gateway            = "10.25.150.1"  # Network gateway
-    vip                = "10.25.150.10" # Control plane VIP
-    talos_version      = "v1.10.3"
-    proxmox_cluster    = "kube"
-    kubernetes_version = "1.33.2" # renovate: github-releases=kubernetes/kubernetes
+    name               = var.cluster_name
+    endpoint           = "api.${var.cluster_domain}"
+    gateway            = var.network.gateway
+    vip                = var.network.vip
+    talos_version      = var.versions.talos
+    proxmox_cluster    = var.proxmox_cluster
+    kubernetes_version = var.versions.kubernetes
   }
+
+  # Pass network config to the module
+  network = var.network
+
+  # Pass OIDC config to the module
+  oidc = var.oidc
 
   nodes = local.nodes_with_upgrade
 }

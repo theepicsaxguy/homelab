@@ -133,3 +133,47 @@ variable "proxmox_datastore" {
   default     = "velocity"
 }
 
+variable "cluster_name" {
+  description = "The name of the Talos cluster."
+  type        = string
+}
+
+variable "cluster_domain" {
+  description = "The domain for the cluster (e.g., kube.example.com)."
+  type        = string
+}
+
+variable "network" {
+  description = "Network configuration for the cluster."
+  type = object({
+    gateway     = string
+    vip         = string
+    cidr_prefix = number
+    dns_servers = list(string)
+    bridge      = string
+    vlan_id     = number
+  })
+}
+
+variable "proxmox_cluster" {
+  description = "The name of the Proxmox cluster."
+  type        = string
+}
+
+variable "versions" {
+  description = "Software versions for the cluster components."
+  type = object({
+    talos      = string
+    kubernetes = string
+  })
+}
+
+variable "oidc" {
+  description = "Optional OIDC provider configuration for Kubernetes API server."
+  type = object({
+    issuer_url = string
+    client_id  = string
+  })
+  default = null # Make it optional
+}
+

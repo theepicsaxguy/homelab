@@ -1,6 +1,6 @@
 machine:
   certSANs:
-    - ${cluster.vip}     # The VIP
+    - ${vip}
     - ${node_ip}      # The node's own IP
     - ${cluster.endpoint}
 
@@ -31,7 +31,7 @@ machine:
       - interface: eth0
         dhcp: true
         vip:
-          ip: ${cluster.vip}
+          ip: ${vip}
 
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
@@ -43,11 +43,13 @@ cluster:
   allowSchedulingOnControlPlanes: false
   clusterName: ${cluster_domain}
   apiServer:
+%{ if oidc != null }
     extraArgs:
-      oidc-issuer-url: https://sso.${cluster_domain}/application/o/kubectl/
-      oidc-client-id: kubectl
+      oidc-issuer-url: ${oidc.issuer_url}
+      oidc-client-id: ${oidc.client_id}
       oidc-username-claim: preferred_username
       oidc-groups-claim: groups
+%{ endif }
   network:
     dnsDomain: ${cluster_domain}
     cni:
