@@ -136,47 +136,6 @@ If you fork it, search for these domains and replace them with your own.
    chmod 600 ~/.talos/config ~/.kube/config
    ```
 
-## Bootstrap and verify ArgoCD
-
-6. **Check or install ArgoCD:**
-   ArgoCD is usually installed automatically. To verify or re-apply manually:
-
-   ```bash
-   kubectl get pods -n argocd
-   # If ArgoCD pods aren't running, install with:
-   kubectl apply -k k8s/infrastructure/controllers/argocd
-   ```
-
-7. **Monitor ApplicationSet synchronization:**
-   Use the ArgoCD CLI to confirm apps are recognized and syncing.
-
-   ```bash
-   argocd app list
-   ```
-
-## Verify the setup
-
-1. **Check node and service health:**
-
-   ```bash
-   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
-   ```
-
-   All checks should report `healthy`.
-
-2. **Confirm apps are synced in ArgoCD UI:**
-   All applications should show *Synced / Healthy* status.
-
-3. **Inspect ArgoCD logs (optional troubleshooting):**
-
-   ```bash
-   kubectl logs -n argocd deployment/argocd-server
-   ```
-
-   Look for messages indicating healthy reconciliation.
-
----
-
 ## Pro tips and troubleshooting
 
 - **To recreate a node (e.g., after resizing a disk):**
