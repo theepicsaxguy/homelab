@@ -18,6 +18,8 @@ data "talos_machine_configuration" "this" {
       cilium_values   = var.cilium.values
       cilium_install  = var.cilium.install
       coredns_install = var.coredns.install
+      oidc            = var.oidc
+      vip             = var.network.vip
     })
   ] : concat(
     [
@@ -31,6 +33,7 @@ data "talos_machine_configuration" "this" {
         disks              = each.value.disks
         igpu               = each.value.igpu
         gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
+        vip                = var.network.vip
       })
     ],
     # This conditionally adds the GPU patches

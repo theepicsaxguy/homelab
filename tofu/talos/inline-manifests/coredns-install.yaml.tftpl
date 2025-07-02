@@ -31,14 +31,14 @@ data:
         prometheus :9153
 
         # Kubernetes service domain
-        kubernetes cluster.local kube.pc-tips.se in-addr.arpa ip6.arpa {
+        kubernetes cluster.local ${cluster_domain} in-addr.arpa ip6.arpa {
             pods insecure
             ttl 30
             fallthrough
         }
 
         # Forwarding to external DNS servers for non-cluster queries
-        forward . 10.25.150.1 1.1.1.1 8.8.8.8 {
+        forward . ${dns_forwarders} {
             policy sequential
         }
 

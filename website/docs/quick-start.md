@@ -28,18 +28,15 @@ For a deeper technical guide or troubleshooting steps, see [Getting Started](./g
    cd homelab
    ```
 
-2. **Create your cluster variable file (`terraform.tfvars`):**
+2. **Create your configuration files:**
 
-   ```hcl
-   # terraform.tfvars
-   cluster_name     = "homelab"
-   controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
-   worker_ips       = ["10.25.150.20", "10.25.150.21"]
+   First, create your sensitive credentials file from the example.
+   ```bash
+   cp tofu/terraform.tfvars.example tofu/terraform.tfvars
    ```
+   Now, **edit `tofu/terraform.tfvars`** with your Proxmox API details.
 
-   :::info
-   Customize IPs and hostnames as needed for your lab environment.
-   :::
+   Next, **edit `tofu/config.auto.tfvars`** to match your network settings (like IP addresses and domain names). The defaults are a good starting point.
 
 3. **Initialize SSH agent and OpenTofu:**
 
@@ -63,22 +60,7 @@ For a deeper technical guide or troubleshooting steps, see [Getting Started](./g
    chmod 600 ~/.talos/config ~/.kube/config
    ```
 
-## Verify
-
-1. **Check that Talos nodes are healthy:**
-
-   ```bash
-   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
-   ```
-
-2. **Confirm apps are syncing (ArgoCD):**
-
-   ```bash
-   argocd app list
-   ```
-
-   All applications should be `Healthy` and `Synced`.
-   For any issues, see [troubleshooting in the full guide](./getting-started.md).
+   For more details see [troubleshooting in the full guide](./getting-started.md).
 
 ---
 That's it! Your cluster and GitOps stack are live.

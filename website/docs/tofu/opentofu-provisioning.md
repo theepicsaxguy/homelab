@@ -56,7 +56,8 @@ Worker Nodes:
 ├── variables.tf      # Input variables
 ├── output.tf         # Generated outputs (kubeconfig, etc.)
 ├── providers.tf      # Provider configs (Proxmox, Talos)
-├── terraform.tfvars  # Variable definitions
+├── config.auto.tfvars # Environment-specific configuration
+├── terraform.tfvars.Example # Example variable definitions
 └── talos/            # Talos cluster module
     ├── config-secrets.tf     # Machine secrets
     ├── config-client.tf      # Client configuration
@@ -237,14 +238,9 @@ I embed essential services in the Talos config:
    ```hcl
    module "talos" {
      # ...
-     talos_image = {
-       version = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for OS images
-       # ...
-     }
-     cluster = {
-       talos_version      = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version for machine configs
-       kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target Kubernetes version
-       # ...
+     versions = {
+       talos      = "<see https://github.com/siderolabs/talos/releases>" # Target Talos version
+       kubernetes = "<see https://github.com/kubernetes/kubernetes/releases>"  # Target Kubernetes version
      }
      # ...
    }
@@ -284,38 +280,38 @@ I embed essential services in the Talos config:
 
 ### Configuration
 
-Create `terraform.tfvars` with your environment settings. The internal
-cluster domain defaults to `kube.pc-tips.se` and can be changed in
-`tofu/locals.tf`:
+Create `config.auto.tfvars` with your environment settings. An example file `terraform.tfvars.Example` is provided.
 
 ```hcl
-proxmox = {
-  name         = "host3"              # Your Proxmox host name
-  cluster_name = "host3"             # Your Proxmox cluster name
-  endpoint     = "https://pve:8006"   # Your Proxmox API endpoint
-  insecure     = false                # Set to true if using self-signed certs
-  username     = "root@pam"           # Your Proxmox username
-  api_token    = "USER@pam!ID=TOKEN"  # Your Proxmox API token
+// tofu/config.auto.tfvars example
+
+cluster_name   = "talos"
+cluster_domain = "kube.pc-tips.se"
+
+# Network settings
+# All nodes must be on the same L2 network
+network = {
+  gateway     = "10.25.150.1"
+  vip         = "10.25.150.10" # Control plane Virtual IP
+  cidr_prefix = 24
+  dns_servers = ["10.25.150.1"]
+  bridge      = "vmbr0"
+  vlan_id     = 150
 }
 
-cluster = {
-  name               = "talos"        # Cluster name
-  endpoint           = "api.kube.your.domain.tld"  # API endpoint
-  kubernetes_version = "<see https://github.com/kubernetes/kubernetes/releases>"       # Kubernetes version
-  talos_version     = "<see https://github.com/siderolabs/talos/releases>"      # Talos version
-  gateway           = "10.25.150.1"   # Network gateway
-  vip               = "10.25.150.10"  # Control plane VIP
+# Proxmox settings
+proxmox_cluster = "host3"
+
+# Software versions
+versions = {
+  talos      = "v1.10.3"
+  kubernetes = "1.33.2"
 }
 
-nodes = {
-  "ctrl-00" = {
-    # host_node is optional and defaults to proxmox.name
-    machine_type  = "controlplane"
-    ip            = "10.25.150.11"
-    mac_address   = "bc:24:11:XX:XX:XX"
-    vm_id         = 8101
-  }
-  # Additional nodes...
+# OIDC settings (optional)
+oidc = {
+  issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
+  client_id  = "kubectl"
 }
 ```
 
