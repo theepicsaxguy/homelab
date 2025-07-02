@@ -89,22 +89,7 @@ For a deeper technical guide or troubleshooting steps, see [Getting Started](./g
    chmod 600 ~/.talos/config ~/.kube/config
    ```
 
-## Verify
-
-1. **Check that Talos nodes are healthy:**
-
-   ```bash
-   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
-   ```
-
-2. **Confirm apps are syncing (ArgoCD):**
-
-   ```bash
-   argocd app list
-   ```
-
-   All applications should be `Healthy` and `Synced`.
-   For any issues, see [troubleshooting in the full guide](./getting-started.md).
+   For more details see [troubleshooting in the full guide](./getting-started.md).
 
 ---
 That's it! Your cluster and GitOps stack are live.

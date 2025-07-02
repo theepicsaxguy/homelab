@@ -42,7 +42,35 @@ If you fork it, search for these domains and replace them with your own.
    ```
 
 2. **Configure cluster variables:**
-   Edit or create the `config.auto.tfvars` file to define your cluster nodes:
+
+- Configure the proxmox environment and cluster settings in the `tofu` directory
+  - Copy the `terraform.tfvars.example` file to `terraform.tfvars`:
+  - Edit or create the `config.auto.tfvars` file to define your cluster nodes:
+
+    ```bash
+    cp tofu/terraform.tfvars.example tofu/terraform.tfvars
+    ```
+
+  - Edit the `tofu/terraform.tfvars` file to match your Proxmox setup and cluster details:
+
+    ```hcl
+    // tofu/terraform.tfvars example
+
+   proxmox = {
+   name         = "node" # Name of the Proxmox node
+   cluster_name = "node" # Must match the Proxmox cluster name
+   endpoint     = "<https://node.example.com:8006>"
+   insecure     = false
+   username     = "root"
+   api_token    = "root@pam!secret"
+   }
+
+   ```
+
+   :::info
+   Use secure storage for secrets, like 1Password or Bitwarden, and avoid committing sensitive files. For more information, see the [Argo CD Secrets Management](<https://argo-cd.readthedocs.io>
+
+  - Edit or create the `config.auto.tfvars` file to define your cluster nodes:
 
    ```hcl
    // tofu/config.auto.tfvars example
@@ -53,12 +81,12 @@ If you fork it, search for these domains and replace them with your own.
    # Network settings
    # All nodes must be on the same L2 network
    network = {
-     gateway     = "10.25.150.1"
-     vip         = "10.25.150.10" # Control plane Virtual IP
-     cidr_prefix = 24
-     dns_servers = ["10.25.150.1"]
-     bridge      = "vmbr0"
-     vlan_id     = 150
+   gateway     = "10.25.150.1"
+   vip         = "10.25.150.10" # Control plane Virtual IP
+   cidr_prefix = 24
+   dns_servers = ["10.25.150.1"]
+   bridge      = "vmbr0"
+   vlan_id     = 150
    }
 
    # Proxmox settings
@@ -66,14 +94,14 @@ If you fork it, search for these domains and replace them with your own.
 
    # Software versions
    versions = {
-     talos      = "v1.10.3"
-     kubernetes = "1.33.2"
+   talos      = "v1.10.3"
+   kubernetes = "1.33.2"
    }
 
    # OIDC settings (optional)
    oidc = {
-     issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
-     client_id  = "kubectl"
+   issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
+   client_id  = "kubectl"
    }
    ```
 
