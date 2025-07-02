@@ -16,8 +16,7 @@ variable "cluster" {
   type = object({
     name               = string
     endpoint           = string
-    gateway            = string
-    vip                = string
+    # gateway and vip are now in var.network
     talos_version      = string
     proxmox_cluster    = string
     kubernetes_version = optional(string, "1.32.0")
@@ -27,6 +26,27 @@ variable "cluster" {
 variable "cluster_domain" {
   description = "Internal cluster domain"
   type        = string
+}
+
+variable "network" {
+  description = "Network configuration for the cluster."
+  type = object({
+    gateway     = string
+    vip         = string
+    cidr_prefix = number
+    dns_servers = list(string)
+    bridge      = string
+    vlan_id     = number
+  })
+}
+
+variable "oidc" {
+  description = "Optional OIDC provider configuration."
+  type = object({
+    issuer_url = string
+    client_id  = string
+  })
+  default = null
 }
 
 variable "proxmox_datastore" {

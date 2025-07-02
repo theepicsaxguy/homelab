@@ -9,13 +9,13 @@ For a minimal demo or test setup, see the [quick‑start version](./quick-start.
 
 ## Prerequisites
 
-- Proxmox access (with SSH key set up on the hypervisor).
-- Installed tools:
+- Proxmox access (with an SSH key configured on the hypervisor).
+- The following tools installed locally:
   - [`opentofu`](https://opentofu.org/)
   - [`talosctl`](https://www.talos.dev/)
   - [`kubectl`](https://kubernetes.io/docs/tasks/tools/)
   - [`argocd`](https://argo-cd.readthedocs.io/)
-- `terraform.tfvars` file with your cluster's details (see below for example).
+- **Information about your environment**, including the Proxmox API endpoint, node IP addresses, and desired domain names.
 - Access to this Git repository.
 
 :::info
@@ -41,19 +41,31 @@ If you fork it, search for these domains and replace them with your own.
    cd homelab
    ```
 
-2. **Configure cluster variables:**
-   Edit or create the `terraform.tfvars` file to define your cluster nodes:
+### 2. Configure Your Cluster
 
-   ```hcl
-   # terraform.tfvars
-   cluster_name     = "homelab"
-   controlplane_ips = ["10.25.150.10", "10.25.150.11", "10.25.150.12"]
-   worker_ips       = ["10.25.150.20", "10.25.150.21"]
-   ```
+Your cluster's configuration is split into two files:
 
-   :::info
-   Use secure storage for secrets, like 1Password or Bitwarden, and avoid committing sensitive files. For more information, see the [Argo CD Secrets Management](https://argo-cd.readthedocs.io/en/stable/operator-manual/secret-management/).
-   :::
+- `tofu/terraform.tfvars`: Holds **sensitive** provider credentials, like your Proxmox API token. You will create this from the example file, and it should **never be committed to version control**.
+- `tofu/config.auto.tfvars`: Holds **non-sensitive** cluster definitions, like IP addresses, domain names, and software versions. You can commit this file to your fork.
+
+**Step 1: Configure Proxmox Credentials**
+
+Copy the example file and edit `tofu/terraform.tfvars` with your Proxmox details:
+
+```bash
+cp tofu/terraform.tfvars.example tofu/terraform.tfvars
+```
+
+**Step 2: Configure Cluster Settings**
+
+Edit `tofu/config.auto.tfvars` to define your cluster's network, versions, and other settings. The provided file `tofu/config.auto.tfvars` serves as a direct example.
+
+:::info
+**Managing Secrets**
+The `terraform.tfvars` file contains your Proxmox API token. To prevent accidentally committing it, ensure your project's `.gitignore` file includes the line `*.tfvars`.
+
+For automated CI/CD pipelines, it is best practice to provide secrets via environment variables instead of files. For example, you can set the Proxmox token with an environment variable named `TF_VAR_proxmox_api_token`.
+:::
 
 ## Apply and deploy the cluster
 
@@ -82,46 +94,63 @@ If you fork it, search for these domains and replace them with your own.
    chmod 600 ~/.talos/config ~/.kube/config
    ```
 
-## Bootstrap and verify ArgoCD
+## Bootstrap the Cluster
 
-6. **Check or install ArgoCD:**
-   ArgoCD is usually installed automatically. To verify or re-apply manually:
+Once the VMs are running, you must manually bootstrap the cluster's core services. This is a one-time process that solves the "chicken-and-egg" problem: we need to install Argo CD, but we want to manage Argo CD *with* Argo CD.
 
-   ```bash
-   kubectl get pods -n argocd
-   # If ArgoCD pods aren't running, install with:
-   kubectl apply -k k8s/infrastructure/controllers/argocd
-   ```
+Apply these components in the following order to ensure dependencies are met.
 
-7. **Monitor ApplicationSet synchronization:**
-   Use the ArgoCD CLI to confirm apps are recognized and syncing.
+**1. Apply Core Custom Resource Definitions (CRDs):**
+These CRDs extend the Kubernetes API and are required by the services you are about to install.
+```bash
+kustomize build --enable-helm infrastructure/crds | kubectl apply -f -
+```
 
-   ```bash
-   argocd app list
-   ```
+**2. Install Networking and Core Controllers:**
+This step deploys Cilium for networking, cert-manager for TLS certificates, and External Secrets for secret management.
+```bash
+# Apply Cilium CNI
+kustomize build --enable-helm infrastructure/network | kubectl apply -f -
+# Apply cert-manager and external-secrets
+kustomize build --enable-helm infrastructure/controllers/cert-manager | kubectl apply -f -
+kustomize build --enable-helm infrastructure/controllers/external-secrets | kubectl apply -f -
+```
 
-## Verify the setup
+**3. Install Argo CD:**
+With the core APIs and networking in place, you can now deploy the GitOps controller, Argo CD.
+```bash
+kustomize build infrastructure/controllers/argocd | kubectl apply -f -
+```
 
-1. **Check node and service health:**
+**4. Deploy Argo CD Projects and ApplicationSets:**
+These final resources configure Argo CD, telling it to automatically find and deploy all other applications from your Git repository.
+```bash
+kubectl apply -f applications/project.yaml
+kubectl apply -f infrastructure/project.yaml
+kubectl apply -f applications/application-set.yaml
+kubectl apply -f infrastructure/application-set.yaml
+```
 
-   ```bash
-   talosctl health --talosconfig ~/.talos/config --nodes <control-plane-IP>
-   ```
+Once these steps are complete, Argo CD will take over and reconcile the state of your cluster to match the Git repository.
 
-   All checks should report `healthy`.
+## Verify the Setup
 
-2. **Confirm apps are synced in ArgoCD UI:**
-   All applications should show *Synced / Healthy* status.
+After bootstrapping, Argo CD will begin deploying the rest of the applications. You can monitor the progress to confirm everything is working correctly.
 
-3. **Inspect ArgoCD logs (optional troubleshooting):**
+1.  **Check Kubernetes Node Status:**
+    Ensure all your nodes are `Ready`.
+    ```bash
+    kubectl get nodes
+    ```
 
-   ```bash
-   kubectl logs -n argocd deployment/argocd-server
-   ```
+2.  **Monitor Argo CD Synchronization:**
+    List the applications that Argo CD is managing. Initially, they may show as `Progressing` or `Missing`. After a few minutes, they should all become `Healthy` and `Synced`.
+    ```bash
+    # Watch the applications sync in real-time
+    argocd app list -w
+    ```
 
-   Look for messages indicating healthy reconciliation.
-
----
+Once all applications are synced, your GitOps homelab is fully operational.
 
 ## Pro tips and troubleshooting
 
@@ -131,15 +160,6 @@ If you fork it, search for these domains and replace them with your own.
   tofu taint 'module.talos.proxmox_virtual_environment_vm.this["work-00"]'
   tofu apply
   ```
-
-- **For common issues (API or etcd failures):**
-
-  ```bash
-  talosctl etcd members
-  ```
-
-- Back up your `talosconfig` and `kubeconfig` immediately after setup.
-- Document and save your network layout for future troubleshooting.
 
 ---
 For further details on cluster architecture, networking, and recovery, see [Cluster Details](./architecture.md).

@@ -40,8 +40,8 @@ resource "proxmox_virtual_environment_vm" "this" {
 
 
   network_device {
-    bridge      = lookup(each.value, "network_bridge", "vmbr0")
-    vlan_id     = lookup(each.value, "network_vlan_id", 150)
+    bridge      = lookup(each.value, "network_bridge", var.network.bridge)
+    vlan_id     = lookup(each.value, "network_vlan_id", var.network.vlan_id)
     mac_address = each.value.mac_address
   }
 
@@ -93,12 +93,12 @@ resource "proxmox_virtual_environment_vm" "this" {
     datastore_id = each.value.datastore_id
     dns {
       domain  = var.cluster_domain
-      servers = lookup(each.value, "dns_servers", ["10.25.150.1"])
+      servers = lookup(each.value, "dns_servers", var.network.dns_servers)
     }
     ip_config {
       ipv4 {
-        address = "${each.value.ip}/24"
-        gateway = var.cluster.gateway
+        address = "${each.value.ip}/${var.network.cidr_prefix}"
+        gateway = var.network.gateway
       }
     }
   }
