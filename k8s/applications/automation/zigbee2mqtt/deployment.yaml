@@ -16,14 +16,32 @@ spec:
         app: zigbee2mqtt
     spec:
       initContainers:
-        - name: seed-z2m-config
-          image: busybox:1.37
-          command: ["sh", "-c", "cp /config-template/* /app/data/"]
-          volumeMounts:
-            - name: data
-              mountPath: /app/data
-            - name: config-template
-              mountPath: /config-template
+      - name: seed-z2m-config
+        image: busybox:1.37
+        command:
+          - sh
+          - -c
+          - |
+            set -e                           # exit on first error
+            echo "Seeding Zigbee2MQTT data dir"
+
+            # 1) make sure the converter directory exists
+            mkdir -p /app/data/external_converters
+
+            # 2) overwrite declarative files
+            cp -f /config-template/configuration.yaml /app/data/configuration.yaml
+            cp -f /config-template/devices.yaml       /app/data/devices.yaml
+            cp -f /config-template/groups.yaml        /app/data/groups.yaml
+            cp -f /config-template/ZB30.js            /app/data/external_converters/ZB30.js
+
+            # 3) seed the device database once (safe even if you keep it later)
+            cp -f /config-template/database.db        /app/data/database.db || true
+        volumeMounts:
+          - name: data
+            mountPath: /app/data
+          - name: config-template
+            mountPath: /config-template
+
       containers:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt:2.5.1

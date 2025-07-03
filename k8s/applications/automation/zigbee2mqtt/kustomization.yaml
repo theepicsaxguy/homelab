@@ -8,6 +8,8 @@ configMapGenerator:
   - config/configuration.yaml
   - config/devices.yaml
   - config/groups.yaml
+  - config/ZB30.js
+  - config/database.db
 
 resources:
 - namespace.yaml
