@@ -18,10 +18,10 @@ spec:
       initContainers:
         - name: seed-z2m-config
           image: busybox:1.37
-          command: ["sh", "-c", "if [ ! -f /data/configuration.yaml ]; then cp /config-template/configuration.yaml /data/configuration.yaml; fi"]
+          command: ["sh", "-c", "cp /config-template/* /app/data/"]
           volumeMounts:
             - name: data
-              mountPath: /data
+              mountPath: /app/data
             - name: config-template
               mountPath: /config-template
       containers:
@@ -47,7 +47,7 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: data
-              mountPath: /data
+              mountPath: /app/data
           livenessProbe:
             tcpSocket:
               port: 8080

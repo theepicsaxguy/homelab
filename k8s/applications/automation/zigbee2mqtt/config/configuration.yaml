@@ -1,22 +1,29 @@
-homeassistant:
-  enabled: true
+version: 4
 mqtt:
   server: mqtt://mosquitto:1883
+  base_topic: zigbee2mqtt
 serial:
   port: tcp://10.0.10.160:20108
   adapter: deconz
+advanced:
+  log_level: info
+  channel: 11
+  network_key: GENERATE
+  pan_id: GENERATE
+  ext_pan_id: GENERATE
 frontend:
   enabled: true
   package: zigbee2mqtt-windfront
   port: 8080
-
+homeassistant:
+  enabled: true
+onboarding: false
 availability:
   enabled: true
   active:
     timeout: 30
   passive:
     timeout: 2500
-version: 4
 ## Map devices to persistent /data directory
 devices: devices.yaml
 groups: groups.yaml

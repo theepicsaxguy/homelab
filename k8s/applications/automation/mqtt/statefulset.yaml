@@ -21,10 +21,11 @@ spec:
           image: eclipse-mosquitto:2.0
           command: ["/bin/sh", "-c"]
           args:
-            - |
-              set -e
-              cp -a /configmap/. /mosquitto/config/
-              mosquitto_passwd -b -c /mosquitto/config/password.txt "$MQTT_USER" "$MQTT_PASSWORD"
+          - |
+            set -e
+            cp -a /configmap/. /mosquitto/config/
+            mosquitto_passwd -b -c /mosquitto/config/password.txt "$MQTT_USER" "$MQTT_PASSWORD"
+            chmod 0700 /mosquitto/config/password.txt
           envFrom:
             - secretRef:
                 name: mosquitto-password
