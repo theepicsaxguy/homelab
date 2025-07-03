@@ -14,6 +14,13 @@ helmCharts:
     includeCRDs: true
     valuesFile: values.yaml
 
+# NOTE:
+#   When Cilium releases 1.18 the issue in applications/automation/mqtt/service.yaml should be resolved.
+#   drops pure-TCP Gateway listeners.  See:
+#   https://github.com/cilium/cilium/issues/38192  (TCP listener missing)
+#   https://github.com/cilium/cilium/issues/34821  (model source empty)
+#   Remove this Service *and* re-add the listener after upgrading to >=1.18.
+
 patches:
   - target:
       kind: ConfigMap
