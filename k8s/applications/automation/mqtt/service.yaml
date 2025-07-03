@@ -11,3 +11,25 @@ spec:
       port: 1883
       targetPort: 1883
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto-external
+  namespace: mqtt
+  annotations:
+    io.cilium/lb-ipam-ips: 10.25.150.226
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 1883
+      targetPort: 1883
+      protocol: TCP
+  selector:
+    app: mosquitto
+# NOTE:
+#   We need this second Service because Cilium <=1.17.5
+#   drops pure-TCP Gateway listeners.  See:
+#   https://github.com/cilium/cilium/issues/38192  (TCP listener missing)
+#   https://github.com/cilium/cilium/issues/34821  (model source empty)
+#   Remove this Service *and* re-add the listener after upgrading to >=1.18.
