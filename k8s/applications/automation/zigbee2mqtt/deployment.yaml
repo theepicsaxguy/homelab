@@ -21,25 +21,15 @@ spec:
         command:
           - sh
           - -c
-          - |
-            set -e                           # exit on first error
-            echo "Seeding Zigbee2MQTT data dir"
-
-            # 1) make sure the converter directory exists
-            mkdir -p /app/data/external_converters
-
-            # 2) overwrite declarative files
-            cp -f /config-template/configuration.yaml /app/data/configuration.yaml
-            cp -f /config-template/devices.yaml       /app/data/devices.yaml
-            cp -f /config-template/groups.yaml        /app/data/groups.yaml
-            cp -f /config-template/ZB30.js            /app/data/external_converters/ZB30.js
-
-
+          - >
+            set -e;
+            echo "Seeding Zigbee2MQTT data dir";
+            mkdir -p /app/data/external_converters;
+            cp -f /config-template/* /app/data/;
+            cp -f /config-template/ZB30.js /app/data/external_converters/ZB30.js;
         volumeMounts:
-          - name: data
-            mountPath: /app/data
-          - name: config-template
-            mountPath: /config-template
+          - { name: data,            mountPath: /app/data }
+          - { name: config-template, mountPath: /config-template }
 
       containers:
         - name: zigbee2mqtt
@@ -49,8 +39,7 @@ spec:
             - name: TZ
               value: Europe/Stockholm
           envFrom:
-            - secretRef:
-                name: zigbee2mqtt-secrets
+            - secretRef: { name: zigbee2mqtt-secrets }
           resources:
             requests:
               cpu: 100m
@@ -86,8 +75,6 @@ spec:
             periodSeconds: 10
       volumes:
         - name: data
-          persistentVolumeClaim:
-            claimName: zigbee2mqtt-data
+          persistentVolumeClaim: { claimName: zigbee2mqtt-data }
         - name: config-template
-          configMap:
-            name: zigbee2mqtt-config
+          configMap: { name: zigbee2mqtt-config }
