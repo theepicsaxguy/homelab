@@ -7,10 +7,14 @@ serial:
   adapter: deconz
 advanced:
   log_level: info
-  channel: 11
-  network_key: GENERATE
-  pan_id: GENERATE
-  ext_pan_id: GENERATE
+  coordinator_ieee: 00212effff0717c9
+  channel: 25
+  channel_mask: [25]
+  # 🗝️  network_key / pan_id / extended_pan_id are
+  #      injected via environment variables
+external_converters:
+  - external_converters/ZB30.js
+
 frontend:
   enabled: true
   package: zigbee2mqtt-windfront
