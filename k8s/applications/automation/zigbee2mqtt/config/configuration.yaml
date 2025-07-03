@@ -11,36 +11,12 @@ advanced:
   channel: 25
   channel_mask:
     - 25
-  # 16-byte network key as hex literals
-  network_key:
-    - 0x01
-    - 0x03
-    - 0x05
-    - 0x07
-    - 0x09
-    - 0x0B
-    - 0x0D
-    - 0x0F
-    - 0x00
-    - 0x02
-    - 0x04
-    - 0x06
-    - 0x08
-    - 0x0A
-    - 0x0C
-    - 0x0D
-  # PAN ID as a hex literal
-  pan_id: 0x1A62
-  # full key name, 8 bytes of 0xDD
-  extended_pan_id:
-    - 0xDD
-    - 0xDD
-    - 0xDD
-    - 0xDD
-    - 0xDD
-    - 0xDD
-    - 0xDD
-    - 0xDD
+  network_key: '!env_var Z2M_NETWORK_KEY'     # JSON array "[...16 items...]"
+  pan_id: '!env_var Z2M_PAN_ID'               # "0x1A62"
+  extended_pan_id: '!env_var Z2M_EXT_PAN_ID'  # JSON array "[221,221,...]"
+
+external_converters:
+  - external_converters/ZB30.js
 
 frontend:
   enabled: true

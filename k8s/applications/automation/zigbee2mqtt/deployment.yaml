@@ -34,8 +34,7 @@ spec:
             cp -f /config-template/groups.yaml        /app/data/groups.yaml
             cp -f /config-template/ZB30.js            /app/data/external_converters/ZB30.js
 
-            # 3) seed the device database once (safe even if you keep it later)
-            cp -f /config-template/database.db        /app/data/database.db || true
+
         volumeMounts:
           - name: data
             mountPath: /app/data
