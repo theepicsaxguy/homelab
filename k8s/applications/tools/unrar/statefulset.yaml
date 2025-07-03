@@ -35,7 +35,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: unrar
-          image: linuxserver/unrar:7.1.6
+          image: linuxserver/unrar:7.1.8
           command: ['/bin/sh']
           args:
             [
