@@ -5,8 +5,12 @@ resources:
 - namespace.yaml
 - http-route.yaml
 - external-secret.yaml
-- init-script.yaml
-- hass-configuration.yaml
 - serviceaccount.yaml
 - svc.yaml
 - statefulset.yaml
+configMapGenerator:
+- name: hass-configuration
+  files:
+  - configuration.yaml
+generatorOptions:
+  disableNameSuffixHash: false
