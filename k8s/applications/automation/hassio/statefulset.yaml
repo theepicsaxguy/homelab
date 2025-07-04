@@ -15,13 +15,12 @@ spec:
   serviceName: home-assistant
   template:
     metadata:
-      annotations:
-        checksum/hass-configuration: 41d81c4dd388f2b621ca87786005ab0fccf7bbdc6c9653dd4866983af679c63c
-        checksum/init-script: 495e927a6986fb8e0bd38f54c81c5cb25cabad179b8c61e53db1ed6405f8007b
       labels:
         app.kubernetes.io/instance: home-assistant
         app.kubernetes.io/name: home-assistant
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
       - env:
         - name: TZ
@@ -62,65 +61,26 @@ spec:
         securityContext:
           capabilities:
             add:
-              - NET_ADMIN     # allows interface promiscuous mode & multicast group joins
-              - NET_RAW       # allows open/listen on raw sockets (ARP, SSDP, mDNS, etc.)
-              - NET_BROADCAST # allows sending broadcast packets
+              - NET_ADMIN
+              - NET_RAW
+              - NET_BROADCAST
         volumeMounts:
-        - mountPath: /config
-          name: home-assistant
-        - name: hassio-secrets
+        - name: home-assistant
+          mountPath: /config
+        - name: config
+          mountPath: /config/configuration.yaml
+          subPath: configuration.yaml
+          readOnly: true
+        - name: secrets
           mountPath: /config/secrets.yaml
           subPath: secrets.yaml
           readOnly: true
-      initContainers:
-      ## Example how to install a custom component declaratively
-
-      # - args:
-      #   - |
-      #     set -e
-      #     echo "Cloning Panasonic CC custom component..."
-      #     git clone https://github.com/sockless-coding/panasonic_cc.git /git/panasonic_cc
-      #     mkdir -p /config/custom_components
-      #     echo "Copying component to /config/custom_components/panasonic_cc"
-      #     cp -r /git/panasonic_cc/custom_components/panasonic_cc /config/custom_components/
-      #     echo "Setting permissions..."
-      #     chown -R 568:568 /config/custom_components/panasonic_cc
-      #     echo "Panasonic CC init complete."
-      #   command:
-      #   - /bin/sh
-      #   - -c
-      #   image: alpine/git
-      #   name: init-panasonic-cc
-      #   volumeMounts:
-      #   - mountPath: /config
-      #     name: home-assistant
-      - args:
-        - /bin/sh /mnt/init/init.sh
-        command:
-        - /bin/sh
-        - -c
-        #env: null
-        image: mikefarah/yq:4
-        name: setup-config
-        securityContext:
-          runAsUser: 0
-        volumeMounts:
-        - mountPath: /mnt/init/init.sh
-          name: init-volume
-          subPath: init.sh
-        - mountPath: /config-templates
-          name: config-volume
-        - mountPath: /config
-          name: home-assistant
       serviceAccountName: home-assistant
       volumes:
-      - configMap:
-          name: init-script
-        name: init-volume
-      - configMap:
+      - name: config
+        configMap:
           name: hass-configuration
-        name: config-volume
-      - name: hassio-secrets
+      - name: secrets
         secret:
           secretName: hassio-secrets
   volumeClaimTemplates:
