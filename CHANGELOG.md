@@ -1,5 +1,33 @@
 # Changelog
 
+## 3.4.1 (2025-07-05)
+
+## What's Changed
+* Refactor(nvidia)  remove deprecated nvidia device plugin resources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1145
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1146
+* chore(deps): update ollama/ollama docker tag to v0.9.4 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1147
+* chore(deps): update onerahmet/openai-whisper-asr-webservice docker tag to v1.9.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1150
+* chore(deps): update all dependencies (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1151
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.7.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1153
+* chore(deps): update all dependencies (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1152
+* refactor(config): centralize cluster configuration into variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1149
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.5.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1154
+* chore(deps): update linuxserver/unrar docker tag to v7.1.8 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1155
+* chore(deps): update helm release external-secrets to v0.18.2 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1156
+* Refactor(mqtt)--update-secret-keys-and-improve-password-handling by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1157
+* chore(deps): update mbentley/omada-controller docker tag to v5.15.24.18 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1158
+* chore(deps): update cloudflare/cloudflared docker tag to v2025.7.0 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1159
+* Enhance-Zigbee2MQTT-initialization-process by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1160
+* docs(k8s): add guide for dynamic app config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1161
+* Refactor(k8s)--simplify-external-secret-and-configuration-management by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1162
+* chore(deps): update all dependencies to v75.8.0 (minor) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1163
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.7.1 by @renovate in https://github.com/theepicsaxguy/homelab/pull/1164
+* refactor(k8s): rename haos to hassio in HTTPRoute and DNS records by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1165
+* chore(deps): update all dependencies to v75.8.1 (patch) by @renovate in https://github.com/theepicsaxguy/homelab/pull/1167
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.4.0...v3.4.1
+
 ## 3.4.0 (2025-06-30)
 
 ## What's Changed
