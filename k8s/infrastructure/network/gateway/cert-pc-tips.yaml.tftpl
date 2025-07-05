@@ -7,7 +7,7 @@ spec:
   dnsNames:
     - "*.pc-tips.se"
     - pc-tips.se
-    - cilium-gateway-external.gateway.svc.kube.pc-tips.se
+    - cilium-gateway-external.gateway.svc.${cluster_domain}
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer

@@ -9,15 +9,15 @@ warp-routing:
 ingress:
 
   - hostname: ittools.pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+    service: https://cilium-gateway-external.gateway.svc.${cluster_domain}:443
   - hostname: argocd.pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+    service: https://cilium-gateway-external.gateway.svc.${cluster_domain}:443
   - hostname: "*.pc-tips.se"
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+    service: https://cilium-gateway-external.gateway.svc.${cluster_domain}:443
     originRequest:
       originServerName: "*.pc-tips.se"
   - hostname: pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+    service: https://cilium-gateway-external.gateway.svc.${cluster_domain}:443
     originRequest:
       originServerName: pc-tips.se
   - service: http_status:404

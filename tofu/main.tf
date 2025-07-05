@@ -40,7 +40,10 @@ module "talos" {
   talos_image = var.talos_image
 
   cilium = {
-    values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
+    values  = templatefile(
+      "${path.module}/../k8s/infrastructure/network/cilium/values.yaml.tftpl",
+      { cluster_domain = var.cluster_domain }
+    )
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
 
