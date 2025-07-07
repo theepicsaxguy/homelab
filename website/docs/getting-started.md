@@ -1,5 +1,6 @@
 ---
 title: 'Getting Started: Homelab Cluster and GitOps Onboarding'
+description: Step-by-step guide to bootstrap the homelab cluster and deploy apps using GitOps.
 ---
 This guide walks you through spinning up a Kubernetes homelab: provisioning VMs, bootstrapping the cluster, and deploying workloads using GitOps—all in under one hour.
 

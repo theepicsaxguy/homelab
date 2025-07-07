@@ -49,8 +49,19 @@ const config: Config = {
       require.resolve('@easyops-cn/docusaurus-search-local'),
       {
         hashed: true,
-        docsRouteBasePath: '/',
+        docsRouteBasePath: 'docs',
         highlightSearchTermsOnTargetPage: true,
+      },
+    ],
+  ],
+  plugins: [
+    [
+      '@docusaurus/plugin-sitemap',
+      {
+        changefreq: 'weekly',
+        priority: 0.5,
+        ignorePatterns: ['/tags/**'],
+        filename: 'sitemap.xml',
       },
     ],
   ],
@@ -65,12 +76,6 @@ const config: Config = {
     metadata: [
       { name: 'keywords', content: 'kubernetes, homelab' },
       { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-    headTags: [
-      {
-        tagName: 'link',
-        attributes: { rel: 'preconnect', href: 'https://homelab.orkestack.com' },
-      },
     ],
     image: 'img/logo.png',
     navbar: {
