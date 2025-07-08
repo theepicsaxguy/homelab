@@ -1,5 +1,6 @@
 ---
 title: Homelab Quick start
+description: Spin up a minimal Kubernetes homelab and deploy apps with GitOps in minutes.
 ---
 Get your Kubernetes homelab up and running fast. This guide covers the minimum steps to launch a cluster and deploy apps with GitOps.
 

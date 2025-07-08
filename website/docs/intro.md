@@ -1,5 +1,6 @@
 ---
 title: Homelab Kubernetes Configuration Guide
+description: Discover the philosophy behind this over-engineered GitOps homelab, built for resilience, automation, and continuous learning with Kubernetes.
 ---
 
 # Overview

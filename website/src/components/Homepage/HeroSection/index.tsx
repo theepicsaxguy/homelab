@@ -28,10 +28,10 @@ export function HeroSection(): JSX.Element {
     <section className={styles.hero}>
       <div className="container">
         <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>
+          <h2 className={styles.heroTitle}>
             An Over-Engineered
             <span className={styles.gradientText}> Homelab Journey</span>
-          </h1>
+          </h2>
           <div className={styles.typedWrapper}>
             <span id="typed"></span>
           </div>
