@@ -7,18 +7,19 @@ interface Technology {
   logo: string;
 }
 
-const techList: Technology[] = [
-  { name: 'Homelab', logo: useBaseUrl('/img/tech-logos/theepicsaxguy.png') },
-  { name: 'Kubernetes', logo: useBaseUrl('/img/tech-logos/kubernetes.png') },
-  { name: 'Talos', logo: useBaseUrl('/img/tech-logos/talos.png') },
-  { name: 'ArgoCD', logo: useBaseUrl('/img/tech-logos/argocd.png') },
-  { name: 'OpenTofu', logo: useBaseUrl('/img/tech-logos/opentofu.png') },
-  { name: 'Prometheus', logo: useBaseUrl('/img/tech-logos/prometheus.png') },
-  { name: 'Grafana', logo: useBaseUrl('/img/tech-logos/grafana.png') },
-  { name: 'Proxmox', logo: useBaseUrl('/img/tech-logos/proxmox.png') },
-];
-
 export function TechStack(): JSX.Element {
+  const withBase = useBaseUrl;
+
+  const techList: Technology[] = [
+    { name: 'Homelab', logo: withBase('/img/tech-logos/theepicsaxguy.png') },
+    { name: 'Kubernetes', logo: withBase('/img/tech-logos/kubernetes.png') },
+    { name: 'Talos', logo: withBase('/img/tech-logos/talos.png') },
+    { name: 'ArgoCD', logo: withBase('/img/tech-logos/argocd.png') },
+    { name: 'OpenTofu', logo: withBase('/img/tech-logos/opentofu.png') },
+    { name: 'Prometheus', logo: withBase('/img/tech-logos/prometheus.png') },
+    { name: 'Grafana', logo: withBase('/img/tech-logos/grafana.png') },
+    { name: 'Proxmox', logo: withBase('/img/tech-logos/proxmox.png') },
+  ];
   return (
     <section className={styles.techStack}>
       <div className="container">
