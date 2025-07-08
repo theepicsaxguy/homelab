@@ -33,7 +33,7 @@ The disaster recovery process follows these sequential phases:
 
 Rebuild your cluster infrastructure using OpenTofu:
 
-```bash
+```shell
 # Clean up existing resources
 tofu destroy
 # Deploy the infrastructure
@@ -44,7 +44,7 @@ tofu apply
 
 Deploy the essential infrastructure components in the correct order:
 
-```bash
+```shell
 # Deploy networking (Cilium)
 kustomize build --enable-helm infrastructure/network/ | kubectl apply -f -
 
@@ -109,7 +109,7 @@ kustomize build --enable-helm infrastructure/ | kubectl apply -f -
 
 Redeploy your applications using your GitOps workflow. This creates the PVCs that will be bound to the restored volumes:
 
-```bash
+```shell
 # Using ArgoCD
 argocd app sync <your-app>
 
@@ -157,7 +157,7 @@ For large-scale deployments with many volumes, consider using automation scripts
 
 Monitor the recovery progress:
 
-```bash
+```shell
 # Check PVC and Pod status across all namespaces
 kubectl get pvc,pods -A
 
@@ -183,7 +183,7 @@ In the Longhorn UI:
 
 Test your applications to ensure data integrity:
 
-```bash
+```shell
 # Check application logs
 kubectl logs -n <namespace> <pod-name>
 

@@ -55,4 +55,7 @@ user-defined
 version-specific
 v2
 :::
-
+:::info
+:::note
+:::warning
+:::important

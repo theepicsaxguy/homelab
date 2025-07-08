@@ -1,6 +1,7 @@
 Algolia
 ArgoCD
 Bootstrap
+Bitwarden
 CC-BY
 CloudNativePG
 CloudSQL
@@ -42,3 +43,19 @@ write-good
 Zendesk
 Zigbee2MQTT
 Zigbee
+Talos
+OpenWebUi
+Karakeep
+cert-manager
+MQTT
+TrueNAS
+Meilisearch
+BabyBuddy
+Pedrobot
+KaraKeep
+AdGuard
+Omada
+IT-Tools
+ArgoCD
+OpenAI
+Longhorn

@@ -10,9 +10,9 @@ This project uses the [External Secrets Operator](https://external-secrets.io/) 
 
 ## Core Concepts
 
-1. **Bitwarden as the Source of Truth** – every token, password, and key lives in Bitwarden.
-2. **External Secrets Operator** – syncs those secrets into Kubernetes at runtime.
-3. **Name-Based Lookups** – we store secrets in Bitwarden using a human-friendly naming convention instead of UUIDs.
+1. **Bitwarden as the Source of Truth**—every token, password, and key lives in Bitwarden.
+2. **External Secrets Operator**—syncs those secrets into Kubernetes at runtime.
+3. **—Name-Based Lookups—we use a naming convention for secrets in Bitwarden:
 
 ## Naming Convention
 
@@ -26,9 +26,9 @@ Example: the client ID for ArgoCD's OIDC setup is stored as `app-argocd-oauth-cl
 
 ## Workflow for Adding a Secret
 
-1. **Create the secret in Bitwarden** – use the naming convention, store the value.
-2. **Reference it in an `ExternalSecret` manifest** – point the `remoteRef.key` to the Bitwarden name.
-3. **Commit the manifest** – once merged, ArgoCD applies it and the operator syncs the secret into the cluster.
+1. **Create the secret in Bitwarden**—use the naming convention, store the value.
+2. **Reference it in an `ExternalSecret` manifest**—point the `remoteRef.key` to the Bitwarden name.
+3. **Commit the manifest**—once merged, ArgoCD applies it and the operator syncs the secret into the cluster.
 
 ```yaml
 apiVersion: external-secrets.io/v1

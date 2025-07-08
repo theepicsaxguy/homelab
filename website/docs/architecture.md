@@ -3,7 +3,7 @@ title: System architecture overview
 description: High-level diagram of how Talos, Kubernetes, and GitOps combine to run the homelab.
 ---
 
-A concise map of the homelab stack—hypervisor to apps—so you always know **what runs where**.
+A concise map of the homelab stack: hypervisor to apps: so you always know **what runs where**.
 
 ## About the system architecture
 
@@ -37,13 +37,13 @@ This design marries an immutable Talos OS, Kubernetes, and GitOps to create a re
 
 ## Dive deeper
 
-- Provisioning flow: [Talos with OpenTofu](./tofu/opentofu-provisioning.md)
-- Configuration flow: [Manage Kubernetes with GitOps](./k8s/manage-kubernetes.md)
-- Application strategy: [Deploy and manage applications](./k8s/applications/application-management.md)
+- Provisioning flow: [Talos with OpenTofu](/docs/tofu/provisioning-task-guide.md)
+- Configuration flow: [Manage Kubernetes with GitOps](/docs/k8s/manage-kubernetes.md)
+- Application strategy: [Deploy and manage applications](/docs/k8s/applications/application-management.md)
 
 ## Verify the architecture in your cluster
 
-```bash
+```shell
 kubectl get nodes -o wide       # Talos nodes present?
 argocd app list                 # All apps Synced/Healthy?
 ````

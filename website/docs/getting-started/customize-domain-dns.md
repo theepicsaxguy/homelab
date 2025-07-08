@@ -21,7 +21,7 @@ The repository uses the placeholder domain `pc-tips.se` throughout its configura
 
 To replace all occurrences of `pc-tips.se` with your domain, navigate to the root of your local repository and execute the following command. Replace `your-domain.com` with your actual domain name.
 
-```bash
+```shell
 rg -l "pc-tips.se" | xargs sed -i 's/pc-tips\.se/your-domain.com/g'
 ```
 This command uses ripgrep (`rg`) to locate files containing the string `pc-tips.se` and then uses `sed` to perform an in-place replacement.
@@ -43,7 +43,7 @@ While Crossplane will manage most DNS records automatically, **you must manually
 **Steps to configure the initial DNS record:**
 
 1.  **Obtain your cluster's external IP address.** This is the public IP address assigned to the `cilium-gateway-external` service in the `gateway` namespace. After running `tofu apply`, you can find it by running:
-    ```bash
+    ```shell
     kubectl get svc -n gateway cilium-gateway-external -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
     ```
 

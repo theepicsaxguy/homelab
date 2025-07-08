@@ -87,20 +87,22 @@ Create the Bitwarden secrets operator token:
 # Replace <your-token> with your actual Bitwarden API token
 kubectl create secret generic bitwarden-access-token \
   --namespace external-secrets \
-  --from-literal=token=<your-token>
+  --from-literal="token=<your-token>"
 ```
+
 
 Trust Let's Encrypt certificates for External Secrets:
 
 ```shell
 # Download Let's Encrypt Root certificate
-curl -Lo isrgrootx1.pem https://letsencrypt.org/certs/isrgrootx1.pem
+curl -Lo "isrgrootx1.pem" "https://letsencrypt.org/certs/isrgrootx1.pem"
 
 # Create the certificate trust secret
 kubectl create secret generic letsencrypt-ca \
   --namespace external-secrets \
   --from-file=ca.crt=isrgrootx1.pem
 ```
+
 
 ## 4. GitOps Configuration
 
