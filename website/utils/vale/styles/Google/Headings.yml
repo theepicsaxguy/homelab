@@ -1,0 +1,70 @@
+extends: capitalization
+message: "'%s' should use sentence-style capitalization."
+link: 'https://developers.google.com/style/capitalization#capitalization-in-titles-and-headings'
+level: warning
+scope: heading
+match: $sentence
+indicators:
+  - ':'
+exceptions:
+  - API
+  - AWS
+  - Azure
+  - BigQuery
+  - Claim
+  - Claims
+  - CLI
+  - ClusterRoles
+  - Code
+  - composition function
+  - composition functions
+  - Composite Resource
+  - Composite resource
+  - composite resource
+  - Composite Resource Definitions
+  - Composite Resources
+  - composite resources
+  - CompositeResourceDefinition
+  - compositeTypeRef
+  - Composition
+  - Compositions
+  - Configuration
+  - Cosmos
+  - Crossplane
+  - Docker
+  - DynamoDB
+  - Emmet
+  - EnvironmentConfigs
+  - GCP
+  - gRPC
+  - Hashicorpterms
+  - Helm
+  - Helm
+  - Hugo
+  - I
+  - JavaScript
+  - Kubernetes
+  - Linux
+  - macOS
+  - Marketplace
+  - MongoDB
+  - Pod
+  - pod
+  - Provider
+  - provider
+  - ProviderConfig
+  - crossplane.yaml
+  - Pub/Sub
+  - PubSub
+  - REPL
+  - RBAC
+  - StoreConfig
+  - Studio
+  - TypeScript
+  - URLs
+  - Vale
+  - Vault
+  - Visual
+  - VS
+  - Windows
+  - XRD

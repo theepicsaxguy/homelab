@@ -1,0 +1,54 @@
+# from https://github.com/dmpop/technically/blob/main/CorporateSpeak.yml
+extends: existence
+message: "'%s' is corporate speak."
+ignorecase: true
+level: error
+tokens:
+  - sunsetting
+  - stakeholder
+  - ballpark
+  - table (?:this|it)
+  - parking lot (?:this|it)
+  - blue sky thinking
+  - north star
+  - unicorn
+  - digital transformation
+  - buy(?:in|-in)
+  - level up
+  - data-driven
+  - momentum
+  - right to win
+  - back to the drawing board
+  - hit the ground running
+  - get the ball rolling
+  - think outside the box
+  - touch base
+  - get my manager's blessing
+  - it's on my radar
+  - have the bandwidth
+  - synerg(?:y|ies)
+  - move the goal post
+  - apples to apples
+  - win-win
+  - circle back
+  - all hands on deck
+  - take this offline
+  - drill-down
+  - move the needle
+  - customer-centric
+  - customer obsession
+  - take-away
+  - leverage
+  - lever(?:s)
+  - strategic fit
+  - going forward
+  - operational excellence
+  - thought leader(?:s|ship)
+  - fly it up the flag pole
+  - journey
+  - driver for success
+  - best-in-class
+  - verticals
+  - cross-functional
+  - cross-functional alignment
+  - growth mindset
