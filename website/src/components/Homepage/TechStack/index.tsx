@@ -1,66 +1,41 @@
-import React, { JSX, useEffect, useState } from 'react';
+import React, { JSX } from 'react';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
+
 interface Technology {
   name: string;
   logo: string;
 }
-interface TechConfig {
-  name: string;
-  repo?: string;
-  org?: string;
-}
-const techConfigs: TechConfig[] = [
-  { name: 'Kubernetes', repo: 'kubernetes/kubernetes' },
-  { name: 'Talos', repo: 'siderolabs/talos' },
-  { name: 'ArgoCD', repo: 'argoproj/argo-cd' },
-  { name: 'OpenTofu', repo: 'opentofu/opentofu' },
-  { name: 'Prometheus', repo: 'prometheus/prometheus' },
-  { name: 'Grafana', repo: 'grafana/grafana' },
-  { name: 'Proxmox', org: 'proxmox' },
-];
 
 export function TechStack(): JSX.Element {
-  const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const withBase = useBaseUrl;
 
-  useEffect(() => {
-    async function fetchLogos(): Promise<void> {
-      const items: Technology[] = await Promise.all(
-        techConfigs.map(async (cfg) => {
-          try {
-            const url = cfg.repo
-              ? `https://api.github.com/repos/${cfg.repo}`
-              : `https://api.github.com/orgs/${cfg.org}`;
-            const res = await fetch(url);
-            const data = await res.json();
-            const logo = data.owner ? data.owner.avatar_url : data.avatar_url;
-            return { name: cfg.name, logo };
-          } catch {
-            return { name: cfg.name, logo: '' };
-          }
-        }),
-      );
-      setTechnologies(items);
-    }
-    fetchLogos();
-  }, []);
-
+  const techList: Technology[] = [
+    { name: 'Kubernetes', logo: withBase('/img/tech-logos/kubernetes.png') },
+    { name: 'Talos', logo: withBase('/img/tech-logos/talos.png') },
+    { name: 'ArgoCD', logo: withBase('/img/tech-logos/argocd.png') },
+    { name: 'OpenTofu', logo: withBase('/img/tech-logos/opentofu.png') },
+    { name: 'Prometheus', logo: withBase('/img/tech-logos/prometheus.png') },
+    { name: 'Grafana', logo: withBase('/img/tech-logos/grafana.png') },
+    { name: 'Proxmox', logo: withBase('/img/tech-logos/proxmox.png') },
+  ];
   return (
     <section className={styles.techStack}>
       <div className="container">
         <h2 className={styles.techStackTitle}>Powered By</h2>
-        <div className={styles.techGrid}>
-          {technologies.map((tech, idx) => (
-            <div key={idx} className={styles.techItem}>
+        <ul className={styles.techGrid}>
+          {techList.map((tech) => (
+            <li key={tech.name} className={styles.techItem}>
               <img
                 src={tech.logo}
-                alt={tech.name}
+                alt={`${tech.name} logo`}
                 className={styles.techLogo}
                 loading="lazy"
               />
               <span className={styles.techName}>{tech.name}</span>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );
