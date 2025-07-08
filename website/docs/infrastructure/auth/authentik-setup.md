@@ -148,17 +148,17 @@ spec:
 #### Authentication Issues
 
 1. Check Proxy Status:
-```bash
+```shell
 kubectl -n auth logs -l app=authentik-proxy
 ```
 
 2. Verify Network Policies:
-```bash
+```shell
 kubectl -n auth get ciliumnetworkpolicies
 ```
 
 3. Test Authentication Flow:
-```bash
+```shell
 curl -v https://app.your.domain.tld
 # Should redirect to SSO
 ```

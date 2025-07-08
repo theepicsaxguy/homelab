@@ -2,29 +2,29 @@
 title: Deploy and Manage Applications
 ---
 
-This guide explains how I deploy and manage applications on my Kubernetes cluster using GitOps with ArgoCD.
+This guide explains how applications are deployed and managed on the Kubernetes cluster using GitOps with ArgoCD.
 
-## Quick Start
+## Quick start
 
 Applications live in `/k8s/applications/` organized by function:
 
-- `ai/` - AI tools like OpenWebUI, KaraKeep
+- `ai/` - AI tools like Open Web UI, KaraKeep
 - `automation/` - Home automation (Frigate, MQTT)
-- `media/` - Media servers and tools (Jellyfin, \*arr stack)
-- `network/` - Network apps (AdGuard Home, Omada)
+- `media/` - Media servers and tools (Jellyfin, *arr stack)
+- `network/` - Network apps (AdGuard, Omada)
 - `tools/` - Utility apps (IT-Tools, Whoami, Unrar)
 - `web/` - Web applications (BabyBuddy, Pedrobot)
 - `external/` - Services outside Kubernetes but referenced internally
 
 ## How Application Deployment Works
 
-I use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the process:
+ArgoCD ApplicationSet automatically deploys apps from Git The process is:
 
 1. Add your app files to a category folder (e.g., `/k8s/applications/media/myapp/`)
-2. For most applications, ensure they are discoverable by the main ApplicationSet in
+2. For most applications, ensure they're discoverable by the main ApplicationSet in
    `/k8s/applications/application-set.yaml` (which scans subdirectories).
-3. For applications in the `external/` category (like HAOS, Proxmox, TrueNAS), these are managed by a separate
-   ApplicationSet located at `/k8s/applications/external/application-set.yaml`. This ApplicationSet specifically scans
+3. For applications in the `external/` category (for example, Home Assistant Operating System (HAOS), Proxmox, TrueNAS), a separate
+   ApplicationSet manages them. This ApplicationSet is located at `/k8s/applications/external/application-set.yaml` and specifically scans
    paths like `k8s/apps/external/*`.
 4. ArgoCD detects the change and deploys automatically.
 
@@ -32,14 +32,14 @@ I use ArgoCD ApplicationSet to automatically deploy apps from Git. Here's the pr
 
 - `kustomization.yaml` - Groups apps in each category
 - `project.yaml` - Sets ArgoCD permissions and controls
-- `application-set.yaml` - Main deployment configuration (additional ApplicationSets may exist for specific categories
+- `application-set.yaml` - Main deployment configuration (additional ApplicationSets exist for specific categories
   like `external`)
 
 ## Application Structure
 
 Each app folder should contain:
 
-```
+```shell
 myapp/
 ├── kustomization.yaml    # App configuration
 ├── namespace.yaml        # Kubernetes namespace
@@ -81,7 +81,7 @@ Here's how KaraKeep (`/k8s/applications/ai/karakeep/`) is structured:
 4. **Network Access**
 
    - The primary web interface is exposed via a `LoadBalancer` service (e.g., `karakeep-web-svc` with IP
-     `10.25.150.230`). Internal components like Meilisearch or Chrome might use `ClusterIP` services.
+     `10.25.150.230`). Internal components like Meilisearch or Chrome use `ClusterIP` services.
    - External access through Gateway API
    - Custom IPs via Cilium
 
@@ -114,7 +114,7 @@ I use NFS for shared media files:
 
 ## OpenWebUI Notes
 
-OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC and merges accounts by email so users can sign in with any provider. The `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack is not managed in this repository.
+OpenWebUI provides a chat interface backed by local AI models. The deployment integrates with Authentik using OIDC and merges accounts by email so users can sign in with any provider. The `OLLAMA_BASE_URL` variable is intentionally omitted because the Ollama stack isn't managed in this repository.
 
 Chrome and Ollama define both liveness and readiness probes so Kubernetes can restart them if they crash and only route traffic when each pod is ready.
 Mosquitto and Unrar use similar probes. Pedro Bot relies on PersistentVolumeClaims for logs and data, and Jellyfin and Unrar can run on any available node.
@@ -126,13 +126,13 @@ The container keeps its root filesystem read-only. Temporary paths like `/run` a
 
 ## BabyBuddy Notes
 
-BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. The deployment does not include a `values.yaml` file, avoiding confusion. Update your service and readiness probes to point to this port if you override the default configuration.
+BabyBuddy runs on port `3000` and is deployed purely with Kustomize manifests. The deployment doesn't include a `values.yaml` file, avoiding confusion. Update your service and readiness probes to point to this port if you override the default configuration.
 
 ## Home Assistant Notes
 
 Home Assistant runs as a StatefulSet. Configuration, media, and data paths each
 use their own persistent volume created through `volumeClaimTemplates`. It
-connects to the shared `mosquitto` service in the `mqtt` namespace—configure the
+connects to the shared `mosquitto` service in the `mqtt` namespace - configure the
 integration to use `mosquitto.mqtt.svc.cluster.local` and your Bitwarden
 credentials. A ConfigMap provides `configuration.yaml` so the cluster gateway can
 proxy requests using the `X-Forwarded-For` header. The main container starts as

@@ -6,7 +6,7 @@ description: Configuration and usage guide for External Secrets Operator with Bi
 
 # External Secrets Configuration
 
-This guide covers the setup and usage of External Secrets Operator (ESO) for managing Kubernetes secrets using Bitwarden as the backend.
+This guide covers the setup and usage of External Secrets Operator (ESO) for managing Kubernetes secrets using Bitwarden as the secret store.
 
 ## Initial Setup
 
@@ -14,9 +14,9 @@ This guide covers the setup and usage of External Secrets Operator (ESO) for man
 
 First, ensure proper certificate trust for external services:
 
-```bash
+```shell
 # Download Let's Encrypt Root certificate
-curl -Lo isrgrootx1.pem https://letsencrypt.org/certs/isrgrootx1.pem
+curl -Lo "isrgrootx1.pem" "https://letsencrypt.org/certs/isrgrootx1.pem"
 
 # Create certificate trust secret
 kubectl create secret generic letsencrypt-ca \
@@ -28,7 +28,7 @@ kubectl create secret generic letsencrypt-ca \
 
 Create the Bitwarden access token secret:
 
-```bash
+```shell
 kubectl create secret generic bitwarden-access-token \
   --namespace external-secrets \
   --from-literal=token=<your-token>
@@ -36,7 +36,7 @@ kubectl create secret generic bitwarden-access-token \
 
 ## ClusterSecretStore Configuration
 
-Define the Bitwarden backend configuration:
+Define the Bitwarden provider configuration:
 
 ```yaml
 apiVersion: external-secrets.io/v1beta1
@@ -235,7 +235,7 @@ alerts:
 
 ### Debug Commands
 
-```bash
+```shell
 # Check ESO logs
 kubectl -n external-secrets logs -l app.kubernetes.io/name=external-secrets
 
@@ -245,5 +245,5 @@ kubectl get externalsecret -A
 # Test Bitwarden access
 kubectl -n external-secrets exec -it \
   $(kubectl -n external-secrets get pod -l app.kubernetes.io/name=external-secrets -o name) \
-  -- curl -v https://bitwarden.your.domain.tld
+  -- curl -v "https://bitwarden.your.domain.tld"
 ```

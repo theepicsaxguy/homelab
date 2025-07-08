@@ -18,7 +18,7 @@ The `zigbee2mqtt` configuration is managed via a `ConfigMap` that contains the `
 
 ### External converters
 
-To support Zigbee devices that are not natively supported by `zigbee2mqtt`, external converters can be used. These are JavaScript files that define how to interpret the messages from a specific device. These converters are also managed in a `ConfigMap` and copied to the data volume by the init container.
+To support Zigbee devices that aren't natively supported by `zigbee2mqtt`, external converters can be used. These are JavaScript files that define how to interpret the messages from a specific device. These converters are also managed in a `ConfigMap` and copied to the data volume by the init container.
 
 *   **Why:** This allows for supporting a wider range of devices and keeps the device-specific logic version-controlled.
 
@@ -40,7 +40,7 @@ Sensitive information, such as the Zigbee network key and PAN ID, are managed by
 
 The `zigbee2mqtt` application requires a persistent volume to store its data, including the configuration files and the Zigbee network database. The persistent volume claim (PVC) is configured with `ReadWriteMany` access mode.
 
-*   **Why:** `ReadWriteMany` supports potential future scaling scenarios, although it is currently used by a single replica.
+*   **Why:** `ReadWriteMany` supports potential future scaling scenarios, although it's currently used by a single replica.
 
 ## Procedural guide
 

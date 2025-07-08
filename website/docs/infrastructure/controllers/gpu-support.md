@@ -1,6 +1,6 @@
-# GPU Support in Kubernetes
+# GPU support in Kubernetes
 
-This document outlines how GPU support is enabled in the Kubernetes cluster, covering Node Feature Discovery and the NVIDIA GPU Operator.
+This document outlines how GPU support is enabled in the Kubernetes cluster, covering Node Feature Discovery (NFD) and the NVIDIA GPU Operator.
 
 ## Node Feature Discovery (NFD)
 

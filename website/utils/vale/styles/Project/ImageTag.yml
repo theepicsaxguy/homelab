@@ -1,0 +1,5 @@
+extends: existence
+message: "Pin Docker image tags; never use :latest."
+level: error
+tokens:
+  - ':[Ll]atest\b'

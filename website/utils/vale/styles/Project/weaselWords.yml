@@ -1,0 +1,10 @@
+extends: existence
+message: "Avoid vague word “%s”. Be precise."
+level: error
+ignorecase: true
+tokens:
+  - may
+  - might
+  - could
+  - seems
+  - appears

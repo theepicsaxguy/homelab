@@ -2,23 +2,23 @@
 title: Declarative configuration for dynamic applications
 ---
 
-Some applications manage their own configuration files and are unaware of GitOps workflows. This guide explains how initContainers and shared volumes let you enforce a declarative setup anyway.
+Some applications manage their own configuration files and are unaware of GitOps workflows. This guide explains how init containers and shared volumes let you enforce a declarative setup anyway.
 
 :::info
-This approach is handy for tools like Home Assistant or Zigbee2MQTT, but it can be applied to any app that writes to its config directory at runtime.
+This approach is handy for tools like Home Assistant or Zigbee2MQTT, but it can be applied to any application that writes to its configuration directory at runtime.
 :::
 
 ## Common use cases
 
-- **Seeding a default configuration:** Provide a known-good baseline before the app starts.
+- **Seeding a default configuration:** Provide a known good baseline before the application starts.
 - **Merging secrets at startup:** Inject credentials without committing them to Git.
 
-## Overview of the initContainer workflow
+## Overview of the init container workflow
 
-1. **Store base files in a ConfigMap.** Version-control the default configuration in your repo.
+1. **Store base files in a ConfigMap.** Version control the default configuration in your repository.
 2. **Keep secrets in Bitwarden.** Use ExternalSecrets so Kubernetes injects them as standard Secrets.
-3. **Share a volume between containers.** Both the initContainer and the main container mount the same path.
-4. **Run the initContainer first.** It copies or merges the ConfigMap files into the shared volume and substitutes secret values.
+3. **Share a volume between containers.** Both the init container and the main container mount the same path.
+4. **Run the init container first.** It copies or merges the ConfigMap files into the shared volume and substitutes secret values.
 5. **Start the main container.** The application reads its configuration from the volume and runs as if it were preconfigured.
 
 This method keeps container images generic while still letting you define configuration in Git. It also preserves runtime-generated files, because the main container has write access to the shared volume.
