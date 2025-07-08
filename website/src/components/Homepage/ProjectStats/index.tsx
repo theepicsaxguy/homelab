@@ -8,26 +8,11 @@ export function ProjectStats(): JSX.Element {
   const [issues, setIssues] = useState(initialStats.issues);
 
   useEffect(() => {
-    const repoUrl = 'https://api.github.com/repos/theepicsaxguy/homelab';
-    const issuesUrl = 'https://api.github.com/search/issues?q=repo:theepicsaxguy/homelab+is:issue+is:open';
-
-
-    Promise.all([fetch(repoUrl), fetch(issuesUrl)])
-      .then(([repoRes, issuesRes]) => Promise.all([repoRes.json(), issuesRes.json()]))
-      .then(([repoData, issuesData]) => {
-        if (repoData.stargazers_count !== undefined) {
-          setStars(repoData.stargazers_count);
-        }
-        if (repoData.forks_count !== undefined) {
-          setForks(repoData.forks_count);
-        }
-        if (issuesData.total_count !== undefined) {
-          setIssues(issuesData.total_count);
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching GitHub stats:', error);
-        // If the API fails, the initial static stats will be used.
+    fetch('/github-stats')
+      .then(r => r.json())
+      .then(d => { setStars(d.stars); setForks(d.forks); setIssues(d.issues); })
+      .catch(()=>{
+        // silently fall back to static JSON
       });
   }, []); // Empty dependency array ensures this runs only once on mount
 

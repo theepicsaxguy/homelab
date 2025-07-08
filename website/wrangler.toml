@@ -1,0 +1,6 @@
+[[triggers]]
+crons = ["17 3 * * *"]  # daily
+
+[[routes]]
+pattern = "/github-stats"
+zone_id = "<your-zone>"
