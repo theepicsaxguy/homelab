@@ -17,8 +17,8 @@ adhere to the following guidelines.
 - Remember to use the [documentation templates](./templates/index.md) when appropriate. They are pre-structured to align
   with my style guidelines, simplify the writing process (helping to avoid the "blank page" challenge), and maintain
   consistency in document structure and headings.
-- Before submitting a PR, ensure your Markdown is well-formatted. If you have local Markdown linting tools configured,
-  please run them.
+ - Before submitting a PR, ensure your Markdown is well-formatted. Pre-commit hooks run
+   `vale` and `markdownlint` automatically, so fix any warnings before pushing.
 - For new documentation pages, ensure they are appropriately linked from relevant sections in the main documentation (e.g., `website/docs/intro.md` or other logical overview pages) so that users can discover them.
 - Place your new file in the folder that best matches its topic (e.g., `infrastructure/` or `k8s/`). The sidebar indexes each folder automatically, so you do not need to edit `sidebars.ts`.
 

@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/errata-ai/vale
+    rev: v3.7.0
+    hooks:
+      - id: vale
+        files: \.md$
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.9.2
+    hooks:
+      - id: markdownlint
+        files: \.md$

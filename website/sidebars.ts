@@ -72,6 +72,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'writing-documentation/writing-documentation',
         'writing-documentation/style-guide',
+        'writing-documentation/linting-toolchain',
         'writing-documentation/templates/index',
       ],
     },
