@@ -1,0 +1,7 @@
+repos:
+  - repo: https://github.com/errata-ai/vale
+    rev: v3.7.0
+    hooks:
+      - id: vale
+        files: ^website/docs/.*\.md$
+        args: ["--config=website/utils/vale/.vale.ini", "--minAlertLevel=suggestion"]

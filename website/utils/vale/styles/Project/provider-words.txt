@@ -24,3 +24,5 @@ us-central1
 us-east-2
 VPC
 xpkg.crossplane.io
+Whoami
+Unrar
