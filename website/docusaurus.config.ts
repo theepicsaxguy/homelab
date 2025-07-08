@@ -41,6 +41,12 @@ const config: Config = {
           customCss: './src/css/custom.css',
         },
         blog: false,
+        sitemap: {
+          changefreq: 'weekly',
+          priority: 0.5,
+          ignorePatterns: ['/tags/**'],
+          filename: 'sitemap.xml',
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -51,17 +57,6 @@ const config: Config = {
         hashed: true,
         docsRouteBasePath: 'docs',
         highlightSearchTermsOnTargetPage: true,
-      },
-    ],
-  ],
-  plugins: [
-    [
-      '@docusaurus/plugin-sitemap',
-      {
-        changefreq: 'weekly',
-        priority: 0.5,
-        ignorePatterns: ['/tags/**'],
-        filename: 'sitemap.xml',
       },
     ],
   ],

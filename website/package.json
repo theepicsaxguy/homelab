@@ -19,7 +19,7 @@
     "@docusaurus/core": "3.8.1",
     "@docusaurus/plugin-sitemap": "^3.8.1",
     "@docusaurus/preset-classic": "3.8.1",
-    "@easyops-cn/docusaurus-search-local": "^0.51.0",
+    "@easyops-cn/docusaurus-search-local": "^0.51.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",
@@ -47,6 +47,6 @@
     ]
   },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=20.18.1"
   }
 }

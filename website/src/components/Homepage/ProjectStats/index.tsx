@@ -16,8 +16,7 @@ export function ProjectStats(): JSX.Element {
               <div className={styles.statValue}>{stats.forks}</div>
               <div className={styles.statLabel}>Forks</div>
             </div>
-          </>
-        </div>
+          </div>
       </div>
     </section>
   );
