@@ -134,7 +134,8 @@
       "github.vscode-pull-request-github",
       "opentofu.vscode-opentofu",
       "esbenp.prettier-vscode",
-      "chrischinchilla.vale-vscode"
+      "chrischinchilla.vale-vscode",
+      "elagil.pre-commit-helper"
     ]
   }
 }
