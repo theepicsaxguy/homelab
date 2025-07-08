@@ -1,0 +1,24 @@
+---
+# Warning: upbound.Spelling
+# From https://gitlab.com/gitlab-org/gitlab/-/blob/master/doc/.vale/gitlab/Spelling.yml
+#
+# Checks for possible spelling mistakes in content, not code. Results from links using angle brackets (<https://example.com>) should be corrected.
+#
+#
+# For a list of all options, see https://errata-ai.gitbook.io/vale/getting-started/styles
+extends: spelling
+message: 'Spelling check: "%s"?'
+level: error
+custom: true
+ignore:
+  - Project/spelling-exceptions.txt
+  - Project/brands.txt
+  - Project/project-words.txt
+  - Project/provider-words.txt
+  - Project/allowed-jargon.txt
+filters:
+  - v\d # e.g. v1, v2
+  - v\d\.[x\d]\d?  # e.g. v1.1, v2.10, v1.x
+  - v\dalpha\d  # e.g. v1alpha1, v2alpha1
+  - v\dbeta\d  # e.g. v1beta1, v2beta2
+  - \/.*

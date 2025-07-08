@@ -1,0 +1,23 @@
+# markdownlint-cli2 rules — strict but practical
+default: true
+
+# Enforce max line length on paragraphs and headings
+MD013:
+  line_length: 120
+  code_blocks: false
+
+MD009: true                 # no trailing spaces
+MD010: true                 # no hard tabs
+
+# Exactly one top-level heading; front-matter title is OK
+MD025:
+  front_matter_title: "false"
+
+# First line must be a heading
+MD041: true
+
+# Use fenced code blocks
+MD046: true
+
+# File ends with a newline
+MD047: true

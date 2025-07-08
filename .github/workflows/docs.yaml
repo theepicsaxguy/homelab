@@ -1,0 +1,38 @@
+name: Docs Lint
+on:
+  pull_request:
+    paths:
+      - 'website/docs/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install remark-lint deps
+        run: npm ci
+
+      - name: Vale
+        uses: errata-ai/vale-action@v3
+        with:
+          files: website
+        env:
+          VALE_MINALERTLEVEL: error     # fail the job on any error-level alert
+
+      - name: markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v5
+        with:
+          config: website/.markdownlint.yaml
+          globs: "website/**/*.md"
+
+      - name: remark-lint
+        run: npx remark-lint . --quiet --format

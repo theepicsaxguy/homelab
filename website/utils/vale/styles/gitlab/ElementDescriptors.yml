@@ -1,0 +1,14 @@
+---
+# Warning: gitlab.ElementDescriptors
+#
+# Suggests the correct way to describe a button.
+#
+# For a list of all options, see https://vale.sh/docs/topics/styles/
+extends: existence
+message: "If possible, rewrite to remove 'button'."
+link: https://docs.gitlab.com/ee/development/documentation/styleguide/word_list.html#button
+level: warning
+ignorecase: true
+scope: raw
+raw:
+  - \*\*[^*]+\*\*\s+button

@@ -1,0 +1,21 @@
+-   repo: https://github.com/errata-ai/vale
+    rev: v3.7.0
+    hooks:
+      - id: vale
+        files: \.md$
+        args: ["--config=website/vale.ini", "--minAlertLevel=error"]
+
+-   repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.9.2
+    hooks:
+      - id: markdownlint
+        files: \.md$
+        args: ["-c", "website/.markdownlint.yaml"]
+
+-   repo: local
+    hooks:
+      - id: remark-lint
+        name: remark-lint
+        entry: bash -c "cd website && npx remark . -qf"
+        language: system
+        files: \.md$

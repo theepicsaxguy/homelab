@@ -1,0 +1,13 @@
+---
+# Error: gitlab.RelativeLinksDoubleSlashes
+#
+# Checks for the presence of double slashes in relative URLs.
+#
+# For a list of all options, see https://vale.sh/docs/topics/styles/
+extends: existence
+message: "Remove the double slash from this relative link."
+link: https://docs.gitlab.com/ee/development/documentation/styleguide/index.html#links
+level: error
+scope: raw
+raw:
+  - '\.//'
