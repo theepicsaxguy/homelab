@@ -11,7 +11,6 @@ export function TechStack(): JSX.Element {
   const withBase = useBaseUrl;
 
   const techList: Technology[] = [
-    { name: 'Homelab', logo: withBase('/img/tech-logos/theepicsaxguy.png') },
     { name: 'Kubernetes', logo: withBase('/img/tech-logos/kubernetes.png') },
     { name: 'Talos', logo: withBase('/img/tech-logos/talos.png') },
     { name: 'ArgoCD', logo: withBase('/img/tech-logos/argocd.png') },
