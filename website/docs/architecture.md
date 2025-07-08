@@ -1,5 +1,6 @@
 ---
 title: System architecture overview
+description: High-level diagram of how Talos, Kubernetes, and GitOps combine to run the homelab.
 ---
 
 A concise map of the homelab stack—hypervisor to apps—so you always know **what runs where**.
