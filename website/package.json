@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "prebuild": "node ./scripts/fetch-github-stats.mjs",
+    "prebuild": "node ./scripts/fetch-github-stats.mjs && node ./scripts/fetch-tech-logos.mjs",
     "build": "npm run prebuild && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",

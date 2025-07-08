@@ -21,6 +21,7 @@ async function fetchStats() {
     stars: repoData.stargazers_count,
     forks: repoData.forks_count,
     issues: issuesData.total_count,
+    owner_avatar_url: repoData.owner.avatar_url,
   };
 
   const outPath = path.join('src', 'data', 'github-stats.json');
