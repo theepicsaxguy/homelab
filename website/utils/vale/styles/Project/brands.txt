@@ -40,3 +40,4 @@ VSCode
 Webpack
 write-good
 Zendesk
+Zigbee2MQTT

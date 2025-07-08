@@ -5,13 +5,6 @@
         files: \.md$
         args: ["--config=website/vale.ini", "--minAlertLevel=error"]
 
--   repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.9.2
-    hooks:
-      - id: markdownlint
-        files: \.md$
-        args: ["-c", "website/.markdownlint.yaml"]
-
 -   repo: local
     hooks:
       - id: remark-lint

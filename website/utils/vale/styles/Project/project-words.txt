@@ -84,3 +84,4 @@ XRD
 XRD's
 XRDs
 XRs
+zigbee

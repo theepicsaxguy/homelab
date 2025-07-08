@@ -54,7 +54,6 @@
       "!Env scalar"
     ],
     "[yaml]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.formatOnSave": false
     },
     // Terraform/OpenTofu settings
@@ -127,13 +126,10 @@
     "chat.promptFilesLocations": {
       ".github/prompts/kustomize": true
     },
-    "vale.valeCLI.config": "${workspaceFolder}/website/vale.ini"
   },
   "extensions": {
     "recommendations": [
       "redhat.vscode-yaml",
-      "ms-kubernetes-tools.vscode-kubernetes-tools",
-      "davidanson.vscode-markdownlint",
       "golang.go",
       "github.vscode-pull-request-github",
       "opentofu.vscode-opentofu",
