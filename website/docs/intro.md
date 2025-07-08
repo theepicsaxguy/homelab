@@ -46,13 +46,13 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 ## Cluster Setup
 
-- [Provision Talos Kubernetes](./tofu/opentofu-provisioning.md)
+- [Provision Talos Kubernetes](/docs/tofu/provisioning-task-guide.md)
   - OpenTofu-based Talos deployment on Proxmox
   - Infrastructure setup steps
 
 ## Kubernetes Management
 
-- [GitOps Configuration](./k8s/manage-kubernetes.md)
+- [GitOps Configuration](/docs/k8s/manage-kubernetes.md)
   - ArgoCD setup and usage
   - Manifest structure
   - Service management

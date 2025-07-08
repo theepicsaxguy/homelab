@@ -1,12 +1,12 @@
 # Manage Kubernetes Configuration with GitOps
 
-Once your Kubernetes cluster is provisioned (see [Provision the Talos Kubernetes cluster with OpenTofu](../tofu/opentofu-provisioning.md)), all ongoing configurations, applications, and core services are managed using a GitOps workflow powered by ArgoCD.
+Once your Kubernetes cluster is provisioned (see [Provision the Talos Kubernetes cluster with OpenTofu](../tofu/provisioning-task-guide.md)), all ongoing configurations, applications, and core services are managed using a GitOps workflow powered by ArgoCD.
 
 ---
 
 ## Why Use GitOps and ArgoCD?
 
-GitOps makes your Git repository the single source of truth for all Kubernetes resources. You define your desired state in YAML files. ArgoCD automatically keeps the cluster in sync with this state, so manual `kubectl apply` isn't needed for persistent changes.
+GitOps makes your Git repository the single source of truth for all Kubernetes resources. You define your desired state in YAML files. ArgoCD automatically keeps the cluster in sync with this state, so manual `kubectl apply` is not needed for persistent changes.
 
 ### Benefits of GitOps
 

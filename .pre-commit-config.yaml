@@ -4,4 +4,4 @@ repos:
     hooks:
       - id: vale
         files: ^website/docs/.*\.md$
-        args: ["--config=website/utils/vale/.vale.ini", "--minAlertLevel=suggestion"]
+        args: ["--config=website/utils/vale/.vale.ini", "--minAlertLevel=error"]

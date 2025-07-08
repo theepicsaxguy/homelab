@@ -6,19 +6,19 @@ description: Core infrastructure controllers and their configuration
 
 # Infrastructure Controllers
 
-This document outlines the core infrastructure controllers deployed in my Kubernetes cluster.
+This document outlines the core infrastructure controllers deployed in the Kubernetes cluster.
 
-## Core Controllers
+## Core controllers
 
-### Node Feature Discovery
+### Node feature discovery
 
 - **Purpose**: Hardware feature and system configuration detection
-- **Further Reading**: [GPU Support in Kubernetes](./controllers/gpu-support.md)
+- **Further Reading**: [GPU Support in Kubernetes](controllers/gpu-support.md)
 
-### NVIDIA GPU Operator
+### NVIDIA GPU operator
 
-- **Purpose**: Automates management of NVIDIA software components for GPU-enabled nodes
-- **Further Reading**: [GPU Support in Kubernetes](./controllers/gpu-support.md)
+- **Purpose**: Automates management of GPU-enabled NVIDIA software components for GPU-enabled nodes
+- **Further Reading**: [GPU Support in Kubernetes](controllers/gpu-support.md)
 
 ### ArgoCD
 
@@ -36,11 +36,11 @@ This document outlines the core infrastructure controllers deployed in my Kubern
 - **Version**: Latest v1.x (automated by Renovate)
 - **Features**:
   - Let's Encrypt integration
-  - Internal PKI support
+  - Internal Public Key Infrastructure (PKI) support
   - Automated renewal
-  - CSI driver integration
+  - Container Storage Interface (CSI) driver integration
 
-### External Secrets
+### External secrets
 
 - **Purpose**: Secrets management
 - **Version**: Latest stable (automated by Renovate)
@@ -69,7 +69,7 @@ This document outlines the core infrastructure controllers deployed in my Kubern
   - GitHub integration
   - Custom webhook support
   - Writable `/tmp` mount to support repo clones
-  - Optional OpenAI summaries (currently disabled)
+  - Optional OpenAI summaries (disabled)
   - Loads Cloudflare provider CRDs so kubeconform validates Crossplane resources
 
 ### Velero
@@ -79,10 +79,10 @@ This document outlines the core infrastructure controllers deployed in my Kubern
 - **Features**:
   - Object storage backups via Minio
   - Volume snapshots through Longhorn
-  - Node-agent deployment for filesystem backup
+  - Node-agent deployment for file system backup
   - Prometheus metrics
 
-## Resource Management
+### Resource management
 
 ### Base Resource Configuration
 
@@ -104,7 +104,7 @@ High-Availability Profile:
     memory: 1Gi
 ```
 
-### Controller-Specific Resources
+### Controller-specific resources
 
 | Controller       | CPU Request | Memory Request | CPU Limit | Memory Limit |
 | ---------------- | ----------- | -------------- | --------- | ------------ |
@@ -114,9 +114,9 @@ High-Availability Profile:
 | Longhorn Manager | 250m        | 256Mi          | 250m      | 256Mi        |
 | Kubechecks       | 200m        | 256Mi          | 500m      | 512Mi        |
 
-## High Availability
+## High availability
 
-### Deployment Strategy
+### Deployment strategy
 
 ```yaml
 Replication:
@@ -134,7 +134,7 @@ Pod Disruption Budget:
   minAvailable: 1
 ```
 
-### Node Placement
+### Node placement
 
 ```yaml
 Topology Spread:
@@ -190,7 +190,7 @@ Controllers:
 
 ## Security Configuration
 
-### RBAC Settings
+### Role-Based Access Control (RBAC) settings
 
 - Minimal permissions model
 - Namespace isolation
@@ -230,7 +230,7 @@ Ingress Rules:
 
 ### Debug Commands
 
-```bash
+```shell
 # Check controller status
 kubectl -n argocd get pods
 kubectl -n cert-manager get pods

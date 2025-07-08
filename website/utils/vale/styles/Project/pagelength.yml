@@ -1,0 +1,28 @@
+# .vale/styles/Custom/PageLengthComplexity.yml
+
+# Check for too many sentences
+---
+extends: occurrence
+message: "This file may be too long ({{count}} sentences). Consider splitting."
+level: warning
+scope: file
+token: '\.'
+max: 60
+
+# Check for too many headings
+---
+extends: occurrence
+message: "This file has {{count}} headings. Consider splitting sections."
+level: warning
+scope: file
+token: '^#{2,6} '
+max: 15
+
+# Check for too many 'the' (common word proxy)
+---
+extends: occurrence
+message: "High frequency of 'the' ({{count}} uses). Consider splitting for brevity."
+level: warning
+scope: file
+token: '\bthe\b'
+max: 50

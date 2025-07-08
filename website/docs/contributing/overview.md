@@ -2,7 +2,7 @@
 title: Contributing Guide
 ---
 
-Welcome! This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to my standards for pull requests.
+Welcome. This guide contains everything you need to know to contribute to the homelab project, from setting up your local environment to my standards for pull requests.
 
 I'm currently the only person maintaining this repository, and I'd be happy to have help. Whether it's fixing a typo, updating a Helm chart, or adding a new application, your contributions are welcome. To keep things organized, I've adopted some standard open-source practices like conventional commits.
 
@@ -21,20 +21,20 @@ To ensure your changes are valid, you'll need a few tools.
 Before opening a pull request, please run these checks on any files you've modified:
 
 - **Kubernetes Manifests:**
-  ```bash
+  ```shell
   # Run from the root of the repo for each directory you changed
   kustomize build --enable-helm k8s/applications/media/jellyfin
   ```
 
 - **OpenTofu Files:**
-  ```bash
+  ```shell
   cd tofu
   tofu fmt
   tofu validate
   ```
 
 - **Website/Documentation:**
-  ```bash
+  ```shell
   cd website
   npm install
   npm run typecheck
