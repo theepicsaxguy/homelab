@@ -1,0 +1,13 @@
+---
+# Error: gitlab.CIConfigFile
+#
+# Checks that the `.gitlab-ci.yml` file is referenced properly.
+#
+# For a list of all options, see https://vale.sh/docs/topics/styles/
+extends: existence
+message: "Change the file name to be exactly '.gitlab-ci.yml'."
+link: https://docs.gitlab.com/ee/development/documentation/versions.html
+level: error
+scope: raw
+raw:
+  - '(?!`\.gitlab-ci\.yml`)`.?gitlab.?ci.?ya?ml`'

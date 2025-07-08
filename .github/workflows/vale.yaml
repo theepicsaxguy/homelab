@@ -1,0 +1,19 @@
+permissions:
+  contents: read
+name: Vale
+on:
+  push:
+    paths:
+      - 'website/docs/**'
+  pull_request:
+    paths:
+      - 'website/docs/**'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: errata-ai/vale-action@v2.1.1
+        with:
+          files: website/docs
+          config: website/utils/vale/.vale.ini
+          fail_on_error: true

@@ -54,13 +54,12 @@
       "!Env scalar"
     ],
     "[yaml]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.formatOnSave": false
     },
     // Terraform/OpenTofu settings
     "[terraform]": {
       "editor.formatOnSave": true,
-      "editor.defaultFormatter": "hashicorp.terraform"
+      "editor.defaultFormatter": "opentofu.vscode-opentofu"
     },
     "terraform.experimentalFeatures.validateOnSave": true,
     // Kubernetes settings
@@ -90,7 +89,7 @@
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "github.copilot.selectedCompletionModel": "gpt-4o-copilot",
     "github.copilot.chat.followUps": true,
-    "github.copilot.chat.edits.codesearch.enabled": true,
+    "github.copilot.chat.codesearch.enabled": true,
     "github.copilot.chat.runCommand.enabled": true,
     "githubIssues.alwaysPromptForNewIssueRepo": true,
     "githubPullRequests.defaultMergeMethod": "squash",
@@ -105,11 +104,6 @@
     "github.copilot.chat.generateTests.codeLens": true,
     "github.copilot.chat.languageContext.typescript.enabled": true,
     "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-    "github.copilot.chat.codeGeneration.instructions": [
-      {
-        "file": ".github/copilot-instructions.md"
-      }
-    ],
     "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
       {
         "file": ".github/.copilot-pull-request-description-instructions.md"
@@ -131,17 +125,17 @@
     },
     "chat.promptFilesLocations": {
       ".github/prompts/kustomize": true
-    }
+    },
   },
   "extensions": {
     "recommendations": [
       "redhat.vscode-yaml",
-      "ms-kubernetes-tools.vscode-kubernetes-tools",
-      "davidanson.vscode-markdownlint",
       "golang.go",
       "github.vscode-pull-request-github",
       "opentofu.vscode-opentofu",
-      "esbenp.prettier-vscode"
+      "esbenp.prettier-vscode",
+      "chrischinchilla.vale-vscode",
+      "elagil.pre-commit-helper"
     ]
   }
 }
