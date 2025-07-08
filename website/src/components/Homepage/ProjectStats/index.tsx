@@ -7,7 +7,7 @@ export function ProjectStats(): JSX.Element {
     <section className={styles.statsSection}>
       <div className="container">
         <div className={styles.statsGrid}>
-          <>
+          
             <div className={styles.statItem}>
               <div className={styles.statValue}>{stats.stars}</div>
               <div className={styles.statLabel}>Stars</div>
