@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
         - name: sabnzbd
-          image: ghcr.io/linuxserver/sabnzbd:4.5.1 # renovate: docker=ghcr.io/linuxserver/sabnzbd
+          image: ghcr.io/linuxserver/sabnzbd:4.5.2 # renovate: docker=ghcr.io/linuxserver/sabnzbd
           imagePullPolicy: IfNotPresent
           resources:
             requests:
