@@ -24,6 +24,15 @@ auth_header:
   username_header: X-ak-hass-user
   debug: true
 
+openid:
+  client_id: !secret ha_oidc_client_id
+  client_secret: !secret ha_oidc_client_secret
+  configure_url: "https://sso.pc-tips.se/application/o/home-assistant/.well-known/openid-configuration"
+  username_field: preferred_username
+  scope: "openid profile email"
+  block_login: false
+  openid_text: "Login with OpenID / OAuth2"
+
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
