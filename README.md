@@ -5,7 +5,7 @@
 After rebuilding my homelab one too many times, I committed to managing it entirely with GitOps. This repository is the result: a blueprint for a resilient, production-inspired Kubernetes cluster.
 
 I'm sharing it to document my own journey and to help others build a stable, maintainable homelab without repeating my mistakes.
- **[Explore the Documentation](https://homelab.orkestack.com/)** │ **[See the Architecture](https://homelab.orkestack.com/docs/architecture)** │ **[Get Started](https://homelab.orkestack.com/docs/quick-start)**
+ **[Explore the Documentation](https://homelab.orkestack.com/)** │ **[See the Architecture](https://homelab.orkestack.com/docs/architecture)** │ **[Get Started](https://homelab.orkestack.com/docs/getting-started)**
 
 ## The Stack
 
@@ -41,7 +41,7 @@ I'm sharing it to document my own journey and to help others build a stable, mai
 ## Quick Start
 
 1. Make sure you have Proxmox access with your SSH key and install `opentofu`, `talosctl`, `kubectl`, and `argocd`. A little Kubernetes and Git know-how helps.
-2. Clone this repository and follow the steps in the [Quick Start guide](https://homelab.orkestack.com/docs/quick-start).
+2. Clone this repository and follow the steps in the [Quick Start guide](https://homelab.orkestack.com/docs/getting-started).
 
 ---
 
