@@ -12,8 +12,13 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - uses: errata-ai/vale-action@v2.1.1
         with:
           files: website/docs
-          config: website/utils/vale/.vale.ini
+          vale_flags: '--config=website/utils/vale/.vale.ini'
           fail_on_error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
