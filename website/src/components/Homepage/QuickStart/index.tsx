@@ -33,7 +33,7 @@ export function QuickStart(): JSX.Element {
         <div className={styles.quickStartCta}>
           <Link
             className="button button--primary button--lg"
-            to="/docs/quick-start"
+            to="/docs/getting-started"
           >
             View Full Guide
           </Link>

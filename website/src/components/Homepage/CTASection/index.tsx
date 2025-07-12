@@ -10,7 +10,7 @@ export function CTASection(): JSX.Element {
         <h2 className={styles.title}>Dive In and Explore</h2>
         <div className={styles.buttons}>
           <Link
-            to="/docs/quick-start"
+            to="/docs/getting-started"
             className={styles.primaryButton}
           >
             Quick Start Guide
