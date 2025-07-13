@@ -7,7 +7,7 @@ A concise map of the homelab stack: hypervisor to apps: so you always know **wha
 
 ## About the system architecture
 
-This design marries an immutable Talos OS, Kubernetes, and GitOps to create a repeatable, auditable platform for self‑hosted services.
+This design marries an immutable Talos OS, Kubernetes, and GitOps to create a repeatable, auditable platform for self-managed services.
 
 :::info
 **Why you care:** Understanding the layers helps you troubleshoot faster and extend the platform safely.
@@ -18,7 +18,7 @@ This design marries an immutable Talos OS, Kubernetes, and GitOps to create a re
 | Layer | What it does | Primary tool |
 |-------|--------------|--------------|
 | Hypervisor | Hosts all VMs | Proxmox VE |
-| Node OS | Minimal, API‑managed Linux | Talos |
+| Node OS | Minimal, API-managed Linux | Talos |
 | Networking | eBPF CNI + policies | Cilium |
 | Traffic routing | L4/L7 gateways | Gateway API |
 | State sync | Declarative config | ArgoCD + Kustomize |
@@ -27,7 +27,7 @@ This design marries an immutable Talos OS, Kubernetes, and GitOps to create a re
 ## Prerequisites
 
 - Basic Kubernetes familiarity.
-- Access to the repo for cross‑referenced manifests.
+- Access to the repo for cross-referenced manifests.
 
 ## Overview of data flow
 
@@ -37,9 +37,11 @@ This design marries an immutable Talos OS, Kubernetes, and GitOps to create a re
 
 ## Dive deeper
 
+<!-- vale Google.Units = NO -->
 - Provisioning flow: [Talos with OpenTofu](/docs/tofu/provisioning-task-guide.md)
 - Configuration flow: [Manage Kubernetes with GitOps](/docs/k8s/manage-kubernetes.md)
 - Application strategy: [Deploy and manage applications](/docs/k8s/applications/application-management.md)
+<!-- vale Google.Units = YES -->
 
 ## Verify the architecture in your cluster
 

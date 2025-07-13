@@ -10,33 +10,37 @@ BREAKING CHANGE: This architectural change is considered a breaking change. If y
 
 ## Prerequisites
 
-- **Backup Your Data:** Before you begin, it is strongly recommended to take a snapshot of your persistent volumes using your storage provider's tools (e.g., Longhorn's snapshot feature, Velero, etc.).
+- **Backup Your Data:** Before you begin, it's strongly recommended to take a snapshot of your persistent volumes using your storage provider's tools (e.g., Longhorn's snapshot feature, Velero, etc.).
 - **`kubectl` CLI:** You need `kubectl` installed and configured to connect to your Kubernetes cluster.
 - **`jq` CLI:** The recovery script requires the command-line JSON processor `jq`. You can install it using your system's package manager.
 
-  ```bash
+  ```shell
   # Example for Debian/Ubuntu
   sudo apt-get update && sudo apt-get install jq
   ```
 
-- **Argo CD Auto-Sync Disabled:** To prevent interference during the manual steps, ensure auto-sync is disabled in Argo CD for the applications you are migrating.
+<!-- vale off -->
+- **Argo CD Auto Sync Disabled:** To prevent interference during the manual steps, ensure auto-sync is disabled in Argo CD for the applications you are migrating.
+<!-- vale on -->
 
 ## Overview of steps/workflow
 
-The migration involves a one-time data recovery procedure after you have pulled the latest Git commits.
+The migration involves a single data recovery procedure after you pull the latest Git commits.
 
 1. **Pull Git Changes:** Update your local repository with the latest changes, which include the new StatefulSet manifests. Let Argo CD sync these changes. The new pods will likely start with empty volumes.
-2. **Prepare the recovery script:** Create a shell script that automates detaching new empty volumes and re-attaching original data volumes.
+2. **Prepare the recovery script:** Create a shell script that automates detaching new empty volumes and reattaching original data volumes.
 3. **Execute the recovery:** Run the prepared script.
-4. **Verify and Cleanup:** Confirm applications are running correctly with their original data, then re-enable auto-sync and remove any orphaned, empty volumes.
+<!-- vale off -->
+4. **Verify and Cleanup:** Confirm applications are running correctly with their original data, then enable auto-sync again and remove any orphaned, empty volumes.
+<!-- vale on -->
 
 ## Prepare the recovery script
 
-This script performs the core recovery task. It finds your original, now-Released data volumes and makes them available for your new StatefulSet pods to claim and use.
+This script performs the core recovery task. It finds your original, now released data volumes and makes them available for your new StatefulSet pods to claim and use.
 
 1. **Create the `recover_data.sh` file:** Save the following content to a file named `recover_data.sh`.
 
-    ```bash
+    ```shell
     #!/bin/bash
     # A function to perform the data recovery for a single application
     # Usage: recover_app <statefulset_name> <namespace> <old_pvc_name> <new_pvc_template_name>
@@ -54,7 +58,7 @@ This script performs the core recovery task. It finds your original, now-Release
       echo "Scaling down StatefulSet '${APP_NAME}'..."
       kubectl scale statefulset "${APP_NAME}" --replicas=0 -n "${APP_NAMESPACE}"
       if [ $? -ne 0 ]; then
-        echo "WARNING: Could not scale down StatefulSet '${APP_NAME}'. It may not exist. Continuing..."
+        echo "WARNING: Could not scale down StatefulSet '${APP_NAME}'. It could be missing. Continuing..."
       fi
       sleep 5
 
@@ -131,7 +135,9 @@ This script performs the core recovery task. It finds your original, now-Release
     echo "--- ALL MIGRATIONS COMPLETE ---"
     echo "------------------------------------------------------------------"
     echo "Please verify all applications are working correctly."
-    echo "Once confirmed, you can re-enable auto-sync in Argo CD."
+<!-- vale off -->
+    echo "Once confirmed, you can enable auto-sync again in Argo CD."
+<!-- vale on -->
 
     ```
 
@@ -139,13 +145,13 @@ This script performs the core recovery task. It finds your original, now-Release
 
 1. **Make the script executable:**
 
-    ```bash
+    ```shell
     chmod +x recover_data.sh
     ```
 
 2. **Run the script:**
 
-    ```bash
+    ```shell
     ./recover_data.sh
     ```
 
@@ -156,14 +162,14 @@ This script performs the core recovery task. It finds your original, now-Release
 1. **Check PersistentVolumeClaims (PVCs):**
     Ensure the new PVCs (e.g., `config-sonarr-0`) have been created and are in the `Bound` state.
 
-    ```bash
+    ```shell
     kubectl get pvc -A
     ```
 
 2. **Inspect Application Pods:**
     Check the logs for each newly created pod to ensure there are no startup errors.
 
-    ```bash
+    ```shell
     # Example for Sonarr
     kubectl logs -n media statefulset/sonarr
     ```
@@ -174,6 +180,8 @@ This script performs the core recovery task. It finds your original, now-Release
 ## Cleanup and Finalize
 
 1. **Delete Orphaned Volumes:**
-    The recovery process may leave behind the new, empty volumes that were created before the script was run. You can identify these in your storage provider's UI (e.g., Longhorn) and safely delete them to reclaim space. They will typically be in a `Released` state and small in size.
-2. **Re-enable Argo CD Auto-Sync:**
-    Once you are confident the migration was successful and all applications are stable, re-enable auto-sync in Argo CD for your applications.
+    The recovery process can leave behind the new, empty volumes that were created before the script was run. You can identify these in your storage provider's UI (e.g., Longhorn) and safely delete them to reclaim space. They typically appear in a `Released` state and are small in size.
+2. **Enable Argo CD Auto Sync:**
+<!-- vale off -->
+    Once you are confident the migration was successful and all applications are stable, enable auto-sync again in Argo CD for your applications.
+<!-- vale on -->

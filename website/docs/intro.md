@@ -1,6 +1,6 @@
 ---
 title: Homelab Kubernetes Configuration Guide
-description: Discover the philosophy behind this over-engineered GitOps homelab, built for resilience, automation, and continuous learning with Kubernetes.
+description: Discover the philosophy behind this elaborate GitOps homelab, built for resilience, automation, and continuous learning with Kubernetes.
 ---
 
 # Overview
@@ -50,8 +50,9 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
   - OpenTofu-based Talos deployment on Proxmox
   - Infrastructure setup steps
 
-## Kubernetes Management
+-## Kubernetes Management
 
+<!-- vale Google.Units = NO -->
 - [GitOps Configuration](/docs/k8s/manage-kubernetes.md)
   - ArgoCD setup and usage
   - Manifest structure
@@ -59,13 +60,13 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 ## Application Guides
 
-- [Deploy Apps](./k8s/applications/application-management.md)
+- [Deploy Apps](k8s/applications/application-management.md)
   - User application deployment
   - App lifecycle management
 
 ## Infrastructure
 
-- [Core Services](./k8s/infrastructure/infrastructure-management.md)
+- [Core Services](k8s/infrastructure/infrastructure-management.md)
   - Network setup
   - Storage configuration
   - Auth systems
@@ -73,7 +74,8 @@ Local search runs entirely in the browser thanks to the `@easyops-cn/docusaurus-
 
 ## CI/CD
 
-- [Pipeline Configuration](./github/github-configuration.md)
+- [Pipeline Configuration](github/github-configuration.md)
   - CI/CD workflow setup
   - Renovate and Dependabot settings
   - Repo maintenance
+<!-- vale Google.Units = YES -->

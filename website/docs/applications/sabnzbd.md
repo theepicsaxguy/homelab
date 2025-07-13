@@ -6,7 +6,9 @@ description: Usenet download client configuration
 
 # SABnzbd
 
+<!-- vale off -->
 SABnzbd downloads from Usenet and serves as the backend for the *arr applications.
+<!-- vale on -->
 
 ## Secret management
 

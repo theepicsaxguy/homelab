@@ -1,6 +1,6 @@
 # GitHub Configuration: CI/CD and Repository Maintenance
 
-This page explains how GitHub Actions, Renovate, and Dependabot keep this homelab repository secure, up to date, and easy to maintain.
+This page explains how GitHub Actions, Renovate, and Dependabot keep this homelab repository secure, up to date, and straightforward to maintain.
 
 ---
 
@@ -29,7 +29,7 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
   - `contents: write` (for tags/changelog updates)
   - `pull-requests: write` (for PRs)
 - **Note:**
-  - Uses a simple versioning scheme (`release-type: simple`). Suitable for single-package projects.
+  - Uses a basic versioning scheme (`release-type: simple`). Suitable for single package projects.
 
 ### Docker Image Build (`image-build.yaml`)
 
@@ -47,7 +47,7 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
 - **When triggered:**
   - Every push to `main`
   - Every pull request to `main`
-- **Jobs may include:**
+- **Jobs can include:**
   - YAML and script linting
   - Kustomize and ArgoCD validation (typically using `kustomize build` and ArgoCD CLI tools)
   - Helm chart checks (typically using `helm lint` or `helm template`)
@@ -99,6 +99,6 @@ By combining GitHub Actions (automated CI), Renovate (dependency updates), and D
 - High quality
 - Secure
 - Automated
-- Easy to maintain
+- Straightforward to maintain
 
 For more details, see the relevant configuration files under `.github/`.

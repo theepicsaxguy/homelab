@@ -27,8 +27,8 @@ spec:
         vectorchord: public
 ```
 
+<!-- vale off -->
 ### Templated DB_URL
-
 The application expects a single `DB_URL`. Use ExternalSecrets to assemble the connection string:
 
 ```yaml
@@ -38,6 +38,8 @@ template:
     DB_URL: >-
       postgres://immich:{{ .password }}@immich-postgresql:5432/immich?sslmode=require&sslmode=no-verify
 ```
+
+<!-- vale on -->
 
 ### External Secrets Permissions
 
@@ -88,7 +90,7 @@ spec:
 ```
 
 This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
-The machine-learning deployment mounts the same Secret so both components read identical settings.
+The machine learning deployment mounts the same Secret so both components read identical settings.
 
 ### Resource Requests
 

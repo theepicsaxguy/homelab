@@ -11,10 +11,10 @@ This guide provides step-by-step instructions for setting up your homelab enviro
 ## Prerequisites
 
 - Proxmox access with your SSH key
-- `opentofu` 1.6+ — [install](https://opentofu.org/docs/intro/install/)
-- `talosctl` 1.10+ — [install](https://www.talos.dev/v1.10/talos-guides/install/talosctl/)
-- `kubectl` 1.28+ — [install](https://kubernetes.io/docs/tasks/tools/)
-- `kustomize` 5.0+ — [install](https://kubectl.docs.kubernetes.io/installation/kustomize/)
+- `opentofu` 1.6+: [install](https://opentofu.org/docs/intro/install/)
+- `talosctl` 1.10+: [install](https://www.talos.dev/v1.10/talos-guides/install/talosctl/)
+- `kubectl` 1.28+: [install](https://kubernetes.io/docs/tasks/tools/)
+- `kustomize` 5.0+: [install](https://kubectl.docs.kubernetes.io/installation/kustomize/)
 - This repository cloned locally
 
 ## Initial Setup
@@ -73,4 +73,6 @@ Deploy the configuration to build your cluster:
 tofu apply
 ```
 
+<!-- vale Google.Units = NO -->
 After the cluster is deployed, follow the [Manual Bootstrap Guide](/docs/k8s/manual-bootstrap-guide) to initialize your Kubernetes environment.
+<!-- vale Google.Units = YES -->
