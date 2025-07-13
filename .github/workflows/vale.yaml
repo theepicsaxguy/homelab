@@ -2,7 +2,7 @@ permissions:
   contents: read
   pull-requests: write
 
-name: Vale
+name: Vale Documentation Lint
 
 on:
   pull_request:
@@ -11,18 +11,21 @@ on:
     paths: [ 'website/docs/**' ]
 
 jobs:
-  lint:
+  docs_lint:
+    name: Vale Lint (website/docs)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: errata-ai/vale-action@v2.1.1
+      - name: Run Vale with reviewdog
+        uses: errata-ai/vale-action@v2.1.1
         with:
           files: website/docs
           vale_flags: '--config=website/utils/vale/.vale.ini'
-          reporter: github-pr-review
-          level: warning          # INFO is non-blocking; WARN/ERR fail
-          fail_on_error: true
-          filter_mode: file
+          reporter: github-pr-review   # inline PR comments
+          level: warning              # INFO is non-blocking
+          fail_on_error: true         # fail on WARN or ERR only
+          filter_mode: file           # lint entire file when it changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
