@@ -27,7 +27,7 @@ rg -l "pc-tips.se" | xargs sed -i 's/pc-tips\.se/your-domain.com/g'
 This command uses ripgrep (`rg`) to locate files containing the string `pc-tips.se` and then uses `sed` to perform an in-place replacement.
 
 :::warning
-Failing to perform this step will result in drift, where your Kubernetes services are configured with a domain you do not control, preventing them from functioning correctly.
+Failing to perform this step will result in drift, where your Kubernetes services are configured with a domain you don't control, preventing them from functioning correctly.
 :::
 
 ### Configure Cloudflare DNS
@@ -35,7 +35,7 @@ Failing to perform this step will result in drift, where your Kubernetes service
 This homelab cluster uses Crossplane to automatically provision DNS records in Cloudflare based on Kubernetes manifests. For this reason, Cloudflare is a mandatory dependency.
 
 :::note
-This project uses the External Secrets operator to fetch the Cloudflare API token from a Bitwarden instance. This is the recommended security practice for this project to avoid storing secrets directly in Git.
+This project uses the External Secrets operator to fetch the Cloudflare API token from a Bitwarden instance. This approach avoids storing secrets directly in Git repositories.
 :::
 
 While Crossplane will manage most DNS records automatically, **you must manually create an `A` record** to point your domain to the cluster's external IP address.
@@ -51,12 +51,12 @@ While Crossplane will manage most DNS records automatically, **you must manually
 
 ### Understand Tool Responsibilities
 :::important
-It is crucial to understand the distinct roles of the primary tools in this homelab to avoid configuration issues:
+It's crucial to understand the distinct roles of the primary tools in this homelab to avoid configuration issues:
 
-*   **OpenTofu**: Provisions the virtual machines and installs the base Talos Kubernetes cluster. It does not manage the applications running inside the cluster.
+*   **OpenTofu**: Provisions the virtual machines and installs the base Talos Kubernetes cluster. It doesn't manage the applications running inside the cluster.
 *   **ArgoCD**: Deploys and manages all Kubernetes applications using the YAML manifests stored in the `k8s/` directory of this Git repository.
 
-If you omit the domain replacement step before committing your changes, ArgoCD will deploy applications configured with the default `pc-tips.se` domain. This creates a state of drift, where the infrastructure provisioned by OpenTofu may use your new domain, but the Kubernetes services will be unreachable because they are pointing to a domain you do not control.
+If you omit the domain replacement step before committing your changes, ArgoCD will deploy applications configured with the default `pc-tips.se` domain. This creates a state of drift, where the infrastructure provisioned by OpenTofu can use your new domain, but the Kubernetes services will be unreachable because they're pointing to a domain you don't control.
 :::
 
 ### Example: Domain Change in a Kubernetes Manifest

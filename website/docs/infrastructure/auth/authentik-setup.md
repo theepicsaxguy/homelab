@@ -53,8 +53,8 @@ Add your users to the **Kubectl Users** group in Authentik to grant access.
 
 Two sample accounts are bootstrapped via Authentik blueprints to show how group membership controls access:
 
-- **admin-user** – belongs to every user group and sits in the ArgoCD and Grafana admin groups.
-- **standard-user** – a regular account added to the same user groups without admin privileges.
+- **admin-user**: belongs to every user group and sits in the ArgoCD and Grafana admin groups.
+- **standard-user**: a regular account added to the same user groups without admin privileges.
 
 Passwords and emails come from ExternalSecrets entries referenced in `authentik-blueprint-secrets`.
 
@@ -159,7 +159,7 @@ kubectl -n auth get ciliumnetworkpolicies
 
 3. Test Authentication Flow:
 ```shell
-curl -v https://app.your.domain.tld
+curl -v "https://app.your.domain.tld"
 # Should redirect to SSO
 ```
 
@@ -167,7 +167,9 @@ curl -v https://app.your.domain.tld
 
 1. **503 Service Unavailable**
    - Check Proxy deployment status
+   <!-- vale off -->
    - Verify backend service health
+   <!-- vale on -->
    - Review network policies
 
 2. **Authentication Loop**
@@ -175,7 +177,7 @@ curl -v https://app.your.domain.tld
    - Check Provider configuration
    - Verify cookie domains
 
-3. **Backend Unreachable**
+3. **Back end Unreachable**
    - Verify service DNS resolution
    - Check network policy rules
    - Validate service ports

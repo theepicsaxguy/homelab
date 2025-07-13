@@ -133,7 +133,6 @@ s6-overlay
 PersistentVolumeClaims
 configs
 single sign-on
-SSO
 etcd
 e.g.
 HAOS
@@ -154,7 +153,6 @@ Containerd
 GPU-aware
 PKI
 CSI
-Cross-namespace
 overprovisioning
 Kubechecks
 Node-agent
@@ -256,9 +254,16 @@ TCPRoute
 NFS
 Helm
 Postgres
-StatefulSet
 external-secrets
 Passthrough
 StorageClass
-ClusterIP
-Loadbalancer
+k8s
+OAuth2
+ExternalSecret
+ServiceMonitor
+BDF
+BDFs
+GM107
+immich-server
+immich-machine-learning
+StatefulSets

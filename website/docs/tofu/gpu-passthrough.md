@@ -9,7 +9,7 @@ This guide explains how GPUs are exposed to Talos nodes.
 
 ## Finding GPU BDFs
 
-On each Proxmox host, run `lspci` to locate the Bus:Device.Function (BDF) for your GPU.
+On each Proxmox host, run `lspci` to locate the `Bus:Device.Function` (BDF) for your GPU.
 
 ## OpenTofu Configuration
 
@@ -43,7 +43,7 @@ Talos loads the NVIDIA drivers through system extensions, and Node Feature Disco
 
 ### VGA Configuration for Console Access
 
-To ensure a working noVNC console for management while the dedicated GPU is passed through, the VM's VGA adapter is set to `virtio`. This allows the primary GPU to be used exclusively by the guest OS for workloads.
+To ensure a working noVNC console for management while the dedicated GPU is passed through, the virtual machine's VGA adapter is set to `virtio`. This allows the primary GPU to be used exclusively by the guest OS for workloads.
 
 ```terraform
 vga {

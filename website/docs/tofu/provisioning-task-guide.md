@@ -38,7 +38,7 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
      `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
    - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
 
-   Example snippet from `main.tf` (actual structure may vary based on module inputs):
+    Example snippet from `main.tf` (actual structure can vary based on module inputs):
 
    ```hcl
    module "talos" {
@@ -56,7 +56,7 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 
 3. Run:
 
-   ```bash
+   ```shell
    tofu apply
    ```
 
@@ -72,7 +72,7 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 1. Update node specs in `tofu/nodes.auto.tfvars`
 2. Run `tofu apply`
 
-> Note: Resource changes may require VM restarts
+> Note: Resource changes can require VM restarts
 
 ## Initial Setup
 

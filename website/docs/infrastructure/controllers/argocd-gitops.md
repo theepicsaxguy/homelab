@@ -158,7 +158,7 @@ retry:
 
 If needed, sync applications manually:
 
-```bash
+```shell
 # Sync all applications
 argocd app sync -l argocd.argoproj.io/instance=infrastructure
 
@@ -170,7 +170,7 @@ argocd app sync cilium
 
 Check deployment status:
 
-```bash
+```shell
 # List all applications
 argocd app list
 
@@ -202,7 +202,7 @@ argocd app get cilium
 
 ### Debug Commands
 
-```bash
+```shell
 # Get application events
 kubectl -n argocd get events --field-selector involvedObject.kind=Application
 
@@ -218,15 +218,15 @@ argocd app resources cilium
 Argo CD identifies resources by the labels and annotations it adds during
 deployment. Two modes exist:
 
-- **label** — Only the `app.kubernetes.io/instance` label is required. This is
+- **label:** Only the `app.kubernetes.io/instance` label is required. This is
   the simpler option and works well for most clusters.
-- **annotation+label** — Adds the label and the
+- **annotation+label:** Adds the label and the
   `argocd.argoproj.io/tracking-id` annotation. Both must be present for Argo CD
   to manage the object.
 
 If you switch from `label` to `annotation+label`, existing resources that only
 have the label will be ignored because the annotation is missing. Server-side
-apply cannot fix this, as it happens after resource discovery. Changing back to
+apply can't fix this, as it happens after resource discovery. Changing back to
 `label` brings those resources under management again.
 
 ## Best Practices

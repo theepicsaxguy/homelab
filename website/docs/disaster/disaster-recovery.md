@@ -72,7 +72,7 @@ kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -
 kustomize build --enable-helm infrastructure/ | kubectl apply -f -
 ```
 
-**⚠️ Important**: Do not deploy applications with persistent volumes yet. This phase only sets up the core infrastructure.
+**⚠️ Important**: Don't deploy applications with persistent volumes yet. This phase only sets up the core infrastructure.
 
 ---
 
@@ -137,7 +137,7 @@ kubectl apply -f k8s/applications/
    - **Critical**: Use the exact PVC name as the volume name
    - Complete the restore process
 
-### 4.2 Re-enable Node Scheduling
+### 4.2 Enable Node Scheduling
 
 After all volumes are restored:
 
@@ -147,7 +147,7 @@ After all volumes are restored:
 
 ### 4.3 Alternative: Automated Restoration
 
-For large-scale deployments with many volumes, consider using automation scripts or the Longhorn API. Reference implementation details can be found in [Longhorn Issue #1867](https://github.com/longhorn/longhorn/issues/1867).
+For large scale deployments with many volumes, consider using automation scripts or the Longhorn API. Reference implementation details can be found in [Longhorn Issue #1867](https://github.com/longhorn/longhorn/issues/1867).
 
 ---
 
@@ -244,7 +244,7 @@ After successful recovery:
 
 ## Quick Reference Commands
 
-```bash
+```shell
 # Cluster rebuild
 tofu destroy && tofu apply
 

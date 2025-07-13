@@ -17,7 +17,7 @@ This guide assumes you have a working ArgoCD setup and access to the necessary c
 
 DEX is an OpenID Connect (OIDC) provider that can be used to authenticate users in ArgoCD. By enabling DEX, you can integrate ArgoCD with various identity providers, such as Authentik, to manage user authentication and authorization.
 
-- **Core Principles:** DEX acts as a middleman between ArgoCD and the identity provider, handling the authentication flow and providing tokens to ArgoCD.
+- **Core Principles:** DEX acts as an intermediary between ArgoCD and the identity provider, handling the authentication flow and providing tokens to ArgoCD.
 - **Benefits:** Simplifies user management, enhances security, and supports multiple identity providers.
 - **Drawbacks:** Adds complexity to the setup and requires additional configuration.
 
@@ -26,7 +26,7 @@ DEX is an OpenID Connect (OIDC) provider that can be used to authenticate users 
 ## Important considerations
 
 - **Dependency:** This component requires Authentik to be configured as the identity provider.
-- **Limitation:** This approach does not support legacy authentication methods.
+- **Limitation:** This approach doesn't support legacy authentication methods.
 - **Security Note:** Ensure that the DEX configuration is properly secured and that sensitive information, such as client secrets, is stored securely.
 
 ## Enabling DEX in ArgoCD

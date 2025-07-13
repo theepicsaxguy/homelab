@@ -43,7 +43,9 @@ spec:
 - **Purpose:** CNI, network security, load balancing
 - **Features:**
   - eBPF-based networking
+<!-- vale off -->
   - LoadBalancer IP pool: 10.25.150.220-255
+<!-- vale on -->
   - L2 announcements for LAN services
   - Kubernetes Gateway API support
 
@@ -93,7 +95,9 @@ Kube Prometheus Stack provides:
 ### 7. Authentication (Authentik)
 
 - Single Sign-On
+<!-- vale off -->
 - PostgreSQL backend
+<!-- vale on -->
 - Proxy outpost for app protection
 - Configuration via Git
 - Worker liveness probe timeout set to 5 seconds to avoid restarts

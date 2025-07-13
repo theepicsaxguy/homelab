@@ -14,7 +14,7 @@ To ensure your changes are valid, you'll need a few tools.
 
 - **OpenTofu:** For validating any changes in the `/tofu` directory.
 - **Kustomize:** For building and validating Kubernetes manifests.
-- **Node.js/npm:** For type-checking and running the documentation website.
+- **Node.js/npm:** For type checking and running the documentation website.
 
 ### Checking Your Work
 

@@ -4,7 +4,7 @@ title: OpenTofu Provisioning Concepts
 
 # Kubernetes Provisioning with OpenTofu: Concepts
 
-This guide explains the conceptual underpinnings of infrastructure provisioning using OpenTofu to create a production-grade Kubernetes cluster running Talos OS on Proxmox.
+This guide explains the conceptual underpinnings of infrastructure provisioning using OpenTofu to create a production ready Kubernetes cluster running Talos OS on Proxmox.
 
 ## Infrastructure Overview
 
@@ -66,11 +66,11 @@ All provider version constraints live in this root `providers.tf` file. The subd
 
 ## Proxmox Provider
 
-I use `bpg/proxmox` to manage VMs declaratively. This enables:
+I use `bpg/proxmox` to manage VMs in a declarative manner. This enables:
 
 - Version-controlled infrastructure
 - Automated deployments
-- Easy cluster rebuilds
+- Quick cluster rebuilds
 
 ## Talos OS
 
@@ -89,7 +89,7 @@ VM configuration uses `lookup(each.value, ..., <default>)` for various settings 
 
 ### Node Specs
 
-Node definitions pull from two base variables—`defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This structure simplifies configuration and reduces repetition.
+Node definitions pull from two base variables: `defaults_worker` and `defaults_controlplane`. Each node configuration in `nodes.auto.tfvars` only needs to declare what differs from these defaults. This structure simplifies configuration and reduces repetition.
 
 If a node's `machine_type` doesn't match a key in the defaults table, the plan fails with an explicit error.
 
