@@ -81,7 +81,9 @@ The following directory structure represents the standard layout for application
     ```
 
 ### `externalsecret.yaml`
+<!-- vale off -->
 *   **Description:** Configuration for external secrets management using Bitwarden backend
+<!-- vale on -->
 
 *   **Type:** `yaml`
 
@@ -108,7 +110,9 @@ The following directory structure represents the standard layout for application
             key: <bitwarden-secret-name>
     ```
 
-Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{service-or-app}-{description}` pattern described in [Secret Management](./secret-management.md).
+<!-- vale off -->
+Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{service-or-app}-{description}` pattern described in [Secret Management](secret-management).
+<!-- vale on -->
 
 ## Optional Components
 

@@ -36,7 +36,7 @@ infrastructure/
 
 - **Authentik**: Primary authentication provider
   - SSO for cluster services
-  - OAuth2 proxy integration
+  - OAuth 2.0 proxy integration
   - User management
 
 ### Controllers (controllers/)
@@ -122,7 +122,7 @@ Permissions:
 ### Component Updates
 
 1. Update in Git repository
-2. ArgoCD auto-sync
+2. ArgoCD auto sync
 3. Progressive rollout
 4. Validation checks
 
@@ -131,18 +131,18 @@ Permissions:
 When issues arise:
 
 1. Check ArgoCD sync status:
-```bash
+```shell
 kubectl get applications -n argocd
 ```
 
 2. Verify resources:
-```bash
+```shell
 kubectl get events -n <namespace>
 kubectl describe <resource> -n <namespace>
 ```
 
 3. Review logs:
-```bash
+```shell
 kubectl logs -n <namespace> <pod> -f
 ```
 
@@ -190,5 +190,5 @@ Priorities:
 
 - [ ] Enhanced metric collection
 - [ ] Automated disaster recovery
-- [ ] Cross-cluster failover
+- [ ] cross cluster failover
 - [ ] Advanced policy enforcement

@@ -2,11 +2,11 @@
 title: 'External DNS records with Crossplane and Cloudflare'
 ---
 
-This document explains how I deploy Crossplane with the Cloudflare provider to declaratively manage external CNAME DNS records in my GitOps workflow.
+This document explains how I deploy Crossplane with the Cloudflare provider to manage external CNAME DNS records in my GitOps workflow.
 
 ## About external DNS records with Crossplane and Cloudflare
 
-Crossplane transforms cloud services into Kubernetes APIs, enabling GitOps-friendly management of DNS entries. By installing the Crossplane control plane, configuring the Cloudflare provider, and declaring `Record` resources, we automate the lifecycle of CNAME records.
+Crossplane transforms cloud services into Kubernetes APIs, enabling GitOps friendly management of DNS entries. By installing the Crossplane control plane, configuring the Cloudflare provider, and declaring `Record` resources, we automate the lifecycle of CNAME records.
 
 :::info
 Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` and each application’s directory to prevent documentation drift.
@@ -18,7 +18,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
   Deploys Crossplane into the `crossplane-system` namespace to enable its CRDs and controllers.
 
 - **ExternalSecret**
-  Retrieves the Cloudflare API token from a Bitwarden-backed `ClusterSecretStore` and templates a Kubernetes Secret containing a `creds` field with JSON credentials.
+  Retrieves the Cloudflare API token from a Bitwarden backed `ClusterSecretStore` and templates a Kubernetes Secret containing a `creds` field with JSON credentials.
 
 - **Provider**
   Installs the Crossplane Cloudflare provider package.
@@ -46,7 +46,7 @@ Maintain manifest definitions in `k8s/infrastructure/controllers/crossplane/` an
    Apply the official Crossplane Helm chart into `crossplane-system` via your GitOps tool.
 
 2. **Configure external secrets**
-   Define an `ExternalSecret` pointing to the Bitwarden-backed `ClusterSecretStore` to sync `infra-cloudflare-api-token` and `infra-cloudflare-account-id` into a Kubernetes Secret named `cloudflare-api-token`. The secret includes a `creds` key containing `{ "api_token": "...", "account_id": "..." }`.
+  Define an `ExternalSecret` pointing to the Bitwarden backed `ClusterSecretStore` to sync `infra-cloudflare-api-token` and `infra-cloudflare-account-id` into a Kubernetes Secret named `cloudflare-api-token`. The secret includes a `creds` key containing `{ "api_token": "...", "account_id": "..." }`.
 
 3. **Install provider and credentials**
    Apply the Crossplane `Provider` for Cloudflare and a `ProviderConfig` that references the `creds` key in `cloudflare-api-token`.

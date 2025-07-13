@@ -20,7 +20,7 @@ The upgrade sequence is automatically derived from your node configuration:
    - `work-01` (index 4)
    - `work-02` (index 5)
 
-## Simple Upgrade Process
+## Upgrade Process
 
 ### Configure Version
 
@@ -36,7 +36,7 @@ talos_image = {
 }
 ```
 
-> **Note:** You may commit and push this change if you're using GitOps automation, or run it locally via CLI if applying manually.
+> **Note:** You can commit and push this change if you're using GitOps automation, or run it locally via CLI if applying manually.
 
 ### Start Upgrade
 
@@ -46,7 +46,7 @@ tofu apply -var 'upgrade_control={enabled=true,index=0}'
 
 ### Check Progress
 
-```bash
+```shell
 tofu output upgrade_info
 ```
 
@@ -54,13 +54,13 @@ tofu output upgrade_info
 
 Use the exact command shown in the output above, or:
 
-```bash
+```shell
 tofu apply -var 'upgrade_control={enabled=true,index=1}'
 ```
 
 ### Finish Upgrade
 
-```bash
+```shell
 tofu apply -var 'upgrade_control={enabled=false,index=-1}'
 ```
 
@@ -89,7 +89,7 @@ cluster = {
 
 ### Monitor Node Upgrade
 
-```bash
+```shell
 # Check Talos version
 talosctl version --nodes 10.25.150.11
 
@@ -112,14 +112,14 @@ After completing all upgrades, update the base version in `main.tf`:
 
 If issues occur during upgrade, disable upgrade mode immediately:
 
-```bash
+```shell
 # This will stop the upgrade and prevent unintended changes
 tofu apply -var 'upgrade_control={enabled=false,index=-1}'
 ```
 
 ## Monitoring Commands
 
-```bash
+```shell
 # Check all node versions
 talosctl version --nodes 10.25.150.11,10.25.150.12,10.25.150.13,10.25.150.21,10.25.150.22,10.25.150.23
 
