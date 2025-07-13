@@ -36,7 +36,7 @@ graph LR
 
 ## Kubernetes API Authentication
 
-Cluster logins go through Authentik using a dedicated OAuth2 provider:
+Cluster logins go through Authentik using a dedicated OAuth 2.0 provider:
 
 ```yaml
 apiServer:
@@ -177,10 +177,12 @@ curl -v "https://app.your.domain.tld"
    - Check Provider configuration
    - Verify cookie domains
 
-3. **Back end Unreachable**
+<!-- vale off -->
+3. **Backend Unreachable**
    - Verify service DNS resolution
    - Check network policy rules
    - Validate service ports
+<!-- vale on -->
 
 ## Integration Examples
 

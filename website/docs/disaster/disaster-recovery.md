@@ -55,7 +55,7 @@ kubectl apply -k infrastructure/crds
 kustomize build --enable-helm infrastructure/controllers/external-secrets/ | kubectl apply -f -
 
 # Deploy Cert Manager
-kustomize build --enable-helm infrastructure/controllers/cert-manager | kubectl apply -f -
+kustomize build --enable-helm infrastructure/controllers/cert-manager/ | kubectl apply -f -
 
 # Configure Bitwarden access token for External Secrets
 kubectl create secret generic bitwarden-access-token \
