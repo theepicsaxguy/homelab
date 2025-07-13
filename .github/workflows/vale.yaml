@@ -1,24 +1,27 @@
 permissions:
   contents: read
+  pull-requests: write
+
 name: Vale
 on:
-  push:
-    paths:
-      - 'website/docs/**'
   pull_request:
-    paths:
-      - 'website/docs/**'
+    paths: [ 'website/docs/**' ]
+  push:
+    paths: [ 'website/docs/**' ]
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - uses: errata-ai/vale-action@v2.1.1
         with:
           files: website/docs
           vale_flags: '--config=website/utils/vale/.vale.ini'
+          reporter: github-pr-review
+          filter_mode: file
           fail_on_error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
