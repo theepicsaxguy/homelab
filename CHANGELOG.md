@@ -1,5 +1,21 @@
 # Changelog
 
+## 3.5.1 (2025-07-18)
+
+## What's Changed
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1194
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.16 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1196
+* chore(deps): update terraform proxmox to v0.80.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1197
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1198
+* chore(deps): update all dependencies to v75.11.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1199
+* chore(deps): update helm release redis to v21.2.12 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1200
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1201
+* fix(deps): update dependency @easyops-cn/docusaurus-search-local to ^0.52.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1202
+* chore(deps): update all dependencies to v75.12.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1203
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.5.0...v3.5.1
+
 ## 3.5.0 (2025-07-13)
 
 ## What's Changed
