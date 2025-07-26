@@ -5,6 +5,7 @@ namespace: omada
 resources:
 - statefulset.yaml
 - svc.yaml
+- svc-lb.yaml
 - tls-route.yaml
 - namespace.yaml
 - cert-omada.yaml
