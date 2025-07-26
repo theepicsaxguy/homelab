@@ -3,7 +3,7 @@ kind: Kustomization
 
 configMapGenerator:
 - literals:
-  - TZ="Europe/Oslo"
+  - TZ="Europe/Stockholm"
   - PUID="2501"
   - PGID="2501"
   name: common-env
@@ -23,4 +23,4 @@ patches:
   - path: base/patch.yaml
     target:
       kind: StatefulSet
-      labelSelector: app in (bazarr, prowlarr, radarr, sonarr)
+      labelSelector: app in (prowlarr, radarr, sonarr)
