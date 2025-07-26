@@ -16,6 +16,10 @@ spec:
       labels:
         app: bazarr
     spec:
+      volumes:
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-share
       containers:
         - name: bazarr
           image: lscr.io/linuxserver/bazarr:1.5.2
@@ -23,6 +27,10 @@ spec:
             - name: http
               containerPort: 6767
               protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: common-env
+                optional: true
           env:
             - name: VPN_ENABLED
               value: 'false'
@@ -31,6 +39,8 @@ spec:
             - name: WEBUI_PORTS
               value: '6767/tcp,6767/udp'
           volumeMounts:
+            - name: media
+              mountPath: /app/data
             - name: config
               mountPath: /config
           resources:
