@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon
+  namespace: mastodon
+spec:
+  type: ClusterIP
+  selector:
+    app: mastodon
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
