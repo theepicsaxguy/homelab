@@ -6,9 +6,9 @@ name: Vale Documentation Lint
 
 on:
   pull_request:
-    paths: [ 'website/docs/**' ]
+    paths: [ 'website/docs/**/*.md' ]
   push:
-    paths: [ 'website/docs/**' ]
+    paths: [ 'website/docs/**/*.md' ]
 
 jobs:
   docs_lint:
