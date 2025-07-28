@@ -96,6 +96,7 @@ LTS
 LateInitialize
 LoadBalancer
 Loadbalancer
+LLMs
 MR
 MRs
 Minio
@@ -111,6 +112,7 @@ OAuth
 Ollama
 Onboarding
 OpenID
+Open WebUI
 OpenTofu
 OpenWebUI
 PDB
@@ -131,6 +133,7 @@ Prowlarr
 QEMU
 Quadro
 QuickSync
+RAG
 RAR
 Radarr
 ReadWriteMany

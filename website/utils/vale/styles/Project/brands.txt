@@ -45,6 +45,7 @@ Zigbee2MQTT
 Zigbee
 Talos
 OpenWebUi
+Open WebUI
 Karakeep
 cert-manager
 MQTT
