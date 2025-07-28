@@ -1,0 +1,65 @@
+# k8s/applications/web/mastadon/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mastadon
+  namespace: mastadon
+spec:
+  serviceName: mastadon
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastadon
+  template:
+    metadata:
+      labels:
+        app: mastadon
+    spec:
+      # the LSIO image will internally drop to uid 911, so we run as that uid
+      securityContext:
+        runAsUser: 911
+        runAsGroup: 911
+        fsGroup: 911
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mastadon
+          image: lscr.io/linuxserver/mastodon:4.4.2
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - name: http
+              containerPort: 80
+          envFrom:
+            - secretRef:
+                name: mastadon-credentials        # produced by ExternalSecret
+            - configMapRef:
+                name: mastadon-env               # only non-secret values
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      # no explicit 'volumes:' block needed; 'config' comes from volumeClaimTemplates
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 10Gi

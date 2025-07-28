@@ -1,0 +1,18 @@
+architecture: standalone
+
+auth:
+  enabled: false
+
+fullnameOverride: mastadon-redis
+
+primary:
+  persistence:
+    enabled: true
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 512Mi

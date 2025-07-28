@@ -1,0 +1,58 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+# App env (non-secrets)
+- name: mastadon-env
+  literals:
+    # Correct quoting format (no quotes needed)
+    - TZ=Europe/Stockholm
+    # Correct DB service name from Zalando Postgres Operator
+    - DB_HOST=mastadon-postgresql
+    - DB_USER=mastadon_user
+    - DB_PORT=5432
+    # Match DB name with the database created by the operator spec
+    - DB_NAME=mastadon
+    # Bitnami Redis primary Service DNS (see values below)
+    - REDIS_HOST=mastadon-redis-master
+    - REDIS_PORT=6379
+    - ES_ENABLED=false
+    - S3_ENABLED=false
+
+# Small settings map used only for Kustomize replacement of HTTPRoute hostname
+- name: mastadon-settings
+  literals:
+    # ⬅️ Replace this with your real public FQDN (LOCAL_DOMAIN) and tell me the value.
+    # Example placeholder below keeps build valid but won't match any real traffic.
+    - DOMAIN=social.publicsafety.com
+
+namespace: mastadon
+
+resources:
+- svc.yaml
+- http-route.yaml
+- namespace.yaml
+- statefulset.yaml
+- database.yaml
+- externalsecret.yaml
+- redis
+
+# Copy DOMAIN into HTTPRoute.spec.hostnames[0]
+replacements:
+- source:
+    kind: ConfigMap
+    name: mastadon-settings
+    fieldPath: data.DOMAIN
+  targets:
+  - select:
+      kind: HTTPRoute
+      name: mastadon
+    fieldPaths:
+    - spec.hostnames.0
+    options:
+      create: false
+
+labels:
+- includeSelectors: true
+  pairs:
+    app: mastadon

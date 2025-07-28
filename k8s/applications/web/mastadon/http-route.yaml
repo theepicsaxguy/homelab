@@ -1,0 +1,22 @@
+# k8s/applications/web/mastadon/http-route.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mastadon
+  namespace: mastadon
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - mastadon.local.invalid  # <- replaced at build time by Kustomize from mastadon-settings
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: mastadon
+          port: 80

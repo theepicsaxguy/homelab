@@ -1,0 +1,27 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: mastadon-postgresql
+  namespace: mastadon
+spec:
+  teamId: "mastadon"
+  volume:
+    size: 10Gi
+  numberOfInstances: 2
+  users:
+    mastadon_user:
+      - superuser
+      - createdb
+  databases:
+    mastadon: mastadon_user
+  enableLogicalBackup: true
+  postgresql:
+    version: "17"
+  enableConnectionPooler: false
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
