@@ -3,7 +3,7 @@ architecture: standalone
 auth:
   enabled: false
 
-fullnameOverride: mastadon-redis
+fullnameOverride: mastodon-redis
 
 primary:
   persistence:
