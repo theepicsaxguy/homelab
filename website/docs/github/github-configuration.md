@@ -40,6 +40,13 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
   - `packages: write` (upload images)
 - **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
 
+### Documentation Lint (`vale.yaml`)
+
+- **File:** `.github/workflows/vale.yaml`
+- **Purpose:** Lints Markdown files in `website/docs` using [Vale](https://vale.sh/).
+- **When triggered:** Only when `.md` files change under `website/docs/`.
+- **How it works:** The workflow runs Vale only on the Markdown files that changed in the PR.
+
 ### Validation & CI (Implied Workflows)
 
 - **What:** While specific workflow YAMLs for all validation steps aren't detailed here, CI jobs automatically lint and validate configurations.
