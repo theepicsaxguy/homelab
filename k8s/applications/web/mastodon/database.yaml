@@ -1,19 +1,19 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: mastadon-postgresql
-  namespace: mastadon
+  name: mastodon-postgresql
+  namespace: mastodon
 spec:
-  teamId: "mastadon"
+  teamId: "mastodon"
   volume:
     size: 10Gi
   numberOfInstances: 2
   users:
-    mastadon_user:
+    mastodon_user:
       - superuser
       - createdb
   databases:
-    mastadon: mastadon_user
+    mastodon: mastodon_user
   enableLogicalBackup: true
   postgresql:
     version: "17"
