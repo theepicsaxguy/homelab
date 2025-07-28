@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: mastadon
-  namespace: mastadon
+  name: mastodon
+  namespace: mastodon
 spec:
   type: ClusterIP
   selector:
-    app: mastadon
+    app: mastodon
   ports:
     - name: http
       port: 80
