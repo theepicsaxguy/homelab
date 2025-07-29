@@ -22,9 +22,6 @@ configMapGenerator:
     - ES_ENABLED=false
     - S3_ENABLED=false
     - FETCH_REPLIES_ENABLED=true
-
-- name: mastodon-settings
-  literals:
     - DOMAIN=goingdark.social
 
 namespace: mastodon
@@ -47,20 +44,6 @@ resources:
 - tor-deployment.yaml
 - privoxy-deployment.yaml
 - privoxy-configmap.yaml
-
-replacements:
-- source:
-    kind: ConfigMap
-    name: mastodon-settings
-    fieldPath: data.DOMAIN
-  targets:
-  - select:
-      kind: HTTPRoute
-      name: mastodon
-    fieldPaths:
-    - spec.hostnames.0
-    options:
-      create: false
 
 labels:
 - includeSelectors: true
