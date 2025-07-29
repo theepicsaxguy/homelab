@@ -35,7 +35,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-pc-tips
+            name: cert-goingdark
       allowedRoutes:
         namespaces:
           from: All
