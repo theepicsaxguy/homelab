@@ -8,7 +8,7 @@ This guide explains how applications are deployed and managed on the Kubernetes 
 
 Applications live in `/k8s/applications/` organized by function:
 
-- `ai/` - AI tools like Open Web UI, KaraKeep
+- `ai/` - AI tools like Open WebUI, KaraKeep
 - `automation/` - Home automation (Frigate, MQTT)
 - `media/` - Media servers and tools (Jellyfin, *arr stack)
 - `network/` - Network apps (AdGuard, Omada)
