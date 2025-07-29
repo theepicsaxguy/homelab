@@ -72,7 +72,7 @@ spec:
         command:
           - cilium
           - install
-          - --version=v1.17.6 # renovate: github-releases=cilium/cilium
+          - --version=v1.18.0 # renovate: github-releases=cilium/cilium
           - --set
           - ipam.mode=kubernetes
           - --set
