@@ -9,11 +9,11 @@ spec:
     size: 10Gi
   numberOfInstances: 2
   users:
-    mastodon_user:
+    mastodon:
       - superuser
       - createdb
   databases:
-    mastodon: mastodon_user
+    mastodon: mastodon
   enableLogicalBackup: true
   postgresql:
     version: "17"

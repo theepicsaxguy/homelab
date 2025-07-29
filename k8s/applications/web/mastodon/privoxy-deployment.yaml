@@ -18,18 +18,12 @@ spec:
     spec:
       containers:
         - name: privoxy
-          image: dockage/tor-privoxy:latest
+          image: ghcr.io/avpnusr/torprivoxy:26-07-2025
           ports:
-            - containerPort: 9050
-              name: socks
             - containerPort: 8118
               name: privoxy
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: RuntimeDefault
+            - containerPort: 9050
+              name: socks
           livenessProbe:
             tcpSocket:
               port: 8118

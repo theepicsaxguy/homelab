@@ -16,6 +16,10 @@ spec:
         app: mastodon-tor
         network: external_internal
     spec:
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
       containers:
         - name: tor
           image: containers.torproject.org/tpo/onion-services/onimages/tor:alpine

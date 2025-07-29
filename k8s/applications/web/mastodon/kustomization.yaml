@@ -23,11 +23,8 @@ configMapGenerator:
     - S3_ENABLED=false
     - FETCH_REPLIES_ENABLED=true
 
-# Small settings map used only for Kustomize replacement of HTTPRoute hostname
 - name: mastodon-settings
   literals:
-    # ⬅️ Replace this with your real public FQDN (LOCAL_DOMAIN) and tell me the value.
-    # Example placeholder below keeps build valid but won't match any real traffic.
     - DOMAIN=goingdark.social
 
 namespace: mastodon
