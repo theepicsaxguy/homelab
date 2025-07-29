@@ -44,7 +44,7 @@ Zendesk
 Zigbee2MQTT
 Zigbee
 Talos
-OpenWebUi
+OpenWebUI
 Open WebUI
 Karakeep
 cert-manager
