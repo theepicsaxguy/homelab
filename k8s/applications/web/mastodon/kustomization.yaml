@@ -41,7 +41,6 @@ resources:
 - serviceaccount.yaml
 - redis
 
-# Copy DOMAIN into HTTPRoute.spec.hostnames[0]
 replacements:
 - source:
     kind: ConfigMap

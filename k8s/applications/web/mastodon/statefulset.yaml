@@ -15,16 +15,12 @@ spec:
       labels:
         app: mastodon
     spec:
-      # the LSIO image will internally drop to uid 911, so we run as that uid
       securityContext:
-        runAsUser: 911
-        runAsGroup: 911
-        fsGroup: 911
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: mastodon
-          image: lscr.io/linuxserver/mastodon:4.4.2
+          image: ghcr.io/mastodon/mastodon:v4.4.2
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -55,7 +51,6 @@ spec:
               port: 80
             initialDelaySeconds: 15
             periodSeconds: 15
-      # no explicit 'volumes:' block needed; 'config' comes from volumeClaimTemplates
   volumeClaimTemplates:
     - metadata:
         name: config
