@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-sidekiq
+  namespace: mastodon
+  labels:
+    app: mastodon-sidekiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastodon-sidekiq
+  template:
+    metadata:
+      labels:
+        app: mastodon-sidekiq
+    spec:
+      containers:
+        - name: sidekiq
+          image: ghcr.io/mastodon/mastodon:v4.4.2
+          command: ["bundle", "exec", "sidekiq"]
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+            - secretRef:
+                name: mastodon-db-url
+            - configMapRef:
+                name: mastodon-env
+          volumeMounts:
+            - name: mastodon-public
+              mountPath: /mastodon/public/system
+          livenessProbe:
+            exec:
+              command: [ "sh", "-c", "ps aux | grep '[s]idekiq\\ 7'" ]
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+      volumes:
+        - name: mastodon-public
+          persistentVolumeClaim:
+            claimName: mastodon-public-pvc

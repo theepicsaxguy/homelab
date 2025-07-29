@@ -28,6 +28,17 @@ spec:
         certificateRefs:
           - kind: Secret
             name: cert-pc-tips
+    - protocol: HTTPS
+      port: 443
+      name: https-goingdark-gateway
+      hostname: goingdark.social
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-pc-tips
+      allowedRoutes:
+        namespaces:
+          from: All
 
     # Add TCP listeners for Omada device mgmt
     - protocol: TCP

@@ -1,0 +1,12 @@
+# k8s/applications/web/mastodon/pvc-es.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mastodon-es-pvc
+  namespace: mastodon
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

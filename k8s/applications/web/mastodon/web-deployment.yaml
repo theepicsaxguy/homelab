@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-web
+  namespace: mastodon
+  labels:
+    app: mastodon-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastodon-web
+  template:
+    metadata:
+      labels:
+        app: mastodon-web
+    spec:
+      securityContext:
+        fsGroup: 991
+      containers:
+        - name: web
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          image: ghcr.io/mastodon/mastodon:v4.4.2
+          command: ["/bin/bash", "-c", "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"]
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+            - secretRef:
+                name: mastodon-db-url
+            - configMapRef:
+                name: mastodon-env
+          volumeMounts:
+            - name: mastodon-public
+              mountPath: /mastodon/public/system
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      volumes:
+        - name: mastodon-public
+          persistentVolumeClaim:
+            claimName: mastodon-public-pvc
