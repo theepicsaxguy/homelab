@@ -35,9 +35,11 @@ spec:
               containerPort: 80
           envFrom:
             - secretRef:
-                name: mastodon-credentials        # produced by ExternalSecret
+                name: mastodon-app-secrets
+            - secretRef:
+                name: mastodon-db-url
             - configMapRef:
-                name: mastodon-env               # only non-secret values
+                name: mastodon-env
           volumeMounts:
             - name: config
               mountPath: /config

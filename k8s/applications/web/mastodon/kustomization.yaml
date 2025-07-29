@@ -18,6 +18,7 @@ configMapGenerator:
     - REDIS_PORT=6379
     - ES_ENABLED=false
     - S3_ENABLED=false
+    - FETCH_REPLIES_ENABLED=true
 
 # Small settings map used only for Kustomize replacement of HTTPRoute hostname
 - name: mastodon-settings
@@ -35,6 +36,9 @@ resources:
 - statefulset.yaml
 - database.yaml
 - externalsecret.yaml
+- db-secrets.yaml
+- secretstore.yaml
+- serviceaccount.yaml
 - redis
 
 # Copy DOMAIN into HTTPRoute.spec.hostnames[0]

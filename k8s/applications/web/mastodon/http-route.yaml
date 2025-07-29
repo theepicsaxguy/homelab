@@ -11,7 +11,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - mastodon.local.invalid  # <- replaced at build time by Kustomize from mastodon-settings
+    - mastodon.local.invalid
   rules:
     - matches:
         - path:
