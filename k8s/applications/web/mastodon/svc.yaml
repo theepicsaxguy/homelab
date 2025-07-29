@@ -1,4 +1,3 @@
-# mastodon-web-svc.yaml (After)
 apiVersion: v1
 kind: Service
 metadata:

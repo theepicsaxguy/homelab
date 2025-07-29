@@ -40,7 +40,7 @@ resources:
 - redis
 - pvc-public.yaml
 - pvc-es.yaml
-- mastodon-tor-pvc.yaml
+- tor-pvc.yaml
 - tor-deployment.yaml
 - privoxy-deployment.yaml
 - privoxy-configmap.yaml
