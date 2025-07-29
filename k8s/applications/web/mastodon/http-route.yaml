@@ -11,12 +11,12 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - mastodon.local.invalid
+    - goingdark.social
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: mastodon
-          port: 80
+        - name: mastodon-web
+          port: 3000

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-es
+  namespace: mastodon
+  labels:
+    app: mastodon-es
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastodon-es
+  template:
+    metadata:
+      labels:
+        app: mastodon-es
+    spec:
+      containers:
+        - name: elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+          env:
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m -Des.enforce.bootstrap.checks=true"
+            - name: discovery.type
+              value: "single-node"
+            - name: xpack.license.self_generated.type
+              value: "basic"
+            - name: xpack.security.enabled
+              value: "false"
+            - name: xpack.watcher.enabled
+              value: "false"
+            - name: xpack.graph.enabled
+              value: "false"
+            - name: xpack.ml.enabled
+              value: "false"
+            - name: bootstrap.memory_lock
+              value: "true"
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+          ports:
+            - containerPort: 9200
+          resources:
+            requests:
+              memory: "512Mi"
+            limits:
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: es-data
+              mountPath: /usr/share/elasticsearch/data
+      initContainers:
+        - name: increase-vm-max-map-count
+          image: busybox
+          command: ["sysctl", "-w", "vm.max_map_count=262144"]
+          securityContext:
+            privileged: true
+      volumes:
+        - name: es-data
+          persistentVolumeClaim:
+            claimName: mastodon-es-pvc

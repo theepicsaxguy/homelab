@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-streaming
+  namespace: mastodon
+  labels:
+    app: mastodon-streaming
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastodon-streaming
+  template:
+    metadata:
+      labels:
+        app: mastodon-streaming
+    spec:
+      containers:
+        - name: streaming
+          image: ghcr.io/mastodon/mastodon-streaming:v4.4.2
+          command: ["node", "./streaming/index.js"]
+          ports:
+            - name: streaming
+              containerPort: 4000
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+            - configMapRef:
+                name: mastodon-env
+          livenessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: 4000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"

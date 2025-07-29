@@ -1,34 +1,36 @@
-# k8s/applications/web/mastodon/statefulset.yaml
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: mastodon
+  name: mastodon-web
   namespace: mastodon
+  labels:
+    app: mastodon-web
 spec:
-  serviceName: mastodon
   replicas: 1
   selector:
     matchLabels:
-      app: mastodon
+      app: mastodon-web
   template:
     metadata:
       labels:
-        app: mastodon
+        app: mastodon-web
     spec:
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
+        fsGroup: 991
       containers:
-        - name: mastodon
-          image: ghcr.io/mastodon/mastodon:v4.4.2
-          imagePullPolicy: IfNotPresent
+        - name: web
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          image: ghcr.io/mastodon/mastodon:v4.4.2
+          command: ["bundle", "exec", "puma", "-C", "config/puma.rb"]
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 3000
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
@@ -37,26 +39,21 @@ spec:
             - configMapRef:
                 name: mastodon-env
           volumeMounts:
-            - name: config
-              mountPath: /config
+            - name: mastodon-public
+              mountPath: /mastodon/public/system
           livenessProbe:
             httpGet:
               path: /health
-              port: 80
+              port: 3000
             initialDelaySeconds: 20
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /health
-              port: 80
+              port: 3000
             initialDelaySeconds: 15
             periodSeconds: 15
-  volumeClaimTemplates:
-    - metadata:
-        name: config
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
-        resources:
-          requests:
-            storage: 10Gi
+      volumes:
+        - name: mastodon-public
+          persistentVolumeClaim:
+            claimName: mastodon-public-pvc
