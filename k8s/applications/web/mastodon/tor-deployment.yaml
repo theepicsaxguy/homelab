@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-tor
+  namespace: mastodon
+  labels:
+    app: mastodon-tor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mastodon-tor
+  template:
+    metadata:
+      labels:
+        app: mastodon-tor
+        network: external_internal
+    spec:
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: tor
+          image: containers.torproject.org/tpo/onion-services/onimages/tor:alpine
+          command:
+            - tor
+            - --RunAsDaemon
+            - "0"
+            - --HiddenServiceDir
+            - /var/lib/tor/mastodon_hidden_service
+            - --HiddenServicePort
+            - "80 web:3000"
+          ports:
+            - containerPort: 9050
+              name: tor
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
+          livenessProbe:
+            tcpSocket:
+              port: 9050
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 9050
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          volumeMounts:
+            - name: tor-data
+              mountPath: /var/lib/tor
+      volumes:
+        - name: tor-data
+          persistentVolumeClaim:
+            claimName: mastodon-tor-pvc

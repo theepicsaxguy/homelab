@@ -5,6 +5,8 @@ configMapGenerator:
 # App env (non-secrets)
 - name: mastodon-env
   literals:
+    - RAILS_ENV=production
+    - NODE_ENV=production
     # Correct quoting format (no quotes needed)
     - TZ=Europe/Stockholm
     # Correct DB service name from Zalando Postgres Operator
@@ -13,19 +15,14 @@ configMapGenerator:
     - DB_PORT=5432
     # Match DB name with the database created by the operator spec
     - DB_NAME=mastodon
+    - PGSSLMODE=require
     # Bitnami Redis primary Service DNS (see values below)
     - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
     - ES_ENABLED=false
     - S3_ENABLED=false
     - FETCH_REPLIES_ENABLED=true
-
-# Small settings map used only for Kustomize replacement of HTTPRoute hostname
-- name: mastodon-settings
-  literals:
-    # ⬅️ Replace this with your real public FQDN (LOCAL_DOMAIN) and tell me the value.
-    # Example placeholder below keeps build valid but won't match any real traffic.
-    - DOMAIN=social.publicsafety.com
+    - DOMAIN=goingdark.social
 
 namespace: mastodon
 
@@ -33,28 +30,20 @@ resources:
 - svc.yaml
 - http-route.yaml
 - namespace.yaml
-- statefulset.yaml
+- web-deployment.yaml
 - database.yaml
 - externalsecret.yaml
 - db-secrets.yaml
 - secretstore.yaml
+- streaming-deployment.yaml
 - serviceaccount.yaml
 - redis
-
-# Copy DOMAIN into HTTPRoute.spec.hostnames[0]
-replacements:
-- source:
-    kind: ConfigMap
-    name: mastodon-settings
-    fieldPath: data.DOMAIN
-  targets:
-  - select:
-      kind: HTTPRoute
-      name: mastodon
-    fieldPaths:
-    - spec.hostnames.0
-    options:
-      create: false
+- pvc-public.yaml
+- pvc-es.yaml
+- tor-pvc.yaml
+- tor-deployment.yaml
+- privoxy-deployment.yaml
+- privoxy-configmap.yaml
 
 labels:
 - includeSelectors: true
