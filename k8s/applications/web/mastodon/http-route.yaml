@@ -15,6 +15,13 @@ spec:
     - matches:
         - path:
             type: PathPrefix
+            value: /api/v1/streaming
+      backendRefs:
+        - name: mastodon-streaming
+          port: 4000
+    - matches:
+        - path:
+            type: PathPrefix
             value: /
       backendRefs:
         - name: mastodon-web

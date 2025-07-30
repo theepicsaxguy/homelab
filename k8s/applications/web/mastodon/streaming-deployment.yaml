@@ -28,6 +28,9 @@ spec:
               drop: ["ALL"]
             seccompProfile:
               type: RuntimeDefault
+          env:
+            - name: PORT
+              value: "4000"
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets

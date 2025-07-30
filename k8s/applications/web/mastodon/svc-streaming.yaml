@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-streaming
+  namespace: mastodon
+spec:
+  type: ClusterIP
+  selector:
+    app: mastodon-streaming
+  ports:
+    - name: http
+      port: 4000
+      targetPort: 4000
