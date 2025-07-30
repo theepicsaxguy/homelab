@@ -50,6 +50,8 @@ resources:
 - redis
 - pvc-public.yaml
 - pvc-es.yaml
+- sidekiq-deployment.yaml
+- es-deployment.yaml
 #- tor-pvc.yaml
 #- tor-deployment.yaml
 #- privoxy-deployment.yaml
