@@ -1,5 +1,59 @@
 # Changelog
 
+## 3.6.0 (2025-07-30)
+
+## What's Changed
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1194
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.16 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1196
+* chore(deps): update terraform proxmox to v0.80.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1197
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1198
+* chore(deps): update all dependencies to v75.11.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1199
+* chore(deps): update helm release redis to v21.2.12 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1200
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1201
+* fix(deps): update dependency @easyops-cn/docusaurus-search-local to ^0.52.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1202
+* chore(deps): update all dependencies to v75.12.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1203
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.18 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1204
+* chore(deps): update helm release argo-cd to v8.1.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1205
+* chore(deps): update ghcr.io/fallenbagel/jellyseerr docker tag to v2.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1206
+* chore(deps): update terraform kubernetes to ~> 2.38.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1207
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1208
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1209
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1210
+* chore(deps): update all dependencies to v1.136.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1211
+* chore(deps): update helm release argo-cd to v8.2.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1212
+* chore(deps): update all dependencies to v75.14.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1213
+* chore(deps): update all dependencies to v75.15.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1214
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1215
+* fix(k8s): update bazarr statefulset configuration and environment variables by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1216
+* feat(network): add LoadBalancer service for omada by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1217
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.7.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1218
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1220
+* feat(k8s): add Mastodon application stack by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1221
+* fix(ci): lint only changed docs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1224
+* docs: standardize Open WebUI references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1226
+* feat(k8s): add Mastodon external secrets and service account configuration
+
+- Introduced db-secrets.yaml for database credentials
+- Updated externalsecret.yaml to use new naming convention
+- Added secretstore.yaml for external secrets management
+- Created serviceaccount.yaml for RBAC permissions
+- Modified statefulset.yaml to reference new secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1227
+* feat(deployment): configure Mastodon with HTTPS and persistent storage by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1228
+* chore(deps): update docker.elastic.co/elasticsearch/elasticsearch docker tag to v7.17.29 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1229
+* chore(deps): update all dependencies to v1.18.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1232
+* Split gateway TLS certs by domain by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1231
+* chore(deps): update docker.elastic.co/elasticsearch/elasticsearch docker tag to v9 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1230
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1233
+* chore(deps): update ollama/ollama docker tag to v0.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1234
+* feat(k8s): update Mastodon deployment configurations and resource limits
+
+- added new environment variables for Mastodon
+- increased Redis persistence size and resource requests/limits
+- updated streaming and web deployment resource requests/limits by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1235
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.5.0...v3.6.0
+
 ## 3.5.0 (2025-07-13)
 
 ## What's Changed
