@@ -11,7 +11,6 @@ configMapGenerator:
     - TZ=Europe/Stockholm
     # Correct DB service name from Zalando Postgres Operator
     - DB_HOST=mastodon-postgresql
-    - DB_USER=mastodon_user
     - DB_PORT=5432
     # Match DB name with the database created by the operator spec
     - DB_NAME=mastodon
@@ -22,12 +21,23 @@ configMapGenerator:
     - ES_ENABLED=false
     - S3_ENABLED=false
     - FETCH_REPLIES_ENABLED=true
-    - DOMAIN=goingdark.social
+    - BIND=0.0.0.0
+    - PORT=3000
+    - RAILS_SERVE_STATIC_FILES=true
+    - RAILS_LOG_TO_STDOUT=true
+    - STREAMING_API_BASE_URL=wss://goingdark.social
+    - SINGLE_USER_MODE=false
+    - DISABLE_AUTOMATIC_SWITCHING_TO_APPROVED_REGISTRATIONS=true
+    - WEB_CONCURRENCY=2
+    - MAX_THREADS=5
+    - PREPARED_STATEMENTS=true
+    - RAILS_MAX_THREADS=5
 
 namespace: mastodon
 
 resources:
 - svc.yaml
+- svc-streaming.yaml
 - http-route.yaml
 - namespace.yaml
 - web-deployment.yaml
@@ -40,12 +50,14 @@ resources:
 - redis
 - pvc-public.yaml
 - pvc-es.yaml
-- tor-pvc.yaml
-- tor-deployment.yaml
-- privoxy-deployment.yaml
-- privoxy-configmap.yaml
+- sidekiq-deployment.yaml
+- es-deployment.yaml
+#- tor-pvc.yaml
+#- tor-deployment.yaml
+#- privoxy-deployment.yaml
+#- privoxy-configmap.yaml
 
 labels:
-- includeSelectors: true
+- includeSelectors: false
   pairs:
-    app: mastodon
+    app.kubernetes.io/name: mastodon
