@@ -26,6 +26,12 @@ configMapGenerator:
     - RAILS_SERVE_STATIC_FILES=true
     - RAILS_LOG_TO_STDOUT=true
     - STREAMING_API_BASE_URL=wss://goingdark.social
+    - SINGLE_USER_MODE=false
+    - DISABLE_AUTOMATIC_SWITCHING_TO_APPROVED_REGISTRATIONS=true
+    - WEB_CONCURRENCY=2
+    - MAX_THREADS=5
+    - PREPARED_STATEMENTS=true
+    - RAILS_MAX_THREADS=5
 
 namespace: mastodon
 
