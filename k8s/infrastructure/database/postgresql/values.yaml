@@ -391,7 +391,7 @@ configLogicalBackup:
   # backup schedule in the cron format
   logical_backup_schedule: "0 3 * * *"
   # secret to be used as reference for env variables in cronjob
-  logical_backup_cronjob_environment_secret: "postgres-minio-credentials"
+  logical_backup_cronjob_environment_secret: "longhorn-minio-credentials"
 
 # automate creation of human users with teams API service
 configTeamsApi:
