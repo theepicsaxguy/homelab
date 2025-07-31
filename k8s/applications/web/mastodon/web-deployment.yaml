@@ -45,8 +45,8 @@ spec:
             httpGet:
               path: /health
               port: 3000
-            initialDelaySeconds: 20
-            periodSeconds: 15
+            initialDelaySeconds: 60
+            periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /health
