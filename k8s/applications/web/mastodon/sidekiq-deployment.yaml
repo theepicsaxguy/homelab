@@ -15,10 +15,18 @@ spec:
       labels:
         app: mastodon-sidekiq
     spec:
+      securityContext:
+        fsGroup: 991
+        fsGroupChangePolicy: Always
       containers:
         - name: sidekiq
           image: ghcr.io/mastodon/mastodon:v4.4.2
-          command: ["bundle", "exec", "sidekiq"]
+          args:
+          - bundle
+          - exec
+          - sidekiq
+          - -C
+          - /opt/mastodon/config/sidekiq.yml
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
@@ -31,9 +39,9 @@ spec:
               mountPath: /mastodon/public/system
           livenessProbe:
             exec:
-              command: [ "sh", "-c", "ps aux | grep '[s]idekiq\\ 7'" ]
-            initialDelaySeconds: 20
-            periodSeconds: 15
+              command: ["sh", "-c", "ps aux | grep '[s]idekiq\\ 7'"]
+            initialDelaySeconds: 60
+            periodSeconds: 30
           resources:
             requests:
               cpu: "100m"
@@ -41,6 +49,15 @@ spec:
             limits:
               cpu: "500m"
               memory: "1Gi"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 991
+            runAsGroup: 991
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: mastodon-public
           persistentVolumeClaim:
