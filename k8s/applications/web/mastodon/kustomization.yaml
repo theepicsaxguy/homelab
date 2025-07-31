@@ -14,10 +14,13 @@ configMapGenerator:
     - DB_PORT=5432
     # Match DB name with the database created by the operator spec
     - DB_NAME=mastodon
-    - PGSSLMODE=require
+    - PGSSLMODE=disable
     # Bitnami Redis primary Service DNS (see values below)
     - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
+    - REDIS_URL=redis://mastodon-redis-master:6379/0
+    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
+    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
     - ES_ENABLED=false
     - S3_ENABLED=false
     - FETCH_REPLIES_ENABLED=true
@@ -51,13 +54,10 @@ resources:
 - pvc-public.yaml
 - pvc-es.yaml
 - sidekiq-deployment.yaml
-- es-deployment.yaml
+#- es-deployment.yaml
 #- tor-pvc.yaml
 #- tor-deployment.yaml
 #- privoxy-deployment.yaml
 #- privoxy-configmap.yaml
 
-labels:
-- includeSelectors: false
-  pairs:
-    app.kubernetes.io/name: mastodon
+
