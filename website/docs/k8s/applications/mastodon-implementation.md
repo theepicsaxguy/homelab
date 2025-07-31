@@ -47,7 +47,22 @@ configMapGenerator:
       - SMTP_SSL=true
       - SMTP_TLS=false
       - SMTP_ENABLE_STARTTLS_AUTO=false
-      - SMTP_ENABLE_STARTTLS=never
+  - SMTP_ENABLE_STARTTLS=never
+```
+
+## Media Storage
+
+Attachments are stored on a Persistent Volume Claim named `mastodon-public-pvc`.
+The claim requests 30Gi from Longhorn:
+
+```yaml
+# k8s/applications/web/mastodon/pvc-public.yaml
+spec:
+  accessModes: [ "ReadWriteMany" ]
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: longhorn
 ```
 
 ## Sidekiq Resources
