@@ -50,3 +50,19 @@ configMapGenerator:
       - SMTP_ENABLE_STARTTLS=never
 ```
 
+## Sidekiq Resources
+
+Sidekiq processes background jobs. A larger instance benefits from more
+CPU and memory:
+
+```yaml
+# k8s/applications/web/mastodon/sidekiq-deployment.yaml
+resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+```
+
