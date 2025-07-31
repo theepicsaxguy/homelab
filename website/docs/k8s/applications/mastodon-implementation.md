@@ -35,3 +35,18 @@ data:
     remoteRef: { key: app-mastodon-smtp-from-address }
 ```
 
+Rails is configured to use implicit TLS on port 465 and to avoid STARTTLS:
+
+```yaml
+# k8s/applications/web/mastodon/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-common-env
+    literals:
+      - SMTP_DELIVERY_METHOD=smtp
+      - SMTP_AUTH_METHOD=login
+      - SMTP_SSL=true
+      - SMTP_TLS=false
+      - SMTP_ENABLE_STARTTLS_AUTO=false
+      - SMTP_ENABLE_STARTTLS=never
+```
+

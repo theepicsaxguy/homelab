@@ -38,6 +38,12 @@ configMapGenerator:
     # ─── locale ─────────────────────────────────────────────────────
     - DEFAULT_LOCALE=en
     - FORCE_DEFAULT_LOCALE=true
+    - SMTP_DELIVERY_METHOD=smtp
+    - SMTP_AUTH_METHOD=login
+    - SMTP_SSL=true
+    - SMTP_TLS=false
+    - SMTP_ENABLE_STARTTLS_AUTO=false
+    - SMTP_ENABLE_STARTTLS=never
 
 - name: mastodon-web-env
   literals:
