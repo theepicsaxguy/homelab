@@ -26,7 +26,7 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
-          image: ghcr.io/mastodon/mastodon:v4.4.2
+          image: ghcr.io/mastodon/mastodon:nightly.2025-07-31
           command: ["/bin/bash", "-c", "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"]
           ports:
             - name: http
@@ -37,7 +37,9 @@ spec:
             - secretRef:
                 name: mastodon-db-url
             - configMapRef:
-                name: mastodon-env
+                name: mastodon-common-env
+            - configMapRef:
+                name: mastodon-web-env
           volumeMounts:
             - name: mastodon-public
               mountPath: /mastodon/public/system

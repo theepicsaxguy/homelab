@@ -28,14 +28,13 @@ spec:
               drop: ["ALL"]
             seccompProfile:
               type: RuntimeDefault
-          env:
-            - name: PORT
-              value: "4000"
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
             - configMapRef:
-                name: mastodon-env
+                name: mastodon-common-env
+            - configMapRef:
+                name: mastodon-streaming-env
           livenessProbe:
             httpGet:
               path: /api/v1/streaming/health
@@ -55,3 +54,10 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+          volumeMounts:
+            - name: mastodon-public
+              mountPath: /mastodon/public/system
+      volumes:
+        - name: mastodon-public
+          persistentVolumeClaim:
+            claimName: mastodon-public-pvc
