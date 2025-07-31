@@ -3,7 +3,7 @@ kind: Kustomization
 
 configMapGenerator:
 # App env (non-secrets)
-- name: mastodon-env
+- name: mastodon-common-env
   literals:
     - RAILS_ENV=production
     - NODE_ENV=production
@@ -23,18 +23,37 @@ configMapGenerator:
     - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
     - ES_ENABLED=false
     - S3_ENABLED=false
-    - FETCH_REPLIES_ENABLED=true
-    - BIND=0.0.0.0
-    - PORT=3000
-    - RAILS_SERVE_STATIC_FILES=true
     - RAILS_LOG_TO_STDOUT=true
-    - STREAMING_API_BASE_URL=wss://goingdark.social
     - SINGLE_USER_MODE=false
     - DISABLE_AUTOMATIC_SWITCHING_TO_APPROVED_REGISTRATIONS=true
+    - PREPARED_STATEMENTS=true
+    # ─── federation & privacy ───────────────────────────────────────
+    - FETCH_REPLIES_ENABLED=true
+    - FETCH_REPLIES_INITIAL_WAIT_MINUTES=3
+    - FETCH_REPLIES_COOLDOWN_MINUTES=30
+    - USER_ACTIVE_DAYS=14
+    - IP_RETENTION_PERIOD=15552000
+    # ─── performance / resource guards ──────────────────────────────
+    - MASTODON_USE_LIBVIPS=true
+    # ─── locale ─────────────────────────────────────────────────────
+    - DEFAULT_LOCALE=en
+    - FORCE_DEFAULT_LOCALE=true
+
+- name: mastodon-web-env
+  literals:
+    - PORT=3000
+    - BIND=0.0.0.0
+    - RAILS_SERVE_STATIC_FILES=true
     - WEB_CONCURRENCY=2
     - MAX_THREADS=5
-    - PREPARED_STATEMENTS=true
     - RAILS_MAX_THREADS=5
+    - STREAMING_API_BASE_URL=wss://goingdark.social
+- name: mastodon-streaming-env
+  literals:
+    - PORT=4000
+- name: mastodon-sidekiq-env
+  literals:
+    - SIDEKIQ_CONCURRENCY=5
 
 namespace: mastodon
 
