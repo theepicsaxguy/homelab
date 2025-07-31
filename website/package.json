@@ -40,7 +40,7 @@
     "remark-lint-no-dead-urls": "^2.0.1",
     "remark-lint-no-empty-sections": "4.0.0",
     "remark-lint-no-undefined-references": "5.0.2",
-    "typescript": "~5.8.0",
+    "typescript": "~5.9.0",
     "unist-util-visit": "5.0.0"
   },
   "browserslist": {
