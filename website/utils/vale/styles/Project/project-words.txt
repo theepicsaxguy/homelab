@@ -115,6 +115,9 @@ OpenID
 Open WebUI
 OpenTofu
 OpenWebUI
+WebUI
+SSL
+Sidekiq
 PDB
 PDBs
 PKI
@@ -270,5 +273,9 @@ walkthrough
 xpkg
 xpkg.crossplane.io
 xpkg.upbound.io
+goingdark.social
+pc-tips.se
 your.domain.tld
+Vectorizing
+ten-minute
 zigbee

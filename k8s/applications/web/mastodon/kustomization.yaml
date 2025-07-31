@@ -14,7 +14,7 @@ configMapGenerator:
     - DB_PORT=5432
     # Match DB name with the database created by the operator spec
     - DB_NAME=mastodon
-    - PGSSLMODE=require
+    - PGSSLMODE=disable
     # Bitnami Redis primary Service DNS (see values below)
     - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
