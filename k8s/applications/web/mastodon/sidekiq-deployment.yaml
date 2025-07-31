@@ -20,7 +20,7 @@ spec:
         fsGroupChangePolicy: Always
       containers:
         - name: sidekiq
-          image: ghcr.io/mastodon/mastodon:v4.4.2
+          image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
           args:
           - bundle
           - exec

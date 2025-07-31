@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: streaming
-          image: ghcr.io/mastodon/mastodon-streaming:v4.4.2
+          image: ghcr.io/glitch-soc/mastodon-streaming:nightly.2025-07-31
           command: ["node", "./streaming/index.js"]
           ports:
             - name: streaming
