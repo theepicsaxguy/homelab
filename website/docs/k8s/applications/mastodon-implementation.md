@@ -53,7 +53,7 @@ configMapGenerator:
 ## Media Storage
 
 Attachments are stored on a Persistent Volume Claim named `mastodon-public-pvc`.
-The claim requests 30Gi from Longhorn:
+The claim now requests 50Gi from Longhorn:
 
 ```yaml
 # k8s/applications/web/mastodon/pvc-public.yaml
@@ -61,7 +61,7 @@ spec:
   accessModes: [ "ReadWriteMany" ]
   resources:
     requests:
-      storage: 30Gi
+      storage: 50Gi
   storageClassName: longhorn
 ```
 
