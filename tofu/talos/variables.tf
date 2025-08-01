@@ -62,8 +62,9 @@ variable "nodes" {
     machine_type  = string
     datastore_id  = optional(string)
     ip            = string
-    mac_address   = string
-    vm_id         = number
+    mac_address   = optional(string)
+    vm_id         = optional(number)
+    is_external   = optional(bool, false)
     cpu           = number
     ram_dedicated = number
     update        = optional(bool, false)
@@ -98,13 +99,22 @@ variable "nodes" {
   }
 
   validation {
-    condition     = length(distinct([for n in values(var.nodes) : n.vm_id])) == length(var.nodes)
-    error_message = "Node VM IDs must be unique."
+    condition = length(distinct([for n in values(var.nodes) : n.vm_id if !lookup(n, "is_external", false) && n.vm_id != null])) == length([for n in values(var.nodes) : n if !lookup(n, "is_external", false)])
+    error_message = "VM IDs must be unique among internal nodes."
   }
 
   validation {
     condition = alltrue([
-      for n in values(var.nodes) : can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", n.mac_address))
+      for n in values(var.nodes) :
+      lookup(n, "is_external", false) ? n.mac_address == null : n.mac_address != null
+    ])
+    error_message = "External nodes must not have mac_address; internal nodes must have mac_address."
+  }
+
+  validation {
+    condition = alltrue([
+      for n in values(var.nodes) : 
+      lookup(n, "is_external", false) || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", n.mac_address))
     ])
     error_message = "MAC addresses must use the format 00:11:22:33:44:55."
   }

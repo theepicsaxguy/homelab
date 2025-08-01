@@ -60,4 +60,9 @@ nodes_config = {
       "0000:03:00.1" = { id = "10de:0fbc", subsystem_id = "10de:1097", iommu_group = 50 }
     }
   }
+  "baremetal-01" = {
+    machine_type = "worker"
+    ip           = "10.25.150.30"
+    is_external  = true
+  }
 }

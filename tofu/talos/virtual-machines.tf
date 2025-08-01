@@ -3,7 +3,7 @@ resource "terraform_data" "image_version" {
 }
 
 resource "proxmox_virtual_environment_vm" "this" {
-  for_each = var.nodes
+  for_each = local.internal_nodes
 
 
   node_name = each.value.host_node
@@ -118,9 +118,11 @@ resource "proxmox_virtual_environment_vm" "this" {
 }
 
 locals {
+  internal_nodes = { for k, v in var.nodes : k => v if !lookup(v, "is_external", false) }
+
   gpu_mapping_alias_prefix = "gpu"
   gpu_mappings = flatten([
-    for node_name, node_cfg in var.nodes : [
+    for node_name, node_cfg in local.internal_nodes : [
       for idx, bdf in lookup(node_cfg, "gpu_devices", []) : {
         name = "${local.gpu_mapping_alias_prefix}-${node_name}-${idx}"
         node = node_cfg.host_node
