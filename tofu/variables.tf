@@ -47,8 +47,9 @@ variable "nodes_config" {
     host_node     = optional(string) #  "The Proxmox node to schedule this VM on. If omitted, defaults to the `name` specified in the `var.proxmox` provider configuration."
     machine_type  = string
     ip            = string
-    mac_address   = string
-    vm_id         = number
+    mac_address   = optional(string)
+    vm_id         = optional(number)
+    is_external   = optional(bool, false)
     ram_dedicated = optional(number)
     igpu          = optional(bool)
     disks = optional(map(object({
@@ -124,6 +125,27 @@ variable "nodes_config" {
       ]
     ]))
     error_message = "Every BDF in gpu_devices must exist in gpu_device_meta."
+  }
+
+  validation {
+    condition = alltrue([
+      for n in values(var.nodes_config) :
+      lookup(n, "is_external", false) ? n.vm_id == null : n.vm_id != null
+    ])
+    error_message = "External nodes must not have vm_id; internal nodes must have vm_id."
+  }
+
+  validation {
+    condition     = length(distinct([for n in values(var.nodes_config) : n.vm_id if !lookup(n, "is_external", false) && n.vm_id != null])) == length([for n in values(var.nodes_config) : n if !lookup(n, "is_external", false)])
+    error_message = "VM IDs must be unique among internal nodes."
+  }
+
+  validation {
+    condition = alltrue([
+      for n in values(var.nodes_config) :
+      lookup(n, "is_external", false) ? n.mac_address == null : n.mac_address != null
+    ])
+    error_message = "External nodes must not have mac_address; internal nodes must have mac_address."
   }
 }
 
