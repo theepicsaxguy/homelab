@@ -49,6 +49,8 @@ locals {
       schematic_id = talos_image_factory_schematic.main[local.get_schematic_key[name]].id
       version      = lookup(node, "update", false) ? local.update_version : var.talos_image.version
     } ...
+    # External nodes manage their own images, skip factory download
+    if !lookup(node, "is_external", false)
   }
 
   image_downloads = {
