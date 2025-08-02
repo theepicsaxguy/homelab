@@ -1,5 +1,34 @@
 # Changelog
 
+## 3.7.0 (2025-08-02)
+
+## What's Changed
+* chore(deps): update ollama/ollama docker tag to v0.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1236
+* fix(k8s): disable Mastodon Postgres SSL by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1238
+* chore(deps): update helm release velero to v10.0.11 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1240
+* Feat/improve-mastodon-performance by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1239
+* Add Mastodon SMTP secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1241
+* chore(deps): update helm release argo-cd to v8.2.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1242
+* Add implicit TLS flags for Mastodon mailer by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1243
+* chore(deps): update dependency typescript to ~5.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1244
+* chore(deps): update helm release kubechecks to v0.5.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1246
+* Fix postgres backup secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1245
+* Increase Mastodon Sidekiq resources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1247
+* feat(k8s): triple Mastodon media PVC by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1248
+* Update Mastodon images by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1249
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.137.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1250
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.137.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1251
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.137.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1252
+* chore(deps): update terraform proxmox to v0.81.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1253
+* chore(deps): update all dependencies to v1.137.3 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1254
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.6.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1255
+* feat(tofu): add support for external nodes in configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1256
+* Increase Mastodon PVC to 50Gi by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1257
+* chore(deps): update mbentley/omada-controller docker tag to v5.15.24.19 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1258
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.6.0...v3.7.0
+
 ## 3.6.0 (2025-07-30)
 
 ## What's Changed
