@@ -41,7 +41,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: omada-controller
-          image: mbentley/omada-controller:5.15.24.18 # renovate: docker=mbentley/omada-controller
+          image: mbentley/omada-controller:5.15.24.19 # renovate: docker=mbentley/omada-controller
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
