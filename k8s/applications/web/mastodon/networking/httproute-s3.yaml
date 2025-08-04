@@ -16,7 +16,6 @@ spec:
         - path:
             type: PathPrefix
             value: /
-          method: GET
       backendRefs:
         - name: mastodon-s3-proxy-internal-svc
           port: 80

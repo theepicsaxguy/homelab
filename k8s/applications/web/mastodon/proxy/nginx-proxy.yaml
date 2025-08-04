@@ -23,7 +23,8 @@ data:
       }
 
       # Variable to force DNS re-resolution
-      set $s3_backend 'https://truenas.pc-tips.se:9000';
+      # Path-style for MinIO: include the bucket from S3_BUCKET=mastodata
+      set $s3_backend 'https://truenas.pc-tips.se:9000/mastodata';
 
             location @s3 {
         limit_except GET {
