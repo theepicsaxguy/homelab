@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: mastodon
+
 configMapGenerator:
 - name: mastodon-env
   literals:
@@ -12,8 +14,11 @@ configMapGenerator:
     - DB_PORT=5432
     - DB_NAME=mastodon
     - PGSSLMODE=disable
-    - REDIS_HOST=redis-master
+    - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
+    - REDIS_URL=redis://mastodon-redis-master:6379/0
+    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
+    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
     - ES_ENABLED=false
     - SINGLE_USER_MODE=false
     - RAILS_LOG_TO_STDOUT=true
@@ -48,7 +53,7 @@ configMapGenerator:
     - S3_BUCKET=mastodata
     - S3_ALIAS_HOST=cdn.goingdark.social
     - S3_PROTOCOL=https
-    - S3_REGION=us-east-1
+    - S3_REGION=us-west-1
     - S3_PERMISSION=public-read
 
 resources:

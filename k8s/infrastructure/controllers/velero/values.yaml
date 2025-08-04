@@ -24,7 +24,7 @@ configuration:
       bucket: velero
       default: true
       config:
-        region: us-east-1
+        region: us-west-1
         s3ForcePathStyle: "true"
         s3Url: http://longhorn-minio-service.longhorn-system.svc:9000
   volumeSnapshotLocation:
