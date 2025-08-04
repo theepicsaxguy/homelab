@@ -15,6 +15,12 @@ spec:
       labels:
         app: mastodon-es
     spec:
+
+      securityContext:
+        sysctls:
+          - name: vm.max_map_count
+            value: "262144"
+
       containers:
         - name: elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:9.1.0
@@ -51,10 +57,6 @@ spec:
           volumeMounts:
             - name: es-data
               mountPath: /usr/share/elasticsearch/data
-      initContainers:
-        - name: increase-vm-max-map-count
-          image: busybox
-          command: ["sysctl", "-w", "vm.max_map_count=262144"]
       volumes:
         - name: es-data
           persistentVolumeClaim:

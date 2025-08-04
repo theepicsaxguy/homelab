@@ -32,9 +32,10 @@ spec:
             - secretRef:
                 name: mastodon-app-secrets
             - configMapRef:
-                name: mastodon-common-env
-            - configMapRef:
-                name: mastodon-streaming-env
+                name: mastodon-env
+          env:
+            - name: PORT
+              value: "4000"
           livenessProbe:
             httpGet:
               path: /api/v1/streaming/health
@@ -54,10 +55,3 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
-          volumeMounts:
-            - name: mastodon-public
-              mountPath: /mastodon/public/system
-      volumes:
-        - name: mastodon-public
-          persistentVolumeClaim:
-            claimName: mastodon-public-pvc
