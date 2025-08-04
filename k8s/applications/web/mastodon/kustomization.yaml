@@ -1,98 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
-configMapGenerator:
-# App env (non-secrets)
-- name: mastodon-common-env
-  literals:
-    - RAILS_ENV=production
-    - NODE_ENV=production
-    # Correct quoting format (no quotes needed)
-    - TZ=Europe/Stockholm
-    # Correct DB service name from Zalando Postgres Operator
-    - DB_HOST=mastodon-postgresql
-    - DB_PORT=5432
-    # Match DB name with the database created by the operator spec
-    - DB_NAME=mastodon
-    - PGSSLMODE=disable
-    # Bitnami Redis primary Service DNS (see values below)
-    - REDIS_HOST=mastodon-redis-master
-    - REDIS_PORT=6379
-    - REDIS_URL=redis://mastodon-redis-master:6379/0
-    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
-    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
-    - ES_ENABLED=false
-    - S3_ENABLED=true
-    - S3_REGION=us-east-1
-    - S3_BUCKET=mastodata
-    - S3_SIGNATURE_VERSION=v4
-    - S3_OVERRIDE_PATH_STYLE=true
-    - S3_PROTOCOL=https
-    - S3_ALIAS_HOST=cdn.goingdark.social
-    - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
-    - RAILS_LOG_TO_STDOUT=true
-    - SINGLE_USER_MODE=false
-    - DISABLE_AUTOMATIC_SWITCHING_TO_APPROVED_REGISTRATIONS=true
-    - PREPARED_STATEMENTS=true
-    # ─── federation & privacy ───────────────────────────────────────
-    - FETCH_REPLIES_ENABLED=true
-    - FETCH_REPLIES_INITIAL_WAIT_MINUTES=3
-    - FETCH_REPLIES_COOLDOWN_MINUTES=30
-    - USER_ACTIVE_DAYS=14
-    - IP_RETENTION_PERIOD=15552000
-    # ─── performance / resource guards ──────────────────────────────
-    - MASTODON_USE_LIBVIPS=true
-    # ─── locale ─────────────────────────────────────────────────────
-    - DEFAULT_LOCALE=en
-    - FORCE_DEFAULT_LOCALE=true
-    - SMTP_DELIVERY_METHOD=smtp
-    - SMTP_AUTH_METHOD=login
-    - SMTP_SSL=true
-    - SMTP_TLS=false
-    - SMTP_ENABLE_STARTTLS_AUTO=false
-    - SMTP_ENABLE_STARTTLS=never
-
-- name: mastodon-web-env
-  literals:
-    - PORT=3000
-    - BIND=0.0.0.0
-    - RAILS_SERVE_STATIC_FILES=true
-    - WEB_CONCURRENCY=2
-    - MAX_THREADS=5
-    - RAILS_MAX_THREADS=5
-    - STREAMING_API_BASE_URL=wss://goingdark.social
-- name: mastodon-streaming-env
-  literals:
-    - PORT=4000
-- name: mastodon-sidekiq-env
-  literals:
-    - SIDEKIQ_CONCURRENCY=5
-
-namespace: mastodon
-
 resources:
-- svc.yaml
-- svc-streaming.yaml
-- http-route.yaml
-- namespace.yaml
-- web-deployment.yaml
-- database.yaml
-- externalsecret.yaml
-- db-secrets.yaml
-- secretstore.yaml
-- streaming-deployment.yaml
-- serviceaccount.yaml
-- redis
-- pvc-public.yaml
-- pvc-es.yaml
-- sidekiq-deployment.yaml
-- httproute-s3.yaml
-- svc-s3-proxy.yaml
-- backendtls-s3.yaml
-#- es-deployment.yaml
-#- tor-pvc.yaml
-#- tor-deployment.yaml
-#- privoxy-deployment.yaml
-#- privoxy-configmap.yaml
-
-
+  - base
+  - web
+  - sidekiq
+  - streaming
+  - redis
+  - postgres
+  - elasticsearch
+  - networking
+  - storage
