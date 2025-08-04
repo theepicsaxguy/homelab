@@ -65,6 +65,19 @@ spec:
   storageClassName: longhorn
 ```
 
+## Content Delivery
+
+Media and static assets are served from `cdn.goingdark.social` through an internal Nginx proxy backed by MinIO. The environment ConfigMap exposes the host to Mastodon's Content Security Policy:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
+      - CDN_HOST=https://cdn.goingdark.social
+```
+
 ## Sidekiq Resources
 
 Sidekiq processes background jobs. A larger instance benefits from more
