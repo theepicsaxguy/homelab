@@ -31,6 +31,7 @@ data "talos_machine_configuration" "this" {
         cluster            = var.cluster
         cluster_domain     = var.cluster_domain
         disks              = each.value.disks
+        sysctls            = lookup(each.value, "sysctls", {})
         igpu               = each.value.igpu
         gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
         vip                = var.network.vip

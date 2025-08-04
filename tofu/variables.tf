@@ -59,6 +59,7 @@ variable "nodes_config" {
       mountpoint  = optional(string)
       unit_number = optional(number)
     }))),
+    sysctls     = optional(map(string), {}),
     gpu_devices = optional(list(string), []),
     #   map keyed by the same BDF strings you list in `gpu_devices`
     gpu_device_meta = optional(

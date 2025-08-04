@@ -28,6 +28,9 @@ machine:
   %{ endif }
   sysctls:
     vm.nr_hugepages: "1024"
+%{ for name, value in sysctls ~}
+    ${name}: "${value}"
+%{ endfor ~}
   kernel:
     modules: # These modules will be loaded on all worker nodes
       - name: nvme_tcp # NVMe over TCP, generally useful for storage
