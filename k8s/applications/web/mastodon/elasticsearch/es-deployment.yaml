@@ -15,7 +15,7 @@ spec:
       labels:
         app: mastodon-es
     spec:
-      
+
       securityContext:
         sysctls:
           - name: vm.max_map_count
@@ -56,8 +56,7 @@ spec:
             periodSeconds: 10
           volumeMounts:
             - name: es-data
-              mountPath: /usr/share/elasticsearch/data"
-
+              mountPath: /usr/share/elasticsearch/data
       volumes:
         - name: es-data
           persistentVolumeClaim:

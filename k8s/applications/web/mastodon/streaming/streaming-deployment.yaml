@@ -55,10 +55,3 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
-          volumeMounts:
-            - name: mastodon-public
-              mountPath: /mastodon/public/system
-      volumes:
-        - name: mastodon-public
-          persistentVolumeClaim:
-            claimName: mastodon-public-pvc
