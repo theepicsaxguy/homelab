@@ -56,7 +56,6 @@ configMapGenerator:
     - S3_REGION=us-west-1
     - S3_PERMISSION=public-read
     - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
-    - CDN_HOST=https://cdn.goingdark.social
 
 resources:
   - namespace.yaml
