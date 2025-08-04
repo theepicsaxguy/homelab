@@ -1,5 +1,5 @@
 # /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
-# k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
+# /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
 # 1. ConfigMap for the nginx configuration.
 apiVersion: v1
 kind: ConfigMap
