@@ -33,12 +33,7 @@ spec:
             - secretRef:
                 name: mastodon-db-url
             - configMapRef:
-                name: mastodon-common-env
-            - configMapRef:
-                name: mastodon-sidekiq-env
-          volumeMounts:
-            - name: mastodon-public
-              mountPath: /mastodon/public/system
+                name: mastodon-env
           livenessProbe:
             exec:
               command: ["sh", "-c", "ps aux | grep '[s]idekiq\\ 7'"]
@@ -60,7 +55,3 @@ spec:
               drop: ["ALL"]
             seccompProfile:
               type: RuntimeDefault
-      volumes:
-        - name: mastodon-public
-          persistentVolumeClaim:
-            claimName: mastodon-public-pvc

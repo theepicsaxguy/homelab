@@ -1,0 +1,63 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mastodon
+
+configMapGenerator:
+- name: mastodon-env
+  literals:
+    # --- Base Mastodon Config ---
+    - RAILS_ENV=production
+    - NODE_ENV=production
+    - TZ=Europe/Stockholm
+    - DB_HOST=mastodon-postgresql
+    - DB_PORT=5432
+    - DB_NAME=mastodon
+    - PGSSLMODE=disable
+    - REDIS_HOST=mastodon-redis-master
+    - REDIS_PORT=6379
+    - REDIS_URL=redis://mastodon-redis-master:6379/0
+    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
+    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
+    - ES_ENABLED=false
+    - SINGLE_USER_MODE=false
+    - RAILS_LOG_TO_STDOUT=true
+    - PREPARED_STATEMENTS=true
+    # --- Federation & Privacy ---
+    - FETCH_REPLIES_ENABLED=true
+    - IP_RETENTION_PERIOD=15552000
+    # --- Performance  ---
+    - MASTODON_USE_LIBVIPS=true
+    # --- Locale  ---
+    - DEFAULT_LOCALE=en
+    - FORCE_DEFAULT_LOCALE=true
+    # --- SMTP  ---
+    - SMTP_DELIVERY_METHOD=smtp
+    - SMTP_AUTH_METHOD=login
+    - SMTP_SSL=true
+    - SMTP_TLS=false
+    - SMTP_ENABLE_STARTTLS_AUTO=false
+    # --- Web Specific ---
+    - PORT=3000
+    - BIND=0.0.0.0
+    - RAILS_SERVE_STATIC_FILES=true
+    - WEB_CONCURRENCY=2
+    - MAX_THREADS=5
+    - STREAMING_API_BASE_URL=wss://goingdark.social
+    # --- Streaming Specific ---
+    - STREAMING_PORT=4000
+    # --- Sidekiq Specific ---
+    - SIDEKIQ_CONCURRENCY=5
+    # --- S3 NON-SECRET Configuration ---
+    - S3_ENABLED=true
+    - S3_BUCKET=mastodata
+    - S3_ALIAS_HOST=cdn.goingdark.social
+    - S3_PROTOCOL=https
+    - S3_REGION=us-west-1
+    - S3_PERMISSION=public-read
+
+resources:
+  - namespace.yaml
+  - secretstore.yaml
+  - serviceaccount.yaml
+  - externalsecret.yaml

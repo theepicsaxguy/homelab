@@ -1,0 +1,6 @@
+# /k8s/applications/web/mastodon/proxy/kustomization.yaml
+# NEW FILE
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - nginx-proxy.yaml

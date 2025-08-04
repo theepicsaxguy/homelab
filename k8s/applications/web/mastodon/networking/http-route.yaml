@@ -7,8 +7,6 @@ spec:
   parentRefs:
     - name: external
       namespace: gateway
-    - name: internal
-      namespace: gateway
   hostnames:
     - goingdark.social
   rules:
