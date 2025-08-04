@@ -21,12 +21,12 @@ data:
       location / {
         try_files $uri @s3;
       }
-      
+
       # Variable to force DNS re-resolution
       set $s3_backend 'https://truenas.pc-tips.se:9000';
 
             location @s3 {
-        limit_except GET HEAD {
+        limit_except GET {
           deny all;
         }
 
@@ -39,10 +39,14 @@ data:
         proxy_hide_header 'Access-Control-Allow-Headers';
         proxy_hide_header x-amz-id-2;
         proxy_hide_header x-amz-request-id;
+        proxy_hide_header x-amz-meta-server-side-encryption;
+        proxy_hide_header x-amz-server-side-encryption;
+        proxy_hide_header x-amz-bucket-region;
+        proxy_hide_header x-amzn-requestid;
         proxy_ignore_headers Set-Cookie;
 
-        proxy_pass $s3_backend$uri;
-        
+        proxy_pass $s3_backend/mastodata$uri;
+
         proxy_intercept_errors off;
         proxy_cache CACHE;
         proxy_cache_valid 200 48h;
@@ -58,7 +62,20 @@ data:
       }
     }
 ---
-# 2. Deployment for the nginx proxy pod.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mastodon-s3-proxy-cache-pvc
+  namespace: mastodon
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: longhorn
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -87,15 +104,21 @@ spec:
               subPath: proxy.conf
             - name: cache-volume
               mountPath: /var/cache/nginx
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
       volumes:
         - name: nginx-config
           configMap:
             name: mastodon-s3-proxy-config
-        # emptyDir is sufficient for ephemeral cache. For persistence across pod restarts, use a PVC.
         - name: cache-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: mastodon-s3-proxy-cache-pvc
 ---
-# 3. Internal ClusterIP service to expose the proxy to the Gateway.
 apiVersion: v1
 kind: Service
 metadata:

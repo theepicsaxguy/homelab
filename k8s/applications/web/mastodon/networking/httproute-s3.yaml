@@ -17,12 +17,6 @@ spec:
             type: PathPrefix
             value: /
           method: GET
-        - path:
-            type: PathPrefix
-            value: /
-          method: HEAD
-      # REMOVE the URLRewrite filter. This is now handled by nginx's proxy_pass.
-      # backendRefs now points to the new internal nginx proxy service.
       backendRefs:
         - name: mastodon-s3-proxy-internal-svc
           port: 80

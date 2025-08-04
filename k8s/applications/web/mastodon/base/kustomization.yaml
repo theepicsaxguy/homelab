@@ -1,5 +1,3 @@
-# /k8s/applications/web/mastodon/base/kustomization.yaml
-# FINAL VERSION: Includes all previous non-default settings
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
@@ -13,21 +11,22 @@ configMapGenerator:
     - DB_HOST=mastodon-postgresql
     - DB_PORT=5432
     - DB_NAME=mastodon
+    - PGSSLMODE=disable
     - REDIS_HOST=redis-master
     - REDIS_PORT=6379
     - ES_ENABLED=false
     - SINGLE_USER_MODE=false
     - RAILS_LOG_TO_STDOUT=true
     - PREPARED_STATEMENTS=true
-    # --- Federation & Privacy (Restored) ---
+    # --- Federation & Privacy ---
     - FETCH_REPLIES_ENABLED=true
     - IP_RETENTION_PERIOD=15552000
-    # --- Performance (Restored) ---
+    # --- Performance  ---
     - MASTODON_USE_LIBVIPS=true
-    # --- Locale (Restored) ---
+    # --- Locale  ---
     - DEFAULT_LOCALE=en
     - FORCE_DEFAULT_LOCALE=true
-    # --- SMTP (Restored) ---
+    # --- SMTP  ---
     - SMTP_DELIVERY_METHOD=smtp
     - SMTP_AUTH_METHOD=login
     - SMTP_SSL=true
@@ -41,7 +40,6 @@ configMapGenerator:
     - MAX_THREADS=5
     - STREAMING_API_BASE_URL=wss://goingdark.social
     # --- Streaming Specific ---
-    # The streaming deployment correctly overrides PORT, so this is harmless.
     - STREAMING_PORT=4000
     # --- Sidekiq Specific ---
     - SIDEKIQ_CONCURRENCY=5
@@ -50,9 +48,6 @@ configMapGenerator:
     - S3_BUCKET=mastodata
     - S3_ALIAS_HOST=cdn.goingdark.social
     - S3_PROTOCOL=https
-    - S3_HOSTNAME=truenas.pc-tips.se:9000
-    # S3_ENDPOINT from ExternalSecret is used for writes. S3_ENDPOINT in the ConfigMap is fine, but redundant.
-    - S3_ENDPOINT=https://truenas.pc-tips.se:9000
     - S3_REGION=us-east-1
     - S3_PERMISSION=public-read
 
