@@ -1,0 +1,111 @@
+# /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
+
+# 1. ConfigMap for the nginx configuration.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mastodon-s3-proxy-config
+  namespace: mastodon
+data:
+  proxy.conf: |
+    # Required for proxy_cache to work
+    proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=48h max_size=10g;
+
+    server {
+      listen 80;
+      server_name cdn.goingdark.social;
+
+      # Use Kubernetes DNS for dynamic resolution of the ExternalName service
+      resolver kube-dns.kube-system.svc.cluster.local valid=5s;
+
+      location / {
+        try_files $uri @s3;
+      }
+      
+      # Variable to force DNS re-resolution
+      set $s3_backend 'https://truenas.pc-tips.se:9000';
+
+            location @s3 {
+        limit_except GET HEAD {
+          deny all;
+        }
+
+        proxy_set_header Host truenas.pc-tips.se;
+        proxy_set_header Connection '';
+        proxy_set_header Authorization '';
+        proxy_hide_header Set-Cookie;
+        proxy_hide_header 'Access-Control-Allow-Origin';
+        proxy_hide_header 'Access-Control-Allow-Methods';
+        proxy_hide_header 'Access-Control-Allow-Headers';
+        proxy_hide_header x-amz-id-2;
+        proxy_hide_header x-amz-request-id;
+        proxy_ignore_headers Set-Cookie;
+
+        proxy_pass $s3_backend$uri;
+        
+        proxy_intercept_errors off;
+        proxy_cache CACHE;
+        proxy_cache_valid 200 48h;
+        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock on;
+
+        expires 1y;
+        add_header Cache-Control "public";
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header X-Cache-Status $upstream_cache_status;
+        add_header X-Content-Type-Options "nosniff";
+        add_header Content-Security-Policy "default-src 'none'; form-action 'none'";
+      }
+    }
+---
+# 2. Deployment for the nginx proxy pod.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-s3-proxy
+  namespace: mastodon
+  labels:
+    app: mastodon-s3-proxy
+spec:
+  replicas: 2 # Recommend at least 2 for availability
+  selector:
+    matchLabels:
+      app: mastodon-s3-proxy
+  template:
+    metadata:
+      labels:
+        app: mastodon-s3-proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/proxy.conf
+              subPath: proxy.conf
+            - name: cache-volume
+              mountPath: /var/cache/nginx
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: mastodon-s3-proxy-config
+        # emptyDir is sufficient for ephemeral cache. For persistence across pod restarts, use a PVC.
+        - name: cache-volume
+          emptyDir: {}
+---
+# 3. Internal ClusterIP service to expose the proxy to the Gateway.
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-s3-proxy-internal-svc
+  namespace: mastodon
+spec:
+  type: ClusterIP
+  selector:
+    app: mastodon-s3-proxy
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

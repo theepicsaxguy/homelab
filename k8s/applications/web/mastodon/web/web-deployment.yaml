@@ -37,9 +37,7 @@ spec:
             - secretRef:
                 name: mastodon-db-url
             - configMapRef:
-                name: mastodon-common-env
-            - configMapRef:
-                name: mastodon-web-env
+                name: mastodon-env
           volumeMounts:
             - name: mastodon-public
               mountPath: /mastodon/public/system

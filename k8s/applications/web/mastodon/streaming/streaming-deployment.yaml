@@ -32,9 +32,10 @@ spec:
             - secretRef:
                 name: mastodon-app-secrets
             - configMapRef:
-                name: mastodon-common-env
-            - configMapRef:
-                name: mastodon-streaming-env
+                name: mastodon-env
+          env:
+            - name: PORT
+              value: "4000"
           livenessProbe:
             httpGet:
               path: /api/v1/streaming/health

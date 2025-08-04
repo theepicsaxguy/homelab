@@ -10,3 +10,4 @@ resources:
   - elasticsearch
   - networking
   - storage
+  - proxy # <-- ADD THIS LINE
