@@ -67,7 +67,7 @@ spec:
 
 ## Content Delivery
 
-Media and static assets are served from `cdn.goingdark.social` through an internal Nginx proxy backed by MinIO. The environment ConfigMap exposes the host to Mastodon's Content Security Policy:
+Media and static assets are served from `cdn.goingdark.social` through an internal Nginx proxy backed by MinIO. Mastodon trusts this host via the `EXTRA_MEDIA_HOSTS` variable; `CDN_HOST` stays unset so Rails keeps serving its own compiled assets:
 
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
@@ -75,7 +75,6 @@ configMapGenerator:
   - name: mastodon-env
     literals:
       - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
-      - CDN_HOST=https://cdn.goingdark.social
 ```
 
 ## Sidekiq Resources
