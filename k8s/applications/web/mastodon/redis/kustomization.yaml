@@ -6,5 +6,5 @@ helmCharts:
   - name: redis
     releaseName: mastodon-redis
     repo: https://charts.bitnami.com/bitnami
-    version: 21.2.13
+    version: 21.2.14
     valuesFile: values.yaml
