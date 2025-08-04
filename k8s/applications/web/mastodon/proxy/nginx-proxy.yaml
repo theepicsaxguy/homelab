@@ -1,5 +1,5 @@
 # /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
-
+# /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
 # 1. ConfigMap for the nginx configuration.
 apiVersion: v1
 kind: ConfigMap
@@ -22,12 +22,13 @@ data:
         try_files $uri @s3;
       }
 
-      # Variable to force DNS re-resolution
-      # Path-style for MinIO: include the bucket from S3_BUCKET=mastodata
+      # Variable to force DNS re‐resolution
+      # Path‐style for MinIO: include the bucket from S3_BUCKET=mastodata
       set $s3_backend 'https://truenas.pc-tips.se:9000/mastodata';
 
-            location @s3 {
-        limit_except GET {
+      location @s3 {
+        # allow both GET and HEAD (for cache probes and curl -I)
+        limit_except GET HEAD {
           deny all;
         }
 
