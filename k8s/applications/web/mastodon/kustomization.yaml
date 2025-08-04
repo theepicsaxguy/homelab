@@ -22,7 +22,14 @@ configMapGenerator:
     - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
     - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
     - ES_ENABLED=false
-    - S3_ENABLED=false
+    - S3_ENABLED=true
+    - S3_REGION=us-east-1
+    - S3_BUCKET=mastodata
+    - S3_SIGNATURE_VERSION=v4
+    - S3_OVERRIDE_PATH_STYLE=true
+    - S3_PROTOCOL=https
+    - S3_ALIAS_HOST=cdn.goingdark.social
+    - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
     - RAILS_LOG_TO_STDOUT=true
     - SINGLE_USER_MODE=false
     - DISABLE_AUTOMATIC_SWITCHING_TO_APPROVED_REGISTRATIONS=true
@@ -79,6 +86,9 @@ resources:
 - pvc-public.yaml
 - pvc-es.yaml
 - sidekiq-deployment.yaml
+- httproute-s3.yaml
+- svc-s3-proxy.yaml
+- backendtls-s3.yaml
 #- es-deployment.yaml
 #- tor-pvc.yaml
 #- tor-deployment.yaml
