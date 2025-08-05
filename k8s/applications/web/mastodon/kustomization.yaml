@@ -9,5 +9,4 @@ resources:
   - postgres
   - elasticsearch
   - networking
-  - storage
   - proxy
