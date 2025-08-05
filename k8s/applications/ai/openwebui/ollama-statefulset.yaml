@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: ollama
-        image: ollama/ollama:0.10.1 # renovate: docker=ollama/ollama
+        image: ollama/ollama:0.11.0 # renovate: docker=ollama/ollama
         imagePullPolicy: IfNotPresent
         env:
           - name: HOME
