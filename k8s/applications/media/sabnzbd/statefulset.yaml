@@ -27,7 +27,7 @@ spec:
     spec:
       initContainers:
         - name: seed-config
-          image: busybox:1.37
+          image: alpine:latest
           envFrom:
             - secretRef:
                 name: sabnzbd-secrets
