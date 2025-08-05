@@ -50,6 +50,19 @@ configMapGenerator:
   - SMTP_ENABLE_STARTTLS=never
 ```
 
+## Captcha
+
+New accounts must solve an hCaptcha challenge. The site and secret keys come from the same `mastodon-app-secrets` ExternalSecret:
+
+```yaml
+# k8s/applications/web/mastodon/base/externalsecret.yaml
+data:
+  - secretKey: HCAPTCHA_SITE_KEY
+    remoteRef: { key: app-mastodon-hcaptcha-site-key }
+  - secretKey: HCAPTCHA_SECRET_KEY
+    remoteRef: { key: app-mastodon-hcaptcha-secret-key }
+```
+
 ## Media Storage
 
 Attachments are stored on a Persistent Volume Claim named `mastodon-public-pvc`.
