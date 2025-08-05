@@ -16,4 +16,4 @@ Credentials are stored in Bitwarden. An `ExternalSecret` pulls the API key and U
 
 ## Configuration seeding
 
-An init container renders `sabnzbd.ini` from a ConfigMap template. If the file already exists, the container skips seeding.
+An init container renders `sabnzbd.ini` from a ConfigMap template, substituting secrets into the file before copying it. If the file already exists, the container skips seeding.
