@@ -1,6 +1,3 @@
-# /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
-# /k8s/applications/web/mastodon/proxy/nginx-proxy.yaml
-# 1. ConfigMap for the nginx configuration.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,76 +5,127 @@ metadata:
   namespace: mastodon
 data:
   proxy.conf: |
-    # Required for proxy_cache to work
-    proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHE:10m inactive=48h max_size=10g;
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Global (http-level) cache, TLS trust, and conditional slicing
+    # ──────────────────────────────────────────────────────────────────────────────
 
+    proxy_cache_path /var/cache/nginx levels=1:2
+                     keys_zone=CACHE:512m
+                     max_size=8g
+                     inactive=48h
+                     use_temp_path=off;
+
+    open_file_cache           max=10000 inactive=60s;
+    open_file_cache_valid     30s;
+    open_file_cache_min_uses  2;
+
+    # Trust store for upstream TLS verification (applies everywhere below)
+    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    proxy_ssl_verify_depth 3;
+
+    # Enable slice module globally; only send Range for selected extensions
+    slice 4m;
+    map $uri $slice_header {
+      default "";
+      ~*\.(mp4|m4v|mov|webm|mp3|aac|opus)$ $slice_range;
+    }
+
+    # Static upstream
+    upstream minio {
+      zone minio 64k;
+      keepalive 32;
+      server truenas.pc-tips.se:9000;
+    }
+
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Shielding server
+    # ──────────────────────────────────────────────────────────────────────────────
     server {
       listen 80;
       server_name cdn.goingdark.social;
+      server_tokens off;
+      access_log off;
 
-      # Use Kubernetes DNS for dynamic resolution of the ExternalName service
-      resolver kube-dns.kube-system.svc.cluster.local valid=5s;
+      sendfile on; tcp_nopush on; tcp_nodelay on;
 
-      location / {
-        try_files $uri @s3;
-      }
+      proxy_connect_timeout 5s;
+      proxy_read_timeout    120s;
+      proxy_send_timeout    120s;
 
-      # Variable to force DNS re‐resolution
-      # Path‐style for MinIO: include the bucket from S3_BUCKET=mastodata
-      set $s3_backend 'https://truenas.pc-tips.se:9000/mastodata';
+      # Only set Range when $slice_header is non-empty (videos/audio)
+      proxy_set_header Range $slice_header;
 
-      location @s3 {
-        # allow both GET and HEAD (for cache probes and curl -I)
-        limit_except GET HEAD {
-          deny all;
-        }
+      # 1) Direct /mastodata/ (fast path)
+      location ^~ /mastodata/ {
+        limit_except GET HEAD { deny all; }
 
-        proxy_set_header Host truenas.pc-tips.se;
-        proxy_set_header Connection '';
-        proxy_set_header Authorization '';
-        proxy_hide_header Set-Cookie;
-        proxy_hide_header 'Access-Control-Allow-Origin';
-        proxy_hide_header 'Access-Control-Allow-Methods';
-        proxy_hide_header 'Access-Control-Allow-Headers';
-        proxy_hide_header x-amz-id-2;
-        proxy_hide_header x-amz-request-id;
-        proxy_hide_header x-amz-meta-server-side-encryption;
-        proxy_hide_header x-amz-server-side-encryption;
-        proxy_hide_header x-amz-bucket-region;
-        proxy_hide_header x-amzn-requestid;
-        proxy_ignore_headers Set-Cookie;
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
 
-        proxy_pass $s3_backend$uri;
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        # Dedupe cache across bare vs /mastodata after rewrite
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
 
         proxy_intercept_errors off;
-        proxy_cache CACHE;
-        proxy_cache_valid 200 48h;
-        proxy_cache_use_stale error timeout updating http_500 http_502 http_503 http_504;
-        proxy_cache_lock on;
+      }
 
-        expires 1y;
-        add_header Cache-Control "public";
-        add_header 'Access-Control-Allow-Origin' '*';
-        add_header X-Cache-Status $upstream_cache_status;
-        add_header X-Content-Type-Options "nosniff";
-        add_header Content-Security-Policy "default-src 'none'; form-action 'none'";
+      # 2) Catch-all → rewrite once → proxy
+      location / {
+        limit_except GET HEAD { deny all; }
+
+        rewrite ^/(.*)$ /mastodata/$1 break;
+
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
+
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
+
+        proxy_intercept_errors off;
       }
     }
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mastodon-s3-proxy-cache-pvc
-  namespace: mastodon
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 10Gi
-  storageClassName: longhorn
----
 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -86,7 +134,7 @@ metadata:
   labels:
     app: mastodon-s3-proxy
 spec:
-  replicas: 2 # Recommend at least 2 for availability
+  replicas: 2
   selector:
     matchLabels:
       app: mastodon-s3-proxy
@@ -117,16 +165,18 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+              ephemeral-storage: "12Gi"
             requests:
               cpu: "250m"
               memory: "128Mi"
+              ephemeral-storage: "12Gi"
       volumes:
         - name: nginx-config
           configMap:
             name: mastodon-s3-proxy-config
         - name: cache-volume
-          persistentVolumeClaim:
-            claimName: mastodon-s3-proxy-cache-pvc
+          emptyDir:
+            sizeLimit: 10Gi
 ---
 apiVersion: v1
 kind: Service

@@ -1,6 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 namespace: media
 
 resources:
@@ -15,16 +14,20 @@ generatorOptions:
 configMapGenerator:
   - name: sabnzbd-env-config
     literals:
-      # [misc] section
       - SABNZBD__MISC__HOST_WHITELIST="sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
       - SABNZBD__MISC__PORT="8080"
-      - SABNZBD__MISC__CACHE_LIMIT="256M"
       - SABNZBD__MISC__DOWNLOAD_DIR="/downloads/incomplete"
       - SABNZBD__MISC__COMPLETE_DIR="/app/data/downloads"
-      # [[news.newshosting.com]] section
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__ENABLE="1"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__NAME="news.newshosting.com"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__DISPLAYNAME="news.newshosting.com"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__HOST="news.newshosting.com"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__PORT="563"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__TIMEOUT="60"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__CONNECTIONS="30"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL="1"
-      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__ENABLE="1"
+      - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL_VERIFY="3"
+
+  - name: sabnzbd-template-config
+    files:
+      - sabnzbd.ini=config/sabnzbd.ini
