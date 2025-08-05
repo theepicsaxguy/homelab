@@ -37,9 +37,7 @@ spec:
             - |
               set -e
               echo "Seeding sabnzbd.ini to /config"
-              if [ ! -f /config/sabnzbd.ini ]; then
-                envsubst < /config-template/sabnzbd.ini > /config/sabnzbd.ini
-              fi
+              envsubst < /config-template/sabnzbd.ini > /config/sabnzbd.ini
               mkdir -p /downloads/incomplete /app/data/downloads
               chown -R 2501:2501 /config /downloads /app/data
           volumeMounts:
