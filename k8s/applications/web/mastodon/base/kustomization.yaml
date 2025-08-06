@@ -10,19 +10,33 @@ configMapGenerator:
     - RAILS_ENV=production
     - NODE_ENV=production
     - TZ=Europe/Stockholm
-    - DB_HOST=mastodon-postgresql
+    - DB_HOST=mastodon-postgresql-pooler
     - DB_PORT=5432
     - DB_NAME=mastodon
     - PGSSLMODE=disable
     - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
     - REDIS_URL=redis://mastodon-redis-master:6379/0
-    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/0
-    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/0
-    - ES_ENABLED=false
+    - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
+    - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+    # --- Elasticsearch ---
+    - ES_ENABLED=true
+    - ES_HOST=http://mastodon-es:9200
+    - ES_PORT=9200
+    - ES_PRESET=single_node_cluster
+    # --- Read Replica ---
+    - REPLICA_DB_HOST=mastodon-postgresql-replicas
+    - REPLICA_DB_PORT=5432
+    - REPLICA_DB_NAME=mastodon
+    - REPLICA_PREPARED_STATEMENTS=false
+    - REPLICA_DB_TASKS=false
+    # --- Prometheus ---
+    - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
+    - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
     - SINGLE_USER_MODE=false
     - RAILS_LOG_TO_STDOUT=true
-    - PREPARED_STATEMENTS=true
+    - PREPARED_STATEMENTS=false
+    - DB_POOL=10
     # --- Federation & Privacy ---
     - FETCH_REPLIES_ENABLED=true
     - IP_RETENTION_PERIOD=15552000
