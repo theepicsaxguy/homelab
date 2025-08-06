@@ -27,7 +27,7 @@ spec:
     spec:
       initContainers:
         - name: seed-config
-          image: alpine:latest
+          image: busybox:1.37
           envFrom:
             - secretRef:
                 name: sabnzbd-secrets
@@ -35,11 +35,15 @@ spec:
             - sh
             - -c
             - |
-              set -e
+              set -euo pipefail
               echo "Seeding sabnzbd.ini to /config"
+              command -v envsubst >/dev/null || { echo "envsubst not found" >&2; exit 1; }
               envsubst < /config-template/sabnzbd.ini > /config/sabnzbd.ini
+              echo "Rendered sabnzbd.ini"
               mkdir -p /downloads/incomplete /app/data/downloads
+              echo "Prepared download directories"
               chown -R 2501:2501 /config /downloads /app/data
+              echo "Config seed complete"
           volumeMounts:
             - name: config
               mountPath: /config
