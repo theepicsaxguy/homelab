@@ -109,16 +109,16 @@ resources:
 ## Container Images
 
 This deployment uses the Glitch-soc variant of Mastodon for additional features.
-All components reference the `nightly.2025-07-31` tag:
+All components reference the `v4.4.3` tag:
 
 ```yaml
 # k8s/applications/web/mastodon/web-deployment.yaml
-image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
+image: ghcr.io/glitch-soc/mastodon:v4.4.3
 
 # k8s/applications/web/mastodon/sidekiq-deployment.yaml
-image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
+image: ghcr.io/glitch-soc/mastodon:v4.4.3
 
 # k8s/applications/web/mastodon/streaming-deployment.yaml
-image: ghcr.io/glitch-soc/mastodon-streaming:nightly.2025-07-31
+image: ghcr.io/glitch-soc/mastodon-streaming:v4.4.3
 ```
 
