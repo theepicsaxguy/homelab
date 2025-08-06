@@ -21,11 +21,11 @@ configMapGenerator:
     - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
     # --- Elasticsearch ---
     - ES_ENABLED=true
-    - ES_HOST=http://mastodon-es:9200
+    - ES_HOST=mastodon-es
     - ES_PORT=9200
     - ES_PRESET=single_node_cluster
     # --- Read Replica ---
-    - REPLICA_DB_HOST=mastodon-postgresql-replicas
+    - REPLICA_DB_HOST=mastodon-postgresql-replicas-pooler
     - REPLICA_DB_PORT=5432
     - REPLICA_DB_NAME=mastodon
     - REPLICA_PREPARED_STATEMENTS=false
