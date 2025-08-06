@@ -26,7 +26,7 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
-          image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
+          image: ghcr.io/glitch-soc/mastodon:v4.4.3
           command: ["/bin/bash", "-c", "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"]
           ports:
             - name: http
