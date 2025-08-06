@@ -17,7 +17,7 @@ spec:
   enableLogicalBackup: true
   postgresql:
     version: "17"
-  enableConnectionPooler: false
+  enableConnectionPooler: true
   resources:
     requests:
       cpu: 200m

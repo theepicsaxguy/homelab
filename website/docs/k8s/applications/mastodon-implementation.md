@@ -16,6 +16,37 @@ configMapGenerator:
       - PGSSLMODE=disable
 ```
 
+## Connection Pooling
+
+The Postgres operator enables PgBouncer, Rails points to the pooler service, and prepared statements stay disabled. The database pool matches the total Puma threads.
+
+```yaml
+# k8s/applications/web/mastodon/postgres/database.yaml
+spec:
+  enableConnectionPooler: true
+
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - DB_HOST=mastodon-postgresql-pooler
+      - PREPARED_STATEMENTS=false
+      - DB_POOL=10
+```
+
+## Redis
+
+Sidekiq queues and application cache use separate Redis databases.
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
+      - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+```
+
 ## Email Configuration
 
 Mastodon sends emails through an SMTP server. The credentials and settings come from the `mastodon-app-secrets` ExternalSecret:
@@ -102,8 +133,26 @@ resources:
     cpu: "200m"
     memory: "512Mi"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+      cpu: "1000m"
+      memory: "2Gi"
+```
+
+## Scaling
+
+Two replicas run for web, streaming, and Sidekiq deployments.
+
+```yaml
+# k8s/applications/web/mastodon/web/web-deployment.yaml
+spec:
+  replicas: 2
+
+# k8s/applications/web/mastodon/streaming/streaming-deployment.yaml
+spec:
+  replicas: 2
+
+# k8s/applications/web/mastodon/sidekiq/sidekiq-deployment.yaml
+spec:
+  replicas: 2
 ```
 
 ## Container Images
