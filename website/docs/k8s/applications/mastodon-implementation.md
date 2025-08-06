@@ -34,6 +34,52 @@ configMapGenerator:
       - DB_POOL=10
 ```
 
+## Elasticsearch
+
+Full-text search and hashtag discovery rely on Elasticsearch. The deployment enables it and points Rails at the internal service:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - ES_ENABLED=true
+      - ES_HOST=http://mastodon-es:9200
+      - ES_PORT=9200
+      - ES_PRESET=single_node_cluster
+```
+
+## Read replica
+
+Rails sends read-only queries to the standby database when these variables are present:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - REPLICA_DB_HOST=mastodon-postgresql-replicas
+      - REPLICA_DB_PORT=5432
+      - REPLICA_DB_NAME=mastodon
+      - REPLICA_DB_USER=$DB_USER
+      - REPLICA_DB_PASS=$DB_PASS
+      - REPLICA_PREPARED_STATEMENTS=false
+      - REPLICA_DB_TASKS=false
+```
+
+## Metrics
+
+Prometheus metrics expose runtime information for scraping:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
+      - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
+```
+
 ## Redis
 
 Sidekiq queues and application cache use separate Redis databases.

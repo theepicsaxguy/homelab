@@ -19,7 +19,22 @@ configMapGenerator:
     - REDIS_URL=redis://mastodon-redis-master:6379/0
     - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
     - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
-    - ES_ENABLED=false
+    # --- Elasticsearch ---
+    - ES_ENABLED=true
+    - ES_HOST=http://mastodon-es:9200
+    - ES_PORT=9200
+    - ES_PRESET=single_node_cluster
+    # --- Read Replica ---
+    - REPLICA_DB_HOST=mastodon-postgresql-replicas
+    - REPLICA_DB_PORT=5432
+    - REPLICA_DB_NAME=mastodon
+    - REPLICA_DB_USER=$(DB_USER)
+    - REPLICA_DB_PASS=$(DB_PASS)
+    - REPLICA_PREPARED_STATEMENTS=false
+    - REPLICA_DB_TASKS=false
+    # --- Prometheus ---
+    - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
+    - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
     - SINGLE_USER_MODE=false
     - RAILS_LOG_TO_STDOUT=true
     - PREPARED_STATEMENTS=false

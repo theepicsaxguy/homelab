@@ -26,7 +26,7 @@ spec:
           image: docker.elastic.co/elasticsearch/elasticsearch:9.1.0
           env:
             - name: ES_JAVA_OPTS
-              value: "-Xms512m -Xmx512m -Des.enforce.bootstrap.checks=true"
+              value: "-Xms1024m -Xmx1024m -Des.enforce.bootstrap.checks=true"
             - name: discovery.type
               value: "single-node"
             - name: xpack.license.self_generated.type
@@ -45,9 +45,9 @@ spec:
             - containerPort: 9200
           resources:
             requests:
-              memory: "512Mi"
-            limits:
               memory: "1Gi"
+            limits:
+              memory: "2Gi"
           livenessProbe:
             httpGet:
               path: /_cluster/health
