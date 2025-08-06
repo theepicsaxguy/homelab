@@ -28,8 +28,7 @@ configMapGenerator:
     - REPLICA_DB_HOST=mastodon-postgresql-replicas
     - REPLICA_DB_PORT=5432
     - REPLICA_DB_NAME=mastodon
-    - REPLICA_DB_USER=$(DB_USER)
-    - REPLICA_DB_PASS=$(DB_PASS)
+    # REPLICA_DB_USER and REPLICA_DB_PASS should be set via Secret, not ConfigMap
     - REPLICA_PREPARED_STATEMENTS=false
     - REPLICA_DB_TASKS=false
     # --- Prometheus ---
