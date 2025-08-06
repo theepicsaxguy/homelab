@@ -18,12 +18,13 @@ configMapGenerator:
 
 ## Connection Pooling
 
-The Postgres operator enables PgBouncer, Rails points to the pooler service, and prepared statements stay disabled. The database pool matches the total Puma threads.
+The Postgres operator pools connections for both the primary and replica. Rails targets the pooler service and disables prepared statements. The database pool matches the total Puma threads.
 
 ```yaml
 # k8s/applications/web/mastodon/postgres/database.yaml
 spec:
   enableConnectionPooler: true
+  enableReplicaConnectionPooler: true
 
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:

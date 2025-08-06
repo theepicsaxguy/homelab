@@ -18,6 +18,7 @@ spec:
   postgresql:
     version: "17"
   enableConnectionPooler: true
+  enableReplicaConnectionPooler: true
   resources:
     requests:
       cpu: 200m
