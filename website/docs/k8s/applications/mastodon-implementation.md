@@ -50,6 +50,17 @@ configMapGenerator:
       - ES_PRESET=single_node_cluster
 ```
 
+The pod raises `vm.max_map_count` to `262144`. Kubernetes blocks that sysctl under the `restricted` PodSecurity profile, so the namespace uses the `baseline` policy instead:
+
+```yaml
+# k8s/applications/web/mastodon/base/namespace.yaml
+metadata:
+  name: mastodon
+  labels:
+    podsecurity.kubernetes.io/enforce: baseline
+    podsecurity.kubernetes.io/enforce-version: latest
+```
+
 ## Read replica
 
 Rails sends read-only queries to the standby database when these variables are present:
