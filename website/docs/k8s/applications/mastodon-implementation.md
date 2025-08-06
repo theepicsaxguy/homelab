@@ -6,14 +6,38 @@ This note summarizes the Mastodon configuration relevant for the Kubernetes mani
 
 ## Database Connection
 
-Sidekiq fails to start when `PGSSLMODE` is set to `require`. The manifests disable SSL to align with the Zalando Postgres Operator:
+PgBouncer terminates TLS, but Rails only reads the `DB_SSLMODE` variable. The manifests disable SSL so Rails connects over plaintext:
 
 ```yaml
-# k8s/applications/web/mastodon/kustomization.yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
   - name: mastodon-env
     literals:
-      - PGSSLMODE=disable
+      - DB_SSLMODE=disable
+```
+
+## Database Migrations
+
+The web pods no longer run migrations. A pre-install and pre-upgrade Job performs them once per rollout:
+
+```yaml
+# k8s/applications/web/mastodon/web/migrate-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: ghcr.io/glitch-soc/mastodon:v4.4.3
+          command:
+            - /bin/bash
+            - -c
+            - bundle exec rails db:migrate
+      restartPolicy: OnFailure
 ```
 
 ## Connection Pooling
