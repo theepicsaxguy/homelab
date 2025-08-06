@@ -17,6 +17,8 @@ spec:
   enableLogicalBackup: true
   postgresql:
     version: "17"
+    parameters:
+      ssl: "off"
   enableConnectionPooler: true
   enableReplicaConnectionPooler: true
   resources:
