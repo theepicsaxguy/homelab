@@ -16,6 +16,84 @@ configMapGenerator:
       - PGSSLMODE=disable
 ```
 
+## Connection Pooling
+
+The Postgres operator pools connections for both the primary and replica. Rails targets the pooler service and disables prepared statements. The database pool matches the total Puma threads.
+
+```yaml
+# k8s/applications/web/mastodon/postgres/database.yaml
+spec:
+  enableConnectionPooler: true
+  enableReplicaConnectionPooler: true
+
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - DB_HOST=mastodon-postgresql-pooler
+      - PREPARED_STATEMENTS=false
+      - DB_POOL=10
+```
+
+## Elasticsearch
+
+Full-text search and hashtag discovery rely on Elasticsearch. The deployment enables it and points Rails at the internal service:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - ES_ENABLED=true
+      - ES_HOST=http://mastodon-es:9200
+      - ES_PORT=9200
+      - ES_PRESET=single_node_cluster
+```
+
+## Read replica
+
+Rails sends read-only queries to the standby database when these variables are present:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - REPLICA_DB_HOST=mastodon-postgresql-replicas
+      - REPLICA_DB_PORT=5432
+      - REPLICA_DB_NAME=mastodon
+      - REPLICA_DB_USER=$DB_USER
+      - REPLICA_DB_PASS=$DB_PASS
+      - REPLICA_PREPARED_STATEMENTS=false
+      - REPLICA_DB_TASKS=false
+```
+
+## Metrics
+
+Prometheus metrics expose runtime information for scraping:
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
+      - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
+```
+
+## Redis
+
+Sidekiq queues and application cache use separate Redis databases.
+
+```yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
+configMapGenerator:
+  - name: mastodon-env
+    literals:
+      - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
+      - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+```
+
 ## Email Configuration
 
 Mastodon sends emails through an SMTP server. The credentials and settings come from the `mastodon-app-secrets` ExternalSecret:
@@ -102,8 +180,26 @@ resources:
     cpu: "200m"
     memory: "512Mi"
   limits:
-    cpu: "1000m"
-    memory: "2Gi"
+      cpu: "1000m"
+      memory: "2Gi"
+```
+
+## Scaling
+
+Two replicas run for web, streaming, and Sidekiq deployments.
+
+```yaml
+# k8s/applications/web/mastodon/web/web-deployment.yaml
+spec:
+  replicas: 2
+
+# k8s/applications/web/mastodon/streaming/streaming-deployment.yaml
+spec:
+  replicas: 2
+
+# k8s/applications/web/mastodon/sidekiq/sidekiq-deployment.yaml
+spec:
+  replicas: 2
 ```
 
 ## Container Images
