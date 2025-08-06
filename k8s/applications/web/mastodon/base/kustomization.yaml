@@ -10,7 +10,7 @@ configMapGenerator:
     - RAILS_ENV=production
     - NODE_ENV=production
     - TZ=Europe/Stockholm
-    - DB_HOST=mastodon-postgresql-pooler
+    - DB_HOST=mastodon-postgresql
     - DB_PORT=5432
     - DB_NAME=mastodon
     - DB_SSLMODE=disable
@@ -25,7 +25,7 @@ configMapGenerator:
     - ES_PORT=9200
     - ES_PRESET=single_node_cluster
     # --- Read Replica ---
-    - REPLICA_DB_HOST=mastodon-postgresql-replicas-pooler
+    - REPLICA_DB_HOST=mastodon-postgresql-repl
     - REPLICA_DB_PORT=5432
     - REPLICA_DB_NAME=mastodon
     - REPLICA_PREPARED_STATEMENTS=false
