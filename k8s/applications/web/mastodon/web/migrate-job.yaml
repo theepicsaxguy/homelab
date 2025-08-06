@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mastodon-migrate
+  namespace: mastodon
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+spec:
+  template:
+    spec:
+      serviceAccountName: mastodon-eso-reader
+      containers:
+        - name: migrate
+          image: ghcr.io/glitch-soc/mastodon:v4.4.3
+          command:
+            - /bin/bash
+            - -c
+            - bundle exec rails db:migrate
+          envFrom:
+            - secretRef: { name: mastodon-app-secrets }
+            - secretRef: { name: mastodon-db-url }
+            - configMapRef: { name: mastodon-env }
+      restartPolicy: OnFailure
