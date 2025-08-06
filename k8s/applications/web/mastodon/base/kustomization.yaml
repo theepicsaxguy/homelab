@@ -13,7 +13,7 @@ configMapGenerator:
     - DB_HOST=mastodon-postgresql-pooler
     - DB_PORT=5432
     - DB_NAME=mastodon
-    - PGSSLMODE=disable
+    - PGSSLMODE=require
     - REDIS_HOST=mastodon-redis-master
     - REDIS_PORT=6379
     - REDIS_URL=redis://mastodon-redis-master:6379/0
