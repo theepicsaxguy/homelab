@@ -6,14 +6,16 @@ This note summarizes the Mastodon configuration relevant for the Kubernetes mani
 
 ## Database Connection
 
-PgBouncer terminates TLS, but Rails only reads the `DB_SSLMODE` variable. The manifests disable SSL so Rails connects over plaintext:
+Rails connects to PgBouncer over TLS and validates the certificate. The CA comes from the `mastodon-postgresql-server` secret and is mounted into each pod:
 
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
   - name: mastodon-env
     literals:
-      - DB_SSLMODE=disable
+      - DB_HOST=mastodon-postgresql-pooler
+      - DB_SSLMODE=verify-ca
+      - DB_SSLROOTCERT=/etc/ssl/certs/pgbouncer-ca.crt
 ```
 
 ## Database Migrations
@@ -42,7 +44,7 @@ spec:
 
 ## Connection Pooling
 
-The Postgres operator pools connections for both the primary and replica. Rails targets the pooler service and disables prepared statements. The database pool matches the total Puma threads.
+The Postgres operator pools connections for both the primary and replica. Rails targets the pooler service, disables prepared statements, and sets the pool size to match the total Puma threads.
 
 ```yaml
 # k8s/applications/web/mastodon/postgres/database.yaml
@@ -54,7 +56,6 @@ spec:
 configMapGenerator:
   - name: mastodon-env
     literals:
-      - DB_HOST=mastodon-postgresql-pooler
       - PREPARED_STATEMENTS=false
       - DB_POOL=10
 ```
@@ -94,11 +95,9 @@ Rails sends read-only queries to the standby database when these variables are p
 configMapGenerator:
   - name: mastodon-env
     literals:
-      - REPLICA_DB_HOST=mastodon-postgresql-replicas
+      - REPLICA_DB_HOST=mastodon-postgresql-repl
       - REPLICA_DB_PORT=5432
       - REPLICA_DB_NAME=mastodon
-      - REPLICA_DB_USER=$DB_USER
-      - REPLICA_DB_PASS=$DB_PASS
       - REPLICA_PREPARED_STATEMENTS=false
       - REPLICA_DB_TASKS=false
 ```
