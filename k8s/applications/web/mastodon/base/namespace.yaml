@@ -3,5 +3,6 @@ kind: Namespace
 metadata:
   name: mastodon
   labels:
-    podsecurity.kubernetes.io/enforce: baseline
-    podsecurity.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

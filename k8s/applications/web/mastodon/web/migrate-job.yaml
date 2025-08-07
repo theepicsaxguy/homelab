@@ -3,8 +3,6 @@ kind: Job
 metadata:
   name: mastodon-migrate
   namespace: mastodon
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
 spec:
   template:
     spec:
