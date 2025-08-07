@@ -1,18 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-
-helmCharts:
-- name: pgbouncer
-  releaseName: pgbouncer
-  version: 2.8.1
-  repo: https://icoretech.github.io/helm
-  valuesFile: values.yaml
-
+namespace: mastodon
 resources:
   - database.yaml
   - db-secrets.yaml
   - postgresql-server-cert.yaml
   - mastodon-postgresql-ca.yaml
   - externalsecret.yaml
-  
+  - pgbouncer.yaml
