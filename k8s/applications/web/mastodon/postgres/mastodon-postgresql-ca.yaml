@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-postgresql-ca
+  namespace: mastodon
+spec:
+  secretName: mastodon-postgresql-ca
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  commonName: mastodon-postgresql-ca
+  isCA: true
+  duration: 87600h # 10 years
+  renewBefore: 43800h # 5 years
+  usages:
+    - digital signature
+    - key encipherment
+    - cert sign

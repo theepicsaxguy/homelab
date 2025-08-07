@@ -38,11 +38,15 @@ spec:
                 name: mastodon-db-url
             - configMapRef:
                 name: mastodon-env
+          env:
+            - name: DB_SSLMODE
+              value: verify-ca
+            - name: DB_SSLROOTCERT
+              value: /opt/mastodon/.postgresql/root.crt
           volumeMounts:
-            - name: pgbouncer-ca
-              mountPath: /etc/ssl/certs/pgbouncer-ca.crt
-              subPath: pgbouncer-ca.crt
-              readOnly: true
+            - name: db-ca
+              mountPath: /opt/mastodon/.postgresql/root.crt
+              subPath: ca.crt
           livenessProbe:
             httpGet:
               path: /health
@@ -63,9 +67,9 @@ spec:
               cpu: "2000m"
               memory: "4Gi"
       volumes:
-        - name: pgbouncer-ca
+        - name: db-ca
           secret:
             secretName: mastodon-postgresql-server
             items:
               - key: ca.crt
-                path: pgbouncer-ca.crt
+                path: ca.crt
