@@ -14,7 +14,7 @@ configMapGenerator:
       - DB_PORT=5432
       - DB_NAME=mastodon
       - DB_SSLMODE=verify-ca
-      - DB_SSLROOTCERT=/etc/ssl/certs/pgbouncer-ca.crt
+      - DB_SSLROOTCERT=/opt/mastodon/.postgresql/root.crt
       - REDIS_HOST=mastodon-redis-master
       - REDIS_PORT=6379
       - REDIS_URL=redis://mastodon-redis-master:6379/0

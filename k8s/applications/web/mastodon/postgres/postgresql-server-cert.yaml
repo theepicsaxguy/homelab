@@ -1,0 +1,24 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-postgresql-server
+  namespace: mastodon
+spec:
+  secretName: mastodon-postgresql-server
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+  commonName: mastodon-postgresql.mastodon.svc
+  dnsNames:
+    - mastodon-postgresql.mastodon.svc
+    - mastodon-postgresql
+    - mastodon-postgresql.mastodon.svc.cluster.local
+    - mastodon-postgresql.mastodon.svc.kube.pc-tips.se
+    - mastodon-postgresql-pooler
+    - mastodon-postgresql-pooler.mastodon.svc
+  duration: 2160h       # 90 days
+  renewBefore: 360h     # renew 15 days before expiry
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
