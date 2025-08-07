@@ -22,11 +22,11 @@ spec:
         - name: sidekiq
           image: ghcr.io/glitch-soc/mastodon:v4.4.3
           args:
-          - bundle
-          - exec
-          - sidekiq
-          - -C
-          - /opt/mastodon/config/sidekiq.yml
+            - bundle
+            - exec
+            - sidekiq
+            - -C
+            - /opt/mastodon/config/sidekiq.yml
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
@@ -34,6 +34,11 @@ spec:
                 name: mastodon-db-url
             - configMapRef:
                 name: mastodon-env
+          volumeMounts:
+            - name: pgbouncer-ca
+              mountPath: /etc/ssl/certs/pgbouncer-ca.crt
+              subPath: pgbouncer-ca.crt
+              readOnly: true
           livenessProbe:
             exec:
               command: ["sh", "-c", "ps aux | grep '[s]idekiq\\ 7'"]
@@ -55,3 +60,10 @@ spec:
               drop: ["ALL"]
             seccompProfile:
               type: RuntimeDefault
+      volumes:
+        - name: pgbouncer-ca
+          secret:
+            secretName: mastodon-postgresql-server
+            items:
+              - key: ca.crt
+                path: pgbouncer-ca.crt
