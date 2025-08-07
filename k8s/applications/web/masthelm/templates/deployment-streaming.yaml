@@ -1,0 +1,182 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mastodon.fullname" . }}-streaming
+  labels:
+    {{- include "mastodon.labels" . | nindent 4 }}
+    {{- with .Values.mastodon.streaming.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with .Values.deploymentAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.mastodon.streaming.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.mastodon.streaming.replicas }}
+  {{- if (ne (toString .Values.mastodon.revisionHistoryLimit) "<nil>") }}
+  revisionHistoryLimit: {{ .Values.mastodon.revisionHistoryLimit }}
+  {{- end }}
+  {{- if .Values.mastodon.streaming.updateStrategy }}
+  strategy: {{- toYaml .Values.mastodon.streaming.updateStrategy | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mastodon.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: streaming
+  template:
+    metadata:
+      annotations:
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.mastodon.streaming.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        # roll the pods to pick up any db migrations or other changes
+        {{- include "mastodon.rollingPodAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "mastodon.globalLabels" . | nindent 8 }}
+        {{- include "mastodon.selectorLabels" . | nindent 8 }}
+        {{- with .Values.mastodon.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.mastodon.streaming.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app.kubernetes.io/component: streaming
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mastodon.serviceAccountName" . }}
+      {{- with (default .Values.podSecurityContext .Values.mastodon.streaming.podSecurityContext) }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mastodon.streaming.extraCerts }}
+      {{- $name := .name | default "extra-certs" }}
+      volumes:
+        - name: {{ $name }}
+          secret:
+            secretName: {{ .existingSecret }}
+            items:
+            - key: ca.crt
+              path: trusted-ca.crt
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-streaming
+          {{- with (default .Values.securityContext .Values.mastodon.streaming.securityContext) }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.mastodon.streaming.image.repository }}:{{ coalesce .Values.mastodon.streaming.image.tag .Values.image.tag .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - node
+            - ./streaming
+          {{- with .Values.mastodon.streaming.extraCerts }}
+          {{- $name := .name | default "extra-certs" }}
+          volumeMounts:
+          - name: {{ $name }}
+            mountPath: "/usr/local/share/ca-certificates"
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "mastodon.fullname" . }}-env
+            {{- if .Values.mastodon.extraEnvFrom }}
+            - configMapRef:
+                name: {{ .Values.mastodon.extraEnvFrom }}
+            {{- end}}
+          env:
+            {{- with .Values.mastodon.streaming.extraCerts }}
+            - name: "NODE_EXTRA_CA_CERTS"
+              value: "/usr/local/share/ca-certificates/trusted-ca.crt"
+            {{- with .sslMode }}
+            - name: "DB_SSLMODE"
+              value: {{ . }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.postgresql.postgresqlReplicaHostname }}
+            - name: "DB_HOST"
+              value: {{ . }}
+            {{- end }}
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.postgresql.secretName" . }}
+                  key: password
+            {{- if .Values.postgresql.readReplica.auth.existingSecret }}
+            - name: "REPLICA_DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgresql.readReplica.auth.existingSecret }}
+                  key: password
+            {{- end }}
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.secretName" . }}
+                  key: redis-password
+            {{- if and .Values.redis.sidekiq.enabled .Values.redis.sidekiq.auth.existingSecret }}
+            - name: "SIDEKIQ_REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.sidekiq.secretName" . }}
+                  key: redis-password
+            {{- end }}
+            {{- if and .Values.redis.cache.enabled .Values.redis.cache.auth.existingSecret }}
+            - name: "CACHE_REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.cache.secretName" . }}
+                  key: redis-password
+            {{- end }}
+            - name: "PORT"
+              value: {{ .Values.mastodon.streaming.port | quote }}
+            {{- range $k, $v := .Values.mastodon.streaming.extraEnvVars }}
+            - name: {{ $k }}
+              value: {{ quote $v }}
+            {{- end }}
+          ports:
+            - name: streaming
+              containerPort: {{ .Values.mastodon.streaming.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          readinessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          startupProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+            initialDelaySeconds: 5
+            failureThreshold: 15
+            periodSeconds: 5
+          {{- with (default .Values.resources .Values.mastodon.streaming.resources) }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with coalesce .Values.mastodon.streaming.nodeSelector .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with (default .Values.affinity .Values.mastodon.streaming.affinity) }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with (default .Values.topologySpreadConstraints .Values.mastodon.streaming.topologySpreadConstraints) }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

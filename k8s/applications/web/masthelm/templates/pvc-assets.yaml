@@ -1,0 +1,16 @@
+{{- if and (not .Values.mastodon.s3.enabled) (not .Values.mastodon.persistence.assets.existingClaim) -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "mastodon.fullname" . }}-assets
+  labels:
+    {{- include "mastodon.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.mastodon.persistence.assets.accessMode }}
+  {{- with .Values.mastodon.persistence.assets.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  storageClassName: {{ .Values.mastodon.persistence.assets.storageClassName }}
+{{- end }}

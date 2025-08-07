@@ -1,0 +1,7 @@
+{{- if and .Values.mastodon.hooks.dbPrepare.enabled (not .Values.postgresql.enabled) }}
+{{- include "mastodon.dbMigrateJob" (merge (dict "prepare" true ) .) }}
+      {{- with coalesce .Values.mastodon.hooks.dbPrepare.nodeSelector .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+{{- end }}

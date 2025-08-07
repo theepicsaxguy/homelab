@@ -1,0 +1,283 @@
+{{- $context := . }}
+{{- range .Values.mastodon.sidekiq.workers }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mastodon.fullname" $context }}-sidekiq-{{ .name }}
+  labels:
+    {{- include "mastodon.labels" $context | nindent 4 }}
+    {{- with $context.Values.mastodon.sidekiq.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: sidekiq-{{ .name }}
+    app.kubernetes.io/part-of: rails
+  annotations:
+    {{- with $context.Values.deploymentAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with $context.Values.mastodon.sidekiq.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if (has "scheduler" .queues) }}
+    {{- if (gt (int .replicas) 1) }}
+      {{ fail "The scheduler queue should never have more than 1 replicas" }}
+    {{- end }}
+  {{- end }}
+  {{- if $context.Values.mastodon.sidekiq.updateStrategy }}
+  strategy: {{- toYaml $context.Values.mastodon.sidekiq.updateStrategy | nindent 4 }}
+  {{- end }}
+  replicas: {{ .replicas }}
+  {{- if (ne (toString $context.Values.mastodon.revisionHistoryLimit) "<nil>") }}
+  revisionHistoryLimit: {{ $context.Values.mastodon.revisionHistoryLimit }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mastodon.selectorLabels" $context | nindent 6 }}
+      app.kubernetes.io/component: sidekiq-{{ .name }}
+      app.kubernetes.io/part-of: rails
+  template:
+    metadata:
+      annotations:
+        {{- with $context.Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with $context.Values.mastodon.sidekiq.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        # roll the pods to pick up any db migrations or other changes
+        {{- include "mastodon.rollingPodAnnotations" $context | nindent 8 }}
+        checksum/config-secrets-smtp: {{ include ( print $.Template.BasePath "/secret-smtp.yaml" ) $context | sha256sum | quote }}
+      labels:
+        {{- include "mastodon.globalLabels" $context | nindent 8 }}
+        {{- include "mastodon.selectorLabels" $context | nindent 8 }}
+        {{- include "mastodon.statsdExporterLabels" $context | nindent 8 }}
+        {{- with $context.Values.mastodon.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with $context.Values.mastodon.sidekiq.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app.kubernetes.io/component: sidekiq-{{ .name }}
+        app.kubernetes.io/part-of: rails
+    spec:
+      {{- with $context.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "mastodon.serviceAccountName" $context }}
+      {{- with (default $context.Values.podSecurityContext $context.Values.mastodon.sidekiq.podSecurityContext) }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with (default (default $context.Values.affinity $context.Values.mastodon.sidekiq.affinity) .affinity) }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with (default (default $context.Values.topologySpreadConstraints $context.Values.mastodon.sidekiq.topologySpreadConstraints) .topologySpreadConstraints) }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- if (not $context.Values.mastodon.s3.enabled) }}
+        - name: assets
+          persistentVolumeClaim:
+            claimName: {{ template "mastodon.pvc.assets" $context }}
+        - name: system
+          persistentVolumeClaim:
+            claimName: {{ template "mastodon.pvc.system" $context }}
+      {{- end }}
+      {{- include "mastodon.statsdExporterVolume" $ | indent 8 }}
+      {{- if dig "customDatabaseConfigYml" "configMapRef" "name" false . }}
+        - name: config-database-yml
+          configMap:
+            name: {{ .customDatabaseConfigYml.configMapRef.name }}
+      {{- end }}
+      {{- with $context.Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $context.Chart.Name }}
+          {{- with $context.Values.mastodon.sidekiq.securityContext | default $context.Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ coalesce (dig "image" "repository" false .) $context.Values.image.repository }}:{{ coalesce (dig "image" "tag" false .) $context.Values.image.tag $context.Chart.AppVersion }}"
+          imagePullPolicy: {{ $context.Values.image.pullPolicy }}
+          command:
+            - bundle
+            - exec
+            - sidekiq
+            - -c
+            - {{ .concurrency | quote }}
+            {{- range .queues }}
+            - -q
+            - {{ . | quote }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "mastodon.fullname" $context }}-env
+            - secretRef:
+                name: {{ template "mastodon.secretName" $context }}
+            {{- if $context.Values.mastodon.extraEnvFrom }}
+            - configMapRef:
+                name: {{ $context.Values.mastodon.extraEnvFrom }}
+            {{- end}}
+          env:
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.postgresql.secretName" $context }}
+                  key: password
+            {{- if $context.Values.postgresql.readReplica.auth.existingSecret }}
+            - name: "REPLICA_DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.postgresql.readReplica.auth.existingSecret }}
+                  key: password
+            {{- end }}
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.secretName" $context }}
+                  key: redis-password
+            {{- if and $context.Values.redis.sidekiq.enabled $context.Values.redis.sidekiq.auth.existingSecret }}
+            - name: "SIDEKIQ_REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.sidekiq.secretName" $context }}
+                  key: redis-password
+            {{- end }}
+            {{- if and $context.Values.redis.cache.enabled $context.Values.redis.cache.auth.existingSecret }}
+            - name: "CACHE_REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "mastodon.redis.cache.secretName" $context }}
+                  key: redis-password
+            {{- end }}
+            {{- if and $context.Values.elasticsearch.existingSecret (or $context.Values.elasticsearch.enabled $context.Values.elasticsearch.hostname) }}
+            - name: "ES_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.elasticsearch.existingSecret }}
+                  key: password
+            {{- end }}
+            - name: "SMTP_LOGIN"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mastodon.smtp.secretName" $context }}
+                  key: login
+                  optional: true
+            - name: "SMTP_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mastodon.smtp.secretName" $context }}
+                  key: password
+                  optional: true
+            {{- if $context.Values.mastodon.smtp.bulk.enabled }}
+            - name: "BULK_SMTP_LOGIN"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mastodon.smtp.bulk.secretName" $context }}
+                  key: login
+                  optional: true
+            - name: "BULK_SMTP_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mastodon.smtp.bulk.secretName" $context }}
+                  key: password
+                  optional: true
+            {{- end }}
+            {{- if (and $context.Values.mastodon.s3.enabled $context.Values.mastodon.s3.existingSecret) }}
+            - name: "AWS_SECRET_ACCESS_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.mastodon.s3.existingSecret }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: "AWS_ACCESS_KEY_ID"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.mastodon.s3.existingSecret }}
+                  key: AWS_ACCESS_KEY_ID
+            {{- end }}
+            {{- if and $context.Values.mastodon.deepl.enabled }}
+            - name: "DEEPL_API_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.mastodon.deepl.apiKeySecretRef.name }}
+                  key: {{ $context.Values.mastodon.deepl.apiKeySecretRef.key }}
+            {{- end }}
+            {{- if and $context.Values.mastodon.cacheBuster.enabled $context.Values.mastodon.cacheBuster.authToken.existingSecret }}
+            - name: CACHE_BUSTER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $context.Values.mastodon.cacheBuster.authToken.existingSecret }}
+                  key: password
+            {{- end }}
+            {{- if or $context.Values.mastodon.sidekiq.otel.enabled (and $context.Values.mastodon.otel.enabled (ne $context.Values.mastodon.sidekiq.otel.enabled false)) }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ coalesce $context.Values.mastodon.sidekiq.otel.endpointUri $context.Values.mastodon.otel.endpointUri }}
+            - name: OTEL_SERVICE_NAME_PREFIX
+              value: {{ coalesce $context.Values.mastodon.sidekiq.otel.namePrefix $context.Values.mastodon.otel.namePrefix }}
+            - name: OTEL_SERVICE_NAME_SEPARATOR
+              value: "{{ coalesce $context.Values.mastodon.sidekiq.otel.nameSeparator $context.Values.mastodon.otel.nameSeparator }}"
+            {{- end }}
+            {{- if $context.Values.mastodon.metrics.prometheus.enabled }}
+            - name: MASTODON_PROMETHEUS_EXPORTER_ENABLED
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_LOCAL
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_HOST
+              value: "0.0.0.0"
+            - name: MASTODON_PROMETHEUS_EXPORTER_PORT
+              value: "{{ $context.Values.mastodon.metrics.prometheus.port }}"
+            {{- if $context.Values.mastodon.metrics.prometheus.sidekiq.detailed }}
+            - name: MASTODON_PROMETHEUS_EXPORTER_SIDEKIQ_DETAILED_METRICS
+              value: "true"
+            {{- end }}
+            {{- end }}
+          {{- if $context.Values.mastodon.metrics.prometheus.enabled }}
+          ports:
+            - name: prometheus
+              containerPort: {{ $context.Values.mastodon.metrics.prometheus.port }}
+          {{- end }}
+          volumeMounts:
+          {{- if (not $context.Values.mastodon.s3.enabled) }}
+            - name: assets
+              mountPath: /opt/mastodon/public/assets
+            - name: system
+              mountPath: /opt/mastodon/public/system
+          {{- end }}
+          {{- if dig "customDatabaseConfigYml" "configMapRef" "name" false . }}
+            - name: config-database-yml
+              mountPath: /opt/mastodon/config/database.yml
+              subPath: {{ .customDatabaseConfigYml.configMapRef.key }}
+          {{- end }}
+          {{- with $context.Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if $context.Values.mastodon.sidekiq.readinessProbe.enabled }}
+          readinessProbe:
+            failureThreshold: {{ default 10 $context.Values.mastodon.sidekiq.readinessProbe.failureThreshold }}
+            exec:
+              command:
+              - cat
+              - {{ required "A valid sidekiq readiness path is required." $context.Values.mastodon.sidekiq.readinessProbe.path }}
+            initialDelaySeconds: {{ default 10 $context.Values.mastodon.sidekiq.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ default 2 $context.Values.mastodon.sidekiq.readinessProbe.periodSeconds }}
+            successThreshold: {{ default 1 $context.Values.mastodon.sidekiq.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ default 1 $context.Values.mastodon.sidekiq.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          resources:
+            {{- toYaml (default (default $context.Values.resources $context.Values.mastodon.sidekiq.resources) .resources) | nindent 12 }}
+      {{- include "mastodon.statsdExporterContainer" $ | indent 8 }}
+      {{- with coalesce .nodeSelector $context.Values.mastodon.sidekiq.nodeSelector $context.Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with $context.Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
