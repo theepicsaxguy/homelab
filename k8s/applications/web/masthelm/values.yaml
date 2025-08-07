@@ -88,7 +88,7 @@ mastodon:
       bucket: mastodata
       acl: public-read
       secretRef:
-        name:
+        name: mastodon-s3-credentials                          # ← fill your Secret name
         keys:
           accesKeyId: acces-key-id
           secretAccessKey: secret-access-key
@@ -265,12 +265,12 @@ mastodon:
     workers:
       - name: default         # split worker for default queue
         queues: [default]
-        concurrency: 25
-        replicas: 1
+        concurrency: 50
+        replicas: 2
       - name: push            # split worker for push queue
         queues: [push]
-        concurrency: 15
-        replicas: 1
+        concurrency: 25
+        replicas: 2
     #- name: push-pull
     #  concurrency: 50
     #  resources: {}
@@ -344,7 +344,7 @@ mastodon:
     # a different domain/subdomain.
     base_url: null
     # -- Number of Streaming Pods running
-    replicas: 2             # updated from 1
+    replicas: 4             # updated from 1
     # -- Affinity for Streaming Pods, overwrites .Values.affinity
     affinity: {}
     # -- Node(s) on which we will deploy the streaming pods
@@ -420,7 +420,7 @@ mastodon:
   web:
     port: 3000
     # -- Number of Web Pods running
-    replicas: 1
+    replicas: 3
     # -- Affinity for Web Pods, overwrites .Values.affinity
     affinity: {}
     # -- Node(s) on which we will deploy the web pods
@@ -472,8 +472,8 @@ mastodon:
     workers: "3"       # updated from "2"
     persistentTimeout: "20"
     image:
-      repository:
-      tag:
+      repository: ghcr.io/mastodon/mastodon                     # ← pin your web image
+      tag: "4.4.3"
     # allows you to mount a custom database.yml from a configmap
     # for example if you want to use a read-only replica
     customDatabaseConfigYml:
@@ -552,28 +552,15 @@ mastodon:
 
 
 ingress:
-  enabled: false
+  enabled: true
   annotations:
-    # For choosing an ingress ingressClassName is preferred over annotations
-    # kubernetes.io/ingress.class: nginx
-    #
-    # To automatically request TLS certificates use one of the following
-    # kubernetes.io/tls-acme: "true"
-    # cert-manager.io/cluster-issuer: "letsencrypt"
-    #
-    # ensure that NGINX's upload size matches Mastodon's
-    #   for the K8s ingress controller:
-    # nginx.ingress.kubernetes.io/proxy-body-size: 40m
-    #   for the NGINX ingress controller:
-    # nginx.org/client-max-body-size: 40m
-  # -- you can specify the ingressClassName if it differs from the default
-  ingressClassName:
+    cert-manager.io/cluster-issuer: "letsencrypt"      # ← enable ACME issuance
   hosts:
     - host: goingdark.social
       paths:
         - path: "/"
   tls:
-    - secretName: mastodon-tls
+    - secretName: mastodon-tls                             # ← Cert-Manager will populate this
       hosts:
         - goingdark.social
 
@@ -581,17 +568,15 @@ ingress:
   # When enabled, the main ingress will no longer handle streaming requests.
   # You will also need to configure mastodon.streaming.base_url accordingly
   streaming:
-    enabled: false
+    enabled: true
     annotations:
-    ingressClassName:
+      cert-manager.io/cluster-issuer: "letsencrypt"        # ← TLS for streaming API
     hosts:
       - host: streaming.goingdark.social
         paths:
           - path: "/"
     tls:
-      - secretName: mastodon-tls
-        hosts:
-          - streaming.goingdark.social
+      - secretName: mastodon-tls                             # ← reuse same Issuer/secret
 
 # Configuration for Elasticsearch.
 # When enabled, the bitnami helm chart is used for Elasticsearch deployment, and
@@ -677,12 +662,21 @@ postgresql:
     # with a key of password set to the password you want
     existingSecret: mastodon-db-url  # MUST expose key `password`
 
-  # Options for a read-only replica.
-  # If enabled, mastodon uses existing defaults for postgres for these values as well.
-  # NOTE: This feature is only available on Mastodon v4.2+
-  # Documentation for more information on this feature:
-  # https://docs.joinmastodon.org/admin/scaling/#read-replicas
+  # → enable connection-pooler (PgBouncer) to cap DB connections
+  pgbouncer:
+    enabled: true
+    replicaCount: 2
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  # → send heavy reads to replicas
   readReplica:
+    enabled: true
     hostname: mastodon-postgresql-repl
     port: 5432
     auth:
@@ -722,7 +716,14 @@ redis:
     # with a key of redis-password set to the password you want
     # existingSecret: ""
   replica:
-    replicaCount: 0
+    # → run at least 2 replicas for HA & sharding
+    replicaCount: 2
+
+  # → turn on Sentinel for failover
+  sentinel:
+    enabled: true
+    masterSet: mastodon-redis-master
+    replicaCount: 2
 
   # Configuration for a separate redis instance only for sidekiq processing.
   # If enabled, any values not specified will be copied from the base config.
@@ -932,7 +933,13 @@ timezone: Europe/Stockholm  # updated from UTC
 # Please note that you need to use `matchLabelKeys` (Kubernetes 1.25+) if you
 # want to spread each deployment independently, or override topologySpreadConstraints
 # for each deployment
-topologySpreadConstraints: {}
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/instance: your-release-name
 
 # Default volume mounts for all mastodon pods
 volumeMounts: []
@@ -940,3 +947,5 @@ volumeMounts: []
 # Default volumes for all mastodon pods
 volumes: []
 # @ignored
+
+
