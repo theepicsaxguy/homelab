@@ -17,10 +17,14 @@ spec:
   enableLogicalBackup: true
   postgresql:
     version: "17"
-    parameters:
-      ssl: "off"
+  spiloFSGroup: 103
+  tls:
+    secretName: mastodon-postgresql-server
+    caSecretName: mastodon-postgresql-ca
+    caFile: ca.crt
   enableConnectionPooler: true
   enableReplicaConnectionPooler: true
+
   resources:
     requests:
       cpu: 200m

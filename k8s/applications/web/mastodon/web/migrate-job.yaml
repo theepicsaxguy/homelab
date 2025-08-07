@@ -24,15 +24,14 @@ spec:
             - configMapRef:
                 name: mastodon-env
           volumeMounts:
-            - name: pgbouncer-ca
-              mountPath: /etc/ssl/certs/pgbouncer-ca.crt
-              subPath: pgbouncer-ca.crt
-              readOnly: true
+            - name: db-ca
+              mountPath: /opt/mastodon/.postgresql/root.crt
+              subPath: ca.crt
       restartPolicy: OnFailure
       volumes:
-        - name: pgbouncer-ca
+        - name: db-ca
           secret:
             secretName: mastodon-postgresql-server
             items:
               - key: ca.crt
-                path: pgbouncer-ca.crt
+                path: ca.crt
