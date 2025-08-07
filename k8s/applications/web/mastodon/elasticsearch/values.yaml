@@ -70,7 +70,7 @@ clusterDomain: cluster.local
 extraDeploy: []
 ## @param namespaceOverride String to fully override common.names.namespace
 ##
-namespaceOverride: ""
+namespaceOverride: "mastodon"
 ## @param usePasswordFiles Mount credentials as files instead of using environment variables
 ##
 usePasswordFiles: true
