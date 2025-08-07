@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: mastodontest
-  labels:
-    podsecurity.kubernetes.io/enforce: baseline
-    podsecurity.kubernetes.io/enforce-version: latest
