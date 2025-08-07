@@ -23,7 +23,7 @@ spec:
 
       containers:
         - name: elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:9.1.0
+          image: docker.elastic.co/elasticsearch/elasticsearch:9.1.1
           env:
             - name: ES_JAVA_OPTS
               value: "-Xms1024m -Xmx1024m -Des.enforce.bootstrap.checks=true"
