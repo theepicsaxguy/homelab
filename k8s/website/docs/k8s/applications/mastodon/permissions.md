@@ -32,5 +32,5 @@ npm run build
 
 ### See also
 
-*   [Mastodon Deployment Manifest](https://github.com/your-repo/k8s/blob/main/applications/web/mastodon/deployment.yaml)
+*   [Mastodon Deployment Manifest](https://github.com/theepicsaxguy/homelab/k8s/blob/main/applications/web/mastodon/deployment.yaml)
 *   [Mastodon Kustomization](http://github.com/theepicsaxguy/homelab/blob/main/applications/web/mastodon/kustomization.yaml)
