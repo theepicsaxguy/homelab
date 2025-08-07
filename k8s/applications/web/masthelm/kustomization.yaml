@@ -1,14 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: mastodonv2
+namespace: mastodon
 
 helmCharts:
-- name:
-  releaseName:
-  repo:
-  valuesFile: values.yaml
+- name: mastodon
+  releaseName: masthelm
   version: 4.4.3
+  valuesFile: values.yaml
+- name: PgBouncer
+  releaseName: PgBouncer
+  version: 2.8.1
+  valuesFile: values.yaml
+
 
 resources:
   - namespace.yaml
