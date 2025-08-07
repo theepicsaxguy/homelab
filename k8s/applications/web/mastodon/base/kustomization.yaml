@@ -18,8 +18,9 @@ configMapGenerator:
       - REDIS_HOST=mastodon-redis-master
       - REDIS_PORT=6379
       - REDIS_URL=redis://mastodon-redis-master:6379/0
-      # - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
-      # - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+      - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
+      - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+      - STREAMING_REDIS_URL=redis://mastodon-redis-master:6379/3
       # --- Elasticsearch ---
       - ES_ENABLED=true
       - ES_HOST=release-name-elasticsearch
@@ -37,7 +38,7 @@ configMapGenerator:
       - SINGLE_USER_MODE=false
       - RAILS_LOG_TO_STDOUT=true
       - PREPARED_STATEMENTS=false
-      - DB_POOL=10
+      - DB_POOL=15
       # --- Federation & Privacy ---
       - FETCH_REPLIES_ENABLED=true
       - IP_RETENTION_PERIOD=15552000

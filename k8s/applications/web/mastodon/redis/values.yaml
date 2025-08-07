@@ -5,6 +5,13 @@ auth:
 
 fullnameOverride: mastodon-redis
 
+# Enable multiple databases
+commonConfiguration: |-
+  databases 16
+  maxclients 10000
+  timeout 0
+  tcp-keepalive 300
+
 primary:
   persistence:
     enabled: true

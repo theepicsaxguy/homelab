@@ -8,4 +8,3 @@ resources:
   - postgresql-server-cert.yaml
   - mastodon-postgresql-ca.yaml
   - externalsecret.yaml
-  - pgbouncer.yaml

@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mastodon-streaming
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mastodon-streaming
@@ -31,6 +31,8 @@ spec:
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
+            - secretRef:
+                name: mastodon-db-url
             - configMapRef:
                 name: mastodon-env
           volumeMounts:
