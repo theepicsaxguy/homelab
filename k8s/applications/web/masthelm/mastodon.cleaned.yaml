@@ -1,0 +1,3324 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    podsecurity.kubernetes.io/enforce: baseline
+    podsecurity.kubernetes.io/enforce-version: latest
+  name: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-coordinating
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-data
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-ingest
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-master
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-postgresql
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-redis
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mastodon-eso-reader
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: mastodon-mastodon
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels: {}
+  name: pgbouncer
+  namespace: mastodon
+spec: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: eso-store-role
+  namespace: mastodon
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - selfsubjectrulesreviews
+    verbs:
+      - create
+spec: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eso-store-rolebinding
+  namespace: mastodon
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: eso-store-role
+subjects:
+  - kind: ServiceAccount
+    name: mastodon-eso-reader
+    namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  redis.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  replica.conf: |-
+    dir /data
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+  sentinel.conf: |-
+    dir "/tmp"
+    port 26379
+    sentinel monitor mastodon-redis-master mastodon-redis-node-0.mastodon-redis-headless.default.svc.cluster.local 6379 2
+    sentinel down-after-milliseconds mastodon-redis-master 60000
+    sentinel failover-timeout mastodon-redis-master 180000
+    sentinel parallel-syncs mastodon-redis-master 1
+    # User-supplied sentinel configuration:
+    # End of sentinel configuration
+kind: ConfigMap
+metadata:
+  labels: {}
+  name: mastodon-redis-configuration
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  parse_sentinels.awk: |-
+    /ip/ {FOUND_IP=1}
+    /port/ {FOUND_PORT=1}
+    /runid/ {FOUND_RUNID=1}
+    !/ip|port|runid/ {
+      if (FOUND_IP==1) {
+        IP=$1; FOUND_IP=0;
+      }
+      else if (FOUND_PORT==1) {
+        PORT=$1;
+        FOUND_PORT=0;
+      } else if (FOUND_RUNID==1) {
+        printf "\nsentinel known-sentinel mastodon-redis-master %s %s %s", IP, PORT, $0; FOUND_RUNID=0;
+      }
+    }
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+    [[ -n "$REDIS_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      redis-cli \
+        -h $REDIS_MASTER_HOST \
+        -p $REDIS_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_sentinel.sh: |-
+    #!/bin/bash
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      redis-cli \
+        -h localhost \
+        -p $REDIS_SENTINEL_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+kind: ConfigMap
+metadata:
+  labels: {}
+  name: mastodon-redis-health
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  prestop-redis.sh: |
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/libvalidations.sh
+    . /opt/bitnami/scripts/libos.sh
+
+    run_redis_command() {
+        if is_boolean_yes "$REDIS_TLS_ENABLED"; then
+            redis-cli -h 127.0.0.1 -p "$REDIS_TLS_PORT" --tls --cert "$REDIS_TLS_CERT_FILE" --key "$REDIS_TLS_KEY_FILE" --cacert "$REDIS_TLS_CA_FILE" "$@"
+        else
+            redis-cli -h 127.0.0.1 -p "$REDIS_PORT" "$@"
+        fi
+    }
+    is_master() {
+        REDIS_ROLE=$(run_redis_command role | head -1)
+        [[ "$REDIS_ROLE" == "master" ]]
+    }
+
+    HEADLESS_SERVICE="mastodon-redis-headless.default.svc.cluster.local"
+
+    get_full_hostname() {
+        hostname="$1"
+        full_hostname="${hostname}.${HEADLESS_SERVICE}"
+        echo "${full_hostname}"
+    }
+
+    run_sentinel_command() {
+        if is_boolean_yes "$REDIS_SENTINEL_TLS_ENABLED"; then
+            redis-cli -h "$REDIS_SERVICE" -p "$REDIS_SENTINEL_PORT" --tls --cert "$REDIS_SENTINEL_TLS_CERT_FILE" --key "$REDIS_SENTINEL_TLS_KEY_FILE" --cacert "$REDIS_SENTINEL_TLS_CA_FILE" sentinel "$@"
+        else
+            redis-cli -h "$REDIS_SERVICE" -p "$REDIS_SENTINEL_PORT" sentinel "$@"
+        fi
+    }
+    sentinel_failover_finished() {
+        REDIS_SENTINEL_INFO=($(run_sentinel_command get-master-addr-by-name "mastodon-redis-master"))
+        REDIS_MASTER_HOST="${REDIS_SENTINEL_INFO[0]}"
+        [[ "$REDIS_MASTER_HOST" != "$(get_full_hostname $HOSTNAME)" ]]
+    }
+
+    REDIS_SERVICE="mastodon-redis.default.svc.cluster.local"
+
+    # redis-cli automatically consumes credentials from the REDISCLI_AUTH variable
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    [[ -f "$REDIS_PASSWORD_FILE" ]] && export REDISCLI_AUTH="$(< "${REDIS_PASSWORD_FILE}")"
+
+
+    if is_master && ! sentinel_failover_finished; then
+        echo "I am the master pod and you are stopping me. Pausing client connections."
+        # Pausing client write connections to avoid data loss
+        run_redis_command CLIENT PAUSE "22000" WRITE
+
+        echo "Issuing failover"
+        # if I am the master, issue a command to failover once
+        run_sentinel_command failover "mastodon-redis-master"
+        echo "Waiting for sentinel to complete failover for up to 20s"
+        retry_while "sentinel_failover_finished" "20" 1
+    else
+        exit 0
+    fi
+  prestop-sentinel.sh: |
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/libvalidations.sh
+    . /opt/bitnami/scripts/libos.sh
+
+    HEADLESS_SERVICE="mastodon-redis-headless.default.svc.cluster.local"
+
+    get_full_hostname() {
+        hostname="$1"
+        full_hostname="${hostname}.${HEADLESS_SERVICE}"
+        echo "${full_hostname}"
+    }
+
+    run_sentinel_command() {
+        if is_boolean_yes "$REDIS_SENTINEL_TLS_ENABLED"; then
+            redis-cli -h "$REDIS_SERVICE" -p "$REDIS_SENTINEL_PORT" --tls --cert "$REDIS_SENTINEL_TLS_CERT_FILE" --key "$REDIS_SENTINEL_TLS_KEY_FILE" --cacert "$REDIS_SENTINEL_TLS_CA_FILE" sentinel "$@"
+        else
+            redis-cli -h "$REDIS_SERVICE" -p "$REDIS_SENTINEL_PORT" sentinel "$@"
+        fi
+    }
+    sentinel_failover_finished() {
+      REDIS_SENTINEL_INFO=($(run_sentinel_command get-master-addr-by-name "mastodon-redis-master"))
+      REDIS_MASTER_HOST="${REDIS_SENTINEL_INFO[0]}"
+      [[ "$REDIS_MASTER_HOST" != "$(get_full_hostname $HOSTNAME)" ]]
+    }
+
+    REDIS_SERVICE="mastodon-redis.default.svc.cluster.local"
+
+    # redis-cli automatically consumes credentials from the REDISCLI_AUTH variable
+    [[ -n "$REDIS_PASSWORD" ]] && export REDISCLI_AUTH="$REDIS_PASSWORD"
+    [[ -f "$REDIS_PASSWORD_FILE" ]] && export REDISCLI_AUTH="$(< "${REDIS_PASSWORD_FILE}")"
+
+    if ! sentinel_failover_finished; then
+        echo "I am the master pod and you are stopping me. Starting sentinel failover"
+        if retry_while "sentinel_failover_finished" "20" 1; then
+            echo "Master has been successfuly failed over to a different pod."
+            exit 0
+        else
+            echo "Master failover failed"
+            exit 1
+        fi
+    else
+        exit 0
+    fi
+  start-node.sh: |
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/libos.sh
+    . /opt/bitnami/scripts/liblog.sh
+    . /opt/bitnami/scripts/libvalidations.sh
+
+    get_port() {
+        hostname="$1"
+        type="$2"
+
+        port_var=$(echo "${hostname^^}_SERVICE_PORT_$type" | sed "s/-/_/g")
+        port=${!port_var}
+
+        if [ -z "$port" ]; then
+            case $type in
+                "SENTINEL")
+                    echo 26379
+                    ;;
+                "REDIS")
+                    echo 6379
+                    ;;
+            esac
+        else
+            echo $port
+        fi
+    }
+
+    get_full_hostname() {
+        hostname="$1"
+        full_hostname="${hostname}.${HEADLESS_SERVICE}"
+        echo "${full_hostname}"
+    }
+
+    REDISPORT=$(get_port "$HOSTNAME" "REDIS")
+
+    HEADLESS_SERVICE="mastodon-redis-headless.default.svc.cluster.local"
+
+    if [ -n "$REDIS_EXTERNAL_MASTER_HOST" ]; then
+        REDIS_SERVICE="$REDIS_EXTERNAL_MASTER_HOST"
+    else
+        REDIS_SERVICE="mastodon-redis.default.svc.cluster.local"
+    fi
+
+    SENTINEL_SERVICE_PORT=$(get_port "mastodon-redis" "SENTINEL")
+    validate_quorum() {
+        if is_boolean_yes "$REDIS_TLS_ENABLED"; then
+            quorum_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT --tls --cert ${REDIS_TLS_CERT_FILE} --key ${REDIS_TLS_KEY_FILE} --cacert ${REDIS_TLS_CA_FILE} sentinel master mastodon-redis-master"
+        else
+            quorum_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT sentinel master mastodon-redis-master"
+        fi
+        info "about to run the command: $quorum_info_command"
+        eval $quorum_info_command | grep -Fq "s_down"
+    }
+
+    trigger_manual_failover() {
+        if is_boolean_yes "$REDIS_TLS_ENABLED"; then
+            failover_command="REDISCLI_AUTH="\$REDIS_PASSWORD" redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT --tls --cert ${REDIS_TLS_CERT_FILE} --key ${REDIS_TLS_KEY_FILE} --cacert ${REDIS_TLS_CA_FILE} sentinel failover mastodon-redis-master"
+        else
+            failover_command="REDISCLI_AUTH="\$REDIS_PASSWORD" redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT sentinel failover mastodon-redis-master"
+        fi
+
+        info "about to run the command: $failover_command"
+        eval $failover_command
+    }
+
+    get_sentinel_master_info() {
+        if is_boolean_yes "$REDIS_TLS_ENABLED"; then
+            sentinel_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" timeout 90 redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT --tls --cert ${REDIS_TLS_CERT_FILE} --key ${REDIS_TLS_KEY_FILE} --cacert ${REDIS_TLS_CA_FILE} sentinel get-master-addr-by-name mastodon-redis-master"
+        else
+            sentinel_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" timeout 90 redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT sentinel get-master-addr-by-name mastodon-redis-master"
+        fi
+
+        info "about to run the command: $sentinel_info_command"
+        retry_while "eval $sentinel_info_command" 2 5
+    }
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+    [[ -f $REDIS_MASTER_PASSWORD_FILE ]] && export REDIS_MASTER_PASSWORD="$(< "${REDIS_MASTER_PASSWORD_FILE}")"
+
+    # check if there is a master
+    master_in_persisted_conf="$(get_full_hostname "$HOSTNAME")"
+    master_port_in_persisted_conf="$REDIS_MASTER_PORT_NUMBER"
+    master_in_sentinel="$(get_sentinel_master_info)"
+    redisRetVal=$?
+
+    if [[ $redisRetVal -ne 0 ]]; then
+        if [[ "$master_in_persisted_conf" == "$(get_full_hostname "$HOSTNAME")" ]]; then
+            # Case 1: No active sentinel and in previous sentinel.conf we were the master --> MASTER
+            info "Configuring the node as master"
+            export REDIS_REPLICATION_MODE="master"
+        else
+            # Case 2: No active sentinel and in previous sentinel.conf we were not master --> REPLICA
+            info "Configuring the node as replica"
+            export REDIS_REPLICATION_MODE="replica"
+            REDIS_MASTER_HOST=${master_in_persisted_conf}
+            REDIS_MASTER_PORT_NUMBER=${master_port_in_persisted_conf}
+        fi
+    else
+        # Fetches current master's host and port
+        REDIS_SENTINEL_INFO=($(get_sentinel_master_info))
+        info "Current master: REDIS_SENTINEL_INFO=(${REDIS_SENTINEL_INFO[0]},${REDIS_SENTINEL_INFO[1]})"
+        REDIS_MASTER_HOST=${REDIS_SENTINEL_INFO[0]}
+        REDIS_MASTER_PORT_NUMBER=${REDIS_SENTINEL_INFO[1]}
+
+        if [[ "$REDIS_MASTER_HOST" == "$(get_full_hostname "$HOSTNAME")" ]]; then
+            # Case 3: Active sentinel and master it is this node --> MASTER
+            info "Configuring the node as master"
+            export REDIS_REPLICATION_MODE="master"
+        else
+            # Case 4: Active sentinel and master is not this node --> REPLICA
+            info "Configuring the node as replica"
+            export REDIS_REPLICATION_MODE="replica"
+        fi
+    fi
+
+    if [[ -n "$REDIS_EXTERNAL_MASTER_HOST" ]]; then
+      REDIS_MASTER_HOST="$REDIS_EXTERNAL_MASTER_HOST"
+      REDIS_MASTER_PORT_NUMBER="${REDIS_EXTERNAL_MASTER_PORT}"
+    fi
+
+    if [[ -f /opt/bitnami/redis/mounted-etc/replica.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/replica.conf /opt/bitnami/redis/etc/replica.conf
+    fi
+
+    if [[ -f /opt/bitnami/redis/mounted-etc/redis.conf ]];then
+        cp /opt/bitnami/redis/mounted-etc/redis.conf /opt/bitnami/redis/etc/redis.conf
+    fi
+
+    echo "" >> /opt/bitnami/redis/etc/replica.conf
+    echo "replica-announce-port $REDISPORT" >> /opt/bitnami/redis/etc/replica.conf
+    echo "replica-announce-ip $(get_full_hostname "$HOSTNAME")" >> /opt/bitnami/redis/etc/replica.conf
+    ARGS=("--port" "${REDIS_PORT}")
+
+    if [[ "$REDIS_REPLICATION_MODE" = "slave" ]] || [[ "$REDIS_REPLICATION_MODE" = "replica" ]]; then
+        ARGS+=("--replicaof" "${REDIS_MASTER_HOST}" "${REDIS_MASTER_PORT_NUMBER}")
+    fi
+    ARGS+=("--requirepass" "${REDIS_PASSWORD}")
+    ARGS+=("--masterauth" "${REDIS_MASTER_PASSWORD}")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/replica.conf")
+    ARGS+=("--include" "/opt/bitnami/redis/etc/redis.conf")
+    exec redis-server "${ARGS[@]}"
+  start-sentinel.sh: |
+    #!/bin/bash
+
+    . /opt/bitnami/scripts/libos.sh
+    . /opt/bitnami/scripts/libvalidations.sh
+    . /opt/bitnami/scripts/libfile.sh
+
+    HEADLESS_SERVICE="mastodon-redis-headless.default.svc.cluster.local"
+    REDIS_SERVICE="mastodon-redis.default.svc.cluster.local"
+
+    get_port() {
+        hostname="$1"
+        type="$2"
+
+        port_var=$(echo "${hostname^^}_SERVICE_PORT_$type" | sed "s/-/_/g")
+        port=${!port_var}
+
+        if [ -z "$port" ]; then
+            case $type in
+                "SENTINEL")
+                    echo 26379
+                    ;;
+                "REDIS")
+                    echo 6379
+                    ;;
+            esac
+        else
+            echo $port
+        fi
+    }
+
+    get_full_hostname() {
+        hostname="$1"
+        full_hostname="${hostname}.${HEADLESS_SERVICE}"
+        echo "${full_hostname}"
+    }
+
+    SERVPORT=$(get_port "$HOSTNAME" "SENTINEL")
+    REDISPORT=$(get_port "$HOSTNAME" "REDIS")
+    SENTINEL_SERVICE_PORT=$(get_port "mastodon-redis" "SENTINEL")
+
+    sentinel_conf_set() {
+        local -r key="${1:?missing key}"
+        local value="${2:-}"
+
+        # Sanitize inputs
+        value="${value//\\/\\\\}"
+        value="${value//&/\\&}"
+        value="${value//\?/\\?}"
+        [[ "$value" = "" ]] && value="\"$value\""
+
+        replace_in_file "/opt/bitnami/redis-sentinel/etc/sentinel.conf" "^#*\s*${key} .*" "${key} ${value}" false
+    }
+    sentinel_conf_add() {
+        echo $'\n'"$@" >> "/opt/bitnami/redis-sentinel/etc/sentinel.conf"
+    }
+    host_id() {
+        echo "$1" | openssl sha1 | awk '{print $2}'
+    }
+    get_sentinel_master_info() {
+        if is_boolean_yes "$REDIS_SENTINEL_TLS_ENABLED"; then
+            sentinel_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" timeout 90 redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT --tls --cert ${REDIS_SENTINEL_TLS_CERT_FILE} --key ${REDIS_SENTINEL_TLS_KEY_FILE} --cacert ${REDIS_SENTINEL_TLS_CA_FILE} sentinel get-master-addr-by-name mastodon-redis-master"
+        else
+            sentinel_info_command="REDISCLI_AUTH="\$REDIS_PASSWORD" timeout 90 redis-cli -h $REDIS_SERVICE -p $SENTINEL_SERVICE_PORT sentinel get-master-addr-by-name mastodon-redis-master"
+        fi
+        info "about to run the command: $sentinel_info_command"
+        retry_while "eval $sentinel_info_command" 2 5
+    }
+
+    [[ -f $REDIS_PASSWORD_FILE ]] && export REDIS_PASSWORD="$(< "${REDIS_PASSWORD_FILE}")"
+
+    master_in_persisted_conf="$(get_full_hostname "$HOSTNAME")"
+    if ! get_sentinel_master_info && [[ "$master_in_persisted_conf" == "$(get_full_hostname "$HOSTNAME")" ]]; then
+        # No master found, lets create a master node
+        export REDIS_REPLICATION_MODE="master"
+
+        REDIS_MASTER_HOST=$(get_full_hostname "$HOSTNAME")
+        REDIS_MASTER_PORT_NUMBER="$REDISPORT"
+    else
+        export REDIS_REPLICATION_MODE="replica"
+
+        # Fetches current master's host and port
+        REDIS_SENTINEL_INFO=($(get_sentinel_master_info))
+        info "printing REDIS_SENTINEL_INFO=(${REDIS_SENTINEL_INFO[0]},${REDIS_SENTINEL_INFO[1]})"
+        REDIS_MASTER_HOST=${REDIS_SENTINEL_INFO[0]}
+        REDIS_MASTER_PORT_NUMBER=${REDIS_SENTINEL_INFO[1]}
+    fi
+
+    if [[ -n "$REDIS_EXTERNAL_MASTER_HOST" ]]; then
+      REDIS_MASTER_HOST="$REDIS_EXTERNAL_MASTER_HOST"
+      REDIS_MASTER_PORT_NUMBER="${REDIS_EXTERNAL_MASTER_PORT}"
+    fi
+
+    cp /opt/bitnami/redis-sentinel/mounted-etc/sentinel.conf /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    printf "\nsentinel auth-pass %s %s" "mastodon-redis-master" "$REDIS_PASSWORD" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    printf "\nrequirepass %s" "$REDIS_PASSWORD" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    printf "\nsentinel myid %s" "$(host_id "$HOSTNAME")" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+
+    if [[ -z "$REDIS_MASTER_HOST" ]] || [[ -z "$REDIS_MASTER_PORT_NUMBER" ]]
+    then
+        # Prevent incorrect configuration to be written to sentinel.conf
+        error "Redis master host is configured incorrectly (host: $REDIS_MASTER_HOST, port: $REDIS_MASTER_PORT_NUMBER)"
+        exit 1
+    fi
+
+    sentinel_conf_set "sentinel monitor" "mastodon-redis-master "$REDIS_MASTER_HOST" "$REDIS_MASTER_PORT_NUMBER" 2"
+
+    add_known_sentinel() {
+        hostname="$1"
+        ip="$2"
+
+        if [[ -n "$hostname" && -n "$ip" && "$hostname" != "$HOSTNAME" ]]; then
+            sentinel_conf_add "sentinel known-sentinel mastodon-redis-master $(get_full_hostname "$hostname") $(get_port "$hostname" "SENTINEL") $(host_id "$hostname")"
+        fi
+    }
+    add_known_replica() {
+        hostname="$1"
+        ip="$2"
+
+        if [[ -n "$ip" && "$(get_full_hostname "$hostname")" != "$REDIS_MASTER_HOST" ]]; then
+            sentinel_conf_add "sentinel known-replica mastodon-redis-master $(get_full_hostname "$hostname") $(get_port "$hostname" "REDIS")"
+        fi
+    }
+
+    # Add available hosts on the network as known replicas & sentinels
+    for node in $(seq 0 $((2-1))); do
+        hostname="mastodon-redis-node-$node"
+        ip="$(getent hosts "$hostname.$HEADLESS_SERVICE" | awk '{ print $1 }')"
+        add_known_sentinel "$hostname" "$ip"
+        add_known_replica "$hostname" "$ip"
+    done
+
+    echo "" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    echo "sentinel announce-hostnames yes" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    echo "sentinel resolve-hostnames yes" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    echo "sentinel announce-port $SERVPORT" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    echo "sentinel announce-ip $(get_full_hostname "$HOSTNAME")" >> /opt/bitnami/redis-sentinel/etc/sentinel.conf
+    exec redis-server /opt/bitnami/redis-sentinel/etc/sentinel.conf --sentinel
+kind: ConfigMap
+metadata:
+  labels: {}
+  name: mastodon-redis-scripts
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  proxy.conf: |
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Global (http-level) cache, TLS trust, and conditional slicing
+    # ──────────────────────────────────────────────────────────────────────────────
+
+    proxy_cache_path /var/cache/nginx levels=1:2
+                     keys_zone=CACHE:512m
+                     max_size=8g
+                     inactive=48h
+                     use_temp_path=off;
+
+    open_file_cache           max=10000 inactive=60s;
+    open_file_cache_valid     30s;
+    open_file_cache_min_uses  2;
+
+    # Trust store for upstream TLS verification (applies everywhere below)
+    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    proxy_ssl_verify_depth 3;
+
+    # Enable slice module globally; only send Range for selected extensions
+    slice 4m;
+    map $uri $slice_header {
+      default "";
+      ~*\.(mp4|m4v|mov|webm|mp3|aac|opus)$ $slice_range;
+    }
+
+    # Static upstream
+    upstream minio {
+      zone minio 64k;
+      keepalive 32;
+      server truenas.pc-tips.se:9000;
+    }
+
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Shielding server
+    # ──────────────────────────────────────────────────────────────────────────────
+    server {
+      listen 80;
+      server_name cdn.goingdark.social;
+      server_tokens off;
+      access_log off;
+
+      sendfile on; tcp_nopush on; tcp_nodelay on;
+
+      proxy_connect_timeout 5s;
+      proxy_read_timeout    120s;
+      proxy_send_timeout    120s;
+
+      # Only set Range when $slice_header is non-empty (videos/audio)
+      proxy_set_header Range $slice_header;
+
+      # 1) Direct /mastodata/ (fast path)
+      location ^~ /mastodata/ {
+        limit_except GET HEAD { deny all; }
+
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
+
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        # Dedupe cache across bare vs /mastodata after rewrite
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
+
+        proxy_intercept_errors off;
+      }
+
+      # 2) Catch-all → rewrite once → proxy
+      location / {
+        limit_except GET HEAD { deny all; }
+
+        rewrite ^/(.*)$ /mastodata/$1 break;
+
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
+
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
+
+        proxy_intercept_errors off;
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: mastodon-s3-proxy-config
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  CACHE_BUSTER_ENABLED: "true"
+  CACHE_BUSTER_HTTP_METHOD: GET
+  CACHE_REDIS_PORT: "6379"
+  DB_HOST: mastodon-postgresql
+  DB_NAME: mastodon
+  DB_PORT: "5432"
+  DB_USER: mastodon
+  ES_ENABLED: "true"
+  ES_HOST: mastodon-elasticsearch-master-hl
+  ES_PORT: "9200"
+  ES_PRESET: single_node_cluster
+  LOCAL_DOMAIN: goingdark.social
+  MALLOC_ARENA_MAX: "2"
+  NODE_ENV: production
+  PREPARED_STATEMENTS: "true"
+  RAILS_ENV: production
+  REDIS_HOST: mastodon-redis-master
+  REDIS_PORT: "6379"
+  REPLICA_DB_HOST: mastodon-postgresql-repl
+  REPLICA_DB_NAME: mastodon
+  REPLICA_DB_PORT: "5432"
+  REPLICA_DB_USER: mastodon
+  S3_ALIAS_HOST: cdn.goingdark.social
+  S3_BUCKET: mastodata
+  S3_ENABLED: "true"
+  S3_ENDPOINT: https://truenas.pc-tips.se:9000
+  S3_HOSTNAME: truenas.pc-tips.se
+  S3_PERMISSION: public-read
+  S3_PROTOCOL: https
+  S3_REGION: us-west-1
+  SIDEKIQ_REDIS_PORT: "6379"
+  SMTP_AUTH_METHOD: plain
+  SMTP_CA_FILE: /etc/ssl/certs/ca-certificates.crt
+  SMTP_DELIVERY_METHOD: smtp
+  SMTP_ENABLE_STARTTLS: auto
+  SMTP_FROM_ADDRESS: notifications@goingdark.social
+  SMTP_OPENSSL_VERIFY_MODE: peer
+  SMTP_PORT: "587"
+  SMTP_SERVER: smtp.mailgun.org
+  STREAMING_CLUSTER_NUM: "1"
+  TZ: Europe/Stockholm
+kind: ConfigMap
+metadata:
+  labels: {}
+  name: mastodon-mastodon-env
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  pgbouncer.ini: |
+    [databases]
+    [pgbouncer]
+    listen_addr = *
+    listen_port = 5432
+    auth_file = /etc/userlist/userlist.txt
+    admin_users = admin
+    server_reset_query = SELECT pg_advisory_unlock_all()
+    server_reset_query_always = 1
+kind: ConfigMap
+metadata:
+  labels: {}
+  name: pgbouncer-configmap
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+data:
+  redis-password: UUtLdFA0ZkpNag==
+kind: Secret
+metadata:
+  labels: {}
+  name: mastodon-redis
+  namespace: mastodon
+type: Opaque
+spec: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  labels: {}
+  name: mastodon-mastodon-smtp
+  namespace: mastodon
+type: Opaque
+spec: {}
+---
+apiVersion: v1
+data:
+  adminPassword: cmVwbGFjZW1l
+  adminUser: YWRtaW4=
+kind: Secret
+metadata:
+  labels: {}
+  name: pgbouncer-secret
+  namespace: mastodon
+type: Opaque
+spec: {}
+---
+apiVersion: v1
+data:
+  userlist.txt: ImFkbWluIiAicmVwbGFjZW1lIg==
+kind: Secret
+metadata:
+  labels: {}
+  name: pgbouncer-userlist-secret
+  namespace: mastodon
+spec: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch
+  namespace: mastodon
+spec:
+  ports:
+    - name: tcp-rest-api
+      port: 9200
+      targetPort: rest-api
+    - name: tcp-transport
+      port: 9300
+  selector:
+    app.kubernetes.io/component: coordinating-only
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: elasticsearch
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-coordinating-hl
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-rest-api
+      port: 9200
+      targetPort: rest-api
+    - name: tcp-transport
+      port: 9300
+      targetPort: transport
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: coordinating-only
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: elasticsearch
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-data-hl
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-rest-api
+      port: 9200
+      targetPort: rest-api
+    - name: tcp-transport
+      port: 9300
+      targetPort: transport
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: data
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: elasticsearch
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-ingest-hl
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-rest-api
+      port: 9200
+      targetPort: rest-api
+    - name: tcp-transport
+      port: 9300
+      targetPort: transport
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: ingest
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: elasticsearch
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-master-hl
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-rest-api
+      port: 9200
+      targetPort: rest-api
+    - name: tcp-transport
+      port: 9300
+      targetPort: transport
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: elasticsearch
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-postgresql
+  namespace: mastodon
+spec:
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: postgresql
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-postgresql-hl
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: postgresql
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-redis
+  namespace: mastodon
+spec:
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: 6379
+    - name: tcp-sentinel
+      port: 26379
+      targetPort: 26379
+  selector:
+    app.kubernetes.io/component: node
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: redis
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-redis-headless
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+    - name: tcp-sentinel
+      port: 26379
+      targetPort: redis-sentinel
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: redis
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-s3-proxy-internal-svc
+  namespace: mastodon
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: mastodon-s3-proxy
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-mastodon-streaming
+  namespace: mastodon
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+    - name: streaming
+      port: 4000
+      protocol: TCP
+      targetPort: streaming
+  selector:
+    app.kubernetes.io/component: streaming
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: mastodon
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: mastodon-mastodon-web
+  namespace: mastodon
+spec:
+  ipFamilyPolicy: PreferDualStack
+  ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: web
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/name: mastodon
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {}
+  name: pgbouncer
+  namespace: mastodon
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: psql
+      port: 5432
+      protocol: TCP
+      targetPort: psql
+  selector:
+    app.kubernetes.io/instance: pgbouncer
+    app.kubernetes.io/name: pgbouncer
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mastodon-s3-proxy
+  name: mastodon-s3-proxy
+  namespace: mastodon
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mastodon-s3-proxy
+  template:
+    metadata:
+      labels:
+        app: mastodon-s3-proxy
+    spec:
+      containers:
+        - image: nginx:1.29
+          name: nginx
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 500m
+              ephemeral-storage: 12Gi
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              ephemeral-storage: 12Gi
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/proxy.conf
+              name: nginx-config
+              subPath: proxy.conf
+            - mountPath: /var/cache/nginx
+              name: cache-volume
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - chown -R 101:101 /var/cache/nginx
+          image: busybox
+          name: volume-permissions
+          volumeMounts:
+            - mountPath: /var/cache/nginx
+              name: cache-volume
+      volumes:
+        - configMap:
+            name: mastodon-s3-proxy-config
+          name: nginx-config
+        - emptyDir:
+            sizeLimit: 10Gi
+          name: cache-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {}
+  name: mastodon-mastodon-sidekiq-default
+  namespace: mastodon
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: sidekiq-default
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/part-of: rails
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-configmap: fc2b236ce7e7fad315c4de1e5cfa1c03f9ae076207a9328dbdbb6ae42d6b3632
+        checksum/config-secrets: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config-secrets-smtp: bc4235608e6f0a5fdae5ffcb8fa558870877248d88d6bcaab60aebeac08d0b8a
+        rollme: "1"
+      labels:
+        app.kubernetes.io/component: sidekiq-default
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/part-of: rails
+    spec:
+      containers:
+        - command:
+            - bundle
+            - exec
+            - sidekiq
+            - -c
+            - "50"
+            - -q
+            - default
+          env:
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: SMTP_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  key: login
+                  name: mastodon-mastodon-smtp
+                  optional: true
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-mastodon-smtp
+                  optional: true
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: mastodon-app-secrets
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: mastodon-app-secrets
+            - name: MASTODON_PROMETHEUS_EXPORTER_ENABLED
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_LOCAL
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_HOST
+              value: 0.0.0.0
+            - name: MASTODON_PROMETHEUS_EXPORTER_PORT
+              value: "9394"
+          envFrom:
+            - configMapRef:
+                name: mastodon-mastodon-env
+            - secretRef:
+                name: mastodon-app-secrets
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          imagePullPolicy: IfNotPresent
+          name: mastodon
+          ports:
+            - containerPort: 9394
+              name: prometheus
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /opt/mastodon/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs
+            failureThreshold: 10
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      serviceAccountName: mastodon-mastodon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {}
+  name: mastodon-mastodon-sidekiq-push
+  namespace: mastodon
+spec:
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: sidekiq-push
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/part-of: rails
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-configmap: fc2b236ce7e7fad315c4de1e5cfa1c03f9ae076207a9328dbdbb6ae42d6b3632
+        checksum/config-secrets: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config-secrets-smtp: bc4235608e6f0a5fdae5ffcb8fa558870877248d88d6bcaab60aebeac08d0b8a
+        rollme: "1"
+      labels:
+        app.kubernetes.io/component: sidekiq-push
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/part-of: rails
+    spec:
+      containers:
+        - command:
+            - bundle
+            - exec
+            - sidekiq
+            - -c
+            - "25"
+            - -q
+            - push
+          env:
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: SMTP_LOGIN
+              valueFrom:
+                secretKeyRef:
+                  key: login
+                  name: mastodon-mastodon-smtp
+                  optional: true
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-mastodon-smtp
+                  optional: true
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: mastodon-app-secrets
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: mastodon-app-secrets
+            - name: MASTODON_PROMETHEUS_EXPORTER_ENABLED
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_LOCAL
+              value: "true"
+            - name: MASTODON_PROMETHEUS_EXPORTER_HOST
+              value: 0.0.0.0
+            - name: MASTODON_PROMETHEUS_EXPORTER_PORT
+              value: "9394"
+          envFrom:
+            - configMapRef:
+                name: mastodon-mastodon-env
+            - secretRef:
+                name: mastodon-app-secrets
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          imagePullPolicy: IfNotPresent
+          name: mastodon
+          ports:
+            - containerPort: 9394
+              name: prometheus
+          readinessProbe:
+            exec:
+              command:
+                - cat
+                - /opt/mastodon/tmp/sidekiq_process_has_started_and_will_begin_processing_jobs
+            failureThreshold: 10
+            initialDelaySeconds: 10
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      serviceAccountName: mastodon-mastodon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {}
+  name: mastodon-mastodon-streaming
+  namespace: mastodon
+spec:
+  replicas: 4
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: streaming
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: mastodon
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-configmap: fc2b236ce7e7fad315c4de1e5cfa1c03f9ae076207a9328dbdbb6ae42d6b3632
+        checksum/config-secrets: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        rollme: "1"
+      labels:
+        app.kubernetes.io/component: streaming
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/name: mastodon
+    spec:
+      containers:
+        - command:
+            - node
+            - ./streaming
+          env:
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: PORT
+              value: "4000"
+            - name: BIND
+              value: 0.0.0.0
+            - name: CACHE_REDIS_URL
+              value: redis://mastodon-redis-master:6379/2
+            - name: DB_POOL
+              value: "10"
+            - name: DB_SSLMODE
+              value: verify-ca
+            - name: DB_SSLROOTCERT
+              value: /opt/mastodon/.postgresql/root.crt
+            - name: EXTRA_MEDIA_HOSTS
+              value: https://cdn.goingdark.social
+            - name: FETCH_REPLIES_ENABLED
+              value: "true"
+            - name: FORCE_DEFAULT_LOCALE
+              value: "true"
+            - name: IP_RETENTION_PERIOD
+              value: "15552000"
+            - name: MASTODON_USE_LIBVIPS
+              value: "true"
+            - name: RAILS_LOG_TO_STDOUT
+              value: "true"
+            - name: REDIS_URL
+              value: redis://mastodon-redis-master:6379/0
+            - name: REPLICA_DB_TASKS
+              value: "false"
+            - name: REPLICA_PREPARED_STATEMENTS
+              value: "false"
+            - name: SIDEKIQ_REDIS_URL
+              value: redis://mastodon-redis-master:6379/1
+            - name: STREAMING_API_BASE_URL
+              value: wss://streaming.goingdark.social
+          envFrom:
+            - configMapRef:
+                name: mastodon-mastodon-env
+          image: ghcr.io/mastodon/mastodon-streaming:4.4.3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          name: mastodon-streaming
+          ports:
+            - containerPort: 4000
+              name: streaming
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          startupProbe:
+            failureThreshold: 15
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      serviceAccountName: mastodon-mastodon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {}
+  name: mastodon-mastodon-web
+  namespace: mastodon
+spec:
+  replicas: 3
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: web
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/part-of: rails
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config-configmap: fc2b236ce7e7fad315c4de1e5cfa1c03f9ae076207a9328dbdbb6ae42d6b3632
+        checksum/config-secrets: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        rollme: "1"
+      labels:
+        app.kubernetes.io/component: web
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/part-of: rails
+    spec:
+      containers:
+        - command:
+            - bundle
+            - exec
+            - puma
+            - -C
+            - config/puma.rb
+          env:
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: PORT
+              value: "3000"
+            - name: MIN_THREADS
+              value: "5"
+            - name: MAX_THREADS
+              value: "16"
+            - name: WEB_CONCURRENCY
+              value: "3"
+            - name: PERSISTENT_TIMEOUT
+              value: "20"
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: mastodon-app-secrets
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: mastodon-app-secrets
+            - name: HCAPTCHA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: HCAPTCHA_SECRET_KEY
+                  name: mastodon-app-secrets
+            - name: MASTODON_PROMETHEUS_EXPORTER_ENABLED
+              value: "true"
+            - name: PROMETHEUS_EXPORTER_HOST
+              value: 127.0.0.1
+            - name: PROMETHEUS_EXPORTER_PORT
+              value: "9394"
+            - name: TEST_ENV_VALUE
+          envFrom:
+            - configMapRef:
+                name: mastodon-mastodon-env
+            - secretRef:
+                name: mastodon-app-secrets
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            tcpSocket:
+              port: http
+          name: mastodon-web
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 5
+        - args:
+            - --bind
+            - 0.0.0.0
+            - --port
+            - "9394"
+          command:
+            - ./bin/prometheus_exporter
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          name: prometheus-exporter
+          ports:
+            - containerPort: 9394
+              name: prometheus
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: 250M
+            requests:
+              cpu: "0.1"
+              memory: 180M
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      serviceAccountName: mastodon-mastodon
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {}
+  name: pgbouncer
+  namespace: mastodon
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: pgbouncer
+      app.kubernetes.io/name: pgbouncer
+  template:
+    metadata:
+      annotations:
+        checksum/config: 62fed1323646c631538464c6ce16108e5b90035aa61b7e6a30c26f663b39c7be
+      labels:
+        app.kubernetes.io/instance: pgbouncer
+        app.kubernetes.io/name: pgbouncer
+    spec:
+      containers:
+        - image: ghcr.io/icoretech/pgbouncer-docker:1.24.1
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            tcpSocket:
+              port: 5432
+          name: pgbouncer
+          ports:
+            - containerPort: 5432
+              name: psql
+              protocol: TCP
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            tcpSocket:
+              port: 5432
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 70
+            runAsNonRoot: true
+            runAsUser: 70
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /etc/pgbouncer/
+              name: config
+            - mountPath: /etc/userlist/
+              name: userlist
+      serviceAccountName: pgbouncer
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: tmp
+        - configMap:
+            name: pgbouncer-configmap
+          name: config
+        - name: userlist
+          secret:
+            secretName: pgbouncer-userlist-secret
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: coordinating-only
+  name: mastodon-elasticsearch-coordinating
+  namespace: mastodon
+spec:
+  podManagementPolicy: Parallel
+  replicas: 2
+  selector:
+    matchLabels:
+      app: coordinating-only
+      app.kubernetes.io/component: coordinating-only
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/version: 8.12.1
+      helm.sh/chart: elasticsearch-19.19.2
+  serviceName: mastodon-elasticsearch-coordinating-hl
+  template:
+    metadata:
+      labels:
+        app: coordinating-only
+        app.kubernetes.io/component: coordinating-only
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/version: 8.12.1
+        helm.sh/chart: elasticsearch-19.19.2
+    spec:
+      affinity: {}
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: ELASTICSEARCH_CLUSTER_NAME
+              value: elastic
+            - name: ELASTICSEARCH_IS_DEDICATED_NODE
+              value: "yes"
+            - name: ELASTICSEARCH_NODE_ROLES
+              value: ""
+            - name: ELASTICSEARCH_TRANSPORT_PORT_NUMBER
+              value: "9300"
+            - name: ELASTICSEARCH_HTTP_PORT_NUMBER
+              value: "9200"
+            - name: ELASTICSEARCH_CLUSTER_HOSTS
+              value: mastodon-elasticsearch-master-hl.default.svc.cluster.local,mastodon-elasticsearch-coordinating-hl.default.svc.cluster.local,mastodon-elasticsearch-data-hl.default.svc.cluster.local,mastodon-elasticsearch-ingest-hl.default.svc.cluster.local,
+            - name: ELASTICSEARCH_TOTAL_NODES
+              value: "4"
+            - name: ELASTICSEARCH_CLUSTER_MASTER_HOSTS
+              value: mastodon-elasticsearch-master-0 mastodon-elasticsearch-master-1
+            - name: ELASTICSEARCH_MINIMUM_MASTER_NODES
+              value: "2"
+            - name: ELASTICSEARCH_ADVERTISED_HOSTNAME
+              value: $(MY_POD_NAME).mastodon-elasticsearch-coordinating-hl.default.svc.cluster.local
+            - name: ELASTICSEARCH_HEAP_SIZE
+              value: 128m
+          image: docker.io/bitnami/elasticsearch:7
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: rest-api
+            timeoutSeconds: 5
+          name: elasticsearch
+          ports:
+            - containerPort: 9200
+              name: rest-api
+            - containerPort: 9300
+              name: transport
+          readinessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/elasticsearch/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /bitnami/elasticsearch/data
+              name: data
+      initContainers:
+        - command:
+            - /bin/bash
+            - -ec
+            - |
+              CURRENT=`sysctl -n vm.max_map_count`;
+              DESIRED="262144";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w vm.max_map_count=262144;
+              fi;
+              CURRENT=`sysctl -n fs.file-max`;
+              DESIRED="65536";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w fs.file-max=65536;
+              fi;
+          image: docker.io/bitnami/os-shell:12-debian-12-r15
+          imagePullPolicy: IfNotPresent
+          name: sysctl
+          securityContext:
+            privileged: true
+            runAsUser: 0
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-elasticsearch-coordinating
+      volumes:
+        - emptyDir: {}
+          name: data
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: data
+  name: mastodon-elasticsearch-data
+  namespace: mastodon
+spec:
+  podManagementPolicy: Parallel
+  replicas: 2
+  selector:
+    matchLabels:
+      app: data
+      app.kubernetes.io/component: data
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/version: 8.12.1
+      helm.sh/chart: elasticsearch-19.19.2
+  serviceName: mastodon-elasticsearch-data-hl
+  template:
+    metadata:
+      labels:
+        app: data
+        app.kubernetes.io/component: data
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/version: 8.12.1
+        helm.sh/chart: elasticsearch-19.19.2
+    spec:
+      affinity: {}
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ELASTICSEARCH_IS_DEDICATED_NODE
+              value: "yes"
+            - name: ELASTICSEARCH_NODE_ROLES
+              value: data
+            - name: ELASTICSEARCH_TRANSPORT_PORT_NUMBER
+              value: "9300"
+            - name: ELASTICSEARCH_HTTP_PORT_NUMBER
+              value: "9200"
+            - name: ELASTICSEARCH_CLUSTER_NAME
+              value: elastic
+            - name: ELASTICSEARCH_CLUSTER_HOSTS
+              value: mastodon-elasticsearch-master-hl.default.svc.cluster.local,mastodon-elasticsearch-coordinating-hl.default.svc.cluster.local,mastodon-elasticsearch-data-hl.default.svc.cluster.local,mastodon-elasticsearch-ingest-hl.default.svc.cluster.local,
+            - name: ELASTICSEARCH_TOTAL_NODES
+              value: "4"
+            - name: ELASTICSEARCH_CLUSTER_MASTER_HOSTS
+              value: mastodon-elasticsearch-master-0 mastodon-elasticsearch-master-1
+            - name: ELASTICSEARCH_MINIMUM_MASTER_NODES
+              value: "2"
+            - name: ELASTICSEARCH_ADVERTISED_HOSTNAME
+              value: $(MY_POD_NAME).mastodon-elasticsearch-data-hl.default.svc.cluster.local
+            - name: ELASTICSEARCH_HEAP_SIZE
+              value: 1024m
+          image: docker.io/bitnami/elasticsearch:7
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: rest-api
+            timeoutSeconds: 5
+          name: elasticsearch
+          ports:
+            - containerPort: 9200
+              name: rest-api
+            - containerPort: 9300
+              name: transport
+          readinessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/elasticsearch/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /bitnami/elasticsearch/data
+              name: data
+      initContainers:
+        - command:
+            - /bin/bash
+            - -ec
+            - |
+              CURRENT=`sysctl -n vm.max_map_count`;
+              DESIRED="262144";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w vm.max_map_count=262144;
+              fi;
+              CURRENT=`sysctl -n fs.file-max`;
+              DESIRED="65536";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w fs.file-max=65536;
+              fi;
+          image: docker.io/bitnami/os-shell:12-debian-12-r15
+          imagePullPolicy: IfNotPresent
+          name: sysctl
+          securityContext:
+            privileged: true
+            runAsUser: 0
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-elasticsearch-data
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: ingest
+  name: mastodon-elasticsearch-ingest
+  namespace: mastodon
+spec:
+  podManagementPolicy: Parallel
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ingest
+      app.kubernetes.io/component: ingest
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/version: 8.12.1
+      helm.sh/chart: elasticsearch-19.19.2
+  serviceName: mastodon-elasticsearch-ingest-hl
+  template:
+    metadata:
+      labels:
+        app: ingest
+        app.kubernetes.io/component: ingest
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/version: 8.12.1
+        helm.sh/chart: elasticsearch-19.19.2
+    spec:
+      affinity: {}
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ELASTICSEARCH_IS_DEDICATED_NODE
+              value: "yes"
+            - name: ELASTICSEARCH_NODE_ROLES
+              value: ingest
+            - name: ELASTICSEARCH_TRANSPORT_PORT_NUMBER
+              value: "9300"
+            - name: ELASTICSEARCH_HTTP_PORT_NUMBER
+              value: "9200"
+            - name: ELASTICSEARCH_CLUSTER_NAME
+              value: elastic
+            - name: ELASTICSEARCH_CLUSTER_HOSTS
+              value: mastodon-elasticsearch-master-hl.default.svc.cluster.local,mastodon-elasticsearch-coordinating-hl.default.svc.cluster.local,mastodon-elasticsearch-data-hl.default.svc.cluster.local,mastodon-elasticsearch-ingest-hl.default.svc.cluster.local,
+            - name: ELASTICSEARCH_TOTAL_NODES
+              value: "4"
+            - name: ELASTICSEARCH_CLUSTER_MASTER_HOSTS
+              value: mastodon-elasticsearch-master-0 mastodon-elasticsearch-master-1
+            - name: ELASTICSEARCH_MINIMUM_MASTER_NODES
+              value: "2"
+            - name: ELASTICSEARCH_ADVERTISED_HOSTNAME
+              value: $(MY_POD_NAME).mastodon-elasticsearch-ingest-hl.default.svc.cluster.local
+            - name: ELASTICSEARCH_HEAP_SIZE
+              value: 128m
+          image: docker.io/bitnami/elasticsearch:7
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: rest-api
+            timeoutSeconds: 5
+          name: elasticsearch
+          ports:
+            - containerPort: 9200
+              name: rest-api
+            - containerPort: 9300
+              name: transport
+          readinessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/elasticsearch/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /bitnami/elasticsearch/data
+              name: data
+      initContainers:
+        - command:
+            - /bin/bash
+            - -ec
+            - |
+              CURRENT=`sysctl -n vm.max_map_count`;
+              DESIRED="262144";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w vm.max_map_count=262144;
+              fi;
+              CURRENT=`sysctl -n fs.file-max`;
+              DESIRED="65536";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w fs.file-max=65536;
+              fi;
+          image: docker.io/bitnami/os-shell:12-debian-12-r15
+          imagePullPolicy: IfNotPresent
+          name: sysctl
+          securityContext:
+            privileged: true
+            runAsUser: 0
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-elasticsearch-ingest
+      volumes:
+        - emptyDir: {}
+          name: data
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: master
+  name: mastodon-elasticsearch-master
+  namespace: mastodon
+spec:
+  podManagementPolicy: Parallel
+  replicas: 2
+  selector:
+    matchLabels:
+      app: master
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: elasticsearch
+      app.kubernetes.io/version: 8.12.1
+      helm.sh/chart: elasticsearch-19.19.2
+  serviceName: mastodon-elasticsearch-master-hl
+  template:
+    metadata:
+      labels:
+        app: master
+        app.kubernetes.io/component: master
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: elasticsearch
+        app.kubernetes.io/version: 8.12.1
+        helm.sh/chart: elasticsearch-19.19.2
+    spec:
+      affinity: {}
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ELASTICSEARCH_IS_DEDICATED_NODE
+              value: "yes"
+            - name: ELASTICSEARCH_NODE_ROLES
+              value: master
+            - name: ELASTICSEARCH_TRANSPORT_PORT_NUMBER
+              value: "9300"
+            - name: ELASTICSEARCH_HTTP_PORT_NUMBER
+              value: "9200"
+            - name: ELASTICSEARCH_CLUSTER_NAME
+              value: elastic
+            - name: ELASTICSEARCH_CLUSTER_HOSTS
+              value: mastodon-elasticsearch-master-hl.default.svc.cluster.local,mastodon-elasticsearch-coordinating-hl.default.svc.cluster.local,mastodon-elasticsearch-data-hl.default.svc.cluster.local,mastodon-elasticsearch-ingest-hl.default.svc.cluster.local,
+            - name: ELASTICSEARCH_TOTAL_NODES
+              value: "4"
+            - name: ELASTICSEARCH_CLUSTER_MASTER_HOSTS
+              value: mastodon-elasticsearch-master-0 mastodon-elasticsearch-master-1
+            - name: ELASTICSEARCH_MINIMUM_MASTER_NODES
+              value: "2"
+            - name: ELASTICSEARCH_ADVERTISED_HOSTNAME
+              value: $(MY_POD_NAME).mastodon-elasticsearch-master-hl.default.svc.cluster.local
+            - name: ELASTICSEARCH_HEAP_SIZE
+              value: 128m
+          image: docker.io/bitnami/elasticsearch:7
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: rest-api
+            timeoutSeconds: 5
+          name: elasticsearch
+          ports:
+            - containerPort: 9200
+              name: rest-api
+            - containerPort: 9300
+              name: transport
+          readinessProbe:
+            exec:
+              command:
+                - /opt/bitnami/scripts/elasticsearch/healthcheck.sh
+            failureThreshold: 5
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /bitnami/elasticsearch/data
+              name: data
+      initContainers:
+        - command:
+            - /bin/bash
+            - -ec
+            - |
+              CURRENT=`sysctl -n vm.max_map_count`;
+              DESIRED="262144";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w vm.max_map_count=262144;
+              fi;
+              CURRENT=`sysctl -n fs.file-max`;
+              DESIRED="65536";
+              if [ "$DESIRED" -gt "$CURRENT" ]; then
+                  sysctl -w fs.file-max=65536;
+              fi;
+          image: docker.io/bitnami/os-shell:12-debian-12-r15
+          imagePullPolicy: IfNotPresent
+          name: sysctl
+          securityContext:
+            privileged: true
+            runAsUser: 0
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-elasticsearch-master
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels: {}
+  name: mastodon-postgresql
+  namespace: mastodon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: postgresql
+      app.kubernetes.io/version: 16.2.0
+      helm.sh/chart: postgresql-14.2.3
+  serviceName: mastodon-postgresql-hl
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: primary
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: postgresql
+        app.kubernetes.io/version: 16.2.0
+        helm.sh/chart: postgresql-14.2.3
+      name: mastodon-postgresql
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: primary
+                    app.kubernetes.io/instance: mastodon
+                    app.kubernetes.io/name: postgresql
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: /bitnami/postgresql
+            - name: PGDATA
+              value: /bitnami/postgresql/data
+            - name: POSTGRES_USER
+              value: mastodon
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: POSTGRES_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-password
+                  name: mastodon-db-url
+            - name: POSTGRES_DATABASE
+              value: mastodon
+            - name: POSTGRESQL_ENABLE_LDAP
+              value: "no"
+            - name: POSTGRESQL_ENABLE_TLS
+              value: "no"
+            - name: POSTGRESQL_LOG_HOSTNAME
+              value: "false"
+            - name: POSTGRESQL_LOG_CONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_LOG_DISCONNECTIONS
+              value: "false"
+            - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+              value: "off"
+            - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+              value: error
+            - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+              value: pgaudit
+          image: docker.io/bitnami/postgresql:16.2.0-debian-12-r5
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "mastodon" -d "dbname=mastodon" -h 127.0.0.1 -p 5432
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: postgresql
+          ports:
+            - containerPort: 5432
+              name: tcp-postgresql
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  exec pg_isready -U "mastodon" -d "dbname=mastodon" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp-dir
+            - mountPath: /opt/bitnami/postgresql/conf
+              name: empty-dir
+              subPath: app-conf-dir
+            - mountPath: /opt/bitnami/postgresql/tmp
+              name: empty-dir
+              subPath: app-tmp-dir
+            - mountPath: /opt/bitnami/postgresql/logs
+              name: empty-dir
+              subPath: app-logs-dir
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /bitnami/postgresql
+              name: data
+      hostIPC: false
+      hostNetwork: false
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-postgresql
+      volumes:
+        - emptyDir: {}
+          name: empty-dir
+        - emptyDir:
+            medium: Memory
+          name: dshm
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels: {}
+  name: mastodon-redis-node
+  namespace: mastodon
+spec:
+  minReadySeconds: 0
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: node
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: redis
+      app.kubernetes.io/version: 7.2.4
+      helm.sh/chart: redis-18.16.1
+  serviceName: mastodon-redis-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 1e0f70c76a34f7bcf4bb96431cb9da8c95cf5cce85d7bbe49fb181c3dbfbbfec
+        checksum/health: 6dba67d5cee6e0654f8028db9c1078e81175cc41c8d95d6382c7bcc1d6a721e0
+        checksum/scripts: 2748427e2459953d624c33bbee0fbc630a3f79101a3937a74507db2e1b827c4b
+        checksum/secret: 00b1315efa000f2aae6783d1b1e4d39ae3dde77f50a6013bc587c42f1a06bd6c
+      labels:
+        app.kubernetes.io/component: node
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: redis
+        app.kubernetes.io/version: 7.2.4
+        helm.sh/chart: redis-18.16.1
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: node
+                    app.kubernetes.io/instance: mastodon
+                    app.kubernetes.io/name: redis
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      automountServiceAccountToken: false
+      containers:
+        - args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-node.sh
+          command:
+            - /bin/bash
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: REDIS_MASTER_PORT_NUMBER
+              value: "6379"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: REDIS_MASTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: REDIS_TLS_ENABLED
+              value: "no"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_SENTINEL_TLS_ENABLED
+              value: "no"
+            - name: REDIS_SENTINEL_PORT
+              value: "26379"
+            - name: REDIS_DATA_DIR
+              value: /data
+          image: docker.io/bitnami/redis:7.2.4-debian-12-r9
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - /opt/bitnami/scripts/start-scripts/prestop-redis.sh
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: redis
+          ports:
+            - containerPort: 6379
+              name: redis
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+            failureThreshold: 22
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /opt/bitnami/scripts/start-scripts
+              name: start-scripts
+            - mountPath: /health
+              name: health
+            - mountPath: /data
+              name: redis-data
+            - mountPath: /opt/bitnami/redis/mounted-etc
+              name: config
+            - mountPath: /opt/bitnami/redis/etc
+              name: empty-dir
+              subPath: app-conf-dir
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp-dir
+        - args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-sentinel.sh
+          command:
+            - /bin/bash
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: REDIS_SENTINEL_TLS_ENABLED
+              value: "no"
+            - name: REDIS_SENTINEL_PORT
+              value: "26379"
+          image: docker.io/bitnami/redis-sentinel:7.2.4-debian-12-r7
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - /opt/bitnami/scripts/start-scripts/prestop-sentinel.sh
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_sentinel.sh 5
+            failureThreshold: 6
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: sentinel
+          ports:
+            - containerPort: 26379
+              name: redis-sentinel
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_sentinel.sh 1
+            failureThreshold: 6
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_sentinel.sh 5
+            failureThreshold: 22
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp-dir
+            - mountPath: /opt/bitnami/scripts/start-scripts
+              name: start-scripts
+            - mountPath: /health
+              name: health
+            - mountPath: /opt/bitnami/redis-sentinel/etc
+              name: sentinel-data
+            - mountPath: /data
+              name: redis-data
+            - mountPath: /opt/bitnami/redis-sentinel/mounted-etc
+              name: config
+      enableServiceLinks: true
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: mastodon-redis
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 493
+            name: mastodon-redis-scripts
+          name: start-scripts
+        - configMap:
+            defaultMode: 493
+            name: mastodon-redis-health
+          name: health
+        - configMap:
+            name: mastodon-redis-configuration
+          name: config
+        - emptyDir: {}
+          name: sentinel-data
+        - emptyDir: {}
+          name: empty-dir
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        labels:
+          app.kubernetes.io/component: node
+          app.kubernetes.io/instance: mastodon
+          app.kubernetes.io/name: redis
+        name: redis-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  labels: {}
+  name: mastodon-mastodon-media-remove
+  namespace: mastodon
+spec:
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: mastodon-mastodon-media-remove
+        spec:
+          containers:
+            - command:
+                - bin/tootctl
+                - media
+                - remove
+              env:
+                - name: DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      key: password
+                      name: mastodon-db-url
+                - name: REDIS_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: redis-password
+                      name: mastodon-redis
+                - name: PORT
+                  value: "3000"
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_SECRET_ACCESS_KEY
+                      name: mastodon-app-secrets
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: AWS_ACCESS_KEY_ID
+                      name: mastodon-app-secrets
+              envFrom:
+                - configMapRef:
+                    name: mastodon-mastodon-env
+                - secretRef:
+                    name: mastodon-app-secrets
+              image: ghcr.io/mastodon/mastodon:4.4.3
+              imagePullPolicy: IfNotPresent
+              name: mastodon-mastodon-media-remove
+          restartPolicy: OnFailure
+  schedule: 0 0 * * 0
+  selector: {}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {}
+  name: mastodon-mastodon-db-post-migrate
+  namespace: mastodon
+spec:
+  template:
+    metadata:
+      name: mastodon-mastodon-db-migrate
+    spec:
+      containers:
+        - command:
+            - bundle
+            - exec
+            - rake
+            - db:migrate
+          env:
+            - name: DB_HOST
+              value: mastodon-postgresql
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: mastodon
+            - name: DB_USER
+              value: mastodon
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_HOST
+              value: mastodon-redis-master
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SIDEKIQ_REDIS_PORT
+              value: "6379"
+            - name: CACHE_REDIS_PORT
+              value: "6379"
+            - name: REDIS_DRIVER
+              value: ruby
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          imagePullPolicy: IfNotPresent
+          name: mastodon-mastodon-db-migrate
+      restartPolicy: Never
+  selector: {}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {}
+  name: mastodon-mastodon-db-pre-migrate
+  namespace: mastodon
+spec:
+  template:
+    metadata:
+      name: mastodon-mastodon-db-migrate
+    spec:
+      containers:
+        - command:
+            - bundle
+            - exec
+            - rake
+            - db:migrate
+          env:
+            - name: DB_HOST
+              value: mastodon-postgresql
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: mastodon
+            - name: DB_USER
+              value: mastodon
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mastodon-db-url
+            - name: REDIS_HOST
+              value: mastodon-redis-master
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SIDEKIQ_REDIS_PORT
+              value: "6379"
+            - name: CACHE_REDIS_PORT
+              value: "6379"
+            - name: REDIS_DRIVER
+              value: ruby
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: redis-password
+                  name: mastodon-redis
+            - name: SKIP_POST_DEPLOYMENT_MIGRATIONS
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+          image: ghcr.io/mastodon/mastodon:4.4.3
+          imagePullPolicy: IfNotPresent
+          name: mastodon-mastodon-db-migrate
+      restartPolicy: Never
+  selector: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-postgresql-ca
+  namespace: mastodon
+spec:
+  commonName: mastodon-postgresql-ca
+  duration: 87600h
+  isCA: true
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: internal-issuer
+  renewBefore: 43800h
+  secretName: mastodon-postgresql-ca
+  usages:
+    - digital signature
+    - key encipherment
+    - cert sign
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-postgresql-server
+  namespace: mastodon
+spec:
+  commonName: mastodon-postgresql.mastodon.svc
+  dnsNames:
+    - mastodon-postgresql.mastodon.svc
+    - mastodon-postgresql
+    - mastodon-postgresql.mastodon.svc.cluster.local
+    - mastodon-postgresql.mastodon.svc.kube.pc-tips.se
+    - mastodon-postgresql-pooler
+    - mastodon-postgresql-pooler.mastodon.svc
+  duration: 2160h
+  issuerRef:
+    kind: ClusterIssuer
+    name: internal-issuer
+  renewBefore: 360h
+  secretName: mastodon-postgresql-server
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mastodon-app-secrets
+  namespace: mastodon
+spec:
+  data:
+    - remoteRef:
+        key: app-mastodon-domain
+      secretKey: LOCAL_DOMAIN
+    - remoteRef:
+        key: app-mastodon-secret-key-base
+      secretKey: SECRET_KEY_BASE
+    - remoteRef:
+        key: app-mastodon-otp-secret
+      secretKey: OTP_SECRET
+    - remoteRef:
+        key: app-mastodon-vapid-private
+      secretKey: VAPID_PRIVATE_KEY
+    - remoteRef:
+        key: app-mastodon-vapid-public
+      secretKey: VAPID_PUBLIC_KEY
+    - remoteRef:
+        key: app-mastodon-ar-primary
+      secretKey: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+    - remoteRef:
+        key: app-mastodon-ar-deterministic
+      secretKey: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+    - remoteRef:
+        key: app-mastodon-ar-salt
+      secretKey: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+    - remoteRef:
+        key: app-mastodon-smtp-server
+      secretKey: SMTP_SERVER
+    - remoteRef:
+        key: app-mastodon-smtp-port
+      secretKey: SMTP_PORT
+    - remoteRef:
+        key: app-mastodon-smtp-login
+      secretKey: SMTP_LOGIN
+    - remoteRef:
+        key: app-mastodon-smtp-password
+      secretKey: SMTP_PASSWORD
+    - remoteRef:
+        key: app-mastodon-smtp-from-address
+      secretKey: SMTP_FROM_ADDRESS
+    - remoteRef:
+        key: app-mastodon-s3-access-key
+      secretKey: AWS_ACCESS_KEY_ID
+    - remoteRef:
+        key: app-mastodon-s3-secret-key
+      secretKey: AWS_SECRET_ACCESS_KEY
+    - remoteRef:
+        key: infra-minio-s3-endpoint-url
+      secretKey: S3_ENDPOINT
+    - remoteRef:
+        key: app-mastodon-hcaptcha-site-key
+      secretKey: HCAPTCHA_SITE_KEY
+    - remoteRef:
+        key: app-mastodon-hcaptcha-secret-key
+      secretKey: HCAPTCHA_SECRET_KEY
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: bitwarden-backend
+  target:
+    creationPolicy: Owner
+    name: mastodon-app-secrets
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mastodon-db-url
+  namespace: mastodon
+spec:
+  data:
+    - remoteRef:
+        key: mastodon.mastodon-postgresql.credentials.postgresql.acid.zalan.do
+        property: username
+      secretKey: username
+    - remoteRef:
+        key: mastodon.mastodon-postgresql.credentials.postgresql.acid.zalan.do
+        property: password
+      secretKey: password
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: SecretStore
+    name: zalando-k8s-store
+  target:
+    creationPolicy: Owner
+    name: mastodon-db-url
+    template:
+      data:
+        DB_PASS: '{{ .password }}'
+        DB_USER: '{{ .username }}'
+      engineVersion: v2
+---
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: zalando-k8s-store
+  namespace: mastodon
+spec:
+  provider:
+    kubernetes:
+      auth:
+        serviceAccount:
+          name: mastodon-eso-reader
+      remoteNamespace: mastodon
+      server:
+        caProvider:
+          key: ca.crt
+          name: kube-root-ca.crt
+          type: ConfigMap
+        url: https://kubernetes.default.svc
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mastodon
+  namespace: mastodon
+spec:
+  hostnames:
+    - goingdark.social
+  parentRefs:
+    - name: external
+      namespace: gateway
+  rules:
+    - backendRefs:
+        - name: mastodon-streaming
+          port: 4000
+      matches:
+        - path:
+            type: PathPrefix
+            value: /api/v1/streaming
+    - backendRefs:
+        - name: mastodon-web
+          port: 3000
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mastodon-s3
+  namespace: mastodon
+spec:
+  hostnames:
+    - cdn.goingdark.social
+  parentRefs:
+    - name: external
+      namespace: gateway
+  rules:
+    - backendRefs:
+        - name: mastodon-s3-proxy-internal-svc
+          port: 80
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels: {}
+  name: mastodon-mastodon
+  namespace: mastodon
+spec:
+  rules:
+    - host: goingdark.social
+      http:
+        paths:
+          - backend:
+              service:
+                name: mastodon-mastodon-web
+                port:
+                  number: 3000
+            path: /
+            pathType: Prefix
+  tls:
+    - hosts:
+        - goingdark.social
+      secretName: mastodon-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels: {}
+  name: mastodon-mastodon-streaming
+  namespace: mastodon
+spec:
+  rules:
+    - host: streaming.goingdark.social
+      http:
+        paths:
+          - backend:
+              service:
+                name: mastodon-mastodon-streaming
+                port:
+                  number: 4000
+            path: /api/v1/streaming
+            pathType: Prefix
+  tls:
+    - secretName: mastodon-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-coordinating
+  namespace: mastodon
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 9200
+        - port: 9300
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: coordinating-only
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: elasticsearch
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-data
+  namespace: mastodon
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 9200
+        - port: 9300
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: data
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: elasticsearch
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-ingest
+  namespace: mastodon
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 9200
+        - port: 9300
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: ingest
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: elasticsearch
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-elasticsearch-master
+  namespace: mastodon
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 9200
+        - port: 9300
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: elasticsearch
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-postgresql
+  namespace: mastodon
+spec:
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - ports:
+        - port: 5432
+      to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: read
+              app.kubernetes.io/instance: mastodon
+              app.kubernetes.io/name: postgresql
+  ingress:
+    - ports:
+        - port: 5432
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: primary
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: postgresql
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels: {}
+  name: mastodon-redis
+  namespace: mastodon
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 6379
+        - port: 26379
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/name: redis
+  policyTypes:
+    - Ingress
+    - Egress
+  selector: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels: {}
+  name: mastodon-mastodon-test-connection
+  namespace: mastodon
+spec:
+  containers:
+    - args:
+        - mastodon-mastodon-web:80
+      command:
+        - wget
+      image: busybox
+      name: wget
+  restartPolicy: Never
+  selector: {}

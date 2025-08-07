@@ -1,0 +1,193 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mastodon-s3-proxy-config
+  namespace: mastodon
+data:
+  proxy.conf: |
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Global (http-level) cache, TLS trust, and conditional slicing
+    # ──────────────────────────────────────────────────────────────────────────────
+
+    proxy_cache_path /var/cache/nginx levels=1:2
+                     keys_zone=CACHE:512m
+                     max_size=8g
+                     inactive=48h
+                     use_temp_path=off;
+
+    open_file_cache           max=10000 inactive=60s;
+    open_file_cache_valid     30s;
+    open_file_cache_min_uses  2;
+
+    # Trust store for upstream TLS verification (applies everywhere below)
+    proxy_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    proxy_ssl_verify_depth 3;
+
+    # Enable slice module globally; only send Range for selected extensions
+    slice 4m;
+    map $uri $slice_header {
+      default "";
+      ~*\.(mp4|m4v|mov|webm|mp3|aac|opus)$ $slice_range;
+    }
+
+    # Static upstream
+    upstream minio {
+      zone minio 64k;
+      keepalive 32;
+      server truenas.pc-tips.se:9000;
+    }
+
+    # ──────────────────────────────────────────────────────────────────────────────
+    # Shielding server
+    # ──────────────────────────────────────────────────────────────────────────────
+    server {
+      listen 80;
+      server_name cdn.goingdark.social;
+      server_tokens off;
+      access_log off;
+
+      sendfile on; tcp_nopush on; tcp_nodelay on;
+
+      proxy_connect_timeout 5s;
+      proxy_read_timeout    120s;
+      proxy_send_timeout    120s;
+
+      # Only set Range when $slice_header is non-empty (videos/audio)
+      proxy_set_header Range $slice_header;
+
+      # 1) Direct /mastodata/ (fast path)
+      location ^~ /mastodata/ {
+        limit_except GET HEAD { deny all; }
+
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
+
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        # Dedupe cache across bare vs /mastodata after rewrite
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
+
+        proxy_intercept_errors off;
+      }
+
+      # 2) Catch-all → rewrite once → proxy
+      location / {
+        limit_except GET HEAD { deny all; }
+
+        rewrite ^/(.*)$ /mastodata/$1 break;
+
+        proxy_pass            https://minio;
+        proxy_http_version    1.1;
+        proxy_set_header      Connection "";
+        proxy_set_header      Host truenas.pc-tips.se;
+        proxy_set_header      Authorization '';
+        proxy_ssl_server_name on;
+        proxy_ssl_name        truenas.pc-tips.se;
+        proxy_ssl_verify      on;
+
+        proxy_buffering                 on;
+        proxy_cache                     CACHE;
+        proxy_cache_revalidate          on;
+        proxy_cache_key                 $scheme$proxy_host$uri;
+        proxy_cache_valid               200 206 48h;
+        proxy_cache_use_stale           error timeout updating http_500 http_502 http_503 http_504;
+        proxy_cache_lock                on;
+        proxy_cache_lock_timeout        15s;
+        proxy_cache_lock_age            10s;
+        proxy_cache_background_update   on;
+
+        proxy_hide_header               Set-Cookie;
+
+        add_header Access-Control-Allow-Origin "*" always;
+        add_header X-Cache-Status         $upstream_cache_status always;
+        add_header X-Content-Type-Options nosniff always;
+
+        proxy_intercept_errors off;
+      }
+    }
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-s3-proxy
+  namespace: mastodon
+  labels:
+    app: mastodon-s3-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mastodon-s3-proxy
+  template:
+    metadata:
+      labels:
+        app: mastodon-s3-proxy
+    spec:
+      initContainers:
+        - name: volume-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown -R 101:101 /var/cache/nginx']
+          volumeMounts:
+            - name: cache-volume
+              mountPath: /var/cache/nginx
+      containers:
+        - name: nginx
+          image: nginx:1.29
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/proxy.conf
+              subPath: proxy.conf
+            - name: cache-volume
+              mountPath: /var/cache/nginx
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+              ephemeral-storage: "12Gi"
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+              ephemeral-storage: "12Gi"
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: mastodon-s3-proxy-config
+        - name: cache-volume
+          emptyDir:
+            sizeLimit: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-s3-proxy-internal-svc
+  namespace: mastodon
+spec:
+  type: ClusterIP
+  selector:
+    app: mastodon-s3-proxy
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
