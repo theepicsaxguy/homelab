@@ -1,0 +1,20 @@
+{{- if .Values.mastodon.web.pdb.enable }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "mastodon.fullname" . }}-web
+  labels:
+      {{- include "mastodon.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.mastodon.web.pdb.minAvailable }}
+  minAvailable: {{ .Values.mastodon.web.pdb.minAvailable }}
+  {{- end }}
+  {{- if .Values.mastodon.web.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.mastodon.web.pdb.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mastodon.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+      app.kubernetes.io/part-of: rails
+{{- end }}

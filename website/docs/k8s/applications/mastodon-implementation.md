@@ -2,7 +2,8 @@
 title: 'Mastodon Deployment Notes'
 ---
 
-This note summarizes the Mastodon configuration relevant for the Kubernetes manifests in `/k8s/applications/web/mastodon`.
+This note summarizes the Mastodon configuration for `/k8s/applications/web/mastodon`.
+An alternative setup lives in `/k8s/applications/web/mastodon-chart`, where the official Mastodon Helm chart renders the same settings.
 
 ## Database Connection
 
@@ -17,6 +18,8 @@ configMapGenerator:
       - DB_SSLMODE=verify-ca
       - DB_SSLROOTCERT=/etc/ssl/certs/pgbouncer-ca.crt
 ```
+
+The `mastodon-db-url` ExternalSecret exports `DB_USER`, `DB_PASS`, and a `password` key so both Kustomize setups can reuse the same credentials.
 
 ## Database Migrations
 

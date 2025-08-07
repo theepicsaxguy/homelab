@@ -1,0 +1,54 @@
+{{/*
+  The exporter container attached to every Mastodon pod
+*/}}
+
+{{- define "mastodon.statsdExporterContainer" }}
+{{- with .Values.mastodon.metrics.statsd }}
+{{- if and .exporter.enabled (not .address) }}
+- name: statsd-exporter
+  image: prom/statsd-exporter
+  args:
+    - "--statsd.mapping-config=/statsd-mappings/mastodon.yml"
+  resources:
+    requests:
+      cpu: "0.1"
+      memory: "180M"
+    limits:
+      cpu: "0.5"
+      memory: "250M"
+  ports:
+    - name: statsd
+      containerPort: {{ .exporter.port }}
+  volumeMounts:
+    - name: statsd-mappings
+      mountPath: /statsd-mappings
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+  The volume needed for the container above
+*/}}
+{{- define "mastodon.statsdExporterVolume" }}
+{{- with .Values.mastodon.metrics.statsd }}
+{{- if and .exporter.enabled (not .address) }}
+- name: statsd-mappings
+  configMap:
+    name: {{ include "mastodon.fullname" $ }}-statsd-mappings
+    items:
+      - key: mastodon-statsd-mappings.yml
+        path: mastodon.yml
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+  Labels added to every statsd_exporter-enabled pod
+*/}}
+{{- define "mastodon.statsdExporterLabels" }}
+{{- with .Values.mastodon.metrics.statsd }}
+{{- if and .exporter.enabled (not .address) }}
+mastodon/statsd-exporter: "true"
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,40 @@
+image:
+  repository: ghcr.io/glitch-soc/mastodon
+  tag: v4.4.3
+
+streaming:
+  image:
+    repository: ghcr.io/glitch-soc/mastodon-streaming
+    tag: v4.4.3
+  replicas: 2
+  base_url: wss://goingdark.social
+
+web:
+  replicas: 2
+
+mastodon:
+  extraEnvFrom: mastodon-extra-env
+  secrets:
+    existingSecret: mastodon-app-secrets
+  sidekiq:
+    workers:
+      - name: all-queues
+        replicas: 2
+        concurrency: 5
+
+postgresql:
+  enabled: false
+  postgresqlHostname: mastodon-postgresql-pooler
+  postgresqlPort: 5432
+  auth:
+    existingSecret: mastodon-db-url
+    username: mastodon
+    database: mastodon
+
+redis:
+  enabled: false
+  hostname: mastodon-redis-master
+  port: 6379
+
+elasticsearch:
+  enabled: false

@@ -1,0 +1,779 @@
+---
+# Source: mastodon/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mastodon
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: mastodon/templates/secret-smtp.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mastodon-smtp
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+---
+# Source: mastodon/templates/configmap-env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mastodon-env
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+data:
+  DB_HOST: mastodon-postgresql-pooler
+  DB_PORT: "5432"
+  DB_NAME: mastodon
+  DB_USER: mastodon
+  PREPARED_STATEMENTS: "true"
+  LOCAL_DOMAIN: mastodon.local
+  # https://devcenter.heroku.com/articles/tuning-glibc-memory-behavior
+  MALLOC_ARENA_MAX: "2"
+  NODE_ENV: "production"
+  RAILS_ENV: "production"
+  REDIS_HOST: mastodon-redis-master
+  REDIS_PORT: "6379"
+  SMTP_AUTH_METHOD: plain
+  SMTP_CA_FILE: /etc/ssl/certs/ca-certificates.crt
+  SMTP_DELIVERY_METHOD: smtp
+  SMTP_ENABLE_STARTTLS: "auto"
+  SMTP_FROM_ADDRESS: "notifications@example.com"
+  SMTP_OPENSSL_VERIFY_MODE: peer
+  SMTP_PORT: "587"
+  SMTP_SERVER: smtp.mailgun.org
+  STREAMING_CLUSTER_NUM: "1"
+  CACHE_BUSTER_ENABLED: "false"
+  TZ: "UTC"
+---
+# Source: mastodon/templates/pvc-assets.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mastodon-assets
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName:
+---
+# Source: mastodon/templates/pvc-system.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mastodon-system
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName:
+---
+# Source: mastodon/templates/service-streaming.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-streaming
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4000
+      targetPort: streaming
+      protocol: TCP
+      name: streaming
+  ipFamilyPolicy: PreferDualStack
+  selector:
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/component: streaming
+---
+# Source: mastodon/templates/service-web.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mastodon-web
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  ipFamilyPolicy: PreferDualStack
+  selector:
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    app.kubernetes.io/component: web
+---
+# Source: mastodon/templates/deployment-sidekiq.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-sidekiq-all-queues
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: sidekiq-all-queues
+    app.kubernetes.io/part-of: rails
+  annotations:
+spec:
+  strategy:
+    type: Recreate
+  replicas: 2
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/component: sidekiq-all-queues
+      app.kubernetes.io/part-of: rails
+  template:
+    metadata:
+      annotations:
+        # roll the pods to pick up any db migrations or other changes
+        
+        rollme: "1"
+        checksum/config-secrets: "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        checksum/config-configmap: "be4fa19a85caddb8fa9ed0c5eb2796d9453cdeac11a6659ce2a52862a3e9c05f"
+        checksum/config-secrets-smtp: "e65924ed98dfffe217e5d30cbf31cffce7102835159d83bee8958ac74dc26465"
+      labels:
+        
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/instance: mastodon
+        
+        app.kubernetes.io/component: sidekiq-all-queues
+        app.kubernetes.io/part-of: rails
+    spec:
+      serviceAccountName: mastodon
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      volumes:
+        - name: assets
+          persistentVolumeClaim:
+            claimName: mastodon-assets
+        - name: system
+          persistentVolumeClaim:
+            claimName: mastodon-system        
+      containers:
+        - name: mastodon
+          image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - bundle
+            - exec
+            - sidekiq
+            - -c
+            - "5"
+          envFrom:
+            - configMapRef:
+                name: mastodon-env
+            - secretRef:
+                name: mastodon-app-secrets
+            - configMapRef:
+                name: mastodon-extra-env
+          env:
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
+            - name: "SMTP_LOGIN"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-smtp
+                  key: login
+                  optional: true
+            - name: "SMTP_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-smtp
+                  key: password
+                  optional: true
+          volumeMounts:
+            - name: assets
+              mountPath: /opt/mastodon/public/assets
+            - name: system
+              mountPath: /opt/mastodon/public/system
+          resources:
+            {}
+---
+# Source: mastodon/templates/deployment-streaming.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-streaming
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/component: streaming
+  template:
+    metadata:
+      annotations:
+        # roll the pods to pick up any db migrations or other changes
+        
+        rollme: "1"
+        checksum/config-secrets: "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        checksum/config-configmap: "be4fa19a85caddb8fa9ed0c5eb2796d9453cdeac11a6659ce2a52862a3e9c05f"
+      labels:
+        
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/instance: mastodon
+        app.kubernetes.io/component: streaming
+    spec:
+      serviceAccountName: mastodon
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      containers:
+        - name: mastodon-streaming
+          image: "ghcr.io/mastodon/mastodon-streaming:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - node
+            - ./streaming
+          envFrom:
+            - configMapRef:
+                name: mastodon-env
+            - configMapRef:
+                name: mastodon-extra-env
+          env:
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
+            - name: "PORT"
+              value: "4000"
+          ports:
+            - name: streaming
+              containerPort: 4000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          readinessProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+          startupProbe:
+            httpGet:
+              path: /api/v1/streaming/health
+              port: streaming
+            initialDelaySeconds: 5
+            failureThreshold: 15
+            periodSeconds: 5
+---
+# Source: mastodon/templates/deployment-web.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mastodon-web
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mastodon
+      app.kubernetes.io/instance: mastodon
+      app.kubernetes.io/component: web
+      app.kubernetes.io/part-of: rails
+  template:
+    metadata:
+      annotations:
+        # roll the pods to pick up any db migrations or other changes
+        
+        rollme: "1"
+        checksum/config-secrets: "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+        checksum/config-configmap: "be4fa19a85caddb8fa9ed0c5eb2796d9453cdeac11a6659ce2a52862a3e9c05f"
+      labels:
+        
+        app.kubernetes.io/name: mastodon
+        app.kubernetes.io/instance: mastodon
+        
+        app.kubernetes.io/component: web
+        app.kubernetes.io/part-of: rails
+    spec:
+      serviceAccountName: mastodon
+      securityContext:
+        fsGroup: 991
+        runAsGroup: 991
+        runAsUser: 991
+      volumes:
+        - name: assets
+          persistentVolumeClaim:
+            claimName: mastodon-assets
+        - name: system
+          persistentVolumeClaim:
+            claimName: mastodon-system        
+      containers:
+        - name: mastodon-web
+          image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - bundle
+            - exec
+            - puma
+            - -C
+            - config/puma.rb
+          envFrom:
+            - configMapRef:
+                name: mastodon-env
+            - secretRef:
+                name: mastodon-app-secrets
+            - configMapRef:
+                name: mastodon-extra-env
+          env:
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
+            - name: "PORT"
+              value: "3000"
+            - name: "MIN_THREADS"
+              value: "5"
+            - name: "MAX_THREADS"
+              value: "5"
+            - name: "WEB_CONCURRENCY"
+              value: "2"
+            - name: "PERSISTENT_TIMEOUT"
+              value: "20"
+            - name: TEST_ENV_VALUE
+              value: 
+          volumeMounts:
+            - name: assets
+              mountPath: /opt/mastodon/public/assets
+            - name: system
+              mountPath: /opt/mastodon/public/system
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            failureThreshold: 30
+            periodSeconds: 5
+---
+# Source: mastodon/templates/cronjob-media-remove.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mastodon-media-remove
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  schedule: 0 0 * * 0
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: mastodon-media-remove
+        spec:
+          restartPolicy: OnFailure
+          # ensure we run on the same node as the other rails components; only
+          # required when using PVCs that are ReadWriteOnce
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app.kubernetes.io/part-of
+                        operator: In
+                        values:
+                          - rails
+                  topologyKey: kubernetes.io/hostname
+          volumes:
+            - name: assets
+              persistentVolumeClaim:
+                claimName: mastodon-assets
+            - name: system
+              persistentVolumeClaim:
+                claimName: mastodon-system
+          containers:
+            - name: mastodon-media-remove
+              image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+              imagePullPolicy: IfNotPresent
+              command:
+                - bin/tootctl
+                - media
+                - remove
+              envFrom:
+                - configMapRef:
+                    name: mastodon-env
+                - secretRef:
+                    name: mastodon-app-secrets
+              env:
+                - name: "DB_PASS"
+                  valueFrom:
+                    secretKeyRef:
+                      name: mastodon-db-url
+                      key: password
+                - name: "REDIS_PASSWORD"
+                  valueFrom:
+                    secretKeyRef:
+                      name: mastodon-redis
+                      key: redis-password
+                - name: "PORT"
+                  value: "3000"
+              volumeMounts:
+                - name: assets
+                  mountPath: /opt/mastodon/public/assets
+                - name: system
+                  mountPath: /opt/mastodon/public/system
+---
+# Source: mastodon/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mastodon
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  tls:
+    - hosts:
+        - "mastodon.local"
+      secretName: mastodon-tls
+  rules:
+    - host: "mastodon.local"
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: mastodon-web
+                port:
+                  number: 3000
+            pathType: Prefix
+          - path: /api/v1/streaming
+            backend:
+              service:
+                name: mastodon-streaming
+                port:
+                  number: 4000
+            pathType: Prefix
+---
+# Source: mastodon/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "mastodon-test-connection"
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['mastodon-web:80']
+  restartPolicy: Never
+---
+# Source: mastodon/templates/job-db-migrate.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mastodon-db-post-migrate
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "-2"
+spec:
+  template:
+    metadata:
+      name: mastodon-db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mastodon-db-migrate
+          image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - bundle
+            - exec
+            - rake
+            - db:migrate
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+          env:
+            - name: "DB_HOST"
+              value: mastodon-postgresql-pooler
+            - name: "DB_PORT"
+              value: "5432"
+            - name: "DB_NAME"
+              value: mastodon
+            - name: "DB_USER"
+              value: mastodon
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_HOST"
+              value: mastodon-redis-master
+            - name: "REDIS_PORT"
+              value: "6379"
+            - name: "REDIS_DRIVER"
+              value: "ruby"
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
+---
+# Source: mastodon/templates/job-db-pre-migrate.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mastodon-db-pre-migrate
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "-2"
+spec:
+  template:
+    metadata:
+      name: mastodon-db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mastodon-db-migrate
+          image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - bundle
+            - exec
+            - rake
+            - db:migrate
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+          env:
+            - name: "DB_HOST"
+              value: mastodon-postgresql-pooler
+            - name: "DB_PORT"
+              value: "5432"
+            - name: "DB_NAME"
+              value: mastodon
+            - name: "DB_USER"
+              value: mastodon
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_HOST"
+              value: mastodon-redis-master
+            - name: "REDIS_PORT"
+              value: "6379"
+            - name: "REDIS_DRIVER"
+              value: "ruby"
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
+            - name: "SKIP_POST_DEPLOYMENT_MIGRATIONS"
+              value: "true"
+---
+# Source: mastodon/templates/job-db-prepare.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mastodon-db-prepare
+  labels:
+    helm.sh/chart: mastodon-6.5.2
+    app.kubernetes.io/name: mastodon
+    app.kubernetes.io/instance: mastodon
+    
+    app.kubernetes.io/version: "v4.4.3"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "-3"
+spec:
+  template:
+    metadata:
+      name: mastodon-db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: mastodon-db-migrate
+          image: "ghcr.io/glitch-soc/mastodon:v4.4.3"
+          imagePullPolicy: IfNotPresent
+          command:
+            - bundle
+            - exec
+            - rake
+            - db:prepare
+          envFrom:
+            - secretRef:
+                name: mastodon-app-secrets
+          env:
+            - name: "DB_HOST"
+              value: mastodon-postgresql-pooler
+            - name: "DB_PORT"
+              value: "5432"
+            - name: "DB_NAME"
+              value: mastodon
+            - name: "DB_USER"
+              value: mastodon
+            - name: "DB_PASS"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-db-url
+                  key: password
+            - name: "REDIS_HOST"
+              value: mastodon-redis-master
+            - name: "REDIS_PORT"
+              value: "6379"
+            - name: "REDIS_DRIVER"
+              value: "ruby"
+            - name: "REDIS_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-redis
+                  key: redis-password
