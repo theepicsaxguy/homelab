@@ -14,3 +14,5 @@ resources:
   - db-secrets.yaml
   - postgresql-server-cert.yaml
   - mastodon-postgresql-ca.yaml
+  - externalsecret.yaml
+  

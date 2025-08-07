@@ -145,7 +145,7 @@ runtimeClassName: ""
 
 config:
   # -- If set, skip creating a new secret for admin credentials, and reference this existing Secret name instead.
-  existingAdminSecret: ""
+  existingAdminSecret: "mastodon-app-pgbouncer-secrets"
 
   # -- The key in the existingAdminSecret that corresponds to the admin username.
   adminUserKey: adminUser
