@@ -20,29 +20,42 @@ configMapGenerator:
       - REDIS_URL=redis://mastodon-redis-master:6379/0
       - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
       - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
+      - STREAMING_REDIS_URL=redis://mastodon-redis-master:6379/3
+      # --- Caching Optimizations ---
+      - QUERY_CACHE_REDIS_URL=redis://mastodon-redis-master:6379/4
       # --- Elasticsearch ---
       - ES_ENABLED=false
-      - ES_HOST=mastodon-es
+      - ES_HOST=release-name-elasticsearch
       - ES_PORT=9200
-      - ES_PRESET=single_node_cluster
+      - ES_PRESET=
       # --- Read Replica ---
       - REPLICA_DB_HOST=mastodon-postgresql-repl
       - REPLICA_DB_PORT=5432
       - REPLICA_DB_NAME=mastodon
       - REPLICA_PREPARED_STATEMENTS=false
       - REPLICA_DB_TASKS=false
+      # --- Database Query Optimizations ---
+      - DATABASE_TIMEOUT=60
+      - STREAMING_DATABASE_TIMEOUT=10
       # --- Prometheus ---
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
       - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
       - SINGLE_USER_MODE=false
       - RAILS_LOG_TO_STDOUT=true
       - PREPARED_STATEMENTS=false
-      - DB_POOL=10
+      - DB_POOL=15
+      # --- Performance Optimizations ---
+      - FEED_PRELOAD_LIMIT=100
+      - LOCAL_TIMELINE_LIMIT=1000
+      - TIMELINE_PRELOAD_CACHE_SIZE=10000
       # --- Federation & Privacy ---
       - FETCH_REPLIES_ENABLED=true
       - IP_RETENTION_PERIOD=15552000
       # --- Performance  ---
       - MASTODON_USE_LIBVIPS=true
+      # --- Admin Performance ---
+      - DISABLE_ADMIN_ANALYTICS=true
+      - ADMIN_ANALYTICS_CACHE_TTL=3600
       # --- Locale  ---
       - DEFAULT_LOCALE=en
       - FORCE_DEFAULT_LOCALE=true
