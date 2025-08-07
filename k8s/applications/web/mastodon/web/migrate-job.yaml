@@ -17,7 +17,22 @@ spec:
             - -c
             - bundle exec rails db:migrate
           envFrom:
-            - secretRef: { name: mastodon-app-secrets }
-            - secretRef: { name: mastodon-db-url }
-            - configMapRef: { name: mastodon-env }
+            - secretRef:
+                name: mastodon-app-secrets
+            - secretRef:
+                name: mastodon-db-url
+            - configMapRef:
+                name: mastodon-env
+          volumeMounts:
+            - name: pgbouncer-ca
+              mountPath: /etc/ssl/certs/pgbouncer-ca.crt
+              subPath: pgbouncer-ca.crt
+              readOnly: true
       restartPolicy: OnFailure
+      volumes:
+        - name: pgbouncer-ca
+          secret:
+            secretName: mastodon-postgresql-server
+            items:
+              - key: ca.crt
+                path: pgbouncer-ca.crt
