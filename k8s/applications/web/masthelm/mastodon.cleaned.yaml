@@ -5,90 +5,72 @@ metadata:
     podsecurity.kubernetes.io/enforce: baseline
     podsecurity.kubernetes.io/enforce-version: latest
   name: mastodon
-spec: {}
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-coordinating
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-data
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-ingest
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-master
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-postgresql
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-redis
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mastodon-eso-reader
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: mastodon-mastodon
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  labels: {}
   name: pgbouncer
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: eso-store-role
-  namespace: mastodon
+  namespace: mastodontest
 rules:
   - apiGroups:
       - ""
@@ -104,13 +86,12 @@ rules:
       - selfsubjectrulesreviews
     verbs:
       - create
-spec: {}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: eso-store-rolebinding
-  namespace: mastodon
+  namespace: mastodontest
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -118,8 +99,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: mastodon-eso-reader
-    namespace: mastodon
-spec: {}
+    namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -145,7 +125,7 @@ data:
   sentinel.conf: |-
     dir "/tmp"
     port 26379
-    sentinel monitor mastodon-redis-master mastodon-redis-node-0.mastodon-redis-headless.default.svc.cluster.local 6379 2
+    sentinel monitor mastodon-redis-master mastodon-redis-node-0.mastodon-redis-headless.mastodontest.svc.cluster.local 6379 2
     sentinel down-after-milliseconds mastodon-redis-master 60000
     sentinel failover-timeout mastodon-redis-master 180000
     sentinel parallel-syncs mastodon-redis-master 1
@@ -153,10 +133,8 @@ data:
     # End of sentinel configuration
 kind: ConfigMap
 metadata:
-  labels: {}
   name: mastodon-redis-configuration
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -290,10 +268,8 @@ data:
     fi
 kind: ConfigMap
 metadata:
-  labels: {}
   name: mastodon-redis-health
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -683,10 +659,8 @@ data:
     exec redis-server /opt/bitnami/redis-sentinel/etc/sentinel.conf --sentinel
 kind: ConfigMap
 metadata:
-  labels: {}
   name: mastodon-redis-scripts
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -813,8 +787,7 @@ data:
 kind: ConfigMap
 metadata:
   name: mastodon-s3-proxy-config
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -861,10 +834,8 @@ data:
   TZ: Europe/Stockholm
 kind: ConfigMap
 metadata:
-  labels: {}
   name: mastodon-mastodon-env
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
@@ -879,30 +850,24 @@ data:
     server_reset_query_always = 1
 kind: ConfigMap
 metadata:
-  labels: {}
   name: pgbouncer-configmap
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 data:
   redis-password: UUtLdFA0ZkpNag==
 kind: Secret
 metadata:
-  labels: {}
   name: mastodon-redis
-  namespace: mastodon
+  namespace: mastodontest
 type: Opaque
-spec: {}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  labels: {}
   name: mastodon-mastodon-smtp
-  namespace: mastodon
+  namespace: mastodontest
 type: Opaque
-spec: {}
 ---
 apiVersion: v1
 data:
@@ -910,28 +875,23 @@ data:
   adminUser: YWRtaW4=
 kind: Secret
 metadata:
-  labels: {}
   name: pgbouncer-secret
-  namespace: mastodon
+  namespace: mastodontest
 type: Opaque
-spec: {}
 ---
 apiVersion: v1
 data:
   userlist.txt: ImFkbWluIiAicmVwbGFjZW1lIg==
 kind: Secret
 metadata:
-  labels: {}
   name: pgbouncer-userlist-secret
-  namespace: mastodon
-spec: {}
+  namespace: mastodontest
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-elasticsearch
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ports:
     - name: tcp-rest-api
@@ -949,9 +909,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-coordinating-hl
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -971,9 +930,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-data-hl
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -993,9 +951,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-ingest-hl
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -1015,9 +972,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-master-hl
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -1037,9 +993,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-postgresql
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ports:
     - name: tcp-postgresql
@@ -1055,9 +1010,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-postgresql-hl
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -1074,9 +1028,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-redis
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ports:
     - name: tcp-redis
@@ -1095,9 +1048,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-redis-headless
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   clusterIP: None
   ports:
@@ -1117,7 +1069,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mastodon-s3-proxy-internal-svc
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ports:
     - name: http
@@ -1130,9 +1082,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-mastodon-streaming
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ipFamilyPolicy: PreferDualStack
   ports:
@@ -1149,9 +1100,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: mastodon-mastodon-web
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   ipFamilyPolicy: PreferDualStack
   ports:
@@ -1168,9 +1118,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels: {}
   name: pgbouncer
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   internalTrafficPolicy: Cluster
   ports:
@@ -1189,7 +1138,7 @@ metadata:
   labels:
     app: mastodon-s3-proxy
   name: mastodon-s3-proxy
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 2
   selector:
@@ -1241,9 +1190,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {}
   name: mastodon-mastodon-sidekiq-default
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 2
   revisionHistoryLimit: 2
@@ -1349,9 +1297,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {}
   name: mastodon-mastodon-sidekiq-push
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 2
   revisionHistoryLimit: 2
@@ -1457,9 +1404,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {}
   name: mastodon-mastodon-streaming
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 4
   revisionHistoryLimit: 2
@@ -1567,9 +1513,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {}
   name: mastodon-mastodon-web
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 3
   revisionHistoryLimit: 2
@@ -1700,9 +1645,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels: {}
   name: pgbouncer
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1770,7 +1714,7 @@ metadata:
   labels:
     app: coordinating-only
   name: mastodon-elasticsearch-coordinating
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   podManagementPolicy: Parallel
   replicas: 2
@@ -1795,7 +1739,7 @@ spec:
         app.kubernetes.io/version: 8.12.1
         helm.sh/chart: elasticsearch-19.19.2
     spec:
-      affinity: {}
+      affinity:
       automountServiceAccountToken: false
       containers:
         - env:
@@ -1879,7 +1823,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: sysctl
           securityContext:
-            privileged: true
+            privileged: false
             runAsUser: 0
       securityContext:
         fsGroup: 1001
@@ -1899,7 +1843,7 @@ metadata:
   labels:
     app: data
   name: mastodon-elasticsearch-data
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   podManagementPolicy: Parallel
   replicas: 2
@@ -1924,7 +1868,7 @@ spec:
         app.kubernetes.io/version: 8.12.1
         helm.sh/chart: elasticsearch-19.19.2
     spec:
-      affinity: {}
+      affinity:
       automountServiceAccountToken: false
       containers:
         - env:
@@ -2008,7 +1952,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: sysctl
           securityContext:
-            privileged: true
+            privileged: false
             runAsUser: 0
       securityContext:
         fsGroup: 1001
@@ -2031,10 +1975,8 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels:
-    app: ingest
   name: mastodon-elasticsearch-ingest
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   podManagementPolicy: Parallel
   replicas: 2
@@ -2059,7 +2001,7 @@ spec:
         app.kubernetes.io/version: 8.12.1
         helm.sh/chart: elasticsearch-19.19.2
     spec:
-      affinity: {}
+      affinity:
       automountServiceAccountToken: false
       containers:
         - env:
@@ -2143,7 +2085,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: sysctl
           securityContext:
-            privileged: true
+            privileged: false
             runAsUser: 0
       securityContext:
         fsGroup: 1001
@@ -2160,10 +2102,8 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels:
-    app: master
   name: mastodon-elasticsearch-master
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   podManagementPolicy: Parallel
   replicas: 2
@@ -2188,7 +2128,7 @@ spec:
         app.kubernetes.io/version: 8.12.1
         helm.sh/chart: elasticsearch-19.19.2
     spec:
-      affinity: {}
+      affinity:
       automountServiceAccountToken: false
       containers:
         - env:
@@ -2272,7 +2212,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: sysctl
           securityContext:
-            privileged: true
+            privileged: false
             runAsUser: 0
       securityContext:
         fsGroup: 1001
@@ -2295,9 +2235,8 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels: {}
   name: mastodon-postgresql
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   replicas: 1
   selector:
@@ -2464,9 +2403,8 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels: {}
   name: mastodon-redis-node
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   minReadySeconds: 0
   replicas: 2
@@ -2744,9 +2682,8 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  labels: {}
   name: mastodon-mastodon-media-remove
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   jobTemplate:
     spec:
@@ -2792,14 +2729,13 @@ spec:
               name: mastodon-mastodon-media-remove
           restartPolicy: OnFailure
   schedule: 0 0 * * 0
-  selector: {}
+  selector:
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  labels: {}
   name: mastodon-mastodon-db-post-migrate
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   template:
     metadata:
@@ -2847,14 +2783,13 @@ spec:
           imagePullPolicy: IfNotPresent
           name: mastodon-mastodon-db-migrate
       restartPolicy: Never
-  selector: {}
+  selector:
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  labels: {}
   name: mastodon-mastodon-db-pre-migrate
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   template:
     metadata:
@@ -2904,14 +2839,15 @@ spec:
           imagePullPolicy: IfNotPresent
           name: mastodon-mastodon-db-migrate
       restartPolicy: Never
-  selector: {}
+  selector:
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: mastodon-postgresql-ca
-  namespace: mastodon
+  namespace: mastodontest
 spec:
+  rotationPolicy: Always
   commonName: mastodon-postgresql-ca
   duration: 87600h
   isCA: true
@@ -2930,8 +2866,9 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: mastodon-postgresql-server
-  namespace: mastodon
+  namespace: mastodontest
 spec:
+  rotationPolicy: Always
   commonName: mastodon-postgresql.mastodon.svc
   dnsNames:
     - mastodon-postgresql.mastodon.svc
@@ -2955,7 +2892,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: mastodon-app-secrets
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   data:
     - remoteRef:
@@ -3024,7 +2961,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: mastodon-db-url
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   data:
     - remoteRef:
@@ -3052,14 +2989,13 @@ apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: zalando-k8s-store
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   provider:
     kubernetes:
       auth:
         serviceAccount:
           name: mastodon-eso-reader
-      remoteNamespace: mastodon
       server:
         caProvider:
           key: ca.crt
@@ -3071,7 +3007,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: mastodon
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   hostnames:
     - goingdark.social
@@ -3098,7 +3034,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: mastodon-s3
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   hostnames:
     - cdn.goingdark.social
@@ -3117,9 +3053,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  labels: {}
   name: mastodon-mastodon
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   rules:
     - host: goingdark.social
@@ -3140,9 +3075,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  labels: {}
   name: mastodon-mastodon-streaming
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   rules:
     - host: streaming.goingdark.social
@@ -3156,14 +3090,15 @@ spec:
             path: /api/v1/streaming
             pathType: Prefix
   tls:
-    - secretName: mastodon-tls
+    - hosts:
+        - streaming.goingdark.social
+      secretName: mastodon-tls
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-coordinating
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - {}
@@ -3179,14 +3114,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-data
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - {}
@@ -3202,14 +3136,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-ingest
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - {}
@@ -3225,14 +3158,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-elasticsearch-master
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - {}
@@ -3248,14 +3180,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-postgresql
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - ports:
@@ -3282,14 +3213,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  labels: {}
   name: mastodon-redis
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   egress:
     - {}
@@ -3304,14 +3234,13 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-  selector: {}
+  selector:
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  labels: {}
   name: mastodon-mastodon-test-connection
-  namespace: mastodon
+  namespace: mastodontest
 spec:
   containers:
     - args:
@@ -3321,4 +3250,5 @@ spec:
       image: busybox
       name: wget
   restartPolicy: Never
-  selector: {}
+  selector:
+  selector:

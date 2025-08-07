@@ -3,3 +3,9 @@ kind: Kustomization
 resources:
   - es-deployment.yaml
   - pvc-es.yaml
+
+helmCharts:
+- name: elasticsearch
+  version: 19.19.2
+  repo: oci://registry-1.docker.io/bitnamicharts
+  valuesFile: values.yaml
