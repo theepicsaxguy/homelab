@@ -39,7 +39,7 @@ RAILS_ENV=production bin/tootctl search deploy
 To validate your changes, run the following commands:
 
 ```bash
-kustomize build applications/web/mastodon/
+kustomize build k8s/applications/web/mastodon/
 cd website/
 npm run build
 pre-commit run vale --all-files
