@@ -65,7 +65,7 @@ RUN mkdir /deps \
     done
 
 ###############################################################################
-# Stage 2 – minimal distroless runtime
+# Stage 2 – minimal distroless runtime 
 ###############################################################################
 FROM gcr.io/distroless/python3-debian12:nonroot
 
