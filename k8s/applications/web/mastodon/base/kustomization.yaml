@@ -35,7 +35,7 @@ configMapGenerator:
       - REPLICA_PREPARED_STATEMENTS=false
       - REPLICA_DB_TASKS=false
       # --- Database Query Optimizations ---
-      - DATABASE_TIMEOUT=60
+      - DATABASE_TIMEOUT=60 # NOTE: If different timeouts are needed per service, move this to role-specific configs. For streaming, ensure STREAMING_DATABASE_TIMEOUT is set in streaming-env.
       # --- Prometheus ---
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
       - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
