@@ -23,6 +23,10 @@ spec:
       labels:
         app: sabnzbd
     spec:
+      securityContext:
+        runAsUser: 2501
+        runAsNonRoot: true
+        fsGroup: 2501
       containers:
         - name: sabnzbd
           image: ghcr.io/theepicsaxguy/sabnzbd:4.5.2
@@ -68,8 +72,6 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
           securityContext:
-            runAsUser: 2501
-            runAsNonRoot: true
             readOnlyRootFilesystem: true
       volumes:
         - name: media-share
