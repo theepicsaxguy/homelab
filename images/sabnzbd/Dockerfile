@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12-slim AS build
+FROM python:3.13-slim AS build
 ARG SAB_VERSION=4.5.2
 ARG SAB_SRC_URL="https://github.com/sabnzbd/sabnzbd/releases/download/${SAB_VERSION}/SABnzbd-${SAB_VERSION}-src.tar.gz"
 ENV VENV=/venv
