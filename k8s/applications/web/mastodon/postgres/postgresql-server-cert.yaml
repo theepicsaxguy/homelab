@@ -16,6 +16,10 @@ spec:
     - mastodon-postgresql.mastodon.svc.kube.pc-tips.se
     - mastodon-postgresql-pooler
     - mastodon-postgresql-pooler.mastodon.svc
+    - mastodon-postgresql-repl
+    - mastodon-postgresql-repl.mastodon.svc
+    - mastodon-postgresql-repl-pooler
+    - mastodon-postgresql-repl-pooler.mastodon.svc
   duration: 2160h       # 90 days
   renewBefore: 360h     # renew 15 days before expiry
   usages:

@@ -95,7 +95,7 @@ Rails sends read-only queries to the standby database when these variables are p
 configMapGenerator:
   - name: mastodon-env
     literals:
-      - REPLICA_DB_HOST=mastodon-postgresql-repl
+      - REPLICA_DB_HOST=mastodon-postgresql-repl-pooler
       - REPLICA_DB_PORT=5432
       - REPLICA_DB_NAME=mastodon
       - REPLICA_PREPARED_STATEMENTS=false

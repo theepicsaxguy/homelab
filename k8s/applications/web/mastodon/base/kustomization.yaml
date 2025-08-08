@@ -29,7 +29,7 @@ configMapGenerator:
       - ES_PORT=9200
       - ES_PRESET=
       # --- Read Replica ---
-      - REPLICA_DB_HOST=mastodon-postgresql-repl
+      - REPLICA_DB_HOST=mastodon-postgresql-repl-pooler
       - REPLICA_DB_PORT=5432
       - REPLICA_DB_NAME=mastodon
       - REPLICA_PREPARED_STATEMENTS=false
