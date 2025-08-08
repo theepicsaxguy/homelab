@@ -70,7 +70,7 @@ RUN mkdir /deps \
 FROM gcr.io/distroless/python3-debian12:nonroot
 
 # tiny busybox shell for user scripts
-COPY --from=busybox:1.36.1-musl /bin/busybox /bin/sh
+COPY --from=busybox:1.37.0-musl /bin/busybox /bin/sh
 
 # runtime artefacts
 COPY --from=build /venv                /venv
