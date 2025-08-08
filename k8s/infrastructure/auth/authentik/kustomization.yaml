@@ -5,6 +5,7 @@ resources:
 - database.yaml
 - httproute.yaml
 - outpost-externalsecret.yaml
+- minio-externalsecret.yaml
 - referencegrant.yaml
 - extra
 generatorOptions:

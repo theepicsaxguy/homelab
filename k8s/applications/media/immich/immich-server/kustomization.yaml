@@ -4,6 +4,7 @@ namespace: immich
 resources:
   - immich-config-external-secret.yaml
   - externalsecret.yaml
+  - minio-externalsecret.yaml
   - database.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml

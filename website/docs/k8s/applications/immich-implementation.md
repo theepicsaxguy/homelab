@@ -119,3 +119,14 @@ spec:
         requests:
           storage: 40Gi
 ```
+
+### Backups
+
+Database backups use MinIO credentials from an ExternalSecret:
+
+```yaml
+# k8s/applications/media/immich/immich-server/minio-externalsecret.yaml
+spec:
+  target:
+    name: longhorn-minio-credentials
+```
