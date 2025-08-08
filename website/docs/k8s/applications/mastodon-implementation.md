@@ -102,6 +102,17 @@ configMapGenerator:
       - REPLICA_DB_TASKS=false
 ```
 
+## Backups
+
+The PostgreSQL operator uploads backups to MinIO with credentials sourced from an ExternalSecret:
+
+```yaml
+# k8s/applications/web/mastodon/postgres/minio-externalsecret.yaml
+spec:
+  target:
+    name: longhorn-minio-credentials
+```
+
 ## Metrics
 
 Prometheus metrics expose runtime information for scraping:
