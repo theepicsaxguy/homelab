@@ -24,10 +24,10 @@ configMapGenerator:
       # --- Caching Optimizations ---
       - QUERY_CACHE_REDIS_URL=redis://mastodon-redis-master:6379/4
       # --- Elasticsearch ---
-      - ES_ENABLED=false
-      - ES_HOST=release-name-elasticsearch
+      - ES_ENABLED=true
+      - ES_HOST=es.goingdark.social
       - ES_PORT=9200
-      - ES_PRESET=
+      - ES_PRESET=single_node_cluster
       # --- Read Replica ---
       - REPLICA_DB_HOST=mastodon-postgresql-repl
       - REPLICA_DB_PORT=5432
