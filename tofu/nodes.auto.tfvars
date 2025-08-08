@@ -67,9 +67,9 @@ nodes_config = {
     mac_address  = "bc:24:11:7f:20:05"
     vm_id        = 8205
   }
-  "baremetal-01" = {
-    machine_type = "worker"
-    ip           = "10.25.150.30"
-    is_external  = true
-  }
+  # "baremetal-01" = {
+  #   machine_type = "worker"
+  #   ip           = "10.25.150.30"
+  #   is_external  = true
+  # }
 }

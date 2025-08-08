@@ -6,4 +6,12 @@ proxmox = {
   username     = "root"
   api_token    = "root@pam!secret"
 }
+proxmox = {
+  name         = "node" # Name of the Proxmox node
+  cluster_name = "node" # Must match the Proxmox cluster name
+  endpoint     = "https://node.example.com:8006"
+  insecure     = false
+  username     = "root"
+  api_token    = "root@pam!secret"
+}
 # The Proxmox API token format is: <username>@<realm>!<name>=<token>
