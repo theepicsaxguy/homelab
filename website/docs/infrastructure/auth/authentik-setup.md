@@ -58,6 +58,17 @@ Two sample accounts are bootstrapped via Authentik blueprints to show how group 
 
 Passwords and emails come from ExternalSecrets entries referenced in `authentik-blueprint-secrets`.
 
+## Database Backups
+
+The database backups upload to MinIO with credentials managed by an ExternalSecret:
+
+```yaml
+# k8s/infrastructure/auth/authentik/minio-externalsecret.yaml
+spec:
+  target:
+    name: longhorn-minio-credentials
+```
+
 ## Configuration Guide
 
 ### 1. Protecting a New Application
