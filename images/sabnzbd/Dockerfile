@@ -1,34 +1,88 @@
 # syntax=docker/dockerfile:1
-FROM python:3.13-slim AS build
-ARG SAB_VERSION=4.5.2
-ARG SAB_SRC_URL="https://github.com/sabnzbd/sabnzbd/releases/download/${SAB_VERSION}/SABnzbd-${SAB_VERSION}-src.tar.gz"
+###############################################################################
+# Stage 0 – build unrar (static) + par2cmdline-turbo
+###############################################################################
+FROM alpine:3.22 AS prepstage
+SHELL ["/bin/ash","-o","pipefail","-c"]
+
+ARG UNRAR_VER=6.2.12
+ARG UNRAR_MD5=1f526429e8e50a9b3b94f325b2848c24   # MD5 from BLFS/SlackBuilds
+
+RUN apk add --no-cache \
+        build-base curl openssl-dev git ca-certificates \
+        automake autoconf libtool m4 && \
+    ###########################################################################
+    # 1.  Download *once* with --insecure (TLS chain is broken on rarlab.com)
+    ###########################################################################
+    curl -L --insecure -o unrarsrc.tar.gz \
+         "https://www.rarlab.com/rar/unrarsrc-${UNRAR_VER}.tar.gz" && \
+    echo "${UNRAR_MD5}  unrarsrc.tar.gz" | md5sum -c - && \
+    ###########################################################################
+    # 2.  Build static unrar
+    ###########################################################################
+    tar xf unrarsrc.tar.gz --strip-components=1 && \
+    sed -i 's|LDFLAGS=-pthread|LDFLAGS=-pthread -static|' makefile && \
+    make -j"$(nproc)" && install -m755 unrar /usr/local/bin/unrar && \
+    ###########################################################################
+    # 3.  Build par2cmdline-turbo (needs Autotools)
+    ###########################################################################
+    git clone --depth 1 https://github.com/animetosho/par2cmdline-turbo.git /tmp/par2 && \
+    cd /tmp/par2 && aclocal && automake --add-missing && autoconf && \
+    ./configure && make -j"$(nproc)" && make install
+
+
+###############################################################################
+# Stage 1 – build SABnzbd, create venv, collect runtime deps
+###############################################################################
+FROM alpine:3.22 AS build
+SHELL ["/bin/ash","-o","pipefail","-c"]
+
+ARG SAB_VERSION=4.3.2
 ENV VENV=/venv
-RUN apt-get update && apt-get install --no-install-recommends -y curl ca-certificates unzip p7zip-full par2 unrar && rm -rf /var/lib/apt/lists/*
-RUN python -m venv $VENV && \
-    curl -sSL "$SAB_SRC_URL" -o /tmp/sabnzbd.tar.gz && \
-    tar -xzf /tmp/sabnzbd.tar.gz -C /tmp && \
-    pip install --no-cache-dir --upgrade pip setuptools wheel && \
-    pip install --no-cache-dir /tmp/SABnzbd-${SAB_VERSION}
-RUN adduser --uid 2501 --disabled-login --gecos '' sabnzbd
-RUN mkdir -p /defaults && \
-    $VENV/bin/python -m sabnzbd --config-file /defaults/sabnzbd.ini --server 127.0.0.1:9 || true && \
-    chown -R 2501:2501 /defaults
-RUN install -d -o 2501 -g 2501 /config /downloads/incomplete /app/data
-RUN mkdir /deps && \
-    for bin in /usr/bin/unrar /usr/bin/par2 /usr/bin/7z; do \
-      ldd $bin | awk '{print $3}' | grep -Ev '^$|^\(.*\)$' | xargs -r -I '{}' cp --parents '{}' /deps; \
+
+RUN apk add --no-cache python3 py3-pip py3-virtualenv git p7zip
+
+# binaries from prepstage
+COPY --from=prepstage /usr/local/bin/unrar /usr/local/bin/unrar
+COPY --from=prepstage /usr/local/bin/par2  /usr/local/bin/par2
+
+# build SABnzbd + default config
+WORKDIR /app
+RUN python3 -m venv $VENV \
+ && $VENV/bin/pip install --upgrade pip setuptools wheel \
+ && git clone --depth 1 --branch "$SAB_VERSION" \
+        https://github.com/sabnzbd/sabnzbd.git /app/sabnzbd \
+ && $VENV/bin/pip install --no-cache-dir -r /app/sabnzbd/requirements.txt \
+ && mkdir /defaults \
+ && $VENV/bin/python -m sabnzbd --config-file /defaults/sabnzbd.ini \
+      --server 127.0.0.1:9 || true
+
+# shared libs needed by par2 and 7z (unrar is static)
+RUN mkdir /deps \
+ && for bin in /usr/local/bin/par2 /usr/bin/7z; do \
+      ldd "$bin" | awk '{print $3}' | grep -Ev '^$|^\(.*\)$' | \
+      xargs -r -I '{}' cp --parents '{}' /deps; \
     done
+
+###############################################################################
+# Stage 2 – minimal distroless runtime
+###############################################################################
 FROM gcr.io/distroless/python3-debian12:nonroot
-COPY --from=build /venv /venv
-COPY --from=build /usr/bin/unrar /usr/bin/par2 /usr/bin/7z /usr/bin/
-COPY --from=build /deps/ /
-COPY --from=build /defaults /defaults
-COPY --from=build /config /config
-COPY --from=build /downloads/incomplete /downloads/incomplete
-COPY --from=build /app/data /app/data
-COPY entrypoint.py /entrypoint.py
+
+# tiny busybox shell for user scripts
+COPY --from=busybox:1.36.1-musl /bin/busybox /bin/sh
+
+# runtime artefacts
+COPY --from=build /venv                /venv
+COPY --from=build /usr/local/bin/unrar /usr/bin/unrar
+COPY --from=build /usr/local/bin/par2  /usr/bin/par2
+COPY --from=build /usr/bin/7z          /usr/bin/7z
+COPY --from=build /deps/              /
+COPY --from=build /defaults           /defaults
+COPY entrypoint.py                    /entrypoint.py
+
 USER 2501:2501
 ENV PATH="/venv/bin:$PATH"
-VOLUME ["/config","/downloads/incomplete","/app/data"]
+VOLUME ["/config", "/downloads/incomplete", "/app/data"]
 EXPOSE 8080
-ENTRYPOINT ["python","/entrypoint.py"]
+ENTRYPOINT ["python", "/entrypoint.py"]
