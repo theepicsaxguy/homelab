@@ -34,7 +34,13 @@ spec:
             - secretRef:
                 name: mastodon-db-url
             - configMapRef:
-                name: mastodon-env
+                name: mastodon-core-env
+            - configMapRef:
+                name: mastodon-db-env
+            - configMapRef:
+                name: mastodon-cache-env
+            - configMapRef:
+                name: mastodon-network-env
           volumeMounts:
             - name: db-ca
               mountPath: /opt/mastodon/.postgresql/root.crt
