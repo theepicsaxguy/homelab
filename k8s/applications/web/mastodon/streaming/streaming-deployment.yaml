@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mastodon-streaming
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mastodon-streaming
