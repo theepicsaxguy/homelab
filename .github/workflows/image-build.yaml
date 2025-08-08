@@ -2,10 +2,12 @@ name: Build and Push Docker Images
 
 on:
   push:
-    paths:
-      - 'images/**/Dockerfile'
     branches:
       - main
+    paths:
+      - 'images/**'
+    tags:
+      - '*-*'
 
 permissions:
   contents: read
@@ -60,15 +62,24 @@ jobs:
         run: |
           DOCKERFILE=images/${{ matrix.image }}/Dockerfile
 
-          # Extract base image tag
           FROM_LINE=$(grep -m 1 "^FROM" "$DOCKERFILE")
           BASE_IMAGE=$(echo "$FROM_LINE" | awk '{print $2}')
           BASE_IMAGE_TAG=$(echo "$BASE_IMAGE" | cut -d':' -f2-)
           [ -z "$BASE_IMAGE_TAG" ] && BASE_IMAGE_TAG="latest"
 
-          # Extract image version
-          IMAGE_VERSION=$(grep "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
+          IMAGE_VERSION=$(grep "ARG SAB_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
+          if [ -z "$IMAGE_VERSION" ]; then
+            IMAGE_VERSION=$(grep "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
+          fi
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
+
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            TAG_IMAGE_NAME="${GITHUB_REF_NAME%%-*}"
+            TAG_IMAGE_VERSION="${GITHUB_REF_NAME#*-}"
+            if [[ "$TAG_IMAGE_NAME" == "${{ matrix.image }}" ]]; then
+              IMAGE_VERSION="$TAG_IMAGE_VERSION"
+            fi
+          fi
 
           echo "base_tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
@@ -80,6 +91,11 @@ jobs:
           file: images/${{ matrix.image }}/Dockerfile
           pull: true
           push: true
+          build-args: |
+            SAB_VERSION=${{ steps.image-tags.outputs.image_version }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache,mode=max
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
             ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}

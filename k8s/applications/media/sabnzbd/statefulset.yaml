@@ -9,7 +9,6 @@ spec:
   selector:
     matchLabels:
       app: sabnzbd
-
   volumeClaimTemplates:
     - metadata:
         name: config
@@ -19,46 +18,25 @@ spec:
         resources:
           requests:
             storage: 5Gi
-
   template:
     metadata:
       labels:
         app: sabnzbd
     spec:
-      initContainers:
-        - name: seed-config
-          image: busybox:1.37
-          envFrom:
-            - secretRef:
-                name: sabnzbd-secrets
-          command:
-            - sh
-            - -c
-            - |
-              set -euo pipefail
-              echo "Seeding sabnzbd.ini to /config"
-              command -v envsubst >/dev/null || { echo "envsubst not found" >&2; exit 1; }
-              envsubst < /config-template/sabnzbd.ini > /config/sabnzbd.ini
-              echo "Rendered sabnzbd.ini"
-              mkdir -p /downloads/incomplete /app/data/downloads
-              echo "Prepared download directories"
-              chown -R 2501:2501 /config /downloads /app/data
-              echo "Config seed complete"
-          volumeMounts:
-            - name: config
-              mountPath: /config
-            - name: config-template
-              mountPath: /config-template
+      securityContext:
+        runAsUser: 2501
+        runAsNonRoot: true
+        fsGroup: 2501
       containers:
         - name: sabnzbd
-          image: ghcr.io/linuxserver/sabnzbd:4.5.2
+          image: ghcr.io/theepicsaxguy/sabnzbd:4.5.2
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              cpu:    "100m"
+              cpu: "100m"
               memory: "128Mi"
             limits:
-              cpu:    "500m"
+              cpu: "500m"
               memory: "512Mi"
           ports:
             - containerPort: 8080
@@ -68,10 +46,6 @@ spec:
             - configMapRef:
                 name: sabnzbd-env-config
           env:
-            - name: PUID
-              value: "2501"
-            - name: PGID
-              value: "2501"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
@@ -86,25 +60,22 @@ spec:
               path: /api?mode=version
               port: 8080
             initialDelaySeconds: 15
-            periodSeconds:        15
-            timeoutSeconds:       10
-            failureThreshold:     3
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /api?mode=version
               port: 8080
             initialDelaySeconds: 10
-            periodSeconds:        15
-            timeoutSeconds:       10
-            failureThreshold:     3
-
-      # step 3: volumes
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          securityContext:
+            readOnlyRootFilesystem: true
       volumes:
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
         - name: incomplete-downloads
           emptyDir: {}
-        - name: config-template
-          configMap:
-            name: sabnzbd-template-config

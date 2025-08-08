@@ -27,7 +27,3 @@ configMapGenerator:
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__CONNECTIONS="30"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL="1"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL_VERIFY="3"
-
-  - name: sabnzbd-template-config
-    files:
-      - sabnzbd.ini=config/sabnzbd.ini
