@@ -4,6 +4,25 @@ title: 'Mastodon Deployment Notes'
 
 This note summarizes the Mastodon configuration relevant for the Kubernetes manifests in `/k8s/applications/web/mastodon`.
 
+## Environment Variables
+
+Shared settings such as the database, Redis, and S3 live in `mastodon-common-env`. Each workload also loads a role-specific ConfigMap:
+
+- `web-env` configures Puma and other web settings.
+- `sidekiq-env` tunes the background workers.
+- `streaming-env` defines ports and timeouts for the streaming API.
+
+Deployments and the migration job import both `mastodon-common-env` and the appropriate role ConfigMap through `envFrom`.
+
+```yaml
+# k8s/applications/web/mastodon/web/web-deployment.yaml
+envFrom:
+  - configMapRef:
+      name: mastodon-common-env
+  - configMapRef:
+      name: web-env
+```
+
 ## Database Connection
 
 Rails connects to PgBouncer over TLS and validates the certificate. The CA comes from the `mastodon-postgresql-server` secret and is mounted into each pod:
@@ -11,7 +30,7 @@ Rails connects to PgBouncer over TLS and validates the certificate. The CA comes
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - DB_HOST=mastodon-postgresql-pooler
       - DB_SSLMODE=verify-ca
@@ -54,7 +73,7 @@ spec:
 
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - PREPARED_STATEMENTS=false
       - DB_POOL=10
@@ -67,7 +86,7 @@ Full-text search and hashtag discovery rely on Elasticsearch. The deployment ena
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - ES_ENABLED=true
       - ES_HOST=http://mastodon-es:9200
@@ -93,7 +112,7 @@ Rails sends read-only queries to the standby database when these variables are p
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - REPLICA_DB_HOST=mastodon-postgresql-repl
       - REPLICA_DB_PORT=5432
@@ -109,7 +128,7 @@ Prometheus metrics expose runtime information for scraping:
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
       - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
@@ -122,7 +141,7 @@ Sidekiq queues and application cache use separate Redis databases.
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - SIDEKIQ_REDIS_URL=redis://mastodon-redis-master:6379/1
       - CACHE_REDIS_URL=redis://mastodon-redis-master:6379/2
@@ -150,7 +169,7 @@ data:
 Rails is configured to use implicit TLS on port 465 and to avoid STARTTLS:
 
 ```yaml
-# k8s/applications/web/mastodon/kustomization.yaml
+# k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
   - name: mastodon-common-env
     literals:
@@ -159,7 +178,7 @@ configMapGenerator:
       - SMTP_SSL=true
       - SMTP_TLS=false
       - SMTP_ENABLE_STARTTLS_AUTO=false
-  - SMTP_ENABLE_STARTTLS=never
+      - SMTP_ENABLE_STARTTLS=never
 ```
 
 ## Captcha
@@ -197,7 +216,7 @@ Media and static assets are served from `cdn.goingdark.social` through an intern
 ```yaml
 # k8s/applications/web/mastodon/base/kustomization.yaml
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
 ```

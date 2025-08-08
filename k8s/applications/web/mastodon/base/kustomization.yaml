@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: mastodon
 
 configMapGenerator:
-  - name: mastodon-env
+  - name: mastodon-common-env
     literals:
       # --- Base Mastodon Config ---
       - RAILS_ENV=production
@@ -36,7 +36,6 @@ configMapGenerator:
       - REPLICA_DB_TASKS=false
       # --- Database Query Optimizations ---
       - DATABASE_TIMEOUT=60
-      - STREAMING_DATABASE_TIMEOUT=10
       # --- Prometheus ---
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
       - MASTODON_PROMETHEUS_EXPORTER_LOCAL=true
@@ -65,17 +64,6 @@ configMapGenerator:
       - SMTP_SSL=true
       - SMTP_TLS=false
       - SMTP_ENABLE_STARTTLS_AUTO=false
-      # --- Web Specific ---
-      - PORT=3000
-      - BIND=0.0.0.0
-      - RAILS_SERVE_STATIC_FILES=true
-      - WEB_CONCURRENCY=2
-      - MAX_THREADS=5
-      - STREAMING_API_BASE_URL=wss://goingdark.social
-      # --- Streaming Specific ---
-      - STREAMING_PORT=4000
-      # --- Sidekiq Specific ---
-      - SIDEKIQ_CONCURRENCY=15
       # --- S3 NON-SECRET Configuration ---
       - S3_ENABLED=true
       - S3_BUCKET=mastodata

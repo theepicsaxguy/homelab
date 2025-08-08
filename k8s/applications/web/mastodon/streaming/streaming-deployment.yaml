@@ -34,18 +34,13 @@ spec:
             - secretRef:
                 name: mastodon-db-url
             - configMapRef:
-                name: mastodon-env
+                name: mastodon-common-env
+            - configMapRef:
+                name: streaming-env
           volumeMounts:
             - name: db-ca
               mountPath: /opt/mastodon/.postgresql/root.crt
               subPath: ca.crt
-          env:
-            - name: DB_SSLMODE
-              value: verify-ca
-            - name: DB_SSLROOTCERT
-              value: /opt/mastodon/.postgresql/root.crt
-            - name: PORT
-              value: "4000"
           livenessProbe:
             httpGet:
               path: /api/v1/streaming/health

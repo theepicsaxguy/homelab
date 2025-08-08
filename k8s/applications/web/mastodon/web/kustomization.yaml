@@ -3,6 +3,16 @@ kind: Kustomization
 
 namespace: mastodon
 
+configMapGenerator:
+  - name: web-env
+    literals:
+      - PORT=3000
+      - BIND=0.0.0.0
+      - RAILS_SERVE_STATIC_FILES=true
+      - WEB_CONCURRENCY=2
+      - MAX_THREADS=5
+      - STREAMING_API_BASE_URL=wss://goingdark.social
+
 resources:
   - svc.yaml
   - web-deployment.yaml
