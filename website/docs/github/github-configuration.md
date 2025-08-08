@@ -39,6 +39,7 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
   - `contents: read` (clone the repository)
   - `packages: write` (upload images)
 - **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
+- **Labels:** Each Dockerfile defines `org.opencontainers.image.description` to clarify the image contents.
 
 ### Documentation Lint (`vale.yaml`)
 
