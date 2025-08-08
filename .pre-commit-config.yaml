@@ -1,3 +1,4 @@
+---
 repos:
   - repo: https://github.com/errata-ai/vale
     rev: v3.12.0

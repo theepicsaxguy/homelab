@@ -7,9 +7,13 @@ name: Vale Documentation Lint
 
 'on':
   pull_request:
-    paths: ['website/docs/**/*.md']
+    paths:
+      - 'website/docs/**/*.md'
+      - 'website/docs/*.md'
   push:
-    paths: ['website/docs/**/*.md']
+    paths:
+      - 'website/docs/**/*.md'
+      - 'website/docs/*.md'
 
 jobs:
   docs_lint:
@@ -25,7 +29,9 @@ jobs:
         id: changed
         uses: tj-actions/changed-files@v46
         with:
-          files: 'website/docs/**/*.md'
+          files: |
+            website/docs/**/*.md
+            website/docs/*.md
           separator: ','
 
       - name: Run Vale with reviewdog
@@ -35,9 +41,10 @@ jobs:
           files: ${{ steps.changed.outputs.all_changed_files }}
           separator: ','
           vale_flags: '--config=website/utils/vale/.vale.ini'
-          reporter: github-pr-review   # inline PR comments
-          level: warning              # INFO is non-blocking
-          fail_on_error: true         # fail on WARN or ERR only
-          filter_mode: file           # lint entire file when it changes
+          reporter: github-pr-review
+          level: warning
+          fail_on_error: true
+          filter_mode: diff_context
+          onlyAnnotateModifiedLines: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

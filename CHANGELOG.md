@@ -1,5 +1,94 @@
 # Changelog
 
+## 3.7.0 (2025-08-08)
+
+## What's Changed
+* chore(deps): update ollama/ollama docker tag to v0.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1236
+* fix(k8s): disable Mastodon Postgres SSL by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1238
+* chore(deps): update helm release velero to v10.0.11 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1240
+* Feat/improve-mastodon-performance by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1239
+* Add Mastodon SMTP secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1241
+* chore(deps): update helm release argo-cd to v8.2.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1242
+* Add implicit TLS flags for Mastodon mailer by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1243
+* chore(deps): update dependency typescript to ~5.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1244
+* chore(deps): update helm release kubechecks to v0.5.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1246
+* Fix postgres backup secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1245
+* Increase Mastodon Sidekiq resources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1247
+* feat(k8s): triple Mastodon media PVC by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1248
+* Update Mastodon images by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1249
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.137.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1250
+* chore(deps): update ghcr.io/immich-app/immich-machine-learning docker tag to v1.137.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1251
+* chore(deps): update ghcr.io/immich-app/immich-server docker tag to v1.137.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1252
+* chore(deps): update terraform proxmox to v0.81.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1253
+* chore(deps): update all dependencies to v1.137.3 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1254
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.6.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1255
+* feat(tofu): add support for external nodes in configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1256
+* Increase Mastodon PVC to 50Gi by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1257
+* chore(deps): update mbentley/omada-controller docker tag to v5.15.24.19 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1258
+* chore(deps): update helm release external-secrets to v0.19.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1259
+* chore(deps): update helm release redis to v21.2.14 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1261
+* chore(deps): update getmeili/meilisearch docker tag to v1.16.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1262
+* Feat--add-s3-cdn-for-mastodon by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1260
+* chore(deps): update nginx docker tag to v1.29 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1263
+* chore(deps): update all dependencies to v75.15.2 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1264
+* fix(mastodon): include bucket in proxy and allow CDN hosts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1267
+* fix(mastodon): remove CDN_HOST override by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1268
+* Update nginx-proxy.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1269
+* feat(gateway): add additional HTTPS listener for goingdark.social by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1270
+* chore(mastodon): remove unused storage configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1272
+* feat(mastodon): add hcaptcha secrets by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1271
+* chore(deps): update ollama/ollama docker tag to v0.11.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1273
+* chore(deps): update coredns/coredns docker tag to v1.12.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1275
+* chore(deps): update all dependencies to v75.16.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1276
+* fix: refactor nginx proxy by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1274
+* fix(k8s): render sabnzbd secrets in config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1277
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1278
+* fix(sabnzbd): overwrite config during init by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1279
+* fix(sabnzbd): overwrite config during init by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1280
+* fix(sabnzbd): ensure config seed uses envsubst by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1282
+* chore(deps): update ollama/ollama docker tag to v0.11.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1283
+* fix(sabnzbd): ensure config seed uses envsubst by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1281
+* chore(deps): update helm release velero to v10.0.12 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1284
+* chore(mastodon): update to v4.4.3 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1285
+* chore(deps): update all dependencies to v75.17.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1286
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.8.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1288
+* chore(deps): update ghcr.io/prometheus-community/charts/kube-prometheus-stack docker tag to v75.17.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1289
+* feat(mastodon): scale components and enable pooling by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1287
+* fix(mastodon): route replica database through pooler by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1291
+* fix(mastodon): label namespace for baseline podsecurity by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1290
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1292
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1293
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1294
+* fix(mastodon): run migrations via job by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1295
+* Update database.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1296
+* fix(mastodon): use primary database service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1297
+* feat(mastodon): enable tls for database connections by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1298
+* chore(deps): update docker.elastic.co/elasticsearch/elasticsearch docker tag to v9.1.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1299
+* chore(deps): update all dependencies to v75.18.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1300
+* chore(deps): update all dependencies to v75.18.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1301
+* Fix  resolved ssl for postgresql and mastodon by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1302
+* chore(deps): update ollama/ollama docker tag to v0.11.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1305
+* Test mastodon helm by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1306
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1307
+* chore(deps): update elasticsearch docker tag to v19.21.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1308
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1310
+* chore(deps): update elasticsearch docker tag to v22 - autoclosed by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1309
+* fix(mastodon): add backup credentials secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1311
+* feat(sabnzbd): rebuild with distroless image by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1313
+* chore(deps): update elasticsearch docker tag to v22.1.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1314
+* chore(deps): update python docker tag to v3.13 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1315
+* Update Dockerfile by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1317
+* chore(deps): update busybox docker tag to v1.37.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1318
+* chore(deps): update helm release redis to v22 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1316
+* Update image-build.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1319
+* trigger build by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1321
+* fix(ci): quote pattern and separator in Vale workflow by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1320
+* fix(pre-commit): add document start by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1325
+* chore(deps): update all dependencies to v76 (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1324
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.6.0...v3.7.0
+
 ## 3.6.0 (2025-07-30)
 
 ## What's Changed
