@@ -68,6 +68,7 @@ RUN mkdir /deps \
 # Stage 2 – minimal distroless runtime 
 ###############################################################################
 FROM gcr.io/distroless/python3-debian12:nonroot
+LABEL org.opencontainers.image.description="SABnzbd with static unrar and par2"
 
 # tiny busybox shell for user scripts
 COPY --from=busybox:1.37.0-musl /bin/busybox /bin/sh
