@@ -45,20 +45,20 @@ configMapGenerator:
       - PREPARED_STATEMENTS=false
       - DB_POOL=15
       # --- Performance Optimizations ---
-      - FEED_PRELOAD_LIMIT=100
-      - LOCAL_TIMELINE_LIMIT=1000
-      - TIMELINE_PRELOAD_CACHE_SIZE=10000
+      #- FEED_PRELOAD_LIMIT=100
+      #- LOCAL_TIMELINE_LIMIT=1000
+      #- TIMELINE_PRELOAD_CACHE_SIZE=10000
       # --- Federation & Privacy ---
       - FETCH_REPLIES_ENABLED=true
       - IP_RETENTION_PERIOD=15552000
       # --- Performance  ---
       - MASTODON_USE_LIBVIPS=true
       # --- Admin Performance ---
-      - DISABLE_ADMIN_ANALYTICS=true
-      - ADMIN_ANALYTICS_CACHE_TTL=3600
+      #- DISABLE_ADMIN_ANALYTICS=true
+      #- ADMIN_ANALYTICS_CACHE_TTL=3600
       # --- Locale  ---
       - DEFAULT_LOCALE=en
-      - FORCE_DEFAULT_LOCALE=true
+      #- FORCE_DEFAULT_LOCALE=true
       # --- SMTP  ---
       - SMTP_DELIVERY_METHOD=smtp
       - SMTP_AUTH_METHOD=login
@@ -75,7 +75,7 @@ configMapGenerator:
       # --- Streaming Specific ---
       - STREAMING_PORT=4000
       # --- Sidekiq Specific ---
-      - SIDEKIQ_CONCURRENCY=5
+      - SIDEKIQ_CONCURRENCY=15
       # --- S3 NON-SECRET Configuration ---
       - S3_ENABLED=true
       - S3_BUCKET=mastodata
