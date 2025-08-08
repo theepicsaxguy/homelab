@@ -45,7 +45,7 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
 - **File:** `.github/workflows/vale.yaml`
 - **Purpose:** Lints Markdown files in `website/docs` using [Vale](https://vale.sh/).
 - **When triggered:** Only when `.md` files change under `website/docs/`.
-- **How it works:** The workflow runs Vale only on the Markdown files that changed in the PR.
+- **How it works:** The workflow lints only the changed Markdown files and posts the results as a single pull request check.
 
 ### Validation & CI (Implied Workflows)
 

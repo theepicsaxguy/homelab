@@ -35,9 +35,9 @@ jobs:
           files: ${{ steps.changed.outputs.all_changed_files }}
           separator: ','
           vale_flags: '--config=website/utils/vale/.vale.ini'
-          reporter: github-pr-review   # inline PR comments
-          level: warning              # INFO is non-blocking
-          fail_on_error: true         # fail on WARN or ERR only
-          filter_mode: file           # lint entire file when it changes
+          reporter: github-pr-check
+          level: warning
+          fail_on_error: true
+          filter_mode: file
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
