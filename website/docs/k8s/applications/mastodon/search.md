@@ -48,4 +48,4 @@ pre-commit run vale --all-files
 ### See also
 
 * [Mastodon Kustomization](http://github.com/theepicsaxguy/homelab/blob/main/k8s/applications/web/mastodon/base/kustomization.yaml)
-* [Elasticsearch Values](https://github.com/theepicsaxguy/homelab/k8s/blob/main/applications/web/mastodon/elasticsearch/values.yaml)
+* [Elasticsearch Values](https://github.com/theepicsaxguy/homelab/blob/main/k8s/applications/web/mastodon/elasticsearch/values.yaml)
