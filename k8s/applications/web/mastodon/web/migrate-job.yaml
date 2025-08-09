@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mastodon-migrate
+  name: mastodon-migrate-nightly-2025-07-31 # renovate: datasource=docker depName=ghcr.io/glitch-soc/mastodon
   namespace: mastodon
 spec:
   template:
@@ -9,7 +9,7 @@ spec:
       serviceAccountName: mastodon-eso-reader
       containers:
         - name: migrate
-          image: ghcr.io/glitch-soc/mastodon:v4.4.3
+          image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
           command:
             - /bin/bash
             - -c
