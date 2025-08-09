@@ -129,6 +129,14 @@ nodes_config = {
     igpu         = true
     gpu_devices  = ["0000:01:00.0", "0000:01:00.1"] # Example BDFs for GPU and HDMI Audio
   }
+  # This worker runs on a different Proxmox host
+  "work-04" = {
+    host_node    = "nuc"
+    machine_type = "worker"
+    ip           = "10.25.150.25"
+    mac_address  = "bc:24:11:XX:XX:X6"
+    vm_id        = 8205
+  }
 }
 ```
 

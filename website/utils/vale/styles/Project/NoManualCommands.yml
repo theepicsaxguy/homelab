@@ -1,0 +1,30 @@
+extends: existence
+message: "Don't document procedural commands. Provide links to runbooks or automation instead."
+level: suggestion
+ignorecase: true
+tokens:
+  # Common manual commands that should be automated
+  - 'kubectl apply'
+  - 'kubectl create'
+  - 'kubectl delete'
+  - 'terraform apply'
+  - 'tofu apply'
+  - 'docker build'
+  - 'docker run'
+
+exceptions:
+  # Allow in troubleshooting sections
+  - 'troubleshoot'
+  - 'debug'
+  - 'Troubleshoot'
+  - 'Debug'
+  
+  # Allow in disaster recovery
+  - 'disaster'
+  - 'recovery'
+  - 'emergency'
+  
+  # Allow in getting started guides
+  - 'getting-started'
+  - 'setup'
+  - 'initial'

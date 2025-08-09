@@ -1,0 +1,16 @@
+extends: existence
+message: "Use relative links to reference files in the repository ('%s'). Avoid absolute URLs to your own repo."
+level: suggestion
+ignorecase: true
+tokens:
+  # GitHub URLs to own repo that should be relative
+  - 'https://github\.com/theepicsaxguy/homelab/blob/[^)]*'
+  - 'https://github\.com/theepicsaxguy/homelab/tree/[^)]*'
+  - 'https://raw\.githubusercontent\.com/theepicsaxguy/homelab/[^)]*'
+
+exceptions:
+  # Allow external references
+  - 'External'
+  - 'external'
+  - 'See also'
+  - 'Reference'

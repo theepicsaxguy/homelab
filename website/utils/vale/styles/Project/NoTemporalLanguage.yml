@@ -1,0 +1,34 @@
+extends: existence
+message: "Avoid documenting temporary states or 'currently' information ('%s'). Focus on declarative, timeless content."
+level: suggestion
+ignorecase: true
+tokens:
+  # Temporal language that becomes outdated
+  - '\bcurrently\b'
+  - '\bpresently\b'
+  - '\bat the moment\b'
+  - '\bright now\b'
+  - '\bfor now\b'
+  - '\btemporarily\b'
+  - '\bas of [0-9]{4}'
+  - '\bin [0-9]{4}\b'
+  - '\bthis year\b'
+  - '\bthis month\b'
+  - '\brecently\b'
+  - '\blately\b'
+  - '\bsoon\b'
+  - '\bupcoming\b'
+  - '\bnext version\b'
+  - '\bfuture version\b'
+
+exceptions:
+  # Allow in specific contexts
+  - 'changelog'
+  - 'CHANGELOG'
+  - 'release'
+  - 'Release'
+  - 'breaking-changes'
+  - 'migration'
+  - 'upgrade'
+  - 'troubleshoot'
+  - 'debug'

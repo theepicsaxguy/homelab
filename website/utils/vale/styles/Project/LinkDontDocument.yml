@@ -1,0 +1,23 @@
+extends: existence
+message: "Don't duplicate code in documentation. Link to the actual configuration file instead."
+level: warning
+ignorecase: true
+tokens:
+  # Simple patterns for common code duplication
+  - 'apiVersion:\s*apps/v1'
+  - 'kind:\s*Deployment'
+  - 'kind:\s*Service'
+  - 'kind:\s*ConfigMap'
+  - 'kind:\s*Secret'
+
+exceptions:
+  # Allow brief examples or single-line references
+  - 'For example'
+  - 'Example:'
+  - 'e\.g\.'
+  
+  # Allow in changelog/release notes
+  - 'CHANGELOG'
+  - 'changelog'
+  - 'release'
+  - 'Release'
