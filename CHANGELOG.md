@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.8.0 (2025-08-09)
+
+## What's Changed
+* docs: move mastodon docs to website by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1322
+* chore(deps): update helm release external-secrets to v0.19.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1329
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1330
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1332
+* chore(ci): lint only changed docs by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1331
+* chore(images): add OCI descriptions by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1326
+* chore(deps): update helm release crossplane to v2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1335
+* refactor(mastodon): split env configmaps per service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1336
+* chore(deps): update helm release redis to v22.0.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1338
+* chore(deps): update helm release argo-cd to v8.2.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1339
+* chore(deps): update helm release argo-cd to v8.2.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1340
+* feat(tofu): add worker node work-04 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1334
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.7.0...v3.8.0
+
 ## 3.7.0 (2025-08-08)
 
 ## What's Changed
