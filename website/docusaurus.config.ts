@@ -36,6 +36,7 @@ const config: Config = {
         docs: {
           sidebarPath: 'sidebars.ts',
           editUrl: 'https://github.com/theepicsaxguy/homelab/edit/main/website/',
+          exclude: ['styles/**'],
         },
         theme: {
           customCss: './src/css/custom.css',
