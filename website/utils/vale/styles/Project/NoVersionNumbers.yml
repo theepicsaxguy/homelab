@@ -1,0 +1,65 @@
+extends: existence
+message: "Don't document specific version numbers ('%s'). Code should be linked to rather than documented. For procedures, reference 'current version' instead of specific versions."
+level: error
+ignorecase: true
+tokens:
+  # Semantic versioning patterns (1.2.3, v1.2.3, 1.2.3-alpha, etc.)
+  - '\bv?\d+\.\d+\.\d+(?:[.-](?:alpha|beta|rc|dev|pre|snapshot|nightly)\d*)?\b'
+  
+  # Version patterns with build metadata (1.2.3+build.1)
+  - '\bv?\d+\.\d+\.\d+\+[a-zA-Z0-9.-]+\b'
+  
+  # Date-based versions (2024.01.15, 2024-01-15)
+  - '\b20\d{2}[.-]\d{1,2}[.-]\d{1,2}\b'
+  
+  # Common software version patterns
+  - '\bversion\s+\d+\.\d+(?:\.\d+)?\b'
+  - '\bv\d+\.\d+(?:\.\d+)?\b'
+  
+  # Container image tags with versions
+  - ':\d+\.\d+(?:\.\d+)?(?:[.-](?:alpine|ubuntu|slim|bullseye|bookworm))?\b'
+  - ':v\d+\.\d+(?:\.\d+)?\b'
+  
+  # Kubernetes/Docker version patterns
+  - '\bkubernetes\s+v?\d+\.\d+(?:\.\d+)?\b'
+  - '\bdocker\s+v?\d+\.\d+(?:\.\d+)?\b'
+  - '\bhelm\s+v?\d+\.\d+(?:\.\d+)?\b'
+  
+  # Node/Python/etc version patterns
+  - '\bnode\s+v?\d+\.\d+(?:\.\d+)?\b'
+  - '\bpython\s+\d+\.\d+(?:\.\d+)?\b'
+  - '\bgo\s+\d+\.\d+(?:\.\d+)?\b'
+  
+  # Chart/app version references
+  - '\bchart\s+version\s+\d+\.\d+(?:\.\d+)?\b'
+  - '\bapp\s+version\s+\d+\.\d+(?:\.\d+)?\b'
+
+# Exceptions for file paths, URLs, and technical references where versions are necessary
+exceptions:
+  # File paths and URLs
+  - '\.yaml'
+  - '\.yml' 
+  - '\.json'
+  - '\.tf'
+  - '\.md'
+  - 'http'
+  - 'https'
+  - 'github\.com'
+  - 'docker\.io'
+  - 'ghcr\.io'
+  
+  # Code blocks and inline code (often contain necessary version info)
+  - '`[^`]*`'
+  - '```[\s\S]*?```'
+  
+  # Configuration examples and technical specifications
+  - 'apiVersion'
+  - 'image:'
+  - 'tag:'
+  - 'version:'
+  
+  # Changelog and release notes (where versions are expected)
+  - 'CHANGELOG'
+  - 'changelog'
+  - 'release'
+  - 'Release'
