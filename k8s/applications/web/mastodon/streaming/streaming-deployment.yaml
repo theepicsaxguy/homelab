@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mastodon-streaming
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mastodon-streaming
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: streaming
-          image: ghcr.io/glitch-soc/mastodon-streaming:nightly.2025-07-31
+          image: ghcr.io/glitch-soc/mastodon-streaming:nightly.2025-08-09
           command: ["node", "./streaming/index.js"]
           ports:
             - name: streaming
@@ -74,7 +74,7 @@ spec:
       volumes:
         - name: db-ca
           secret:
-            secretName: mastodon-postgresql-server
+            secretName: mastodon-postgresql-ca
             items:
               - key: ca.crt
                 path: ca.crt

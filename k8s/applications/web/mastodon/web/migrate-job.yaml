@@ -9,7 +9,7 @@ spec:
       serviceAccountName: mastodon-eso-reader
       containers:
         - name: migrate
-          image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
+          image: ghcr.io/glitch-soc/mastodon:nightly.2025-08-09
           command:
             - /bin/bash
             - -c
@@ -43,7 +43,7 @@ spec:
       volumes:
         - name: db-ca
           secret:
-            secretName: mastodon-postgresql-server
+            secretName: mastodon-postgresql-ca
             items:
               - key: ca.crt
                 path: ca.crt

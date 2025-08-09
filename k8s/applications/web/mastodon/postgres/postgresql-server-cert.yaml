@@ -4,7 +4,7 @@ metadata:
   name: mastodon-postgresql-server
   namespace: mastodon
 spec:
-  secretName: mastodon-postgresql-server
+  secretName: mastodon-postgresql-ca
   issuerRef:
     name: internal-issuer
     kind: ClusterIssuer

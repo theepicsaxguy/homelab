@@ -19,7 +19,7 @@ configMapGenerator:
       - DB_HOST=mastodon-postgresql-pooler
       - DB_PORT=5432
       - DB_NAME=mastodon
-      - DB_SSLMODE=verify-ca
+      - DB_SSLMODE=require
       - DB_SSLROOTCERT=/opt/mastodon/.postgresql/root.crt
       - DB_POOL=15
       - REPLICA_DB_HOST=mastodon-postgresql-repl

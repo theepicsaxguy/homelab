@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mastodon-sidekiq
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mastodon-sidekiq
@@ -20,7 +20,7 @@ spec:
         fsGroupChangePolicy: Always
       containers:
         - name: sidekiq
-          image: ghcr.io/glitch-soc/mastodon:nightly.2025-07-31
+          image: ghcr.io/glitch-soc/mastodon:nightly.2025-08-09
           args:
             - bundle
             - exec
@@ -81,7 +81,7 @@ spec:
       volumes:
         - name: db-ca
           secret:
-            secretName: mastodon-postgresql-server
+            secretName: mastodon-postgresql-ca
             items:
               - key: ca.crt
                 path: ca.crt
