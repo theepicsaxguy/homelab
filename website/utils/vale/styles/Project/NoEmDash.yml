@@ -2,8 +2,8 @@
 extends: existence
 message: "Avoid using em dashes (—). Use conversational language instead."
 level: error
-scope: text
 nonword: true
 tokens:
   - '—'
   - '–'
+  - '---'

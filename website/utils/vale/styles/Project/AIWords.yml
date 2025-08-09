@@ -1,0 +1,45 @@
+extends: existence
+message: "'%s' is a common AI-generated text phrase. Use simpler, more natural wording."
+ignorecase: true
+level: error
+tokens:
+  # High-frequency AI words (with variations)
+  - \bdelve(?:d)? into\b
+  - \bunderscor(?:e|es|ed|ing)\b
+  - \bpivotal\b
+  - \brealm\b
+  - \bharness(?:es|ed|ing)?\b
+  - \billuminat(?:e|es|ed|ing)\b
+
+  # Transitions and structured phrases
+  - \bthat being said\b
+  - \bat its core\b
+  - \bto put it simply\b
+  - \bthis underscores the importance of\b
+  - \ba key takeaway is\b
+  - \bfrom a broader perspective\b
+
+  # Qualifiers and softening words
+  - \bgenerally speaking\b
+  - \btypically\b
+  - \btends? to\b
+  - \barguably\b
+  - \bto some extent\b
+  - \bbroadly speaking\b
+
+  # Analytical / academic words
+  - \bshed(?:s)? light on\b
+  - \bfacilit(?:ate|ates|ated|ating)\b
+  - \brefin(?:e|es|ed|ing)\b
+  - \bbolster(?:s|ed|ing)?\b
+  - \bdifferentiat(?:e|es|ed|ing)\b
+  - \bstreamlin(?:e|es|ed|ing)\b
+
+  # Overused AI buzzwords
+  - \brevolutioniz(?:e|es|ed|ing)\b
+  - \binnovative\b
+  - \bcutting[- ]edge\b
+  - \bgame[- ]changing\b
+  - \btransformative\b
+  - \bseamless integration\b
+  - \bscalable solution\b
