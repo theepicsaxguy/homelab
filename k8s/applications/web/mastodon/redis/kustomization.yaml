@@ -4,6 +4,6 @@ namespace: mastodon
 helmCharts:
   - name: redis
     repo: https://charts.bitnami.com/bitnami
-    version: 22.0.0
+    version: 22.0.1
     releaseName: mastodon-redis
     valuesFile: values.yaml
