@@ -1,7 +1,9 @@
+---
 extends: existence
-message: "Never use an em dash (—) or en dash (–) in documentation. Use a colon, parentheses, or regular hyphen (-) instead."
+message: "Avoid using em dashes (—). Use conversational language instead."
 level: error
 scope: text
+nonword: true
 tokens:
-  - "—"
-  - "–"
+  - '—'
+  - '–'

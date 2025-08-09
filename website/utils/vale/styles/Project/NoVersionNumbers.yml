@@ -58,6 +58,14 @@ exceptions:
   - 'tag:'
   - 'version:'
   
+  # Network and IP addresses (not version numbers)
+  - '\b(?:10|172|192)\.\d{1,3}\.\d{1,3}(?:\.\d{1,3})?(?:/\d{1,2})?\b'
+  - '\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?:/\d{1,2})?\b'
+  - 'CIDR'
+  - 'IP'
+  - 'Network'
+  - 'subnet'
+  
   # Changelog and release notes (where versions are expected)
   - 'CHANGELOG'
   - 'changelog'
