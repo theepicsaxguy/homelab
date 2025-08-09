@@ -304,3 +304,4 @@ VM.Configuration.Network
 VM.Configuration.Options
 VM.Monitor
 VM.PowerMgmt
+PgBouncer
