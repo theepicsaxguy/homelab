@@ -10,5 +10,6 @@ if not os.path.exists(config):
     os.makedirs(os.path.dirname(config), exist_ok=True)
     shutil.copy(default, config)
 
-# Run SABnzbd
+# Change to SABnzbd directory and run SABnzbd
+os.chdir('/app/sabnzbd')
 os.execv(sys.executable, [sys.executable, '-m', 'sabnzbd', '--config-file', config])

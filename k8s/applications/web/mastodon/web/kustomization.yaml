@@ -4,6 +4,6 @@ kind: Kustomization
 namespace: mastodon
 
 resources:
+  - migrate-job.yaml
   - svc.yaml
   - web-deployment.yaml
-  - migrate-job.yaml

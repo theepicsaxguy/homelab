@@ -1,19 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mastodon-migrate-nightly-2025-07-31 # renovate: datasource=docker depName=ghcr.io/glitch-soc/mastodon
+  name: mastodon-migrate-mastodon.v4.4.3
   namespace: mastodon
 spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 0
   template:
     spec:
-      serviceAccountName: mastodon-eso-reader
+      restartPolicy: Never
       containers:
         - name: migrate
-          image: ghcr.io/glitch-soc/mastodon:nightly.2025-08-09
-          command:
-            - /bin/bash
-            - -c
-            - bundle exec rails db:migrate
+          image: ghcr.io/glitch-soc/mastodon:v4.4.3
+          command: ["/bin/bash", "-c", "RAILS_ENV=production DB_PORT=5432 bundle exec rails db:migrate --trace"]
           envFrom:
             - secretRef:
                 name: mastodon-app-secrets
@@ -25,21 +25,10 @@ spec:
                 name: mastodon-db-env
             - configMapRef:
                 name: mastodon-cache-env
-            - configMapRef:
-                name: mastodon-search-env
-            - configMapRef:
-                name: mastodon-metrics-env
-            - configMapRef:
-                name: mastodon-features-env
-            - configMapRef:
-                name: mastodon-storage-env
-            - configMapRef:
-                name: mastodon-smtp-env
           volumeMounts:
             - name: db-ca
               mountPath: /opt/mastodon/.postgresql/root.crt
               subPath: ca.crt
-      restartPolicy: OnFailure
       volumes:
         - name: db-ca
           secret:
