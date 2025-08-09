@@ -75,6 +75,7 @@ COPY --from=busybox:1.37.0-musl /bin/busybox /bin/sh
 
 # runtime artefacts
 COPY --from=build /venv                /venv
+COPY --from=build /app/sabnzbd         /app/sabnzbd
 COPY --from=build /usr/local/bin/unrar /usr/bin/unrar
 COPY --from=build /usr/local/bin/par2  /usr/bin/par2
 COPY --from=build /usr/bin/7z          /usr/bin/7z
@@ -83,7 +84,7 @@ COPY --from=build /defaults           /defaults
 COPY entrypoint.py                    /entrypoint.py
 
 USER 2501:2501
-ENV PATH="/venv/bin:$PATH"
+ENV PATH="/venv/bin:$PATH" PYTHONPATH="/app"
 VOLUME ["/config", "/downloads/incomplete", "/app/data"]
 EXPOSE 8080
 ENTRYPOINT ["python", "/entrypoint.py"]

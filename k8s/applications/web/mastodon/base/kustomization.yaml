@@ -41,8 +41,8 @@ configMapGenerator:
       - SIDEKIQ_CONCURRENCY=15
   - name: mastodon-search-env
     literals:
-      - ES_ENABLED=false
-      - ES_HOST=release-name-elasticsearch
+      - ES_ENABLED=true
+      - ES_HOST=elasticsearch-master
       - ES_PORT=9200
       - ES_PRESET=
   - name: mastodon-metrics-env
