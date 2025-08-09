@@ -41,7 +41,7 @@ jobs:
           files: ${{ steps.changed.outputs.all_changed_files }}
           separator: ','
           vale_flags: '--config=website/docs/.vale.ini'
-          reporter: github-pr-review
+          reporter: github-pr-check
           fail_on_error: true
           filter_mode: diff_context
         env:
