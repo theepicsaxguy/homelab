@@ -28,6 +28,13 @@
       "matchStrings": [
         "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?"
       ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/k8s/.+\\.ya?ml$"],
+      "matchStrings": [
+        "name:\\s*mastodon-migrate-(?<currentValue>[\\w.-]+)\\s*#\\s*renovate: datasource=docker depName=ghcr.io/glitch-soc/mastodon"
+      ]
     }
   ],
   "packageRules": [
@@ -62,6 +69,11 @@
     {
       "groupName": "external-secrets",
       "matchPackageNames": ["/^ghcr.io/external-secrets//"]
+    },
+    {
+      "groupName": "Mastodon",
+      "automerge": false,
+      "matchPackageNames": ["/ghcr.io/glitch-soc/mastodon/"]
     },
     {
       "groupName": "all dependencies",
