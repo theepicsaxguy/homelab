@@ -1,75 +1,40 @@
 nodes_config = {
   "ctrl-00" = {
-    host_node     = "host3"
     machine_type  = "controlplane"
     ip            = "10.25.150.11"
     mac_address   = "bc:24:11:e6:ba:07"
     vm_id         = 8101
-    cpu           = 6
     ram_dedicated = 7168
   }
   "ctrl-01" = {
-    host_node     = "host3"
-    machine_type  = "controlplane"
-    ip            = "10.25.150.12"
-    mac_address   = "bc:24:11:44:94:5c"
-    vm_id         = 8102
-    cpu           = 6
-    ram_dedicated = 6144
+    machine_type = "controlplane"
+    ip           = "10.25.150.12"
+    mac_address  = "bc:24:11:44:94:5c"
+    vm_id        = 8102
   }
   "ctrl-02" = {
-    host_node     = "host3"
-    machine_type  = "controlplane"
-    ip            = "10.25.150.13"
-    mac_address   = "bc:24:11:1e:1d:2f"
-    vm_id         = 8103
-    cpu           = 6
-    ram_dedicated = 6144
+    machine_type = "controlplane"
+    ip           = "10.25.150.13"
+    mac_address  = "bc:24:11:1e:1d:2f"
+    vm_id        = 8103
   }
   "work-00" = {
-    host_node     = "host3"
-    machine_type  = "worker"
-    ip            = "10.25.150.21"
-    mac_address   = "bc:24:11:64:5b:cb"
-    vm_id         = 8201
-    cpu           = 8
-    ram_dedicated = 13312
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "220G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    machine_type = "worker"
+    ip           = "10.25.150.21"
+    mac_address  = "bc:24:11:64:5b:cb"
+    vm_id        = 8201
   }
   "work-01" = {
-    host_node     = "host3"
-    machine_type  = "worker"
-    ip            = "10.25.150.22"
-    mac_address   = "bc:24:11:c9:22:c3"
-    vm_id         = 8202
-    cpu           = 8
-    ram_dedicated = 13312
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "220G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    machine_type = "worker"
+    ip           = "10.25.150.22"
+    mac_address  = "bc:24:11:c9:22:c3"
+    vm_id        = 8202
   }
   "work-02" = {
-    host_node     = "host3"
-    machine_type  = "worker"
-    ip            = "10.25.150.23"
-    mac_address   = "bc:24:11:6f:20:03"
-    vm_id         = 8203
-    cpu           = 8
-    ram_dedicated = 13312
+    machine_type = "worker"
+    ip           = "10.25.150.23"
+    mac_address  = "bc:24:11:6f:20:03"
+    vm_id        = 8203
     disks = {
       longhorn = {
         device      = "/dev/sdb"
@@ -89,15 +54,6 @@ nodes_config = {
     datastore_id  = "local-lvm"
     cpu           = 8
     ram_dedicated = 7168
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "220G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
   }
   # "work-04" = {
   #   machine_type       = "worker"

@@ -1,16 +1,13 @@
 output "machine_config" {
-  value = {
-    for k, v in data.talos_machine_configuration.this :
-    k => { machine_configuration = v.machine_configuration }
-  }
+  value = data.talos_machine_configuration.this
 }
 
 output "client_configuration" {
-  value     = var.manage_cluster ? data.talos_client_configuration.this[0] : null
+  value     = data.talos_client_configuration.this
   sensitive = true
 }
 
 output "kube_config" {
-  value     = var.manage_cluster ? data.talos_cluster_kubeconfig.this[0] : null
+  value     = talos_cluster_kubeconfig.this
   sensitive = true
 }

@@ -1,9 +1,10 @@
 locals {
   node_defaults = {
-    worker       = var.defaults_worker
     controlplane = var.defaults_controlplane
+    worker       = var.defaults_worker
   }
 
+  # Primary cluster nodes (backward compatible)
   nodes_with_upgrade = {
     for name, config in var.nodes_config : name => merge(
       try(local.node_defaults[config.machine_type], error("machine_type '${config.machine_type}' has no defaults")),
@@ -11,35 +12,61 @@ locals {
       {
         disks = {
           for disk_name, disk_defaults in try(local.node_defaults[config.machine_type].disks, {}) :
-          disk_name => merge(disk_defaults, coalesce(lookup(coalesce(config.disks, {}), disk_name, null), {}))
+          disk_name => merge(
+            disk_defaults,
+            coalesce(lookup(coalesce(config.disks, {}), disk_name, null), {})
+          )
         }
       },
       {
-        # Fallback only when a single-cluster object is supplied; with a map, host_node must be provided.
-        host_node    = coalesce(config.host_node, try(nonsensitive(var.proxmox.name), null))
+        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox.name))
         update       = var.upgrade_control.enabled && name == local.current_upgrade_node
         datastore_id = coalesce(lookup(config, "datastore_id", null), var.proxmox_datastore)
       }
     )
   }
 
-  # Partition dynamically by cluster key. (Provider alias names themselves are static)
-  nodes_by_cluster = {
-    for k in(can(var.proxmox.endpoint) ? [] : keys(var.proxmox)) :
-    k => { for n, v in local.nodes_with_upgrade : n => v if v.host_node == k && !lookup(v, "is_external", false) }
+  # Optional second cluster nodes; count-guarded module below
+  nodes_with_upgrade_extra = {
+    for name, config in var.nodes_config_extra : name => merge(
+      try(local.node_defaults[config.machine_type], error("machine_type '${config.machine_type}' has no defaults")),
+      { for k, v in config : k => v if v != null },
+      {
+        disks = {
+          for disk_name, disk_defaults in try(local.node_defaults[config.machine_type].disks, {}) :
+          disk_name => merge(
+            disk_defaults,
+            coalesce(lookup(coalesce(config.disks, {}), disk_name, null), {})
+          )
+        }
+      },
+      {
+        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox.name))
+        update       = false
+        datastore_id = coalesce(lookup(config, "datastore_id", null), var.proxmox_datastore)
+      }
+    )
   }
 }
 
-# Cluster-owner (host3). Manages bootstrap, kubeconfig, etc.
-module "talos_owner" {
-  source    = "./talos"
-  providers = { proxmox = proxmox.host3 }
+module "talos" {
+  source = "./talos"
 
-  manage_cluster    = true
   proxmox_datastore = var.proxmox_datastore
+  talos_image       = var.talos_image
+  cluster_domain    = var.cluster_domain
 
-  talos_image    = var.talos_image
-  cluster_domain = var.cluster_domain
+  cilium = {
+    values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
+    install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
+  }
+
+  coredns = {
+    install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
+      cluster_domain = var.cluster_domain
+      dns_forwarders = join(" ", var.network.dns_servers)
+    })
+  }
 
   cluster = {
     name               = var.cluster_name
@@ -51,26 +78,33 @@ module "talos_owner" {
 
   network = var.network
   oidc    = var.oidc
-
-  # Keep Proxmox actions scoped to host3 only
-  nodes = try(local.nodes_by_cluster["host3"], {})
+  nodes   = local.nodes_with_upgrade
 }
 
-# Worker(s) on nuc. No cluster-wide actions here.
-module "talos_nuc" {
-  count     = contains(keys(local.nodes_by_cluster), "nuc") ? 1 : 0
-  source    = "./talos"
-  providers = { proxmox = proxmox.nuc }
+# Optional second cluster (only if nodes_config_extra is non-empty)
+module "talos_extra" {
+  count  = length(var.nodes_config_extra) > 0 ? 1 : 0
+  source = "./talos"
 
-  manage_cluster    = false
   proxmox_datastore = var.proxmox_datastore
+  talos_image       = var.talos_image
+  cluster_domain    = var.cluster_domain_extra
 
-  talos_image    = var.talos_image
-  cluster_domain = var.cluster_domain
+  cilium = {
+    values  = file("${path.module}/../k9s/../k8s/infrastructure/network/cilium/values.yaml")
+    install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
+  }
+
+  coredns = {
+    install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
+      cluster_domain = var.cluster_domain_extra
+      dns_forwarders = join(" ", var.network.dns_servers)
+    })
+  }
 
   cluster = {
-    name               = var.cluster_name
-    endpoint           = "api.${var.cluster_domain}"
+    name               = var.cluster_name_extra
+    endpoint           = "api.${var.cluster_domain_extra}"
     talos_version      = var.versions.talos
     proxmox_cluster    = var.proxmox_cluster
     kubernetes_version = var.versions.kubernetes
@@ -78,7 +112,5 @@ module "talos_nuc" {
 
   network = var.network
   oidc    = var.oidc
-
-  # Proxmox resources here act only on nuc’s nodes
-  nodes = local.nodes_by_cluster["nuc"]
+  nodes   = local.nodes_with_upgrade_extra
 }
