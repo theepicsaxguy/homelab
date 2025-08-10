@@ -1,18 +1,18 @@
 proxmox = {
-  name         = "proxmox-node-1" # Name of the Proxmox node
-  cluster_name = "cluster-name"   # Must match the Proxmox cluster name
-  endpoint     = "https://proxmox.example.com:8006"
+  name         = "host3" # Name of the Proxmox node
+  cluster_name = "host3"   # Must match the Proxmox cluster name
+  endpoint     = "https://host3.pc-tips.se:8006"
   insecure     = false
   username     = "root@pam"
-  api_token    = "user@pve!tokenid=value"
+  api_token    = "opentofu@pve!opentofu=secret"
 }
 
 # Example for proxmox_extra variable
-# proxmox_extra = {
-#   name         = "proxmox-node-2"
-#   cluster_name = "other-cluster"
-#   endpoint     = "https://other-proxmox.example.com:8006"
-#   insecure     = false
-#   username     = "root@pam"
-#   api_token    = "user@pve!tokenid=value"
-# }
+ proxmox_extra = {
+   name         = "nuc"
+   cluster_name = "nuc"
+   endpoint     = "https://nuc.pc-tips.se:8006"
+   insecure     = false
+   username     = "root@pam"
+   api_token    = "opentofu@pve!opentofu=secret"
+ }

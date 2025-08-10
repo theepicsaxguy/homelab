@@ -31,7 +31,7 @@ variable "talos_image" {
     update_version        = optional(string)
     arch                  = optional(string, "amd64")
     platform              = optional(string, "nocloud")
-    proxmox_datastore     = string
+    proxmox_datastore     = optional(string, "velocity")
     factory_url           = optional(string, "https://factory.talos.dev")
   })
 }

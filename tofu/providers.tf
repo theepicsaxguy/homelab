@@ -10,7 +10,7 @@ terraform {
     }
     talos = {
       source  = "siderolabs/talos"
-      version = "0.8.1"
+      version = "~> 0.8.1"
     }
   }
 }
@@ -37,12 +37,12 @@ provider "kubernetes" {
 
 provider "proxmox" {
   alias     = "extra"
-  endpoint  = try(var.proxmox_extra.endpoint, null)
-  insecure  = try(var.proxmox_extra.insecure, null)
-  api_token = try(var.proxmox_extra.api_token, null)
+  endpoint  = var.proxmox_extra != null ? var.proxmox_extra.endpoint : var.proxmox.endpoint
+  insecure  = var.proxmox_extra != null ? var.proxmox_extra.insecure : var.proxmox.insecure
+  api_token = var.proxmox_extra != null ? var.proxmox_extra.api_token : var.proxmox.api_token
 
   ssh {
     agent    = true
-    username = try(var.proxmox_extra.username, null)
+    username = var.proxmox_extra != null ? var.proxmox_extra.username : var.proxmox.username
   }
 }

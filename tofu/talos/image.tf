@@ -36,13 +36,17 @@ locals {
     name => "${try(node.igpu, false) ? "gpu" : "std"}_${try(node.update, false) ? "upd" : "inst"}"
   }
 
-  image_download_groups = {
+  image_download_groups_raw = {
     for name, node in var.nodes :
     "${node.host_node}-${(try(node.update, false) ? "upd" : "inst")}-${(try(node.igpu, false) ? "gpu" : "std")}" => {
       host_node    = node.host_node
       schematic_id = talos_image_factory_schematic.main[local.get_schematic_key[name]].id
       version      = try(node.update, false) ? local.update_version : var.talos_image.version
-    } if !try(node.is_external, false)
+    }... if !try(node.is_external, false)
+  }
+
+  image_download_groups = {
+    for k, v in local.image_download_groups_raw : k => v[0]
   }
 
   image_downloads = {
