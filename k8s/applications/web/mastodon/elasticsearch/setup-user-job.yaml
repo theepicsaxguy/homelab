@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: elasticsearch-setup-mastodon-user
+  namespace: mastodon
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-elasticsearch
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - |
+              until curl -k -u "elastic:${ELASTIC_PASSWORD}" https://elasticsearch-master:9200/_cluster/health?wait_for_status=yellow&timeout=30s; do
+                echo "Waiting for Elasticsearch to be ready..."
+                sleep 10
+              done
+          env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-credentials
+                  key: elasticsearch-password
+      containers:
+        - name: setup-user
+          image: curlimages/curl:8.5.0
+          command:
+            - sh
+            - -c
+            - |
+              # Create mastodon role with appropriate permissions
+              curl -k -X POST -u "elastic:${ELASTIC_PASSWORD}" \
+                "https://elasticsearch-master:9200/_security/role/mastodon_full_access" \
+                -H 'Content-Type: application/json' \
+                -d '{
+                  "cluster": ["monitor"],
+                  "indices": [{
+                    "names": ["*"],
+                    "privileges": ["read", "monitor", "write", "manage", "create_index", "delete_index"]
+                  }]
+                }'
+              
+              # Create mastodon user
+              curl -k -X POST -u "elastic:${ELASTIC_PASSWORD}" \
+                "https://elasticsearch-master:9200/_security/user/mastodon" \
+                -H 'Content-Type: application/json' \
+                -d '{
+                  "password": "'${MASTODON_PASSWORD}'",
+                  "roles": ["mastodon_full_access"]
+                }'
+              
+              echo "Mastodon user created successfully"
+          env:
+            - name: ELASTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-credentials
+                  key: elasticsearch-password
+            - name: MASTODON_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-credentials
+                  key: mastodon-user-password
