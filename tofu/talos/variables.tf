@@ -1,152 +1,136 @@
-variable "proxmox_clusters" {
-  description = "Map of Proxmox cluster configurations"
-  type = map(object({
-    name         = string
-    cluster_name = string
-    endpoint     = string
-    insecure     = bool
-    username     = string
-    api_token    = string
-  }))
-  sensitive = true
-}
-
 variable "talos_image" {
   description = "Talos image configuration"
   type = object({
-    factory_url           = optional(string, "https://factory.talos.dev")
-    schematic_path        = string
     version               = string
-    update_schematic_path = optional(string)
     update_version        = optional(string)
-    arch                  = optional(string, "amd64")
+    schematic_path        = string
+    update_schematic_path = optional(string)
+
+    # Either provide image_url / update_image_url directly,
+    # or provide factory_url/platform/arch and schematic_id / update_schematic_id
+    image_url             = optional(string)
+    update_image_url      = optional(string)
+    file_name             = optional(string)
+    update_file_name      = optional(string)
+
+    factory_url           = optional(string, "https://factory.talos.dev")
     platform              = optional(string, "nocloud")
-    proxmox_datastore     = optional(string, "local")
+    arch                  = optional(string, "amd64")
+    schematic_id          = optional(string)
+    update_schematic_id   = optional(string)
+
+    proxmox_datastore     = string
   })
 }
+
 variable "cluster" {
-  description = "Cluster configuration"
+  description = "Cluster settings"
   type = object({
     name               = string
     endpoint           = string
-    # gateway and vip are now in var.network
     talos_version      = string
     proxmox_cluster    = string
-    kubernetes_version = optional(string, "1.32.0")
+    kubernetes_version = string
   })
 }
 
 variable "cluster_domain" {
-  description = "Internal cluster domain"
+  description = "Cluster domain (e.g., cluster.local)"
   type        = string
 }
 
+variable "proxmox_datastore" {
+  description = "Default Proxmox datastore for VM disks and ISOs"
+  type        = string
+  default     = "velocity"
+}
+
+variable "manage_cluster" {
+  description = "Run cluster-wide Talos actions (secrets, bootstrap, kubeconfig)."
+  type        = bool
+  default     = true
+}
+
 variable "network" {
-  description = "Network configuration for the cluster."
+  description = "Network settings (original shape)"
   type = object({
+    bridge      = string
+    vlan_id     = number
     gateway     = string
     vip         = string
     cidr_prefix = number
     dns_servers = list(string)
-    bridge      = string
-    vlan_id     = number
   })
 }
 
 variable "oidc" {
-  description = "Optional OIDC provider configuration."
+  description = "OIDC configuration"
   type = object({
     issuer_url = string
     client_id  = string
   })
-  default = null
-}
-
-variable "proxmox_datastore" {
-  description = "Proxmox datastore to use for VM disks"
-  type        = string
-  default     = "velocity"
 }
 
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    host_node     = string
-    machine_type  = string
-    datastore_id  = optional(string)
-    ip            = string
-    mac_address   = optional(string)
-    vm_id         = optional(number)
-    is_external   = optional(bool, false)
-    cpu           = number
-    ram_dedicated = number
-    update        = optional(bool, false)
-    igpu          = optional(bool, false)
-    gpu_node_exclusive = optional(bool, true)
-    disks = optional(map(object({
+    host_node                = string
+    machine_type             = string
+    ip                       = string
+    mac_address              = optional(string)
+    vm_id                    = number
+    datastore_id             = optional(string)
+    cpu                      = number
+    ram_dedicated            = number
+    igpu                     = optional(bool)
+    gpu_node_exclusive       = optional(bool)
+    gpu_devices              = optional(list(string))
+    gpu_device_meta          = optional(map(object({
+      id           = string
+      subsystem_id = string
+      iommu_group  = number
+    })))
+    is_external              = optional(bool)
+    update                   = optional(bool)
+    network_bridge           = optional(string)
+    network_vlan_id          = optional(number)
+    root_disk_file_format    = optional(string)
+    root_disk_size           = optional(number)
+    dns_servers              = optional(list(string))
+    disks                    = optional(map(object({
       device      = string
       size        = string
       type        = string
       mountpoint  = string
       unit_number = number
-    })), {}),
-    gpu_devices = optional(list(string), []),
-    gpu_device_meta = optional(
-      map(object({
-        id            = string
-        subsystem_id  = string
-        iommu_group   = number
-      })),
-      {}
-    )
+    })))
   }))
 
   validation {
-    condition     = length([for n in values(var.nodes) : n if n.machine_type == "controlplane"]) > 0
-    error_message = "You must define at least one node with machine_type \"controlplane\"."
+    condition     = !var.manage_cluster || length([for n in values(var.nodes) : n if n.machine_type == "controlplane"]) >= 1
+    error_message = "You must define at least one controlplane node when manage_cluster = true."
   }
 
   validation {
-    condition     = length(distinct([for n in values(var.nodes) : n.ip])) == length(var.nodes)
-    error_message = "Node IP addresses must be unique."
-  }
-
-  validation {
-    condition = length(distinct([for n in values(var.nodes) : n.vm_id if !lookup(n, "is_external", false) && n.vm_id != null])) == length([for n in values(var.nodes) : n if !lookup(n, "is_external", false)])
-    error_message = "VM IDs must be unique among internal nodes."
-  }
-
-  validation {
-    condition = alltrue([
-      for n in values(var.nodes) :
-      lookup(n, "is_external", false) ? n.mac_address == null : n.mac_address != null
-    ])
-    error_message = "External nodes must not have mac_address; internal nodes must have mac_address."
-  }
-
-  validation {
-    condition = alltrue([
-      for n in values(var.nodes) : 
-      lookup(n, "is_external", false) || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", n.mac_address))
-    ])
-    error_message = "MAC addresses must use the format 00:11:22:33:44:55."
+    condition = alltrue([for n in values(var.nodes) : can(regex("^\\d+\\.\\d+\\.\\d+\\.\\d+$", n.ip)) ])
+    error_message = "Each node must have a valid IPv4 address."
   }
 }
 
+# Optional, with sensible in-module defaults to keep root DRY.
 variable "cilium" {
-  description = "Cilium configuration"
+  description = "Cilium configuration (optional; module has defaults)"
   type = object({
     values  = string
     install = string
   })
+  default = null
 }
 
 variable "coredns" {
-  description = "CoreDNS configuration"
+  description = "CoreDNS configuration (optional; module has defaults)"
   type = object({
     install = string
   })
+  default = null
 }
-
-
-

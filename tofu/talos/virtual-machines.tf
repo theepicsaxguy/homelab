@@ -1,10 +1,5 @@
-resource "terraform_data" "image_version" {
-  input = var.talos_image.version
-}
-
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = local.internal_nodes
-
 
   node_name = each.value.host_node
 
@@ -37,8 +32,6 @@ resource "proxmox_virtual_environment_vm" "this" {
     dedicated = each.value.ram_dedicated # minimum (guaranteed)
   }
 
-
-
   network_device {
     bridge      = lookup(each.value, "network_bridge", var.network.bridge)
     vlan_id     = lookup(each.value, "network_vlan_id", var.network.vlan_id)
@@ -55,7 +48,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_format  = lookup(each.value, "root_disk_file_format", "raw")
     size         = lookup(each.value, "root_disk_size", 40)
     file_id = proxmox_virtual_environment_download_file.iso[
-      local.vm_to_image_mapping["${each.value.host_node}-${lookup(each.value, "update", false) ? "upd" : "inst"}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"]
+      "${each.value.host_node}-${lookup(each.value, "update", false) ? "upd" : "inst"}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"
     ].id
   }
 

@@ -45,7 +45,7 @@ variable "talos_image" {
 variable "nodes_config" {
   description = "Per-node configuration map"
   type = map(object({
-    host_node     = optional(string) # "The Proxmox node to schedule this VM on. If omitted, defaults to the first node in the `var.proxmox` map."
+    host_node     = string
     machine_type  = string
     ip            = string
     mac_address   = optional(string)
@@ -98,6 +98,14 @@ variable "nodes_config" {
     os_type                     = optional(string),
     dns_servers                 = optional(list(string))
   }))
+
+  validation {
+    condition = length([
+      for name, node in var.nodes_config :
+      name if !contains(keys(var.proxmox), node.host_node)
+    ]) == 0
+    error_message = "Each node.host_node must match a key in var.proxmox (cluster alias)."
+  }
 
   validation {
     condition = alltrue([
