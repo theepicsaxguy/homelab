@@ -1,12 +1,13 @@
 variable "proxmox" {
-  type = object({
+  description = "Map of Proxmox cluster configurations, keyed by node name"
+  type = map(object({
     name         = string
     cluster_name = string
     endpoint     = string
     insecure     = bool
     username     = string
     api_token    = string
-  })
+  }))
   sensitive = true
 }
 
@@ -44,7 +45,7 @@ variable "talos_image" {
 variable "nodes_config" {
   description = "Per-node configuration map"
   type = map(object({
-    host_node     = optional(string) #  "The Proxmox node to schedule this VM on. If omitted, defaults to the `name` specified in the `var.proxmox` provider configuration."
+    host_node     = optional(string) # "The Proxmox node to schedule this VM on. If omitted, defaults to the first node in the `var.proxmox` map."
     machine_type  = string
     ip            = string
     mac_address   = optional(string)

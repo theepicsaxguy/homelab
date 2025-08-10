@@ -1,8 +1,0 @@
-proxmox = {
-  name         = "proxmox"
-  cluster_name = "proxmox"
-  endpoint     = "https://proxmox:8006"
-  insecure     = false
-  username     = "root"
-  api_token    = "root@pam!name=token"
-}

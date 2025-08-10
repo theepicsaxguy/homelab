@@ -16,13 +16,13 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = var.proxmox.endpoint
-  insecure = var.proxmox.insecure
+  endpoint = var.proxmox[keys(var.proxmox)[0]].endpoint
+  insecure = var.proxmox[keys(var.proxmox)[0]].insecure
 
-  api_token = var.proxmox.api_token
+  api_token = var.proxmox[keys(var.proxmox)[0]].api_token
   ssh {
     agent    = true
-    username = var.proxmox.username
+    username = var.proxmox[keys(var.proxmox)[0]].username
   }
 }
 

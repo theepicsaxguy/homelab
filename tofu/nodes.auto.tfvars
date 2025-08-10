@@ -45,28 +45,29 @@ nodes_config = {
       }
     }
   }
-  "work-03" = {
-    machine_type       = "worker"
-    ip                 = "10.25.150.24"
-    mac_address        = "bc:24:11:7f:20:04"
-    vm_id              = 8204
-    ram_dedicated      = 5168
-    datastore_id       = "rpool2"
-    igpu               = true
-    gpu_node_exclusive = true
-    gpu_devices        = ["0000:03:00.0", "0000:03:00.1"]
-    gpu_device_meta = {
-      "0000:03:00.0" = { id = "10de:13ba", subsystem_id = "10de:1097", iommu_group = 50 }
-      "0000:03:00.1" = { id = "10de:0fbc", subsystem_id = "10de:1097", iommu_group = 50 }
-    }
-  }
-  "work-04" = {
+    "work-03" = {
     host_node    = "nuc"
     machine_type = "worker"
     ip           = "10.25.150.25"
     mac_address  = "bc:24:11:7f:20:05"
-    vm_id        = 8205
+    vm_id        = 8204
   }
+  # "work-04" = {
+  #   machine_type       = "worker"
+  #   ip                 = "10.25.150.24"
+  #   mac_address        = "bc:24:11:7f:20:04"
+  #   vm_id              = 8204
+  #   ram_dedicated      = 5168
+  #   datastore_id       = "rpool2"
+  #   igpu               = true
+  #   gpu_node_exclusive = true
+  #   gpu_devices        = ["0000:03:00.0", "0000:03:00.1"]
+  #   gpu_device_meta = {
+  #     "0000:03:00.0" = { id = "10de:13ba", subsystem_id = "10de:1097", iommu_group = 50 }
+  #     "0000:03:00.1" = { id = "10de:0fbc", subsystem_id = "10de:1097", iommu_group = 50 }
+  #   }
+  # }
+
   # "baremetal-01" = {
   #   machine_type = "worker"
   #   ip           = "10.25.150.30"

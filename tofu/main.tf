@@ -21,7 +21,7 @@ locals {
         }
       },
       {
-        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox.name))
+        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox[keys(var.proxmox)[0]].name))
         update       = var.upgrade_control.enabled && name == local.current_upgrade_node
         datastore_id = coalesce(lookup(config, "datastore_id", null), var.proxmox_datastore)
       }
