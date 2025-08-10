@@ -1,3 +1,16 @@
+variable "proxmox_clusters" {
+  description = "Map of Proxmox cluster configurations"
+  type = map(object({
+    name         = string
+    cluster_name = string
+    endpoint     = string
+    insecure     = bool
+    username     = string
+    api_token    = string
+  }))
+  sensitive = true
+}
+
 variable "talos_image" {
   description = "Talos image configuration"
   type = object({

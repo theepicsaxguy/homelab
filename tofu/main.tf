@@ -28,6 +28,7 @@ locals {
     )
   }
 }
+
 module "talos" {
   source = "./talos"
 
@@ -36,6 +37,7 @@ module "talos" {
   }
 
   proxmox_datastore = var.proxmox_datastore
+  proxmox_clusters  = var.proxmox  # Pass all cluster configs
 
   talos_image = var.talos_image
 
@@ -45,7 +47,6 @@ module "talos" {
   }
 
   coredns = {
-    # CHANGE: Convert the coredns manifest to a template
     install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
       cluster_domain = var.cluster_domain
       dns_forwarders = join(" ", var.network.dns_servers)
@@ -54,7 +55,6 @@ module "talos" {
 
   cluster_domain = var.cluster_domain
 
-  # CHANGE: Replace the hardcoded cluster block with variables
   cluster = {
     name               = var.cluster_name
     endpoint           = "api.${var.cluster_domain}"
@@ -65,11 +65,7 @@ module "talos" {
     kubernetes_version = var.versions.kubernetes
   }
 
-  # Pass network config to the module
   network = var.network
-
-  # Pass OIDC config to the module
-  oidc = var.oidc
-
-  nodes = local.nodes_with_upgrade
+  oidc    = var.oidc
+  nodes   = local.nodes_with_upgrade
 }

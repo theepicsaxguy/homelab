@@ -48,9 +48,11 @@ nodes_config = {
     "work-03" = {
     host_node    = "nuc"
     machine_type = "worker"
-    ip           = "10.25.150.25"
+    ip           = "10.25.150.24"
     mac_address  = "bc:24:11:7f:20:05"
     vm_id        = 8204
+    datastore_id = "local-lvm"
+    ram_dedicated = 7168
   }
   # "work-04" = {
   #   machine_type       = "worker"

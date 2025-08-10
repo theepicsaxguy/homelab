@@ -40,16 +40,27 @@ locals {
     name => "${lookup(node,"igpu",false) ? "gpu" : "std"}_${lookup(node,"update",false) ? "upd" : "inst"}"
   }
 
-  # one stable key per host+schematic-type
-  #   <host>-<inst|upd>-<gpu|std>
+  # Only download images to the default cluster due to provider limitations
+  default_cluster = nonsensitive(keys(var.proxmox_clusters)[0])
+  
+  # Create a mapping from actual VM requirements to available downloads
+  # For multi-cluster support: VMs on secondary clusters will reference images downloaded to the default cluster
+  # This is a temporary limitation of the provider architecture
+  vm_to_image_mapping = {
+    for name, node in var.nodes :
+    "${node.host_node}-${lookup(node,"update",false) ? "upd" : "inst"}-${lookup(node,"igpu",false) ? "gpu" : "std"}" => 
+    "${local.default_cluster}-${lookup(node,"update",false) ? "upd" : "inst"}-${lookup(node,"igpu",false) ? "gpu" : "std"}"
+    if !lookup(node, "is_external", false)
+  }
+  
   image_download_groups = {
     for name, node in var.nodes :
-    "${node.host_node}-${lookup(node,"update",false) ? "upd" : "inst"}-${lookup(node,"igpu",false) ? "gpu" : "std"}" => {
-      host_node    = node.host_node
+    "${local.default_cluster}-${lookup(node,"update",false) ? "upd" : "inst"}-${lookup(node,"igpu",false) ? "gpu" : "std"}" => {
+      host_node    = local.default_cluster  # Download to default cluster only
       schematic_id = talos_image_factory_schematic.main[local.get_schematic_key[name]].id
       version      = lookup(node, "update", false) ? local.update_version : var.talos_image.version
     } ...
-    # External nodes manage their own images, skip factory download
+    # Include all non-external nodes
     if !lookup(node, "is_external", false)
   }
 
