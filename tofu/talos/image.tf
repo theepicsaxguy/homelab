@@ -2,7 +2,7 @@ locals {
   update_version        = coalesce(var.talos_image.update_version, var.talos_image.version)
   update_schematic_path = coalesce(var.talos_image.update_schematic_path, var.talos_image.schematic_path)
 
-  has_gpu_nodes = anytrue([for name, node in var.nodes : try(node.igpu, false)])
+  has_gpu_nodes = anytrue([for name, node in var.nodes : lookup(node, "igpu", false)])
 
   schematic_configs = merge(
     {
@@ -74,6 +74,7 @@ resource "proxmox_virtual_environment_download_file" "iso" {
 
   file_name               = "talos-${each.value.schematic_id}-${each.value.version}-${var.talos_image.platform}-${var.talos_image.arch}.img"
   url                     = "${var.talos_image.factory_url}/image/${each.value.schematic_id}/${each.value.version}/${var.talos_image.platform}-${var.talos_image.arch}.raw.gz"
+  upload_timeout      = 800
   decompression_algorithm = "gz"
   overwrite               = false
 }

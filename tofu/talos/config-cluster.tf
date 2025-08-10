@@ -2,8 +2,8 @@ resource "talos_machine_bootstrap" "this" {
   depends_on = [
     talos_machine_configuration_apply.this
   ]
-
-  # Bootstrap with the first controlplane node IP (VIP not ready yet)
+  # Bootstrap with the first node. VIP not yet available at this stage, so cant use var.cluster.endpoint as it may be set to VIP
+  # ref - https://www.talos.dev/v1.9/talos-guides/network/vip/#caveats
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
   client_configuration = talos_machine_secrets.this.client_configuration
 }
@@ -12,11 +12,9 @@ resource "talos_cluster_kubeconfig" "this" {
   depends_on = [
     talos_machine_bootstrap.this
   ]
-
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
   endpoint             = var.cluster.endpoint
   client_configuration = talos_machine_secrets.this.client_configuration
-
   timeouts = {
     read = "1m"
   }
@@ -27,12 +25,10 @@ data "talos_cluster_health" "this" {
     talos_cluster_kubeconfig.this,
     talos_machine_configuration_apply.this
   ]
-
   client_configuration = data.talos_client_configuration.this.client_configuration
   control_plane_nodes  = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"]
   worker_nodes         = [for k, v in var.nodes : v.ip if v.machine_type == "worker"]
   endpoints            = data.talos_client_configuration.this.endpoints
-
   timeouts = {
     read = "3m"
   }

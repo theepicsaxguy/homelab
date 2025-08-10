@@ -1,13 +1,15 @@
 locals {
   node_defaults = {
-    controlplane = var.defaults_controlplane
     worker       = var.defaults_worker
+    controlplane = var.defaults_controlplane
   }
 
-  # Primary cluster nodes (backward compatible)
   nodes_with_upgrade = {
     for name, config in var.nodes_config : name => merge(
-      try(local.node_defaults[config.machine_type], error("machine_type '${config.machine_type}' has no defaults")),
+      try(
+        local.node_defaults[config.machine_type],
+        error("machine_type '${config.machine_type}' has no defaults")
+      ),
       { for k, v in config : k => v if v != null },
       {
         disks = {
@@ -26,13 +28,16 @@ locals {
     )
   }
 }
-
 module "talos" {
   source = "./talos"
 
+  providers = {
+    proxmox = proxmox
+  }
+
   proxmox_datastore = var.proxmox_datastore
-  talos_image       = var.talos_image
-  cluster_domain    = var.cluster_domain
+
+  talos_image = var.talos_image
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
@@ -40,58 +45,31 @@ module "talos" {
   }
 
   coredns = {
+    # CHANGE: Convert the coredns manifest to a template
     install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
       cluster_domain = var.cluster_domain
       dns_forwarders = join(" ", var.network.dns_servers)
     })
   }
 
+  cluster_domain = var.cluster_domain
+
+  # CHANGE: Replace the hardcoded cluster block with variables
   cluster = {
     name               = var.cluster_name
     endpoint           = "api.${var.cluster_domain}"
+    gateway            = var.network.gateway
+    vip                = var.network.vip
     talos_version      = var.versions.talos
     proxmox_cluster    = var.proxmox_cluster
     kubernetes_version = var.versions.kubernetes
   }
 
+  # Pass network config to the module
   network = var.network
-  oidc    = var.oidc
-  nodes   = local.nodes_with_upgrade
-}
 
-module "talos_extra" {
-  count  = length(var.nodes_config_extra) > 0 ? 1 : 0
-  source = "./talos"
+  # Pass OIDC config to the module
+  oidc = var.oidc
 
-  providers = {
-    proxmox = proxmox.extra
-  }
-
-  proxmox_datastore = var.proxmox_datastore
-  talos_image       = var.talos_image
-  cluster_domain    = var.cluster_domain
-
-  cilium = {
-    values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
-    install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
-  }
-
-  coredns = {
-    install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
-      cluster_domain = var.cluster_domain
-      dns_forwarders = join(" ", var.network.dns_servers)
-    })
-  }
-
-  cluster = {
-    name               = "${var.cluster_name}-extra"
-    endpoint           = "api.${var.cluster_domain}"
-    talos_version      = var.versions.talos
-    proxmox_cluster    = var.proxmox_extra.cluster_name
-    kubernetes_version = var.versions.kubernetes
-  }
-
-  network = var.network
-  oidc    = var.oidc
-  nodes   = var.nodes_config_extra
+  nodes = local.nodes_with_upgrade
 }

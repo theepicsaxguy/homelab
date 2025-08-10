@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.38.0"
+      version = "~> 2.38.0" # This ensures you get the latest 2.37.x version
     }
     proxmox = {
       source  = "bpg/proxmox"
@@ -10,24 +10,23 @@ terraform {
     }
     talos = {
       source  = "siderolabs/talos"
-      version = "~> 0.8.1"
+      version = "0.8.1"
     }
   }
 }
 
-# Default provider (must exist to decode prior state)
 provider "proxmox" {
-  endpoint  = var.proxmox.endpoint
-  insecure  = var.proxmox.insecure
-  api_token = var.proxmox.api_token
+  endpoint = var.proxmox.endpoint
+  insecure = var.proxmox.insecure
 
+  api_token = var.proxmox.api_token
   ssh {
     agent    = true
     username = var.proxmox.username
   }
 }
 
-# Kubernetes provider wired to original module outputs (no contract change)
+
 provider "kubernetes" {
   host                   = module.talos.kube_config.kubernetes_client_configuration.host
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)

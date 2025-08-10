@@ -16,3 +16,4 @@ proxmox = {
    username     = "root@pam"
    api_token    = "opentofu@pve!opentofu=secret"
  }
+ # The Proxmox API token format is: <username>@<realm>!<name>=<token>
