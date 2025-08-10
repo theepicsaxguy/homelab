@@ -31,13 +31,13 @@ This document addresses issues related to configuring SSL/TLS for Mastodon when 
 
 ### Best Practices
 
-*   **Align with Application Defaults:** Always verify where your application (e.g., Mastodon) expects TLS files to be located, rather than solely relying on where they are mounted. For Mastodon, the default location is `/opt/mastodon/.postgresql`.
+*   **Align with Application Defaults:** Always verify where your application (e.g., Mastodon) expects TLS files to be located, rather than solely relying on where they're mounted. For Mastodon, the default location is `/opt/mastodon/.postgresql`.
 
 ### Checking Your Work
 
 To validate your changes, run the following commands:
 
-```bash
+```shell
 kustomize build applications/web/mastodon/
 npm run build
 ```

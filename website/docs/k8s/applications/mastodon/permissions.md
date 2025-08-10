@@ -8,7 +8,7 @@ This document addresses permission issues encountered when deploying Mastodon wi
 
 *   **Problem:** Postgres replica pods crash on startup with "Permission denied" errors when attempting to load server certificate files from `/tls`.
 *   **Rationale:** The `/tls` directory and its contents are owned by `root`, but the Spilo container runs as a non-root user (UID 1000, GID 101), lacking necessary permissions.
-*   **Fix:** Grant Postgres pods group-ownership of TLS files by setting `spiloFSGroup: 103` so non-root containers can read them.
+*   **Fix:** Grant Postgres pods group ownership of TLS files by setting `spiloFSGroup: 103` so non-root containers can read them.
 
 **Key configuration changes:**
 
@@ -25,7 +25,7 @@ This document addresses permission issues encountered when deploying Mastodon wi
 
 To validate your changes, run the following commands:
 
-```bash
+```shell
 kustomize build applications/web/mastodon/
 npm run build
 ```

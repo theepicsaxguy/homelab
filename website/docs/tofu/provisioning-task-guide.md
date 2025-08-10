@@ -2,13 +2,13 @@
 title: Provision Kubernetes with OpenTofu and Talos
 ---
 
-# Kubernetes Provisioning with OpenTofu
+# Kubernetes provisioning with OpenTofu
 
 
 
-## Deployment Process
+## Deployment process
 
-Before you begin deployment, ensure your SSH key is loaded:
+Before you begin deployment, load your SSH key:
 
 ```shell
 eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
@@ -16,7 +16,7 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 
 
 
-# Deployment Process
+# Deployment process
 
 1. OpenTofu reads configurations
 2. Downloads Talos images
@@ -26,11 +26,11 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 6. Generates kubeconfig
 7. Verifies cluster health
 
-# Maintenance Tasks
+# Maintenance tasks
 
-## Version Upgrades
+## Version upgrades
 
-1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions can be specified in multiple
+1. Update versions in `main.tf` or related `tfvars` files. You can specify Talos versions in several
    places:
 
    - For the Talos image factory (e.g., `module "talos" { talos_image = { version = "vX.Y.Z" } }`)
@@ -52,7 +52,7 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
    ```
 
 2. Set `update = true` for affected nodes in `tofu/nodes.auto.tfvars` if your OpenTofu module supports this flag for triggering upgrades. Otherwise,
-   `tofu apply` will handle changes to version properties.
+   `tofu apply` handles changes to version properties.
 
 3. Run:
 
@@ -60,32 +60,36 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
    tofu apply
    ```
 
-## Node Management
+## Node management
 
-### Add/Remove Nodes
+### Add or remove nodes
 
-1. Modify the map in `tofu/nodes.auto.tfvars`
+1. Change the map in `tofu/nodes.auto.tfvars`
 2. Run `tofu apply`
 
-### Change Resources
+### Change resources
 
 1. Update node specs in `tofu/nodes.auto.tfvars`
 2. Run `tofu apply`
 
 > Note: Resource changes can require VM restarts
 
-## Initial Setup
+## Initial setup
 
 ### Prerequisites
 
 - Proxmox server running 7.4+
-- SSH key access configured
-- Network DHCP/DNS ready
+
+<!-- vale off -->
+- API tokens configured for each Proxmox node ([Setup Guide](setup-apikey.md))
+- SSH key access configured for each Proxmox node ([Setup Guide](setup-ssh-keys.md))
+<!-- vale on -->
+- Network dynamic host configuration and domain name resolution ready
 - Storage pools configured
 
 ### Configuration
 
-Create `config.auto.tfvars` with your environment settings. An example file `terraform.tfvars.Example` is provided.
+Create `config.auto.tfvars` with your environment settings. The repository provides example configuration files.
 
 ```hcl
 // tofu/config.auto.tfvars example
@@ -120,7 +124,53 @@ oidc = {
 }
 ```
 
-### 3. Deployment Steps
+Configure your Proxmox clusters in `terraform.tfvars`:
+
+```hcl
+// tofu/terraform.tfvars example for multiple clusters
+proxmox = {
+  host3 = {
+    name         = "host3"
+    cluster_name = "host3"
+    endpoint     = "https://host3.pc-tips.se:8006"
+    insecure     = false
+    username     = "root"
+    api_token    = "root@pam!terraform2=..."
+  }
+  nuc = {
+    name         = "nuc"
+    cluster_name = "nuc"
+    endpoint     = "https://nuc.pc-tips.se:8006"
+    insecure     = false
+    username     = "root"
+    api_token    = "terraform@pve!terraform-token=..."
+  }
+}
+```
+
+Configure your nodes in `nodes.auto.tfvars`:
+
+```hcl
+// tofu/nodes.auto.tfvars example
+nodes_config = {
+  "ctrl-00" = {
+    machine_type = "controlplane"
+    ip          = "10.25.150.11"
+    mac_address = "bc:24:11:e6:ba:07"
+    vm_id       = 8101
+    # Will deploy to first cluster (host3) by default
+  }
+  "work-04" = {
+    host_node    = "nuc"  # Explicitly specify cluster
+    machine_type = "worker"
+    ip           = "10.25.150.25"
+    mac_address  = "bc:24:11:7f:20:05"
+    vm_id        = 8205
+  }
+}
+```
+
+### 3. Deployment steps
 
 1. Load your SSH key for Proxmox access:
 
@@ -154,11 +204,11 @@ cat output/kube-config.yaml > ~/.kube/config
 kubectl get nodes
 ```
 
-## Maintenance Operations
+## Maintenance operations
 
-### Node Operations
+### Node operations
 
-#### Applying Node Updates
+#### Applying node updates
 
 To update a node, follow these steps:
 
@@ -181,7 +231,7 @@ Return the node to service:
 kubectl uncordon node-name
 ```
 
-#### Version Upgrades
+#### Version upgrades
 
 To upgrade Kubernetes and Talos versions, update the configuration:
 
@@ -202,11 +252,11 @@ tofu plan -target=module.talos
 tofu apply -target=module.talos
 ```
 
-### Recovery Operations
+### Recovery operations
 
-#### State Recovery
+#### State recovery
 
-If OpenTofu state is lost, follow these steps:
+If you lose OpenTofu state, follow these steps:
 
 Import existing infrastructure:
 
@@ -224,7 +274,7 @@ tofu refresh
 tofu plan
 ```
 
-#### Node Recovery
+#### Node recovery
 
 To replace a failed node:
 
@@ -247,11 +297,11 @@ tofu apply -target='module.talos.proxmox_virtual_environment_vm.this["failed-nod
 
 
 
-## Monitoring and Troubleshooting
+## Monitoring and troubleshooting
 
-### Health Checks
+### Health checks
 
-To verify cluster health, check the following:
+To verify cluster health, select the following:
 
 Node status:
 
@@ -273,7 +323,7 @@ kubectl get pods -n kube-system
 
 ### Common Issues
 
-#### Node Join Problems
+#### Node join problems
 
 Common causes of node join failures:
 
@@ -281,18 +331,18 @@ Common causes of node join failures:
 - Machine configuration errors
 - Bootstrap process failures
 
-#### API Server Availability
+#### API server availability
 
-When the API server is unreachable:
+When the API server becomes unreachable:
 
-- Verify control plane VIP status
+- Verify control plane virtual IP status
 - Check etcd cluster health
 - Review API server container logs
 
-#### Resource Management
+#### Resource management
 
-Monitor these aspects:
+Watch these aspects:
 
-- VM resource utilization
+- VM resource use
 - Storage availability and performance
 - Network connectivity and throughput

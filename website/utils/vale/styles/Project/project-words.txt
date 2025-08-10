@@ -305,3 +305,12 @@ VM.Configuration.Options
 VM.Monitor
 VM.PowerMgmt
 PgBouncer
+:::
+:::info
+:::note
+:::warning
+:::important
+:::tip
+:::danger
+OpenTofu
+pooler
