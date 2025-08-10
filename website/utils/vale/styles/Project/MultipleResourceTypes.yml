@@ -1,7 +1,7 @@
 extends: occurrence
 message: "This doc mentions several K8s resource types ({{count}}). Consider focusing on one topic per page."
 level: warning
-scope: file
+scope: raw
 # `token`: a regex matching all targeted terms (with alternation).
 token: '\b(Pod|Deployment|Service|StatefulSet|ConfigMap|Secret|Ingress|DaemonSet)s?\b'
 max: 2
