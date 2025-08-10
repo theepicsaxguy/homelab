@@ -5,7 +5,7 @@
 extends: occurrence
 message: "This file may be too long ({{count}} sentences). Consider splitting."
 level: warning
-scope: file
+scope: raw
 token: '\.'
 max: 60
 
@@ -14,7 +14,7 @@ max: 60
 extends: occurrence
 message: "This file has {{count}} headings. Consider splitting sections."
 level: warning
-scope: file
+scope: raw
 token: '^#{2,6} '
 max: 15
 
@@ -23,6 +23,6 @@ max: 15
 extends: occurrence
 message: "High frequency of 'the' ({{count}} uses). Consider splitting for brevity."
 level: warning
-scope: file
+scope: raw
 token: '\bthe\b'
 max: 50
