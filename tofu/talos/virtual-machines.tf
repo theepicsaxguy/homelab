@@ -1,6 +1,14 @@
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = local.internal_nodes
 
+  # Use secondary provider if node is in secondary cluster
+  provider = (
+    var.proxmox_secondary != null && 
+    each.value.host_node == var.proxmox_secondary.name
+    ? proxmox.secondary 
+    : proxmox
+  )
+
   node_name = each.value.host_node
 
   name        = each.key

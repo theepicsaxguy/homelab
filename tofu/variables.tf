@@ -149,8 +149,8 @@ variable "nodes_config" {
   }
 }
 
-variable "proxmox_extra" {
-  description = "Proxmox API connection for extra cluster (optional). If null, defaults to primary proxmox provider."
+variable "proxmox_secondary" {
+  description = "Optional secondary Proxmox API connection for nodes in another cluster"
   type = object({
     name         = string
     cluster_name = string
@@ -163,39 +163,20 @@ variable "proxmox_extra" {
   default   = null
 }
 
-variable "nodes_config_extra" {
-  description = "Per-node configuration map for the optional extra proxmox cluster"
-  type = map(object({
-    host_node     = optional(string)
-    machine_type  = string
-    ip            = string
-    mac_address   = optional(string)
-    vm_id         = optional(number)
-    is_external   = optional(bool, false)
-    ram_dedicated = optional(number)
-    igpu          = optional(bool)
-    disks = optional(map(object({
-      device      = optional(string)
-      size        = optional(string)
-      type        = optional(string)
-      mountpoint  = optional(string)
-      unit_number = optional(number)
-    }))),
-    gpu_devices        = optional(list(string), []),
-    gpu_device_meta    = optional(map(object({
-      id           = string
-      subsystem_id = string
-      iommu_group  = number
-    })), {}),
-    gpu_node_exclusive = optional(bool, true),
-    datastore_id       = optional(string),
-    network_bridge     = optional(string),
-    network_vlan_id    = optional(number),
-    root_disk_file_format = optional(string),
-    root_disk_size     = optional(number),
-    dns_servers        = optional(list(string))
-  }))
-  default = {}
+
+variable "cilium" {
+  description = "Cilium configuration"
+  type = object({
+    values  = string
+    install = string
+  })
+}
+
+variable "coredns" {
+  description = "CoreDNS configuration"
+  type = object({
+    install = string
+  })
 }
 
 variable "proxmox_datastore" {

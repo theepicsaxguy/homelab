@@ -55,6 +55,20 @@ variable "proxmox_datastore" {
   default     = "velocity"
 }
 
+variable "proxmox_secondary" {
+  description = "Optional secondary Proxmox API connection for nodes in another cluster"
+  type = object({
+    name         = string
+    cluster_name = string
+    endpoint     = string
+    insecure     = bool
+    username     = string
+    api_token    = string
+  })
+  sensitive = true
+  default   = null
+}
+
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({

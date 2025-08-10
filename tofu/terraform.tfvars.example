@@ -7,8 +7,8 @@ proxmox = {
   api_token    = "opentofu@pve!opentofu=secret"
 }
 
-# Example for proxmox_extra variable
- proxmox_extra = {
+# Example for proxmox_secondary variable
+ proxmox_secondary = {
    name         = "nuc"
    cluster_name = "nuc"
    endpoint     = "https://nuc.pc-tips.se:8006"
