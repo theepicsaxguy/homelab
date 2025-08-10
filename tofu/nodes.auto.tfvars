@@ -73,3 +73,23 @@ nodes_config = {
   #   is_external  = true
   # }
 }
+
+nodes_config_extra = {
+  "worker-extra-01" = {
+    host_node     = "nuc"                 # Or whatever node in extra cluster
+    machine_type  = "worker"
+    ip            = "10.26.150.21"
+    mac_address   = "bc:24:11:xx:xx:xx"
+    vm_id         = 9201
+    ram_dedicated = 8192
+    disks = {
+      longhorn = {
+        device      = "/dev/sdb"
+        size        = "220G"
+        type        = "scsi"
+        mountpoint  = "/var/lib/longhorn"
+        unit_number = 1
+      }
+    }
+  }
+}

@@ -73,3 +73,28 @@ module "talos" {
 
   nodes = local.nodes_with_upgrade
 }
+
+module "talos_extra" {
+  count  = length(var.nodes_config_extra) > 0 ? 1 : 0
+  source = "./talos"
+
+  providers = {
+    proxmox = proxmox.extra
+  }
+
+  proxmox_datastore = var.proxmox_datastore
+  talos_image       = var.talos_image
+  cluster_domain    = var.cluster_domain
+  cilium            = var.cilium
+  coredns           = var.coredns
+  cluster = {
+    name               = "${var.cluster_name}-extra"
+    endpoint           = "api.${var.cluster_domain}"
+    talos_version      = var.versions.talos
+    proxmox_cluster    = var.proxmox_extra.cluster_name
+    kubernetes_version = var.versions.kubernetes
+  }
+  network = var.network
+  oidc    = var.oidc
+  nodes   = var.nodes_config_extra
+}
