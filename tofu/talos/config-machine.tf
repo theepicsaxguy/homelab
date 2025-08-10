@@ -46,7 +46,8 @@ data "talos_machine_configuration" "this" {
 
 resource "talos_machine_configuration_apply" "this" {
   depends_on = [
-    proxmox_virtual_environment_vm.this,
+    proxmox_virtual_environment_vm.primary,
+    proxmox_virtual_environment_vm.secondary,
     talos_image_factory_schematic.main,
   ]
   for_each                    = var.nodes
@@ -56,7 +57,8 @@ resource "talos_machine_configuration_apply" "this" {
   lifecycle {
     # External nodes will handle missing VM dependencies gracefully
     replace_triggered_by = [
-      proxmox_virtual_environment_vm.this
+      proxmox_virtual_environment_vm.primary,
+      proxmox_virtual_environment_vm.secondary
     ]
   }
 }
