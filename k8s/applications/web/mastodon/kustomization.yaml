@@ -9,4 +9,3 @@ resources:
   - streaming
   - elasticsearch
   - networking
-  - proxy
