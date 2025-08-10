@@ -45,6 +45,7 @@ configMapGenerator:
       - ES_HOST=elasticsearch-master
       - ES_PORT=9200
       - ES_PRESET=
+      - ES_USER=mastodon
   - name: mastodon-metrics-env
     literals:
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true
@@ -68,7 +69,7 @@ configMapGenerator:
       - S3_BUCKET=mastodata
       - S3_ALIAS_HOST=cdn.goingdark.social
       - S3_PROTOCOL=https
-      - S3_REGION=us-west-1
+      - S3_REGION=auto
       - S3_PERMISSION=public-read
       - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
   - name: mastodon-smtp-env
