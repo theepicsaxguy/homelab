@@ -11,6 +11,6 @@ output "client_configuration" {
 }
 
 output "kube_config" {
-  value     = var.manage_cluster ? talos_cluster_kubeconfig.this[0] : null
+  value     = var.manage_cluster ? data.talos_cluster_kubeconfig.this[0] : null
   sensitive = true
 }

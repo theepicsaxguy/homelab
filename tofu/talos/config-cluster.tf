@@ -10,7 +10,7 @@ resource "talos_machine_bootstrap" "this" {
   client_configuration = talos_machine_secrets.this[0].client_configuration
 }
 
-resource "talos_cluster_kubeconfig" "this" {
+data "talos_cluster_kubeconfig" "this" {
   count = var.manage_cluster ? 1 : 0
 
   depends_on = [
@@ -28,7 +28,7 @@ data "talos_cluster_health" "this" {
   count = var.manage_cluster ? 1 : 0
 
   depends_on = [
-    talos_cluster_kubeconfig.this,
+    data.talos_cluster_kubeconfig.this,
     talos_machine_configuration_apply.this
   ]
 
