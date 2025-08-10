@@ -1,191 +1,77 @@
-variable "proxmox" {
-  type = object({
-    name         = string
-    cluster_name = string
-    endpoint     = string
-    insecure     = bool
-    username     = string
-    api_token    = string
-  })
-  sensitive = true
-}
-
-variable "upgrade_control" {
-  description = "Controls sequential node upgrades."
-  type = object({
-    enabled = bool
-    index   = number
-  })
-  default = {
-    enabled = false
-    index   = -1
-  }
-}
-
-# ---- drop these duplicates (moved to variables.tf) ----
-# variable "talos_image" { … }
-# variable "cluster_domain" { … }
-# variable "proxmox_datastore" { … }
-# variable "network" { … }
-# variable "oidc" { … }
-
-# fix illegal var‐interpolation in default
-variable "cluster_domain_extra" {
-  description = "Override domain for optional second cluster"
-  type        = string
-  default     = ""
-}
-
 locals {
-  cluster_domain_extra = var.cluster_domain_extra != ""
-    ? var.cluster_domain_extra
-    : "b.${var.cluster_domain}"
+  cilium_values_default   = file("${path.root}/../k8s/infrastructure/network/cilium/values.yaml")
+  cilium_install_default  = file("${path.module}/inline-manifests/cilium-install.yaml")
+  coredns_install_default = templatefile("${path.module}/inline-manifests/coredns-install.yaml.tftpl", {
+    cluster_domain = var.cluster_domain
+    dns_forwarders = join(" ", var.network.dns_servers)
+  })
+
+  cilium_values   = coalesce(try(var.cilium.values, null), local.cilium_values_default)
+  cilium_install  = coalesce(try(var.cilium.install, null), local.cilium_install_default)
+  coredns_install = coalesce(try(var.coredns.install, null), local.coredns_install_default)
 }
 
-variable "nodes_config" {
-  description = "Per-node configuration map (primary cluster)"
-  type = map(object({
-    host_node                = optional(string)
-    machine_type             = string
-    ip                       = string
-    mac_address              = optional(string)
-    vm_id                    = optional(number)
-    is_external              = optional(bool, false)
-    cpu                      = optional(number)
-    ram_dedicated            = optional(number)
-    update                   = optional(bool, false)
-    igpu                     = optional(bool, false)
-    gpu_node_exclusive       = optional(bool, true)
-    gpu_devices              = optional(list(string), [])
-    gpu_device_meta          = optional(map(object({
-      id           = string
-      subsystem_id = string
-      iommu_group  = number
-    })), {})
-    datastore_id             = optional(string)
-    network_bridge           = optional(string)
-    network_vlan_id          = optional(number)
-    root_disk_file_format    = optional(string)
-    root_disk_size           = optional(number)
-    dns_servers              = optional(list(string))
-    disks                    = optional(map(object({
-      device      = string
-      size        = string
-      type        = string
-      mountpoint  = string
-      unit_number = number
-    })), {})
-  }))
+data "talos_machine_configuration" "this" {
+  for_each           = nonsensitive(var.nodes)
+  cluster_name       = var.cluster.name
+  cluster_endpoint   = "https://${var.cluster.endpoint}:6443"
+  talos_version      = var.cluster.talos_version
+  machine_type       = each.value.machine_type
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  kubernetes_version = var.cluster.kubernetes_version
 
-  validation {
-    condition     = length(distinct([for n in values(var.nodes_config) : n.ip])) == length(var.nodes_config)
-    error_message = "Node IP addresses must be unique."
+  config_patches = (
+    each.value.machine_type == "controlplane" ?
+    [
+      templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
+        hostname        = each.key
+        node_name       = each.value.host_node
+        cluster_name    = var.cluster.proxmox_cluster
+        node_ip         = each.value.ip
+        cluster         = var.cluster
+        cluster_domain  = var.cluster_domain
+        cilium_values   = local.cilium_values
+        cilium_install  = local.cilium_install
+        coredns_install = local.coredns_install
+        oidc            = var.oidc
+        vip             = var.network.vip
+      })
+    ] :
+    concat(
+      [
+        templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
+          hostname           = each.key
+          node_name          = each.value.host_node
+          cluster_name       = var.cluster.proxmox_cluster
+          node_ip            = each.value.ip
+          cluster            = var.cluster
+          cluster_domain     = var.cluster_domain
+          disks              = coalesce(each.value.disks, {})
+          igpu               = try(each.value.igpu, false)
+          gpu_node_exclusive = try(each.value.gpu_node_exclusive, false)
+          vip                = var.network.vip
+        })
+      ],
+      (try(each.value.igpu, false) ? [
+        file("${path.module}/patches/gpu-modules.yaml"),
+        file("${path.module}/patches/gpu-runtime.yaml")
+      ] : [])
+    )
+  )
+}
+
+resource "talos_machine_configuration_apply" "this" {
+  depends_on = [
+    proxmox_virtual_environment_vm.this,
+    talos_image_factory_schematic.main,
+  ]
+
+  for_each                    = nonsensitive(var.nodes)
+  node                        = each.value.ip
+  client_configuration        = talos_machine_secrets.this.client_configuration
+  machine_configuration_input = data.talos_machine_configuration.this[each.key].machine_configuration
+
+  lifecycle {
+    ignore_changes = [machine_configuration_input]
   }
-}
-
-# ---- optional second cluster support (disabled by default) ----
-
-variable "nodes_config_extra" {
-  description = "Per-node configuration map for the optional second cluster"
-  type = map(object({
-    host_node                = optional(string)
-    machine_type             = string
-    ip                       = string
-    mac_address              = optional(string)
-    vm_id                    = optional(number)
-    is_external              = optional(bool, false)
-    cpu                      = optional(number)
-    ram_dedicated            = optional(number)
-    update                   = optional(bool, false)
-    igpu                     = optional(bool, false)
-    gpu_node_exclusive       = optional(bool, true)
-    gpu_devices              = optional(list(string), [])
-    gpu_device_meta          = optional(map(object({
-      id           = string
-      subsystem_id = string
-      iommu_group  = number
-    })), {})
-    datastore_id             = optional(string)
-    network_bridge           = optional(string)
-    network_vlan_id          = optional(number)
-    root_disk_file_format    = optional(string)
-    root_disk_size           = optional(number)
-    dns_servers              = optional(list(string))
-    disks                    = optional(map(object({
-      device      = string
-      size        = string
-      type        = string
-      mountpoint  = string
-      unit_number = number
-    })), {})
-  }))
-  default = {}
-}
-
-variable "cluster_name" {
-  description = "The name of the primary Talos cluster."
-  type        = string
-}
-
-variable "cluster_domain" {
-  description = "The domain for the primary cluster (e.g., kube.example.com)."
-  type        = string
-}
-
-variable "cluster_name_extra" {
-  description = "Name of the optional second Talos cluster."
-  type        = string
-  default     = "talos-b"
-}
-
-variable "cluster_domain_extra" {
-  description = "Override domain for optional second cluster"
-  type        = string
-  default     = ""
-}
-
-variable "proxmox_datastore" {
-  description = "Default Proxmox datastore for all nodes"
-  type        = string
-  default     = "velocity"
-}
-
-variable "proxmox_cluster" {
-  description = "The name of the Proxmox cluster."
-  type        = string
-}
-
-variable "versions" {
-  description = "Software versions for the cluster components."
-  type = object({
-    talos      = string
-    kubernetes = string
-  })
-}
-
-variable "network" {
-  description = "Network configuration for the cluster."
-  type = object({
-    gateway     = string
-    vip         = string
-    cidr_prefix = number
-    dns_servers = list(string)
-    bridge      = string
-    vlan_id     = number
-  })
-}
-
-variable "oidc" {
-  description = "Optional OIDC provider configuration for Kubernetes API server."
-  type = object({
-    issuer_url = string
-    client_id  = string
-  })
-  default = null
-}
-
-locals {
-  cluster_domain_extra = var.cluster_domain_extra != ""
-    ? var.cluster_domain_extra
-    : "b.${var.cluster_domain}"
 }

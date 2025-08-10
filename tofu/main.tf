@@ -25,28 +25,6 @@ locals {
       }
     )
   }
-
-  # Optional second cluster nodes; count-guarded module below
-  nodes_with_upgrade_extra = {
-    for name, config in var.nodes_config_extra : name => merge(
-      try(local.node_defaults[config.machine_type], error("machine_type '${config.machine_type}' has no defaults")),
-      { for k, v in config : k => v if v != null },
-      {
-        disks = {
-          for disk_name, disk_defaults in try(local.node_defaults[config.machine_type].disks, {}) :
-          disk_name => merge(
-            disk_defaults,
-            coalesce(lookup(coalesce(config.disks, {}), disk_name, null), {})
-          )
-        }
-      },
-      {
-        host_node    = coalesce(config.host_node, nonsensitive(var.proxmox.name))
-        update       = false
-        datastore_id = coalesce(lookup(config, "datastore_id", null), var.proxmox_datastore)
-      }
-    )
-  }
 }
 
 module "talos" {
@@ -81,36 +59,39 @@ module "talos" {
   nodes   = local.nodes_with_upgrade
 }
 
-# Optional second cluster (only if nodes_config_extra is non-empty)
 module "talos_extra" {
   count  = length(var.nodes_config_extra) > 0 ? 1 : 0
   source = "./talos"
 
+  providers = {
+    proxmox = proxmox.extra
+  }
+
   proxmox_datastore = var.proxmox_datastore
   talos_image       = var.talos_image
-  cluster_domain    = var.cluster_domain_extra
+  cluster_domain    = var.cluster_domain
 
   cilium = {
-    values  = file("${path.module}/../k9s/../k8s/infrastructure/network/cilium/values.yaml")
+    values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
     install = file("${path.module}/talos/inline-manifests/cilium-install.yaml")
   }
 
   coredns = {
     install = templatefile("${path.module}/talos/inline-manifests/coredns-install.yaml.tftpl", {
-      cluster_domain = var.cluster_domain_extra
+      cluster_domain = var.cluster_domain
       dns_forwarders = join(" ", var.network.dns_servers)
     })
   }
 
   cluster = {
-    name               = var.cluster_name_extra
-    endpoint           = "api.${var.cluster_domain_extra}"
+    name               = "${var.cluster_name}-extra"
+    endpoint           = "api.${var.cluster_domain}"
     talos_version      = var.versions.talos
-    proxmox_cluster    = var.proxmox_cluster
+    proxmox_cluster    = var.proxmox_extra.cluster_name
     kubernetes_version = var.versions.kubernetes
   }
 
   network = var.network
   oidc    = var.oidc
-  nodes   = local.nodes_with_upgrade_extra
+  nodes   = var.nodes_config_extra
 }

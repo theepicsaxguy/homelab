@@ -34,3 +34,15 @@ provider "kubernetes" {
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
 }
+
+provider "proxmox" {
+  alias     = "extra"
+  endpoint  = try(var.proxmox_extra.endpoint, null)
+  insecure  = try(var.proxmox_extra.insecure, null)
+  api_token = try(var.proxmox_extra.api_token, null)
+
+  ssh {
+    agent    = true
+    username = try(var.proxmox_extra.username, null)
+  }
+}

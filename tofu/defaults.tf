@@ -5,7 +5,8 @@ variable "defaults_worker" {
     machine_type  = string
     cpu           = number
     ram_dedicated = number
-    disks         = optional(map(object({
+    igpu          = optional(bool, false)
+    disks = optional(map(object({
       device      = string
       size        = string
       type        = string
@@ -13,6 +14,21 @@ variable "defaults_worker" {
       unit_number = number
     })), {})
   })
+  default = {
+    machine_type  = "worker"
+    cpu           = 8
+    ram_dedicated = 13312
+    igpu          = false
+    disks = {
+      longhorn = {
+        device      = "/dev/sdb"
+        size        = "220G"
+        type        = "scsi"
+        mountpoint  = "/var/lib/longhorn"
+        unit_number = 1
+      }
+    }
+  }
 }
 
 variable "defaults_controlplane" {
@@ -22,7 +38,8 @@ variable "defaults_controlplane" {
     machine_type  = string
     cpu           = number
     ram_dedicated = number
-    disks         = optional(map(object({
+    igpu          = optional(bool, false)
+    disks = optional(map(object({
       device      = string
       size        = string
       type        = string
@@ -30,4 +47,11 @@ variable "defaults_controlplane" {
       unit_number = number
     })), {})
   })
+  default = {
+    machine_type  = "controlplane"
+    cpu           = 6
+    ram_dedicated = 6144
+    igpu          = false
+    disks         = {}
+  }
 }
