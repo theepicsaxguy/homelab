@@ -59,6 +59,6 @@ v2
 :::note
 :::warning
 :::important
-::tip
+:::tip
 :::danger
 OpenTofu

@@ -15,7 +15,9 @@ https://3os.org/infrastructure/proxmox/lets-encrypt-cloudflare/#installation-and
 2. Go to **Data center > Permissions > Users > Add**.  
 3. Enter:
    - **Username:** `opentofu`  
+<!-- vale off -->
    - **Realm:** Proxmox VE authentication.  
+<!-- vale on -->
 4. Press **Add**.
 
 ---
@@ -57,20 +59,42 @@ https://3os.org/infrastructure/proxmox/lets-encrypt-cloudflare/#installation-and
 ---
 
 ## Step 4: Prepare `terraform.tfvars`
-Enter the token in the format:  
-```
-Token ID + Secret
-```
 
-Example `terraform.tfvars`:
+For many Proxmox clusters, configure each cluster in the map format:
 
 ```hcl
 proxmox = {
-  name         = "nuc"
-  cluster_name = "nuc"
-  endpoint     = "https://nuc.pc-tips.se:8006"
-  insecure     = false
-  username     = "root"
-  api_token    = "opentofu@pve!opentofu-token=313a1w3551awd5a1wd3a1wd5"
+  host3 = {
+    name         = "host3"
+    cluster_name = "host3"
+    endpoint     = "https://host3.pc-tips.se:8006"
+    insecure     = false
+    username     = "root"
+    api_token    = "root@pam!terraform2=313a1w3551awd5a1wd3a1wd5"
+  }
+  nuc = {
+    name         = "nuc"
+    cluster_name = "nuc"
+    endpoint     = "https://nuc.pc-tips.se:8006"
+    insecure     = false
+    username     = "root"
+    api_token    = "opentofu@pve!opentofu-token=313a1w3551awd5a1wd3a1wd5"
+  }
 }
 ```
+
+:::tip
+- Each cluster needs its own API token configured in Proxmox
+- The `name` field should match the Proxmox node name
+- The `cluster_name` can match the `name` field for clusters with only one node.
+- Use the format: `username@realm!token_id=token_secret`
+:::
+
+
+<!-- vale off -->
+:::info Next Step
+After configuring API tokens, set up SSH key access for each Proxmox node.  
+See: [Setup SSH Keys for Proxmox Nodes](setup-ssh-keys)
+:::
+
+<!-- vale on -->

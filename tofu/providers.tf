@@ -33,3 +33,17 @@ provider "kubernetes" {
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
 }
+
+# Optional secondary Proxmox provider for nodes in another cluster
+provider "proxmox" {
+  alias     = "secondary"
+  endpoint  = var.proxmox_secondary != null ? var.proxmox_secondary.endpoint : var.proxmox.endpoint
+  insecure  = var.proxmox_secondary != null ? var.proxmox_secondary.insecure : var.proxmox.insecure
+  api_token = var.proxmox_secondary != null ? var.proxmox_secondary.api_token : var.proxmox.api_token
+
+  ssh {
+    agent    = true
+    username = var.proxmox_secondary != null ? var.proxmox_secondary.username : var.proxmox.username
+  }
+}
+

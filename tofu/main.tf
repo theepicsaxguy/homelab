@@ -32,10 +32,12 @@ module "talos" {
   source = "./talos"
 
   providers = {
-    proxmox = proxmox
+    proxmox           = proxmox
+    proxmox.secondary = proxmox.secondary
   }
 
   proxmox_datastore = var.proxmox_datastore
+  proxmox_secondary = var.proxmox_secondary
 
   talos_image = var.talos_image
 

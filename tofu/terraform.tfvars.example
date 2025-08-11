@@ -1,17 +1,19 @@
 proxmox = {
-  name         = "node" # Name of the Proxmox node
-  cluster_name = "node" # Must match the Proxmox cluster name
-  endpoint     = "https://node.example.com:8006"
+  name         = "host3" # Name of the Proxmox node
+  cluster_name = "host3"   # Must match the Proxmox cluster name
+  endpoint     = "https://host3.pc-tips.se:8006"
   insecure     = false
-  username     = "root"
-  api_token    = "root@pam!secret"
+  username     = "root@pam"
+  api_token    = "opentofu@pve!opentofu=secret"
 }
-proxmox = {
-  name         = "node" # Name of the Proxmox node
-  cluster_name = "node" # Must match the Proxmox cluster name
-  endpoint     = "https://node.example.com:8006"
-  insecure     = false
-  username     = "root"
-  api_token    = "root@pam!secret"
-}
-# The Proxmox API token format is: <username>@<realm>!<name>=<token>
+
+# Example for proxmox_secondary variable
+ proxmox_secondary = {
+   name         = "nuc"
+   cluster_name = "nuc"
+   endpoint     = "https://nuc.pc-tips.se:8006"
+   insecure     = false
+   username     = "root@pam"
+   api_token    = "opentofu@pve!opentofu=secret"
+ }
+ # The Proxmox API token format is: <username>@<realm>!<name>=<token>

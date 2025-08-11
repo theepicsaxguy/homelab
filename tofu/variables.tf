@@ -149,21 +149,60 @@ variable "nodes_config" {
   }
 }
 
+variable "proxmox_secondary" {
+  description = "Optional secondary Proxmox API connection for nodes in another cluster"
+  type = object({
+    name         = string
+    cluster_name = string
+    endpoint     = string
+    insecure     = bool
+    username     = string
+    api_token    = string
+  })
+  sensitive = true
+  default   = null
+}
+
+
+variable "cilium" {
+  description = "Cilium configuration"
+  type = object({
+    values  = string
+    install = string
+  })
+}
+
+variable "coredns" {
+  description = "CoreDNS configuration"
+  type = object({
+    install = string
+  })
+}
+
 variable "proxmox_datastore" {
   description = "Default Proxmox datastore for all nodes"
   type        = string
   default     = "velocity"
 }
-
 variable "cluster_name" {
   description = "The name of the Talos cluster."
   type        = string
 }
-
 variable "cluster_domain" {
   description = "The domain for the cluster (e.g., kube.example.com)."
   type        = string
 }
+
+variable "cluster_name_extra" {
+  type    = string
+  default = "talos-b"
+}
+
+variable "cluster_domain_extra" {
+  type    = string
+  default = null
+}
+
 
 variable "network" {
   description = "Network configuration for the cluster."
@@ -176,7 +215,6 @@ variable "network" {
     vlan_id     = number
   })
 }
-
 variable "proxmox_cluster" {
   description = "The name of the Proxmox cluster."
   type        = string
@@ -189,13 +227,11 @@ variable "versions" {
     kubernetes = string
   })
 }
-
 variable "oidc" {
   description = "Optional OIDC provider configuration for Kubernetes API server."
   type = object({
     issuer_url = string
     client_id  = string
   })
-  default = null # Make it optional
+  default = null
 }
-

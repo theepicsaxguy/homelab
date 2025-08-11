@@ -305,7 +305,6 @@ VM.Configuration.Options
 VM.Monitor
 VM.PowerMgmt
 PgBouncer
-PgBouncer
 :::
 :::info
 :::note
