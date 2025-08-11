@@ -381,7 +381,7 @@ configLogicalBackup:
   # S3 region of bucket
   logical_backup_s3_region: "us-west-1"
   # S3 endpoint url when not using AWS
-  logical_backup_s3_endpoint: ""
+  logical_backup_s3_endpoint: "https://truenas.pc-tips.se:9000"
   # S3 Secret Access Key
   logical_backup_s3_secret_access_key: ""
   # S3 server side encryption

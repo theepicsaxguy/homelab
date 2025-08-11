@@ -83,6 +83,12 @@ jobs:
 
           echo "base_tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
+      - name: Generate revision tag
+        id: revision
+        run: |
+          REVISION_TAG="${{ steps.image-tags.outputs.image_version }}-$(echo ${{ github.sha }} | cut -c1-7)"
+          echo "revision_tag=$REVISION_TAG" >> $GITHUB_OUTPUT
+
 
       - name: Generate revision tag
         id: revision
