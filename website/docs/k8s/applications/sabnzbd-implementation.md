@@ -6,7 +6,7 @@ SABnzbd runs as a StatefulSet and keeps its own `sabnzbd.ini`. Environment varia
 
 ## Image
 
-The image builds SABnzbd from the official release tarball in a Python 3.12 virtual environment. It runs on a distroless base as UID 2501. A default `sabnzbd.ini` is generated during the build and copied to `/config` only when that directory is empty.
+The image builds SABnzbd from the official release tarball in a Python 3.12 virtual environment. It runs on a distroless base as UID 2501. Dependencies from `requirements.txt`, including CherryPy, are installed during the build. A default `sabnzbd.ini` is generated during the build and copied to `/config` only when that directory is empty.
 
 ## Configuration
 

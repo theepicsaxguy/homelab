@@ -52,7 +52,7 @@ RUN python3 -m venv $VENV \
  && $VENV/bin/pip install --upgrade pip setuptools wheel \
  && git clone --depth 1 --branch "$SAB_VERSION" \
         https://github.com/sabnzbd/sabnzbd.git /app/sabnzbd \
- && $VENV/bin/pip install --no-cache-dir -r /app/sabnzbd/requirements.txt \
+ && $VENV/bin/pip install --no-cache-dir -r /app/sabnzbd/requirements.txt cherrypy \
  && mkdir /defaults \
  && $VENV/bin/python -m sabnzbd --config-file /defaults/sabnzbd.ini \
       --server 127.0.0.1:9 || true
