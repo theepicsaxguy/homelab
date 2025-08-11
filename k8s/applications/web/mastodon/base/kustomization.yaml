@@ -70,7 +70,7 @@ configMapGenerator:
       - S3_ALIAS_HOST=cdn.goingdark.social
       - S3_PROTOCOL=https
       - S3_REGION=auto
-      - S3_PERMISSION=public-read
+      - S3_PERMISSION=
       - EXTRA_MEDIA_HOSTS=https://cdn.goingdark.social
   - name: mastodon-smtp-env
     literals:
