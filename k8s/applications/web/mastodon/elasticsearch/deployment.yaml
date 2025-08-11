@@ -13,6 +13,9 @@ spec:
   strategy:
     type: RollingUpdate
   template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kibana
     spec:
       affinity:
         nodeAffinity: null
