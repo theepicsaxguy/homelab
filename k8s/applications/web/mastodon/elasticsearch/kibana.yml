@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  kibana.yml: |
+    pid.file: /opt/bitnami/kibana/tmp/kibana.pid
+    server.host: "0.0.0.0"
+    server.port: 5601
+    elasticsearch.hosts: [http://elasticsearch:9200]
+    server.rewriteBasePath: false
+kind: ConfigMap
+metadata:
+  name: kibana-conf
+  namespace: mastodon

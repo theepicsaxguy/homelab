@@ -1,12 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - pvc-es.yaml
-  - externalsecret.yaml
-  - setup-user-job.yaml
+- deployment.yaml
+- es-cert.yaml
+- externalsecret.yaml
+- httproute-es.yaml
+- kibana.yml
+- networkpolicy
+- pvc-es.yaml
+- serviceaccount.yaml
+- setup-user-job.yaml
+- statefulset.yaml
+
 namespace: mastodon
-helmCharts:
-- name: elasticsearch
-  version: 22.1.4
-  repo: oci://registry-1.docker.io/bitnamicharts
-  valuesFile: values.yaml

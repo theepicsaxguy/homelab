@@ -17,5 +17,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: release-name-kibana
+        - name: kibana
           port: 5601
