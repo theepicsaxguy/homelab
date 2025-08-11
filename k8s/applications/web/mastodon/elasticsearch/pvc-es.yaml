@@ -1,4 +1,3 @@
-# k8s/applications/web/mastodon/pvc-es.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,3 +9,28 @@ spec:
   resources:
     requests:
       storage: 5Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mastodon-es-pvc
+  namespace: mastodon
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kibana
+  namespace: mastodon
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

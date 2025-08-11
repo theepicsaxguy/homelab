@@ -1,0 +1,187 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: mastodon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kibana
+  strategy:
+    type: RollingUpdate
+  template:
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: release-name
+                  app.kubernetes.io/name: kibana
+              topologyKey: kubernetes.io/hostname
+            weight: 1
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: KIBANA_PORT_NUMBER
+          value: "5601"
+        - name: KIBANA_ELASTICSEARCH_URL
+          value: http://elasticsearch:9200
+        - name: KIBANA_ELASTICSEARCH_PORT_NUMBER
+          value: "9200"
+        - name: KIBANA_FORCE_INITSCRIPTS
+          value: "false"
+        - name: KIBANA_SERVER_ENABLE_TLS
+          value: "false"
+        - name: KIBANA_ELASTICSEARCH_ENABLE_TLS
+          value: "false"
+        - name: KIBANA_ELASTICSEARCH_TLS_USE_PEM
+          value: "false"
+        - name: KIBANA_ELASTICSEARCH_TLS_VERIFICATION_MODE
+          value: full
+        - name: KIBANA_ELASTICSEARCH_ENABLE_TLS
+          value: "true"
+        - name: KIBANA_ELASTICSEARCH_TLS_USE_PEM
+          value: "true"
+        - name: KIBANA_ELASTICSEARCH_TLS_VERIFICATION_MODE
+          value: full
+        envFrom: null
+        image: docker.io/bitnami/kibana:9.1.0-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: http
+          timeoutSeconds: 5
+        name: kibana
+        ports:
+        - containerPort: 5601
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /status
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 750m
+            ephemeral-storage: 2Gi
+            memory: 768Mi
+          requests:
+            cpu: 500m
+            ephemeral-storage: 50Mi
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+          seLinuxOptions: {}
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+        - mountPath: /opt/bitnami/kibana/config
+          name: empty-dir
+          subPath: app-conf-dir
+        - mountPath: /opt/bitnami/kibana/tmp
+          name: empty-dir
+          subPath: app-tmp-dir
+        - mountPath: /opt/bitnami/kibana/logs
+          name: empty-dir
+          subPath: app-logs-dir
+        - mountPath: /opt/bitnami/kibana/plugins
+          name: empty-dir
+          subPath: app-plugins-dir
+        - mountPath: /bitnami/kibana
+          name: kibana-data
+        - mountPath: /bitnami/kibana/conf
+          name: kibana-config
+        - mountPath: /opt/bitnami/kibana/config/certs
+          name: kibana-certificates
+          readOnly: true
+      initContainers:
+      - args:
+        - -ec
+        - |
+          #!/bin/bash
+
+          . /opt/bitnami/scripts/libfs.sh
+          . /opt/bitnami/scripts/kibana-env.sh
+
+          if ! is_dir_empty "$SERVER_DEFAULT_PLUGINS_DIR"; then
+              cp -nr "$SERVER_DEFAULT_PLUGINS_DIR"/* /plugins
+          fi
+        command:
+        - /bin/bash
+        image: docker.io/bitnami/kibana:9.1.0-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        name: copy-default-plugins
+        resources:
+          limits:
+            cpu: 750m
+            ephemeral-storage: 2Gi
+            memory: 768Mi
+          requests:
+            cpu: 500m
+            ephemeral-storage: 50Mi
+            memory: 512Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+          seLinuxOptions: {}
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /plugins
+          name: empty-dir
+          subPath: app-plugins-dir
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: kibana
+      volumes:
+      - emptyDir: {}
+        name: empty-dir
+      - name: kibana-data
+        persistentVolumeClaim:
+          claimName: kibana
+      - configMap:
+          name: kibana-conf
+        name: kibana-config
+      - name: kibana-certificates
+        secret:
+          secretName: mastodon-elastic-ca

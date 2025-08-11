@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: mastodon
+spec:
+  clusterIP: None
+  ports:
+  - name: tcp-rest-api
+    port: 9200
+    targetPort: rest-api
+  - name: tcp-transport
+    port: 9300
+    targetPort: transport
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/name: elasticsearch
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: mastodon
+spec:
+  ports:
+  - name: tcp-rest-api
+    nodePort: null
+    port: 9200
+    targetPort: rest-api
+  - name: tcp-transport
+    nodePort: null
+    port: 9300
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/name: elasticsearch
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: mastodon
+spec:
+  ports:
+  - name: http
+    nodePort: null
+    port: 5601
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: kibana
+  sessionAffinity: None
+  type: ClusterIP

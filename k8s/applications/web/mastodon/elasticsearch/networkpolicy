@@ -1,0 +1,47 @@
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: elasticsearch-master
+  namespace: mastodon
+spec:
+  egress:
+  - {}
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          elasticsearch-client: "true"
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: elasticsearch
+    ports:
+    - port: 9200
+    - port: 9300
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/name: elasticsearch
+  policyTypes:
+  - Ingress
+  - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: kibana
+  namespace: mastodon
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 5601
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: server
+      app.kubernetes.io/name: kibana
+  policyTypes:
+  - Ingress
+  - Egress
