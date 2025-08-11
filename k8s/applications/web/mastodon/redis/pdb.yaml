@@ -1,0 +1,14 @@
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: mastodon-redis-master
+  namespace: mastodon
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: mastodon-redis
+      app.kubernetes.io/name: redis
