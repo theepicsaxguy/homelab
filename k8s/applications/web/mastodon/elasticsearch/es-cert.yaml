@@ -1,0 +1,45 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-elastic-server
+  namespace: mastodon
+spec:
+  secretName: mastodon-elastic-ca
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+  commonName: mastodon-elastic.mastodon.svc
+  dnsNames:
+    - mastodon-elastic.mastodon.svc
+    - mastodon-elastic
+    - mastodon-elastic.mastodon.svc.cluster.local
+    - mastodon-elastic.mastodon.svc.kube.pc-tips.se
+    - mastodon-elastic-pooler
+    - mastodon-elastic-pooler.mastodon.svc
+  duration: 2160h       # 90 days
+  renewBefore: 360h     # renew 15 days before expiry
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mastodon-elastic-ca
+  namespace: mastodon
+spec:
+  secretName: mastodon-elastic-ca
+  issuerRef:
+    name: internal-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+  commonName: mastodon-elastic-ca
+  isCA: true
+  duration: 87600h # 10 years
+  renewBefore: 43800h # 5 years
+  usages:
+    - digital signature
+    - key encipherment
+    - cert sign
