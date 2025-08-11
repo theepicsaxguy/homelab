@@ -1,0 +1,253 @@
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-master
+  namespace: mastodon
+spec:
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: elasticsearch
+  serviceName: elasticsearch-master
+  template:
+    metadata:
+      annotations: null
+    spec:
+      affinity:
+        nodeAffinity: null
+        podAffinity: null
+        podAntiAffinity: null
+      automountServiceAccountToken: false
+      containers:
+      - env:
+        - name: BITNAMI_DEBUG
+          value: "false"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ELASTICSEARCH_IS_DEDICATED_NODE
+          value: "no"
+        - name: ELASTICSEARCH_NODE_ROLES
+          value: master
+        - name: ELASTICSEARCH_TRANSPORT_PORT_NUMBER
+          value: "9300"
+        - name: ELASTICSEARCH_HTTP_PORT_NUMBER
+          value: "9200"
+        - name: ELASTICSEARCH_CLUSTER_NAME
+          value: elastic
+        - name: ELASTICSEARCH_HEAP_SIZE
+          value: 512m
+        - name: ELASTICSEARCH_ENABLE_SECURITY
+          value: "true"
+        - name: ELASTICSEARCH_PASSWORD_FILE
+          value: /opt/bitnami/elasticsearch/secrets/elasticsearch-password
+        - name: ELASTICSEARCH_ENABLE_FIPS_MODE
+          value: "false"
+        - name: ELASTICSEARCH_TLS_VERIFICATION_MODE
+          value: full
+        - name: ELASTICSEARCH_ENABLE_REST_TLS
+          value: "true"
+        - name: ELASTICSEARCH_TLS_USE_PEM
+          value: "true"
+        image: docker.io/bitnami/elasticsearch:9.1.1-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 5
+          initialDelaySeconds: 180
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: rest-api
+          timeoutSeconds: 5
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+          name: rest-api
+        - containerPort: 9300
+          name: transport
+        readinessProbe:
+          exec:
+            command:
+            - /opt/bitnami/scripts/elasticsearch/healthcheck.sh
+          failureThreshold: 5
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            memory: 1.5Gi
+          requests:
+            memory: 768Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+          seLinuxOptions: {}
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+        - mountPath: /opt/bitnami/elasticsearch/config
+          name: empty-dir
+          subPath: app-conf-dir
+        - mountPath: /opt/bitnami/elasticsearch/tmp
+          name: empty-dir
+          subPath: app-tmp-dir
+        - mountPath: /opt/bitnami/elasticsearch/logs
+          name: empty-dir
+          subPath: app-logs-dir
+        - mountPath: /opt/bitnami/elasticsearch/plugins
+          name: empty-dir
+          subPath: app-plugins-dir
+        - mountPath: /bitnami/elasticsearch
+          name: empty-dir
+          subPath: app-volume-dir
+        - mountPath: /bitnami/elasticsearch/data
+          name: data
+        - mountPath: /opt/bitnami/elasticsearch/secrets
+          name: elasticsearch-secrets
+        - mountPath: /opt/bitnami/elasticsearch/config/certs
+          name: elasticsearch-certificates
+          readOnly: true
+      initContainers:
+      - command:
+        - /bin/bash
+        - -ec
+        - |
+          CURRENT=`sysctl -n vm.max_map_count`;
+          DESIRED="262144";
+          if [ "$DESIRED" -gt "$CURRENT" ]; then
+              sysctl -w vm.max_map_count=262144;
+          fi;
+          CURRENT=`sysctl -n fs.file-max`;
+          DESIRED="65536";
+          if [ "$DESIRED" -gt "$CURRENT" ]; then
+              sysctl -w fs.file-max=65536;
+          fi;
+        image: docker.io/bitnami/os-shell:12-debian-12-r50
+        imagePullPolicy: IfNotPresent
+        name: sysctl
+        resources:
+          limits:
+            cpu: 150m
+            ephemeral-storage: 2Gi
+            memory: 192Mi
+          requests:
+            cpu: 100m
+            ephemeral-storage: 50Mi
+            memory: 128Mi
+        securityContext:
+          privileged: true
+          runAsUser: 0
+      - args:
+        - -ec
+        - |
+          #!/bin/bash
+
+          . /opt/bitnami/scripts/libfs.sh
+          . /opt/bitnami/scripts/elasticsearch-env.sh
+
+          if ! is_dir_empty "$DB_DEFAULT_PLUGINS_DIR"; then
+              cp -nr "$DB_DEFAULT_PLUGINS_DIR"/* /plugins
+          fi
+        command:
+        - /bin/bash
+        image: docker.io/bitnami/elasticsearch:9.1.1-debian-12-r0
+        imagePullPolicy: IfNotPresent
+        name: copy-default-plugins
+        resources:
+          limits:
+            memory: 1.5Gi
+          requests:
+            memory: 768Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          privileged: false
+          readOnlyRootFilesystem: false
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+          seLinuxOptions: {}
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+        - mountPath: /tmp
+          name: empty-dir
+          subPath: tmp-dir
+        - mountPath: /plugins
+          name: empty-dir
+          subPath: app-plugins-dir
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: elasticsearch-master
+      volumes:
+      - emptyDir: {}
+        name: empty-dir
+      - name: elasticsearch-secrets
+        projected:
+          sources:
+          - secret:
+              name: elasticsearch-credentials
+      - name: elasticsearch-certificates
+        secret:
+          defaultMode: 256
+          secretName: mastodon-elastic-ca
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 8Gi
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: elasticsearch-master
+  namespace: mastodon
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: elasticsearch
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: kibana
+  namespace: mastodon
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/name: kibana

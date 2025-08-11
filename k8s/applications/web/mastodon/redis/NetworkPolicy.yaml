@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mastodon-redis
+  namespace: mastodon
+spec:
+  egress:
+  - {}
+  ingress:
+  - ports:
+    - port: 6379
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: mastodon-redis
+      app.kubernetes.io/name: redis
+  policyTypes:
+  - Ingress
+  - Egress
