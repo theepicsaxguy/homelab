@@ -4,10 +4,10 @@ title: PostgreSQL Backups
 description: Logical backups using the Zalando operator and Minio storage
 ---
 
-# PostgreSQL Operator Backup Configuration
+# Postgres operator backup configuration
 
-The Zalando Postgres operator schedules `pg_dumpall` to run via a Kubernetes CronJob. Backups write to the `postgres` bucket on the cluster's Minio instance.
+The Zalando Postgres operator schedules `pg_dumpall` with a Kubernetes CronJob. Backups write to the `postgres` bucket on the cluster's Minio instance.
 
-Credentials come from the `ExternalSecret` named `longhorn-minio-credentials`. This secret is shared with Longhorn so the same Minio user manages all backups.
+The `longhorn-minio-credentials` ExternalSecret supplies credentials. Longhorn uses this secret too, so one Minio user handles every backup. It must also expose `LOGICAL_BACKUP_S3_ENDPOINT` so the job points at Minio.
 
-The default schedule stores a dump every night at 03:00 UTC. Adjust `logical_backup_schedule` in `values.yaml` if needed.
+Set `logical_backup_s3_endpoint` in `values.yaml` to the Minio S3 endpoint URL (the value of `LOGICAL_BACKUP_S3_ENDPOINT` exposed by the `longhorn-minio-credentials` secret). The default schedule stores a dump every night at 03:00 Coordinated Universal Time. Adjust `logical_backup_schedule` if needed.
