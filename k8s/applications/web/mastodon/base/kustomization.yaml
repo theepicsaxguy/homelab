@@ -10,7 +10,6 @@ configMapGenerator:
       - NODE_ENV=production
       - TZ=Europe/Stockholm
       - SINGLE_USER_MODE=false
-      - DEFAULT_LOCALE=en
       - MASTODON_USE_LIBVIPS=true
       - RAILS_LOG_TO_STDOUT=true
       - PREPARED_STATEMENTS=false
