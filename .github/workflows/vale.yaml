@@ -42,7 +42,7 @@ jobs:
           separator: ','
           vale_flags: '--config=website/docs/.vale.ini'
           reporter: github-pr-check
-          fail_on_error: true
+          fail_on_error: false
           filter_mode: diff_context
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

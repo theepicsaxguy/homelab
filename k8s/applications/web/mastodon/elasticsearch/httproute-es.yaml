@@ -17,5 +17,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: elasticsearch-master
+        - name: release-name-kibana
           port: 5601
