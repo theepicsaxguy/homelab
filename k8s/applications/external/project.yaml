@@ -9,8 +9,6 @@ spec:
   destinations:
     - namespace: 'argocd'
       server: '*'
-    - namespace: 'haos'
-      server: '*'
     - namespace: 'proxmox'
       server: '*'
     - namespace: 'truenas'
