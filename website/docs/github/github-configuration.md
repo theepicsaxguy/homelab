@@ -35,11 +35,12 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
 
 - **File:** `.github/workflows/image-build.yaml`
 - **Purpose:** Detects Dockerfiles and pushes updated images to GHCR.
+- **When triggered:** Pushes to `main`, tags matching `*-*`, and pull requests that change files under `images/`.
 - **Permissions:**
   - `contents: read` (clone the repository)
   - `packages: write` (upload images)
 - **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
-- **Labels:** Each Dockerfile defines `org.opencontainers.image.description` to clarify the image contents.
+ - **Labels:** Each `Dockerfile` defines `org.opencontainers.image.description` to clarify the image contents.
 
 ### Documentation Lint (`vale.yaml`)
 
@@ -57,8 +58,8 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
   - Every pull request to `main`
 - **Jobs can include:**
   - YAML and script linting
-  - Kustomize and ArgoCD validation (typically using `kustomize build` and ArgoCD CLI tools)
-  - Helm chart checks (typically using `helm lint` or `helm template`)
+   - Kustomize and ArgoCD validation (using `kustomize build` and ArgoCD CLI tools)
+   - Helm chart checks (using `helm lint` or `helm template`)
 - **Why:**
   - **Automation:** Prevents errors and broken configs from reaching production.
   - **Quality gate:** Fails builds if code doesn’t meet standards.

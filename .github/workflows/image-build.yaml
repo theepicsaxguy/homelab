@@ -8,6 +8,9 @@ on:
       - 'images/**'
     tags:
       - '*-*'
+  pull_request:
+    paths:
+      - 'images/**'
 
 permissions:
   contents: read
