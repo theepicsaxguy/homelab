@@ -29,7 +29,11 @@ jobs:
       - name: Detect Dockerfiles
         id: detect
         run: |
-          CHANGED=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" -- 'images/*')
+          BEFORE_REF="${{ github.event.before }}"
+          if [ -z "$BEFORE_REF" ]; then
+            BEFORE_REF="HEAD~1"
+          fi
+          CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u)
           if [ -z "$IMAGES" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
             IMAGES="${GITHUB_REF_NAME%%-*}"
