@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: mastodon-migrate-mastodon.v4.4.3
+  name: mastodon-db-migrate
   namespace: mastodon
 spec:
   parallelism: 1

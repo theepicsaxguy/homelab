@@ -1,5 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
 - deployment.yaml
 - es-cert.yaml
@@ -14,3 +15,14 @@ resources:
 - statefulset.yaml
 
 namespace: mastodon
+
+patches:
+- target:
+    group: batch
+    version: v1
+    kind: Job
+    name: elasticsearch-setup-mastodon-user
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: elasticsearch-setup-mastodon-user

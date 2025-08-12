@@ -15,6 +15,10 @@ spec:
   databases:
     mastodon: mastodon
   enableLogicalBackup: true
+  logicalBackupSchedule: "0 3 * * *"
+  logicalBackupPodTargetSelector:
+    spilo-role: master
+  logical_backup_s3_sse: ""
   postgresql:
     version: "17"
   spiloFSGroup: 103

@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: mastodon-sidekiq
+        elasticsearch-client: "true"
     spec:
       securityContext:
         fsGroup: 991
@@ -57,6 +58,9 @@ spec:
             - name: db-ca
               mountPath: /opt/mastodon/.postgresql/root.crt
               subPath: ca.crt
+            - name: es-ca
+              mountPath: /opt/mastodon/.elasticsearch/ca.crt
+              subPath: ca.crt
           livenessProbe:
             exec:
               command: ["sh", "-c", "ps aux | grep '[s]idekiq\\ 7'"]
@@ -82,6 +86,12 @@ spec:
         - name: db-ca
           secret:
             secretName: mastodon-postgresql-ca
+            items:
+              - key: ca.crt
+                path: ca.crt
+        - name: es-ca
+          secret:
+            secretName: elasticsearch-master-crt
             items:
               - key: ca.crt
                 path: ca.crt

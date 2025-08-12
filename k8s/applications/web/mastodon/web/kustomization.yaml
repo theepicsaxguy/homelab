@@ -7,3 +7,14 @@ resources:
   - migrate-job.yaml
   - svc.yaml
   - web-deployment.yaml
+
+patches:
+- target:
+    group: batch
+    version: v1
+    kind: Job
+    name: mastodon-db-migrate
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: mastodon-db-migrate
