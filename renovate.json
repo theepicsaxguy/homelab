@@ -33,8 +33,10 @@
       "customType": "regex",
       "managerFilePatterns": ["/k8s/.+\\.ya?ml$"],
       "matchStrings": [
-        "name:\\s*mastodon-migrate-(?<currentValue>[\\w.-]+)\\s*#\\s*renovate: datasource=docker depName=ghcr.io/glitch-soc/mastodon"
-      ]
+        "name:\\s*mastodon-migrate-(?<currentValue>[\\w.-]+)\\s*#\\s*renovate"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "ghcr.io/glitch-soc/mastodon"
     }
   ],
   "packageRules": [
