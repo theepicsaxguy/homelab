@@ -36,7 +36,7 @@ jobs:
           CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u)
           if [ -z "$IMAGES" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            IMAGES="${GITHUB_REF_NAME%%-*}"
+            IMAGES="${GITHUB_REF_NAME#*-}"
           fi
           if [ -n "$IMAGES" ]; then
             JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
