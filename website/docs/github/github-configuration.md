@@ -36,11 +36,12 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
 - **File:** `.github/workflows/image-build.yaml`
 - **Purpose:** Detects Dockerfiles and pushes updated images to GHCR.
 - **When triggered:** Pushes to `main`, tags matching `*-*`, and pull requests that change files under `images/`.
+- **Tags:** Pull requests publish a revision tag. Merges and tag pushes also publish `latest` and version tags.
 - **Permissions:**
   - `contents: read` (clone the repository)
   - `packages: write` (upload images)
 - **Build context:** Uses `.dockerignore` files within each image directory to keep uploads minimal.
- - **Labels:** Each `Dockerfile` defines `org.opencontainers.image.description` to clarify the image contents.
+- **Labels:** Each `Dockerfile` defines `org.opencontainers.image.description` to clarify the image contents.
 
 ### Documentation Lint (`vale.yaml`)
 

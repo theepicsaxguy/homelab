@@ -91,7 +91,16 @@ jobs:
         run: |
           REVISION_TAG="${{ steps.image-tags.outputs.image_version }}-$(echo ${{ github.sha }} | cut -c1-7)"
           echo "revision_tag=$REVISION_TAG" >> $GITHUB_OUTPUT
-
+      - name: Set image tags
+        id: tags
+        run: |
+          TAGS="ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.revision.outputs.revision_tag }}"
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest"
+            TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}"
+            TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.image_version }}"
+          fi
+          printf 'tags<<EOF\n%s\nEOF\n' "$TAGS" >> "$GITHUB_OUTPUT"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -105,8 +114,4 @@ jobs:
           platforms: linux/amd64
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache
           cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache,mode=max
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.image_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.revision.outputs.revision_tag }}
+          tags: ${{ steps.tags.outputs.tags }}
