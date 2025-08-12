@@ -51,6 +51,11 @@ spec:
             secretKeyRef:
               name: elasticsearch-credentials
               key: kibana-service-account-token
+        - name: KIBANA_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-encryption-key
         - name: KIBANA_FORCE_INITSCRIPTS
           value: "false"
         - name: KIBANA_SERVER_ENABLE_TLS
@@ -82,7 +87,7 @@ spec:
         readinessProbe:
           failureThreshold: 6
           httpGet:
-            path: /status
+            path: /api/status
             port: http
             scheme: HTTP
           initialDelaySeconds: 30
