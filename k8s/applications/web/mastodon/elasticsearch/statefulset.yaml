@@ -17,6 +17,10 @@ spec:
   template:
     metadata:
       annotations: null
+      labels:
+        app.kubernetes.io/component: master
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/name: elasticsearch
     spec:
       affinity:
         nodeAffinity: null
