@@ -1,16 +1,19 @@
 name: Build and Push Docker Images
 
 on:
+  pull_request:
+    paths:
+      - 'images/**'
+
   push:
     branches:
       - main
     paths:
       - 'images/**'
+
+  push:
     tags:
       - '*-*'
-  pull_request:
-    paths:
-      - 'images/**'
 
 permissions:
   contents: read
@@ -31,15 +34,14 @@ jobs:
       - name: Detect Dockerfiles
         id: detect
         run: |
-          BEFORE_REF="${{ github.event.before }}"
-          if [ -z "$BEFORE_REF" ]; then
-            BEFORE_REF="HEAD~1"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}" "origin/${{ github.head_ref }}" -- 'images/*')
+          else
+            BEFORE_REF="${{ github.event.before }}"
+            [ -z "$BEFORE_REF" ] && BEFORE_REF="HEAD~1"
+            CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           fi
-          CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u)
-          if [ -z "$IMAGES" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            IMAGES="${GITHUB_REF_NAME#*-}"
-          fi
           if [ -n "$IMAGES" ]; then
             JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
           else
@@ -62,6 +64,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set lowercase owner for GHCR
+        run: |
+          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -76,34 +82,28 @@ jobs:
         id: image-tags
         run: |
           DOCKERFILE=images/${{ matrix.image }}/Dockerfile
-
           FROM_LINE=$(grep -m 1 "^FROM" "$DOCKERFILE")
-          BASE_IMAGE=$(echo "$FROM_LINE" | awk '{print $2}')
-          BASE_IMAGE_TAG=$(echo "$BASE_IMAGE" | cut -d':' -f2-)
-          [ -z "$BASE_IMAGE_TAG" ] && BASE_IMAGE_TAG="latest"
-
-          IMAGE_VERSION=$(grep "ARG SAB_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
-          if [ -z "$IMAGE_VERSION" ]; then
-            IMAGE_VERSION=$(grep "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2)
-          fi
+          FROM_IMG=$(echo "$FROM_LINE" | sed -E 's/^FROM[[:space:]]+//; s/[[:space:]]+AS[[:space:]].*$//; s/^--platform=[^[:space:]]+[[:space:]]+//')
+          BASE_IMAGE_TAG=$(echo "$FROM_IMG" | awk -F':' 'NF>1{print $NF; next}{print "latest"}')
+          IMAGE_VERSION=$(grep -m1 "ARG SAB_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
+          [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION=$(grep -m1 "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
-
-          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
-            TAG_IMAGE_NAME="${GITHUB_REF_NAME%%-*}"
-            TAG_IMAGE_VERSION="${GITHUB_REF_NAME#*-}"
+          if [[ "${{ github.event_name }}" == "push" && startsWith(github.ref, 'refs/tags/') ]]; then
+            TAG_NAME="${{ github.ref_name }}"
+            TAG_IMAGE_NAME="${TAG_NAME%%-*}"
+            TAG_IMAGE_VERSION="${TAG_NAME#*-}"
             if [[ "$TAG_IMAGE_NAME" == "${{ matrix.image }}" ]]; then
               IMAGE_VERSION="$TAG_IMAGE_VERSION"
             fi
           fi
-
           echo "base_tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
+
       - name: Generate revision tag
         id: revision
         run: |
           REVISION_TAG="${{ steps.image-tags.outputs.image_version }}-$(echo ${{ github.sha }} | cut -c1-7)"
           echo "revision_tag=$REVISION_TAG" >> $GITHUB_OUTPUT
-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -115,10 +115,11 @@ jobs:
           build-args: |
             SAB_VERSION=${{ steps.image-tags.outputs.image_version }}
           platforms: linux/amd64
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ env.OWNER_LC }}/${{ matrix.image }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ env.OWNER_LC }}/${{ matrix.image }}:buildcache,mode=max
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.image_version }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.revision.outputs.revision_tag }}
+            ${{ github.event_name == 'pull_request' && format('ghcr.io/{0}/{1}:pr-{2}', env.OWNER_LC, matrix.image, github.event.number) || '' }}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}/{1}:latest', env.OWNER_LC, matrix.image) || '' }}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}/{1}:{2}', env.OWNER_LC, matrix.image, steps.image-tags.outputs.base_tag) || '' }}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}/{1}:{2}', env.OWNER_LC, matrix.image, steps.image-tags.outputs.image_version) || '' }}
+            ${{ github.event_name != 'pull_request' && format('ghcr.io/{0}/{1}:{2}', env.OWNER_LC, matrix.image, steps.revision.outputs.revision_tag) || '' }}
