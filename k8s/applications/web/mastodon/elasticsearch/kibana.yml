@@ -10,8 +10,7 @@ data:
     server.port: 5601
     elasticsearch.hosts: ["https://elasticsearch-master:9200"]
     elasticsearch.serviceAccountToken: ${KIBANA_SERVICE_ACCOUNT_TOKEN}
-    elasticsearch.ssl.certificateAuthorities: ["/opt/bitnami/kibana/config/certs/tls.crt"]
-    elasticsearch.ssl.verificationMode: full
+    elasticsearch.ssl.verificationMode: none
     server.rewriteBasePath: false
     xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
     xpack.encryptedSavedObjects.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
