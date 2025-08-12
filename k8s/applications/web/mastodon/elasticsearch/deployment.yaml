@@ -1,5 +1,3 @@
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +14,9 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kibana
+        elasticsearch-client: "true"
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/component: server
     spec:
       affinity:
         nodeAffinity: null
@@ -37,9 +38,29 @@ spec:
         - name: KIBANA_PORT_NUMBER
           value: "5601"
         - name: KIBANA_ELASTICSEARCH_URL
-          value: https://elasticsearch:9200
+          value: https://elasticsearch-master:9200
         - name: KIBANA_ELASTICSEARCH_PORT_NUMBER
           value: "9200"
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: elasticsearch-password
+        - name: KIBANA_SERVICE_ACCOUNT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-service-account-token
+        - name: KIBANA_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-encryption-key
+        - name: KIBANA_SAVEDOBJECTS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-savedobjects-encryption-key
         - name: KIBANA_FORCE_INITSCRIPTS
           value: "false"
         - name: KIBANA_SERVER_ENABLE_TLS
@@ -69,15 +90,13 @@ spec:
           name: http
           protocol: TCP
         readinessProbe:
-          failureThreshold: 6
-          httpGet:
-            path: /status
+          tcpSocket:
             port: http
-            scheme: HTTP
-          initialDelaySeconds: 30
+          initialDelaySeconds: 20
           periodSeconds: 10
-          successThreshold: 1
           timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
         resources:
           limits:
             cpu: 750m
@@ -90,8 +109,7 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
-            drop:
-            - ALL
+            drop: [ "ALL" ]
           privileged: false
           readOnlyRootFilesystem: true
           runAsGroup: 1001
@@ -104,9 +122,6 @@ spec:
         - mountPath: /tmp
           name: empty-dir
           subPath: tmp-dir
-        - mountPath: /opt/bitnami/kibana/config
-          name: empty-dir
-          subPath: app-conf-dir
         - mountPath: /opt/bitnami/kibana/tmp
           name: empty-dir
           subPath: app-tmp-dir
@@ -118,25 +133,40 @@ spec:
           subPath: app-plugins-dir
         - mountPath: /bitnami/kibana
           name: kibana-data
-        - mountPath: /bitnami/kibana/conf
+        # This mount makes the ConfigMap take effect at boot:
+        - mountPath: /opt/bitnami/kibana/config/kibana.yml
           name: kibana-config
+          subPath: kibana.yml
+          readOnly: true
         - mountPath: /opt/bitnami/kibana/config/certs
           name: kibana-certificates
           readOnly: true
       initContainers:
+      - name: verify-kibana-env
+        image: curlimages/curl:8.15.0
+        imagePullPolicy: IfNotPresent
+        command: ["sh","-c","[ -n \"$KIBANA_ENCRYPTION_KEY\" ] && [ -n \"$KIBANA_SERVICE_ACCOUNT_TOKEN\" ] || { echo 'Kibana required env not ready'; exit 1; }"]
+        env:
+        - name: KIBANA_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-encryption-key
+        - name: KIBANA_SERVICE_ACCOUNT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-service-account-token
       - args:
         - -ec
         - |
           #!/bin/bash
-
           . /opt/bitnami/scripts/libfs.sh
           . /opt/bitnami/scripts/kibana-env.sh
-
           if ! is_dir_empty "$SERVER_DEFAULT_PLUGINS_DIR"; then
               cp -nr "$SERVER_DEFAULT_PLUGINS_DIR"/* /plugins
           fi
-        command:
-        - /bin/bash
+        command: ["/bin/bash"]
         image: docker.io/bitnami/kibana:9.1.1-debian-12-r0
         imagePullPolicy: IfNotPresent
         name: copy-default-plugins
@@ -152,8 +182,7 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
-            drop:
-            - ALL
+            drop: [ "ALL" ]
           privileged: false
           readOnlyRootFilesystem: true
           runAsGroup: 1001
@@ -178,9 +207,9 @@ spec:
       - name: kibana-data
         persistentVolumeClaim:
           claimName: kibana
-      - configMap:
+      - name: kibana-config
+        configMap:
           name: kibana-conf
-        name: kibana-config
       - name: kibana-certificates
         secret:
           secretName: mastodon-elastic-ca

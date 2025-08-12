@@ -1,12 +1,17 @@
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kibana-conf
+  namespace: mastodon
 data:
   kibana.yml: |
     pid.file: /opt/bitnami/kibana/tmp/kibana.pid
     server.host: "0.0.0.0"
     server.port: 5601
-    elasticsearch.hosts: [https://elasticsearch:9200]
+    elasticsearch.hosts: ["https://elasticsearch-master:9200"]
+    elasticsearch.serviceAccountToken: ${KIBANA_SERVICE_ACCOUNT_TOKEN}
+    elasticsearch.ssl.certificateAuthorities: ["/opt/bitnami/kibana/config/certs/tls.crt"]
+    elasticsearch.ssl.verificationMode: full
     server.rewriteBasePath: false
-kind: ConfigMap
-metadata:
-  name: kibana-conf
-  namespace: mastodon
+    xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+    xpack.encryptedSavedObjects.encryptionKey: ${KIBANA_ENCRYPTION_KEY}

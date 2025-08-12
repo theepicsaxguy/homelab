@@ -15,6 +15,7 @@ spec:
   databases:
     mastodon: mastodon
   enableLogicalBackup: true
+  logicalBackupSchedule: "0 3 * * *"
   postgresql:
     version: "17"
   spiloFSGroup: 103

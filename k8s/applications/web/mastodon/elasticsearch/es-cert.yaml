@@ -4,7 +4,7 @@ metadata:
   name: mastodon-elastic-server
   namespace: mastodon
 spec:
-  secretName: mastodon-elastic-ca
+  secretName: mastodon-elastic-server
   issuerRef:
     name: internal-issuer
     kind: ClusterIssuer
@@ -16,6 +16,9 @@ spec:
     - mastodon-elastic.mastodon.svc.kube.pc-tips.se
     - mastodon-elastic-pooler
     - mastodon-elastic-pooler.mastodon.svc
+    - elasticsearch-master
+    - elasticsearch-master.mastodon.svc
+    - elasticsearch-master.mastodon.svc.cluster.local
   duration: 2160h       # 90 days
   renewBefore: 360h     # renew 15 days before expiry
   usages:
