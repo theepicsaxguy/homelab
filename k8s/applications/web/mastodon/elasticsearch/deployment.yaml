@@ -16,6 +16,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kibana
+        elasticsearch-client: "true"
     spec:
       affinity:
         nodeAffinity: null
@@ -45,6 +46,11 @@ spec:
             secretKeyRef:
               name: elasticsearch-credentials
               key: elasticsearch-password
+        - name: KIBANA_SERVICE_ACCOUNT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-service-account-token
         - name: KIBANA_FORCE_INITSCRIPTS
           value: "false"
         - name: KIBANA_SERVER_ENABLE_TLS
