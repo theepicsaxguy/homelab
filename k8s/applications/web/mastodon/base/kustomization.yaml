@@ -41,10 +41,12 @@ configMapGenerator:
   - name: mastodon-search-env
     literals:
       - ES_ENABLED=true
-      - ES_HOST=elasticsearch-master
+      - ES_HOST=https://elasticsearch-master
       - ES_PORT=9200
       - ES_USER=mastodon
       - ES_PRESET=single_node_cluster
+      - ES_SSL=true
+      - ES_CA_FILE=/opt/mastodon/.elasticsearch/ca.crt
   - name: mastodon-metrics-env
     literals:
       - MASTODON_PROMETHEUS_EXPORTER_ENABLED=true

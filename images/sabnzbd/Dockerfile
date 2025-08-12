@@ -1,90 +1,77 @@
+# images/sabnzbd/Dockerfile
 # syntax=docker/dockerfile:1
-###############################################################################
-# Stage 0 – build unrar (static) + par2cmdline-turbo
-###############################################################################
-FROM alpine:3.22 AS prepstage
-SHELL ["/bin/ash","-o","pipefail","-c"]
 
+###############################################################################
+# Stage 0: build unrar from source (matches LSIO pattern)
+###############################################################################
+FROM alpine:3.22 AS unrar-build
 ARG UNRAR_VER=6.2.12
-ARG UNRAR_MD5=1f526429e8e50a9b3b94f325b2848c24   # MD5 from BLFS/SlackBuilds
 
+RUN apk add --no-cache build-base ca-certificates curl tar \
+     && update-ca-certificates \
+     && curl -fsSL "https://www.rarlab.com/rar/unrarsrc-${UNRAR_VER}.tar.gz" -o /tmp/unrarsrc.tar.gz \
+     && tar -xzf /tmp/unrarsrc.tar.gz -C /tmp \
+     && make -C /tmp/unrar -f makefile -j"$(nproc)" \
+     # create target dir and install atomically
+     && install -Dm755 /tmp/unrar/unrar /out/usr/bin/unrar
+
+###############################################################################
+# Stage 1: build SABnzbd from source + venv (includes native deps)
+###############################################################################
+FROM alpine:3.22 AS sab-build
+ARG SAB_VERSION=4.5.2
+
+# Toolchain for wheels (sabctools) + Python
 RUN apk add --no-cache \
-        build-base curl openssl-dev git ca-certificates \
-        automake autoconf libtool m4 && \
-    ###########################################################################
-    # 1.  Download *once* with --insecure (TLS chain is broken on rarlab.com)
-    ###########################################################################
-    curl -L --insecure -o unrarsrc.tar.gz \
-         "https://www.rarlab.com/rar/unrarsrc-${UNRAR_VER}.tar.gz" && \
-    echo "${UNRAR_MD5}  unrarsrc.tar.gz" | md5sum -c - && \
-    ###########################################################################
-    # 2.  Build static unrar
-    ###########################################################################
-    tar xf unrarsrc.tar.gz --strip-components=1 && \
-    sed -i 's|LDFLAGS=-pthread|LDFLAGS=-pthread -static|' makefile && \
-    make -j"$(nproc)" && install -m755 unrar /usr/local/bin/unrar && \
-    ###########################################################################
-    # 3.  Build par2cmdline-turbo (needs Autotools)
-    ###########################################################################
-    git clone --depth 1 https://github.com/animetosho/par2cmdline-turbo.git /tmp/par2 && \
-    cd /tmp/par2 && aclocal && automake --add-missing && autoconf && \
-    ./configure && make -j"$(nproc)" && make install
+     git ca-certificates tzdata \
+     python3 py3-pip py3-virtualenv \
+     build-base python3-dev musl-dev libffi-dev openssl-dev cargo
 
+WORKDIR /src
+RUN git clone --depth 1 --branch "${SAB_VERSION}" https://github.com/sabnzbd/sabnzbd.git .
+# Build isolated venv and install runtime deps from source tree
+RUN python3 -m venv /venv \
+     && /venv/bin/pip install --upgrade pip setuptools wheel \
+     && /venv/bin/pip install --no-cache-dir -r /src/requirements.txt \
+     # ensure sabctools is present per upstream packaging guidance
+     && /venv/bin/pip install --no-cache-dir sabctools \
+     && /venv/bin/pip check
 
 ###############################################################################
-# Stage 1 – build SABnzbd, create venv, collect runtime deps
+# Stage 2: runtime (Kubernetes-ready)
 ###############################################################################
-FROM alpine:3.22 AS build
-SHELL ["/bin/ash","-o","pipefail","-c"]
+FROM alpine:3.22
 
-ARG SAB_VERSION=4.3.2
-ENV VENV=/venv
+# Runtime only; add tini for PID1 & su-exec for privilege drop
+RUN apk add --no-cache \
+     ca-certificates tzdata tini \
+     python3 py3-pip \
+     libstdc++ p7zip par2cmdline ffmpeg su-exec
 
-RUN apk add --no-cache python3 py3-pip py3-virtualenv git p7zip
+# unrar from our build
+COPY --from=unrar-build /out/usr/bin/unrar /usr/bin/unrar
 
-# binaries from prepstage
-COPY --from=prepstage /usr/local/bin/unrar /usr/local/bin/unrar
-COPY --from=prepstage /usr/local/bin/par2  /usr/local/bin/par2
+# SABnzbd source + venv
+COPY --from=sab-build /venv /venv
+COPY --from=sab-build /src /app
 
-# build SABnzbd + default config
+# Declarative env (all are overridable at runtime)
+ENV PATH="/venv/bin:${PATH}" \
+     PYTHONUNBUFFERED=1 \
+     PYTHONDONTWRITEBYTECODE=1 \
+     SAB_CONFIG_DIR=/config \
+     SAB_DOWNLOAD_DIR=/downloads \
+     SAB_INCOMPLETE_DIR=/downloads/incomplete \
+     SAB_COMPLETE_DIR=/downloads/complete \
+     SAB_HOST=0.0.0.0 \
+     SAB_PORT=8080 \
+     SAB_OVERWRITE_CONFIG=true \
+     PUID=1000 \
+     PGID=1000
+
 WORKDIR /app
-RUN python3 -m venv $VENV \
- && $VENV/bin/pip install --upgrade pip setuptools wheel \
- && git clone --depth 1 --branch "$SAB_VERSION" \
-        https://github.com/sabnzbd/sabnzbd.git /app/sabnzbd \
- && $VENV/bin/pip install --no-cache-dir -r /app/sabnzbd/requirements.txt cherrypy \
- && mkdir /defaults \
- && $VENV/bin/python -m sabnzbd --config-file /defaults/sabnzbd.ini \
-      --server 127.0.0.1:9 || true
+COPY entrypoint.py /entrypoint.py
 
-# shared libs needed by par2 and 7z (unrar is static)
-RUN mkdir /deps \
- && for bin in /usr/local/bin/par2 /usr/bin/7z; do \
-      ldd "$bin" | awk '{print $3}' | grep -Ev '^$|^\(.*\)$' | \
-      xargs -r -I '{}' cp --parents '{}' /deps; \
-    done
-
-###############################################################################
-# Stage 2 – minimal distroless runtime 
-###############################################################################
-FROM gcr.io/distroless/python3-debian12:nonroot
-LABEL org.opencontainers.image.description="SABnzbd with static unrar and par2"
-
-# tiny busybox shell for user scripts
-COPY --from=busybox:1.37.0-musl /bin/busybox /bin/sh
-
-# runtime artefacts
-COPY --from=build /venv                /venv
-COPY --from=build /app/sabnzbd         /app/sabnzbd
-COPY --from=build /usr/local/bin/unrar /usr/bin/unrar
-COPY --from=build /usr/local/bin/par2  /usr/bin/par2
-COPY --from=build /usr/bin/7z          /usr/bin/7z
-COPY --from=build /deps/              /
-COPY --from=build /defaults           /defaults
-COPY entrypoint.py                    /entrypoint.py
-
-USER 2501:2501
-ENV PATH="/venv/bin:$PATH" PYTHONPATH="/app"
-VOLUME ["/config", "/downloads/incomplete", "/app/data"]
+VOLUME ["/config", "/downloads"]
 EXPOSE 8080
-ENTRYPOINT ["python", "/entrypoint.py"]
+ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]

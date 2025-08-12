@@ -47,7 +47,7 @@ spec:
                     "privileges": ["read", "monitor", "write", "manage", "create_index", "delete_index"]
                   }]
                 }'
-              
+
               # Create mastodon user
               curl -k -X POST -u "elastic:${ELASTIC_PASSWORD}" \
                 "https://elasticsearch-master:9200/_security/user/mastodon" \
@@ -56,7 +56,7 @@ spec:
                   "password": "'${MASTODON_PASSWORD}'",
                   "roles": ["mastodon_full_access"]
                 }'
-              
+
               echo "Mastodon user created successfully"
           env:
             - name: ELASTIC_PASSWORD
