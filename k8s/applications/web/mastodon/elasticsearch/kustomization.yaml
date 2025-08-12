@@ -11,7 +11,6 @@ resources:
 - pvc-es.yaml
 - service.yaml
 - serviceaccount.yaml
-- setup-user-job.yaml
 - statefulset.yaml
 
 namespace: mastodon

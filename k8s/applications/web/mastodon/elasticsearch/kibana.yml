@@ -4,7 +4,11 @@ data:
     pid.file: /opt/bitnami/kibana/tmp/kibana.pid
     server.host: "0.0.0.0"
     server.port: 5601
-    elasticsearch.hosts: [https://elasticsearch:9200]
+    elasticsearch.hosts: [https://elasticsearch-master:9200]
+    elasticsearch.username: elastic
+    elasticsearch.password: ${ELASTICSEARCH_PASSWORD}
+    elasticsearch.ssl.certificateAuthorities: [/opt/bitnami/kibana/config/certs/ca.crt]
+    elasticsearch.ssl.verificationMode: full
     server.rewriteBasePath: false
 kind: ConfigMap
 metadata:
