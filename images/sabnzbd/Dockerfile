@@ -84,7 +84,7 @@ COPY --from=build /defaults           /defaults
 COPY entrypoint.py                    /entrypoint.py
 
 USER 2501:2501
-ENV PATH="/venv/bin:$PATH" PYTHONPATH="/app"
+ENV PATH="/venv/bin:$PATH" PYTHONPATH="/app" CONFIG_DIR="/config/sabnzbd"
 VOLUME ["/config", "/downloads/incomplete", "/app/data"]
 EXPOSE 8080
 ENTRYPOINT ["python", "/entrypoint.py"]
