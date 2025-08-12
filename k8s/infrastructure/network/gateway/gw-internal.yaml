@@ -39,6 +39,17 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - protocol: HTTPS
+      port: 443
+      name: https-domain-goingdark-gateway
+      hostname: "*.goingdark.social"
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: cert-goingdark
+      allowedRoutes:
+        namespaces:
+          from: All
 
     # Add TCP listeners for Omada device mgmt
     - protocol: TCP
