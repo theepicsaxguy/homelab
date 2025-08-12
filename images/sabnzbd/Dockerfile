@@ -53,8 +53,7 @@ COPY --from=unrar-build /out/usr/bin/unrar /usr/bin/unrar
 
 # SABnzbd source + venv
 COPY --from=sab-build /venv /venv
-COPY --from=sab-build /src/sabnzbd /app/sabnzbd
-COPY --from=sab-build /src/SABnzbd.py /app/SABnzbd.py
+COPY --from=sab-build /src /app
 
 # Declarative env (all are overridable at runtime)
 ENV PATH="/venv/bin:${PATH}" \
@@ -77,4 +76,5 @@ VOLUME ["/config", "/downloads"]
 EXPOSE 8080
 
 # Run as root to map PUID/PGID and drop privileges in entrypoint
+ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
 ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
