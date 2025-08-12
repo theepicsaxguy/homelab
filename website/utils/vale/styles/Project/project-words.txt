@@ -86,6 +86,7 @@ Internet-facing
 Jellyfin
 Jellyseerr
 K2200
+Kibana
 KCL
 Keep-alive
 Kube

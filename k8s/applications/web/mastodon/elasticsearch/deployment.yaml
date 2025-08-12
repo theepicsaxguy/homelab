@@ -37,7 +37,7 @@ spec:
         - name: KIBANA_PORT_NUMBER
           value: "5601"
         - name: KIBANA_ELASTICSEARCH_URL
-          value: http://elasticsearch:9200
+          value: https://elasticsearch:9200
         - name: KIBANA_ELASTICSEARCH_PORT_NUMBER
           value: "9200"
         - name: KIBANA_FORCE_INITSCRIPTS
@@ -45,13 +45,15 @@ spec:
         - name: KIBANA_SERVER_ENABLE_TLS
           value: "false"
         - name: KIBANA_ELASTICSEARCH_TLS_USE_PEM
-          value: "false"
+          value: "true"
+        - name: KIBANA_ELASTICSEARCH_CA_CERT_LOCATION
+          value: /opt/bitnami/kibana/config/certs/ca.crt
         - name: KIBANA_ELASTICSEARCH_TLS_VERIFICATION_MODE
           value: full
         - name: KIBANA_ELASTICSEARCH_ENABLE_TLS
           value: "true"
         envFrom: null
-        image: docker.io/bitnami/kibana:9.1.0-debian-12-r0
+        image: docker.io/bitnami/kibana:9.1.1-debian-12-r0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
@@ -135,7 +137,7 @@ spec:
           fi
         command:
         - /bin/bash
-        image: docker.io/bitnami/kibana:9.1.0-debian-12-r0
+        image: docker.io/bitnami/kibana:9.1.1-debian-12-r0
         imagePullPolicy: IfNotPresent
         name: copy-default-plugins
         resources:

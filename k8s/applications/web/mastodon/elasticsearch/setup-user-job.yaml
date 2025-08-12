@@ -14,7 +14,7 @@ spec:
       restartPolicy: OnFailure
       initContainers:
         - name: wait-for-elasticsearch
-          image: curlimages/curl:8.5.0
+          image: curlimages/curl:8.15.0
           command:
             - sh
             - -c
@@ -31,7 +31,7 @@ spec:
                   key: elasticsearch-password
       containers:
         - name: setup-user
-          image: curlimages/curl:8.5.0
+          image: curlimages/curl:8.15.0
           command:
             - sh
             - -c
