@@ -90,15 +90,13 @@ spec:
           name: http
           protocol: TCP
         readinessProbe:
-          httpGet:
-            path: /api/status
+          tcpSocket:
             port: http
-            scheme: HTTP
-          initialDelaySeconds: 180
+          initialDelaySeconds: 20
           periodSeconds: 10
-          successThreshold: 1
-          failureThreshold: 6
           timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
         resources:
           limits:
             cpu: 750m
@@ -135,8 +133,11 @@ spec:
           subPath: app-plugins-dir
         - mountPath: /bitnami/kibana
           name: kibana-data
-        - mountPath: /bitnami/kibana/conf
+        # This mount makes the ConfigMap take effect at boot:
+        - mountPath: /opt/bitnami/kibana/config/kibana.yml
           name: kibana-config
+          subPath: kibana.yml
+          readOnly: true
         - mountPath: /opt/bitnami/kibana/config/certs
           name: kibana-certificates
           readOnly: true
