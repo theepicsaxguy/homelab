@@ -11,4 +11,8 @@ metadata:
 spec:
   ports:
     - port: 9200
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/name: elasticsearch
 ```
