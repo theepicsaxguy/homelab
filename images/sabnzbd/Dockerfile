@@ -74,7 +74,4 @@ COPY entrypoint.py /entrypoint.py
 
 VOLUME ["/config", "/downloads"]
 EXPOSE 8080
-
-# Run as root to map PUID/PGID and drop privileges in entrypoint
-ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
 ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
