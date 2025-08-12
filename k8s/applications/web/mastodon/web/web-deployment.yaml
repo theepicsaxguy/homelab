@@ -95,7 +95,7 @@ spec:
                 path: ca.crt
         - name: es-ca
           secret:
-            secretName: elasticsearch-master-crt
+            secretName: mastodon-elastic-ca
             items:
               - key: ca.crt
                 path: ca.crt

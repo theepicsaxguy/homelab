@@ -216,7 +216,7 @@ spec:
       - name: elasticsearch-certificates
         secret:
           defaultMode: 256
-          secretName: mastodon-elastic-ca
+          secretName: mastodon-elastic-server
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
