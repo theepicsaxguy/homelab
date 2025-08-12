@@ -10,6 +10,7 @@ data:
     elasticsearch.ssl.verificationMode: full
     server.rewriteBasePath: false
     xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
+    xpack.encryptedSavedObjects.encryptionKey: ${KIBANA_SAVEDOBJECTS_KEY}
 kind: ConfigMap
 metadata:
   name: kibana-conf

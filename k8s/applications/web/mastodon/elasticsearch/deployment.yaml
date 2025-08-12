@@ -56,6 +56,11 @@ spec:
             secretKeyRef:
               name: elasticsearch-credentials
               key: kibana-encryption-key
+        - name: KIBANA_SAVEDOBJECTS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-credentials
+              key: kibana-savedobjects-encryption-key
         - name: KIBANA_FORCE_INITSCRIPTS
           value: "false"
         - name: KIBANA_SERVER_ENABLE_TLS
