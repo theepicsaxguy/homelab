@@ -98,7 +98,11 @@ jobs:
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest"
             TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.base_tag }}"
-            TAGS="$TAGS\nghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.image-tags.outputs.image_version }}"
+          TAGS="${{ steps.base-image.outputs.base_image }}:${{ steps.revision.outputs.revision_tag }}"
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            TAGS="$TAGS\n${{ steps.base-image.outputs.base_image }}:latest"
+            TAGS="$TAGS\n${{ steps.base-image.outputs.base_image }}:${{ steps.image-tags.outputs.base_tag }}"
+            TAGS="$TAGS\n${{ steps.base-image.outputs.base_image }}:${{ steps.image-tags.outputs.image_version }}"
           fi
           printf 'tags<<EOF\n%s\nEOF\n' "$TAGS" >> "$GITHUB_OUTPUT"
 
