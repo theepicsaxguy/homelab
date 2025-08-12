@@ -29,18 +29,26 @@ jobs:
       - name: Detect Dockerfiles
         id: detect
         run: |
-          DOCKERFILES=$(find images/ -name "Dockerfile")
-          IMAGES=$(echo "$DOCKERFILES" | while read path; do
-            dirname=$(dirname "$path")
-            relative_path=$(realpath --relative-to=images/ "$dirname")
-            echo "$relative_path"
-          done)
-          JSON_ARRAY=$(echo "$IMAGES" | sort -u | jq -R -s -c 'split("\n")[:-1]')
-          echo "images=$JSON_ARRAY" >> $GITHUB_OUTPUT
+          BEFORE_REF="${{ github.event.before }}"
+          if [ -z "$BEFORE_REF" ]; then
+            BEFORE_REF="HEAD~1"
+          fi
+          CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
+          IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u)
+          if [ -z "$IMAGES" ] && [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            IMAGES="${GITHUB_REF_NAME#*-}"
+          fi
+          if [ -n "$IMAGES" ]; then
+            JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
+          else
+            JSON='[]'
+          fi
+          echo "images=$JSON" >> "$GITHUB_OUTPUT"
 
   build:
     runs-on: ubuntu-latest
     needs: detect-dockerfiles
+    if: needs.detect-dockerfiles.outputs.images != '[]'
     strategy:
       matrix:
         image: ${{ fromJson(needs.detect-dockerfiles.outputs.images) }}

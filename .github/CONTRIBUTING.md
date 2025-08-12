@@ -26,3 +26,4 @@ Before opening a pull request, make sure your changes pass the basic checks. A d
 - **Kubernetes manifests:** `kustomize build --enable-helm <dir>` for each modified directory.
 - **OpenTofu:** Run `tofu fmt` and `tofu validate` in the `tofu/` folder.
 - **Website and docs:** From `website/`, run `npm install`, `npm run typecheck`, and `npm run lint`.
+- **Docker images:** Only Dockerfiles that changed are built. Pushing a tag like `image-<version>` rebuilds that image even if no files changed.
