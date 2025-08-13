@@ -170,6 +170,7 @@ variable "network" {
   type = object({
     gateway     = string
     vip         = string
+    api_lb_vip  = string
     cidr_prefix = number
     dns_servers = list(string)
     bridge      = string
@@ -197,5 +198,18 @@ variable "oidc" {
     client_id  = string
   })
   default = null # Make it optional
+}
+
+variable "lb_nodes" {
+  description = "Load balancer VMs"
+  type = map(object({
+    host_node     = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    cpu           = optional(number)
+    ram_dedicated = optional(number)
+    datastore_id  = optional(string)
+  }))
 }
 

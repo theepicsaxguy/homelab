@@ -1,0 +1,19 @@
+#cloud-config
+package_update: true
+packages:
+  - haproxy
+  - keepalived
+write_files:
+  - path: /etc/haproxy/haproxy.cfg
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, haproxy_cfg)}
+  - path: /etc/keepalived/keepalived.conf
+    permissions: "0644"
+    owner: root:root
+    content: |
+      ${indent(6, keepalived_cfg)}
+runcmd:
+  - systemctl enable haproxy --now
+  - systemctl enable keepalived --now
