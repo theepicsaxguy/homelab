@@ -7,7 +7,7 @@ vrrp_script chk_haproxy {
 
 vrrp_instance VI_API {
   state ${state}
-  interface eth0
+  interface ens18
   virtual_router_id 51
   priority ${priority}
   advert_int 1
@@ -16,7 +16,7 @@ vrrp_instance VI_API {
     auth_pass ${auth_pass}
   }
   virtual_ipaddress {
-    ${api_lb_vip}/32 dev eth0
+    ${api_lb_vip}/32 dev ens18
   }
   track_script {
     chk_haproxy

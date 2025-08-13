@@ -66,7 +66,7 @@ resource "proxmox_virtual_environment_vm" "lb" {
     interface    = "scsi0"
     ssd          = true
     size         = 8
-    file_format  = "raw"
+    file_format  = "qcow2"
     file_id      = proxmox_virtual_environment_download_file.ubuntu_amd64[each.value.host_node].id
   }
 
