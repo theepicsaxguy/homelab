@@ -19,11 +19,13 @@ frontend fe_kubeapi
 
 backend be_kubeapi
   mode tcp
+  balance leastconn
   option tcp-check
+  timeout check 1s
   tcp-check connect ssl sni api.${cluster_domain} verify none
   tcp-check send "GET /readyz HTTP/1.1\r\nHost: api.${cluster_domain}\r\nConnection: close\r\n\r\n"
   tcp-check expect rstring ^HTTP/1\.[01]\ 200
-  default-server inter 1s fall 2 rise 2
+  default-server inter 1s fall 2 rise 2 maxconn 1000
 %{ for ip in control_plane_ips ~}
-  server cp-${ip} ${ip}:6443 check
+  server cp-${ip} ${ip}:6443 check slowstart 5s
 %{ endfor ~}
