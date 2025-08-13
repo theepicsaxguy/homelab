@@ -5,6 +5,17 @@ locals {
     control_plane_ips = local.control_plane_ips
     cluster_domain    = var.cluster_domain
   })
+  lb_host_nodes = toset([for n in var.lb_nodes : n.host_node])
+}
+
+resource "proxmox_virtual_environment_download_file" "ubuntu_amd64" {
+  for_each    = local.lb_host_nodes
+  node_name   = each.value
+  content_type = "iso"
+  datastore_id = var.proxmox_datastore
+  file_name    = "ubuntu-24.04-server-cloudimg-amd64.img"
+  url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  upload_timeout = 800
 }
 
 resource "proxmox_virtual_environment_file" "cloudinit" {
@@ -56,6 +67,7 @@ resource "proxmox_virtual_environment_vm" "lb" {
     ssd          = true
     size         = 8
     file_format  = "raw"
+    file_id      = proxmox_virtual_environment_download_file.ubuntu_amd64[each.value.host_node].id
   }
 
   operating_system { type = "l26" }

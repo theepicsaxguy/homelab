@@ -18,10 +18,12 @@ frontend fe_kubeapi
   default_backend be_kubeapi
 
 backend be_kubeapi
-  mode http
-  option httpchk GET /readyz
-  http-check expect status 200
-  default-server inter 1000ms fall 2 rise 2 check
+  mode tcp
+  option tcp-check
+  tcp-check connect ssl sni api.${cluster_domain} verify none
+  tcp-check send "GET /readyz HTTP/1.1\r\nHost: api.${cluster_domain}\r\nConnection: close\r\n\r\n"
+  tcp-check expect rstring ^HTTP/1\.[01]\ 200
+  default-server inter 1s fall 2 rise 2
 %{ for ip in control_plane_ips ~}
-  server cp-${ip} ${ip}:6443 check check-ssl verify none sni str(api.${cluster_domain})
+  server cp-${ip} ${ip}:6443 check
 %{ endfor ~}

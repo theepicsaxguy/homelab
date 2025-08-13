@@ -4,7 +4,7 @@ title: API load balancer
 
 # API load balancer
 
-Two small VMs run `HAProxy` and `Keepalived`. OpenTofu provisions them with Proxmox `cloud-init`. `HAProxy` checks `/readyz` on each control plane node over HTTPS and routes only to nodes that respond. `Keepalived` advertises a virtual IP used by the DNS record `api.<cluster-domain>`.
+Two small VMs run `HAProxy` and `Keepalived`. OpenTofu downloads an Ubuntu 24.04 cloud image and configures the VMs with Proxmox `cloud-init`. `HAProxy` checks `/readyz` on each control plane node over HTTPS and routes only to nodes that respond. `Keepalived` advertises a virtual IP used by the Domain Name System (DNS) record `api.<cluster-domain>`.
 
 ## Configuration
 
@@ -31,7 +31,7 @@ lb_nodes = {
 }
 ```
 
-Create a DNS A record `api.<cluster-domain>` pointing at `api_lb_vip`.
+Create a Domain Name System (DNS) A record `api.<cluster-domain>` pointing at `api_lb_vip`.
 
 ## Verification
 
