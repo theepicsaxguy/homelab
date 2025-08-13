@@ -59,7 +59,7 @@ spec:
           value: "true"
         - name: ELASTICSEARCH_TLS_USE_PEM
           value: "true"
-        image: docker.io/bitnami/elasticsearch:9.1.1-debian-12-r0
+        image: docker.io/bitnami/elasticsearch:9.1.2-debian-12-r0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 5
@@ -171,7 +171,7 @@ spec:
           fi
         command:
         - /bin/bash
-        image: docker.io/bitnami/elasticsearch:9.1.1-debian-12-r0
+        image: docker.io/bitnami/elasticsearch:9.1.2-debian-12-r0
         imagePullPolicy: IfNotPresent
         name: copy-default-plugins
         resources:
