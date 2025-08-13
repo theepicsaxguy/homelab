@@ -73,3 +73,16 @@ module "talos" {
 
   nodes = local.nodes_with_upgrade
 }
+
+module "lb" {
+  source = "./lb"
+  providers = {
+    proxmox = proxmox
+  }
+  proxmox           = var.proxmox
+  proxmox_datastore = var.proxmox_datastore
+  cluster_domain    = var.cluster_domain
+  network           = var.network
+  control_plane_ips = [for name, n in var.nodes_config : n.ip if n.machine_type == "controlplane"]
+  lb_nodes          = var.lb_nodes
+}
