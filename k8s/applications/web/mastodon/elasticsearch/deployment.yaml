@@ -74,7 +74,7 @@ spec:
         - name: KIBANA_ELASTICSEARCH_ENABLE_TLS
           value: "true"
         envFrom: null
-        image: docker.io/bitnami/kibana:9.1.1-debian-12-r0
+        image: docker.io/bitnami/kibana:9.1.2-debian-12-r0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
@@ -167,7 +167,7 @@ spec:
               cp -nr "$SERVER_DEFAULT_PLUGINS_DIR"/* /plugins
           fi
         command: ["/bin/bash"]
-        image: docker.io/bitnami/kibana:9.1.1-debian-12-r0
+        image: docker.io/bitnami/kibana:9.1.2-debian-12-r0
         imagePullPolicy: IfNotPresent
         name: copy-default-plugins
         resources:
