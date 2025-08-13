@@ -1,0 +1,27 @@
+global
+  log /dev/log local0
+  log /dev/log local1 notice
+  maxconn 10000
+  daemon
+
+defaults
+  log     global
+  mode    tcp
+  option  tcplog
+  timeout connect 10s
+  timeout client  86400s
+  timeout server  86400s
+
+frontend fe_kubeapi
+  bind *:6443
+  mode tcp
+  default_backend be_kubeapi
+
+backend be_kubeapi
+  mode http
+  option httpchk GET /readyz
+  http-check expect status 200
+  default-server inter 1000ms fall 2 rise 2 check
+%{ for ip in control_plane_ips ~}
+  server cp-${ip} ${ip}:6443 check check-ssl verify none sni str(api.${cluster_domain})
+%{ endfor ~}

@@ -1,0 +1,24 @@
+vrrp_script chk_haproxy {
+  script "/usr/bin/pgrep -x haproxy"
+  interval 2
+  fall 2
+  rise 2
+}
+
+vrrp_instance VI_API {
+  state ${state}
+  interface eth0
+  virtual_router_id 51
+  priority ${priority}
+  advert_int 1
+  authentication {
+    auth_type PASS
+    auth_pass ${auth_pass}
+  }
+  virtual_ipaddress {
+    ${api_lb_vip}/32 dev eth0
+  }
+  track_script {
+    chk_haproxy
+  }
+}
