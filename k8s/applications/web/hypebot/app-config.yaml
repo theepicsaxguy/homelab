@@ -14,7 +14,7 @@ data:
     # profile fields to fill in
     fields:
       instance: https://goingdark.social
-      operator: "@fanfare@goingdark.social"
+      code: "https://github.com/goingdark-social/hypebot"
       automation: "Runs every 120 minutes"
       about: "Boosts trending posts from curated instances"
       contact: "DM operator for feedback or issues"
