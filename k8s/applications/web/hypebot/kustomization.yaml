@@ -5,6 +5,7 @@ namespace: hypebot
 
 resources:
   - namespace.yaml
-  - deploy.yaml
   - configmap.yaml
   - external-secret.yaml
+  - deploy.yaml
+  - app-config.yaml

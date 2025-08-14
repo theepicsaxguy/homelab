@@ -22,17 +22,21 @@ spec:
             - name: BOT_SERVER
               valueFrom:
                 secretKeyRef:
-                  name: your-external-secret
+                  name: hypebot-auth
                   key: server
             - name: BOT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: your-external-secret
+                  name: hypebot-auth
                   key: access_token
           volumeMounts:
             - name: entrypoint
               mountPath: /entrypoint.sh
               subPath: entrypoint.sh
+              readOnly: true
+            - name: app-config
+              mountPath: /app/config/config.yaml
+              subPath: config.yaml
               readOnly: true
           command: ["/bin/sh"]
           args: ["-c", "/entrypoint.sh"]
@@ -41,3 +45,6 @@ spec:
           configMap:
             name: hype-entrypoint
             defaultMode: 0755
+        - name: app-config
+          configMap:
+            name: hypebot-config
