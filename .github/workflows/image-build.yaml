@@ -49,7 +49,7 @@ jobs:
             JSON='[]'
           fi
 
-          # Remove any spaces/newlines before writing to GITHUB_OUTPUT
+          # Remove spaces/newlines before writing to GITHUB_OUTPUT
           echo "images=$(echo "$JSON" | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
 
   build:
@@ -91,7 +91,9 @@ jobs:
           IMAGE_VERSION=$(grep -m1 "ARG SAB_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION=$(grep -m1 "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
-          if [[ "${{ github.event_name }}" == "push" && startsWith(github.ref, 'refs/tags/') ]]; then
+
+          # Fixed: Use Bash glob instead of invalid startsWith()
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/tags/*" ]]; then
             TAG_NAME="${{ github.ref_name }}"
             TAG_IMAGE_NAME="${TAG_NAME%%-*}"
             TAG_IMAGE_VERSION="${TAG_NAME#*-}"
@@ -99,6 +101,7 @@ jobs:
               IMAGE_VERSION="$TAG_IMAGE_VERSION"
             fi
           fi
+
           echo "base_tag=$BASE_IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "image_version=$IMAGE_VERSION" >> $GITHUB_OUTPUT
 
