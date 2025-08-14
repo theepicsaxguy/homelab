@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  namespace: argocd
+  name: applications-web-external
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/goingdark-social/instance
+        revision: main
+        directories:
+          - path: mastodon
+          - path: hypebot
+  template:
+    metadata:
+      name: 'apps-{{ path.basename }}'   # matches existing names
+      namespace: argocd
+      labels:
+        app.kubernetes.io/component: 'static-applications'
+        app.kubernetes.io/part-of: applications
+    spec:
+      project: applications
+      source:
+        repoURL: https://github.com/goingdark-social/instance
+        targetRevision: main
+        path: '{{ path }}'
+        kustomize: {}
+      destination:
+        namespace: applications-system
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        retry:
+          limit: 1
+          backoff:
+            duration: 10s
+            factor: 2
+            maxDuration: 3m
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - PruneLast=true
+          - ServerSideApply=true
+          - RespectIgnoreDifferences=true
