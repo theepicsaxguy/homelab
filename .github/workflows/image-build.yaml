@@ -93,7 +93,7 @@ jobs:
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
 
           # Fixed: Use Bash glob instead of invalid startsWith()
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == refs/tags/* ]]; then
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/tags/*" ]]; then
             TAG_NAME="${{ github.ref_name }}"
             TAG_IMAGE_NAME="${TAG_NAME%%-*}"
             TAG_IMAGE_VERSION="${TAG_NAME#*-}"
