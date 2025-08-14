@@ -13,8 +13,8 @@ data:
 
     # profile fields to fill in
     fields:
-      code: https://github.com/v411e/hype
-      operator: "YOUR HANDLE HERE"
+      instance: https://goingdark.social
+      operator: "@fanfare@goingdark.social"
 
     # Define subscribed instances and
     # their individual limit (top n trending posts)
