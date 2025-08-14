@@ -7,7 +7,7 @@ resources:
 - externalsecret.yaml
 - httproute-es.yaml
 - kibana.yml
-- networkpolicy
+- networkpolicy.yaml
 - pvc-es.yaml
 - service.yaml
 - serviceaccount.yaml
