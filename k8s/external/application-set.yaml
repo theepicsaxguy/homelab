@@ -2,33 +2,18 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   namespace: argocd
-  name: applications
-  labels:
-    app.kubernetes.io/part-of: applications
-    app.kubernetes.io/managed-by: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: '0'
+  name: applications-web-external
 spec:
   generators:
     - git:
-        repoURL: https://github.com/theepicsaxguy/homelab.git
+        repoURL: https://github.com/goingdark-social/instance
         revision: main
         directories:
-          - path: k8s/applications/media
-          - path: k8s/applications/tools
-          - path: k8s/applications/ai
-          - path: k8s/applications/external
-          - path: k8s/applications/web
-          - path: k8s/applications/network
-          - path: k8s/applications/automation
-          - path: k8s/applications/web/hypebot
-            exclude: true
-          - path: k8s/applications/web/mastodon
-            exclude: true
-
+          - path: mastodon
+          - path: hypebot
   template:
     metadata:
-      name: 'apps-{{ path.basename }}'
+      name: 'apps-{{ path.basename }}'   # matches existing names
       namespace: argocd
       labels:
         app.kubernetes.io/component: 'static-applications'
@@ -36,10 +21,10 @@ spec:
     spec:
       project: applications
       source:
-        repoURL: https://github.com/theepicsaxguy/homelab.git
+        repoURL: https://github.com/goingdark-social/instance
         targetRevision: main
         path: '{{ path }}'
-        kustomize: {} # Let Kustomize handle naming
+        kustomize: {}
       destination:
         namespace: applications-system
         server: https://kubernetes.default.svc
