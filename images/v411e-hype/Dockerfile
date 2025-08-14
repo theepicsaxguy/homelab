@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.12-alpine
+FROM python:3.13-alpine
 
 ARG IMAGE_VERSION=1.0.0
 ARG HYPEBOT_REPO=https://github.com/goingdark-social/hypebot
