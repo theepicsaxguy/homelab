@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.12-alpine
+FROM python:3.13-alpine
 
 # Match workflow: it looks for SAB_VERSION or IMAGE_VERSION and passes SAB_VERSION
 ARG IMAGE_VERSION=latest
