@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hypebot
+  namespace: hypebot
+  labels:
+    app: hypebot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hypebot
+  template:
+    metadata:
+      labels:
+        app: hypebot
+    spec:
+      containers:
+        - name: hype
+          image: ghcr.io/theepicsaxguy/v411e-hype:1.0.0
+          env:
+            - name: BOT_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: hypebot-auth
+                  key: server
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hypebot-auth
+                  key: access_token
+          volumeMounts:
+            - name: entrypoint
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
+              readOnly: true
+            - name: app-config
+              mountPath: /app/config/config.yaml
+              subPath: config.yaml
+              readOnly: true
+          command: ["/bin/sh"]
+          args: ["-c", "/entrypoint.sh"]
+      volumes:
+        - name: entrypoint
+          configMap:
+            name: hype-entrypoint
+            defaultMode: 0755
+        - name: app-config
+          configMap:
+            name: hypebot-config
