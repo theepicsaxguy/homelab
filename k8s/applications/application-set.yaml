@@ -21,6 +21,11 @@ spec:
           - path: k8s/applications/web
           - path: k8s/applications/network
           - path: k8s/applications/automation
+          - path: k8s/applications/web/hypebot
+            exclude: true
+          - path: k8s/applications/web/mastodon
+            exclude: true
+
   template:
     metadata:
       name: 'apps-{{ path.basename }}'
