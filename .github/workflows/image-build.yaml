@@ -39,13 +39,18 @@ jobs:
             [ -z "$BEFORE_REF" ] && BEFORE_REF="HEAD~1"
             CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           fi
-          IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u)
+
+          # Get image directories from changed Dockerfiles
+          IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
+
           if [ -n "$IMAGES" ]; then
             JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
           else
             JSON='[]'
           fi
-          echo "images=$JSON" >> "$GITHUB_OUTPUT"
+
+          # Remove any spaces/newlines before writing to GITHUB_OUTPUT
+          echo "images=$(echo "$JSON" | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
 
   build:
     runs-on: ubuntu-latest
