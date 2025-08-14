@@ -8,12 +8,10 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'images/**'
-
-  push:
     tags:
       - '*-*'
+    paths:
+      - 'images/**'
 
 permissions:
   contents: read
