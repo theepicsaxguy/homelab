@@ -19,7 +19,7 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 # Stage 1: build SABnzbd from source + venv (includes native deps)
 ###############################################################################
 FROM alpine:3.22 AS sab-build
-ARG SAB_VERSION=4.5.2
+ARG IMAGE_VERSION=4.5.2
 
 # Toolchain for wheels (sabctools) + Python
 RUN apk add --no-cache \
@@ -28,7 +28,7 @@ RUN apk add --no-cache \
      build-base python3-dev musl-dev libffi-dev openssl-dev cargo
 
 WORKDIR /src
-RUN git clone --depth 1 --branch "${SAB_VERSION}" https://github.com/sabnzbd/sabnzbd.git .
+RUN git clone --depth 1 --branch "${IMAGE_VERSION}" https://github.com/sabnzbd/sabnzbd.git .
 # Build isolated venv and install runtime deps from source tree
 RUN python3 -m venv /venv \
      && /venv/bin/pip install --upgrade pip setuptools wheel \

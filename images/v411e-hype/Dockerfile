@@ -2,8 +2,7 @@
 FROM python:3.12-alpine
 
 ARG IMAGE_VERSION=1.0.0
-ARG IMAGE_VERSION=${IMAGE_VERSION}
-ARG HYPEBOT_REPO=https://github.com/v411e/hype
+ARG HYPEBOT_REPO=https://github.com/goingdark-social/hypebot
 
 RUN apk add --no-cache git tzdata file py3-pip ca-certificates \
   && update-ca-certificates
