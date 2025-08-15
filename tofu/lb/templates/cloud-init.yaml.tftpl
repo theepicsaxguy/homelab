@@ -3,6 +3,7 @@ package_update: true
 packages:
   - haproxy
   - keepalived
+  - qemu-guest-agent
 write_files:
   - path: /etc/haproxy/haproxy.cfg
     permissions: "0644"
@@ -17,3 +18,4 @@ write_files:
 runcmd:
   - systemctl enable haproxy --now
   - systemctl enable keepalived --now
+  - systemctl enable --now qemu-guest-agent
