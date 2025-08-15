@@ -34,12 +34,25 @@ variable "control_plane_ips" {
 variable "lb_nodes" {
   description = "Load balancer VMs"
   type = map(object({
-    host_node    = string
-    ip           = string
-    mac_address  = string
-    vm_id        = number
-    cpu          = optional(number, 2)
-    ram_dedicated= optional(number, 2048)
-    datastore_id = optional(string)
+    host_node     = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    cpu           = optional(number, 2)
+    ram_dedicated = optional(number, 2048)
+    datastore_id  = optional(string)
   }))
+}
+
+variable "auth_pass" {
+  description = "Password for Keepalived auth"
+  type        = string
+  sensitive   = true
+}
+
+
+variable "lb_store" {
+  description = "Datastore for load balancers"
+  type        = string
+  default     = "rpool2"
 }

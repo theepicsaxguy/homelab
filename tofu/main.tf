@@ -80,8 +80,9 @@ module "lb" {
     proxmox = proxmox
   }
   proxmox           = var.proxmox
-  proxmox_datastore = var.proxmox_datastore
   cluster_domain    = var.cluster_domain
+  auth_pass         = var.auth_pass
+  proxmox_datastore = var.lb_store
   network           = var.network
   control_plane_ips = [for name, n in var.nodes_config : n.ip if n.machine_type == "controlplane"]
   lb_nodes          = var.lb_nodes

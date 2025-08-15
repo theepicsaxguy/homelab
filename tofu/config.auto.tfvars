@@ -25,15 +25,17 @@ oidc = {
 
 lb_nodes = {
   lb-00 = {
-    host_node   = "host3"
-    ip          = "10.25.150.5"
-    mac_address = "bc:24:11:aa:aa:05"
-    vm_id       = 8005
+    host_node     = "host3"
+    ip            = "10.25.150.5"
+    mac_address   = "bc:24:11:aa:aa:05"
+    startup_order = 1
+    vm_id         = 8005
   }
   lb-01 = {
-    host_node   = "host3"
-    ip          = "10.25.150.6"
-    mac_address = "bc:24:11:aa:aa:06"
-    vm_id       = 8006
+    host_node     = "host3"
+    ip            = "10.25.150.6"
+    mac_address   = "bc:24:11:aa:aa:06"
+    startup_order = 2
+    vm_id         = 8006
   }
 }

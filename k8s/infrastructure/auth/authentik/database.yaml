@@ -6,7 +6,7 @@ metadata:
 spec:
   teamId: "auth"
   volume:
-    size: 10Gi
+    size: 15Gi
   numberOfInstances: 2
   users:
     authentik_user:
