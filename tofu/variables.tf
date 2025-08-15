@@ -213,3 +213,13 @@ variable "lb_nodes" {
   }))
 }
 
+variable "auth_pass" {
+  description = "Password for Keepalived auth"
+  type        = string
+  sensitive   = true
+}
+
+variable "lb_store" {
+  description = "datastore for loadbalancers"
+  type        = string
+}

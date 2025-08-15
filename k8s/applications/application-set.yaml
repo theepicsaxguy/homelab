@@ -44,6 +44,7 @@ spec:
         namespace: applications-system
         server: https://kubernetes.default.svc
       syncPolicy:
+        preserveResourcesOnDeletion: true
         automated:
           prune: true
           selfHeal: true

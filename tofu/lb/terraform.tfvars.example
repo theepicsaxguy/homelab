@@ -18,5 +18,3 @@ proxmox = {
 
 # for loadbalancers
 auth_pass = "choose-a-strong-secret-here"
-
-lb_store = "rpool2"

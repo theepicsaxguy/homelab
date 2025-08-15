@@ -23,6 +23,16 @@ resource "proxmox_virtual_environment_vm" "this" {
       type = "virtio"
     }
   }
+  dynamic "startup" {
+    # render only if startup_order is set AND non-null
+    for_each = try([each.value.startup_order], [])
+    content {
+      order      = startup.value
+      up_delay   = 10
+      down_delay = -1
+    }
+  }
+
 
   agent {
     enabled = lookup(each.value, "agent_enabled", true)
@@ -135,12 +145,12 @@ locals {
 
 resource "proxmox_virtual_environment_hardware_mapping_pci" "gpu" {
   for_each = { for m in local.gpu_mappings : m.name => m }
-  name = each.value.name
-  map  = [{
-    node          = each.value.node
-    path          = each.value.path
-    id            = each.value.meta.id
-    subsystem_id  = each.value.meta.subsystem_id
-    iommu_group   = each.value.meta.iommu_group
+  name     = each.value.name
+  map = [{
+    node         = each.value.node
+    path         = each.value.path
+    id           = each.value.meta.id
+    subsystem_id = each.value.meta.subsystem_id
+    iommu_group  = each.value.meta.iommu_group
   }]
 }

@@ -30,8 +30,8 @@
     "files.associations": {
       "*.yaml": "yaml",
       "*.yml": "yaml",
-      "*.tf": "terraform",
-      "*.tfvars": "terraform",
+      "*.tf": "opentofu",
+      "*.tfvars": "opentofu-vars",
       "Tiltfile": "python",
       "k8s/infrastructure/auth/authentik/extra/blueprints/*.yaml": "yaml"
     },

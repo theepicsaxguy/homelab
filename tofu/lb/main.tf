@@ -1,6 +1,6 @@
 locals {
   control_plane_ips = var.control_plane_ips
-  auth_pass         = "k8sapi"
+  auth_pass         = var.auth_pass
   haproxy_cfg = templatefile("${path.module}/templates/haproxy.cfg.tftpl", {
     control_plane_ips = local.control_plane_ips
     cluster_domain    = var.cluster_domain
@@ -9,12 +9,12 @@ locals {
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_amd64" {
-  for_each    = local.lb_host_nodes
-  node_name   = each.value
-  content_type = "iso"
-  datastore_id = var.proxmox_datastore
-  file_name    = "ubuntu-24.04-server-cloudimg-amd64.img"
-  url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  for_each       = local.lb_host_nodes
+  node_name      = each.value
+  content_type   = "iso"
+  datastore_id   = var.proxmox_datastore
+  file_name      = "ubuntu-24.04-server-cloudimg-amd64.img"
+  url            = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
   upload_timeout = 800
 }
 
