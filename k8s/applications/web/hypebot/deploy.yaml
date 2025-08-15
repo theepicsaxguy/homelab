@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: hype
-          image: ghcr.io/theepicsaxguy/v411e-hype:1.0.0
+          image: ghcr.io/goingdark-social/hypebot:v0.1.0
           env:
             - name: BOT_SERVER
               valueFrom:
