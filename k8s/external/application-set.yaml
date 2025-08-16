@@ -4,6 +4,8 @@ metadata:
   namespace: argocd
   name: applications-web-external
 spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
   generators:
     - git:
         repoURL: https://github.com/goingdark-social/instance
@@ -13,7 +15,7 @@ spec:
           - path: hypebot
   template:
     metadata:
-      name: 'apps-{{ path.basename }}'   # matches existing names
+      name: 'apps-{{ path.basename }}'
       namespace: argocd
       labels:
         app.kubernetes.io/component: 'static-applications'
@@ -29,7 +31,6 @@ spec:
         namespace: applications-system
         server: https://kubernetes.default.svc
       syncPolicy:
-        preserveResourcesOnDeletion: true
         automated:
           prune: true
           selfHeal: true
