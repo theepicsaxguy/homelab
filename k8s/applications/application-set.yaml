@@ -9,6 +9,8 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: '0'
 spec:
+  syncPolicy:
+    preserveResourcesOnDeletion: true
   generators:
     - git:
         repoURL: https://github.com/theepicsaxguy/homelab.git
@@ -44,7 +46,6 @@ spec:
         namespace: applications-system
         server: https://kubernetes.default.svc
       syncPolicy:
-        preserveResourcesOnDeletion: true
         automated:
           prune: true
           selfHeal: true
