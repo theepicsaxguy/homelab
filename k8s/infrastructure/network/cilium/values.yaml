@@ -30,6 +30,11 @@ ipam:
   mode: kubernetes
   multiPoolPreAllocation: ''
 
+enableMulticast: false
+multicast:
+  enabled: false
+
+
 operator:
   rollOutPods: true
   resources:
