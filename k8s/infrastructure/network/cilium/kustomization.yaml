@@ -21,9 +21,9 @@ helmCharts:
 #   https://github.com/cilium/cilium/issues/34821  (model source empty)
 #   Remove this Service *and* re-add the listener after upgrading to >=1.18.
 
-patches:
-  - target:
-      kind: ConfigMap
-      name: cilium-config
-      namespace: kube-system
-    path: multicast-configmap.yaml
+# patches:
+#   - target:
+#       kind: ConfigMap
+#       name: cilium-config
+#       namespace: kube-system
+#     path: multicast-configmap.yaml
