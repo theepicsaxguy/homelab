@@ -97,6 +97,7 @@ LTS
 LateInitialize
 LoadBalancer
 Loadbalancer
+LiteLLM
 LLMs
 MR
 MRs
