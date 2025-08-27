@@ -21,6 +21,7 @@ spec:
           - "/app/proxy_server_config.yaml"
         ports:
         - containerPort: 4000
+        - containerPort: 4001
         envFrom:
         - secretRef:
             name: litellm-secrets
@@ -37,10 +38,36 @@ spec:
               key: password
         - name: DATABASE_URL
           value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql.litellm.svc.kube.pc-tips.se:5432/litellm
+        - name: SEPARATE_HEALTH_APP
+          value: "1"
+        - name: SEPARATE_HEALTH_PORT
+          value: "4001"
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml
           subPath: proxy_server_config.yaml
+        livenessProbe:
+          httpGet:
+            path: /health/liveliness
+            port: 4001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health/readiness
+            port: 4001
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health/liveliness
+            port: 4001
+          failureThreshold: 30
+          periodSeconds: 2
 
       volumes:
         - name: litellm-config
