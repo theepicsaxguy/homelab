@@ -1,23 +1,24 @@
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: authentik-postgresql
-  namespace: auth
+  name: litellm-postgresql
+  namespace: litellm
 spec:
-  teamId: "auth"
+  teamId: "litellm"
   volume:
-    size: 15Gi
-  numberOfInstances: 2
+    size: 10Gi
+  numberOfInstances: 1
   users:
-    authentik_user:
+    litellm:
       - superuser
       - createdb
   databases:
-    authentik: authentik_user
+    litellm: litellm
   enableLogicalBackup: false
+  logicalBackupSchedule: "0 3 * * *"
   postgresql:
     version: "17"
-  enableConnectionPooler: false
+  spiloFSGroup: 103
   resources:
     requests:
       cpu: 200m
