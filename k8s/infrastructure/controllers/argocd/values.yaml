@@ -81,8 +81,11 @@ redis-ha:
 
 server:
   autoscaling:
-    enabled: true
-    minReplicas: 2
+    enabled: false
+    minReplicas: 1
+    # -- Maximum number of replicas for the Argo CD server [HPA]
+    # Set to a lower number to avoid the chart default of 5
+    maxReplicas: 2
   extensions:
     enabled: true
   service:
@@ -99,8 +102,11 @@ server:
 
 repoServer:
   autoscaling:
-    enabled: true
-    minReplicas: 2
+    enabled: false
+    minReplicas: 1
+    # -- Maximum number of replicas for the repo server [HPA]
+    # Set to a lower number to avoid the chart default of 5
+    maxReplicas: 2
   pdb:
     enabled: true
     minAvailable: 1
