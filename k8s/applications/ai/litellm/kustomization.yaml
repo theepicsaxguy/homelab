@@ -6,6 +6,7 @@ resources:
 - namespace.yaml
 - http-route.yaml
 - litellm-secrets.yaml
+- configmap.yaml
 - deployment.yaml
 - svc.yaml
 - database.yaml
