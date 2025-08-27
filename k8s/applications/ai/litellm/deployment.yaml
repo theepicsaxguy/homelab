@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: litellm-deployment
+  labels:
+    app: litellm
+spec:
+  selector:
+    matchLabels:
+      app: litellm
+  template:
+    metadata:
+      labels:
+        app: litellm
+    spec:
+      containers:
+      - name: litellm
+        image: ghcr.io/berriai/litellm:v1.75.8-stable
+        args:
+          - "--config"
+          - "/app/proxy_server_config.yaml"
+        ports:
+        - containerPort: 4000
+        envFrom:
+        - secretRef:
+            name: litellm-secrets
+        env:
+        - name: STORE_MODEL_IN_DB
+          value: "true"
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: litellm.litellm-postgresql.credentials.postgresql.acid.zalan.do
+              key: username
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: litellm.litellm-postgresql.credentials.postgresql.acid.zalan.do
+              key: password
+        - name: DATABASE_URL
+          value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql.litellm.svc.kube.pc-tips.se:5432/litellm

@@ -14,7 +14,7 @@ spec:
       - createdb
   databases:
     mastodon: mastodon
-  enableLogicalBackup: true
+  enableLogicalBackup: false
   logicalBackupSchedule: "0 3 * * *"
   postgresql:
     version: "17"
