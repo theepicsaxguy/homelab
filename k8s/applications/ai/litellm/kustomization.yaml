@@ -8,5 +8,6 @@ resources:
 - litellm-secrets.yaml
 - configmap.yaml
 - deployment.yaml
+- redis.yaml
 - svc.yaml
 - database.yaml

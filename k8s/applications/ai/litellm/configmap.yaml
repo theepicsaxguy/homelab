@@ -5,6 +5,56 @@ metadata:
   namespace: litellm
 data:
   proxy_server_config.yaml: |
+    model_list: []
+
+    litellm_settings:
+      callbacks: ["prometheus"]
+      prometheus_initialize_budget_metrics: true
+      require_auth_for_metrics_endpoint: false
+      cache: true
+      cache_params:
+        type: redis
+        host: redis.litellm.svc.kube.pc-tips.se
+        port: 6379
+        namespace: "litellm.cache"
+        mode: default_off
+        ttl: 600
+      json_logs: true
+      turn_off_message_logging: true
+      redact_user_api_key_info: true
+      enable_json_schema_validation: true
+      set_verbose: false
+
+    router_settings:
+      routing_strategy: usage-based-routing-v2
+      enable_pre_call_checks: true
+      num_retries: 3
+      retry_after: 1
+      allowed_fails: 3
+      cooldown_time: 30
+      allowed_fails_policy:
+        AuthenticationErrorAllowedFails: 3
+        TimeoutErrorAllowedFails: 6
+        RateLimitErrorAllowedFails: 10000
+        ContentPolicyViolationErrorAllowedFails: 6
+        InternalServerErrorAllowedFails: 10
+        BadRequestErrorAllowedFails: 1000
+      max_fallbacks: 3
+      enable_tag_filtering: true
+      cache_responses: true
+      redis_host: redis.litellm.svc.kube.pc-tips.se
+      redis_port: "6379"
+
     general_settings:
       store_model_in_db: true
       store_prompts_in_spend_logs: true
+      enforce_user_param: true
+      background_health_checks: true
+      health_check_interval: 300
+      health_check_details: true
+      ui_access_mode: admin_only
+      max_request_size_mb: 20
+      max_response_size_mb: 25
+      database_connection_pool_limit: 50
+      database_connection_timeout: 60
+      allow_requests_on_db_unavailable: false
