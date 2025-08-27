@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: litellm-config
+  namespace: litellm
+data:
+  proxy_server_config.yaml: |
+    general_settings:
+      store_model_in_db: true
+      store_prompts_in_spend_logs: true

@@ -25,8 +25,6 @@ spec:
         - secretRef:
             name: litellm-secrets
         env:
-        - name: STORE_MODEL_IN_DB
-          value: "true"
         - name: PGUSER
           valueFrom:
             secretKeyRef:
@@ -39,3 +37,12 @@ spec:
               key: password
         - name: DATABASE_URL
           value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql.litellm.svc.kube.pc-tips.se:5432/litellm
+        volumeMounts:
+        - name: litellm-config
+          mountPath: /app/proxy_server_config.yaml
+          subPath: proxy_server_config.yaml
+
+      volumes:
+        - name: litellm-config
+          configMap:
+            name: litellm-config
