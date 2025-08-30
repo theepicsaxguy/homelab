@@ -17,8 +17,8 @@ data:
         host: redis.litellm.svc.kube.pc-tips.se
         port: 6379
         namespace: "litellm.cache"
-        mode: default_off
         ttl: 600
+        supported_call_types: ["acompletion", "atext_completion", "aembedding", "atranscription"]
       json_logs: true
       turn_off_message_logging: true
       redact_user_api_key_info: true
