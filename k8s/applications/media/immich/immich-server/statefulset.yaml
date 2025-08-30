@@ -57,7 +57,7 @@ spec:
               value: immich-redis-master
             - name: TZ
               value: Europe/Stockholm
-          image: ghcr.io/immich-app/immich-server:v1.140.0
+          image: ghcr.io/immich-app/immich-server:v1.140.1
           imagePullPolicy: IfNotPresent
           resources:
             requests:
