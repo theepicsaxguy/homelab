@@ -23,11 +23,11 @@ data:
       turn_off_message_logging: true
       redact_user_api_key_info: true
       enable_json_schema_validation: true
-      set_verbose: false
+      set_verbose: true
 
     router_settings:
       routing_strategy: usage-based-routing-v2
-      enable_pre_call_checks: true
+      enable_pre_call_checks: false
       num_retries: 3
       retry_after: 1
       allowed_fails: 3
@@ -48,7 +48,7 @@ data:
     general_settings:
       store_model_in_db: true
       store_prompts_in_spend_logs: true
-      enforce_user_param: true
+      enforce_user_param: false
       background_health_checks: true
       health_check_interval: 300
       health_check_details: true
