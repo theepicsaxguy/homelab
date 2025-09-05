@@ -5,3 +5,4 @@ resources:
 - project.yaml
 - openwebui
 - karakeep
+- litellm
