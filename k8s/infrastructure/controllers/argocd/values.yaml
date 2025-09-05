@@ -151,7 +151,7 @@ repoServer:
           name: cmp-tmp
 
 applicationSet:
-  replicas: 2
+  replicas: 1
   pdb:
     enabled: true
     minAvailable: 1
