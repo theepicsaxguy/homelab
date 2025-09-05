@@ -49,7 +49,7 @@ data:
       store_model_in_db: true
       store_prompts_in_spend_logs: true
       enforce_user_param: false
-      background_health_checks: true
+      background_health_checks: false
       health_check_interval: 300
       health_check_details: true
       ui_access_mode: admin_only
