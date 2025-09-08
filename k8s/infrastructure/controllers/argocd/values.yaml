@@ -78,6 +78,22 @@ dex:
 
 redis-ha:
   enabled: true
+  redis:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 64Mi
+  haproxy:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        cpu: 50m
+        memory: 128Mi
 
 server:
   autoscaling:

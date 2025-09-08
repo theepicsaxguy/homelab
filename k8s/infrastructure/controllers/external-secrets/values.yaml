@@ -384,10 +384,10 @@ webhook:
 certController:
   resources:
     requests:
-      cpu: 60m
-      memory: 128Mi
+      cpu: 10m
+      memory: 100Mi
     limits:
-      cpu: 60m
+      cpu: 50m
       memory: 128Mi
   # -- Specifies whether a certificate controller deployment be created.
   create: true

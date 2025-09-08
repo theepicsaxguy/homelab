@@ -5,7 +5,7 @@ metadata:
   namespace: pedro-bot
 spec:
   serviceName: 'mongodb'
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mongodb

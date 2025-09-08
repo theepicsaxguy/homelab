@@ -52,7 +52,7 @@ prometheusOperator:
 
 prometheus:
   prometheusSpec:
-    replicas: 2
+    replicas: 1
     resources:
       requests:
         cpu: 500m
@@ -66,7 +66,7 @@ prometheus:
 
 alertmanager:
   alertmanagerSpec:
-    replicas: 2
+    replicas: 1
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
