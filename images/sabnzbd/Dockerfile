@@ -74,4 +74,4 @@ COPY entrypoint.py /entrypoint.py
 
 VOLUME ["/config", "/downloads"]
 EXPOSE 8080
-ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
+ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"] 
