@@ -39,6 +39,53 @@
       "depNameTemplate": "ghcr.io/glitch-soc/mastodon"
     }
   ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^images/sabnzbd/Dockerfile$"],
+      "matchStrings": [
+        "ARG IMAGE_VERSION=(?<currentValue>.*)"
+      ],
+      "depNameTemplate": "sabnzbd/sabnzbd",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^images/sabnzbd/Dockerfile$"],
+      "matchStrings": [
+        "ARG UNRAR_VER=(?<currentValue>.*)"
+      ],
+      "depNameTemplate": "rarlab/unrar",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^images/spilo17-vchord/Dockerfile$"],
+      "matchStrings": [
+        "ARG VCHORD_VERSION=(?<currentValue>.*)"
+      ],
+      "depNameTemplate": "tensorchord/VectorChord",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^images/spilo17-vchord/Dockerfile$"],
+      "matchStrings": [
+        "ARG IMAGE_VERSION=(?<currentValue>.*)"
+      ],
+      "depNameTemplate": "spilo17-vchord-image",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    },
+    {
+      "fileMatch": ["^k8s/.+\\.ya?ml$"],
+      "matchStrings": [
+        "image:\\s*ghcr.io/theepicsaxguy/sabnzbd:(?<currentValue>[\\w.-]+)"
+      ],
+      "depNameTemplate": "ghcr.io/theepicsaxguy/sabnzbd",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    }
+  ],
   "packageRules": [
     {
       "groupName": "Media containers",
