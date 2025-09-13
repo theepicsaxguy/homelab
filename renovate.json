@@ -68,15 +68,6 @@
       "versioningTemplate": "semver"
     },
     {
-      "fileMatch": ["^images/spilo17-vchord/Dockerfile$"],
-      "matchStrings": [
-        "ARG IMAGE_VERSION=(?<currentValue>.*)"
-      ],
-      "depNameTemplate": "spilo17-vchord-image",
-      "datasourceTemplate": "docker",
-      "versioningTemplate": "semver"
-    },
-    {
       "fileMatch": ["^k8s/.+\\.ya?ml$"],
       "matchStrings": [
         "image:\\s*ghcr.io/theepicsaxguy/sabnzbd:(?<currentValue>[\\w.-]+)"
