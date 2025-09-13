@@ -46,13 +46,25 @@ spec:
             - configMapRef:
                 name: sabnzbd-env-config
           env:
+            - name: PUID
+              value: "2501"
+            - name: PGID
+              value: "2501"
+            - name: SAB_DOWNLOAD_DIR
+              value: "/downloads"
+            - name: SAB_INCOMPLETE_DIR
+              value: "/downloads/incomplete"
+            - name: SAB_COMPLETE_DIR
+              value: "/downloads/complete"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: downloads-root
+              mountPath: /downloads
             - name: media-share
-              mountPath: /app/data
+              mountPath: /downloads/complete
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
           livenessProbe:
@@ -74,6 +86,8 @@ spec:
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
+        - name: downloads-root
+          emptyDir: {}
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
