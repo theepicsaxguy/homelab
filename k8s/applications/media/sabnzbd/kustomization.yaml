@@ -14,10 +14,13 @@ generatorOptions:
 configMapGenerator:
   - name: sabnzbd-env-config
     literals:
+      - PUID="2501"
+      - PGID="2501"
+      - SAB_DOWNLOAD_DIR="/downloads"
+      - SAB_INCOMPLETE_DIR="/downloads/incomplete"
+      - SAB_COMPLETE_DIR="/downloads/complete"
       - SABNZBD__MISC__HOST_WHITELIST="sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
       - SABNZBD__MISC__PORT="8080"
-      - SABNZBD__MISC__DOWNLOAD_DIR="/downloads/incomplete"
-      - SABNZBD__MISC__COMPLETE_DIR="/app/data/downloads"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__ENABLE="1"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__NAME="news.newshosting.com"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__DISPLAYNAME="news.newshosting.com"
@@ -27,3 +30,4 @@ configMapGenerator:
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__CONNECTIONS="30"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL="1"
       - SABNZBD__SERVERS__NEWSNEWSHOSTINGCOM__SSL_VERIFY="3"
+
