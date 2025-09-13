@@ -1,10 +1,9 @@
-"""SABnzbd container entrypoint with per-key declarative overrides and safe path validation."""
+"""SABnzbd entrypoint with declarative env overrides."""
 
 import os
 import sys
 import pathlib
-import configparser
-from typing import Dict, Set, Tuple
+import re
 
 CFG_DIR = os.getenv("SAB_CONFIG_DIR", "/config")
 CFG_FILE = os.path.join(CFG_DIR, "sabnzbd.ini")
@@ -14,170 +13,116 @@ PGID = int(os.getenv("PGID", "1000"))
 # Ensure config directory exists
 pathlib.Path(CFG_DIR).mkdir(parents=True, exist_ok=True)
 
-# Load existing INI if present, preserving option case
-cfg = configparser.ConfigParser()
-cfg.optionxform = str  # keep keys as written
-if os.path.exists(CFG_FILE):
-    cfg.read(CFG_FILE, encoding="utf-8")
+# Helper: strip wrapping quotes
+def clean_val(v: str) -> str:
+    v = v.strip()
+    if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+        return v[1:-1]
+    return v
 
-def set_k(section: str, option: str, value: str) -> None:
-    if section not in cfg:
-        cfg.add_section(section)
-    cfg[section][option] = value
+# Collect env overrides
+env_overrides: dict[tuple[str, str], str] = {}
 
-def split_env_list(val: str) -> Tuple[str, ...]:
-    # Accept comma or colon separated lists
-    parts = [p.strip() for p in val.replace(":", ",").split(",")]
-    return tuple(p for p in parts if p)
+root = os.getenv("SAB_DOWNLOAD_DIR")
+inc = os.getenv("SAB_INCOMPLETE_DIR")
+comp = os.getenv("SAB_COMPLETE_DIR")
 
-def collect_env_overrides() -> Dict[Tuple[str, str], str]:
-    """
-    Collect SAB__section__option and SAB__section__subsection__option envs.
-    Nested becomes 'subsection.option' to keep INI flat.
-    """
-    out: Dict[Tuple[str, str], str] = {}
-    for k, v in os.environ.items():
-        if not k.startswith("SAB__"):
-            continue
-        parts = k.split("__")
-        if len(parts) == 3:
-            _, section, option = parts
-            out[(section.lower(), option.lower())] = v
-        elif len(parts) == 4:
-            _, section, subsection, option = parts
-            out[(section.lower(), f"{subsection.lower()}.{option.lower()}")] = v
-    return out
+if inc or root:
+    env_overrides[("folders", "download_dir")] = clean_val(inc or f"{root.rstrip('/')}/incomplete")
+if comp or root:
+    env_overrides[("folders", "complete_dir")] = clean_val(comp or f"{root.rstrip('/')}/complete")
+if root:
+    env_overrides[("folders", "nzb_backup_dir")] = clean_val(f"{root.rstrip('/')}/nzb-backup")
 
-def infer_folder_overrides_from_simple_roots() -> Dict[Tuple[str, str], str]:
-    """
-    Map convenience vars into folder keys if provided.
-    No hardcoded defaults. Only map what the caller set.
-    """
-    out: Dict[Tuple[str, str], str] = {}
-    root = os.getenv("SAB_DOWNLOAD_DIR")
-    inc = os.getenv("SAB_INCOMPLETE_DIR")
-    comp = os.getenv("SAB_COMPLETE_DIR")
+for k, v in os.environ.items():
+    if not k.startswith("SAB__"):
+        continue
+    parts = k.split("__")
+    if len(parts) == 3:
+        _, section, option = parts
+        env_overrides[(section.lower(), option.lower())] = clean_val(v)
+    elif len(parts) == 4:
+        _, section, subsection, option = parts
+        env_overrides[(section.lower(), f"{subsection.lower()}.{option.lower()}")] = clean_val(v)
 
-    if inc or root:
-        out[("folders", "download_dir")] = inc or f"{root.rstrip('/')}/incomplete"
-    if comp or root:
-        out[("folders", "complete_dir")] = comp or f"{root.rstrip('/')}/complete"
-    if root:
-        out[("folders", "nzb_backup_dir")] = f"{root.rstrip('/')}/nzb-backup"
-    return out
+# Allowed roots for folder paths
+ALLOWED_ROOTS = [pathlib.Path("/downloads"), pathlib.Path("/config"), pathlib.Path("/tmp")]
 
-def resolve_safe(path_str: str) -> pathlib.Path:
-    """
-    Resolve to an absolute canonical path without requiring it to exist.
-    Reject non-absolute inputs early.
-    """
-    p = pathlib.Path(path_str)
-    if not p.is_absolute():
-        raise ValueError(f"path must be absolute: {path_str}")
-    # strict=False so we can validate and then create if needed
-    return p.resolve(strict=False)
+def resolve_and_validate(p: str) -> str:
+    rp = pathlib.Path(p).resolve(strict=False)
+    if not rp.is_absolute():
+        raise ValueError(f"Path must be absolute: {p}")
+    if not any(rp == root or rp.is_relative_to(root) for root in ALLOWED_ROOTS):
+        raise PermissionError(f"Path outside allowed roots: {rp}")
+    rp.mkdir(parents=True, exist_ok=True)
+    return str(rp)
 
-def build_allowed_roots(overrides: Dict[Tuple[str, str], str]) -> Set[pathlib.Path]:
-    """
-    Allowed roots are:
-    - Explicit SAB_ALLOWED_ROOTS if provided
-    - CFG_DIR
-    - For any folder override we are about to write, include its top-level root
-      and its immediate parent. This derives the policy from caller intent.
-    """
-    roots: Set[pathlib.Path] = set()
-    roots.add(pathlib.Path(CFG_DIR).resolve(strict=False))
-
-    allowed_env = os.getenv("SAB_ALLOWED_ROOTS", "")
-    for root_str in split_env_list(allowed_env):
-        try:
-            roots.add(resolve_safe(root_str))
-        except Exception:
-            # Ignore malformed allowlist entries silently
-            pass
-
-    for (section, option), val in overrides.items():
-        if section != "folders":
-            continue
-        try:
-            rp = resolve_safe(val)
-            # include the top-level like /downloads, and the parent dir
-            parts = rp.parts
-            if len(parts) >= 2:
-                roots.add(pathlib.Path("/" + parts[1]))
-            roots.add(rp.parent)
-        except Exception:
-            # Validation will catch on actual write
-            pass
-    return roots
-
-def ensure_within_allowed(rp: pathlib.Path, allowed_roots: Set[pathlib.Path]) -> None:
-    """
-    Enforce that resolved path is within at least one allowed root.
-    """
-    for root in allowed_roots:
-        try:
-            if rp == root or rp.is_relative_to(root):
-                return
-        except Exception:
-            # Defensive: skip broken roots
-            continue
-    raise PermissionError(f"path outside allowed roots: {rp}")
-
-def mkdir_if_needed(rp: pathlib.Path) -> None:
-    try:
-        rp.mkdir(parents=True, exist_ok=True)
-    except (OSError, PermissionError, FileExistsError) as e:
-        print(f"WARNING: could not create path {rp}: {e}", file=sys.stderr)
-
-# Collect overrides
-env_overrides = collect_env_overrides()
-env_overrides.update(infer_folder_overrides_from_simple_roots())
-
-# Build allowlist dynamically based on what caller asked us to write
-allowed_roots = build_allowed_roots(env_overrides)
-
-# Apply overrides with validation for folders.*
-for (section, option), value in env_overrides.items():
-    # Validate only folder paths; other keys are written as-is
+# Apply validation to folder overrides
+for (section, option), val in list(env_overrides.items()):
     if section == "folders":
-        rp = resolve_safe(value)
-        ensure_within_allowed(rp, allowed_roots)
-        mkdir_if_needed(rp)
-        set_k(section, option, str(rp))
-    else:
-        set_k(section, option, value)
+        env_overrides[(section, option)] = resolve_and_validate(val)
 
-# Minimal misc defaults only if absent, to avoid SAB inventing globals
-host = os.getenv("SAB_HOST", "0.0.0.0")
-port = os.getenv("SAB_PORT", "8080")
-if "misc" not in cfg:
-    cfg.add_section("misc")
-if "host" not in cfg["misc"]:
-    cfg["misc"]["host"] = host
-if "port" not in cfg["misc"]:
-    cfg["misc"]["port"] = port
+# If ini exists, load it as lines, else start with empty
+lines: list[str] = []
+if os.path.exists(CFG_FILE):
+    with open(CFG_FILE, encoding="utf-8") as f:
+        lines = f.readlines()
 
-# Persist merged INI
+# Function to patch a section.option line
+def patch_lines(lines: list[str], section: str, option: str, value: str) -> list[str]:
+    section_pat = re.compile(rf"^\[{re.escape(section)}\]\s*$", re.I)
+    option_pat = re.compile(rf"^{re.escape(option)}\s*=", re.I)
+
+    out = []
+    in_section = False
+    replaced = False
+    for line in lines:
+        if line.strip().startswith("[") and line.strip().endswith("]"):
+            if in_section and not replaced:
+                out.append(f"{option} = {value}\n")
+                replaced = True
+            in_section = bool(section_pat.match(line.strip()))
+            out.append(line)
+            continue
+        if in_section and option_pat.match(line.strip()):
+            if not replaced:
+                out.append(f"{option} = {value}\n")
+                replaced = True
+            continue
+        out.append(line)
+    if not replaced:
+        # append section if missing
+        if not any(section_pat.match(l.strip()) for l in lines):
+            out.append(f"\n[{section}]\n")
+        out.append(f"{option} = {value}\n")
+    return out
+
+# Apply all overrides
+patched = lines
+for (section, option), value in env_overrides.items():
+    patched = patch_lines(patched, section, option, value)
+
+# Write back
 with open(CFG_FILE, "w", encoding="utf-8") as f:
-    cfg.write(f)
+    f.writelines(patched)
 
-def drop_privileges(uid: int, gid: int) -> None:
+# Drop privileges if running as root
+def drop_privileges(uid: int, gid: int):
     try:
         os.setgid(gid)
         os.setuid(uid)
         os.umask(0o022)
-    except (OSError, PermissionError) as e:
+    except OSError as e:
         print(f"WARNING: failed to drop privileges: {e}", file=sys.stderr)
 
 if os.getuid() == 0:
     drop_privileges(PUID, PGID)
 
-# Keep SAB defaults under /config for non-overridden stuff
+# Set HOME so SAB defaults resolve under /config
 os.environ["HOME"] = CFG_DIR
 
 # Exec SABnzbd
 os.execv(
     "/venv/bin/python",
-    ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"{cfg['misc']['host']}:{cfg['misc']['port']}"],
+    ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"0.0.0.0:{os.getenv('SAB_PORT','8080')}"],
 )
