@@ -25,7 +25,7 @@ spec:
       - env:
         - name: TZ
           value: Europe/Stockholm
-        image: ghcr.io/home-assistant/home-assistant:2025.9.1
+        image: ghcr.io/home-assistant/home-assistant:2025.9.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
