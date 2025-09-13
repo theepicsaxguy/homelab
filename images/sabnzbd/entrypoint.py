@@ -1,11 +1,9 @@
-"""SABnzbd container entrypoint with PUID/PGID support and config management."""
+"""SABnzbd container entrypoint with deterministic config generation."""
 
 import os
 import sys
 import configparser
 import pathlib
-import pwd
-import grp
 
 # === Core, overridable defaults ===
 cfg_dir = os.getenv("SAB_CONFIG_DIR", "/config")
@@ -18,84 +16,89 @@ complete = os.getenv("SAB_COMPLETE_DIR", f"{downloads}/complete")
 host = os.getenv("SAB_HOST", "0.0.0.0")
 PORT = str(os.getenv("SAB_PORT", "8080"))
 
-# PUID/PGID mapping (LSIO/hotio/binhex convention)
 PUID = int(os.getenv("PUID", "1000"))
 PGID = int(os.getenv("PGID", "1000"))
 
-# Ensure dirs exist before ownership and config write
+# Ensure dirs exist before config write
 for p in (cfg_dir, downloads, incomplete, complete):
     pathlib.Path(p).mkdir(parents=True, exist_ok=True)
 
 
-def ensure_uid_gid(uid: int, gid: int):
-    """Create user and group if they don't exist."""
-    try:
-        grp.getgrgid(gid)
-    except KeyError:
-        os.system(f"addgroup -g {gid} sab || true")
-    try:
-        pwd.getpwuid(uid)
-    except KeyError:
-        os.system(f"adduser -D -H -u {uid} -G sab -s /sbin/nologin sab || true")
-
-
-ensure_uid_gid(PUID, PGID)
-
-# Make sure config dir is owned by target uid:gid so SAB can write logs/state
-try:
-    os.chown(cfg_dir, PUID, PGID)
-except PermissionError:
-    pass
-
-
-# === Build sabnzbd.ini from env deterministically ===
 class _CaseConfigParser(configparser.ConfigParser):
-    """ConfigParser preserving option key case."""
+    """Preserve case but allow writing nested [[subsections]]."""
 
     def optionxform(self, optionstr: str) -> str:  # type: ignore[override]
         return optionstr
 
 
-cfg = _CaseConfigParser()
-
+cfg = _CaseConfigParser(allow_no_value=True, delimiters=("=",))
 if not overwrite and os.path.exists(cfg_file):
     cfg.read(cfg_file)
 
-for section in ("misc", "folders"):
+# Seed required sections
+for section in ("misc", "folders", "servers"):
     if section not in cfg:
         cfg[section] = {}
 
-# Baseline values (these can still be overridden by SAB__* envs below)
 cfg["misc"]["host"] = host
 cfg["misc"]["port"] = PORT
 cfg["folders"]["download_dir"] = incomplete
 cfg["folders"]["complete_dir"] = complete
 cfg["folders"]["nzb_backup_dir"] = f"{downloads}/nzb-backup"
 
-# Arbitrary overrides via SAB__section__option=value
+# Helper: ensure nested section
+def ensure_nested(section: str, subsection: str):
+    secname = f"{section}:{subsection}"
+    if secname not in cfg:
+        cfg.add_section(secname)
+        # Mark it as a subsection
+        cfg.set(secname, None, f"[[{subsection}]]")
+
+
+# Apply overrides from env
 for k, v in os.environ.items():
     if not k.startswith("SAB__"):
         continue
-    parts = k.split("__", 2)
-    if len(parts) != 3:
-        continue
-    _, section, option = parts
-    if section not in cfg:
-        cfg[section] = {}
-    cfg[section][option] = v
+    parts = k.split("__", 3)
+    if len(parts) == 3:
+        _, section, option = parts
+        section = section.lower()
+        option = option.lower()
+        if section not in cfg:
+            cfg[section] = {}
+        cfg[section][option] = v
+    elif len(parts) == 4:
+        _, section, subsection, option = parts
+        section = section.lower()
+        subsection = subsection.lower()
+        option = option.lower()
+        ensure_nested(section, subsection)
+        secname = f"{section}:{subsection}"
+        cfg[secname][option] = v
 
 # Atomic write
 TMP_FILE = f"{cfg_file}.tmp"
 with open(TMP_FILE, "w", encoding="utf-8") as f:
-    cfg.write(f)
+    # Custom writer to support [[subsection]] lines
+    for section in cfg.sections():
+        base, _, subsection = section.partition(":")
+        if subsection:
+            # Write parent section if not already written
+            if not any(s == base for s in cfg.sections()):
+                f.write(f"[{base}]\n")
+            f.write(f"[[{subsection}]]\n")
+        else:
+            f.write(f"[{section}]\n")
+        for key, val in cfg.items(section):
+            if key is None and val and val.startswith("[["):
+                # subsection marker, skip writing again
+                continue
+            f.write(f"{key} = {val}\n")
+        f.write("\n")
 os.replace(TMP_FILE, cfg_file)
 
-# Set HOME to config dir so SAB writes under /config
-os.environ["HOME"] = cfg_dir
-
-
+# Drop privileges if running as root
 def drop_privileges(uid: int, gid: int):
-    """Drop privileges to specified UID and GID."""
     try:
         os.setgid(gid)
         os.setuid(uid)
@@ -104,9 +107,13 @@ def drop_privileges(uid: int, gid: int):
         print(f"WARNING: failed to drop privileges: {e}", file=sys.stderr)
 
 
-drop_privileges(PUID, PGID)
+if os.getuid() == 0:
+    drop_privileges(PUID, PGID)
 
-# Exec SAB from source using the venv interpreter
+# Set HOME to config dir
+os.environ["HOME"] = cfg_dir
+
+# Exec SABnzbd
 os.execv(
     "/venv/bin/python",
     ["/venv/bin/python", "/app/SABnzbd.py", "-f", cfg_file, "-s", f"{host}:{PORT}"],
