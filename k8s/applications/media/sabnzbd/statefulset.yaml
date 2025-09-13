@@ -67,6 +67,8 @@ spec:
               mountPath: /downloads/complete
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /api?mode=version
@@ -92,4 +94,6 @@ spec:
           persistentVolumeClaim:
             claimName: media-share
         - name: incomplete-downloads
+          emptyDir: {}
+        - name: tmp
           emptyDir: {}
