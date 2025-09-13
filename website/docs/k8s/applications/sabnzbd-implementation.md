@@ -14,7 +14,7 @@ The image builds SABnzbd from the official release tarball in a Python 3.12 vir
 
 ## Storage
 
-`/config` uses a 5 Gi PVC. `/downloads/incomplete` is an `emptyDir`. Completed files write to the existing `media-share` PVC under `/app/data`.
+`/config` uses a 5 Gi PVC. `/downloads` is an `emptyDir` that provides a writable parent. `/downloads/incomplete` is an `emptyDir` for temporary files. Completed files write to the `media-share` NFS PVC under `/downloads/complete`.
 
 ## Network
 
