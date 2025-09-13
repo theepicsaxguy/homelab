@@ -19,7 +19,7 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 # Stage 1: build SABnzbd from source + venv (includes native deps)
 ###############################################################################
 FROM alpine:3.22 AS sab-build
-ARG IMAGE_VERSION=4.5.2
+ARG IMAGE_VERSION=4.5.3
 
 # Toolchain for wheels (sabctools) + Python
 RUN apk add --no-cache \
