@@ -14,19 +14,19 @@ generatorOptions:
 configMapGenerator:
   - name: sabnzbd-env-config
     literals:
-      - PUID="2501"
-      - PGID="2501"
-      - SAB_DOWNLOAD_DIR="/downloads"
-      - SAB_INCOMPLETE_DIR="/downloads/incomplete"
-      - SAB_COMPLETE_DIR="/downloads/complete"
-      - SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
-      - SAB__misc__port="8080"
-      - SAB__servers__newsnewshostingcom__enable="1"
-      - SAB__servers__newsnewshostingcom__name="news.newshosting.com"
-      - SAB__servers__newsnewshostingcom__displayname="news.newshosting.com"
-      - SAB__servers__newsnewshostingcom__host="news.newshosting.com"
-      - SAB__servers__newsnewshostingcom__port="563"
-      - SAB__servers__newsnewshostingcom__timeout="60"
-      - SAB__servers__newsnewshostingcom__connections="30"
-      - SAB__servers__newsnewshostingcom__ssl="1"
-      - SAB__servers__newsnewshostingcom__ssl_verify="3"
+      - PUID=2501
+      - PGID=2501
+      - SAB_DOWNLOAD_DIR=/downloads
+      - SAB_INCOMPLETE_DIR=/downloads/incomplete
+      - SAB_COMPLETE_DIR=/downloads/complete
+      - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se
+      - SAB__misc__port=8080
+      - SAB__servers__newsnewshostingcom__enable=1
+      - SAB__servers__newsnewshostingcom__name=news.newshosting.com
+      - SAB__servers__newsnewshostingcom__displayname=news.newshosting.com
+      - SAB__servers__newsnewshostingcom__host=news.newshosting.com
+      - SAB__servers__newsnewshostingcom__port=563
+      - SAB__servers__newsnewshostingcom__timeout=60
+      - SAB__servers__newsnewshostingcom__connections=30
+      - SAB__servers__newsnewshostingcom__ssl=1
+      - SAB__servers__newsnewshostingcom__ssl_verify=3
