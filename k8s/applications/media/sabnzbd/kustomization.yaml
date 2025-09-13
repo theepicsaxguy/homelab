@@ -16,9 +16,9 @@ configMapGenerator:
     literals:
       - PUID="2501"
       - PGID="2501"
-      - SAB_DOWNLOAD_DIR="/downloads"
+      - SAB_DOWNLOAD_DIR=/downloads
       - SAB_INCOMPLETE_DIR="/downloads/incomplete"
-      - SAB_COMPLETE_DIR="/downloads/complete"
+      - SAB_COMPLETE_DIR=/downloads/complete
       - SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se"
       - SAB__misc__port="8080"
       - SAB__servers__newsnewshostingcom__enable="1"
