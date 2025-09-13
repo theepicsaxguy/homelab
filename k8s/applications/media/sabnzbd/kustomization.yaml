@@ -8,14 +8,14 @@ resources:
   - statefulset.yaml
   - svc.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
-
 configMapGenerator:
   - name: sabnzbd-env-config
     literals:
       - PUID=2501
       - PGID=2501
+      - SAB__folders__download_dir=/downloads/incomplete
+      - SAB__folders__complete_dir=/downloads/complete
+      - SAB__folders__nzb_backup_dir=/downloads/nzb-backup
       - SAB_DOWNLOAD_DIR=/downloads
       - SAB_INCOMPLETE_DIR=/downloads/incomplete
       - SAB_COMPLETE_DIR=/downloads/complete
