@@ -30,7 +30,6 @@ configMapGenerator:
       # SAB misc
       - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se
       - SAB__misc__port=8080
-      - SAB__folders__nzb_backup_dir=/downloads/nzb-backup
 
       # SAB servers
       - SAB__servers__newsnewshostingcom__enable=1
