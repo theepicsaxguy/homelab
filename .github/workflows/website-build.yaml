@@ -1,0 +1,75 @@
+---
+name: Website Build
+
+on:
+  pull_request:
+    paths:
+      - 'website/**'
+      - 'package.json'
+      - '.nvmrc'
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - 'package.json'
+      - '.nvmrc'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Website
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Read Node.js version from .nvmrc
+        id: node-version
+        run: echo "node-version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.node-version }}
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install website dependencies
+        run: cd website && npm ci
+
+      - name: Validate Node.js version requirement
+        run: |
+          CURRENT_VERSION=$(node --version | sed 's/v//')
+          REQUIRED_VERSION=$(node -pe "require('./package.json').engines.node.replace('>=', '')")
+          echo "Current Node.js version: $CURRENT_VERSION"
+          echo "Required Node.js version: >= $REQUIRED_VERSION"
+          
+          # Simple version comparison - this will fail if current version is less than required
+          if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$CURRENT_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
+            echo "❌ Node.js version $CURRENT_VERSION does not meet requirement >= $REQUIRED_VERSION"
+            exit 1
+          else
+            echo "✅ Node.js version $CURRENT_VERSION meets requirement >= $REQUIRED_VERSION"
+          fi
+
+      - name: Build website
+        run: cd website && npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: website-build
+          path: website/build/
+          retention-days: 7

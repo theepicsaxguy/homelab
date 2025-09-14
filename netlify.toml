@@ -1,0 +1,15 @@
+[build]
+  publish = "website/build"
+  command = "cd website && npm run build"
+
+[build.environment]
+  NODE_VERSION = "20.18.1"
+  NPM_VERSION = "10.0.0"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
