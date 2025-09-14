@@ -40,8 +40,9 @@ jobs:
             CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
           fi
 
-          # Get image directories from changed Dockerfiles
-          IMAGES=$(echo "$CHANGED" | grep 'Dockerfile$' | xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
+          # Get image directories from changed non-Markdown files
+          IMAGES=$(echo "$CHANGED" | grep -v -E '\.(md|MD)$' | grep -v '^$' | \
+            xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
 
           if [ -n "$IMAGES" ]; then
             JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
