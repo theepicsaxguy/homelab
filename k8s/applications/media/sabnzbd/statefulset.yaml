@@ -63,7 +63,7 @@ spec:
             - name: SAB_INCOMPLETE_DIR
               value: "/downloads/incomplete"
             - name: SAB_COMPLETE_DIR
-              value: "/app/data/complete"
+              value: "/downloads/complete"
             - name: SAB__folders__nzb_backup_dir
               value: "/downloads/nzb-backup"
             - name: TZ
@@ -72,7 +72,7 @@ spec:
             - name: config
               mountPath: /config
             - name: media-share
-              mountPath: /app/data
+              mountPath: /downloads/complete
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
             - name: nzb-backup
@@ -105,3 +105,4 @@ spec:
           emptyDir: {}
         - name: tmp
           emptyDir: {}
+```0
