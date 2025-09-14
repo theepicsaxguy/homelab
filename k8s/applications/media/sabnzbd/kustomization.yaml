@@ -15,16 +15,16 @@ configMapGenerator:
       - PGID=2501
       - SAB_DOWNLOAD_DIR=/downloads
       - SAB_INCOMPLETE_DIR=/downloads/incomplete
-      - SAB_COMPLETE_DIR=/app/data/complete
+      - SAB_COMPLETE_DIR=/downloads/complete
 
       # Explicit folders (keeps UI from ever resetting)
       - SAB__folders__download_dir=/downloads/incomplete
-      - SAB__folders__complete_dir=/app/data/complete
+      - SAB__folders__complete_dir=/downloads/complete
       - SAB__folders__nzb_backup_dir=/downloads/nzb-backup
 
       # Mirror into misc (UI expects these)
       - SAB__misc__download_dir=/downloads/incomplete
-      - SAB__misc__complete_dir=/app/data/complete
+      - SAB__misc__complete_dir=/downloads/complete
       - SAB__misc__nzb_backup_dir=/downloads/nzb-backup
 
       # SAB misc
