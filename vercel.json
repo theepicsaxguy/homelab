@@ -1,0 +1,17 @@
+{
+  "builds": [
+    {
+      "src": "website/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "functions": {
+    "website/functions/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "outputDirectory": "website/build"
+}
