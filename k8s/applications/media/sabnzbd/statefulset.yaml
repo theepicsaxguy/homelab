@@ -14,10 +14,18 @@ spec:
         name: config
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: longhorn
         resources:
           requests:
             storage: 6Gi
+    - metadata:
+        name: nzb-backup
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 1Gi
   template:
     metadata:
       labels:
@@ -56,17 +64,19 @@ spec:
               value: "/downloads/incomplete"
             - name: SAB_COMPLETE_DIR
               value: "/downloads/complete"
+            - name: SAB__folders__nzb_backup_dir
+              value: "/downloads/nzb-backup"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: downloads-root
-              mountPath: /downloads
             - name: media-share
               mountPath: /downloads/complete
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
+            - name: nzb-backup
+              mountPath: /downloads/nzb-backup
             - name: tmp
               mountPath: /tmp
           livenessProbe:
@@ -88,8 +98,6 @@ spec:
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
-        - name: downloads-root
-          emptyDir: {}
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
