@@ -13,25 +13,30 @@ configMapGenerator:
     literals:
       - PUID=2501
       - PGID=2501
+
+      # Base paths (entrypoint still creates/validates)
       - SAB_DOWNLOAD_DIR=/downloads
       - SAB_INCOMPLETE_DIR=/downloads/incomplete
-      - SAB_COMPLETE_DIR=/downloads/complete
+      - SAB_COMPLETE_DIR=/app/data/complete
 
-      # Explicit folders (keeps UI from ever resetting)
+      # Explicit folders (prevents UI “reset”)
       - SAB__folders__download_dir=/downloads/incomplete
-      - SAB__folders__complete_dir=/downloads/complete
+      - SAB__folders__complete_dir=/app/data/complete
       - SAB__folders__nzb_backup_dir=/downloads/nzb-backup
 
-      # Mirror into misc (UI expects these)
+      # Mirror into [misc] because the UI reads these too
       - SAB__misc__download_dir=/downloads/incomplete
-      - SAB__misc__complete_dir=/downloads/complete
+      - SAB__misc__complete_dir=/app/data/complete
       - SAB__misc__nzb_backup_dir=/downloads/nzb-backup
 
       # SAB misc
       - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se
       - SAB__misc__port=8080
+      - SAB__misc__pause_on_post_processing=1
+      - SAB__misc__wait_for_dfolder=30
+      - SAB__misc__wait_ext_drive=30
 
-      # SAB servers
+      # Server (example)
       - SAB__servers__newsnewshostingcom__enable=1
       - SAB__servers__newsnewshostingcom__name=newsnewshostingcom
       - SAB__servers__newsnewshostingcom__displayname=news.newshosting.com
@@ -42,12 +47,7 @@ configMapGenerator:
       - SAB__servers__newsnewshostingcom__ssl=1
       - SAB__servers__newsnewshostingcom__ssl_verify=3
 
-      # SAB built-in waits (optional but recommended for network storage)
-      - SAB__misc__wait_for_dfolder=30
-      - SAB__misc__wait_ext_drive=30
-      - SAB__misc__pause_on_post_processing=1
-
-      # Entrypoint wait-probe tuning (optional; defaults are fine)
+      # Entrypoint write-probe (safe defaults)
       - SAB_WAIT_PROBE=1
       - SAB_WAIT_TIMEOUT=60
       - SAB_WAIT_INTERVAL=1
