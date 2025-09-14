@@ -16,13 +16,21 @@ configMapGenerator:
       - SAB_DOWNLOAD_DIR=/downloads
       - SAB_INCOMPLETE_DIR=/downloads/incomplete
       - SAB_COMPLETE_DIR=/downloads/complete
+
       # Explicit folders (keeps UI from ever resetting)
       - SAB__folders__download_dir=/downloads/incomplete
       - SAB__folders__complete_dir=/downloads/complete
       - SAB__folders__nzb_backup_dir=/downloads/nzb-backup
+
+      # Mirror into misc (UI expects these)
+      - SAB__misc__download_dir=/downloads/incomplete
+      - SAB__misc__complete_dir=/downloads/complete
+      - SAB__misc__nzb_backup_dir=/downloads/nzb-backup
+
       # SAB misc
       - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se
       - SAB__misc__port=8080
+
       # SAB servers (example)
       - SAB__servers__newsnewshostingcom__enable=1
       - SAB__servers__newsnewshostingcom__name=newsnewshostingcom
@@ -33,9 +41,11 @@ configMapGenerator:
       - SAB__servers__newsnewshostingcom__connections=30
       - SAB__servers__newsnewshostingcom__ssl=1
       - SAB__servers__newsnewshostingcom__ssl_verify=3
+
       # SAB built-in waits (optional but recommended for network storage)
       - SAB__misc__wait_for_dfolder=30
       - SAB__misc__wait_ext_drive=30
+
       # Entrypoint wait-probe tuning (optional; defaults are fine)
       - SAB_WAIT_PROBE=1
       - SAB_WAIT_TIMEOUT=60
