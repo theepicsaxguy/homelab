@@ -43,10 +43,10 @@ jobs:
             website/package.json
 
       - name: Install root dependencies
-        run: npm ci
+        run: npm install
 
       - name: Install website dependencies
-        run: cd website && npm ci
+        run: cd website && npm install
 
       - name: Validate Node.js version requirement
         run: |
