@@ -8,9 +8,6 @@ resources:
   - statefulset.yaml
   - svc.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
-
 configMapGenerator:
   - name: sabnzbd-env-config
     literals:
