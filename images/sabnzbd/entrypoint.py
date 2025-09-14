@@ -5,13 +5,16 @@ SABnzbd entrypoint – fully declarative:
 - Build sabnzbd.ini from environment on each start.
 - Handle sections with mixed flat keys and nested [[subsections]].
 - Enforce folder path safety & writability before launch.
+- Wait for storage with a real write-probe (configurable, NFS-safe).
 - Fail hard on privilege drop failure.
 """
 
 import os
 import sys
+import time
+import tempfile
 import pathlib
-from typing import Dict, Any
+from typing import Dict, Any, Iterable
 
 # -------------------------
 # Helpers
@@ -31,12 +34,6 @@ def _abs_path(p: str) -> pathlib.Path:
 
 def _mk_ok(path: pathlib.Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
-
-def _ensure_writable(paths) -> None:
-    for p in paths:
-        if not os.access(str(p), os.W_OK):
-            sys.stderr.write(f"ERROR: not writable by UID {os.getuid()} → {p}\n")
-            sys.exit(1)
 
 def _drop_priv(uid: int, gid: int) -> None:
     # Set GID first, then UID. Verify. Fail hard if not effective.
@@ -90,6 +87,62 @@ def _write_ini(cfg_file: str, cfg: Dict[str, Dict[str, Any]]) -> None:
             if not nested_items:
                 f.write("\n")
 
+def _probe_writable(dirpath: str) -> None:
+    """
+    Truthful writability check (works on NFSv4): create+write+fsync+unlink a temp file.
+    Raises OSError on failure.
+    """
+    fd = None
+    tmp_path = None
+    try:
+        fd, tmp_path = tempfile.mkstemp(prefix=".sab_probe_", dir=dirpath)
+        os.write(fd, b"x")
+        os.fsync(fd)
+    finally:
+        if fd is not None:
+            try:
+                os.close(fd)
+            except OSError:
+                pass
+        if tmp_path:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                # best-effort; not fatal for probe
+                pass
+
+def _wait_for_paths(paths: Iterable[pathlib.Path],
+                    timeout: float,
+                    base_interval: float,
+                    backoff: float,
+                    max_interval: float) -> None:
+    """
+    Wait for each path to become truly writable using _probe_writable.
+    Per-path timeout and exponential backoff.
+    """
+    for p in paths:
+        start = time.monotonic()
+        interval = base_interval
+        last_err = None
+        while True:
+            try:
+                _probe_writable(str(p))
+                # Ready
+                print(f"READY: storage path usable → {p}", flush=True)
+                break
+            except OSError as e:
+                last_err = e
+                elapsed = time.monotonic() - start
+                if elapsed >= timeout:
+                    sys.stderr.write(
+                        f"ERROR: storage not ready after {elapsed:.1f}s: {p} → {e.strerror} (errno={e.errno})\n"
+                    )
+                    sys.exit(1)
+                # Log first failure and then at increasing intervals
+                print(f"WAIT: {p} not ready yet ({e.strerror}); retrying in {interval:.1f}s", flush=True)
+                time.sleep(interval)
+                interval = min(max_interval, interval * backoff)
+
 # -------------------------
 # Core
 # -------------------------
@@ -108,6 +161,14 @@ ROOT = _clean(os.getenv("SAB_DOWNLOAD_DIR", "/downloads"))
 INCOMPLETE = _clean(os.getenv("SAB_INCOMPLETE_DIR", f"{ROOT.rstrip('/')}/incomplete"))
 COMPLETE   = _clean(os.getenv("SAB_COMPLETE_DIR",   f"{ROOT.rstrip('/')}/complete"))
 NZB_BACKUP = f"{ROOT.rstrip('/')}/nzb-backup"
+
+# Wait-probe controls (safe defaults)
+WAIT_PROBE = os.getenv("SAB_WAIT_PROBE", "1").strip().lower() in {"1", "true", "yes", "on"}
+WAIT_TIMEOUT = float(os.getenv("SAB_WAIT_TIMEOUT", "60"))
+WAIT_INTERVAL = float(os.getenv("SAB_WAIT_INTERVAL", "1"))
+WAIT_BACKOFF = float(os.getenv("SAB_WAIT_BACKOFF", "1.5"))
+WAIT_MAX_INTERVAL = float(os.getenv("SAB_WAIT_MAX_INTERVAL", "5"))
+WAIT_DIRS_CSV = os.getenv("SAB_WAIT_DIRS", "download_dir,complete_dir,nzb_backup_dir")
 
 # Build config map
 config: Dict[str, Dict[str, Any]] = {
@@ -146,17 +207,18 @@ for k, v in os.environ.items():
             section_dict[subsection] = sub_dict
         sub_dict[option] = val
 
-# Prepare folders: resolve, create, validate
-folder_paths = []
+# Prepare folders: resolve & create (idempotent)
+folders_section = config.get("folders", {})
+key_to_path: Dict[str, pathlib.Path] = {}
 for key in ("download_dir", "complete_dir", "nzb_backup_dir", "admin_dir", "log_dir", "cache_dir", "dirscan_dir"):
-    val = config.get("folders", {}).get(key)
+    val = folders_section.get(key)
     if not val:
         continue
     p = _abs_path(val)
     _mk_ok(p)
-    folder_paths.append(p)
+    key_to_path[key] = p
 
-# Ensure config dir exists too
+# Ensure config dir exists
 pathlib.Path(CFG_DIR).mkdir(parents=True, exist_ok=True)
 
 # Write INI deterministically
@@ -166,8 +228,18 @@ _write_ini(CFG_FILE, config)
 if os.getuid() == 0:
     _drop_priv(PUID, PGID)
 
-# After dropping privileges, verify writable folders
-_ensure_writable(folder_paths)
+# Optionally wait for storage using truthful write-probe (NFS-safe)
+if WAIT_PROBE:
+    wanted_keys = [k.strip() for k in WAIT_DIRS_CSV.split(",") if k.strip()]
+    to_wait = [key_to_path[k] for k in wanted_keys if k in key_to_path]
+    if to_wait:
+        _wait_for_paths(
+            to_wait,
+            timeout=WAIT_TIMEOUT,
+            base_interval=WAIT_INTERVAL,
+            backoff=WAIT_BACKOFF,
+            max_interval=WAIT_MAX_INTERVAL,
+        )
 
 # Make SAB defaults land under /config for anything we didn’t set
 os.environ["HOME"] = CFG_DIR
