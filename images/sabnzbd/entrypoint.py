@@ -254,4 +254,3 @@ os.execv(
     "/venv/bin/python",
     ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"{HOST}:{PORT}"],
 )
-```0
