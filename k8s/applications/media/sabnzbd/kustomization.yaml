@@ -45,6 +45,7 @@ configMapGenerator:
       # SAB built-in waits (optional but recommended for network storage)
       - SAB__misc__wait_for_dfolder=30
       - SAB__misc__wait_ext_drive=30
+      - SAB__misc__pause_on_post_processing=1
 
       # Entrypoint wait-probe tuning (optional; defaults are fine)
       - SAB_WAIT_PROBE=1
