@@ -13,8 +13,10 @@ import os
 import sys
 import time
 import tempfile
+import secrets
 import pathlib
 from typing import Dict, Any, Iterable
+
 
 # -------------------------
 # Helpers
@@ -50,6 +52,12 @@ def _drop_priv(uid: int, gid: int) -> None:
             f"expected {uid}:{gid})\n"
         )
         sys.exit(1)
+
+def _estr(e: OSError) -> str:
+    """Robust OSError formatter even when strerror is None."""
+    err = getattr(e, "strerror", None) or str(e)
+    eno = getattr(e, "errno", None)
+    return f"{err} (errno={eno})" if eno is not None else err
 
 def _write_ini(cfg_file: str, cfg: Dict[str, Dict[str, Any]]) -> None:
     """
@@ -95,7 +103,9 @@ def _probe_writable(dirpath: str) -> None:
     fd = None
     tmp_path = None
     try:
-        fd, tmp_path = tempfile.mkstemp(prefix=".sab_probe_", dir=dirpath)
+        # mkstemp is unique; add a cryptographically random prefix for defense-in-depth.
+        prefix = f".sab_{secrets.token_hex(6)}_"
+        fd, tmp_path = tempfile.mkstemp(prefix=prefix, dir=dirpath)
         os.write(fd, b"x")
         os.fsync(fd)
     finally:
@@ -123,26 +133,20 @@ def _wait_for_paths(paths: Iterable[pathlib.Path],
     for p in paths:
         start = time.monotonic()
         interval = base_interval
-        last_err = None
         while True:
             try:
                 _probe_writable(str(p))
-                # Ready
                 print(f"READY: storage path usable → {p}", flush=True)
                 break
             except OSError as e:
-                last_err = e
                 elapsed = time.monotonic() - start
                 if elapsed >= timeout:
-                    sys.stderr.write(
-                        f"ERROR: storage not ready after {elapsed:.1f}s: {p} → "
-                        f"{getattr(e, 'strerror', str(e))} (errno={getattr(e, 'errno', 'N/A')})\n"
-                    )
+                    sys.stderr.write(f"ERROR: storage not ready after {elapsed:.1f}s: {p} → {_estr(e)}\n")
                     sys.exit(1)
-                # Log first failure and then at increasing intervals
-                print(f"WAIT: {p} not ready yet ({getattr(e, 'strerror', str(e))}); retrying in {interval:.1f}s", flush=True)
+                print(f"WAIT: {p} not ready yet ({_estr(e)}); retrying in {interval:.1f}s", flush=True)
                 time.sleep(interval)
                 interval = min(max_interval, interval * backoff)
+
 
 # -------------------------
 # Core
@@ -250,3 +254,4 @@ os.execv(
     "/venv/bin/python",
     ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"{HOST}:{PORT}"],
 )
+```0
