@@ -39,8 +39,8 @@ jobs:
           node-version: ${{ steps.node-version.outputs.node-version }}
           cache: 'npm'
           cache-dependency-path: |
-            package-lock.json
-            website/package-lock.json
+            package.json
+            website/package.json
 
       - name: Install root dependencies
         run: npm ci
