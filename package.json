@@ -1,10 +1,15 @@
 {
   "type": "module",
+  "scripts": {
+    "build": "cd website && npm run build",
+    "install:all": "npm install && cd website && npm install"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1"
   },
   "engines": {
-    "node": ">=20.18.1"
+    "node": ">=20.18.1",
+    "npm": ">=10.0.0"
   }
 }
