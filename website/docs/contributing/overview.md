@@ -14,7 +14,34 @@ To ensure your changes are valid, you'll need a few tools.
 
 - **OpenTofu:** For validating any changes in the `/tofu` directory.
 - **Kustomize:** For building and validating Kubernetes manifests.
-- **Node.js/npm:** For type checking and running the documentation website.
+- **Node.js/npm:** For type checking and running the documentation website. **Requires Node.js >=20.18.1 and npm >=10.0.0**.
+
+### Node.js Version Management
+
+This project requires Node.js >=20.18.1. If you're using a different version, you can:
+
+1. **Use nvm (Node Version Manager):**
+   ```shell
+   # Install the required version (reads from .nvmrc)
+   nvm install
+   nvm use
+   ```
+
+2. **Check your current version:**
+   ```shell
+   node --version  # Should show v20.18.1 or higher
+   npm --version   # Should show v10.0.0 or higher
+   ```
+
+3. **Install all dependencies:**
+   ```shell
+   # From the root of the repository
+   npm run install:all
+   ```
+
+### Common Build Issues
+
+If you encounter "File is not defined" errors with the search plugin or other module loading issues, this usually indicates you're using an incompatible Node.js version. Ensure you're using Node.js >=20.18.1.
 
 ### Checking Your Work
 
@@ -37,7 +64,8 @@ Before opening a pull request, please run these checks on any files you've modif
   ```shell
   cd website
   npm install
-  npm run typecheck
+  npm run build      # Test the full build process
+  npm run typecheck  # Check TypeScript types
   ```
 
 ## The Pull Request Process
