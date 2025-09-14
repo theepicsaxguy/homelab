@@ -12,7 +12,6 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
      && curl -fsSL "https://www.rarlab.com/rar/unrarsrc-${UNRAR_VER}.tar.gz" -o /tmp/unrarsrc.tar.gz \
      && tar -xzf /tmp/unrarsrc.tar.gz -C /tmp \
      && make -C /tmp/unrar -f makefile -j"$(nproc)" \
-     # create target dir and install atomically
      && install -Dm755 /tmp/unrar/unrar /out/usr/bin/unrar
 
 ###############################################################################
@@ -21,7 +20,6 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 FROM alpine:3.22 AS sab-build
 ARG IMAGE_VERSION=4.5.3
 
-# Toolchain for wheels (sabctools) + Python
 RUN apk add --no-cache \
      git ca-certificates tzdata \
      python3 py3-pip py3-virtualenv \
@@ -29,11 +27,9 @@ RUN apk add --no-cache \
 
 WORKDIR /src
 RUN git clone --depth 1 --branch "${IMAGE_VERSION}" https://github.com/sabnzbd/sabnzbd.git .
-# Build isolated venv and install runtime deps from source tree
 RUN python3 -m venv /venv \
      && /venv/bin/pip install --upgrade pip setuptools wheel \
      && /venv/bin/pip install --no-cache-dir -r /src/requirements.txt \
-     # ensure sabctools is present per upstream packaging guidance
      && /venv/bin/pip install --no-cache-dir sabctools \
      && /venv/bin/pip check
 
@@ -42,20 +38,16 @@ RUN python3 -m venv /venv \
 ###############################################################################
 FROM alpine:3.22
 
-# Runtime only; add tini for PID1 & su-exec for privilege drop
 RUN apk add --no-cache \
      ca-certificates tzdata tini \
      python3 py3-pip \
      libstdc++ p7zip par2cmdline ffmpeg su-exec
 
-# unrar from our build
 COPY --from=unrar-build /out/usr/bin/unrar /usr/bin/unrar
-
-# SABnzbd source + venv
 COPY --from=sab-build /venv /venv
 COPY --from=sab-build /src /app
 
-# Declarative env (all are overridable at runtime)
+# Declarative env (overridable at runtime)
 ENV PATH="/venv/bin:${PATH}" \
      PYTHONUNBUFFERED=1 \
      PYTHONDONTWRITEBYTECODE=1 \
@@ -67,7 +59,14 @@ ENV PATH="/venv/bin:${PATH}" \
      SAB_PORT=8080 \
      SAB_OVERWRITE_CONFIG=true \
      PUID=1000 \
-     PGID=1000
+     PGID=1000 \
+     # Storage wait-probe defaults (apply to all FS, cheap on local; NFS-safe)
+     SAB_WAIT_PROBE=1 \
+     SAB_WAIT_TIMEOUT=60 \
+     SAB_WAIT_INTERVAL=1 \
+     SAB_WAIT_BACKOFF=1.5 \
+     SAB_WAIT_MAX_INTERVAL=5 \
+     SAB_WAIT_DIRS="download_dir,complete_dir,nzb_backup_dir"
 
 WORKDIR /app
 COPY entrypoint.py /entrypoint.py
