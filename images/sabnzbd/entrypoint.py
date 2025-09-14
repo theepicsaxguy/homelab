@@ -135,11 +135,12 @@ def _wait_for_paths(paths: Iterable[pathlib.Path],
                 elapsed = time.monotonic() - start
                 if elapsed >= timeout:
                     sys.stderr.write(
-                        f"ERROR: storage not ready after {elapsed:.1f}s: {p} → {e.strerror} (errno={e.errno})\n"
+                        f"ERROR: storage not ready after {elapsed:.1f}s: {p} → "
+                        f"{getattr(e, 'strerror', str(e))} (errno={getattr(e, 'errno', 'N/A')})\n"
                     )
                     sys.exit(1)
                 # Log first failure and then at increasing intervals
-                print(f"WAIT: {p} not ready yet ({e.strerror}); retrying in {interval:.1f}s", flush=True)
+                print(f"WAIT: {p} not ready yet ({getattr(e, 'strerror', str(e))}); retrying in {interval:.1f}s", flush=True)
                 time.sleep(interval)
                 interval = min(max_interval, interval * backoff)
 
