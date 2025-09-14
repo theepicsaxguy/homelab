@@ -64,14 +64,12 @@ spec:
               value: "/downloads/incomplete"
             - name: SAB_COMPLETE_DIR
               value: "/app/data/complete"
-            - name: SAB__folders__nzb_backup_dir
-              value: "/downloads/nzb-backup"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
             - name: config
               mountPath: /config
-            # Align with Sonarr/Radarr/Bazarr: they already mount media-share at /app/data
+            # Align with Sonarr/Radarr/Bazarr: they mount media at /app/data
             - name: media-share
               mountPath: /app/data
             - name: incomplete-downloads
@@ -99,9 +97,11 @@ spec:
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
+        # Shared library (NFS PV) used by all apps at /app/data
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
+        # Fast node-local scratch for I/O-heavy incomplete files
         - name: incomplete-downloads
           emptyDir: {}
         - name: tmp
