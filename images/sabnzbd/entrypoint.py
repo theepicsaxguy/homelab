@@ -1,136 +1,179 @@
-"""SABnzbd entrypoint enforcing declarative config."""
+#!/venv/bin/python
+# -*- coding: utf-8 -*-
+"""
+SABnzbd entrypoint – fully declarative:
+- Build sabnzbd.ini from environment on each start.
+- Handle sections with mixed flat keys and nested [[subsections]].
+- Enforce folder path safety & writability before launch.
+- Fail hard on privilege drop failure.
+"""
 
-import os, sys, re, pathlib, stat
+import os
+import sys
+import pathlib
+from typing import Dict, Any
+
+# -------------------------
+# Helpers
+# -------------------------
+
+def _clean(v: str) -> str:
+    v = v.strip()
+    if (len(v) >= 2) and ((v[0] == v[-1] == '"') or (v[0] == v[-1] == "'")):
+        return v[1:-1]
+    return v
+
+def _abs_path(p: str) -> pathlib.Path:
+    q = pathlib.Path(p).resolve(strict=False)
+    if not q.is_absolute():
+        raise ValueError(f"path must be absolute: {p!r}")
+    return q
+
+def _mk_ok(path: pathlib.Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
+
+def _ensure_writable(paths) -> None:
+    for p in paths:
+        if not os.access(str(p), os.W_OK):
+            sys.stderr.write(f"ERROR: not writable by UID {os.getuid()} → {p}\n")
+            sys.exit(1)
+
+def _drop_priv(uid: int, gid: int) -> None:
+    # Set GID first, then UID. Verify. Fail hard if not effective.
+    try:
+        os.setgid(gid)
+        os.setuid(uid)
+        os.umask(0o022)
+    except OSError as e:
+        sys.stderr.write(f"ERROR: failed to drop privileges to {uid}:{gid} → {e}\n")
+        sys.exit(1)
+    if os.getuid() != uid or os.getgid() != gid:
+        sys.stderr.write(
+            f"ERROR: privilege drop verification failed (uid={os.getuid()}, gid={os.getgid()}; "
+            f"expected {uid}:{gid})\n"
+        )
+        sys.exit(1)
+
+def _write_ini(cfg_file: str, cfg: Dict[str, Dict[str, Any]]) -> None:
+    """
+    Write INI supporting sections that contain BOTH flat keys and nested [[subsections]].
+    - Flat keys are written first.
+    - Then each nested dict is emitted as [[subsection]].
+    - Deterministic ordering by key for reproducibility.
+    """
+    with open(cfg_file, "w", encoding="utf-8") as f:
+        f.write("__encoding__ = utf-8\n")
+        f.write("__version__ = 1\n\n")
+
+        for section in sorted(cfg.keys()):
+            values = cfg[section]
+            f.write(f"[{section}]\n")
+
+            # Separate flat keys vs nested dicts
+            flat_items = {k: v for k, v in values.items() if not isinstance(v, dict)}
+            nested_items = {k: v for k, v in values.items() if isinstance(v, dict)}
+
+            # Flat first
+            for k in sorted(flat_items.keys()):
+                f.write(f"{k} = {flat_items[k]}\n")
+
+            if flat_items and nested_items:
+                f.write("\n")
+
+            # Then nested [[subsections]]
+            for sub in sorted(nested_items.keys()):
+                subvals = nested_items[sub]
+                f.write(f"[[{sub}]]\n")
+                for k in sorted(subvals.keys()):
+                    f.write(f"{k} = {subvals[k]}\n")
+                f.write("\n")
+            if not nested_items:
+                f.write("\n")
+
+# -------------------------
+# Core
+# -------------------------
 
 CFG_DIR = os.getenv("SAB_CONFIG_DIR", "/config")
 CFG_FILE = os.path.join(CFG_DIR, "sabnzbd.ini")
+
 PUID = int(os.getenv("PUID", "1000"))
 PGID = int(os.getenv("PGID", "1000"))
 
-ALLOWED_ROOTS = [pathlib.Path("/downloads"), pathlib.Path("/config"), pathlib.Path("/tmp")]
+HOST = _clean(os.getenv("SAB_HOST", "0.0.0.0"))
+PORT = _clean(str(os.getenv("SAB_PORT", "8080")))
 
-def clean_value(val: str) -> str:
-    val = val.strip()
-    if (val.startswith('"') and val.endswith('"')) or (val.startswith("'") and val.endswith("'")):
-        val = val[1:-1]
-    return val
+# Derive folder defaults (caller can override via SAB__folders__*)
+ROOT = _clean(os.getenv("SAB_DOWNLOAD_DIR", "/downloads"))
+INCOMPLETE = _clean(os.getenv("SAB_INCOMPLETE_DIR", f"{ROOT.rstrip('/')}/incomplete"))
+COMPLETE   = _clean(os.getenv("SAB_COMPLETE_DIR",   f"{ROOT.rstrip('/')}/complete"))
+NZB_BACKUP = f"{ROOT.rstrip('/')}/nzb-backup"
 
-def resolve_path(val: str) -> str:
-    path = pathlib.Path(val).resolve(strict=False)
-    if not path.is_absolute():
-        raise ValueError(f"Path must be absolute: {val}")
-    if not any(path == root or path.is_relative_to(root) for root in ALLOWED_ROOTS):
-        raise PermissionError(f"Path {path} outside allowed roots")
-    path.mkdir(parents=True, exist_ok=True)
-    return str(path)
+# Build config map
+config: Dict[str, Dict[str, Any]] = {
+    "misc": {
+        "host": HOST,
+        "port": PORT,
+    },
+    "folders": {
+        "download_dir": INCOMPLETE,
+        "complete_dir": COMPLETE,
+        "nzb_backup_dir": NZB_BACKUP,
+    },
+}
 
-# Collect env overrides
-overrides = {}
-root = os.getenv("SAB_DOWNLOAD_DIR")
-inc  = os.getenv("SAB_INCOMPLETE_DIR")
-comp = os.getenv("SAB_COMPLETE_DIR")
-if inc or root:
-    overrides[("", "download_dir")] = clean_value(inc or f"{root.rstrip('/')}/incomplete")
-if comp or root:
-    overrides[("", "complete_dir")] = clean_value(comp or f"{root.rstrip('/')}/complete")
-if root:
-    overrides[("", "nzb_backup_dir")] = clean_value(f"{root.rstrip('/')}/nzb-backup")
-
+# Parse SAB__section__option and SAB__section__subsection__option
 for k, v in os.environ.items():
     if not k.startswith("SAB__"):
         continue
-    parts = k.split("__")
+    parts = k.split("__", 3)
+    val = _clean(v)
     if len(parts) == 3:
         _, section, option = parts
-        overrides[(section.lower(), option.lower())] = clean_value(v)
+        section = section.lower()
+        option = option.lower()
+        config.setdefault(section, {})
+        config[section][option] = val
     elif len(parts) == 4:
         _, section, subsection, option = parts
-        overrides[(section.lower(), f"{subsection.lower()}.{option.lower()}")] = clean_value(v)
+        section = section.lower()
+        subsection = subsection.lower()
+        option = option.lower()
+        section_dict = config.setdefault(section, {})
+        sub_dict = section_dict.get(subsection)
+        if sub_dict is None or not isinstance(sub_dict, dict):
+            sub_dict = {}
+            section_dict[subsection] = sub_dict
+        sub_dict[option] = val
 
-# Prepare folder paths
-for (section, option), val in list(overrides.items()):
-    if (section == "folders" or section == "") and option in {"download_dir", "complete_dir", "nzb_backup_dir"}:
-        overrides[(section, option)] = resolve_path(val)
+# Prepare folders: resolve, create, validate
+folder_paths = []
+for key in ("download_dir", "complete_dir", "nzb_backup_dir", "admin_dir", "log_dir", "cache_dir", "dirscan_dir"):
+    val = config.get("folders", {}).get(key)
+    if not val:
+        continue
+    p = _abs_path(val)
+    _mk_ok(p)
+    folder_paths.append(p)
 
-# Load existing ini text
-lines = []
-if os.path.exists(CFG_FILE):
-    with open(CFG_FILE, "r", encoding="utf-8") as f:
-        lines = f.readlines()
+# Ensure config dir exists too
+pathlib.Path(CFG_DIR).mkdir(parents=True, exist_ok=True)
 
-def patch_root(lines, key, value):
-    out, replaced, in_root = [], False, True
-    for line in lines:
-        if in_root and re.match(rf"^{re.escape(key)}\s*=", line, re.I):
-            if not replaced:
-                out.append(f"{key} = {value}\n")
-                replaced = True
-            # skip existing
-            continue
-        if line.strip().startswith("["):
-            in_root = False
-        out.append(line)
-    if not replaced:
-        insert_idx = 0
-        for idx, line in enumerate(out):
-            if line.strip().startswith("["):
-                insert_idx = idx
-                break
-        out.insert(insert_idx, f"{key} = {value}\n")
-    return out
+# Write INI deterministically
+_write_ini(CFG_FILE, config)
 
-def patch_section(lines, section, key, value):
-    sec_pat   = re.compile(rf"^\[{re.escape(section)}\]\s*$", re.I)
-    key_pat   = re.compile(rf"^{re.escape(key)}\s*=", re.I)
-    out, in_sec, replaced = [], False, False
-    for line in lines:
-        if sec_pat.match(line.strip()):
-            if in_sec and not replaced:
-                out.append(f"{key} = {value}\n")
-                replaced = True
-            in_sec = True
-            out.append(line)
-            continue
-        if in_sec and line.strip().startswith("[") and line.strip().endswith("]"):
-            if not replaced:
-                out.append(f"{key} = {value}\n")
-                replaced = True
-            in_sec = False
-        if in_sec and key_pat.match(line.strip()):
-            if not replaced:
-                out.append(f"{key} = {value}\n")
-                replaced = True
-            continue
-        out.append(line)
-    if not replaced:
-        out.append(f"\n[{section}]\n{key} = {value}\n")
-    return out
-
-# Patch ini lines
-for (section, key), value in overrides.items():
-    if section == "" :  # root-level keys
-        lines = patch_root(lines, key, value)
-        lines = patch_section(lines, "folders", key, value)
-    else:
-        lines = patch_section(lines, section, key, value)
-
-# Write ini
-with open(CFG_FILE, "w", encoding="utf-8") as f:
-    f.writelines(lines)
-
-# Drop privileges
+# Drop privileges if root; fail hard on error
 if os.getuid() == 0:
-    os.setgid(PGID)
-    os.setuid(PUID)
-    os.umask(0o022)
+    _drop_priv(PUID, PGID)
 
-# Verify declared folders are writable after dropping privileges
-for (section, key), value in overrides.items():
-    if (section == "folders" or section == "") and key in {"download_dir", "complete_dir", "nzb_backup_dir"}:
-        if not os.access(value, os.W_OK):
-            sys.stderr.write(f"ERROR: SABnzbd cannot write to {value}\n")
-            sys.exit(1)
+# After dropping privileges, verify writable folders
+_ensure_writable(folder_paths)
 
-# Set HOME so SAB uses /config
+# Make SAB defaults land under /config for anything we didn’t set
 os.environ["HOME"] = CFG_DIR
-os.execv("/venv/bin/python", ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"0.0.0.0:{os.getenv('SAB_PORT','8080')}"])
+
+# Exec SAB
+os.execv(
+    "/venv/bin/python",
+    ["/venv/bin/python", "/app/SABnzbd.py", "-f", CFG_FILE, "-s", f"{HOST}:{PORT}"],
+)
