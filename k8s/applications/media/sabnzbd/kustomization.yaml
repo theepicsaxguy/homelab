@@ -5,6 +5,7 @@ namespace: media
 resources:
   - http-route.yaml
   - externalsecret.yaml
+  - incomplete-pvc.yaml
   - statefulset.yaml
   - svc.yaml
 

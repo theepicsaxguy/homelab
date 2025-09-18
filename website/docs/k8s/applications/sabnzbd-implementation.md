@@ -6,15 +6,15 @@ SABnzbd runs as a StatefulSet and keeps its own `sabnzbd.ini`. Environment varia
 
 ## Image
 
-The image builds SABnzbd from the official release tarball in a Python 3.12 virtual environment. It runs on a distroless base as UID 2501. Dependencies from `requirements.txt`, including CherryPy, are installed during the build. A default `sabnzbd.ini` is generated during the build and copied to `/config` only when that directory is empty.
+The image builds SABnzbd from the official release tarball in a Python virtual environment. It runs on a minimal base image as user 2501. Dependencies from `requirements.txt`, including `CherryPy`, install during the build. The build copies a default `sabnzbd.ini` into `/config` only when that directory is empty.
 
 ## Configuration
 
-`sabnzbd-env-config` sets non‑secret defaults. `sabnzbd-secrets` pulls API keys and usenet credentials from Bitwarden. Update either and redeploy; no manual edits are needed.
+`sabnzbd-env-config` ships baseline defaults that avoid secrets. `sabnzbd-secrets` pulls API keys and Usenet credentials from Bitwarden. Update either and redeploy to apply changes without manual edits.
 
 ## Storage
 
-`/config` uses a 5 Gi PVC. `/downloads` is an `emptyDir` that provides a writable parent. `/downloads/incomplete` is an `emptyDir` for temporary files. Completed files write to the `media-share` NFS PVC under `/downloads/complete`.
+`/config` lives on a 6 Gi Longhorn PersistentVolumeClaim (PVC). `/downloads/incomplete` mounts the `sabnzbd-incomplete` claim, which provisions 256 Gi from the default storage class so partial files survive restarts. `/downloads/nzb-backup` keeps 1 Gi on Longhorn for `.nzb` archives. Completed jobs land on the shared `media-share` network file system (NFS) claim at `/app/data/complete`. `/tmp` stays ephemeral for scratch space inside the container.
 
 ## Network
 
@@ -22,7 +22,7 @@ The image builds SABnzbd from the official release tarball in a Python 3.12 vir
 
 ## Upgrades
 
-Bump the `SAB_VERSION` ARG or push a `sabnzbd-x.y.z` tag. The image build workflow publishes new tags, and Flux or ArgoCD rolls them out. Existing PVCs keep their configs, and env vars still take precedence.
+Bump the `SAB_VERSION` build argument or push a `sabnzbd-x.y.z` tag. The image build workflow publishes new tags, and Flux or ArgoCD roll them out. Existing PVCs keep their configs, and environment variables still take precedence.
 
 ## Debug
 
