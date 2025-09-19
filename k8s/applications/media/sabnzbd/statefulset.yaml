@@ -77,10 +77,10 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: media-share
-              mountPath: /app/data
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
+            - name: media-share
+              mountPath: /app/data
             - name: nzb-backup
               mountPath: /downloads/nzb-backup
             - name: tmp
