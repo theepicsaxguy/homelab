@@ -26,6 +26,14 @@ spec:
         resources:
           requests:
             storage: 1Gi
+    - metadata:
+        name: incomplete-downloads
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 15Gi
   template:
     metadata:
       labels:
@@ -69,11 +77,10 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            # Align with Sonarr/Radarr/Bazarr: they mount media at /app/data
-            - name: media-share
-              mountPath: /app/data
             - name: incomplete-downloads
               mountPath: /downloads/incomplete
+            - name: media-share
+              mountPath: /app/data
             - name: nzb-backup
               mountPath: /downloads/nzb-backup
             - name: tmp
@@ -97,12 +104,8 @@ spec:
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
-        # Shared library (NFS PV) used by all apps at /app/data
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
-        # Fast node-local scratch for I/O-heavy incomplete files
-        - name: incomplete-downloads
-          emptyDir: {}
         - name: tmp
           emptyDir: {}
