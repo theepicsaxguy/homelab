@@ -26,6 +26,14 @@ spec:
         resources:
           requests:
             storage: 1Gi
+    - metadata:
+        name: incomplete-downloads
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 15Gi
   template:
     metadata:
       labels:
@@ -99,8 +107,5 @@ spec:
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
-        - name: incomplete-downloads
-          persistentVolumeClaim:
-            claimName: sabnzbd-incomplete
         - name: tmp
           emptyDir: {}
