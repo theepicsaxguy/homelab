@@ -20,15 +20,6 @@ This document covers the utility tools and applications deployed in my cluster f
   - Network tools
   - Development utilities
 
-### Whoami Service
-
-- **Purpose**: Testing and debugging service
-- **Features**:
-  - HTTP request inspection
-  - Headers display
-  - Connection info
-  - Load balancing verification
-
 ### Unrar Service
 
 - **Purpose**: Archive extraction utility
@@ -44,7 +35,6 @@ This document covers the utility tools and applications deployed in my cluster f
 | Application | CPU Request | CPU Limit | Memory Request | Memory Limit |
 | ----------- | ----------- | --------- | -------------- | ------------ |
 | IT Tools    | 75m         | 250m      | 100Mi          | 256Mi        |
-| Whoami      | 25m         | 100m      | 24Mi           | 48Mi         |
 | Unrar       | 50m         | 200m      | 64Mi           | 128Mi        |
 
 ### Network Access
@@ -61,15 +51,6 @@ Gateway Configuration:
         - name: authentik-proxy
           namespace: auth
           port: 9000 # Authentik SSO
-
-  - Whoami:
-      host: whoami.your.domain.tld
-      service: whoami
-      port: 80
-      backendRefs:
-        - name: authentik-proxy
-          namespace: auth
-          port: 9000
 
   - Unrar:
       host: internal only
