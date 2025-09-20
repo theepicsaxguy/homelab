@@ -12,7 +12,7 @@ Applications live in `/k8s/applications/` organized by function:
 - `automation/` - Home automation (Frigate, MQTT)
 - `media/` - Media servers and tools (Jellyfin, *arr stack)
 - `network/` - Network apps (AdGuard, Omada)
-- `tools/` - Utility apps (IT-Tools, Whoami, Unrar)
+- `tools/` - Utility apps (IT-Tools, Unrar)
 - `web/` - Web applications (BabyBuddy, Pedrobot)
 - `external/` - Services outside Kubernetes but referenced internally
 
