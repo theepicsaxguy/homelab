@@ -6,7 +6,6 @@ metadata:
   labels:
     app.kubernetes.io/version: "1.12.1"
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: nlb
 spec:
   type: ClusterIP
   sessionAffinity: None
