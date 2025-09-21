@@ -8,8 +8,10 @@ restricted policy set before any other resource syncs.
 ## Configuration
 
 The ConfigMap sets `NODE_ENV`, health check path, port, and log level so the container starts in production mode. The Deployment
-pulls `portkeyai/gateway:1.12.1`, runs it as UID and GID `1000`, and keeps the file system read-only except for temporary
-storage mounted at `/tmp` and `/var/tmp`.
+pulls `portkeyai/gateway:1.12.1`, runs it as UID and GID `1000`, and keeps the file system read-only except for writable
+volumes. npm and Node.js operations are redirected to writable locations via environment variables (`NPM_CONFIG_CACHE`,
+`XDG_CONFIG_HOME`, etc.) and additional volume mounts for `/home/node/.npm`, `/home/node/.config`, `/app/cache`, `/var/log`,
+and `/var/run`.
 
 ## Probes and Resources
 
