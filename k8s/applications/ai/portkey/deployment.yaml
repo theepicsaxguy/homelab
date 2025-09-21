@@ -118,7 +118,7 @@ spec:
               ephemeral-storage: 500Mi
           startupProbe:
             httpGet:
-              path: /v1/health
+              path: /public/
               port: 8787
               scheme: HTTP
             initialDelaySeconds: 5
@@ -128,7 +128,7 @@ spec:
             successThreshold: 1
           readinessProbe:
             httpGet:
-              path: /v1/health
+              path: /public/
               port: 8787
               scheme: HTTP
             initialDelaySeconds: 5
@@ -138,7 +138,7 @@ spec:
             successThreshold: 1
           livenessProbe:
             httpGet:
-              path: /v1/health
+              path: /public/
               port: 8787
               scheme: HTTP
             initialDelaySeconds: 30
