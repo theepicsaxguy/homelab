@@ -85,6 +85,20 @@ spec:
               value: "true"
             - name: CACHE_TYPE
               value: "memory"
+            # npm configuration for read-only filesystem
+            - name: NPM_CONFIG_CACHE
+              value: "/tmp/.npm"
+            - name: NPM_CONFIG_LOGS_DIR
+              value: "/tmp"
+            - name: NPM_CONFIG_UPDATE_NOTIFIER
+              value: "false"
+            - name: NPM_CONFIG_FUND
+              value: "false"
+            # Node.js configuration
+            - name: XDG_CONFIG_HOME
+              value: "/tmp/.config"
+            - name: XDG_CACHE_HOME
+              value: "/tmp/.cache"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -140,6 +154,17 @@ spec:
             - name: model-configs
               mountPath: /app/configs
               readOnly: true
+            # Additional writable mounts for npm and Node.js
+            - name: npm-cache
+              mountPath: /home/node/.npm
+            - name: node-config
+              mountPath: /home/node/.config
+            - name: app-cache
+              mountPath: /app/cache
+            - name: var-log
+              mountPath: /var/log
+            - name: var-run
+              mountPath: /var/run
       volumes:
         - name: tmp
           emptyDir:
@@ -150,6 +175,22 @@ spec:
         - name: model-configs
           configMap:
             name: portkey-model-configs
+        # Additional writable volumes for npm and Node.js
+        - name: npm-cache
+          emptyDir:
+            sizeLimit: 100Mi
+        - name: node-config
+          emptyDir:
+            sizeLimit: 50Mi
+        - name: app-cache
+          emptyDir:
+            sizeLimit: 200Mi
+        - name: var-log
+          emptyDir:
+            sizeLimit: 100Mi
+        - name: var-run
+          emptyDir:
+            sizeLimit: 10Mi
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       restartPolicy: Always
