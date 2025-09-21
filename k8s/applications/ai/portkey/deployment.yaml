@@ -128,7 +128,7 @@ spec:
               path: /v1/health
               port: 8787
               scheme: HTTP
-            initialDelaySeconds: 15
+            initialDelaySeconds: 65
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 5
