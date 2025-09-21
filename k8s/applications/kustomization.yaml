@@ -10,7 +10,6 @@ resources:
 - external
 - web
 - network
-- portkey
 
 
 generatorOptions:
