@@ -6,7 +6,6 @@ metadata:
   labels:
     app.kubernetes.io/version: "1.12.1"
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   parentRefs:
     - name: external
