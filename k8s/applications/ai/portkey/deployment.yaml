@@ -85,7 +85,6 @@ spec:
               value: "true"
             - name: CACHE_TYPE
               value: "memory"
-            # npm configuration for read-only filesystem
             - name: NPM_CONFIG_CACHE
               value: "/tmp/.npm"
             - name: NPM_CONFIG_LOGS_DIR
@@ -94,7 +93,6 @@ spec:
               value: "false"
             - name: NPM_CONFIG_FUND
               value: "false"
-            # Node.js configuration
             - name: XDG_CONFIG_HOME
               value: "/tmp/.config"
             - name: XDG_CACHE_HOME
@@ -118,34 +116,31 @@ spec:
               ephemeral-storage: 500Mi
           startupProbe:
             httpGet:
-              path: /public/
+              path: /v1/health
               port: 8787
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 10
             periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 10
-            successThreshold: 1
+            timeoutSeconds: 5
+            failureThreshold: 24
           readinessProbe:
             httpGet:
-              path: /public/
+              path: /v1/health
               port: 8787
               scheme: HTTP
-            initialDelaySeconds: 5
+            initialDelaySeconds: 65
             periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 3
-            successThreshold: 1
+            timeoutSeconds: 5
+            failureThreshold: 5
           livenessProbe:
             httpGet:
-              path: /public/
+              path: /v1/health
               port: 8787
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-            successThreshold: 1
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -154,7 +149,6 @@ spec:
             - name: model-configs
               mountPath: /app/configs
               readOnly: true
-            # Additional writable mounts for npm and Node.js
             - name: npm-cache
               mountPath: /home/node/.npm
             - name: node-config
@@ -175,7 +169,6 @@ spec:
         - name: model-configs
           configMap:
             name: portkey-model-configs
-        # Additional writable volumes for npm and Node.js
         - name: npm-cache
           emptyDir:
             sizeLimit: 100Mi
