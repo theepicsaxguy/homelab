@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portkey-gateway
+  namespace: portkey
+  labels:
+    app.kubernetes.io/version: "1.12.1"
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: portkey-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/version: "1.12.1"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8787"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: gateway
+          image: portkeyai/gateway:1.12.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8787
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: portkey-gateway-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+              ephemeral-storage: 100Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+              ephemeral-storage: 500Mi
+          startupProbe:
+            httpGet:
+              path: /v1/health
+              port: 8787
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 10
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8787
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 8787
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: var-tmp
+              mountPath: /var/tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 100Mi
+        - name: var-tmp
+          emptyDir:
+            sizeLimit: 100Mi
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
