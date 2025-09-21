@@ -27,3 +27,16 @@ namespaces and restricts egress to DNS plus HTTP and HTTPS.
 
 Prometheus discovers the pods through a ServiceMonitor that scrapes `/metrics` over HTTP every thirty seconds. The Deployment
 labels and annotations enable the scrape and keep version tracking in sync with the `1.12.1` release.
+
+## Model Comparison
+
+Portkey mounts JSON strategy files at `/app/configs` so you can call the gateway with an `x-portkey-config` header. Each name
+maps to a prebuilt routing policy:
+
+- `azure-models` spreads traffic across eight Azure OpenAI variants.
+- `claude-models` rotates through the three Claude tiers.
+- `openai-models` balances across three direct OpenAI models.
+- `all-models` mixes Azure, Anthropic, OpenAI, and Cerebras targets with semantic caching.
+- `cost-optimized` inspects token counts to choose between budget and premium Azure plans.
+
+API credentials live in Bitwarden and sync into the cluster with External Secrets so keys stay out of Git.

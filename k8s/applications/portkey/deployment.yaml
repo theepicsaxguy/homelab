@@ -45,6 +45,46 @@ spec:
           envFrom:
             - configMapRef:
                 name: portkey-gateway-config
+          env:
+            - name: AZURE_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: AZURE_OPENAI_API_KEY
+            - name: AZURE_OPENAI_API_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: AZURE_OPENAI_API_BASE
+            - name: AZURE_OPENAI_API_VERSION
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: AZURE_OPENAI_API_VERSION
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: ANTHROPIC_API_KEY
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: OPENAI_API_KEY
+            - name: HUGGINGFACE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: HUGGINGFACE_API_KEY
+            - name: CEREBRAS_API_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: portkey-provider-secrets
+                  key: CEREBRAS_API_BASE
+            - name: ENABLE_CONFIG_ENDPOINT
+              value: "true"
+            - name: CACHE_TYPE
+              value: "memory"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -97,6 +137,9 @@ spec:
               mountPath: /tmp
             - name: var-tmp
               mountPath: /var/tmp
+            - name: model-configs
+              mountPath: /app/configs
+              readOnly: true
       volumes:
         - name: tmp
           emptyDir:
@@ -104,6 +147,9 @@ spec:
         - name: var-tmp
           emptyDir:
             sizeLimit: 100Mi
+        - name: model-configs
+          configMap:
+            name: portkey-model-configs
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
       restartPolicy: Always

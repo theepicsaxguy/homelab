@@ -10,6 +10,8 @@ resources:
 - servicemonitor.yaml
 - networkpolicy.yaml
 - configmap.yaml
+- external-secrets.yaml
+- model-configs.yaml
 
 
 commonAnnotations:

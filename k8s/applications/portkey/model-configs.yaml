@@ -1,0 +1,227 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portkey-model-configs
+  namespace: portkey
+data:
+  # Azure Models Comparison (8 models)
+  azure-models.json: |
+    {
+      "strategy": {
+        "mode": "loadbalance"
+      },
+      "targets": [
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "o4-mini"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "o1"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "o3-pro"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "o3-mini"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "gpt-5"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "o3"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "gpt-4o"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.125,
+          "override_params": {"model": "gpt-4.1"}
+        }
+      ],
+      "cache": {"mode": "simple", "max_age": 300}
+    }
+
+  # Claude Models Comparison (3 models)
+  claude-models.json: |
+    {
+      "strategy": {
+        "mode": "loadbalance"
+      },
+      "targets": [
+        {
+          "provider": "anthropic",
+          "api_key": "$ANTHROPIC_API_KEY",
+          "weight": 0.33,
+          "override_params": {"model": "claude-opus-4-1"}
+        },
+        {
+          "provider": "anthropic",
+          "api_key": "$ANTHROPIC_API_KEY",
+          "weight": 0.33,
+          "override_params": {"model": "claude-3-5-sonnet"}
+        },
+        {
+          "provider": "anthropic",
+          "api_key": "$ANTHROPIC_API_KEY",
+          "weight": 0.34,
+          "override_params": {"model": "claude-sonnet-4"}
+        }
+      ],
+      "cache": {"mode": "simple", "max_age": 300}
+    }
+
+  # OpenAI Direct Models (3 models)
+  openai-models.json: |
+    {
+      "strategy": {
+        "mode": "loadbalance"
+      },
+      "targets": [
+        {
+          "provider": "openai",
+          "api_key": "$OPENAI_API_KEY",
+          "weight": 0.33,
+          "override_params": {"model": "gpt-5"}
+        },
+        {
+          "provider": "openai",
+          "api_key": "$OPENAI_API_KEY",
+          "weight": 0.33,
+          "override_params": {"model": "gpt-5-mini"}
+        },
+        {
+          "provider": "openai",
+          "api_key": "$OPENAI_API_KEY",
+          "weight": 0.34,
+          "override_params": {"model": "o3"}
+        }
+      ],
+      "cache": {"mode": "simple", "max_age": 300}
+    }
+
+  # All Models Cross-Provider Comparison
+  all-models.json: |
+    {
+      "strategy": {
+        "mode": "loadbalance"
+      },
+      "targets": [
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.059,
+          "override_params": {"model": "gpt-5"}
+        },
+        {
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "weight": 0.059,
+          "override_params": {"model": "o3-pro"}
+        },
+        {
+          "provider": "anthropic",
+          "api_key": "$ANTHROPIC_API_KEY",
+          "weight": 0.059,
+          "override_params": {"model": "claude-opus-4-1"}
+        },
+        {
+          "provider": "anthropic",
+          "api_key": "$ANTHROPIC_API_KEY",
+          "weight": 0.059,
+          "override_params": {"model": "claude-sonnet-4"}
+        },
+        {
+          "provider": "openai",
+          "api_key": "$OPENAI_API_KEY",
+          "weight": 0.059,
+          "override_params": {"model": "gpt-5"}
+        },
+        {
+          "provider": "openai-compatible",
+          "api_key": "$HUGGINGFACE_API_KEY",
+          "api_base": "$CEREBRAS_API_BASE",
+          "weight": 0.059,
+          "override_params": {"model": "gpt-oss-120b"}
+        }
+      ],
+      "cache": {"mode": "semantic", "max_age": 600}
+    }
+
+  # Cost-Optimized Routing
+  cost-optimized.json: |
+    {
+      "strategy": {
+        "mode": "conditional",
+        "conditions": [
+          {
+            "query": {"tokens": {"$lt": 1000}},
+            "then": "cheap-models"
+          },
+          {
+            "query": {"tokens": {"$gte": 1000}},
+            "then": "premium-models"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "name": "cheap-models",
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "override_params": {"model": "gpt-5-mini"}
+        },
+        {
+          "name": "premium-models",
+          "provider": "azure-openai",
+          "api_key": "$AZURE_OPENAI_API_KEY",
+          "api_base": "$AZURE_OPENAI_API_BASE",
+          "api_version": "$AZURE_OPENAI_API_VERSION",
+          "override_params": {"model": "gpt-5"}
+        }
+      ],
+      "cache": {"mode": "semantic", "max_age": 600}
+    }
