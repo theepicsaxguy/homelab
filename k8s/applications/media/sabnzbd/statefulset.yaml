@@ -33,7 +33,7 @@ spec:
         storageClassName: longhorn
         resources:
           requests:
-            storage: 15Gi
+            storage: 25Gi
   template:
     metadata:
       labels:
