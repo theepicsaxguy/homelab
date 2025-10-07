@@ -22,7 +22,7 @@ spec:
       storageClassName: "longhorn"
       resources:
         requests:
-          storage: 40Gi
+          storage: 50Gi
   template:
     metadata:
       labels:

@@ -104,7 +104,7 @@ Both pods need enough memory to process photos without crashing. A good starting
 ### Library Storage
 
 Immich stores uploaded files on a Persistent Volume Claim named `library`. The claim
-requests 40Gi from Longhorn:
+requests 50Gi from Longhorn:
 
 ```yaml
 # k8s/applications/media/immich/immich-server/statefulset.yaml
@@ -117,7 +117,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 40Gi
+          storage: 50Gi
 ```
 
 ### Backups
