@@ -14,7 +14,7 @@ The image builds SABnzbd from the official release tarball in a Python virtual e
 
 ## Storage
 
-`/config` lives on a 6 Gi Longhorn PersistentVolumeClaim (PVC). `/downloads/incomplete` mounts the StatefulSet-managed `incomplete-downloads` claim, which provisions 15 Gi on Longhorn so partial files survive restarts without orphaned PVCs. `/downloads/nzb-backup` keeps 1 Gi on Longhorn for `.nzb` archives. Completed jobs land on the shared `media-share` network file system (NFS) claim at `/app/data/complete`. `/tmp` stays ephemeral for scratch space inside the container.
+`/config` lives on a 6 Gi Longhorn PersistentVolumeClaim (PVC). `/downloads/incomplete` mounts the StatefulSet-managed `incomplete-downloads` claim, which provisions 50 Gi on Longhorn so partial files survive restarts without orphaned PVCs. `/downloads/nzb-backup` keeps 1 Gi on Longhorn for `.nzb` archives. Completed jobs land on the shared `media-share` network file system (NFS) claim at `/app/data/complete`. `/tmp` stays ephemeral for scratch space inside the container.
 
 ## Network
 
