@@ -23,10 +23,13 @@ spec:
           type: RuntimeDefault
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            # sizeLimit ensures pod won't consume unbounded ephemeral storage on node
+            sizeLimit: 1Gi
       containers:
         - name: docling
-          image: quay.io/docling-project/docling-serve:latest
+          image: quay.io/docling-project/docling-serve:v1.6.0
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -40,10 +43,12 @@ spec:
           resources:
             requests:
               cpu: '250m'
-              memory: '512Mi'
+              memory: '1Gi'
+              ephemeral-storage: '500Mi'
             limits:
               cpu: '500m'
-              memory: '1Gi'
+              memory: '2Gi'
+              ephemeral-storage: '2Gi'
           env:
             - name: DOCLING_SERVE_ENABLE_UI
               value: 'true'
@@ -51,7 +56,7 @@ spec:
             httpGet:
               path: /
               port: 5001
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
@@ -59,15 +64,16 @@ spec:
             httpGet:
               path: /
               port: 5001
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
             failureThreshold: 3
           startupProbe:
             httpGet:
               path: /
               port: 5001
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 10
+            # docling image is large and may take time to unpack and start; give it more time
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 30
