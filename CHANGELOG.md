@@ -1,5 +1,90 @@
 # Changelog
 
+## 3.9.0 (2025-10-11)
+
+## What's Changed
+* chore(deps): update helm release authentik to v2025.8.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1494
+* chore(deps): bump actions/setup-node from 4 to 5 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/1492
+* chore(deps): update node.js to v22 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1491
+* chore(deps): update helm release argo-cd to v8.3.9 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1496
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1497
+* chore(deps): update all dependencies to v77.7.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1498
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1499
+* chore(deps): update helm release argo-cd to v8.5.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1500
+* chore(deps): update all dependencies to v77.9.1 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1501
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1502
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.30 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1503
+* chore(deps): update cloudflare/cloudflared docker tag to v2025.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1504
+* feat: persist sabnzbd incomplete downloads by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1505
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1506
+* chore(deps): update helm release argo-cd to v8.5.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1507
+* chore(deps): update helm release gpu-operator to v25.3.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1508
+* chore(deps): update all dependencies to v77.10.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1509
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.9.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1510
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1511
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1514
+* chore(deps): update ghcr.io/berriai/litellm docker tag to v1.77.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1515
+* Remove unused whoami service from homelab infrastructure by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1513
+* Add Portkey Gateway deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1516
+* chore(deps): update dependency externalsecret to external-secrets.io/v1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1517
+* feat(k8s): move Portkey from standalone folder to ai folder by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1519
+* [WIP] Fix Portkey Gateway Pod Restart Loop Due to Read-Only Filesystem by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1521
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1522
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1523
+* chore(deps): update terraform proxmox to v0.84.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1524
+* chore(deps): update helm release argo-cd to v8.5.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1525
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1526
+* chore(deps): update helm release external-secrets to v0.20.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1527
+* chore(deps): update all dependencies to v1.143.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1528
+* chore(deps): update helm release argo-cd to v8.5.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1529
+* chore(deps): update helm release argo-cd to v8.5.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1530
+* chore(deps): update all dependencies to v77.11.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1531
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1532
+* chore(deps): update all dependencies to v1.143.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1533
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1534
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1535
+* chore(deps): update helm release longhorn to v1.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1539
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.31 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1540
+* fix(deps): update all dependencies to v3.9.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1541
+* chore(deps): update all dependencies to v77.11.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1542
+* fix(deps): update all dependencies to v3.9.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1543
+* chore(deps): update ghcr.io/prometheus-community/charts/kube-prometheus-stack docker tag to v77.12.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1544
+* chore(deps): update helm release argo-cd to v8.5.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1545
+* chore(deps): update ghcr.io/berriai/litellm docker tag to v1.77.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1546
+* chore(deps): update terraform proxmox to v0.84.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1547
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.32 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1548
+* chore(deps): update portkeyai/gateway docker tag to v1.12.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1549
+* chore(deps): update getmeili/meilisearch docker tag to v1.22.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1550
+* chore(deps): update helm release authentik to v2025.8.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1551
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1553
+* chore(deps): update all dependencies to v1.144.1 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1554
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.6.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1555
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1556
+* chore(deps-dev): bump @commitlint/cli from 19.8.1 to 20.1.0 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/1552
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1536
+* chore(deps): update helm release node-feature-discovery to v0.18.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1557
+* chore(deps): update all dependencies to v77.12.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1558
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1559
+* chore(deps): update all dependencies to v77.13.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1560
+* chore(deps): update ghcr.io/berriai/litellm docker tag to v1.77.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1561
+* chore(deps): update coredns/coredns docker tag to v1.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1562
+* chore(deps): update helm release redis to v23 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1563
+* feat(k8s): increase storage for Immich and SABnzbd by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1565
+* chore(deps): update helm release argo-cd to v8.5.9 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1566
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1567
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1568
+* chore(deps): update python docker tag to v3.14 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1570
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.33 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1569
+* chore(deps): update helm release argo-cd to v8.5.10 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1571
+* chore(deps): update coredns/coredns docker tag to v1.13.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1572
+* chore(deps): update helm release argo-cd to v8.6.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1574
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.10.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1576
+
+## New Contributors
+* @dependabot[bot] made their first contribution in https://github.com/theepicsaxguy/homelab/pull/1492
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.8.0...v3.9.0
+
 ## 3.8.0 (2025-09-15)
 
 ## What's Changed
