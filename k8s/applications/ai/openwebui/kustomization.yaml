@@ -5,5 +5,8 @@ resources:
 - namespace.yaml
 - webui-statefulset.yaml
 - webui-service.yaml
+- docling-deployment.yaml
+- docling-service.yaml
 - http-route.yaml
+- docling-http-route.yaml
 - openwebui-secrets-external.yaml
