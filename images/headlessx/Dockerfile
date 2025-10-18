@@ -68,8 +68,8 @@ COPY --from=website-builder /app/website/out/ ./website/out/
 # Create logs directory
 RUN mkdir -p logs
 
-# Create non-root user for security
-RUN groupadd -r headlessx && useradd -r -g headlessx headlessx
+# Create non-root user for security (using UID/GID 1000 to match Kubernetes deployment)
+RUN groupadd -r -g 1000 headlessx && useradd -r -u 1000 -g headlessx headlessx
 RUN chown -R headlessx:headlessx /app
 
 # Environment variables (override with docker-compose or runtime)
