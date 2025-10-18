@@ -8,7 +8,7 @@ spec:
     - name: external
       namespace: gateway
   hostnames:
-    - llm.YOURHOST.example.com
+    - llm.pc-tips.se
   rules:
     - matches:
         - path:

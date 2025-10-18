@@ -8,7 +8,7 @@ spec:
     - name: external
       namespace: gateway
   hostnames:
-    - bytebot.YOURHOST.example.com
+    - bytebot.pc-tips.se
   rules:
     - matches:
         - path:
