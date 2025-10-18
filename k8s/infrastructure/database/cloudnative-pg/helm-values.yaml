@@ -1,0 +1,10 @@
+replicaCount: 2
+
+monitoring:
+  podMonitorEnabled: true
+  grafanaDashboard:
+    create: true
+
+additionalEnv:
+  - name: ENABLE_INSTANCE_MANAGER_INPLACE_UPDATES
+    value: "true"

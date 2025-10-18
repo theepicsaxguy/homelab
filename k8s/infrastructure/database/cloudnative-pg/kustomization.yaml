@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - rules.yaml
+  - https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/v0.5.0/manifest.yaml
+
+helmCharts:
+  - name: cloudnative-pg
+    valuesFile: helm-values.yaml
+    releaseName: cloudnative-pg
+    namespace: cnpg-system
+    version: 0.26.0
+    includeCRDs: true
+    repo: https://cloudnative-pg.github.io/charts
