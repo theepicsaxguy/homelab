@@ -6,8 +6,9 @@ This service runs the modular HeadlessX browserless API behind the internal gate
 
 ## Build and Image
 
-* Build the container with `docker/Dockerfile` and push it to a registry the cluster can reach, for example `ghcr.io/theepicsaxguy/headlessx:1.2.0`.
-* If the registry requires credentials, create an `imagePullSecret` named `headlessx-registry` in the `headlessx` namespace and add it to the Deployment before syncing.
+* The Dockerfile at `images/headlessx/Dockerfile` builds HeadlessX from source using the upstream repository at `https://github.com/saifyxpro/HeadlessX`.
+* The CI workflow in `.github/workflows/image-build.yaml` automatically builds and pushes the image to `ghcr.io/theepicsaxguy/headlessx:1.2.0` when changes are made to the Dockerfile.
+* The build uses a multi-stage Dockerfile pattern: the first stage clones and builds from source, and the second stage creates a minimal runtime image.
 
 ## Namespace
 
