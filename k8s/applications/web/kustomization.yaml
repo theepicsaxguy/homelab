@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
 - project.yaml
 - babybuddy
-- mastodon
