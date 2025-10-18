@@ -20,7 +20,7 @@ RUN if [ "${IMAGE_VERSION}" = "latest" ]; then REF="main"; else REF="v${IMAGE_VE
 ###############################################################################
 # Stage 2: Build website
 ###############################################################################
-FROM node:20-slim AS website-builder
+FROM node:22-slim AS website-builder
 
 WORKDIR /app/website
 
