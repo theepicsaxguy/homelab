@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headlessx
+  namespace: headlessx
+  labels:
+    app.kubernetes.io/name: headlessx
+    app.kubernetes.io/part-of: headlessx
+    app.kubernetes.io/component: service
+    app.kubernetes.io/version: "1.2.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: headlessx
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: headlessx
+        app.kubernetes.io/version: "1.2.0"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: headlessx
+          image: ghcr.io/theepicsaxguy/headlessx:1.2.0 # renovate: docker=ghcr.io/theepicsaxguy/headlessx
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: es-headlessx-auth-token
+          env:
+            - name: PORT
+              value: "3000"
+            - name: NODE_ENV
+              value: production
+            - name: UV_THREADPOOL_SIZE
+              value: "128"
+            - name: NODE_OPTIONS
+              value: --max-old-space-size=4096
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "4"
+              memory: 4Gi
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: logs
+              mountPath: /app/logs
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: headlessx-logs
+        - name: tmp
+          emptyDir: {}
