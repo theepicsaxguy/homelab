@@ -6,8 +6,13 @@ This service runs the modular HeadlessX browserless API behind the internal gate
 
 ## Build and Image
 
-* Build the container with `docker/Dockerfile` and push it to a registry the cluster can reach, for example `ghcr.io/theepicsaxguy/headlessx:1.2.0`.
-* If the registry requires credentials, create an `imagePullSecret` named `headlessx-registry` in the `headlessx` namespace and add it to the Deployment before syncing.
+* The Dockerfile at `images/headlessx/Dockerfile` builds HeadlessX from source using the upstream repository at `https://github.com/saifyxpro/HeadlessX`.
+* The build uses a three-stage Dockerfile pattern matching the official HeadlessX Dockerfile:
+  1. **Source stage**: Clones the HeadlessX repository at the specified version
+  2. **Website builder stage**: Builds the HeadlessX web interface for production
+  3. **Runtime stage**: Uses the official Playwright base image (`mcr.microsoft.com/playwright:v1.56.0-noble`) with all browser dependencies pre-installed
+* The CI workflow in `.github/workflows/image-build.yaml` automatically builds and pushes the image to `ghcr.io/theepicsaxguy/headlessx:1.2.0` when changes are made to the Dockerfile.
+* The runtime image includes a `HEALTHCHECK` that probes `/api/health` every 30 seconds.
 
 ## Namespace
 
