@@ -9,15 +9,14 @@ This service runs the modular HeadlessX browserless API behind the internal gate
 * Build the container with `docker/Dockerfile` and push it to a registry the cluster can reach, for example `ghcr.io/theepicsaxguy/headlessx:1.2.0`.
 * If the registry requires credentials, create an `imagePullSecret` named `headlessx-registry` in the `headlessx` namespace and add it to the Deployment before syncing.
 
-## Namespace Guardrails
+## Namespace
 
-* Namespace: `headlessx` with the matching `LimitRange` (`headlessx-defaults`) to set default requests (1 CPU / 1Gi) and limits (4 CPU / 4Gi).
-* `ResourceQuota` (`headlessx-quota`) keeps aggregate CPU, memory, and PVC consumption bounded so noisy neighbors do not starve the node pool.
+* Namespace: `headlessx`. No extra quota or limit range is defined here—reuse the cluster defaults.
 
 ## Configuration and Secrets
 
-* Config values (`DOMAIN`, `SUBDOMAIN`, `PORT`, `NODE_ENV`, `UV_THREADPOOL_SIZE`, `NODE_OPTIONS`) sit in `headlessx-env` as a `ConfigMap`.
-* `AUTH_TOKEN` lives in `headlessx-auth`. Populate it out-of-band with the production token before rollout.
+* Runtime knobs (`PORT`, `NODE_ENV`, `UV_THREADPOOL_SIZE`, `NODE_OPTIONS`) are set directly on the Deployment.
+* `AUTH_TOKEN` comes from `es-headlessx-auth-token`, which pulls `app-headlessx-auth-token` out of Bitwarden through External Secrets.
 
 ## Storage Layout
 
@@ -29,7 +28,7 @@ This service runs the modular HeadlessX browserless API behind the internal gate
 * Single replica Deployment with requests set to 1 CPU / 1Gi and limits to 4 CPU / 4Gi.
 * Probes hit `GET /api/health` on port 3000 with a 15s initial delay, 30s period, and 10s timeout.
 * Pod security: `runAsNonRoot`, `runAsUser`/`runAsGroup` 1000, default seccomp, no privilege escalation, and all capabilities dropped.
-* `PodDisruptionBudget` (`minAvailable: 1`) protects the lone replica during node maintenance.
+* `PodDisruptionBudget` allows one pod down (`maxUnavailable: 1`) so voluntary disruptions still proceed.
 
 ## Networking
 

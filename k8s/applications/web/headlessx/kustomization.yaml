@@ -3,10 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - limitrange.yaml
-  - resourcequota.yaml
-  - configmap.yaml
-  - secret.yaml
+  - headlessx-external-secret.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml

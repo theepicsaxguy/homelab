@@ -28,17 +28,20 @@ spec:
           type: RuntimeDefault
       containers:
         - name: headlessx
-          image: ghcr.io/theepicsaxguy/headlessx:1.2.0
+          image: ghcr.io/theepicsaxguy/headlessx:1.2.0 # renovate: docker=ghcr.io/theepicsaxguy/headlessx
           imagePullPolicy: IfNotPresent
           envFrom:
-            - configMapRef:
-                name: headlessx-env
+            - secretRef:
+                name: es-headlessx-auth-token
           env:
-            - name: AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: headlessx-auth
-                  key: AUTH_TOKEN
+            - name: PORT
+              value: "3000"
+            - name: NODE_ENV
+              value: production
+            - name: UV_THREADPOOL_SIZE
+              value: "128"
+            - name: NODE_OPTIONS
+              value: --max-old-space-size=4096
           ports:
             - containerPort: 3000
               name: http

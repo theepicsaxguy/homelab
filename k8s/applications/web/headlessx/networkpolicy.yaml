@@ -3,6 +3,9 @@ kind: NetworkPolicy
 metadata:
   name: headlessx
   namespace: headlessx
+  labels:
+    app.kubernetes.io/name: headlessx
+    app.kubernetes.io/version: "1.2.0"
 spec:
   podSelector:
     matchLabels:
