@@ -25,4 +25,4 @@ images:
   - name: ghcr.io/bytebot-ai/bytebot-desktop
     newTag: edge
   - name: postgres
-    newTag: 16-alpine
+    newTag: 18-alpine
