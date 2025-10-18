@@ -11,6 +11,8 @@ spec:
       server: '*'
     - namespace: 'open-webui'
       server: '*'
+    - namespace: 'bytebot'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

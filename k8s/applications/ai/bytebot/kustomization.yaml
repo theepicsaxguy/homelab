@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: bytebot
+
+resources:
+  - namespace.yaml
+  - externalsecrets/db-url.yaml
+  - externalsecrets/postgres-credentials.yaml
+  - ui/deployment.yaml
+  - ui/service.yaml
+  - ui/hpa.yaml
+  - agent/deployment.yaml
+  - agent/service.yaml
+  - desktop/deployment.yaml
+  - desktop/service.yaml
+  - postgres/statefulset.yaml
+  - postgres/service.yaml
+  - httproute.yaml
+
+images:
+  - name: ghcr.io/bytebot-ai/bytebot-ui
+    newTag: edge
+  - name: ghcr.io/bytebot-ai/bytebot-agent
+    newTag: edge
+  - name: ghcr.io/bytebot-ai/bytebot-desktop
+    newTag: edge
+  - name: postgres
+    newTag: 16-alpine
