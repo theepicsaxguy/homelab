@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: headlessx-quota
+  namespace: headlessx
+spec:
+  hard:
+    limits.cpu: "4"
+    limits.memory: 8Gi
+    requests.cpu: "2"
+    requests.memory: 4Gi
+    persistentvolumeclaims: "2"
+    requests.storage: 50Gi
