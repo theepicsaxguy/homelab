@@ -68,8 +68,14 @@ COPY --from=website-builder /app/website/out/ ./website/out/
 # Create logs directory
 RUN mkdir -p logs
 
-# Create non-root user for security (using UID/GID 1000 to match Kubernetes deployment)
-RUN groupadd -r -g 1000 headlessx && useradd -r -u 1000 -g headlessx headlessx
+# Create non-root user for security (using UID 1000 to match Kubernetes deployment)
+# Check if GID 1000 exists and use it, otherwise create the group
+RUN if getent group 1000 > /dev/null 2>&1; then \
+        GROUP_NAME=$(getent group 1000 | cut -d: -f1); \
+        useradd -r -u 1000 -g "$GROUP_NAME" headlessx; \
+    else \
+        groupadd -r -g 1000 headlessx && useradd -r -u 1000 -g headlessx headlessx; \
+    fi
 RUN chown -R headlessx:headlessx /app
 
 # Environment variables (override with docker-compose or runtime)
