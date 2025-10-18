@@ -5,16 +5,14 @@ namespace: bytebot
 resources:
   - namespace.yaml
   - externalsecrets/db-url.yaml
-  - externalsecrets/postgres-credentials.yaml
+  # cnpg creates Postgres credentials by default; external Secret not required
   - ui/deployment.yaml
   - ui/service.yaml
-  - ui/hpa.yaml
   - agent/deployment.yaml
   - agent/service.yaml
   - desktop/deployment.yaml
   - desktop/service.yaml
-  - postgres/statefulset.yaml
-  - postgres/service.yaml
+  - postgres/database.yaml
   - httproute.yaml
 
 images:
