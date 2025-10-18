@@ -5,6 +5,6 @@ monitoring:
   grafanaDashboard:
     create: true
 
-additionalEnv: 
+additionalEnv:
   - name: ENABLE_INSTANCE_MANAGER_INPLACE_UPDATES
     value: "true"
