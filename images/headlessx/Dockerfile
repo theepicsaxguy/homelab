@@ -1,46 +1,93 @@
 # syntax=docker/dockerfile:1
+# HeadlessX v1.2.0 - Modular Browserless Web Scraping API
+# Multi-stage build for optimized production image with modular architecture
 
 ###############################################################################
-# Stage 1: Clone and build HeadlessX from source
+# Stage 1: Clone HeadlessX source
 ###############################################################################
-FROM node:23-alpine AS builder
+FROM alpine:3.22 AS source
 
 ARG IMAGE_VERSION=1.2.0
 ARG HEADLESSX_REPO=https://github.com/saifyxpro/HeadlessX
 
-RUN apk add --no-cache git ca-certificates \
-  && update-ca-certificates
+RUN apk add --no-cache git ca-certificates
 
 WORKDIR /src
 
 RUN if [ "${IMAGE_VERSION}" = "latest" ]; then REF="main"; else REF="v${IMAGE_VERSION}"; fi \
   && git clone --depth 1 --branch "${REF}" "${HEADLESSX_REPO}" .
 
-RUN npm ci --only=production \
-  && npm cache clean --force
+###############################################################################
+# Stage 2: Build website
+###############################################################################
+FROM node:20-slim AS website-builder
+
+WORKDIR /app/website
+
+# Copy website package files from source
+COPY --from=source /src/website/package*.json ./
+
+# Install website dependencies
+RUN npm ci
+
+# Copy website source
+COPY --from=source /src/website/ ./
+
+# Build website for production
+RUN npm run build
 
 ###############################################################################
-# Stage 2: Runtime image
+# Stage 3: Production runtime
 ###############################################################################
-FROM node:23-alpine
+FROM mcr.microsoft.com/playwright:v1.56.0-noble
 
-RUN apk add --no-cache tzdata chromium \
-  && mkdir -p /app/logs /tmp
+# Install essential system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
+# Set working directory
 WORKDIR /app
 
-COPY --from=builder /src /app
+# Copy package files from source
+COPY --from=source /src/package*.json ./
 
-# Set environment variables
-ENV NODE_ENV=production \
-    PORT=3000 \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Install production dependencies
+RUN if [ -f "package-lock.json" ]; then \
+    npm ci --omit=dev; \
+    else \
+    npm install --production; \
+    fi && npm cache clean --force
 
-VOLUME ["/app/logs"]
+# Copy modular application source
+COPY --from=source /src/src/ ./src/
 
+# Copy built website from previous stage
+COPY --from=website-builder /app/website/out/ ./website/out/
+
+# Create logs directory
+RUN mkdir -p logs
+
+# Create non-root user for security
+RUN groupadd -r headlessx && useradd -r -g headlessx headlessx
+RUN chown -R headlessx:headlessx /app
+
+# Environment variables (override with docker-compose or runtime)
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV AUTH_TOKEN=""
+ENV DOMAIN=localhost
+ENV SUBDOMAIN=headlessx
+
+# Expose the application port directly
 EXPOSE 3000
 
-USER node
+# Health check targets the Node.js application directly
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
-ENTRYPOINT ["node", "src/index.js"]
+# Switch to non-root user for security
+USER headlessx
+
+# Start the Node.js application directly
+CMD ["node", "src/server.js"]
