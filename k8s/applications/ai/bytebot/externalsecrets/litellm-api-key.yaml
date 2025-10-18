@@ -1,0 +1,19 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: bytebot-litellm-api-key
+  namespace: bytebot
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: bitwarden-backend
+  target:
+    name: bytebot-litellm-api-key
+    creationPolicy: Owner
+    template:
+      type: Opaque
+  data:
+    - secretKey: LITELLM_API_KEY
+      remoteRef:
+        key: bytebot-litellm-api-key

@@ -4,8 +4,9 @@ namespace: bytebot
 
 resources:
   - namespace.yaml
-  - externalsecrets/db-url.yaml
-  # cnpg creates Postgres credentials by default; external Secret not required
+  # cnpg creates connection secrets automatically; no ExternalSecret needed
+  - externalsecrets/litellm-api-key.yaml
+  - proxy/configmap.yaml
   - ui/deployment.yaml
   - ui/service.yaml
   - agent/deployment.yaml
