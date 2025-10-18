@@ -11,6 +11,12 @@ spec:
       server: '*'
     - namespace: 'open-webui'
       server: '*'
+    - namespace: 'litellm'
+      server: '*'
+    - namespace: 'portkey'
+      server: '*'
+    - namespace: 'bytebot'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

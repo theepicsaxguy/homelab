@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bytebot-ui
+  namespace: bytebot
+  labels:
+    app.kubernetes.io/name: bytebot-ui
+    app.kubernetes.io/part-of: bytebot
+    app.kubernetes.io/component: ui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: bytebot-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: 9992
+      protocol: TCP

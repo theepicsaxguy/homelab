@@ -1,0 +1,19 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: bytebot-llm-proxy
+  namespace: bytebot
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+  hostnames:
+    - llm.YOURHOST.example.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: bytebot-llm-proxy
+          port: 80
