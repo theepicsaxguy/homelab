@@ -13,6 +13,8 @@ spec:
       server: '*'
     - namespace: 'babybuddy'
       server: '*'
+    - namespace: 'headlessx'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
