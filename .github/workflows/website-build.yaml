@@ -34,7 +34,7 @@ jobs:
         run: echo "node-version=$(cat .nvmrc)" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ steps.node-version.outputs.node-version }}
           cache: 'npm'
