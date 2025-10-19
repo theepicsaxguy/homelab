@@ -6,7 +6,6 @@ resources:
   - namespace.yaml
   # cnpg creates connection secrets automatically; no ExternalSecret needed
   - externalsecrets/litellm-api-key.yaml
-  - proxy/configmap.yaml
   - ui/deployment.yaml
   - ui/service.yaml
   - agent/deployment.yaml
