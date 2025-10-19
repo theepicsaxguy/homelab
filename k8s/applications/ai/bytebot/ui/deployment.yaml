@@ -33,9 +33,9 @@ spec:
             - name: HOSTNAME
               value: "0.0.0.0"
             - name: BYTEBOT_AGENT_BASE_URL
-              value: "http://bytebot-agent"
+              value: "/api"
             - name: BYTEBOT_DESKTOP_VNC_URL
-              value: "http://bytebot-desktop/websockify"
+              value: "/vnc/websockify"
           resources:
             requests:
               cpu: "250m"
