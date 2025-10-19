@@ -36,13 +36,8 @@ spec:
             - name: BYTEBOT_DESKTOP_BASE_URL
               value: "http://bytebot-desktop"
             - name: BYTEBOT_LLM_PROXY_URL
-              value: "http://localhost:8080"
+              value: "http://litellm.litellm.svc.cluster.local"
             - name: BYTEBOT_LLM_PROXY_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: bytebot-litellm-api-key
-                  key: LITELLM_API_KEY
-            - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: bytebot-litellm-api-key
@@ -54,32 +49,3 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
-        
-        - name: litellm-proxy
-          image: nginx:alpine
-          ports:
-            - name: proxy
-              containerPort: 8080
-              protocol: TCP
-          env:
-            - name: LITELLM_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: bytebot-litellm-api-key
-                  key: LITELLM_API_KEY
-          volumeMounts:
-            - name: nginx-config
-              mountPath: /etc/nginx/templates/default.conf.template
-              subPath: default.conf.template
-          resources:
-            requests:
-              cpu: "50m"
-              memory: "64Mi"
-            limits:
-              cpu: "100m"
-              memory: "128Mi"
-      
-      volumes:
-        - name: nginx-config
-          configMap:
-            name: litellm-proxy-config
