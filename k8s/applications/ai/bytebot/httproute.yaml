@@ -5,6 +5,8 @@ metadata:
   namespace: bytebot
 spec:
   parentRefs:
+    - name: internal
+      namespace: gateway
     - name: external
       namespace: gateway
   hostnames:
@@ -14,6 +16,12 @@ spec:
         - path:
             type: PathPrefix
             value: /api
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: bytebot-agent
           port: 80
