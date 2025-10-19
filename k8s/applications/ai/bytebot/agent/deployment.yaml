@@ -34,7 +34,7 @@ spec:
                   name: database-cnpg-app
                   key: uri
             - name: BYTEBOT_DESKTOP_BASE_URL
-              value: "http://bytebot-desktop:9990"
+              value: "/vnc"
             - name: BYTEBOT_LLM_PROXY_URL
               value: "http://litellm.litellm.svc.cluster.local"
             - name: BYTEBOT_LLM_PROXY_API_KEY

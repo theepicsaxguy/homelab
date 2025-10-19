@@ -29,6 +29,12 @@ spec:
         - path:
             type: PathPrefix
             value: /vnc
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
       backendRefs:
         - name: bytebot-desktop
           port: 80
