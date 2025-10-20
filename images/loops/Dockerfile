@@ -61,7 +61,7 @@ WORKDIR /var/www
 
 COPY --from=builder /var/www /var/www
 
-COPY images/loops/docker/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
