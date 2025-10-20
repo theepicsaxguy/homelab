@@ -1,0 +1,203 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loops-app
+  namespace: loops
+  labels:
+    app.kubernetes.io/name: loops
+    app.kubernetes.io/part-of: loops
+    app.kubernetes.io/component: application
+    app.kubernetes.io/version: "1.0.0-beta.1"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loops
+      app.kubernetes.io/component: application
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: loops
+        app.kubernetes.io/part-of: loops
+        app.kubernetes.io/component: application
+        app.kubernetes.io/version: "1.0.0-beta.1"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 33
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-code
+          image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - cp -a /var/www/. /code/ && mkdir -p /code/bootstrap/cache && chown -R www-data:www-data /code/bootstrap
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: app-code
+              mountPath: /code
+      containers:
+        - name: php-fpm
+          image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+              name: fpm
+          envFrom:
+            - secretRef:
+                name: es-loops-app-env
+          env:
+            - name: APP_NAME
+              value: "Loops"
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
+            - name: APP_URL
+              value: https://loops.pc-tips.se
+            - name: DB_CONNECTION
+              value: pgsql
+            - name: DB_HOST
+              value: loops-postgresql.loops.svc.kube.pc-tips.se
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: loops
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: loops.loops-postgresql.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: loops.loops-postgresql.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: CACHE_DRIVER
+              value: redis
+            - name: SESSION_DRIVER
+              value: redis
+            - name: QUEUE_CONNECTION
+              value: redis
+            - name: REDIS_HOST
+              value: redis.loops.svc.kube.pc-tips.se
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              value: ""
+            - name: FILESYSTEM_DISK
+              value: s3
+            - name: BROADCAST_DRIVER
+              value: log
+            - name: LOG_CHANNEL
+              value: stack
+            - name: FFMPEG_BINARIES
+              value: /usr/bin/ffmpeg
+            - name: FFPROBE_BINARIES
+              value: /usr/bin/ffprobe
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          livenessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: app-code
+              mountPath: /var/www
+            - name: storage
+              mountPath: /var/www/storage
+            - name: tmp
+              mountPath: /tmp
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.27.3-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: app-code
+              mountPath: /var/www
+              readOnly: true
+            - name: storage
+              mountPath: /var/www/storage
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: app-code
+          emptyDir: {}
+        - name: storage
+          persistentVolumeClaim:
+            claimName: loops-storage
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: loops-nginx-config
+      terminationGracePeriodSeconds: 60

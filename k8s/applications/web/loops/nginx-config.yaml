@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loops-nginx-config
+  namespace: loops
+  labels:
+    app.kubernetes.io/name: loops
+    app.kubernetes.io/component: web
+    app.kubernetes.io/version: "1.0.0-beta.1"
+data:
+  default.conf: |
+    server {
+        listen 8080;
+        server_name _;
+        root /var/www/public;
+        index index.php;
+
+        client_max_body_size 100M;
+
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+            fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+        }
+
+        location ~* \.(?:css|js|png|jpg|jpeg|gif|ico|svg|mp4|webm)$ {
+            expires 7d;
+            access_log off;
+        }
+    }
