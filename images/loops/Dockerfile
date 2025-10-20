@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1
 
-ARG LOOPS_VERSION="v1.0.0-beta.1"
+ARG IMAGE_VERSION="v1.0.0-beta.1"
 
 FROM php:8.4-fpm AS builder
 
-ARG LOOPS_VERSION
+ARG IMAGE_VERSION
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libicu-dev \
     libzip-dev \
+    && docker-php-ext-configure pcntl --enable-pcntl \
     && docker-php-ext-install -j"$(nproc)" \
     pdo_mysql \
     pdo_pgsql \
@@ -33,7 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /var/www
 
-RUN curl -sSL https://github.com/joinloops/loops-server/archive/refs/tags/${LOOPS_VERSION}.tar.gz \
+RUN curl -sSL https://github.com/joinloops/loops-server/archive/refs/tags/${IMAGE_VERSION}.tar.gz \
     | tar -xz --strip-components=1
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
