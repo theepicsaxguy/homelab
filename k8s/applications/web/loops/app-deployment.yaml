@@ -27,33 +27,20 @@ spec:
         fsGroup: 33
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: init-code
-          image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/sh
-          args:
-            - -c
-            - cp -a /var/www/. /code/ && mkdir -p /code/bootstrap/cache && chown -R www-data:www-data /code/bootstrap
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 33
-            runAsGroup: 33
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - name: app-code
-              mountPath: /code
       containers:
-        - name: php-fpm
+        - name: app
           image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 9000
-              name: fpm
+            - containerPort: 8080
+              name: http
+          command:
+            - php
+          args:
+            - artisan
+            - serve
+            - --host=0.0.0.0
+            - --port=8080
           envFrom:
             - secretRef:
                 name: es-loops-app-env
@@ -98,6 +85,10 @@ spec:
               value: ""
             - name: FILESYSTEM_DISK
               value: s3
+            - name: AWS_BUCKET
+              value: loops
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
             - name: BROADCAST_DRIVER
               value: log
             - name: LOG_CHANNEL
@@ -114,15 +105,17 @@ spec:
               cpu: "2"
               memory: 4Gi
           livenessProbe:
-            tcpSocket:
-              port: 9000
+            httpGet:
+              path: /
+              port: 8080
             initialDelaySeconds: 20
             periodSeconds: 15
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            tcpSocket:
-              port: 9000
+            httpGet:
+              path: /
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -136,68 +129,14 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: app-code
-              mountPath: /var/www
             - name: storage
               mountPath: /var/www/storage
             - name: tmp
               mountPath: /tmp
-        - name: nginx
-          image: nginxinc/nginx-unprivileged:1.27.3-alpine
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-              name: http
-          resources:
-            requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
-              cpu: 500m
-              memory: 512Mi
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 20
-            periodSeconds: 20
-            timeoutSeconds: 5
-            failureThreshold: 3
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 101
-            runAsGroup: 101
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - name: app-code
-              mountPath: /var/www
-              readOnly: true
-            - name: storage
-              mountPath: /var/www/storage
-              readOnly: true
-            - name: nginx-config
-              mountPath: /etc/nginx/conf.d/default.conf
-              subPath: default.conf
       volumes:
-        - name: app-code
-          emptyDir: {}
         - name: storage
           persistentVolumeClaim:
             claimName: loops-storage
         - name: tmp
           emptyDir: {}
-        - name: nginx-config
-          configMap:
-            name: loops-nginx-config
       terminationGracePeriodSeconds: 60

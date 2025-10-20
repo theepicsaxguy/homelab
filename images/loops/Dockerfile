@@ -73,5 +73,5 @@ USER www-data
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-EXPOSE 9000
+EXPOSE 8080
 CMD ["php-fpm"]

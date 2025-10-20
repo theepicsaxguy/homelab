@@ -27,26 +27,6 @@ spec:
         fsGroup: 33
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: init-code
-          image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
-          imagePullPolicy: IfNotPresent
-          command:
-            - /bin/sh
-          args:
-            - -c
-            - cp -a /var/www/. /code/ && mkdir -p /code/bootstrap/cache && chown -R www-data:www-data /code/bootstrap
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 33
-            runAsGroup: 33
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - name: app-code
-              mountPath: /code
       containers:
         - name: horizon
           image: ghcr.io/theepicsaxguy/loops:v1.0.0-beta.1 # renovate: docker=ghcr.io/theepicsaxguy/loops
@@ -100,6 +80,10 @@ spec:
               value: ""
             - name: FILESYSTEM_DISK
               value: s3
+            - name: AWS_BUCKET
+              value: loops
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
             - name: BROADCAST_DRIVER
               value: log
             - name: LOG_CHANNEL
@@ -144,15 +128,11 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: app-code
-              mountPath: /var/www
             - name: storage
               mountPath: /var/www/storage
             - name: tmp
               mountPath: /tmp
       volumes:
-        - name: app-code
-          emptyDir: {}
         - name: storage
           persistentVolumeClaim:
             claimName: loops-storage

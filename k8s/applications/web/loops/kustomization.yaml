@@ -7,7 +7,6 @@ resources:
   - redis.yaml
   - loops-external-secret.yaml
   - pvc.yaml
-  - nginx-config.yaml
   - app-deployment.yaml
   - horizon-deployment.yaml
   - service.yaml
