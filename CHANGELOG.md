@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.9.1 (2025-10-25)
+
+## What's Changed
+* chore(deps): update pre-commit hook errata-ai/vale to v3.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1625
+* chore(deps): update portkeyai/gateway docker tag to v1.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1627
+* chore(deps): update helm release cloudnative-pg to v0.26.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1628
+* chore(deps): update helm release cilium to v1.18.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1629
+* chore(deps): update helm release argo-cd to v9.0.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1630
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1631
+* chore(deps): update all dependencies to v78.5.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1632
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.10.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1633
+* chore(deps): update helm release gpu-operator to v25.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1635
+* chore(deps): update ghcr.io/berriai/litellm docker tag to v1.78.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1637
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.9.0...v3.9.1
+
 ## 3.9.0 (2025-10-21)
 
 ## What's Changed
