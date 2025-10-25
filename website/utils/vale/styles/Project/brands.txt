@@ -16,6 +16,7 @@ Goldmark
 Grammarly
 Graphviz
 HashiCorp
+HeadlessX
 instant.page
 Kubebuilder
 Kustomize

@@ -50,6 +50,7 @@ Dependabot
 DeploymentRuntimeConfig
 DeploymentRuntimeConfigs
 Dockerfiles
+Dockerfile
 ECR
 ESO
 EnvironmentConfig
@@ -124,6 +125,7 @@ PDB
 PDBs
 PKI
 PVCs
+PVC
 Passthrough
 PatchSet
 PatchSets
@@ -151,6 +153,7 @@ SABnzbd
 SSD
 SSO
 ServiceMonitor
+seccomp
 Sigstore
 Sonarr
 Spilo
