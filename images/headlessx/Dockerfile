@@ -20,7 +20,7 @@ RUN REF=$([ "${IMAGE_VERSION}" = "latest" ] && echo "main" || echo "v${IMAGE_VER
 ###############################################################################
 # Stage 2: Build website
 ###############################################################################
-FROM node:22-slim AS website-builder
+FROM node:24-slim AS website-builder
 
 WORKDIR /app/website
 
