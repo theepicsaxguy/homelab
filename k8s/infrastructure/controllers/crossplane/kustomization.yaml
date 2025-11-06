@@ -13,6 +13,6 @@ resources:
 helmCharts:
   - name: crossplane
     repo: https://charts.crossplane.io/stable
-    version: 2.0.2
+    version: 2.1.0
     releaseName: crossplane
     namespace: crossplane-system
