@@ -10,14 +10,14 @@ spec:
     matchLabels:
       app: unifi-controller
   volumeClaimTemplates:
-  - metadata:
-      name: unifi-data
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
-      resources:
-        requests:
-          storage: 5Gi
+    - metadata:
+        name: unifi-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 5Gi
   template:
     metadata:
       labels:
@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: unifi-controller
-          image: jacobalberty/unifi:v9.5.21 # renovate: docker=jacobalberty/unifi
+          image: jacobalberty/unifi:v9.2.87
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -42,11 +42,11 @@ spec:
                 - ALL
           resources:
             requests:
-              cpu: '100m'
-              memory: '512Mi'
+              cpu: "100m"
+              memory: "512Mi"
             limits:
-              cpu: '1000m'
-              memory: '2Gi'
+              cpu: "1000m"
+              memory: "2Gi"
           env:
             - name: TZ
               value: "Etc/UTC"
