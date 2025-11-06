@@ -21,8 +21,8 @@ spec:
     spec:
       containers:
         - name: agent
-          image: ghcr.io/bytebot-ai/bytebot-agent
-          imagePullPolicy: IfNotPresent
+          image: ghcr.io/theepicsaxguy/bytebot-agent:latest
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 9991
@@ -34,7 +34,7 @@ spec:
                   name: database-cnpg-app
                   key: uri
             - name: BYTEBOT_DESKTOP_BASE_URL
-              value: "/vnc"
+              value: "http://bytebot-desktop:9990"
             - name: BYTEBOT_LLM_PROXY_URL
               value: "http://litellm.litellm.svc.cluster.local"
             - name: BYTEBOT_LLM_PROXY_API_KEY

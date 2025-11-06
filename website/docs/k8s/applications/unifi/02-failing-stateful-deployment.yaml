@@ -1,0 +1,345 @@
+###############################################################################
+# NAMESPACE: Allows ephemeral root/privileged pods
+###############################################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: unifi
+  labels:
+    # This effectively disables the strict "restricted" PodSecurity
+    # so initContainers can run as root to fix volume perms.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
+
+---
+###############################################################################
+# PVC for Unifi data
+###############################################################################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: unifi-data
+  namespace: unifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # Adjust to match your real storage class if needed:
+  storageClassName: ssd
+
+---
+###############################################################################
+# PVC for Mongo data
+###############################################################################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-data
+  namespace: unifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  # Adjust to match your real storage class if needed:
+  storageClassName: ssd
+
+---
+###############################################################################
+# Secret with MongoDB credentials
+###############################################################################
+# To generate your own password base64:
+#   echo -n "mynewpassword" | base64
+# Then replace the below 'c3VwZXJzZWNyZXQK' with your new base64 string.
+###############################################################################
+apiVersion: v1
+kind: Secret
+metadata:
+  name: unifi-mongo-credentials
+  namespace: unifi
+type: Opaque
+data:
+  password: "c3VwZXJzZWNyZXQK"
+
+---
+###############################################################################
+# UniFi Controller Deployment
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-controller
+  template:
+    metadata:
+      labels:
+        app: unifi-controller
+    spec:
+      # We fix ownership on /config before the main container runs.
+      initContainers:
+      - name: fix-permissions-unifi
+        image: busybox:1.36
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: true
+        command:
+          - sh
+          - -c
+          - |
+            echo "[INFO] initContainer: chown -R 1000:1000 /config"
+            chown -R 1000:1000 /config || true
+            chmod -R 755 /config || true
+        volumeMounts:
+          - name: unifi-data
+            mountPath: /config
+
+      containers:
+      - name: unifi-controller
+        image: lscr.io/linuxserver/unifi-network-application:8.6.9
+        imagePullPolicy: Always
+
+        # This container will run as UID=1000 after init fixes perms
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+
+        env:
+          # Container user and group match securityContext
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: TZ
+            value: "Etc/UTC"
+
+          # Memory constraints
+          - name: MEM_LIMIT
+            value: "1024"
+          - name: MEM_STARTUP
+            value: "1024"
+
+          # Mongo connection details
+          - name: MONGO_USER
+            value: "unifi"
+          - name: MONGO_PASS
+            valueFrom:
+              secretKeyRef:
+                name: unifi-mongo-credentials
+                key: password
+          - name: MONGO_HOST
+            value: "unifi-db.unifi.svc.cluster.local"
+          - name: MONGO_PORT
+            value: "27017"
+          - name: MONGO_DBNAME
+            value: "unifi"
+          - name: MONGO_AUTHSOURCE
+            value: "unifi"
+
+        ports:
+          - name: unifi-discovery
+            containerPort: 10001
+            protocol: UDP
+          - name: stun
+            containerPort: 3478
+            protocol: UDP
+          - name: syslog
+            containerPort: 5514
+            protocol: UDP
+          - name: https-ui
+            containerPort: 8843
+            protocol: TCP
+          - name: api
+            containerPort: 8443
+            protocol: TCP
+          - name: http-portal
+            containerPort: 8880
+            protocol: TCP
+          - name: controller
+            containerPort: 8080
+            protocol: TCP
+          - name: speed-test
+            containerPort: 6789
+            protocol: TCP
+
+        volumeMounts:
+          - name: unifi-data
+            mountPath: /config
+
+      volumes:
+        - name: unifi-data
+          persistentVolumeClaim:
+            claimName: unifi-data
+
+---
+###############################################################################
+# UniFi Controller Service
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  # If your CNI supports "LoadBalancer" (like MetalLB or Cilium w/ ARP),
+  # this will get an IP. Otherwise, set "type: NodePort" or "ClusterIP".
+  type: LoadBalancer
+  selector:
+    app: unifi-controller
+  ports:
+    - name: unifi-discovery
+      port: 10001
+      protocol: UDP
+      targetPort: 10001
+    - name: stun
+      port: 3478
+      protocol: UDP
+      targetPort: 3478
+    - name: syslog
+      port: 5514
+      protocol: UDP
+      targetPort: 5514
+    - name: https-ui
+      port: 8843
+      protocol: TCP
+      targetPort: 8843
+    - name: api
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: http-portal
+      port: 8880
+      protocol: TCP
+      targetPort: 8880
+    - name: controller
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: speed-test
+      port: 6789
+      protocol: TCP
+      targetPort: 6789
+
+---
+###############################################################################
+# MongoDB Deployment (Bitnami)
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-db
+  namespace: unifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-db
+  template:
+    metadata:
+      labels:
+        app: unifi-db
+    spec:
+      # This initContainer ensures /bitnami/mongodb is owned by user=1001
+      initContainers:
+      - name: fix-mongo-permissions
+        image: busybox:1.36
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: true
+        command:
+          - sh
+          - -c
+          - |
+            echo "[INFO] initContainer: chown -R 1001:1001 /bitnami/mongodb"
+            chown -R 1001:1001 /bitnami/mongodb || true
+            chmod -R 755 /bitnami/mongodb || true
+            echo "[INFO] init complete."
+
+        volumeMounts:
+          - name: mongo-data
+            mountPath: /bitnami/mongodb
+
+      containers:
+      - name: mongo
+        image: bitnami/mongodb:4.4.10
+        imagePullPolicy: IfNotPresent
+
+        # The main container runs as user=1001
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 1001
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+
+        env:
+          # root user (you can rename it) and password
+          - name: MONGODB_ROOT_USER
+            value: "root"
+          - name: MONGODB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: unifi-mongo-credentials
+                key: password
+
+          # Main unifi user and database
+          - name: MONGODB_USERNAME
+            value: "unifi"
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: unifi-mongo-credentials
+                key: password
+          - name: MONGODB_DATABASE
+            value: "unifi"
+
+          # Disallow empty password just for safety
+          - name: ALLOW_EMPTY_PASSWORD
+            value: "no"
+
+        ports:
+          - containerPort: 27017
+
+        volumeMounts:
+          - name: mongo-data
+            mountPath: /bitnami/mongodb
+
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-data
+
+---
+###############################################################################
+# MongoDB Service
+###############################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-db
+  namespace: unifi
+spec:
+  selector:
+    app: unifi-db
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
+      protocol: TCP

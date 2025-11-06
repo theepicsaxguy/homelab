@@ -13,6 +13,6 @@ spec:
     app.kubernetes.io/name: bytebot-desktop
   ports:
     - name: http
-      port: 80
+      port: 9990
       targetPort: 9990
       protocol: TCP
