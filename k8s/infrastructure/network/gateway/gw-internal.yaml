@@ -50,8 +50,6 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-
-    # Add TCP listeners for Omada device mgmt
     - protocol: TCP
       port: 29811
       name: omada-mgr-v1
