@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-unifi
+  namespace: unifi
+spec:
+  dnsNames:
+    - unifi.pc-tips.se
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: cloudflare-issuer
+  secretName: cert-unifi
+  usages:
+    - digital signature
+    - key encipherment

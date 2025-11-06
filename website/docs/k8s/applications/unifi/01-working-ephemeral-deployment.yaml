@@ -1,0 +1,331 @@
+###############################################################################
+# 0) Namespace
+###############################################################################
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: unifi
+  labels:
+    # Essentially disables PodSecurity for this namespace
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
+
+---
+###############################################################################
+# 1) PersistentVolumeClaim for UniFi data
+###############################################################################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: unifi-data
+  namespace: unifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ssd
+
+---
+###############################################################################
+# 2) PersistentVolumeClaim for Mongo data
+###############################################################################
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-data
+  namespace: unifi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ssd
+
+---
+###############################################################################
+# 3) Secret containing MongoDB credentials
+###############################################################################
+apiVersion: v1
+kind: Secret
+metadata:
+  name: unifi-mongo-credentials
+  namespace: unifi
+type: Opaque
+data:
+  # Example password: `echo supersecret | base64 -o-` => 'c3VwZXJzZWNyZXQK'
+  password: "c3VwZXJzZWNyZXQK"
+
+---
+###############################################################################
+# 4) UniFi Controller Deployment & Service
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-controller
+  template:
+    metadata:
+      labels:
+        app: unifi-controller
+    spec:
+      containers:
+        - name: unifi-controller
+          image: lscr.io/linuxserver/unifi-network-application:8.6.9
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            privileged: true
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+
+            - name: MEM_LIMIT
+              value: "1024"
+            - name: MEM_STARTUP
+              value: "1024"
+
+            # Mongo connection
+            - name: MONGO_USER
+              value: "unifi"
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-mongo-credentials
+                  key: password
+            - name: MONGO_HOST
+              value: "unifi-db.unifi.svc.cluster.local"
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DBNAME
+              value: "unifi"
+            - name: MONGO_AUTHSOURCE
+              value: "unifi"
+
+          ports:
+            - name: unifi-discovery
+              containerPort: 10001
+              protocol: UDP
+            - name: stun
+              containerPort: 3478
+              protocol: UDP
+            - name: syslog
+              containerPort: 5514
+              protocol: UDP
+            - name: https-ui
+              containerPort: 8843
+              protocol: TCP
+            - name: api
+              containerPort: 8443
+              protocol: TCP
+            - name: http-portal
+              containerPort: 8880
+              protocol: TCP
+            - name: controller
+              containerPort: 8080
+              protocol: TCP
+            - name: speed-test
+              containerPort: 6789
+              protocol: TCP
+
+          volumeMounts:
+            - name: unifi-data
+              mountPath: /config
+
+      volumes:
+        - name: unifi-data
+          persistentVolumeClaim:
+            claimName: unifi-data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  type: LoadBalancer
+  selector:
+    app: unifi-controller
+  ports:
+    - name: unifi-discovery
+      port: 10001
+      protocol: UDP
+      targetPort: 10001
+    - name: stun
+      port: 3478
+      protocol: UDP
+      targetPort: 3478
+    - name: syslog
+      port: 5514
+      protocol: UDP
+      targetPort: 5514
+    - name: https-ui
+      port: 8843
+      protocol: TCP
+      targetPort: 8843
+    - name: api
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: http-portal
+      port: 8880
+      protocol: TCP
+      targetPort: 8880
+    - name: controller
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: speed-test
+      port: 6789
+      protocol: TCP
+      targetPort: 6789
+
+---
+###############################################################################
+# 6) MongoDB Deployment & Service (Bitnami container)
+###############################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-db
+  namespace: unifi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-db
+  template:
+    metadata:
+      labels:
+        app: unifi-db
+    spec:
+      initContainers:
+        - name: fix-permissions
+          image: bitnami/mongodb:4.4.10
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            privileged: true
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "[DEBUG] fix-permissions initContainer started as user $(id -u):$(id -g)."
+              echo "[DEBUG] Current ownership in /bitnami/mongodb:"
+              ls -la /bitnami/mongodb || true
+
+              echo "[DEBUG] Setting everything wide open with chown/chmod."
+              chown -R root:root /bitnami/mongodb || true
+              chmod -R 0777 /bitnami/mongodb || true
+
+              echo "[DEBUG] Post-chown/chmod listing:"
+              ls -la /bitnami/mongodb
+              echo "[DEBUG] fix-permissions complete. Next container..."
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /bitnami/mongodb
+
+      containers:
+        - name: mongo
+          image: bitnami/mongodb:4.4.10
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            privileged: true
+          env:
+            - name: BITNAMI_DEBUG
+              value: "true"
+            - name: MONGODB_DATABASE
+              value: "unifi"
+            - name: MONGODB_USERNAME
+              value: "unifi"
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-mongo-credentials
+                  key: password
+
+            - name: MONGODB_ROOT_USER
+              value: "root"
+            - name: MONGODB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-mongo-credentials
+                  key: password
+
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /bitnami/mongodb
+            - name: mongo-init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-data
+        - name: mongo-init-scripts
+          configMap:
+            name: mongo-init-grant
+            items:
+              - key: zzz-grant-unifi-stat.sh
+                path: zzz-grant-unifi-stat.sh
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unifi-db
+  namespace: unifi
+spec:
+  selector:
+    app: unifi-db
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
+      protocol: TCP
+
+---
+###############################################################################
+# 1) ConfigMap: post-init script to grant 'unifi' dbOwner on 'unifi_stat'
+# x) This is a hacky workaround, Ubiquiti, do better.
+###############################################################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-grant
+  namespace: unifi
+data:
+  zzz-grant-unifi-stat.sh: |
+    #!/bin/bash
+    echo "[INFO] Granting 'unifi' user dbOwner on 'unifi_stat'..."
+    echo "[INFO] Running as user: $(id -u):$(id -g)"
+    ls -la /bitnami/mongodb || true
+
+    mongo --username "${MONGODB_ROOT_USER}" --password "${MONGODB_ROOT_PASSWORD}" <<EOF
+      use unifi
+      db.grantRolesToUser("unifi", [
+        { role: "dbOwner", db: "unifi_stat" }
+      ]);
+    EOF
+    echo "[INFO] Done granting dbOwner on unifi_stat."

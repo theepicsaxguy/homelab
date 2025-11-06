@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  serviceName: "unifi-svc"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-controller
+  volumeClaimTemplates:
+  - metadata:
+      name: unifi-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "longhorn"
+      resources:
+        requests:
+          storage: 5Gi
+  template:
+    metadata:
+      labels:
+        app: unifi-controller
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        runAsNonRoot: true
+        fsGroup: 999
+        fsGroupChangePolicy: 'OnRootMismatch'
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: unifi-controller
+          image: jacobalberty/unifi:v9.5.21 # renovate: docker=jacobalberty/unifi
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '512Mi'
+            limits:
+              cpu: '1000m'
+              memory: '2Gi'
+          env:
+            - name: TZ
+              value: "Etc/UTC"
+            - name: UNIFI_HTTP_PORT
+              value: "8080"
+            - name: UNIFI_HTTPS_PORT
+              value: "8443"
+            - name: PORTAL_HTTP_PORT
+              value: "8880"
+            - name: PORTAL_HTTPS_PORT
+              value: "8843"
+            - name: UNIFI_STDOUT
+              value: "true"
+            - name: JVM_MAX_HEAP_SIZE
+              value: "1024M"
+            - name: CERTNAME
+              value: "tls.crt"
+            - name: CERT_PRIVATE_NAME
+              value: "tls.key"
+          ports:
+            - containerPort: 8080
+              name: http-admin
+              protocol: TCP
+            - containerPort: 8443
+              name: https-admin
+              protocol: TCP
+            - containerPort: 3478
+              name: stun
+              protocol: UDP
+            - containerPort: 10001
+              name: ap-discovery
+              protocol: UDP
+            - containerPort: 8843
+              name: https-portal
+              protocol: TCP
+            - containerPort: 8880
+              name: http-portal
+              protocol: TCP
+            - containerPort: 6789
+              name: speed-test
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /status
+              port: 8443
+              scheme: HTTPS
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - name: unifi-data
+              mountPath: /unifi
+            - name: unifi-cert
+              mountPath: /unifi/cert
+              readOnly: true
+      volumes:
+        - name: unifi-cert
+          secret:
+            secretName: cert-unifi
+      restartPolicy: Always
