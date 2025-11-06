@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: unifi-controller
-          image: jacobalberty/unifi:v9.2.87
+          image: jacobalberty/unifi:v9.5.21
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
