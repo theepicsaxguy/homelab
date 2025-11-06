@@ -1,0 +1,26 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: loops-postgresql
+  namespace: loops
+spec:
+  teamId: "loops"
+  volume:
+    size: 20Gi
+  numberOfInstances: 2
+  users:
+    loops:
+      - superuser
+  databases:
+    loops: loops
+  enableLogicalBackup: false
+  postgresql:
+    version: "17"
+  spiloFSGroup: 103
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
