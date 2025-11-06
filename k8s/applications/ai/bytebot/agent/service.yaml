@@ -13,6 +13,6 @@ spec:
     app.kubernetes.io/name: bytebot-agent
   ports:
     - name: http
-      port: 80
+      port: 9991
       targetPort: 9991
       protocol: TCP
