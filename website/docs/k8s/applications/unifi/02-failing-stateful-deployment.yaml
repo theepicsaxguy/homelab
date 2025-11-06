@@ -87,7 +87,7 @@ spec:
       # We fix ownership on /config before the main container runs.
       initContainers:
       - name: fix-permissions-unifi
-        image: busybox:1.36
+        image: busybox:1.37
         securityContext:
           runAsUser: 0
           allowPrivilegeEscalation: true
@@ -256,7 +256,7 @@ spec:
       # This initContainer ensures /bitnami/mongodb is owned by user=1001
       initContainers:
       - name: fix-mongo-permissions
-        image: busybox:1.36
+        image: busybox:1.37
         securityContext:
           runAsUser: 0
           allowPrivilegeEscalation: true
