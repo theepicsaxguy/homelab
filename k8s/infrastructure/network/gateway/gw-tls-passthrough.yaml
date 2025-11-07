@@ -29,15 +29,6 @@ spec:
           from: All
     - protocol: TLS
       port: 443
-      name: omada
-      hostname: "omada.pc-tips.se"
-      tls:
-        mode: Passthrough
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TLS
-      port: 443
       name: unifi
       hostname: "unifi.pc-tips.se"
       tls:
