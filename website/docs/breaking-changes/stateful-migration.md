@@ -117,15 +117,6 @@ This script performs the core recovery task. It finds your original, now release
     recover_app "jellyfin" "media" "jellyfin-config" "config"
     recover_app "jellyfin" "media" "jellyfin-cache" "cache"
 
-    # --- Network Applications ---
-    # Omada has two volumes to migrate
-    :::note
-    The Omada StatefulSet now creates its PVCs dynamically using
-    `volumeClaimTemplates`, so there isn't a separate `pvc.yaml` file.
-    :::
-    recover_app "omada-controller" "omada" "omada-data-pvc" "omada-data"
-    recover_app "omada-controller" "omada" "omada-logs-pvc" "omada-logs"
-
     # --- Other Applications ---
     recover_app "unrar" "unrar" "unrar-data" "unrar-data"
 
