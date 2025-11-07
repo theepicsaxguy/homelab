@@ -51,56 +51,6 @@ spec:
         namespaces:
           from: All
     - protocol: TCP
-      port: 29811
-      name: omada-mgr-v1
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
-      port: 29812
-      name: omada-adopt-v1
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
-      port: 29813
-      name: omada-upgrade-v1
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
-      port: 29814
-      name: omada-mgr-v2
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
-      port: 29815
-      name: omada-transfer-v2
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
-      port: 29816
-      name: omada-rtty
-      allowedRoutes:
-        namespaces:
-          from: All
-
-    # Add UDP listeners for Omada discovery
-    - protocol: UDP
-      port: 29810
-      name: omada-discovery
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: UDP
-      port: 27001
-      name: omada-app-discovery
-      allowedRoutes:
-        namespaces:
-          from: All
-    - protocol: TCP
       port: 1883
       name: mqtt-tcp
       allowedRoutes:

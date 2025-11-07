@@ -7,8 +7,6 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: 'omada'
-      server: '*'
     - namespace: 'dns'
       server: '*'
   clusterResourceWhitelist:
