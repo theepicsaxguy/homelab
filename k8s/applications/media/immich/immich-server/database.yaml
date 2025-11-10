@@ -6,7 +6,7 @@ metadata:
 spec:
   teamId: immich
   volume:
-    size: 10Gi
+    size: 15Gi
   dockerImage: ghcr.io/theepicsaxguy/spilo17-vchord:0.1.0
   numberOfInstances: 2
   users:
