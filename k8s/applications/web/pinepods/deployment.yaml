@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pinepods
+  namespace: pinepods
+  labels:
+    app.kubernetes.io/name: pinepods
+    app.kubernetes.io/part-of: pinepods
+    app.kubernetes.io/component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pinepods
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pinepods
+        app.kubernetes.io/part-of: pinepods
+        app.kubernetes.io/component: web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: pinepods
+          image: madeofpendletonwool/pinepods:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8040
+              name: http
+          envFrom:
+            - configMapRef:
+                name: pinepods-config
+            - secretRef:
+                name: es-pinepods-admin
+          env:
+            - name: TZ
+              value: Europe/Stockholm
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: pinepods-db-app
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: pinepods-db-app
+                  key: port
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: pinepods-db-app
+                  key: dbname
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pinepods-db-app
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pinepods-db-app
+                  key: password
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /api/pinepods_check
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 5
+          livenessProbe:
+            httpGet:
+              path: /api/pinepods_check
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: downloads
+              mountPath: /opt/pinepods/downloads
+            - name: backups
+              mountPath: /opt/pinepods/backups
+      volumes:
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: pinepods-downloads
+        - name: backups
+          persistentVolumeClaim:
+            claimName: pinepods-backups

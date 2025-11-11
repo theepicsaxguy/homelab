@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: pinepods
+  namespace: pinepods
+  labels:
+    app.kubernetes.io/name: pinepods
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: pinepods
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: gateway
+      ports:
+        - protocol: TCP
+          port: 8040
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: pinepods
+          podSelector:
+            matchLabels:
+              cnpg.io/cluster: pinepods-db
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 80
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
