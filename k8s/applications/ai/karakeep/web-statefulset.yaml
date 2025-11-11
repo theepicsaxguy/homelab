@@ -27,6 +27,8 @@ spec:
           emptyDir: {}
         - name: run
           emptyDir: {}
+        - name: next-cache
+          emptyDir: {}
       containers:
         - name: web
           image: ghcr.io/karakeep-app/karakeep:0.28.0 # renovate: docker=ghcr.io/karakeep-app/karakeep
@@ -42,12 +44,14 @@ spec:
               mountPath: /tmp
             - name: run
               mountPath: /run
+            - name: next-cache
+              mountPath: /app/apps/web/.next/cache
           resources:
             requests:
-              cpu: '50m'
-              memory: '256Mi'
+              cpu: '500m'
+              memory: '512Mi'
             limits:
-              cpu: '400m'
+              cpu: '1000m'
               memory: '1Gi'
           imagePullPolicy: IfNotPresent
           ports:
@@ -81,7 +85,7 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 15
             timeoutSeconds: 10
-            failureThreshold: 3
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /
@@ -89,4 +93,4 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 15
             timeoutSeconds: 10
-            failureThreshold: 3
+            failureThreshold: 10
