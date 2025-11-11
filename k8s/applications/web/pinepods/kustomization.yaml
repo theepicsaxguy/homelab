@@ -10,4 +10,3 @@ resources:
   - deployment.yaml
   - service.yaml
   - http-route.yaml
-  - networkpolicy.yaml

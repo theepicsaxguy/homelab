@@ -11,7 +11,7 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 
 ## Database
 
-* CloudNativePG manages the single-node `pinepods-db` cluster with a 20Gi Longhorn-backed volume.
+* CloudNativePG runs PostgreSQL 18 in a single-node `pinepods-db` cluster with a 20Gi Longhorn-backed volume.
 * Bootstrap creates the `pinepods` database and role, then writes connection details to the generated secret `pinepods-db-app`.
 * The Deployment reads `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` from that CNPG secret.
 
@@ -30,7 +30,6 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 
 * Service `pinepods` exposes port 8040 inside the namespace.
 * `HTTPRoute` binds `pinepods.pc-tips.se` to both the internal and external Gateways.
-* NetworkPolicy only allows ingress from Gateway-managed namespaces and limits egress to DNS, HTTPS, HTTP, and the CloudNativePG database service.
 
 ## Verification Checklist
 
