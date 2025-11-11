@@ -93,6 +93,10 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           startupProbe:
             failureThreshold: 30
             httpGet:
@@ -109,6 +113,13 @@ spec:
               name: library
       dnsPolicy: ClusterFirst
       enableServiceLinks: true
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: default
       volumes:
         - name: config
