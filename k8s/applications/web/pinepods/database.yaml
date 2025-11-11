@@ -1,28 +1,31 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: pinepods-db
+  name: database-cnpg
   namespace: pinepods
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:18
   enablePDB: false
+  managed:
+    roles:
+      - name: app
+        ensure: present
+        login: true
+        passwordSecret:
+          name: database-cnpg-app
+        inRoles:
+          - pg_read_all_data
+          - pg_write_all_data
+  bootstrap:
+    initdb:
+      database: pinepods
+      owner: app
   storage:
     size: 20Gi
     storageClass: longhorn
   monitoring:
     enablePodMonitor: false
-  bootstrap:
-    initdb:
-      database: pinepods
-      owner: pinepods
-  managed:
-    roles:
-      - name: pinepods
-        ensure: present
-        login: true
-        passwordSecret:
-          name: pinepods-db-app
   postgresql:
     parameters:
       max_connections: "200"
@@ -33,3 +36,6 @@ spec:
       memory: "512Mi"
     limits:
       memory: "1Gi"
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
