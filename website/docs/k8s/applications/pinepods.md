@@ -11,13 +11,13 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 
 ## Database
 
-* CloudNativePG runs PostgreSQL 18 in a single-node `database-cnpg` cluster with a 20Gi Longhorn-backed volume.
-* Bootstrap creates the `pinepods` database and grants ownership to the managed `app` role, which CloudNativePG stores in the `database-cnpg-app` secret.
+* CloudNativePG runs PostgreSQL 18 in a single-node `pinepods-db` cluster with a 20Gi Longhorn-backed volume.
+* Bootstrap creates the `pinepods` database and grants ownership to the managed `app` role, which CloudNativePG stores in the `pinepods-db-app` secret.
 * The Deployment reads `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` from that CNPG secret.
 
 ## Monitoring
 
-* `database-cnpg` exposes PostgreSQL metrics through a dedicated PodMonitor instead of the deprecated CNPG toggle.
+* `pinepods-db` exposes PostgreSQL metrics through a dedicated PodMonitor instead of the deprecated CNPG toggle.
 
 ## Storage Layout
 
@@ -37,7 +37,7 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 
 ## Verification Checklist
 
-1. Confirm the `database-cnpg` CNPG cluster reaches a ready state and emits the `database-cnpg-app` secret.
+1. Confirm the `pinepods-db` CNPG cluster reaches a ready state and emits the `pinepods-db-app` secret.
 2. Wait for the Deployment to become `Available`, then curl `http://localhost:8040/api/pinepods_check` inside the pod.
 3. Resolve `pinepods.pc-tips.se` through the Gateway and ensure it returns HTTP 200.
 4. Inspect the download and backup PVCs to verify files land in the correct paths.

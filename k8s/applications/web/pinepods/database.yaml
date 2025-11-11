@@ -1,7 +1,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: database-cnpg
+  name: pinepods-db
   namespace: pinepods
 spec:
   instances: 1
@@ -13,7 +13,7 @@ spec:
         ensure: present
         login: true
         passwordSecret:
-          name: database-cnpg-app
+          name: pinepods-db-app
         inRoles:
           - pg_read_all_data
           - pg_write_all_data
