@@ -11,7 +11,7 @@ spec:
     size: 20Gi
     storageClass: longhorn
   monitoring:
-    enablePodMonitor: true
+    enablePodMonitor: false
   bootstrap:
     initdb:
       database: pinepods

@@ -15,6 +15,10 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 * Bootstrap creates the `pinepods` database and role, then writes connection details to the generated secret `pinepods-db-app`.
 * The Deployment reads `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD` from that CNPG secret.
 
+## Monitoring
+
+* `pinepods-db` exposes PostgreSQL metrics through a dedicated PodMonitor instead of the deprecated CNPG toggle.
+
 ## Storage Layout
 
 * `pinepods-downloads`: 100Gi Longhorn PVC mounted at `/opt/pinepods/downloads`.
