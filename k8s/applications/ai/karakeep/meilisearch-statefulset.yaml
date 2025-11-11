@@ -51,6 +51,8 @@ spec:
           volumeMounts:
             - mountPath: /meili_data
               name: meilisearch-data
+            - mountPath: /tmp
+              name: tmp
           envFrom:
             - secretRef:
                 name: karakeep-secrets
@@ -72,3 +74,6 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
             failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir: {}
