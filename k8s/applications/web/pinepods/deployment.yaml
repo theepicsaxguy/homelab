@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: pinepods
-          image: madeofpendletonwool/pinepods:latest
+          image: madeofpendletonwool/pinepods:0.8.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8040

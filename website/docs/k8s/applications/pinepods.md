@@ -26,7 +26,7 @@ Pinepods runs as a web application in the `pinepods` namespace. The manifests li
 
 ## Deployment Highlights
 
-* Runs `madeofpendletonwool/pinepods:latest` as a single replica with non-root security settings.
+* Runs `madeofpendletonwool/pinepods:0.8.2` as a single replica with non-root security settings.
 * Requests 250m CPU / 512Mi memory and caps usage at 500m CPU / 1Gi memory.
 * Readiness probe hits `GET /api/pinepods_check` every 15 seconds after a 30-second delay; the liveness probe follows the same path with a 60-second delay.
 
