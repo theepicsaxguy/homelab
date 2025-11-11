@@ -31,7 +31,7 @@ spec:
           emptyDir: {}
       containers:
         - name: web
-          image: ghcr.io/karakeep-app/karakeep:0.28.0 # renovate: docker=ghcr.io/karakeep-app/karakeep
+          image: ghcr.io/karakeep-app/karakeep:0.28.0
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
