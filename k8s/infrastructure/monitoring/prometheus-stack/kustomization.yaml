@@ -11,7 +11,7 @@ resources:
 helmCharts:
   - name: kube-prometheus-stack
     repo: https://prometheus-community.github.io/helm-charts
-    version: 79.4.1 # renovate: docker=ghcr.io/prometheus-community/charts/kube-prometheus-stack
+    version: 79.5.0 # renovate: docker=ghcr.io/prometheus-community/charts/kube-prometheus-stack
     releaseName: kube-prometheus-stack
     namespace: monitoring
     valuesFile: values.yaml
