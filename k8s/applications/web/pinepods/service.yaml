@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pinepods
+  namespace: pinepods
+  labels:
+    app.kubernetes.io/name: pinepods
+spec:
+  selector:
+    app.kubernetes.io/name: pinepods
+  ports:
+    - name: http
+      port: 8040
+      targetPort: http
+      protocol: TCP
