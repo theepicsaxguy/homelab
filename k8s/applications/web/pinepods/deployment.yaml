@@ -99,6 +99,10 @@ spec:
               mountPath: /opt/pinepods/downloads
             - name: backups
               mountPath: /opt/pinepods/backups
+            - name: cache
+              mountPath: /pinepods/cache
+            - name: certs
+              mountPath: /opt/pinepods/certs
       volumes:
         - name: downloads
           persistentVolumeClaim:
@@ -106,3 +110,7 @@ spec:
         - name: backups
           persistentVolumeClaim:
             claimName: pinepods-backups
+        - name: cache
+          emptyDir: {}
+        - name: certs
+          emptyDir: {}
