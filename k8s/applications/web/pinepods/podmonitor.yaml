@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: pinepods-db
+  namespace: pinepods
+  labels:
+    app.kubernetes.io/name: pinepods-db
+spec:
+  namespaceSelector:
+    matchNames:
+      - pinepods
+  selector:
+    matchLabels:
+      cnpg.io/cluster: pinepods-db
+  podMetricsEndpoints:
+    - port: metrics
+      scheme: http

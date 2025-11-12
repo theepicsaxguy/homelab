@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pinepods-config
+  namespace: pinepods
+data:
+  SEARCH_API_URL: https://search.pinepods.online/api/search
+  DB_TYPE: postgresql
+  DEBUG_MODE: "false"
