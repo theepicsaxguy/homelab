@@ -73,6 +73,8 @@ spec:
               value: http://chrome:9222
             - name: DATA_DIR
               value: /data
+            - name: KARAKEEP_VERSION
+              value: 0.28.0
           envFrom:
             - secretRef:
                 name: karakeep-secrets
