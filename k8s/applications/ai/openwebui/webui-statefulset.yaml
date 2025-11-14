@@ -101,23 +101,23 @@ spec:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 120
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 10
+            timeoutSeconds: 30
+            failureThreshold: 20
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 10
+            timeoutSeconds: 30
+            failureThreshold: 20
           startupProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 30
+            timeoutSeconds: 30
+            failureThreshold: 60

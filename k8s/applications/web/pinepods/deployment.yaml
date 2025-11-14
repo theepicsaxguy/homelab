@@ -19,13 +19,6 @@ spec:
         app.kubernetes.io/part-of: pinepods
         app.kubernetes.io/component: web
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: pinepods
           image: madeofpendletonwool/pinepods:0.8.2
@@ -39,6 +32,10 @@ spec:
             - secretRef:
                 name: es-pinepods-admin
           env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
             - name: TZ
               value: Europe/Stockholm
             - name: DB_HOST
@@ -89,11 +86,6 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
           volumeMounts:
             - name: downloads
               mountPath: /opt/pinepods/downloads
@@ -101,8 +93,6 @@ spec:
               mountPath: /opt/pinepods/backups
             - name: cache
               mountPath: /pinepods/cache
-            - name: certs
-              mountPath: /opt/pinepods/certs
       volumes:
         - name: downloads
           persistentVolumeClaim:
@@ -111,6 +101,4 @@ spec:
           persistentVolumeClaim:
             claimName: pinepods-backups
         - name: cache
-          emptyDir: {}
-        - name: certs
           emptyDir: {}
