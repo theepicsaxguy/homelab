@@ -7,3 +7,5 @@ data:
   SEARCH_API_URL: https://search.pinepods.online/api/search
   DB_TYPE: postgresql
   DEBUG_MODE: "false"
+  VALKEY_HOST: pinepods-valkey
+  VALKEY_PORT: "6379"

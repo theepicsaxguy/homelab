@@ -8,6 +8,7 @@ resources:
   - pvc.yaml
   - database.yaml
   - podmonitor.yaml
+  - valkey.yaml
   - deployment.yaml
   - service.yaml
   - http-route.yaml
