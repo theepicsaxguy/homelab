@@ -18,24 +18,21 @@ spec:
         - name: vllm-openai
           image: public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.10.2
           imagePullPolicy: IfNotPresent
-          command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+          # Use shell to expand API key from env var securely
+          command: ["/bin/sh", "-c"]
           args:
-            - "--model"
-            - "intfloat/e5-base-v2"
-            - "--task"
-            - "embed"
-            - "--port"
-            - "8000"
-            - "--host"
-            - "0.0.0.0"
-            - "--device"
-            - "cpu"
+            - "python3 -m vllm.entrypoints.openai.api_server --model intfloat/e5-base-v2 --task embed --port 8000 --host 0.0.0.0 --device cpu --api-key $VLLM_API_KEY"
           env:
             - name: HUGGING_FACE_HUB_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: app-vllm-embed-hf-token
                   key: HUGGING_FACE_HUB_TOKEN
+            - name: VLLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-vllm-embed-api-key
+                  key: VLLM_API_KEY
           ports:
             - name: http
               containerPort: 8000

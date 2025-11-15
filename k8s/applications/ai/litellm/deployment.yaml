@@ -38,6 +38,8 @@ spec:
               key: password
         - name: DATABASE_URL
           value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql.litellm.svc.kube.pc-tips.se:5432/litellm
+        - name: QDRANT_API_BASE
+          value: "http://qdrant.qdrant.svc.cluster.local:6333"
         - name: SEPARATE_HEALTH_APP
           value: "1"
         - name: SEPARATE_HEALTH_PORT

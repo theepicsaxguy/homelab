@@ -5,6 +5,7 @@ namespace: vllm-embed
 resources:
   - namespace.yaml
   - externalsecret.yaml
+  - externalsecret-apikey.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
