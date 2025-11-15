@@ -317,3 +317,7 @@ PgBouncer
 :::danger
 OpenTofu
 pooler
+
+OpenAI-compatible
+Qdrant
+vLLM

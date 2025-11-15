@@ -5,7 +5,12 @@ metadata:
   namespace: litellm
 data:
   proxy_server_config.yaml: |
-    model_list: []
+    model_list:
+      - model_name: vllm-embed
+        litellm_params:
+          model: openai/text-embedding-3-small
+          api_key: os.environ/VLLM_API_KEY
+          api_base: http://vllm-embed.vllm-embed.svc.cluster.local:8000/v1
 
     litellm_settings:
       callbacks: ["prometheus"]
@@ -13,12 +18,15 @@ data:
       require_auth_for_metrics_endpoint: false
       cache: true
       cache_params:
-        type: redis
-        host: redis.litellm.svc.kube.pc-tips.se
-        port: 6379
-        namespace: "litellm.cache"
+        type: qdrant-semantic
+        qdrant_api_base: http://qdrant.qdrant.svc.cluster.local:6333
+        qdrant_api_key: os.environ/QDRANT_API_KEY
+        qdrant_semantic_cache_embedding_model: vllm-embed
+        qdrant_collection_name: litellm_semantic_cache
+        qdrant_quantization_config: binary
+        similarity_threshold: 0.8
         ttl: 600
-        supported_call_types: ["acompletion", "atext_completion", "aembedding", "atranscription"]
+        supported_call_types: ["acompletion", "atext_completion"]
       json_logs: true
       turn_off_message_logging: true
       redact_user_api_key_info: true

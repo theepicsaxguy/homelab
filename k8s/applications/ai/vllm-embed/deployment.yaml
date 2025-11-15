@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-embed
+  labels:
+    app: vllm-embed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-embed
+  template:
+    metadata:
+      labels:
+        app: vllm-embed
+    spec:
+      containers:
+        - name: vllm-openai
+          image: public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.10.2
+          imagePullPolicy: IfNotPresent
+          # Use shell to expand API key from env var securely
+          command: ["/bin/sh", "-c"]
+          args:
+            - "python3 -m vllm.entrypoints.openai.api_server --model intfloat/e5-base-v2 --task embed --port 8000 --host 0.0.0.0 --device cpu --api-key $VLLM_API_KEY"
+          env:
+            - name: HUGGING_FACE_HUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-vllm-embed-hf-token
+                  key: HUGGING_FACE_HUB_TOKEN
+            - name: VLLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-vllm-embed-api-key
+                  key: VLLM_API_KEY
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: hf-cache
+              mountPath: /root/.cache/huggingface
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+      volumes:
+        - name: hf-cache
+          persistentVolumeClaim:
+            claimName: vllm-model-cache
