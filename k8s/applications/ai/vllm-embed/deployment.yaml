@@ -41,11 +41,11 @@ spec:
               mountPath: /root/.cache/huggingface
           resources:
             requests:
-              cpu: "2000m"
-              memory: "8Gi"
+              cpu: "1000m"
+              memory: "1Gi"
             limits:
-              cpu: "8000m"
-              memory: "32Gi"
+              cpu: "2000m"
+              memory: "2Gi"
       volumes:
         - name: hf-cache
           persistentVolumeClaim:
