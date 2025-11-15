@@ -62,3 +62,7 @@ v2
 ::tip
 :::danger
 OpenTofu
+npm
+nvm
+pre-commit
+Pre-commit

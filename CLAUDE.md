@@ -83,12 +83,14 @@ npm run build
 ### Linting & Pre-commit
 
 ```bash
-# Run pre-commit hooks manually
+# Run pre-commit hooks manually (includes Vale linting)
 pre-commit run --all-files
 
-# Vale linting (documentation)
-vale --config=website/utils/vale/.vale.ini --minAlertLevel=error website/docs/
+# Run pre-commit on specific files
+pre-commit run --files website/docs/path/to/file.md
 ```
+
+**Note:** Pre-commit must be installed first (`pip install pre-commit` or `pipx install pre-commit`), then initialized with `pre-commit install`. The pre-commit hooks will automatically download and install Vale and other linting tools on first run.
 
 ### Git Workflow
 
@@ -218,4 +220,5 @@ Before submitting PRs:
 1. Kubernetes: Run `kustomize build --enable-helm` on modified directories
 2. OpenTofu: Run `tofu fmt` and `tofu validate` in `tofu/`
 3. Website: Run `npm install`, `npm run typecheck`, and `npm run lint:all` in `website/`
-4. Validation happens via Kubechecks before Argo CD rollout
+4. Documentation: Run `pre-commit run --files <changed-files>` to validate with Vale
+5. Validation happens via Kubechecks before Argo CD rollout
