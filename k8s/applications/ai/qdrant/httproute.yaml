@@ -5,10 +5,12 @@ metadata:
   namespace: qdrant
 spec:
   parentRefs:
-    - name: main-gateway
+    - name: external
+      namespace: gateway
+    - name: internal
       namespace: gateway
   hostnames:
-    - qdrant.local
+    - 'qdrant.pc-tips.se'
   rules:
     - matches:
         - path:

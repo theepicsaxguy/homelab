@@ -5,10 +5,12 @@ metadata:
   namespace: vllm-embed
 spec:
   parentRefs:
-    - name: main-gateway
+    - name: external
+      namespace: gateway
+    - name: internal
       namespace: gateway
   hostnames:
-    - embeddings.local
+    - 'embeddings.pc-tips.se'
   rules:
     - matches:
         - path:

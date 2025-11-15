@@ -16,4 +16,4 @@ metadata:
 
 ## Access
 
-Requests reach the Deployment through the `vllm-embed` Service on port 8000 or via the `embeddings.local` host on the Gateway.
+Requests reach the Deployment through the `vllm-embed` Service on port 8000 or via `embeddings.pc-tips.se` on the internal and external Gateways.
