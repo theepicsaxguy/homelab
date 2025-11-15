@@ -23,6 +23,12 @@ spec:
               containerPort: 6333
             - name: grpc
               containerPort: 6334
+          env:
+            - name: QDRANT__SERVICE__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-qdrant-api-key
+                  key: QDRANT__SERVICE__API_KEY
           volumeMounts:
             - name: data
               mountPath: /qdrant/storage
