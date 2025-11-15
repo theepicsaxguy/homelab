@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: vllm-openai
-          image: vllm-openai-cpu:0.11.0
+          image: public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.10.2
           imagePullPolicy: IfNotPresent
           command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
           args:
