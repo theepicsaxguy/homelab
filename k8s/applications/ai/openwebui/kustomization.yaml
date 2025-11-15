@@ -7,3 +7,4 @@ resources:
 - webui-service.yaml
 - http-route.yaml
 - openwebui-secrets-external.yaml
+- litellm-api-key.yaml

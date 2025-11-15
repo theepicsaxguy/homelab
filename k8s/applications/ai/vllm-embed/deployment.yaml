@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-embed
+  labels:
+    app: vllm-embed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-embed
+  template:
+    metadata:
+      labels:
+        app: vllm-embed
+    spec:
+      containers:
+        - name: vllm-openai
+          image: vllm-openai-cpu:0.11.0
+          imagePullPolicy: IfNotPresent
+          command: ["python3", "-m", "vllm.entrypoints.openai.api_server"]
+          args:
+            - "--model"
+            - "intfloat/e5-base-v2"
+            - "--task"
+            - "embed"
+            - "--port"
+            - "8000"
+            - "--host"
+            - "0.0.0.0"
+            - "--device"
+            - "cpu"
+          env:
+            - name: HUGGING_FACE_HUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-vllm-embed-hf-token
+                  key: HUGGING_FACE_HUB_TOKEN
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: hf-cache
+              mountPath: /root/.cache/huggingface
+          resources:
+            requests:
+              cpu: "2000m"
+              memory: "8Gi"
+            limits:
+              cpu: "8000m"
+              memory: "32Gi"
+      volumes:
+        - name: hf-cache
+          persistentVolumeClaim:
+            claimName: vllm-model-cache

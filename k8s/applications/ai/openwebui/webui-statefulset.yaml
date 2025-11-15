@@ -96,6 +96,31 @@ spec:
               value: 'OpenWebUI/0.6.15'
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
               value: 'true'
+            - name: VECTOR_DB
+              value: 'qdrant'
+            - name: QDRANT_URI
+              value: 'http://qdrant.qdrant.svc.cluster.local:6333'
+            - name: ENABLE_QDRANT_MULTITENANCY_MODE
+              value: 'true'
+            - name: QDRANT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-openwebui-qdrant-api-key
+                  key: QDRANT_API_KEY
+                  optional: true
+            - name: QDRANT_PREFER_GRPC
+              value: 'false'
+            - name: OPENAI_API_BASE_URL
+              value: 'http://litellm.litellm.svc.cluster.local:4000/v1'
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-openwebui-litellm-api-key
+                  key: OPENAI_API_KEY
+            - name: RAG_EMBEDDING_ENGINE
+              value: 'openai'
+            - name: RAG_EMBEDDING_MODEL
+              value: 'intfloat/e5-base-v2'
           tty: true
           livenessProbe:
             httpGet:
