@@ -12,9 +12,12 @@ For community expectations, please read my [Code of Conduct](https://github.com/
 
 To ensure your changes are valid, you'll need a few tools.
 
+<!-- vale Project.NoVersionNumbers = NO -->
+
 - **OpenTofu:** For validating any changes in the `/tofu` directory.
 - **Kustomize:** For building and validating Kubernetes manifests.
 - **Node.js/npm:** For type checking and running the documentation website. **Requires Node.js >=20.18.1 and npm >=10.0.0**.
+- **pre-commit:** For running validation hooks automatically. **Optional but recommended**.
 
 ### Node.js Version Management
 
@@ -39,9 +42,41 @@ This project requires Node.js >=20.18.1. If you're using a different version, yo
    npm run install:all
    ```
 
+### Pre-commit Hooks (Optional)
+
+Pre-commit hooks automatically validate your changes before you commit them. This is optional but highly recommended to catch issues early.
+
+1. **Install pre-commit:**
+   ```shell
+   # Using pip
+   pip install pre-commit
+   
+   # Or using pipx (recommended)
+   pipx install pre-commit
+   ```
+
+2. **Install the hooks:**
+   ```shell
+   # From the root of the repository
+   pre-commit install
+   ```
+
+3. **Run hooks manually:**
+   ```shell
+   # Check all files
+   pre-commit run --all-files
+   
+   # Check specific files
+   pre-commit run --files website/docs/path/to/file.md
+   ```
+
+Once installed, pre-commit will automatically run validation checks (including Vale documentation linting) before each commit. If you prefer not to use pre-commit, you can run the validation commands manually as described below.
+
 ### Common Build Issues
 
-If you encounter "File is not defined" errors with the search plugin or other module loading issues, this usually indicates you're using an incompatible Node.js version. Ensure you're using Node.js >=20.18.1.
+If you encounter "File isn't defined" errors with the search plugin or other module loading issues, this usually indicates you're using an incompatible Node.js version. Ensure you're using Node.js version 20.18.1 or higher.
+
+<!-- vale Project.NoVersionNumbers = YES -->
 
 ### Checking Your Work
 
