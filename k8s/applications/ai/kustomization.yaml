@@ -6,3 +6,5 @@ resources:
 - openwebui
 - karakeep
 - litellm
+- qdrant
+- vllm-embed

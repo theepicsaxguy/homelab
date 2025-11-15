@@ -93,7 +93,7 @@ spec:
               path: /status
               port: 8443
               scheme: HTTPS
-            periodSeconds: 10
+            periodSeconds: 15
             failureThreshold: 30
           livenessProbe:
             httpGet:
@@ -103,7 +103,7 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
-            failureThreshold: 3
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /status
@@ -112,7 +112,7 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 15
             timeoutSeconds: 10
-            failureThreshold: 3
+            failureThreshold: 10
           volumeMounts:
             - name: unifi-data
               mountPath: /unifi

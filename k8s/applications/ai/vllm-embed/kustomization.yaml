@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: vllm-embed
+
+resources:
+  - namespace.yaml
+  - externalsecret.yaml
+  - externalsecret-apikey.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+  - httproute.yaml

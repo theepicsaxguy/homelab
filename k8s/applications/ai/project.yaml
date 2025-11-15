@@ -13,6 +13,12 @@ spec:
       server: '*'
     - namespace: 'bytebot'
       server: '*'
+    - namespace: 'litellm'
+      server: '*'
+    - namespace: 'qdrant'
+      server: '*'
+    - namespace: 'vllm-embed'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
