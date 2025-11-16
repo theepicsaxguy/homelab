@@ -8,3 +8,4 @@ resources:
 - http-route.yaml
 - openwebui-secrets-external.yaml
 - litellm-api-key.yaml
+- openwebui-qdrant-api-key.yaml

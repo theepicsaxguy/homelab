@@ -107,7 +107,6 @@ spec:
                 secretKeyRef:
                   name: app-openwebui-qdrant-api-key
                   key: QDRANT_API_KEY
-                  optional: true
             - name: QDRANT_PREFER_GRPC
               value: 'false'
             - name: OPENAI_API_BASE_URL

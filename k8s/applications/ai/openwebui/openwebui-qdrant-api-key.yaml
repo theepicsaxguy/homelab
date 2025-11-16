@@ -1,0 +1,18 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: app-openwebui-qdrant-api-key
+  namespace: open-webui
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: app-openwebui-qdrant-api-key
+    creationPolicy: Owner
+  data:
+    - secretKey: QDRANT_API_KEY
+      remoteRef:
+        key: app-qdrant-api-key
+        property: QDRANT__SERVICE__API_KEY
