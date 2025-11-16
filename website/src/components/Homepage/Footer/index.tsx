@@ -25,6 +25,7 @@ export function Footer(): JSX.Element {
             <h3 className={styles.title}>Community</h3>
             <ul className={styles.list}>
               <li><Link to="https://github.com/theepicsaxguy/homelab">GitHub</Link></li>
+              <li><Link to="https://goingdark.social/">Mastodon</Link></li>
             </ul>
           </div>
           {/* <div className={styles.column}>
