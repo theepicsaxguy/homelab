@@ -1,6 +1,8 @@
 # Stage 1: build vLLM from source with CPU support
 FROM ubuntu:22.04@sha256:104ae83764a5119017b8e8d6218fa0832b09df65aae7d5a6de29a85d813da2fb AS build
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install build tools and dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates=20240203~22.04.1 \
@@ -54,6 +56,8 @@ RUN VLLM_TARGET_DEVICE=cpu python setup.py bdist_wheel \
 
 # Stage 2: runtime image
 FROM ubuntu:22.04@sha256:104ae83764a5119017b8e8d6218fa0832b09df65aae7d5a6de29a85d813da2fb
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
