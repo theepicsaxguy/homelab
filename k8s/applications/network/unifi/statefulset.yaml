@@ -48,6 +48,8 @@ spec:
               cpu: "1000m"
               memory: "2Gi"
           env:
+            - name: SYSTEM_IP
+              value: "10.25.150.236"
             - name: TZ
               value: "Etc/UTC"
             - name: UNIFI_HTTP_PORT
