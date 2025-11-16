@@ -82,7 +82,7 @@ COPY --from=build /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:${PATH}"
 
 # Create unprivileged user for running the service
-RUN useradd -m -u 65534 -s /sbin/nologin -c "vllm user" vllm \
+RUN useradd -m -s /sbin/nologin -c "vllm user" vllm \
     && mkdir -p /tmp /var/tmp \
     && chown vllm:vllm /tmp /var/tmp
 
