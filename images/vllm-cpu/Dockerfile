@@ -3,25 +3,22 @@ FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d4
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install build tools and dependencies
+# Install build tools and dependencies pinned to Ubuntu 24.04 versions
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates=20240203~22.04.1 \
-    curl=7.81.0-1ubuntu1.21 \
-    gnupg2=2.2.27-3ubuntu2.4 \
-    && curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get\&search=0xF23C5A6CF475977595C89F51BA6932366A755776 | gpg --dearmor -o /etc/apt/trusted.gpg.d/deadsnakes.gpg \
-    && echo "deb https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/ jammy main" > /etc/apt/sources.list.d/deadsnakes.list \
-    && apt-get update && apt-get install -y --no-install-recommends \
-    python3.12=3.12.12-1+jammy1 \
-    python3.12-venv=3.12.12-1+jammy1 \
-    python3.12-dev=3.12.12-1+jammy1 \
-    gcc-12=12.3.0-1ubuntu1~22.04.2 \
-    g++-12=12.3.0-1ubuntu1~22.04.2 \
-    git=1:2.34.1-1ubuntu1.15 \
-    wget=1.21.2-2ubuntu1.1 \
-    cmake=3.22.1-1ubuntu1.22.04.2 \
-    ninja-build=1.10.1-1 \
-    libnuma-dev=2.0.14-3ubuntu2 \
-    libtcmalloc-minimal4=2.9.1-0ubuntu3 \
+    ca-certificates=20240203 \
+    curl=8.5.0-2ubuntu10.6 \
+    gnupg2=2.4.4-2ubuntu17.3 \
+    python3.12=3.12.3-1ubuntu0.8 \
+    python3.12-venv=3.12.3-1ubuntu0.8 \
+    python3.12-dev=3.12.3-1ubuntu0.8 \
+    gcc-13=13.3.0-6ubuntu2~24.04 \
+    g++-13=13.3.0-6ubuntu2~24.04 \
+    git=1:2.43.0-1ubuntu7.3 \
+    wget=1.21.4-1ubuntu4.1 \
+    cmake=3.28.3-1build7 \
+    ninja-build=1.11.1-2 \
+    libnuma-dev=2.0.18-1build1 \
+    libtcmalloc-minimal4t64=2.15-3build1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtualenv
@@ -29,8 +26,8 @@ RUN python3.12 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:${PATH}"
 
 # Set C and C++ compilers for CMake
-ENV CC=gcc-12
-ENV CXX=g++-12
+ENV CC=gcc-13
+ENV CXX=g++-13
 
 # Copy pinned build requirements
 COPY requirements-build.txt /tmp/requirements-build.txt
@@ -65,16 +62,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates=20240203~22.04.1 \
-    curl=7.81.0-1ubuntu1.21 \
-    gnupg2=2.2.27-3ubuntu2.4 \
-    && curl -fsSL https://keyserver.ubuntu.com/pks/lookup?op=get\&search=0xF23C5A6CF475977595C89F51BA6932366A755776 | gpg --dearmor -o /etc/apt/trusted.gpg.d/deadsnakes.gpg \
-    && echo "deb https://ppa.launchpadcontent.net/deadsnakes/ppa/ubuntu/ jammy main" > /etc/apt/sources.list.d/deadsnakes.list \
-    && apt-get update && apt-get install -y --no-install-recommends \
-    python3.12=3.12.12-1+jammy1 \
-    python3.12-venv=3.12.12-1+jammy1 \
-    libnuma1=2.0.14-3ubuntu2 \
-    libtcmalloc-minimal4=2.9.1-0ubuntu3 \
+    ca-certificates=20240203 \
+    curl=8.5.0-2ubuntu10.6 \
+    gnupg2=2.4.4-2ubuntu17.3 \
+    python3.12=3.12.3-1ubuntu0.8 \
+    python3.12-venv=3.12.3-1ubuntu0.8 \
+    libnuma1=2.0.18-1build1 \
+    libtcmalloc-minimal4t64=2.15-3build1 \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy venv from build image
