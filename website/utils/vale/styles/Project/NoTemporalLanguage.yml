@@ -9,6 +9,7 @@ tokens:
   - '\bat the moment\b'
   - '\bright now\b'
   - '\bfor now\b'
+  - '\bnow\b'
   - '\btemporarily\b'
   - '\bas of [0-9]{4}'
   - '\bin [0-9]{4}\b'
