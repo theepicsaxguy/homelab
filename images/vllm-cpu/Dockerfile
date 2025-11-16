@@ -28,6 +28,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3.12 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:${PATH}"
 
+# Set C and C++ compilers for CMake
+ENV CC=gcc-12
+ENV CXX=g++-12
+
 # Copy pinned build requirements
 COPY requirements-build.txt /tmp/requirements-build.txt
 
