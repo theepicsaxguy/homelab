@@ -4,5 +4,5 @@ setuptools==75.6.0
 wheel==0.45.1
 packaging==24.2
 cmake==3.31.6
-ninja==1.11.1.4
-setuptools-scm==8.1.0
+ninja==1.13.0
+setuptools-scm==8.3.1
