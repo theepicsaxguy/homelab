@@ -28,10 +28,15 @@ deployment:
 - `ENABLE_QDRANT_MULTITENANCY_MODE=true`
 - `QDRANT_PREFER_GRPC=false`
 
-Provide a Qdrant API key by creating a secret named
-`app-openwebui-qdrant-api-key` with a `QDRANT_API_KEY` field. The env var is
-optional, so the pod keeps running even if you leave the service unauthenticated
-for local testing.
+The `app-openwebui-qdrant-api-key` ExternalSecret now mirrors the
+`QDRANT__SERVICE__API_KEY` property from Bitwarden into a Kubernetes secret with
+a `QDRANT_API_KEY` field. Open WebUI will not start without this secret, which
+prevents it from silently falling back to the default Chroma store and ensures
+all traffic to Qdrant is authenticated.
+
+After switching stores or rotating the API key, re-index all documents from the
+Admin Panel → Settings → Documents page so the new Qdrant collection is
+populated.
 
 ## Embeddings
 
