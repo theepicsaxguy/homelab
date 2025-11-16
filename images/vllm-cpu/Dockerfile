@@ -1,5 +1,5 @@
 # Stage 1: build vLLM from source with CPU support
-FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54 AS build
+FROM ubuntu:22.04@sha256:19478ce7fc2ffbce89df29fea5725a8d12e57de52eb9ea570890dc5852aac1ac AS build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -59,7 +59,7 @@ RUN VLLM_TARGET_DEVICE=cpu python setup.py bdist_wheel \
     && pip install dist/*.whl
 
 # Stage 2: runtime image
-FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54
+FROM ubuntu:22.04@sha256:19478ce7fc2ffbce89df29fea5725a8d12e57de52eb9ea570890dc5852aac1ac
 
 ENV DEBIAN_FRONTEND=noninteractive
 
