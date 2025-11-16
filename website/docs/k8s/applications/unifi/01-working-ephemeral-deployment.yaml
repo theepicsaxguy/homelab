@@ -80,7 +80,7 @@ spec:
     spec:
       containers:
         - name: unifi-controller
-          image: lscr.io/linuxserver/unifi-network-application:8.6.9
+          image: lscr.io/linuxserver/unifi-network-application:9.5.21
           imagePullPolicy: Always
           securityContext:
             runAsUser: 0
