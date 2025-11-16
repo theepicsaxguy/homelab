@@ -92,6 +92,11 @@ const config: Config = {
           label: 'GitHub',
           position: 'right',
         },
+        {
+          href: 'https://goingdark.social/',
+          label: 'Mastodon',
+          position: 'right',
+        },
       ],
     },
     footer: {
@@ -112,6 +117,10 @@ const config: Config = {
             {
               label: 'GitHub',
               href: 'https://github.com/theepicsaxguy/homelab',
+            },
+            {
+              label: 'Mastodon',
+              href: 'https://goingdark.social/',
             },
           ],
         },
