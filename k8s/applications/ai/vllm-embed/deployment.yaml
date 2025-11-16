@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: vllm-openai
-          image: ghcr.io/theepicsaxguy/vllm-cpu:latest-1b41551
+          image: ghcr.io/theepicsaxguy/vllm-cpu:latest-e5028a3
           imagePullPolicy: IfNotPresent
           # Use shell to expand API key from env var securely
           command: ["/bin/sh", "-c"]
