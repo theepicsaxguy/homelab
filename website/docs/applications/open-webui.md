@@ -46,6 +46,19 @@ as an OpenAI-compatible backend with these environment variables:
 LiteLLM and vLLM expose the `intfloat/e5-base-v2` embedding model, so the RAG
 pipeline now shares a single embedding cache across the cluster.
 
+## Streaming performance
+
+The `CHAT_RESPONSE_STREAM_DELTA_CHUNK_SIZE` environment variable sets a
+system-wide minimum value for token batching in streaming responses. This
+prevents excessively small chunk sizes that can cause high CPU load when
+running with high concurrency and fast streaming models.
+
+The final chunk size used for a response will be the highest value among this
+global variable, the model's advanced parameters, or per-chat settings.
+
+- Default: `1` (no minimum batching)
+- Current setting: `10` (recommended for high concurrency deployments)
+
 ## Persistent settings
 
 Open WebUI reads the embedding and vector settings from env vars only on the

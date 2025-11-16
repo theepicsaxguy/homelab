@@ -121,6 +121,8 @@ spec:
               value: 'openai'
             - name: RAG_EMBEDDING_MODEL
               value: 'intfloat/e5-base-v2'
+            - name: CHAT_RESPONSE_STREAM_DELTA_CHUNK_SIZE
+              value: '10'
           tty: true
           livenessProbe:
             httpGet:
