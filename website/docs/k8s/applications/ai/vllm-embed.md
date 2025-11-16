@@ -2,7 +2,9 @@
 title: 'vLLM Embedding Server'
 ---
 
-The embedding server runs the OpenAI-compatible entrypoint from the official CPU image `public.ecr.aws/q9t5s3a7/vllm-cpu-release-repo:v0.10.2`. It loads `intfloat/e5-base-v2` in embed mode and stores the Hugging Face cache on a 100Gi PersistentVolumeClaim.
+The embedding server uses the OpenAI-compatible entrypoint in the custom image `ghcr.io/theepicsaxguy/vllm-cpu`.
+The `Dockerfile` in `images/vllm-cpu/` pins the current Ubuntu long term support releases so Python, `gcc`, and `gperftools` match between builds.
+It loads `intfloat/e5-base-v2` in embed mode and stores the Hugging Face cache on a 100Gi PersistentVolumeClaim.
 
 ## Secrets
 
