@@ -1,0 +1,1 @@
+# This file helps ensure Docker properly includes submodule files in the build context

@@ -62,9 +62,9 @@ ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 ENV UV_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 ENV UV_INDEX_STRATEGY="unsafe-best-match"
 ENV UV_LINK_MODE="copy"
+# Copy requirements files from submodule to avoid bind mount issues with git submodules
+COPY upstream/requirements/common.txt upstream/requirements/cpu.txt requirements/
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,src=./upstream/requirements/common.txt,target=requirements/common.txt \
-    --mount=type=bind,src=./upstream/requirements/cpu.txt,target=requirements/cpu.txt \
     uv pip install --upgrade pip && \
     uv pip install -r requirements/cpu.txt
 
@@ -110,13 +110,14 @@ WORKDIR /workspace/vllm
 
 ARG IMAGE_VERSION
 
+# Copy build requirements from submodule to avoid bind mount issues with git submodules
+COPY upstream/requirements/cpu-build.txt requirements/build.txt
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,src=./upstream/requirements/cpu-build.txt,target=requirements/build.txt \
     uv pip install -r requirements/build.txt
 
 COPY upstream/ .
-RUN --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
-    if [ "$GIT_REPO_CHECK" != 0 ]; then bash tools/check_repo.sh ; fi
+# Note: .git is already copied by the line above, no bind mount needed
+RUN if [ "$GIT_REPO_CHECK" != 0 ]; then bash tools/check_repo.sh ; fi
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=cache,target=/root/.cache/ccache \
@@ -130,8 +131,9 @@ FROM base AS vllm-test-deps
 WORKDIR /workspace/vllm
 
 # TODO: Update to 2.9.0 when there is a new build for intel_extension_for_pytorch for that version
-RUN --mount=type=bind,src=upstream/requirements/test.in,target=requirements/test.in \
-    cp requirements/test.in requirements/cpu-test.in && \
+# Copy test requirements from submodule to avoid bind mount issues with git submodules
+COPY upstream/requirements/test.in requirements/test.in
+RUN cp requirements/test.in requirements/cpu-test.in && \
     sed -i '/mamba_ssm/d' requirements/cpu-test.in && \
     sed -i 's/^torch==.*/torch==2.8.0/g' requirements/cpu-test.in && \
     sed -i 's/torchaudio.*/torchaudio/g' requirements/cpu-test.in && \
@@ -154,9 +156,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install -e tests/vllm_test_utils
 
+# Note: .git is already available from the vllm-build stage parent
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=cache,target=/root/.cache/ccache \
-    --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
     VLLM_TARGET_DEVICE=cpu python3 setup.py develop
 
 COPY --from=vllm-test-deps /workspace/vllm/requirements/cpu-test.txt requirements/test.txt

@@ -69,6 +69,22 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
+      - name: Verify submodule checkout
+        run: |
+          echo "Checking submodule status..."
+          git submodule status
+          if [ -d "images/${{ matrix.image }}/upstream" ]; then
+            echo "Listing contents of images/${{ matrix.image }}/upstream:"
+            ls -la "images/${{ matrix.image }}/upstream" || true
+            if [ -d "images/${{ matrix.image }}/upstream/requirements" ]; then
+              echo "✓ Found requirements directory"
+              ls -la "images/${{ matrix.image }}/upstream/requirements" | head -10
+            else
+              echo "⚠ Requirements directory not found!"
+              exit 1
+            fi
+          fi
+
       - name: Set lowercase owner for GHCR
         run: |
           echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
