@@ -19,6 +19,10 @@ spec:
         - name: vllm-openai
           image: ghcr.io/theepicsaxguy/vllm-cpu:v0.11.0-cfc13f2
           imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - SYS_NICE
           # Use shell to expand API key from env var securely
           command: ["/bin/sh", "-c"]
           args:
@@ -40,6 +44,8 @@ spec:
                 secretKeyRef:
                   name: app-vllm-embed-api-key
                   key: VLLM_API_KEY
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "2"
           ports:
             - name: http
               containerPort: 8000
@@ -48,11 +54,11 @@ spec:
               mountPath: /root/.cache/huggingface
           resources:
             requests:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: "2000m"
+              memory: "5Gi"
             limits:
-              cpu: "3000m"
-              memory: "4Gi"
+              cpu: "4000m"
+              memory: "6Gi"
       volumes:
         - name: hf-cache
           persistentVolumeClaim:
