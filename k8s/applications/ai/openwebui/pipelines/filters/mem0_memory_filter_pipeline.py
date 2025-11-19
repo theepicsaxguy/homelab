@@ -24,7 +24,7 @@ class Pipeline:
 
         # Default values for the mem0 vector store
         vector_store_qdrant_name: str = "memories"
-        vector_store_qdrant_url: str = "host.docker.internal"
+        vector_store_qdrant_url: str = "qdrant.qdrant.svc.cluster.local"
         vector_store_qdrant_port: int = 6333
         vector_store_qdrant_dims: int = 768 # Need to match the vector dimensions of the embedder model
 
@@ -32,11 +32,11 @@ class Pipeline:
         ollama_llm_model: str = "llama3.1:latest" # This model need to exist in ollama
         ollama_llm_temperature: float = 0
         ollama_llm_tokens: int = 8000
-        ollama_llm_url: str = "http://host.docker.internal:11434"
+        ollama_llm_url: str = "http://litellm.litellm.svc.cluster.local:4000"
 
         # Default values for the mem0 embedding model
         ollama_embedder_model: str = "nomic-embed-text:latest" # This model need to exist in ollama
-        ollama_embedder_url: str = "http://host.docker.internal:11434"
+        ollama_embedder_url: str = "http://litellm.litellm.svc.cluster.local:4000"
 
     def __init__(self):
         self.type = "filter"

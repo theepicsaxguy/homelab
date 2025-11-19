@@ -53,7 +53,7 @@ spec:
               mountPath: /pipelines-init
       containers:
         - name: pipelines
-          image: ghcr.io/open-webui/pipelines:git-039f9c5
+          image: ghcr.io/theepicsaxguy/openwebui-pipelines:latest
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -68,6 +68,11 @@ spec:
                 secretKeyRef:
                   name: app-openwebui-pipelines-api-key
                   key: PIPELINES_API_KEY
+            - name: QDRANT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-openwebui-qdrant-api-key
+                  key: QDRANT_API_KEY
             - name: PIPELINES_DIR
               value: "/app/pipelines"
             - name: PIPELINES_ENV
