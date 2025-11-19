@@ -108,18 +108,20 @@ ENV VLLM_CPU_AMXBF16=${VLLM_CPU_AMXBF16}
 
 WORKDIR /workspace/vllm
 
+ARG IMAGE_VERSION
+
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,src=upstream/requirements/cpu-build.txt,target=requirements/build.txt \
     uv pip install -r requirements/build.txt
 
 COPY upstream/ .
-RUN --mount=type=bind,source=upstream/.git,target=.git \
+RUN --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
     if [ "$GIT_REPO_CHECK" != 0 ]; then bash tools/check_repo.sh ; fi
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=cache,target=/root/.cache/ccache \
     --mount=type=cache,target=/workspace/vllm/.deps,sharing=locked \
-    --mount=type=bind,source=upstream/.git,target=.git \
+    SETUPTOOLS_SCM_PRETEND_VERSION=${IMAGE_VERSION#v} \
     VLLM_TARGET_DEVICE=cpu python3 setup.py bdist_wheel --dist-dir=dist --py-limited-api=cp38
 
 ######################### TEST DEPS #########################
@@ -154,7 +156,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=cache,target=/root/.cache/ccache \
-    --mount=type=bind,source=upstream/.git,target=.git \
+    --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
     VLLM_TARGET_DEVICE=cpu python3 setup.py develop
 
 COPY --from=vllm-test-deps /workspace/vllm/requirements/cpu-test.txt requirements/test.txt
