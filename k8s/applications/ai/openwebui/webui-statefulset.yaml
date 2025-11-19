@@ -122,6 +122,8 @@ spec:
               value: 'intfloat/e5-base-v2'
             - name: CHAT_RESPONSE_STREAM_DELTA_CHUNK_SIZE
               value: '10'
+            - name: PIPELINES_URL
+              value: 'http://pipelines.open-webui.svc.cluster.local:9099'
           tty: true
           livenessProbe:
             httpGet:

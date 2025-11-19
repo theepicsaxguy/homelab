@@ -2,16 +2,3 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: open-webui
-
-configMapGenerator:
-  - name: openwebui-pipelines
-    literals:
-      - PIPELINES_PATH=/app/pipelines
-    files:
-      - pipelines/wikipedia_pipeline.py
-  - name: openwebui-filters
-    files:
-      - filters/mem0_memory_filter_pipeline.py
-  - name: openwebui-scaffolds
-    files:
-      - scaffolds/example_pipeline_scaffold.py
