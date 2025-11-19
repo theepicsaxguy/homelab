@@ -26,6 +26,7 @@ spec:
               --model Qwen/Qwen3-Embedding-0.6B
               --convert embed
               --port 8000
+              --max-model-len 18688
               --host 0.0.0.0
               --api-key $VLLM_API_KEY
           env:
