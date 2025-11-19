@@ -8,7 +8,7 @@ data:
     model_list:
       - model_name: vllm-embed
         litellm_params:
-          model: openai/intfloat/e5-base-v2
+          model: openai/Qwen/Qwen3-Embedding-0.6B
           api_key: os.environ/VLLM_API_KEY
           api_base: http://vllm-embed.vllm-embed.svc.cluster.local:8000/v1
 
