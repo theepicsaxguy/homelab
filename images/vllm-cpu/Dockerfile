@@ -1,104 +1,209 @@
-# Stage 1: build vLLM from source with CPU support
-FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54 AS build
+# Build arguments:
+#   PYTHON_VERSION=3.13|3.12 (default)|3.11|3.10
+#   VLLM_CPU_DISABLE_AVX512=false (default)|true
+#   VLLM_CPU_AVX512BF16=false (default)|true
+#   VLLM_CPU_AVX512VNNI=false (default)|true
+#   VLLM_CPU_AMXBF16=false (default)|true
+#
+ARG IMAGE_VERSION=v0.11.0
 
-ENV DEBIAN_FRONTEND=noninteractive
+# This vLLM Dockerfile is used to build images that can run vLLM on both x86_64 and arm64 CPU platforms.
+#
+# Supported platforms:
+#   - linux/amd64 (x86_64)
+#   - linux/arm64 (aarch64)
+#
+# Use the `--platform` option with `docker buildx build` to specify the target architecture, e.g.:
+#   docker buildx build --platform=linux/arm64 -f docker/Dockerfile.cpu .
+#
+# Build targets:
+#   vllm-openai (default): used for serving deployment
+#   vllm-test: used for CI tests
+#   vllm-dev: used for development
+#
+# Build arguments:
+#   PYTHON_VERSION=3.13|3.12 (default)|3.11|3.10
+#   VLLM_CPU_DISABLE_AVX512=false (default)|true
+#   VLLM_CPU_AVX512BF16=false (default)|true
+#   VLLM_CPU_AVX512VNNI=false (default)|true
+#   VLLM_CPU_AMXBF16=false (default)|true
+#
 
-# Install build tools and dependencies pinned to Ubuntu 24.04 versions
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates=20240203 \
-    curl=8.5.0-2ubuntu10.6 \
-    gnupg2=2.4.4-2ubuntu17.3 \
-    python3.12=3.12.3-1ubuntu0.8 \
-    python3.12-venv=3.12.3-1ubuntu0.8 \
-    python3.12-dev=3.12.3-1ubuntu0.8 \
-    gcc-13=13.3.0-6ubuntu2~24.04 \
-    g++-13=13.3.0-6ubuntu2~24.04 \
-    git=1:2.43.0-1ubuntu7.3 \
-    wget=1.21.4-1ubuntu4.1 \
-    cmake=3.28.3-1build7 \
-    ninja-build=1.11.1-2 \
-    libnuma-dev=2.0.18-1build1 \
-    libtcmalloc-minimal4t64=2.15-3build1 \
-    && rm -rf /var/lib/apt/lists/*
+######################### COMMON BASE IMAGE #########################
+FROM ubuntu:22.04 AS base-common
 
-# Create and activate virtualenv
-RUN python3.12 -m venv /opt/venv
-ENV PATH="/opt/venv/bin:${PATH}"
+WORKDIR /workspace/
 
-# Set C and C++ compilers for CMake
-ENV CC=gcc-13
-ENV CXX=g++-13
+ARG PYTHON_VERSION=3.12
+ARG PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"
 
-# Copy pinned build requirements
-COPY requirements-build.txt /tmp/requirements-build.txt
+# Install minimal dependencies and uv
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update -y \
+    && apt-get install -y --no-install-recommends sudo ccache git curl wget ca-certificates \
+        gcc-12 g++-12 libtcmalloc-minimal4 libnuma-dev ffmpeg libsm6 libxext6 libgl1 jq lsof \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 10 --slave /usr/bin/g++ g++ /usr/bin/g++-12 \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install pinned build tools
-RUN pip install --no-cache-dir -r /tmp/requirements-build.txt
+ENV CCACHE_DIR=/root/.cache/ccache
+ENV CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
-# Clone vLLM at specific tag
-RUN git clone --depth 1 --branch v0.10.0 https://github.com/vllm-project/vllm.git /workspace/vllm
+ENV PATH="/root/.local/bin:$PATH"
+ENV VIRTUAL_ENV="/opt/venv"
+ENV UV_PYTHON_INSTALL_DIR=/opt/uv/python
+RUN uv venv --python ${PYTHON_VERSION} --seed ${VIRTUAL_ENV}
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+ENV UV_HTTP_TIMEOUT=500
+
+# Install Python dependencies
+ENV PIP_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
+ENV UV_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
+ENV UV_INDEX_STRATEGY="unsafe-best-match"
+ENV UV_LINK_MODE="copy"
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,src=upstream/requirements/common.txt,target=requirements/common.txt \
+    --mount=type=bind,src=upstream/requirements/cpu.txt,target=requirements/cpu.txt \
+    uv pip install --upgrade pip && \
+    uv pip install -r requirements/cpu.txt
+
+ARG TARGETARCH=amd64
+ENV TARGETARCH=${TARGETARCH}
+
+######################### x86_64 BASE IMAGE #########################
+FROM base-common AS base-amd64
+
+ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4:/opt/venv/lib/libiomp5.so"
+
+######################### arm64 BASE IMAGE #########################
+FROM base-common AS base-arm64
+
+ENV LD_PRELOAD="/usr/lib/aarch64-linux-gnu/libtcmalloc_minimal.so.4"
+
+######################### BASE IMAGE #########################
+FROM base-${TARGETARCH} AS base
+
+RUN echo 'ulimit -c 0' >> ~/.bashrc
+
+######################### BUILD IMAGE #########################
+FROM base AS vllm-build
+
+ARG max_jobs=32
+ENV MAX_JOBS=${max_jobs}
+
+ARG GIT_REPO_CHECK=0
+# Support for building with non-AVX512 vLLM: docker build --build-arg VLLM_CPU_DISABLE_AVX512="true" ...
+ARG VLLM_CPU_DISABLE_AVX512="true"
+ENV VLLM_CPU_DISABLE_AVX512=${VLLM_CPU_DISABLE_AVX512}
+# Support for building with AVX512BF16 ISA: docker build --build-arg VLLM_CPU_AVX512BF16="true" ...
+ARG VLLM_CPU_AVX512BF16=0
+ENV VLLM_CPU_AVX512BF16=${VLLM_CPU_AVX512BF16}
+# Support for building with AVX512VNNI ISA: docker build --build-arg VLLM_CPU_AVX512VNNI="true" ...
+ARG VLLM_CPU_AVX512VNNI=0
+ENV VLLM_CPU_AVX512VNNI=${VLLM_CPU_AVX512VNNI}
+# Support for building with AMXBF16 ISA: docker build --build-arg VLLM_CPU_AMXBF16="true" ...
+ARG VLLM_CPU_AMXBF16=0
+ENV VLLM_CPU_AMXBF16=${VLLM_CPU_AMXBF16}
+
 WORKDIR /workspace/vllm
 
-# Install vLLM dependencies from its own requirements
-RUN pip install --no-cache-dir -r requirements/cpu-build.txt --extra-index-url https://download.pytorch.org/whl/cpu \
-    && pip install --no-cache-dir -r requirements/cpu.txt --extra-index-url https://download.pytorch.org/whl/cpu
+ARG IMAGE_VERSION
 
-# Build and install vLLM with target device CPU
-# pass build args to disable AVX512 if your CPU lacks it
-ARG VLLM_CPU_DISABLE_AVX512=true
-ARG VLLM_CPU_AVX512BF16=false
-ARG VLLM_CPU_AVX512VNNI=false
-ENV VLLM_CPU_DISABLE_AVX512=${VLLM_CPU_DISABLE_AVX512}
-ENV VLLM_CPU_AVX512BF16=${VLLM_CPU_AVX512BF16}
-ENV VLLM_CPU_AVX512VNNI=${VLLM_CPU_AVX512VNNI}
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,src=upstream/requirements/cpu-build.txt,target=requirements/build.txt \
+    uv pip install -r requirements/build.txt
 
-RUN VLLM_TARGET_DEVICE=cpu python setup.py bdist_wheel \
-    && pip install dist/*.whl
+COPY upstream/ .
+RUN --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
+    if [ "$GIT_REPO_CHECK" != 0 ]; then bash tools/check_repo.sh ; fi
 
-# Stage 2: runtime image
-FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=cache,target=/root/.cache/ccache \
+    --mount=type=cache,target=/workspace/vllm/.deps,sharing=locked \
+    SETUPTOOLS_SCM_PRETEND_VERSION=${IMAGE_VERSION#v} \
+    VLLM_TARGET_DEVICE=cpu python3 setup.py bdist_wheel --dist-dir=dist --py-limited-api=cp38
 
-ENV DEBIAN_FRONTEND=noninteractive
+######################### TEST DEPS #########################
+FROM base AS vllm-test-deps
 
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates=20240203 \
-    curl=8.5.0-2ubuntu10.6 \
-    gnupg2=2.4.4-2ubuntu17.3 \
-    python3.12=3.12.3-1ubuntu0.8 \
-    python3.12-venv=3.12.3-1ubuntu0.8 \
-    libnuma1=2.0.18-1build1 \
-    libtcmalloc-minimal4t64=2.15-3build1 \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+WORKDIR /workspace/vllm
 
-# Copy venv from build image
-COPY --from=build /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:${PATH}"
+# TODO: Update to 2.9.0 when there is a new build for intel_extension_for_pytorch for that version
+RUN --mount=type=bind,src=upstream/requirements/test.in,target=requirements/test.in \
+    cp requirements/test.in requirements/cpu-test.in && \
+    sed -i '/mamba_ssm/d' requirements/cpu-test.in && \
+    sed -i 's/^torch==.*/torch==2.8.0/g' requirements/cpu-test.in && \
+    sed -i 's/torchaudio.*/torchaudio/g' requirements/cpu-test.in && \
+    sed -i 's/torchvision.*/torchvision/g' requirements/cpu-test.in && \
+    uv pip compile requirements/cpu-test.in -o requirements/cpu-test.txt --index-strategy unsafe-best-match --torch-backend cpu
 
-# Create unprivileged user for running the service
-RUN useradd -m -s /sbin/nologin -c "vllm user" vllm \
-    && mkdir -p /tmp /var/tmp \
-    && chown vllm:vllm /tmp /var/tmp
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -r requirements/cpu-test.txt
 
-# Environment variables to tune CPU backend (adjust VLLM_CPU_KVCACHE_SPACE for available RAM)
+######################### DEV IMAGE #########################
+FROM vllm-build AS vllm-dev
+
+WORKDIR /workspace/vllm
+
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get install -y --no-install-recommends vim numactl xz-utils
+
+# install development dependencies (for testing)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -e tests/vllm_test_utils
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=cache,target=/root/.cache/ccache \
+    --mount=type=bind,source=upstream/.git,target=/workspace/vllm/.git \
+    VLLM_TARGET_DEVICE=cpu python3 setup.py develop
+
+COPY --from=vllm-test-deps /workspace/vllm/requirements/cpu-test.txt requirements/test.txt
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -r requirements/dev.txt && \
+    pre-commit install --hook-type pre-commit --hook-type commit-msg
+
+ENTRYPOINT ["bash"]
+
+######################### TEST IMAGE #########################
+FROM vllm-test-deps AS vllm-test
+
+WORKDIR /workspace/
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,from=vllm-build,src=/workspace/vllm/dist,target=dist \
+    uv pip install dist/*.whl
+
+ADD upstream/tests/ ./tests/
+ADD upstream/examples/ ./examples/
+ADD upstream/benchmarks/ ./benchmarks/
+ADD upstream/vllm/collect_env.py .
+ADD upstream/.buildkite/ ./.buildkite/
+
+# Create symlink for vllm-workspace to maintain CI compatibility
+RUN ln -sf /workspace /vllm-workspace
+
+# install development dependencies (for testing)
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install -e tests/vllm_test_utils
+
+######################### RELEASE IMAGE #########################
+FROM base AS vllm-openai
+
+WORKDIR /workspace/
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=cache,target=/root/.cache/ccache \
+    --mount=type=bind,from=vllm-build,src=/workspace/vllm/dist,target=dist \
+    uv pip install dist/*.whl
+
 ENV VLLM_CPU_DISABLE_AVX512=true \
     VLLM_CPU_AVX512BF16=false \
     VLLM_CPU_AVX512VNNI=false \
+    VLLM_CPU_AMXBF16=false \
     VLLM_CPU_NUM_OF_RESERVED_CPU=1 \
     VLLM_CPU_KVCACHE_SPACE=10
-ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4:$LD_PRELOAD"
 
-# Make filesystem immutable (except tmpfs mounts)
-RUN find / -type f -perm /u+w,g+w,o+w ! -path '/proc/*' ! -path '/sys/*' ! -path '/dev/*' ! -path '/tmp/*' ! -path '/var/tmp/*' ! -path '/run/*' 2>/dev/null -exec chmod a-w {} \; \
-    && find / -type d -perm /u+w,g+w,o+w ! -path '/proc/*' ! -path '/sys/*' ! -path '/dev/*' ! -path '/tmp/*' ! -path '/var/tmp/*' ! -path '/run/*' 2>/dev/null -exec chmod a-w {} \;
-
-# Switch to non-root user
-USER vllm
-
-# Expose port for OpenAI compatible API
-EXPOSE 8000
-
-# Command to serve embedding model
-# Adjust model name if you choose different model than intfloat/e5-base-v2
-ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
-CMD ["--model", "intfloat/e5-base-v2", "--task", "embed", "--port", "8000", "--host", "0.0.0.0", "--device", "cpu"]
+ENTRYPOINT ["vllm", "serve"]

@@ -1,8 +1,0 @@
-# Pinned build dependencies for vLLM v0.10.0 CPU
-pip==25.3
-setuptools==80.9.0
-wheel==0.45.1
-packaging==25.0
-cmake==4.1.2
-ninja==1.13.0
-setuptools-scm==9.2.2
