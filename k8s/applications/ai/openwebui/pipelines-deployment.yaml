@@ -25,7 +25,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: copy-pipelines
-          image: busybox:1.35
+          image: busybox:1.37
           command: ['sh', '-c']
           args:
             - |
