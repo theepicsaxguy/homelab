@@ -23,6 +23,34 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: copy-pipelines
+          image: busybox:1.35
+          command: ['sh', '-c']
+          args:
+            - |
+              set -x
+              mkdir -p /pipelines-init/pipelines /pipelines-init/filters /pipelines-init/scaffolds
+              echo "Copying pipelines..."
+              find /config-pipelines -type f -exec cp {} /pipelines-init/pipelines/ \;
+              echo "Copying filters..."
+              find /config-filters -type f -exec cp {} /pipelines-init/filters/ \;
+              echo "Copying scaffolds..."
+              find /config-scaffolds -type f -exec cp {} /pipelines-init/scaffolds/ \;
+              echo "Done. Listing contents:"
+              find /pipelines-init -type f
+          volumeMounts:
+            - name: config-pipelines
+              mountPath: /config-pipelines
+              readOnly: true
+            - name: config-filters
+              mountPath: /config-filters
+              readOnly: true
+            - name: config-scaffolds
+              mountPath: /config-scaffolds
+              readOnly: true
+            - name: pipelines-data
+              mountPath: /pipelines-init
       containers:
         - name: pipelines
           image: ghcr.io/open-webui/pipelines:git-039f9c5
@@ -47,6 +75,8 @@ spec:
           volumeMounts:
             - name: pipelines-data
               mountPath: /app/pipelines
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "500m"
@@ -71,6 +101,19 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
       volumes:
+        - name: config-pipelines
+          configMap:
+            name: openwebui-pipelines
+            defaultMode: 0644
+        - name: config-filters
+          configMap:
+            name: openwebui-filters
+            defaultMode: 0644
+        - name: config-scaffolds
+          configMap:
+            name: openwebui-scaffolds
+            defaultMode: 0644
         - name: pipelines-data
-          persistentVolumeClaim:
-            claimName: openwebui-pipelines-storage
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
