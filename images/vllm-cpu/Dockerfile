@@ -63,8 +63,8 @@ ENV UV_EXTRA_INDEX_URL=${PIP_EXTRA_INDEX_URL}
 ENV UV_INDEX_STRATEGY="unsafe-best-match"
 ENV UV_LINK_MODE="copy"
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,src=upstream/requirements/common.txt,target=requirements/common.txt \
-    --mount=type=bind,src=upstream/requirements/cpu.txt,target=requirements/cpu.txt \
+    --mount=type=bind,src=./upstream/requirements/common.txt,target=requirements/common.txt \
+    --mount=type=bind,src=./upstream/requirements/cpu.txt,target=requirements/cpu.txt \
     uv pip install --upgrade pip && \
     uv pip install -r requirements/cpu.txt
 
@@ -111,7 +111,7 @@ WORKDIR /workspace/vllm
 ARG IMAGE_VERSION
 
 RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,src=upstream/requirements/cpu-build.txt,target=requirements/build.txt \
+    --mount=type=bind,src=./upstream/requirements/cpu-build.txt,target=requirements/build.txt \
     uv pip install -r requirements/build.txt
 
 COPY upstream/ .

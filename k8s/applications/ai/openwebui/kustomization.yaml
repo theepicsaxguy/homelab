@@ -9,7 +9,7 @@ resources:
 - openwebui-secrets-external.yaml
 - litellm-api-key.yaml
 - openwebui-qdrant-api-key.yaml
-- pipelines-pvc.yaml
+- pipelines/
 - pipelines-secret.yaml
 - pipelines-deployment.yaml
 - pipelines-service.yaml
