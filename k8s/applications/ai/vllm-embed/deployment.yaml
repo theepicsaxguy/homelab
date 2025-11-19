@@ -24,7 +24,7 @@ spec:
           args:
             - >
               python3 -m vllm.entrypoints.openai.api_server
-              --model intfloat/e5-base-v2
+              --model Qwen/Qwen3-Embedding-0.6B
               --convert embed
               --port 8000
               --host 0.0.0.0
