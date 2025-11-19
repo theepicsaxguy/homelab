@@ -19,11 +19,6 @@ spec:
         - name: vllm-openai
           image: ghcr.io/theepicsaxguy/vllm-cpu:v0.11.0-cfc13f2
           imagePullPolicy: IfNotPresent
-          securityContext:
-            capabilities:
-              add:
-                - SYS_NICE
-          # Use shell to expand API key from env var securely
           command: ["/bin/sh", "-c"]
           args:
             - >
