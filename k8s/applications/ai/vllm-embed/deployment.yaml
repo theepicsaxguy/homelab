@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +18,9 @@ spec:
         - name: vllm-openai
           image: ghcr.io/theepicsaxguy/vllm-cpu:v0.11.0-cfc13f2
           imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              drop: ["ALL"]
           command: ["/bin/sh", "-c"]
           args:
             - >
@@ -26,10 +28,14 @@ spec:
               --model Qwen/Qwen3-Embedding-0.6B
               --convert embed
               --port 8000
-              --max-model-len 18688
               --host 0.0.0.0
+              --max-model-len 8192
+              --enforce-eager
               --api-key $VLLM_API_KEY
           env:
+            # Reserve exactly 1GB for KV Cache (Enough for 8192 tokens)
+            - name: VLLM_CPU_KVCACHE_SPACE
+              value: "1"
             - name: HUGGING_FACE_HUB_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -40,8 +46,6 @@ spec:
                 secretKeyRef:
                   name: app-vllm-embed-api-key
                   key: VLLM_API_KEY
-            - name: VLLM_CPU_KVCACHE_SPACE
-              value: "2"
           ports:
             - name: http
               containerPort: 8000
@@ -51,10 +55,10 @@ spec:
           resources:
             requests:
               cpu: "2000m"
-              memory: "2Gi"
+              memory: "3Gi"
             limits:
               cpu: "4000m"
-              memory: "6Gi"
+              memory: "4Gi"
       volumes:
         - name: hf-cache
           persistentVolumeClaim:
