@@ -119,7 +119,7 @@ spec:
             - name: RAG_EMBEDDING_ENGINE
               value: 'openai'
             - name: RAG_EMBEDDING_MODEL
-              value: 'intfloat/e5-base-v2'
+              value: 'vllm-embed'
             - name: CHAT_RESPONSE_STREAM_DELTA_CHUNK_SIZE
               value: '10'
             - name: PIPELINES_URL
