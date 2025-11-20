@@ -26,14 +26,19 @@ spec:
             - >
               python3 -m vllm.entrypoints.openai.api_server
               --model Qwen/Qwen3-Embedding-0.6B
-              --convert embed
+              --task embed
+              --runner pooling
               --port 8000
               --host 0.0.0.0
-              --max-model-len 8192
+              --max-model-len 4608
+              --dtype float32
+              --max-num-seqs 10
+              --max-num-batched-tokens 32768
               --enforce-eager
+              --disable-log-requests
               --api-key $VLLM_API_KEY
           env:
-            # Reserve exactly 1GB for KV Cache (Enough for 8192 tokens)
+            # Reserve exactly 1GB for KV Cache (Enough for 4608 tokens)
             - name: VLLM_CPU_KVCACHE_SPACE
               value: "1"
             - name: HUGGING_FACE_HUB_TOKEN
