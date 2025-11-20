@@ -8,7 +8,7 @@ spec:
   volume:
     size: 15Gi
   dockerImage: ghcr.io/theepicsaxguy/spilo17-vchord:0.1.0
-  numberOfInstances: 2
+  numberOfInstances: 1
   users:
     immich:
       - superuser

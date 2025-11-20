@@ -6,7 +6,6 @@ resources:
   - grafana-http-route.yaml
   - grafana-oauth-secret.yaml
   - prometheus-http-route.yaml
-  - grafana-pdb.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
