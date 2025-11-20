@@ -5,10 +5,10 @@ metadata:
   namespace: argocd
 spec:
   description: "Restrict Redis access to ArgoCD components while allowing necessary egress"
-  # Target all components of the HA Redis cluster (master, replicas, and sentinels)
+  # Target standalone Redis instance
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: redis-ha
+      app.kubernetes.io/name: argocd-redis
   egress:
     - toPorts:
         - ports:
@@ -26,8 +26,6 @@ spec:
             app.kubernetes.io/name: argocd-repo-server
         - matchLabels:
             app.kubernetes.io/name: argocd-application-controller
-        - matchLabels:
-            app.kubernetes.io/name: redis-ha
       toPorts:
         - ports:
             - port: "6379"
