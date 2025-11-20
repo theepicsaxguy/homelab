@@ -11,6 +11,8 @@ data:
           model: openai/Qwen/Qwen3-Embedding-0.6B
           api_key: os.environ/VLLM_API_KEY
           api_base: http://vllm-embed.vllm-embed.svc.cluster.local:8000/v1
+        model_info:
+          mode: embedding
 
     litellm_settings:
       callbacks: ["prometheus"]
