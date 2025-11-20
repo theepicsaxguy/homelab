@@ -40,11 +40,11 @@ spec:
           env:
             # --- SPEED OPTIMIZATIONS ---
             - name: OMP_NUM_THREADS
-              value: "4"
+              value: "8"
             - name: MKL_NUM_THREADS
-              value: "4"
+              value: "8"
             - name: VLLM_CPU_OMP_THREADS_BIND
-              value: "0-3"
+              value: "0-7"
             - name: KMP_BLOCKTIME
               value: "1"
             - name: KMP_SETTINGS
@@ -79,7 +79,7 @@ spec:
               cpu: "2000m"
               memory: "3Gi"
             limits:
-              cpu: "4000m"
+              cpu: "8000m"
               memory: "4Gi"
       volumes:
         - name: hf-cache
