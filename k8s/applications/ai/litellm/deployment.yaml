@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm@sha256:9d3c9ccf539baf17ef6c78375362751d39f4e19c739b05984ddc4f877ab7cc62
+        image: ghcr.io/berriai/litellm:main-v1.80.0.dev6
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
