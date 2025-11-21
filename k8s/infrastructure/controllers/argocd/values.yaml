@@ -77,23 +77,17 @@ dex:
       memory: 128Mi
 
 redis-ha:
+  enabled: false
+
+redis:
   enabled: true
-  redis:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 32Mi
-      limits:
-        cpu: 100m
-        memory: 64Mi
-  haproxy:
-    resources:
-      requests:
-        cpu: 10m
-        memory: 96Mi
-      limits:
-        cpu: 50m
-        memory: 128Mi
+  resources:
+    requests:
+      cpu: 50m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
 
 server:
   autoscaling:
@@ -124,7 +118,7 @@ repoServer:
     # Set to a lower number to avoid the chart default of 5
     maxReplicas: 2
   pdb:
-    enabled: true
+    enabled: false
     minAvailable: 1
   containerSecurityContext:
     readOnlyRootFilesystem: true
@@ -169,7 +163,7 @@ repoServer:
 applicationSet:
   replicas: 1
   pdb:
-    enabled: true
+    enabled: false
     minAvailable: 1
   resources:
     requests:
@@ -187,5 +181,3 @@ notifications:
     limits:
       cpu: 1000m
       memory: 128Mi
-
-

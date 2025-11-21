@@ -61,14 +61,14 @@ prometheus:
         cpu: 1000m
         memory: 1Gi
   podDisruptionBudget:
-    enabled: true
+    enabled: false
     minAvailable: 1
 
 alertmanager:
   alertmanagerSpec:
     replicas: 1
   podDisruptionBudget:
-    enabled: true
+    enabled: false
     minAvailable: 1
 
 prometheus-node-exporter:
