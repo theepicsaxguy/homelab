@@ -26,6 +26,7 @@ data:
         qdrant_semantic_cache_embedding_model: text-embedding-3-large
         qdrant_collection_name: litellm_semantic_cache
         qdrant_quantization_config: binary
+        qdrant_vector_size: 3072
         similarity_threshold: 0.8
         ttl: 600
         supported_call_types: ["acompletion", "atext_completion"]
