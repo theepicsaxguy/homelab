@@ -36,7 +36,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gateway
-          image: portkeyai/gateway:1.14.1
+          image: portkeyai/gateway:1.14.2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
