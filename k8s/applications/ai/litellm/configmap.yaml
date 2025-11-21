@@ -23,7 +23,7 @@ data:
         type: qdrant-semantic
         qdrant_api_base: http://qdrant.qdrant.svc.cluster.local:6333
         qdrant_api_key: os.environ/QDRANT_API_KEY
-        qdrant_semantic_cache_embedding_model: vllm-embed
+        qdrant_semantic_cache_embedding_model: @cf/qwen/qwen3-embedding-0.6b
         qdrant_collection_name: litellm_semantic_cache
         qdrant_quantization_config: binary
         similarity_threshold: 0.8
@@ -34,6 +34,7 @@ data:
       redact_user_api_key_info: true
       enable_json_schema_validation: true
       set_verbose: true
+      drop_params: true
 
     router_settings:
       routing_strategy: usage-based-routing-v2
