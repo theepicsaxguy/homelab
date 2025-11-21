@@ -36,6 +36,10 @@ data:
       enable_json_schema_validation: true
       set_verbose: true
       drop_params: true
+      extra_spend_tag_headers:
+        - "X-OpenWebUI-User-Id"
+        - "X-OpenWebUI-User-Email"
+        - "X-OpenWebUI-User-Name"
 
     router_settings:
       routing_strategy: usage-based-routing-v2
@@ -70,3 +74,8 @@ data:
       database_connection_pool_limit: 50
       database_connection_timeout: 60
       allow_requests_on_db_unavailable: false
+      user_header_mappings:
+        - header_name: X-OpenWebUI-User-Id
+          litellm_user_role: internal_user
+        - header_name: X-OpenWebUI-User-Email
+          litellm_user_role: customer
