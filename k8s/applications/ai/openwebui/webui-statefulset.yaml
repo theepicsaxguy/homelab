@@ -124,6 +124,8 @@ spec:
               value: '10'
             - name: PIPELINES_URL
               value: 'http://pipelines.open-webui.svc.cluster.local:9099'
+            - name: ENABLE_FORWARD_USER_INFO_HEADERS
+              value: 'true'
           tty: true
           livenessProbe:
             httpGet:
