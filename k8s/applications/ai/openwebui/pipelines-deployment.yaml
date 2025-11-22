@@ -54,6 +54,8 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: pipelines-data
+              mountPath: /app/pipelines
           resources:
             requests:
               cpu: "500m"
@@ -79,4 +81,6 @@ spec:
             failureThreshold: 3
       volumes:
         - name: tmp
+          emptyDir: {}
+        - name: pipelines-data
           emptyDir: {}
