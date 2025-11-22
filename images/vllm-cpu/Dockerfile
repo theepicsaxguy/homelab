@@ -30,7 +30,7 @@ ARG IMAGE_VERSION=v0.11.0
 #
 
 ######################### COMMON BASE IMAGE #########################
-FROM ubuntu:22.04 AS base-common
+FROM ubuntu:24.04 AS base-common
 
 WORKDIR /workspace/
 
