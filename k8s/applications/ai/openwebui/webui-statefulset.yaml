@@ -124,6 +124,11 @@ spec:
               value: '10'
             - name: PIPELINES_URL
               value: 'http://pipelines.open-webui.svc.cluster.local:9099'
+            - name: PIPELINES_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-openwebui-pipelines-api-key
+                  key: PIPELINES_API_KEY
             - name: ENABLE_FORWARD_USER_INFO_HEADERS
               value: 'true'
           tty: true
