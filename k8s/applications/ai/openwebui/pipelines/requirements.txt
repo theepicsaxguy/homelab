@@ -1,0 +1,7 @@
+fastembed
+llama-index-embeddings-deepinfra
+llama-index-embeddings-ollama
+llama-index-llms-ollama
+llama-index-vector-stores-qdrant
+aiohttp
+qdrant-client

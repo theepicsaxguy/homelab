@@ -9,6 +9,8 @@ version: 0.2.4
 license: AGPL-3.0-or-later
 """
 
+# Add this at the very top, before any other imports
+from __future__ import annotations
 
 # Notes:
 #
@@ -25,7 +27,7 @@ import asyncio
 import codecs
 import json
 import re
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, List
 from urllib.parse import urlparse
 
 import aiohttp
@@ -77,16 +79,16 @@ class DeepInfraReranker(BaseNodePostprocessor):
 
     def _postprocess_nodes(
         self,
-        nodes: list[NodeWithScore],
+        nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
-    ) -> list[NodeWithScore]:
+    ) -> List[NodeWithScore]:
         raise NotImplementedError
 
     async def _apostprocess_nodes(
         self,
-        nodes: list[NodeWithScore],
+        nodes: List[NodeWithScore],
         query_bundle: Optional[QueryBundle] = None,
-    ) -> list[NodeWithScore]:
+    ) -> List[NodeWithScore]:
         """
         Rerank nodes using DeepInfra API.
         """
@@ -384,7 +386,7 @@ class CitationIndex:
                 return self._count
 
 
-class Tools:
+class Pipeline:
     """
     A toolset for interacting with an existing Qdrant vector store for Retrieval-Augmented Generation
     """
@@ -441,7 +443,7 @@ class Tools:
         query: str,
         top_k: int = RESULTS_DEFAULT,
         file_name: Optional[str] = None,
-        __metadata__: Optional[dict[str, Any]] = None,
+        __metadata__: Optional[dict] = None,
         __event_emitter__: Optional[Callable[[dict], Any]] = None,
     ) -> str:
         """
