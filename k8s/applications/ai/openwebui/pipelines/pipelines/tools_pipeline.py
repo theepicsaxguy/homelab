@@ -82,10 +82,17 @@ class Pipeline:
     ) -> str:
         """
         Calculate the result of an equation.
+        WARNING: This uses eval() which can be a security risk.
+        Only use in trusted environments or with proper input validation.
         """
-        # Avoid using eval in production code
+        # Note: eval() is used here for flexibility but is a security risk
         # https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
+        # In production, consider using ast.literal_eval() or a math expression parser
         try:
+            # Basic input validation to prevent obvious abuse
+            # This is NOT comprehensive security - use at your own risk
+            if any(keyword in equation for keyword in ['import', '__', 'exec', 'compile', 'open', 'file']):
+                return "Invalid equation: potentially unsafe operations detected"
             result = eval(equation)
             return f"{equation} = {result}"
         except Exception as e:
@@ -127,7 +134,7 @@ class Pipeline:
             humidity = data["main"]["humidity"]
             wind_speed = data["wind"]["speed"]
 
-            return f"Weather in {city}: {temperature}°C"
+            return f"Weather in {city}: {weather_description}, {temperature}°C, Humidity: {humidity}%, Wind: {wind_speed} m/s"
         except requests.RequestException as e:
             logger.error(f"Weather API error: {e}")
             return f"Error fetching weather data: {str(e)}"

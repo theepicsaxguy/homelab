@@ -23,6 +23,7 @@ license: AGPL-3.0-or-later
 import asyncio
 import codecs
 import json
+import os
 import re
 from typing import Any, Callable, Optional
 from urllib.parse import urlparse
@@ -357,7 +358,9 @@ class Pipeline:
 
     def __init__(self):
         self.name = "Document Search Pipeline"
-        self.valves = self.Valves()
+        self.valves = self.Valves(
+            **{k: os.getenv(k, v.default) for k, v in self.Valves.model_fields.items()}
+        )
         self.index = None
         self.lock = asyncio.Lock()
 
