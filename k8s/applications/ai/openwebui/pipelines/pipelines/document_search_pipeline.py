@@ -27,7 +27,7 @@ import asyncio
 import codecs
 import json
 import re
-from typing import Any, Callable, Optional, List
+from typing import Any, Callable, Optional, List, Dict
 from urllib.parse import urlparse
 
 import aiohttp
@@ -443,7 +443,7 @@ class Pipeline:
         query: str,
         top_k: int = RESULTS_DEFAULT,
         file_name: Optional[str] = None,
-        __metadata__: Optional[dict] = None,
+        __metadata__: Optional[Dict[str, Any]] = None,
         __event_emitter__: Optional[Callable[[dict], Any]] = None,
     ) -> str:
         """
