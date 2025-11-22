@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.11.0 (2025-11-22)
+
+## What's Changed
+* Fix(configmap,-webui)--update-qdrant-semantic-cache-embedding-model-to-@cf/qwen/qwen3-embedding-0.6b by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1766
+* fix(configmap): add qdrant vector size to configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1767
+* chore(deps): update portkeyai/gateway docker tag to v1.14.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1769
+* chore(deps): update portkeyai/gateway docker tag to v1.14.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1771
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.11.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1772
+* chore(infra): reduce unnecessary HA configurations for homelab by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1765
+* Enable per-user spend tracking for LiteLLM via Open WebUI headers by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1773
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1761
+* feat(openwebui): add general tools and document search pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1774
+* chore(deps): bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/1770
+* Update document_search_pipeline.py by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1776
+* Add writable volume mount for /app/pipelines to fix pipeline loading by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1775
+* Fix Python 3.8 syntax errors and missing Pipeline class in document_search_pipeline.py by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1777
+* fix(k8s/openwebui): add persistent storage and API key for pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1778
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.10.0...v3.11.0
+
 ## 3.10.0 (2025-11-20)
 
 ## What's Changed
