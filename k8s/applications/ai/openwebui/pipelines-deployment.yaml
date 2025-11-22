@@ -50,7 +50,7 @@ spec:
             - name: PIPELINES_ENV
               value: "production"
             - name: PIPELINES_URLS
-              value: "https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/wikipedia_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/filters/mem0_memory_filter_pipeline.py"
+              value: "https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/wikipedia_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/filters/mem0_memory_filter_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/tools_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/document_search_pipeline.py"
           volumeMounts:
             - name: tmp
               mountPath: /tmp
