@@ -346,7 +346,7 @@ class CitationIndex:
         self._lock = asyncio.Lock()
 
     async def emit_citation(
-        self, node: NodeWithScore, __event_emitter__: Callable[[dict], Any]
+        self, node: NodeWithScore, __event_emitter__: Callable[[Dict[str, Any]], Any]
     ) -> None:
         source_name = node.metadata.get("file_name", "Retrieved Document")
         source_name += f" ({node.id_})"
@@ -371,7 +371,7 @@ class CitationIndex:
     async def add_if_not_exists(
         self,
         node: NodeWithScore,
-        __event_emitter__: Optional[Callable[[dict], Any]] = None,
+        __event_emitter__: Optional[Callable[[Dict[str, Any]], Any]] = None,
     ) -> Optional[int]:
         # Lock required to prevent race conditions in check-and-set operation
         # and to ensure citations are emitted in citation_id order.
@@ -444,7 +444,7 @@ class Pipeline:
         top_k: int = RESULTS_DEFAULT,
         file_name: Optional[str] = None,
         __metadata__: Optional[Dict[str, Any]] = None,
-        __event_emitter__: Optional[Callable[[dict], Any]] = None,
+        __event_emitter__: Optional[Callable[[Dict[str, Any]], Any]] = None,
     ) -> str:
         """
         Retrieve relevant documents from the Qdrant vector store using hybrid search.
