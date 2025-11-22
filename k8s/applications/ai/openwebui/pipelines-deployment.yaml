@@ -85,4 +85,5 @@ spec:
         - name: tmp
           emptyDir: {}
         - name: pipelines-data
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: pipelines-pvc
