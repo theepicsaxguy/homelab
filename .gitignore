@@ -41,3 +41,10 @@ k8s/.env
 GEMINI.md
 .aider*
 config
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
