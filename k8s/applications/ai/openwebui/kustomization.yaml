@@ -11,5 +11,6 @@ resources:
 - openwebui-qdrant-api-key.yaml
 - pipelines/
 - pipelines-secret.yaml
+- pipelines-pvc.yaml
 - pipelines-deployment.yaml
 - pipelines-service.yaml

@@ -48,3 +48,5 @@ __pycache__/
 *$py.class
 *.so
 .Python
+vale
+vale_*.tar.gz
