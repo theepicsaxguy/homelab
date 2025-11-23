@@ -23,6 +23,18 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: sync-pipelines
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - "cp -ra /bootstrap/. /app/pipelines"
+          volumeMounts:
+            - name: pipelines-bootstrap
+              mountPath: /bootstrap
+            - name: pipelines-data
+              mountPath: /app/pipelines
       containers:
         - name: pipelines
           image: ghcr.io/open-webui/pipelines:git-039f9c5
@@ -49,8 +61,6 @@ spec:
               value: "/app/pipelines"
             - name: PIPELINES_ENV
               value: "production"
-            - name: PIPELINES_URLS
-              value: "https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/wikipedia_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/filters/mem0_memory_filter_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/tools_pipeline.py,https://raw.githubusercontent.com/theepicsaxguy/homelab/main/k8s/applications/ai/openwebui/pipelines/pipelines/document_search_pipeline.py"
             - name: PIPELINES_REQUIREMENTS_PATH
               value: "/app/pipelines/requirements.txt"
           volumeMounts:
@@ -84,6 +94,9 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: pipelines-bootstrap
+          configMap:
+            name: pipelines-bootstrap
         - name: pipelines-data
           persistentVolumeClaim:
             claimName: pipelines-pvc
