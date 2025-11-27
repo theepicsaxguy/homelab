@@ -4,6 +4,7 @@ variable "defaults_worker" {
     host_node     = optional(string) #  "The Proxmox node to schedule this VM on. If omitted, defaults to the `name` specified in the `var.proxmox` provider configuration."
     machine_type  = string
     cpu           = number
+    cpu_units     = optional(number)
     ram_dedicated = number
     igpu          = bool
     disks = map(object({
@@ -17,6 +18,7 @@ variable "defaults_worker" {
   default = {
     machine_type  = "worker"
     cpu           = 8
+    cpu_units     = 1024
     ram_dedicated = 13312
     igpu          = false
     disks = {
@@ -37,11 +39,13 @@ variable "defaults_controlplane" {
     host_node     = optional(string) #  "The Proxmox node to schedule this VM on. If omitted, defaults to the `name` specified in the `var.proxmox` provider configuration."
     machine_type  = string
     cpu           = number
+    cpu_units     = optional(number)
     ram_dedicated = number
   })
   default = {
     machine_type  = "controlplane"
     cpu           = 6
+    cpu_units     = 1024
     ram_dedicated = 6144
   }
 }

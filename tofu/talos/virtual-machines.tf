@@ -41,6 +41,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   cpu {
     cores = each.value.cpu
     type  = lookup(each.value, "cpu_type", "host")
+    units = lookup(each.value, "cpu_units", 1024)
   }
 
   memory {

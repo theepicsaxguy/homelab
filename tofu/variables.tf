@@ -51,6 +51,7 @@ variable "nodes_config" {
     vm_id         = optional(number)
     is_external   = optional(bool, false)
     ram_dedicated = optional(number)
+    cpu_units     = optional(number)
     igpu          = optional(bool)
     disks = optional(map(object({
       device      = optional(string)
