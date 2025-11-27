@@ -200,6 +200,12 @@ variable "oidc" {
   default = null # Make it optional
 }
 
+variable "enable_lb" {
+  description = "Enable load balancer deployment"
+  type        = bool
+  default     = false
+}
+
 variable "lb_nodes" {
   description = "Load balancer VMs"
   type = map(object({
@@ -211,15 +217,18 @@ variable "lb_nodes" {
     ram_dedicated = optional(number)
     datastore_id  = optional(string)
   }))
+  default = {}
 }
 
 variable "auth_pass" {
   description = "Password for Keepalived auth"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "lb_store" {
   description = "datastore for loadbalancers"
   type        = string
+  default     = "local"
 }

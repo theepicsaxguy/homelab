@@ -75,6 +75,7 @@ module "talos" {
 }
 
 module "lb" {
+  count  = var.enable_lb ? 1 : 0
   source = "./lb"
   providers = {
     proxmox = proxmox
