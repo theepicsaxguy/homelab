@@ -45,29 +45,48 @@ spec:
 
 The volume is mounted at `/openhands-state` with workspace files stored in `/openhands-state/workspace`.
 
-## Secrets
+## LiteLLM Integration
 
-The ExternalSecret `app-openhands-llm-api-key` sources the LLM API key from Bitwarden and injects it into the container:
+OpenHands is configured to use the cluster's LiteLLM proxy service for LLM access. This provides unified access to multiple LLM providers with caching, rate limiting, and cost tracking.
+
+```yaml
+# k8s/applications/ai/openhands/deployment.yaml
+env:
+  - name: LLM_BASE_URL
+    value: "http://litellm.litellm.svc.cluster.local/v1"
+  - name: LLM_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: app-openhands-litellm-api-key
+        key: LITELLM_API_KEY
+```
+
+The ExternalSecret `app-openhands-litellm-api-key` sources the LiteLLM master key from Bitwarden:
 
 ```yaml
 # k8s/applications/ai/openhands/externalsecret.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: app-openhands-llm-api-key
+  name: app-openhands-litellm-api-key
   namespace: openhands
 spec:
   secretStoreRef:
-    name: bitwarden-secrets-manager
+    name: bitwarden-backend
     kind: ClusterSecretStore
   target:
-    name: app-openhands-llm-api-key
-  dataFrom:
-    - extract:
-        key: app-openhands-llm-api-key
+    name: app-openhands-litellm-api-key
+  data:
+    - secretKey: LITELLM_API_KEY
+      remoteRef:
+        key: app-litellm-master-key
 ```
 
-Configure your LLM provider (Anthropic, OpenAI, Gemini, etc.) through the OpenHands UI. The API key can be set via the `LLM_API_KEY` environment variable or directly in the UI.
+Benefits of using LiteLLM:
+- **Reduced latency**: Cluster-local communication instead of external API calls
+- **Cost tracking**: Centralized logging and spend analytics
+- **Caching**: Redis-backed response caching reduces API costs
+- **Multi-provider**: Access to all LLM providers configured in LiteLLM
 
 ## Networking
 
@@ -95,6 +114,33 @@ spec:
   hostnames:
     - openhands.pc-tips.se
 ```
+
+### Network Policies
+
+A NetworkPolicy restricts traffic to only necessary services:
+
+```yaml
+# k8s/applications/ai/openhands/networkpolicy.yaml
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: gateway
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    # DNS, LiteLLM access, and external HTTPS for dependencies
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: litellm
+```
+
+The policy allows:
+- **Ingress**: Only from the `gateway` namespace on port 3000
+- **Egress**: DNS resolution, LiteLLM service access, and HTTPS for downloading models/dependencies
 
 ## Security Considerations
 
@@ -141,6 +187,13 @@ Consider implementing NetworkPolicies to restrict egress traffic from the OpenHa
 
 For production use, consider running OpenHands on dedicated nodes with node taints and tolerations to further reduce the threat surface from the privileged DinD container.
 
+### Network Isolation
+
+NetworkPolicies enforce the principle of least privilege:
+- Ingress traffic only from the gateway namespace
+- Egress limited to DNS, LiteLLM service, and external HTTPS
+- No lateral movement to other application namespaces
+
 ## Configuration
 
 Key environment variables:
@@ -149,15 +202,19 @@ Key environment variables:
 - `LOG_ALL_EVENTS`: Enable verbose logging (default: `true`)
 - `SANDBOX_HOST`: Host for agent containers (default: `127.0.0.1`)
 - `WORKSPACE_BASE`: Base path for workspace files (default: `/openhands-state/workspace`)
-- `LLM_API_KEY`: API key for LLM provider (sourced from ExternalSecret)
+- `LLM_BASE_URL`: LiteLLM proxy endpoint (default: `http://litellm.litellm.svc.cluster.local/v1`)
+- `LLM_API_KEY`: LiteLLM API key (sourced from ExternalSecret)
 
-## Integration with LLMariner
+## LLM Provider Configuration
 
-If running LLMariner in the same cluster, configure OpenHands to use local LLM endpoints to reduce latency:
+OpenHands is pre-configured to use the cluster's LiteLLM proxy, which provides:
 
-1. Set the LLM base URL to your LLMariner service endpoint
-2. Use cluster-local DNS names (e.g., `http://llmariner.llmariner.svc.cluster.local`)
-3. Configure the API key through the OpenHands UI or `LLM_API_KEY` environment variable
+1. **Unified access**: All LLM providers configured in LiteLLM are available
+2. **Local routing**: Cluster-local communication reduces latency
+3. **Cost tracking**: Centralized spend monitoring across all services
+4. **Caching**: Redis-backed caching reduces redundant API calls
+
+To add or modify LLM providers, update the LiteLLM configuration rather than OpenHands directly. This allows for centralized management of all AI services in the cluster.
 
 ## Limitations and Future Improvements
 
@@ -169,11 +226,17 @@ If running LLMariner in the same cluster, configure OpenHands to use local LLM e
 
 ### Planned Improvements
 
-1. **Containerd Support**: Test and validate deployment with containerd runtime instead of Docker
-2. **Enhanced Network Policies**: Add egress restrictions to limit outbound connections
-3. **Node Isolation**: Document patterns for node-level isolation using taints and tolerations
-4. **Monitoring**: Add Prometheus ServiceMonitor for metrics collection
-5. **Multi-User Sessions**: Investigate patterns for multi-user deployments with session isolation
+1. **Containerd Support**: The current deployment uses Docker-in-Docker. Kubernetes has migrated to containerd as the default runtime. Future work should investigate:
+   - Testing OpenHands with containerd runtime
+   - Evaluating performance and compatibility
+   - Updating runtime configuration if needed
+2. **Node Isolation**: Document patterns for node-level isolation using taints and tolerations
+3. **Monitoring**: Add Prometheus ServiceMonitor for metrics collection
+4. **Multi-User Sessions**: Current deployment supports single-user sessions. For multi-user scenarios:
+   - Investigate StatefulSet with per-user pods
+   - Evaluate session isolation mechanisms
+   - Consider authentication and authorization patterns
+   - Research workspace segregation strategies
 
 ## Troubleshooting
 

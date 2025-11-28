@@ -72,12 +72,13 @@ spec:
               value: "127.0.0.1"
             - name: WORKSPACE_BASE
               value: "/openhands-state/workspace"
+            - name: LLM_BASE_URL
+              value: "http://litellm.litellm.svc.cluster.local/v1"
             - name: LLM_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: app-openhands-llm-api-key
-                  key: LLM_API_KEY
-                  optional: true
+                  name: app-openhands-litellm-api-key
+                  key: LITELLM_API_KEY
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false

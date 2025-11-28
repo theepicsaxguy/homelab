@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: openhands
+  namespace: openhands
+  labels:
+    app.kubernetes.io/name: openhands
+    app.kubernetes.io/version: "0.24"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: openhands
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: gateway
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    # DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow access to LiteLLM service
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: litellm
+        - podSelector:
+            matchLabels:
+              app: litellm
+      ports:
+        - protocol: TCP
+          port: 80
+    # Allow HTTPS for downloading models and dependencies
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 443
+    # Allow HTTP for potential internal services
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 80

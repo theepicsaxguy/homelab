@@ -9,6 +9,7 @@ resources:
   - service.yaml
   - httproute.yaml
   - externalsecret.yaml
+  - networkpolicy.yaml
 
 commonAnnotations:
   app.kubernetes.io/version: "0.24"
