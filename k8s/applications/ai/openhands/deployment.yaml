@@ -32,7 +32,7 @@ spec:
             - "host.docker.internal"
       initContainers:
         - name: wait-for-docker
-          image: busybox:1.36
+          image: busybox:1.37
           command:
             - sh
             - -c
@@ -55,7 +55,7 @@ spec:
                 - ALL
       containers:
         - name: openhands
-          image: docker.all-hands.dev/all-hands-ai/openhands:0.24
+          image: docker.all-hands.dev/all-hands-ai/openhands:0.28
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
