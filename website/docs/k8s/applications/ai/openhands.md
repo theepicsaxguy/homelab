@@ -100,7 +100,14 @@ spec:
 
 ### Pod Security Standards
 
-The namespace enforces the `restricted` Pod Security Standard, which requires non-root containers and dropped capabilities. However, the DinD sidecar needs `privileged: true` to function, creating an exemption from the full restricted profile.
+The namespace enforces the `baseline` Pod Security Standard to accommodate the DinD sidecar, which requires `privileged: true` to function. The baseline standard prevents the most dangerous behaviors while allowing the privileged container needed for Docker-in-Docker operation.
+
+The OpenHands main container follows security best practices:
+- Runs as non-root user (UID 1000)
+- Drops all capabilities
+- Uses seccomp profile
+
+Note: `readOnlyRootFilesystem` is set to `false` for the OpenHands container because the application requires write access to multiple directories for runtime operation.
 
 ### Isolated Execution
 
