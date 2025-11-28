@@ -79,6 +79,7 @@ spec:
                 secretKeyRef:
                   name: app-openhands-litellm-api-key
                   key: LITELLM_API_KEY
+                  optional: true
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false

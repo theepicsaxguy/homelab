@@ -45,8 +45,3 @@ spec:
       ports:
         - protocol: TCP
           port: 443
-    # Allow HTTP for potential internal services
-    - to: []
-      ports:
-        - protocol: TCP
-          port: 80
