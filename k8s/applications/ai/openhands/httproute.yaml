@@ -1,0 +1,37 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: openhands
+  namespace: openhands
+  labels:
+    app.kubernetes.io/name: openhands
+    app.kubernetes.io/version: "0.24"
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+      sectionName: https
+  hostnames:
+    - openhands.pc-tips.se
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: openhands
+          namespace: openhands
+          port: 3000
+          weight: 100
+      filters:
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set:
+              - name: X-Frame-Options
+                value: DENY
+              - name: X-Content-Type-Options
+                value: nosniff
+              - name: X-XSS-Protection
+                value: "1; mode=block"
+              - name: Strict-Transport-Security
+                value: max-age=31536000; includeSubDomains
