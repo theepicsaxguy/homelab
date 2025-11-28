@@ -132,7 +132,7 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
         - name: dind
-          image: docker:27-dind
+          image: docker:29-dind
           securityContext:
             privileged: true
           args:
