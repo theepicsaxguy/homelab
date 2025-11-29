@@ -1,5 +1,77 @@
 # Changelog
 
+## 3.11.0 (2025-11-29)
+
+## What's Changed
+* Fix(configmap,-webui)--update-qdrant-semantic-cache-embedding-model-to-@cf/qwen/qwen3-embedding-0.6b by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1766
+* fix(configmap): add qdrant vector size to configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1767
+* chore(deps): update portkeyai/gateway docker tag to v1.14.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1769
+* chore(deps): update portkeyai/gateway docker tag to v1.14.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1771
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.11.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1772
+* chore(infra): reduce unnecessary HA configurations for homelab by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1765
+* Enable per-user spend tracking for LiteLLM via Open WebUI headers by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1773
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1761
+* feat(openwebui): add general tools and document search pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1774
+* chore(deps): bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/1770
+* Update document_search_pipeline.py by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1776
+* Add writable volume mount for /app/pipelines to fix pipeline loading by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1775
+* Fix Python 3.8 syntax errors and missing Pipeline class in document_search_pipeline.py by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1777
+* fix(k8s/openwebui): add persistent storage and API key for pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1778
+* Package pipeline files via ConfigMap instead of downloading from GitHub URLs by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1779
+* chore(deps): update helm release argo-cd to v9.1.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1780
+* chore(deps): update busybox docker tag to v1.37 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1781
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.37 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1782
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.38 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1783
+* chore(deps): update getmeili/meilisearch docker tag to v1.27.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1785
+* chore(deps): update mcr.microsoft.com/playwright docker tag to v1.57.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1787
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.40 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1786
+* chore(deps): update qdrant/qdrant docker tag to v1.16.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1788
+* chore(deps): update all dependencies to v79.8.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1789
+* chore(deps): update all dependencies to v79.8.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1790
+* chore(deps): update all dependencies to v79.8.2 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1791
+* chore(deps): update portkeyai/gateway docker tag to v1.14.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1792
+* feat(tofu): make load balancer deployment optional and disabled by default
+
+Add enable_lb feature flag to control load balancer deployment. This prevents
+tofu plan from prompting for lb-related variables when load balancer is not needed.
+
+Changes:
+- Add enable_lb variable (defaults to false)
+- Make lb_nodes, auth_pass, and lb_store optional with sensible defaults
+- Use count in lb module to conditionally deploy based on enable_lb flag
+
+To enable load balancer deployment, set enable_lb = true in your .tfvars file.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1794
+* Update nodes.auto.tfvars by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1793
+* feat(tofu): set CPU units default to 1024 for all nodes
+
+Add cpu_units configuration with default value of 1024 to prevent Proxmox
+from changing CPU units to 100 during VM updates. This ensures consistent
+CPU scheduling across control plane and worker nodes.
+
+Changes:
+- Add cpu_units field to defaults_worker and defaults_controlplane with default 1024
+- Add cpu_units to nodes_config variable type for per-node override capability
+- Update virtual-machines.tf cpu block to use cpu_units with fallback to 1024
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1795
+* feat(k8s/ai): add OpenHands AI coding agent with LiteLLM integration by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1796
+* chore(deps): update all dependencies to v24 (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1735
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1798
+* chore(deps): update dependency externalsecret to external-secrets.io/v1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1797
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1799
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1800
+* chore(deps): update all dependencies to v79.9.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1801
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.29.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1802
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.10.0...v3.11.0
+
 ## 3.10.0 (2025-11-20)
 
 ## What's Changed
