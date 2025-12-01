@@ -114,6 +114,7 @@ authentik:
     user: file:///secrets/authentik/username
     password: file:///secrets/authentik/password
     port: "5432"
+    sslmode: require
 
   redis:
     password: "env://AUTHENTIK_REDIS__PASSWORD"
