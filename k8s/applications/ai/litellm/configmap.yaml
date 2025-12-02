@@ -18,7 +18,7 @@ data:
       callbacks: ["prometheus"]
       prometheus_initialize_budget_metrics: true
       require_auth_for_metrics_endpoint: false
-      cache: true
+      cache: false
       cache_params:
         type: qdrant-semantic
         qdrant_api_base: http://qdrant.qdrant.svc.cluster.local:6333
@@ -44,6 +44,7 @@ data:
     router_settings:
       routing_strategy: usage-based-routing-v2
       enable_pre_call_checks: false
+      optional_pre_call_checks: ["responses_api_deployment_check"]
       num_retries: 3
       retry_after: 1
       allowed_fails: 3
