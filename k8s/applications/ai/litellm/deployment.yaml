@@ -44,6 +44,12 @@ spec:
           value: "1"
         - name: SEPARATE_HEALTH_PORT
           value: "4001"
+        - name: DISABLE_RESPONSES_ID_SECURITY
+          value: "false"
+        - name: STORE_PROMPTS_IN_COLD_STORAGE
+          value: "false"
+        - name: COLD_STORAGE_CUSTOM_LOGGER
+          value: "s3_v2"
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml

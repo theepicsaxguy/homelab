@@ -89,3 +89,15 @@ Choose based on your needs, but note that in Open WebUI:
 
 - Users can modify their own usernames
 - Administrators can modify both usernames and emails of any account
+
+## Responses API (OpenAI `/responses`)
+
+LiteLLM supports the OpenAI-style Responses API which provides session continuity, stored responses, and advanced streaming features. To enable Requests/Responses API features, update the ConfigMap and Deployment values below.
+
+- **Session continuity**: add `optional_pre_call_checks: ["responses_api_deployment_check"]` under `router_settings` in `proxy_server_config.yaml` (already present in the default ConfigMap). This ensures follow-up requests using `previous_response_id` route to the same upstream deployment.
+
+- **Cold storage for prompts**: Optional for basic responses API functionality. Set `store_prompts_in_cold_storage: true` and configure `cold_storage_custom_logger` and `s3_callback_params` in the ConfigMap to store request/response text into S3 for auditing, session continuity, and long-term storage. The ConfigMap uses environment variables for S3 credentials — create a `litellm-s3-secret` Secret with keys `bucket_name`, `region_name`, `access_key_id`, `secret_access_key`.
+
+- **Response ID security**: by default LiteLLM encrypts response IDs so clients cannot fetch others' responses. To allow cross-access (not recommended for multi-tenant deployments), set `disable_responses_id_security: true` in the ConfigMap's `general_settings` or set the `DISABLE_RESPONSES_ID_SECURITY` env var on the Deployment. The Deployment includes `DISABLE_RESPONSES_ID_SECURITY` which defaults to `false`.
+
+- **Performance optimizations**: The config enables Redis caching, Qdrant semantic caching, usage-based routing, and connection pooling for fast responses. For high-throughput deployments, consider increasing `database_connection_pool_limit` and enabling `background_health_checks`.
