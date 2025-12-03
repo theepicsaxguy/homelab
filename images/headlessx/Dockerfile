@@ -5,7 +5,7 @@
 ###############################################################################
 # Stage 1: Clone HeadlessX source
 ###############################################################################
-FROM alpine:3.22 AS source
+FROM alpine:3.23 AS source
 
 ARG IMAGE_VERSION=1.2.0
 ARG HEADLESSX_REPO=https://github.com/saifyxpro/HeadlessX
