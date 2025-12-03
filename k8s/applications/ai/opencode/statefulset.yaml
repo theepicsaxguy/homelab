@@ -44,6 +44,8 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: home-local
+          emptyDir: {}
       containers:
         - name: opencode-web
           image: ghcr.io/chriswritescode-dev/opencode-web:commit-a0a4922
@@ -94,6 +96,8 @@ spec:
               mountPath: /app/data
             - name: tmp
               mountPath: /tmp
+            - name: home-local
+              mountPath: /home/node/.local
           resources:
             requests:
               cpu: "250m"
