@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opencode-web
+  namespace: opencode
+  labels:
+    app: opencode-web
+spec:
+  serviceName: "opencode-web"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opencode-web
+  volumeClaimTemplates:
+    - metadata:
+        name: workspace
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 10Gi
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "longhorn"
+        resources:
+          requests:
+            storage: 5Gi
+  template:
+    metadata:
+      labels:
+        app: opencode-web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: opencode-web
+          image: ghcr.io/chriswritescode-dev/opencode-web:commit-a0a4922
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5003
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "5003"
+            - name: OPENCODE_SERVER_PORT
+              value: "5551"
+            - name: DATABASE_PATH
+              value: "/app/data/opencode.db"
+            - name: WORKSPACE_PATH
+              value: "/workspace"
+            - name: PROCESS_START_WAIT_MS
+              value: "2000"
+            - name: PROCESS_VERIFY_WAIT_MS
+              value: "1000"
+            - name: HEALTH_CHECK_INTERVAL_MS
+              value: "5000"
+            - name: HEALTH_CHECK_TIMEOUT_MS
+              value: "30000"
+            - name: MAX_FILE_SIZE_MB
+              value: "50"
+            - name: MAX_UPLOAD_SIZE_MB
+              value: "50"
+            - name: SANDBOX_TTL_HOURS
+              value: "24"
+            - name: CLEANUP_INTERVAL_MINUTES
+              value: "60"
+            - name: DEBUG
+              value: "false"
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+            - name: data
+              mountPath: /app/data
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5003
+            initialDelaySeconds: 40
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5003
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 3
