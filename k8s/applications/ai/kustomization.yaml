@@ -9,3 +9,4 @@ resources:
 - openhands
 - qdrant
 - vllm-embed
+- opencode
