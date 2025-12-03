@@ -41,10 +41,18 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: tmp
+          emptyDir: {}
       containers:
         - name: opencode-web
           image: ghcr.io/chriswritescode-dev/opencode-web:commit-a0a4922
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
           ports:
             - name: http
               containerPort: 5003
@@ -84,6 +92,8 @@ spec:
               mountPath: /workspace
             - name: data
               mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "250m"
