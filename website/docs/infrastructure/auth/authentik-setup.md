@@ -113,7 +113,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: authentik-proxy
+        - name: ak-outpost-authentik-embedded-outpost
           namespace: auth
           port: 9000
 ```
@@ -126,7 +126,7 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-authentik-proxy
+  name: allow-ak-outpost-authentik-embedded-outpost
   namespace: my-namespace
 spec:
   endpointSelector:
@@ -135,7 +135,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app: authentik-proxy
+            app: ak-outpost-authentik-embedded-outpost
             io.kubernetes.pod.namespace: auth
 ```
 
@@ -160,7 +160,7 @@ spec:
 
 1. Check Proxy Status:
 ```shell
-kubectl -n auth logs -l app=authentik-proxy
+kubectl -n auth logs -l app=ak-outpost-authentik-embedded-outpost
 ```
 
 2. Verify Network Policies:
@@ -218,7 +218,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: authentik-proxy
+        - name: ak-outpost-authentik-embedded-outpost
           namespace: auth
           port: 9000
 ```
@@ -244,7 +244,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: authentik-proxy
+        - name: ak-outpost-authentik-embedded-outpost
           namespace: auth
           port: 9000
 ```

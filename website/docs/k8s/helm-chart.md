@@ -136,7 +136,7 @@ Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{ser
           namespace: gateway
       rules:
         - backendRefs:
-            - name: authentik-proxy
+            - name: ak-outpost-authentik-embedded-outpost
               namespace: auth
               port: 9000
     ```

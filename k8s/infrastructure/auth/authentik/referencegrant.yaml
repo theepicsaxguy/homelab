@@ -11,4 +11,4 @@ spec:
   to:
   - group: ""
     kind: Service
-    name: authentik-proxy
+    name: ak-outpost-authentik-embedded-outpost
