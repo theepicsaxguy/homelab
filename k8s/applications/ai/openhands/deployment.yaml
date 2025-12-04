@@ -134,7 +134,14 @@ spec:
         - name: dind
           image: docker:29-dind
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - SYS_ADMIN
+              drop:
+                - ALL
+            seccompProfile:
+              type: Unconfined
           args:
             - "--host=unix:///var/run/docker.sock"
             - "--tls=false"
