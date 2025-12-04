@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
 - project.yaml
 - babybuddy
-- headlessx
+#- headlessx
 - pinepods
 
