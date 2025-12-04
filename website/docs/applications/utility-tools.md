@@ -48,7 +48,7 @@ Gateway Configuration:
       service: it-tools
       port: 80
       backendRefs:
-        - name: authentik-proxy
+        - name: ak-outpost-authentik-embedded-outpost
           namespace: auth
           port: 9000 # Authentik SSO
 
@@ -76,7 +76,7 @@ Gateway Configuration:
 policies:
   it-tools:
     ingress:
-      - from: authentik-proxy
+      - from: ak-outpost-authentik-embedded-outpost
         ports: [80]
   unrar:
     ingress:
