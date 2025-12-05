@@ -1,7 +1,6 @@
 # Over-Engineered GitOps Homelab
 
 [![CI](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml/badge.svg)](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml) ![License](https://img.shields.io/github/license/theepicsaxguy/homelab)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftheepicsaxguy%2Fhomelab.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftheepicsaxguy%2Fhomelab?ref=badge_shield)
 
 After rebuilding my homelab one too many times, I committed to managing it entirely with GitOps. This repository is the result: a blueprint for a resilient, production-inspired Kubernetes cluster.
 
@@ -111,9 +110,6 @@ For questions, open an issue or start a discussion. More details are at [homelab
 MIT – see [LICENSE](LICENSE) for details.
 
 ---
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftheepicsaxguy%2Fhomelab.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftheepicsaxguy%2Fhomelab?ref=badge_large)
 
 ## Credits
 
