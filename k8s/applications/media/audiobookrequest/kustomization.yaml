@@ -4,12 +4,12 @@ kind: Kustomization
 namespace: audiobookshelf
 
 resources:
-  - namespace.yaml
-  - statefulset.yaml
+  - deployment.yaml
   - svc.yaml
   - http-route.yaml
+  - pvc.yaml
 
 labels:
   - includeSelectors: true
     pairs:
-      app: audiobookshelf
+      app: audiobookrequest
