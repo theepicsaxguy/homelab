@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audiobookrequest
+  namespace: audiobookshelf
+  labels:
+    app: audiobookrequest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookrequest
+  template:
+    metadata:
+      labels:
+        app: audiobookrequest
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: audiobookrequest
+          image: markbeep/audiobookrequest:1
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          ports:
+            - name: http-request
+              containerPort: 8000
+          volumeMounts:
+            - mountPath: /config
+              name: abr-config
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http-request
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http-request
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: abr-config
+          persistentVolumeClaim:
+            claimName: audiobookrequest-config
+        - name: tmp
+          emptyDir: {}

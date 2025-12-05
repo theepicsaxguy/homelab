@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: audiobookshelf
-  namespace: media
+  namespace: audiobookshelf
 spec:
   clusterIP: None
   type: ClusterIP

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: audiobookshelf
-  namespace: media
+  namespace: audiobookshelf
 spec:
   serviceName: audiobookshelf
   replicas: 1
@@ -26,6 +26,22 @@ spec:
         resources:
           requests:
             storage: 20Gi
+    - metadata:
+        name: audiobooks
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 100Gi
+    - metadata:
+        name: podcasts
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: longhorn
+        resources:
+          requests:
+            storage: 50Gi
   template:
     metadata:
       labels:
@@ -41,7 +57,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: audiobookshelf
-          image: ghcr.io/advplyr/audiobookshelf:latest
+          image: ghcr.io/advplyr/audiobookshelf:2.31.0
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -52,16 +68,14 @@ spec:
             - name: http
               containerPort: 80
           volumeMounts:
-            - name: media-share
-              mountPath: /audiobooks
-              subPath: audiobookshelf/audiobooks
-            - name: media-share
-              mountPath: /podcasts
-              subPath: audiobookshelf/podcasts
             - name: config
               mountPath: /config
             - name: metadata
               mountPath: /metadata
+            - name: audiobooks
+              mountPath: /audiobooks
+            - name: podcasts
+              mountPath: /podcasts
             - name: tmp
               mountPath: /tmp
           resources:
@@ -88,8 +102,5 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: media-share
-          persistentVolumeClaim:
-            claimName: media-share
         - name: tmp
           emptyDir: {}
