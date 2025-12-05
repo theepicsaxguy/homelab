@@ -17,12 +17,19 @@ containers:
       - name: DOCKER_HOST
         value: "unix:///var/run/docker.sock"
   - name: dind
-    image: docker:27-dind
+    image: docker:29-dind
     securityContext:
-      privileged: true
+      allowPrivilegeEscalation: true
+      capabilities:
+        add:
+          - SYS_ADMIN
+        drop:
+          - ALL
+      seccompProfile:
+        type: Unconfined
 ```
 
-The DinD container requires `privileged: true` to run Docker inside Kubernetes. An init container waits for the Docker socket to be ready before starting OpenHands.
+The DinD container requires the `SYS_ADMIN` capability to run Docker inside Kubernetes. Instead of using full `privileged: true` mode, it uses specific capabilities to comply with the baseline Pod Security Standard. An init container waits for the Docker socket to be ready before starting OpenHands.
 
 ## Storage
 
@@ -146,12 +153,18 @@ The policy allows:
 
 ### Pod Security Standards
 
-The namespace enforces the `baseline` Pod Security Standard to accommodate the DinD sidecar, which requires `privileged: true` to function. The baseline standard prevents the most dangerous behaviors while allowing the privileged container needed for Docker-in-Docker operation.
+The namespace enforces the `baseline` Pod Security Standard. The DinD sidecar container uses the `SYS_ADMIN` capability instead of full privileged mode, which allows it to function while complying with baseline security requirements. This approach:
+
+- Avoids using `privileged: true` which violates baseline policy
+- Grants only the specific capability needed for Docker operations
+- Uses `Unconfined` seccomp profile required for container runtime operations
+- Drops all other unnecessary capabilities
 
 The OpenHands main container follows security best practices:
 - Runs as non-root user (UID 1000)
 - Drops all capabilities
-- Uses seccomp profile
+- Uses RuntimeDefault seccomp profile
+- Disables privilege escalation
 
 Note: `readOnlyRootFilesystem` is set to `false` for the OpenHands container because the application requires write access to multiple directories for runtime operation.
 
@@ -221,7 +234,7 @@ To add or modify LLM providers, update the LiteLLM configuration rather than Ope
 ### Current Limitations
 
 1. **Single Replica**: The deployment uses `strategy: Recreate` and single replica due to session state requirements
-2. **Privileged Container**: DinD requires privileged mode, which increases security risk
+2. **Elevated Capabilities**: DinD requires the `SYS_ADMIN` capability, which still carries some security risk but is better than full privileged mode
 3. **Storage Backend**: Switching from Docker to containerd would require updates to the runtime configuration
 
 ### Planned Improvements
