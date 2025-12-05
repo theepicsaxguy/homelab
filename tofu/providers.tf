@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.38.0" # This ensures you get the latest 2.37.x version
+      version = "~> 3.0.0" # This ensures you get the latest 2.37.x version
     }
     proxmox = {
       source  = "bpg/proxmox"
