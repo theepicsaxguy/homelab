@@ -81,6 +81,8 @@ spec:
               mountPath: /downloads/incomplete
             - name: media-share
               mountPath: /app/data
+            - name: audiobooks-shared
+              mountPath: /app/data/audiobooks
             - name: nzb-backup
               mountPath: /downloads/nzb-backup
             - name: tmp
@@ -107,5 +109,8 @@ spec:
         - name: media-share
           persistentVolumeClaim:
             claimName: media-share
+        - name: audiobooks-shared
+          persistentVolumeClaim:
+            claimName: audiobooks-shared
         - name: tmp
           emptyDir: {}
