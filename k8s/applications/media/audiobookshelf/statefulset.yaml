@@ -12,6 +12,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -20,6 +23,9 @@ spec:
             storage: 5Gi
     - metadata:
         name: metadata
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -28,14 +34,20 @@ spec:
             storage: 20Gi
     - metadata:
         name: audiobooks
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes: ["ReadWriteMany"]
         storageClassName: longhorn
         resources:
           requests:
             storage: 100Gi
     - metadata:
         name: podcasts
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn

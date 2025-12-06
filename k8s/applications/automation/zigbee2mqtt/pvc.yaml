@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: zigbee2mqtt
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/daily: enabled
   name: zigbee2mqtt-data
 spec:
   accessModes:

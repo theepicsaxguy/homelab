@@ -1,5 +1,9 @@
 grafana:
   # OIDC Configuration for Authentik
+  persistence:
+    labels:
+      recurring-job.longhorn.io/source: enabled
+      recurring-job-group.longhorn.io/daily: enabled
   grafana.ini:
     auth.generic_oauth:
       enabled: true

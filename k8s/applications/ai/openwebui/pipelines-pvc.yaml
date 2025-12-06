@@ -4,6 +4,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: pipelines-pvc
   namespace: open-webui
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce
