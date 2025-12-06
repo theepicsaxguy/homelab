@@ -1,0 +1,6 @@
+{
+    "chat.checkpoints.showFileChanges": true,
+    "chat.customAgentInSubagent.enabled": true,
+    "chat.useNestedAgentsMdFiles": true,
+    "github.copilot.chat.agent.autoFix": true
+}

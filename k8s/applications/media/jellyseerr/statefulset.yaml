@@ -84,6 +84,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: config # This name is referenced in the volumeMounts above
+      labels:
+        recurring-job.longhorn.io/source: enabled
+        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes:
       - ReadWriteOnce

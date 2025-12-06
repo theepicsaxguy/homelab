@@ -14,6 +14,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: workspace
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: "longhorn"
@@ -22,6 +25,9 @@ spec:
             storage: 10Gi
     - metadata:
         name: data
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/gfs: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: "longhorn"
