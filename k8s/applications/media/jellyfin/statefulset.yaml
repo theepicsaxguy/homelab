@@ -78,6 +78,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: config
+      labels:
+        recurring-job.longhorn.io/source: enabled
+        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"
@@ -86,6 +89,9 @@ spec:
           storage: 10Gi
   - metadata:
       name: cache
+      labels:
+        recurring-job.longhorn.io/source: enabled
+        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes: [ "ReadWriteOnce" ]
       storageClassName: "longhorn"

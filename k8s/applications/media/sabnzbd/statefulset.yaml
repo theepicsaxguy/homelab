@@ -12,6 +12,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -20,6 +23,9 @@ spec:
             storage: 6Gi
     - metadata:
         name: nzb-backup
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -28,6 +34,9 @@ spec:
             storage: 1Gi
     - metadata:
         name: incomplete-downloads
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn

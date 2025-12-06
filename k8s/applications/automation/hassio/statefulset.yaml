@@ -86,6 +86,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: home-assistant
+      labels:
+        recurring-job.longhorn.io/source: enabled
+        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes:
       - ReadWriteOnce

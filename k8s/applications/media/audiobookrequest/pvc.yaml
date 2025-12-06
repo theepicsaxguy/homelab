@@ -3,6 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: audiobookrequest-config
   namespace: audiobookshelf
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/weekly: enabled
 spec:
   accessModes:
     - ReadWriteOnce
