@@ -1,92 +1,85 @@
-# For volumes that ONLY need hourly backups
-apiVersion: longhorn.io/v1beta2
-kind: RecurringJob
-metadata:
-  name: backup-hourly-only
-  namespace: longhorn-system
-spec:
-  cron: "0 * * * *"
-  task: "backup"
-  groups:
-    - hourly-only  # Renamed to be explicit
-  retain: 48
-  concurrency: 3
-  labels:
-    tier: short-term
----
-# For volumes that need GFS (hourly tier)
+# Critical data - GFS (Grandfather-Father-Son) backup rotation
+# Provides hourly, daily, and weekly recovery points for databases and stateful apps
+
+# Son tier: Recent recovery points (hourly, 2-day retention)
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
   name: backup-gfs-hourly
   namespace: longhorn-system
 spec:
-  cron: "0 * * * *"
+  cron: "0 * * * *"  # Every hour
   task: "backup"
   groups:
-    - gfs  # Shared group for GFS strategy
-  retain: 48
+    - gfs
+  retain: 48  # 2 days (48 hourly backups)
   concurrency: 3
   labels:
-    tier: gfs-hourly
+    strategy: gfs
+    tier: son-hourly
 ---
-# For volumes that need GFS (daily tier)
+# Father tier: Medium-term recovery (daily, 2-week retention)
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
   name: backup-gfs-daily
   namespace: longhorn-system
 spec:
-  cron: "0 2 * * *"
+  cron: "0 2 * * *"  # 2 AM daily
   task: "backup"
   groups:
-    - gfs  # Same group - volumes with "gfs" get BOTH hourly and daily
-  retain: 14
+    - gfs
+  retain: 14  # 2 weeks
   concurrency: 3
   labels:
-    tier: gfs-daily
+    strategy: gfs
+    tier: father-daily
 ---
-# For volumes that need GFS (weekly tier)
+# Grandfather tier: Long-term archive (weekly, 2-month retention)
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
   name: backup-gfs-weekly
   namespace: longhorn-system
 spec:
-  cron: "0 3 * * 0"
+  cron: "0 3 * * 0"  # 3 AM every Sunday
   task: "backup"
   groups:
     - gfs
-  retain: 8
+  retain: 8  # 2 months (8 weekly backups)
   concurrency: 2
   labels:
-    tier: gfs-weekly
+    strategy: gfs
+    tier: grandfather-weekly
 ---
-# Simple daily backups
+# Standard tier: Daily backups for non-critical data
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: backup-daily-only
+  name: backup-daily
   namespace: longhorn-system
 spec:
-  cron: "0 2 * * *"
+  cron: "0 2 * * *"  # 2 AM daily
   task: "backup"
   groups:
-    - daily-only
-  retain: 14
+    - daily
+  retain: 14  # 2 weeks
   concurrency: 3
+  labels:
+    strategy: daily
 ---
-# Snapshot cleanup for all
+# Snapshot cleanup - removes temporary snapshots for all backup groups
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
   name: snapshot-cleanup
   namespace: longhorn-system
 spec:
-  cron: "15 */6 * * *"
+  cron: "15 */6 * * *"  # Every 6 hours at :15
   task: "snapshot-cleanup"
   groups:
-    - hourly-only
-    - daily-only
     - gfs
+    - daily
   concurrency: 2
+  labels:
+    type: maintenance

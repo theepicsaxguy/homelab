@@ -126,6 +126,11 @@
     "chat.promptFilesLocations": {
       ".github/prompts/kustomize": true
     },
+    "chat.agent.enabled": true,
+    "chat.customAgentInSubagent.enabled": true,
+    "chat.useNestedAgentsMdFiles": true,
+    "github.copilot.chat.agent.autoFix": true,
+    "github.copilot.chat.customAgents.showOrganizationAndEnterpriseAgents": true,
   },
   "extensions": {
     "recommendations": [
