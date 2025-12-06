@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/gfs: enabled
+        recurring-job-group.longhorn.io/daily: enabled
   numberOfInstances: 1
   users:
     litellm:

@@ -11,6 +11,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: meilisearch-data
+        labels:
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: [ "ReadWriteOnce" ]
         storageClassName: "longhorn"
