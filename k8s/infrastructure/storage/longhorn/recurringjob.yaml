@@ -1,19 +1,82 @@
+# For volumes that ONLY need hourly backups
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: backup-regular
+  name: backup-hourly-only
   namespace: longhorn-system
 spec:
-  cron: "0 */4 * * *"   # Every 4 hours (12AM, 4AM, 8AM, 12PM, 4PM, 8PM)
+  cron: "0 * * * *"
   task: "backup"
   groups:
-    - default
-    - group1
-  retain: 18  # 3 days worth (6 backups/day × 3 days)
+    - hourly-only  # Renamed to be explicit
+  retain: 48
   concurrency: 3
   labels:
-    type: resource-friendly
+    tier: short-term
 ---
+# For volumes that need GFS (hourly tier)
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-gfs-hourly
+  namespace: longhorn-system
+spec:
+  cron: "0 * * * *"
+  task: "backup"
+  groups:
+    - gfs  # Shared group for GFS strategy
+  retain: 48
+  concurrency: 3
+  labels:
+    tier: gfs-hourly
+---
+# For volumes that need GFS (daily tier)
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-gfs-daily
+  namespace: longhorn-system
+spec:
+  cron: "0 2 * * *"
+  task: "backup"
+  groups:
+    - gfs  # Same group - volumes with "gfs" get BOTH hourly and daily
+  retain: 14
+  concurrency: 3
+  labels:
+    tier: gfs-daily
+---
+# For volumes that need GFS (weekly tier)
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-gfs-weekly
+  namespace: longhorn-system
+spec:
+  cron: "0 3 * * 0"
+  task: "backup"
+  groups:
+    - gfs
+  retain: 8
+  concurrency: 2
+  labels:
+    tier: gfs-weekly
+---
+# Simple daily backups
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-daily-only
+  namespace: longhorn-system
+spec:
+  cron: "0 2 * * *"
+  task: "backup"
+  groups:
+    - daily-only
+  retain: 14
+  concurrency: 3
+---
+# Snapshot cleanup for all
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
@@ -23,8 +86,7 @@ spec:
   cron: "15 */6 * * *"
   task: "snapshot-cleanup"
   groups:
-    - default
-    - group1
+    - hourly-only
+    - daily-only
+    - gfs
   concurrency: 2
-  labels:
-    type: maintenance
