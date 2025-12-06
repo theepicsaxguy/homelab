@@ -68,6 +68,22 @@ spec:
   labels:
     strategy: daily
 ---
+# Basic tier: Weekly backups for least critical data
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-weekly
+  namespace: longhorn-system
+spec:
+  cron: "0 3 * * 0"  # 3 AM every Sunday
+  task: "backup"
+  groups:
+    - weekly
+  retain: 4  # 1 month (4 weekly backups)
+  concurrency: 2
+  labels:
+    strategy: weekly
+---
 # Snapshot cleanup - removes temporary snapshots for all backup groups
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
@@ -80,6 +96,7 @@ spec:
   groups:
     - gfs
     - daily
+    - weekly
   concurrency: 2
   labels:
     type: maintenance

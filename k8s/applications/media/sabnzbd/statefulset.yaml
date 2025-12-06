@@ -14,7 +14,7 @@ spec:
         name: config
         labels:
           recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -25,7 +25,7 @@ spec:
         name: nzb-backup
         labels:
           recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
@@ -36,7 +36,7 @@ spec:
         name: incomplete-downloads
         labels:
           recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
+          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: longhorn
