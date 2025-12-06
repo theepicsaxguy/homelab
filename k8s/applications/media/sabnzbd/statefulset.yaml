@@ -72,6 +72,8 @@ spec:
               value: "/downloads/incomplete"
             - name: SAB_COMPLETE_DIR
               value: "/app/data/complete"
+            - name: SAB_SCRIPT_DIR
+              value: "/scripts"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
@@ -85,6 +87,9 @@ spec:
               mountPath: /app/data/audiobooks
             - name: nzb-backup
               mountPath: /downloads/nzb-backup
+            - name: audiobook-script
+              mountPath: /scripts
+              readOnly: true
             - name: tmp
               mountPath: /tmp
           livenessProbe:
@@ -112,5 +117,9 @@ spec:
         - name: audiobooks-shared
           persistentVolumeClaim:
             claimName: audiobooks-shared
+        - name: audiobook-script
+          configMap:
+            name: sabnzbd-audiobook-script
+            defaultMode: 0755
         - name: tmp
           emptyDir: {}
