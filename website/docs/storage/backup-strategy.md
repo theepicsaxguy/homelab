@@ -51,6 +51,19 @@ metadata:
     recurring-job-group.longhorn.io/<tier>: enabled
 ```
 
+**Why two labels?**
+
+Longhorn uses a two-label system for flexible backup configuration:
+
+1. **`recurring-job.longhorn.io/source: enabled`**: This marks the PVC as a backup source, telling Longhorn to include it in automated recurring backup jobs. Without this label, the PVC will not be backed up regardless of other labels.
+
+2. **`recurring-job-group.longhorn.io/<tier>: enabled`**: This specifies which recurring job group (backup schedule) to use. The `<tier>` value (`gfs`, `daily`, or `weekly`) determines the backup frequency and retention policy. Multiple groups can exist, and this label assigns the PVC to the appropriate group.
+
+This separation allows for:
+- Selective backup enabling (first label)
+- Flexible scheduling assignment (second label)
+- Easy management of different backup policies across the cluster
+
 Where `<tier>` is one of: `gfs`, `daily`, or `weekly`.
 
 ### Labeled Resources
@@ -130,13 +143,6 @@ The tiered strategy balances backup frequency with storage costs and recovery re
 - **Scalable**: New PVCs automatically inherit backup behavior
 - **GitOps**: Backup configuration is declarative and version-controlled
 - **Cost-Effective**: Avoids backing up ephemeral or replaceable data
-
-## Implementation Status
-
-- ✅ Identified and labeled all critical PVCs and StatefulSets
-- ✅ Created appropriate backup tiers with justified retention policies
-- ✅ Excluded non-critical and ephemeral data
-- ✅ Documented the strategy for future maintenance
 
 ## Future Considerations
 
