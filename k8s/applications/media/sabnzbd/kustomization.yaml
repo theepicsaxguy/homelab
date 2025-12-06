@@ -55,3 +55,15 @@ configMapGenerator:
       - SAB_WAIT_BACKOFF=1.5
       - SAB_WAIT_MAX_INTERVAL=5
       - SAB_WAIT_DIRS=download_dir,complete_dir,nzb_backup_dir
+
+      # Scripts folder configuration
+      - SAB__misc__script_dir=/scripts
+
+      # Audiobook category configuration
+      - SAB__categories__audiobook__name=audiobook
+      - SAB__categories__audiobook__order=0
+      - SAB__categories__audiobook__pp=3
+      - SAB__categories__audiobook__script=move-audiobook.sh
+      - SAB__categories__audiobook__dir=audiobook
+      - SAB__categories__audiobook__newzbin=
+      - SAB__categories__audiobook__priority=0

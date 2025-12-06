@@ -72,8 +72,6 @@ spec:
               value: "/downloads/incomplete"
             - name: SAB_COMPLETE_DIR
               value: "/app/data/complete"
-            - name: SAB_SCRIPT_DIR
-              value: "/scripts"
             - name: TZ
               value: "Europe/Stockholm"
           volumeMounts:
