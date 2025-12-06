@@ -29,7 +29,7 @@ spec:
     - metadata:
         name: audiobooks
       spec:
-        accessModes: ["ReadWriteOnce"]
+        accessModes: ["ReadWriteMany"]
         storageClassName: longhorn
         resources:
           requests:
