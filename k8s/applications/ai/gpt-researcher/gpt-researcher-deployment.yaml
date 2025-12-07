@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpt-researcher
+  namespace: gpt-researcher
+  labels:
+    app.kubernetes.io/name: gpt-researcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gpt-researcher
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gpt-researcher
+    spec:
+      securityContext:
+        runAsNonRoot: false
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: gpt-researcher
+          image: gptresearcher/gpt-researcher:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-gpt-researcher-litellm-api-key
+                  key: OPENAI_API_KEY
+            - name: OPENAI_BASE_URL
+              value: "https://litellm.pc-tips.se"
+            - name: TAVILY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gpt-researcher-secrets
+                  key: TAVILY_API_KEY
+            - name: LANGCHAIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gpt-researcher-secrets
+                  key: LANGCHAIN_API_KEY
+            - name: LOGGING_LEVEL
+              value: "INFO"
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts:
+            - name: my-docs
+              mountPath: /usr/src/app/my-docs
+            - name: outputs
+              mountPath: /usr/src/app/outputs
+            - name: logs
+              mountPath: /usr/src/app/logs
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+      volumes:
+        - name: my-docs
+          persistentVolumeClaim:
+            claimName: gpt-researcher-my-docs
+        - name: outputs
+          persistentVolumeClaim:
+            claimName: gpt-researcher-outputs
+        - name: logs
+          persistentVolumeClaim:
+            claimName: gpt-researcher-logs

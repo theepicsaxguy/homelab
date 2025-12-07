@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gpt-researcher
+  namespace: gpt-researcher
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - 'gpt-researcher.pc-tips.se'
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: gptr-nextjs
+          port: 3000

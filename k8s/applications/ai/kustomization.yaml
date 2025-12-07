@@ -10,3 +10,4 @@ resources:
 - qdrant
 - vllm-embed
 - opencode
+- gpt-researcher
