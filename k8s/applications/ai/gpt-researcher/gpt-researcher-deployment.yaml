@@ -23,6 +23,8 @@ spec:
         - name: gpt-researcher
           image: gptresearcher/gpt-researcher:latest
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
           env:
             - name: OPENAI_API_KEY
               valueFrom:
