@@ -39,6 +39,9 @@ spec:
               value: "INFO"
             - name: NEXT_PUBLIC_GPTR_API_URL
               value: "https://research.pc-tips.se/api"
+            - name: NEXT_PUBLIC_WS_HOST
+              # Host only, no protocol. This ensures frontend constructs wss:// when served over HTTPS.
+              value: "research.pc-tips.se"
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
           volumeMounts:
