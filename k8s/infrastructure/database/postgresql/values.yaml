@@ -156,9 +156,9 @@ configKubernetes:
   # - owned-by
 
   # list of label keys that can be inherited from the cluster manifest
-  # inherited_labels:
-  # - application
-  # - environment
+  inherited_labels:
+  - recurring-job.longhorn.io/source
+  - recurring-job-group.longhorn.io/daily
 
   # timeout for successful migration of master pods from unschedulable node
   # master_pod_move_timeout: 20m
