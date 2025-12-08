@@ -57,7 +57,7 @@ spec:
               mountPath: /usr/src/app/logs
           readinessProbe:
             httpGet:
-              path: /health
+              path: /
               port: http
             initialDelaySeconds: 15
             periodSeconds: 15
@@ -65,7 +65,7 @@ spec:
             failureThreshold: 3
           livenessProbe:
             httpGet:
-              path: /health
+              path: /
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30

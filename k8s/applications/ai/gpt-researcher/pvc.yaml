@@ -40,7 +40,7 @@ metadata:
     recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 5Gi

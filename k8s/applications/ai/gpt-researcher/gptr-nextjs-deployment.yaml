@@ -37,16 +37,11 @@ spec:
               value: "true"
             - name: LOGGING_LEVEL
               value: "INFO"
-            - name: NEXT_PUBLIC_GA_MEASUREMENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: gpt-researcher-secrets
-                  key: NEXT_PUBLIC_GA_MEASUREMENT_ID
             - name: NEXT_PUBLIC_GPTR_API_URL
-              valueFrom:
-                secretKeyRef:
-                  name: gpt-researcher-secrets
-                  key: NEXT_PUBLIC_GPTR_API_URL
+              value: "http://gpt-researcher.gpt-researcher.svc.cluster.local:8000"
+          volumeMounts:
+            - name: nextjs-cache
+              mountPath: /app/.next
           ports:
             - containerPort: 3000
               name: http
@@ -73,3 +68,6 @@ spec:
             limits:
               cpu: "1000m"
               memory: "1Gi"
+      volumes:
+        - name: nextjs-cache
+          emptyDir: {}
