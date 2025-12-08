@@ -7,11 +7,6 @@ spec:
   teamId: immich
   volume:
     size: 15Gi
-  volumeClaimTemplate:
-    metadata:
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/gfs: enabled
   dockerImage: ghcr.io/theepicsaxguy/spilo17-vchord:0.1.0
   numberOfInstances: 2
   users:

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gptr-nextjs
+  namespace: gpt-researcher
+  labels:
+    app.kubernetes.io/name: gptr-nextjs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gptr-nextjs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gptr-nextjs
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: gptr-nextjs
+          image: gptresearcher/gptr-nextjs:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ['ALL']
+          env:
+            - name: CHOKIDAR_USEPOLLING
+              value: "true"
+            - name: LOGGING_LEVEL
+              value: "INFO"
+            - name: NEXT_PUBLIC_GPTR_API_URL
+              value: "https://research.pc-tips.se/api"
+            - name: NEXT_PUBLIC_WS_HOST
+              # Host only, no protocol. This ensures frontend constructs wss:// when served over HTTPS.
+              value: "research.pc-tips.se"
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "0"
+          volumeMounts:
+            - name: nextjs-cache
+              mountPath: /app/.next
+          ports:
+            - containerPort: 3000
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+      volumes:
+        - name: nextjs-cache
+          emptyDir: {}

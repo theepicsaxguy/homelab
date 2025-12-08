@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: longhorn-manager
+  namespace: longhorn-system
+spec:
+  template:
+    spec:
+      containers:
+      - name: longhorn-manager
+        image: longhornio/longhorn-manager:v1.10.1-hotfix-1
