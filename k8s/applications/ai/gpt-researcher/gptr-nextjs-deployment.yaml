@@ -38,7 +38,9 @@ spec:
             - name: LOGGING_LEVEL
               value: "INFO"
             - name: NEXT_PUBLIC_GPTR_API_URL
-              value: "http://gpt-researcher.gpt-researcher.svc.cluster.local:8000"
+              value: "https://research.pc-tips.se/api"
+            - name: NODE_TLS_REJECT_UNAUTHORIZED
+              value: "0"
           volumeMounts:
             - name: nextjs-cache
               mountPath: /app/.next
