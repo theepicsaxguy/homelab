@@ -105,6 +105,11 @@ longhornDriver:
 preUpgradeChecker:
   jobEnabled: false
 
+# Longhorn 1.10.1 CRD conversion configuration
+# Disables webhook-based conversion to avoid Kubernetes API validation errors
+crdConversion:
+  enabled: false
+
 metrics:
   serviceMonitor:
     enabled: true
