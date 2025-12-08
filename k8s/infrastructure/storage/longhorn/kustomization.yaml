@@ -8,7 +8,6 @@ resources:
   - recurringjob.yaml
   - http-route.yaml
   - externalsecret.yaml
-  - recovery-job.yaml
 
 helmCharts:
   - name: longhorn
@@ -17,6 +16,3 @@ helmCharts:
     repo: https://charts.longhorn.io
     valuesFile: values.yaml
     version: 1.10.1
-
-patches:
-  - path: manager-hotfix-patch.yaml
