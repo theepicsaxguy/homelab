@@ -104,7 +104,7 @@ spec:
 
       containers:
       - name: unifi-controller
-        image: lscr.io/linuxserver/unifi-network-application:10.0.160
+        image: lscr.io/linuxserver/unifi-network-application:10.0.162
         imagePullPolicy: Always
 
         # This container will run as UID=1000 after init fixes perms

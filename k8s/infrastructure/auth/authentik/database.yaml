@@ -3,10 +3,13 @@ kind: postgresql
 metadata:
   name: authentik-postgresql
   namespace: auth
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   teamId: "auth"
   volume:
-    size: 15Gi
+    size: 20Gi
   numberOfInstances: 2
   users:
     authentik_user:
