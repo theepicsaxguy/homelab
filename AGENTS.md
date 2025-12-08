@@ -97,128 +97,160 @@ pre-commit run --files website/docs/path/to/file.md
 This repository uses:
 - **Conventional Commits**: Follow the format `type(scope): description`
 - **Commitlint**: Enforced via git hooks
-- **Release Please**: Automated changelog and versioning
+# AGENTS – Steering & Design Guidelines
 
-## Architecture
+This document defines how to structure and maintain `AGENTS.md` (and nested variants) so that AI coding agents can work across the entire repository with no external tools. The goal: an agent can onboard as a new teammate using only the repo + AGENTS files.
 
-### GitOps with Argo CD
+## 1. Purpose & Scope of AGENTS.md
 
-The cluster uses Argo CD ApplicationSets to automatically deploy everything from Git:
+`AGENTS.md` is the repository's README for automated agents. Treat it as the single predictable place for agent-focused technical guidance, separate from human-centric docs. Use it to:
 
-1. **Infrastructure ApplicationSet** (`k8s/infrastructure/application-set.yaml`):
-   - Sync wave: `-10` (deployed first)
-   - Auto-discovers directories under `k8s/infrastructure/`
-   - Manages: controllers, network, storage, auth, database, monitoring, deployment, CRDs
-   - Project: `infrastructure`
+- Describe architecture, workflows, and conventions an agent must follow.
+- Specify exact commands and patterns that define "how we do things here." Prioritize machine-actionable instructions.
+- Document deployment, routing, and secrets handling at a conceptual level (no secret values).
+- Provide clear boundaries: what the agent should and should not touch.
 
-2. **Applications ApplicationSet** (`k8s/applications/application-set.yaml`):
-   - Sync wave: `0` (deployed after infrastructure)
-   - Auto-discovers directories under `k8s/applications/`
-   - Categories: ai, media, tools, web, network, automation, external
-   - Project: `applications`
+Every line should help an automated agent work effectively and safely.
 
-When adding a new application or infrastructure component, simply create a new directory with a `kustomization.yaml` file in the appropriate location. Argo CD will automatically discover and deploy it.
+## 2. Layout Strategy — Root and Nested AGENTS
 
-### Key Infrastructure Components
+Follow a hierarchy: the closest `AGENTS.md` to a file wins. Root file contains global rules and a directory map; nested AGENTS refine for their scope.
 
-- **Networking**: Cilium (eBPF-based CNI), Gateway API for ingress, Cloudflared for tunnels
-- **Storage**: Longhorn (distributed block storage)
-- **Secrets**: External Secrets Operator (syncs from Bitwarden)
-- **Auth**: Authentik (SSO)
-- **Certificates**: cert-manager (automated TLS)
-- **Database**: Zalando Postgres Operator
-- **Backup**: Velero
-- **GPU**: NVIDIA GPU Operator and device plugin
-- **Controllers**: Argo CD, Crossplane, External Secrets, cert-manager
+- Root `AGENTS.md` (this file)
+   - Global conventions, architecture overview, deployment and routing patterns.
+   - Directory map linking to subproject AGENTS (if present).
+   - Cross-cutting rules (security, commit style, logging, minimal changes).
 
-### Infrastructure Provisioning
+- Nested `AGENTS.md`
+   - Eg: `k8s/AGENTS.md`, `tofu/AGENTS.md`, `website/AGENTS.md`, `images/AGENTS.md`.
+   - Narrow, actionable guidance for that area (build/test commands, structure, patterns).
 
-OpenTofu provisions:
-- Talos Linux VMs on Proxmox
-- Kubernetes cluster configuration
-- Load balancer VMs (HAProxy)
-- Network configuration (VIP, gateway, DNS)
-- Inline manifests for Cilium and CoreDNS
+Rule: the closest AGENTS.md to a target file or folder takes precedence for that scope.
 
-The Talos module (`tofu/talos/`) generates:
-- Machine configs (control plane and worker nodes)
-- Cluster configuration
-- Client configuration (talosctl)
-- Inline manifests injected during bootstrap
+## 3. Core Sections (for root and for nested AGENTS)
 
-### Kustomize Structure
+Each AGENTS file should follow this minimal structure. Keep it short and machine-friendly.
 
-Every application and infrastructure component:
-1. Lives in its own directory with a `kustomization.yaml`
-2. Is referenced in the parent directory's `kustomization.yaml`
-3. May include Helm charts, raw manifests, or both
-4. Uses Kustomize's `generatorOptions.disableNameSuffixHash: true`
+1. Purpose & Scope — what this AGENTS covers.
+2. Quick-start Commands — actionable build/test/deploy commands for that scope.
+3. Architecture / Layout — concise map of code responsibilities.
+4. Testing — how to run full and partial test suites.
+5. Code Style & Patterns — concrete examples and references to real files.
+6. Boundaries & Safety — what must not be changed, where secrets live.
+7. How to Extend — step-by-step recipes for common tasks (add endpoint, new page, DB table).
+8. Checklist — things to verify before merging architecture or infra changes.
 
-Example application structure:
-```
-k8s/applications/ai/litellm/
-├── kustomization.yaml
-├── deployment.yaml
-├── service.yaml
-└── httproute.yaml
-```
+### 3.1 Project & Architecture Overview
 
-### Custom Images
+At root, include a short architecture summary. Example for this repo:
 
-Custom container images are in `images/` with their own Dockerfiles:
-- `headlessx/`: VNC/remote desktop container
-- `sabnzbd/`: Usenet downloader
-- `spilo17-vchord/`: Custom Postgres image with pgvector and vector-chord extensions
+- Multicomponent homelab on Kubernetes (Talos) using GitOps (Argo CD).
+- Top-level flow: frontend SPA (website) → API services in `k8s/applications/*` → controllers & infra in `k8s/infrastructure/*` → long-lived data in Postgres (Zalando Spilo) and Longhorn volumes.
+- Infrastructure provisioning via OpenTofu (Terraform fork) in `tofu/`.
+- Secrets are sourced via External Secrets Operator from Bitwarden and injected into pods as env vars or mounted volumes.
 
-Images are built via GitHub Actions workflow (`image-build.yaml`) when:
-- Files in the image directory change
-- A tag matching `image-<version>` is pushed
+Reference real files when possible (e.g., `k8s/infrastructure/application-set.yaml`, `tofu/`) so an agent can find examples.
 
-## Adding New Components
+### 3.2 Setup & Build Commands
 
-### Adding an Application
+Put the most-used commands first so an agent can quickly bootstrap. Example commands (tool-agnostic where possible):
 
-1. Create directory: `k8s/applications/<category>/<app-name>/`
-2. Add `kustomization.yaml` and manifests
-3. Update `k8s/applications/<category>/kustomization.yaml` to include the new app
-4. Commit and push - Argo CD will auto-deploy
+- Kubernetes manifests: `kustomize build --enable-helm k8s/applications` and `kustomize build --enable-helm k8s/infrastructure`.
+- OpenTofu: `cd tofu && tofu fmt && tofu validate && tofu plan` (apply only in infra PRs by humans).
+- Website: `cd website && npm install && npm run build` (dev: `npm start`).
+- Image builds: GitHub Actions runs `images/*/Dockerfile` builds via `image-build.yaml`.
 
-### Adding Infrastructure
+State environment assumptions (Node.js, npm versions) and where to run commands.
 
-1. Create directory: `k8s/infrastructure/<component-name>/`
-2. Add `kustomization.yaml` and manifests
-3. Update `k8s/infrastructure/kustomization.yaml` to include the new component
-4. Consider sync wave ordering (infrastructure uses wave `-10`)
-5. Commit and push - Argo CD will auto-deploy
+### 3.3 Testing Instructions
 
-### Adding Custom Images
+- How to run all tests for the repo (if applicable) and per-subproject commands.
+- Where test files live and naming conventions (e.g., `**/*.test.*`, `__tests__`).
+- What CI expects (lint, typecheck, build, tests). Keep machine-readable exit conditions.
 
-1. Create directory: `images/<image-name>/`
-2. Add `Dockerfile` and any required files
-3. GitHub Actions will build on file changes or `image-<version>` tags
+### 3.4 Code Style & Patterns
 
-## Important Notes
+- Use concrete examples (point to `website/src/`, `images/*/Dockerfile`) rather than vague rules.
+- State patterns: controllers thin, services contain business logic, repositories handle DB access.
+- Naming: kebab-case for directories, camelCase for JS/TS variables, PascalCase for types/classes.
+- Linting and format: pre-commit, Vale for prose; include commands to run them.
 
-- **No manual kubectl apply**: Changes must go through Git for GitOps to work
-- **ApplicationSets auto-discover**: New directories are automatically picked up by Argo CD
-- **Helm via Kustomize**: Use `kustomize build --enable-helm` when testing Helm-based applications
-- **Sync options**: Applications use ServerSideApply, PruneLast, and RespectIgnoreDifferences
-- **Node requirements**: Node.js >=20.18.1, npm >=10.0.0
-- **Documentation**: Primary docs site is at https://homelab.orkestack.com/
+### 3.5 Boundaries & Safety
 
-## CI/CD Workflows
+- Files/folders NOT to modify unless explicitly allowed:
+   - Generated artifacts: `website/build/`, any `build/` outputs, `terraform.tfstate*` files.
+   - Secrets and vaults: `secrets/`, any local env files (never commit `.env` with values).
+   - CI runners or central infrastructure state outside the repo.
+- Read-only vs write-allowed rules: nested AGENTS may allow write in their scope.
+- Never commit secrets or secret material into code or logs.
 
-- `image-build.yaml`: Builds custom Docker images
-- `website-build.yaml`: Builds and deploys documentation site
-- `vale.yaml`: Lints documentation prose
-- `claude.yaml`: Claude Code integration
-- `release-please.yml`: Automated releases and changelogs
+## 4. Deployment, Routing, Gateway & Secrets
 
-## Testing Changes
+This section captures conceptual deployment and routing so an agent can reason about adding services or routes.
 
-Before submitting PRs:
-1. Kubernetes: Run `kustomize build --enable-helm` on modified directories
-2. OpenTofu: Run `tofu fmt` and `tofu validate` in `tofu/`
-3. Website: Run `npm install`, `npm run typecheck`, and `npm run lint:all` in `website/`
-4. Documentation: Run `pre-commit run --files <changed-files>` to validate with Vale
-5. Validation happens via Kubechecks before Argo CD rollout
+### 4.1 Deployment & Environments
+
+- Environments: `dev`, `test`, `prod` (conceptual).
+- Deployment: GitOps. Changes are made in Git and Argo CD auto-syncs Kubernetes manifests from `k8s/`.
+- Artifacts: container images (built via GitHub Actions) are pushed to the registry and referenced by manifests in `k8s/applications/*`.
+- OpenTofu manages infrastructure resources and VMs in `tofu/` (Talos, load balancers).
+- Configuration differences by environment are represented via separate kustomize overlays or Kustomize variables in the infra folders.
+
+### 4.2 HTTP Routing & Gateways
+
+- Public ingress is managed via Gateway API and Cloudflared tunnels.
+- Base API patterns: e.g., `/api/...` for backend services; specific apps live under `k8s/applications/<category>/<app>/httproute.yaml`.
+- Versioning: use `/api/v1/...` if the service is versioned; prefer semantic versioning for breaking changes.
+- Contracts: OpenAPI/Swagger (if present) should be referenced from `k8s/applications/*` or `website/` when clients are generated.
+- Auth: Authentik (SSO). Services typically use bearer tokens or OIDC flows; local dev may use test tokens.
+- CORS: described in each service's httproute or ingress policy. Local dev may be permissive; production should be restrictive.
+
+### 4.3 Secrets & Bitwarden
+
+- Secrets live conceptually in Bitwarden (or the configured external secrets provider). External Secrets Operator syncs them into Kubernetes Secrets.
+- Local dev: use developer-managed local secrets or `.local.env` (never committed). Provide sample config files with dummy values only.
+- Access patterns: pods receive secrets via env vars or mounted volumes; pipelines reference secrets from CI secret stores.
+- Rules: do not commit secrets; never log secret values; use placeholders in config examples.
+
+## 5. Agent Personas (optional folder)
+
+Create machine-readable agent persona files in `.github/agents/` or `agents/` to define focused roles. Each persona file should:
+
+- State scope and responsibilities.
+- List allowed file areas and prohibited paths.
+- Give example tasks and constraints (e.g., "Test-agent: only add tests and update docs, never change infra").
+
+Example persona names: `system-architect.agent.md`, `test-agent.agent.md`, `docs-agent.agent.md`, `infra-agent.agent.md`.
+
+## 6. Making the Repo Self-Explanatory (No Tools Required)
+
+To ensure an agent can operate without external tools, follow these practices:
+
+- Use this root `AGENTS.md` as an index with a Directory Map pointing to nested AGENTS.
+- Keep instructions concise, deterministic, and example-driven.
+- Provide recipes for common tasks (add endpoint, add page, add DB table) as step-by-step numbered lists.
+- Update AGENTS files whenever architecture or deployment changes; require AGENTS updates in the same PR as structural changes.
+
+## 7. Checklist for Repository Maintainers
+
+Before merging changes that affect architecture, workflows, or structure, ensure:
+
+- [ ] Root `AGENTS.md` accurately describes overall architecture and workflows.
+- [ ] Nested AGENTS in modified subprojects match actual folder roles and patterns.
+- [ ] Deployment patterns (environments, gateways, routes) are current.
+- [ ] Secrets handling / Bitwarden usage is correctly described.
+- [ ] No references to deprecated patterns or obsolete tools.
+- [ ] Commands listed actually work (build, test, deploy).
+- [ ] Boundaries remain clear (what agents must not modify).
+
+---
+
+Directory Map (high-level):
+
+- `k8s/` — Kubernetes manifests and kustomize overlays. See `k8s/AGENTS.md` (if present).
+- `tofu/` — OpenTofu/terraform for provisioning. See `tofu/AGENTS.md` (if present).
+- `images/` — custom container images and Dockerfiles. See `images/AGENTS.md` (if present).
+- `website/` — docs website (Docusaurus). See `website/AGENTS.md` (if present).
+
+
+Completion note: keep AGENTS files concise, example-rich, and always up-to-date with infra and repo changes.

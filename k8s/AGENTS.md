@@ -1,5 +1,80 @@
 # Kubernetes Infrastructure - Agent Guidelines
 
+This document provides guidance for agents working with the Kubernetes infrastructure in this repository. It is a scoped `AGENTS.md` meant to be the authoritative source for anything under `k8s/`.
+
+## Purpose & Scope
+
+- Scope: `k8s/` (all files and subdirectories). Use this file as the primary reference for Kubernetes manifests, kustomize, Argo CD ApplicationSets, and operational patterns.
+- Goal: enable an agent to validate, extend, and reason about Kubernetes manifests and operational policies without external tools or secrets.
+
+## Quick-start Commands (verify locally)
+
+Run these commands from the repository root.
+
+```bash
+# Build a kustomize overlay (Helm enabled)
+kustomize build --enable-helm k8s/applications/<category>/<app>
+
+# Build infra overlays
+kustomize build --enable-helm k8s/infrastructure/<component>
+
+# Validate generated YAML (example: check for syntax)
+kustomize build k8s/applications | yq eval -P -
+
+# Lint manifests (kubectl kustomize + kubeval if installed)
+kustomize build k8s/applications | kubeval --strict --ignore-missing-schemas
+```
+
+Notes:
+- Use `--enable-helm` when a kustomization pulls in Helm charts.
+- `yq` and `kubeval` are recommended but optional; fall back to manual inspection if not available.
+
+## Structure & Examples
+
+- `k8s/applications/` — user-facing apps organized by category (e.g., `ai/`, `media/`, `web/`). Each app should have its own `kustomization.yaml`.
+- `k8s/infrastructure/` — cluster-level components (controllers, network, storage, auth, database).
+- Example app layout:
+
+```
+k8s/applications/ai/litellm/
+├── kustomization.yaml
+├── deployment.yaml
+├── service.yaml
+└── httproute.yaml
+```
+
+## Operational Patterns
+
+- GitOps: Argo CD ApplicationSets defined at `k8s/application-set.yaml` auto-discover new directories.
+- Sync waves: infrastructure is applied before applications (use ApplicationSet ordering when adding infra components).
+- Use `generatorOptions.disableNameSuffixHash: true` in kustomizations when you need stable resource names.
+
+## Backups (Longhorn)
+
+See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup rules. Key rule: PVCs without backup labels are not backed up. Use labels `recurring-job.longhorn.io/source: enabled` plus group label `recurring-job-group.longhorn.io/gfs=enabled` or `.../daily=enabled`.
+
+## How to Add an Application
+
+1. Create `k8s/applications/<category>/<app>/` and add `kustomization.yaml` and manifests.
+2. Ensure `k8s/applications/<category>/kustomization.yaml` references the new app.
+3. Test locally with `kustomize build --enable-helm k8s/applications/<category>/<app>` and inspect output.
+4. Create a PR. Do not apply changes directly to cluster.
+
+## Testing Manifests
+
+- Unit: Validate that each `kustomization.yaml` builds without error.
+- Integration: `kustomize build` for parent directories (`k8s/applications` and `k8s/infrastructure`) and run `kubeval` or CI validators.
+- CI: PRs should include `kustomize build --enable-helm` in their CI step (see repo workflows for examples).
+
+## Boundaries & Safety
+
+- Do not hardcode secrets in manifests. Use ExternalSecrets/SecretProvider references.
+- Do not change `k8s/infrastructure/application-set.yaml` without review — it affects discovery and sync ordering.
+- Do not modify CRD definitions unless you understand operator compatibility.
+
+---
+# Kubernetes Infrastructure - Agent Guidelines
+
 This document provides guidance for agents working with the Kubernetes infrastructure in this repository.
 
 ## Longhorn Backup Strategy
