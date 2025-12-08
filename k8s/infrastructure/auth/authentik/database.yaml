@@ -7,11 +7,6 @@ spec:
   teamId: "auth"
   volume:
     size: 15Gi
-  volumeClaimTemplate:
-    metadata:
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/gfs: enabled
   numberOfInstances: 2
   users:
     authentik_user:
