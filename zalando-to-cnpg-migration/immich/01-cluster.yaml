@@ -47,7 +47,7 @@ spec:
       secret:
         name: immich-postgresql-app-secret
       postInitApplicationSQL:
-        - CREATE EXTENSION IF NOT EXISTS "vectors";
+        - CREATE EXTENSION IF NOT EXISTS "vector";
         - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
   
   backup:
