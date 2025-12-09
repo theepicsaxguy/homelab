@@ -1,28 +1,71 @@
-apiVersion: "acid.zalan.do/v1"
-kind: postgresql
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
   name: litellm-postgresql
   namespace: litellm
 spec:
-  teamId: "litellm"
-  volume:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+
+  storage:
     size: 10Gi
-  numberOfInstances: 1
-  users:
-    litellm:
-      - superuser
-      - createdb
-  databases:
-    litellm: litellm
-  enableLogicalBackup: false
-  logicalBackupSchedule: "0 3 * * *"
-  postgresql:
-    version: "17"
-  spiloFSGroup: 103
+    storageClass: longhorn
+
+  walStorage:
+    size: 2Gi
+    storageClass: longhorn
+
   resources:
     requests:
-      cpu: 200m
       memory: 512Mi
+      cpu: 200m
     limits:
-      cpu: 1000m
       memory: 1Gi
+      cpu: 1000m
+
+  postgresql:
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"
+      effective_cache_size: "768MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2621kB"
+      huge_pages: "off"
+      min_wal_size: "1GB"
+      max_wal_size: "1GB"
+
+  bootstrap:
+    initdb:
+      database: litellm
+      owner: litellm
+      secret:
+        name: litellm-postgresql-app-secret
+
+  backup:
+    method: plugin
+    pluginConfiguration:
+      name: barman-cloud
+      parameters:
+        destinationPath: s3://homelab-postgres-backups/litellm/litellm-postgresql
+        endpointURL: http://minio.minio.svc.cluster.local:9000
+        s3Credentials:
+          accessKeyId:
+            name: longhorn-minio-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: longhorn-minio-credentials
+            key: AWS_SECRET_ACCESS_KEY
+    retentionPolicy: "30d"
+
+  monitoring:
+    enablePodMonitor: false
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

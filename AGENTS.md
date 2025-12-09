@@ -184,6 +184,38 @@ State environment assumptions (Node.js, npm versions) and where to run commands.
 - Read-only vs write-allowed rules: nested AGENTS may allow write in their scope.
 - Never commit secrets or secret material into code or logs.
 
+### 3.6 Global Operational Rules
+
+**Verify, Don't Guess**
+
+- **Never guess resource names, connection strings, or secret keys.** Before writing a reference to a resource (like a Secret, Service, or URL) in a configuration file, query the active environment to confirm the exact name and existence:
+  ```bash
+  kubectl get secret <name> -n <namespace>
+  kubectl get service <name> -n <namespace>
+  ```
+- **If a command fails due to a configuration error** (e.g., `CreateContainerConfigError`), do not simply retry or change the name to what you think it should be. Inspect the actual failing resource:
+  ```bash
+  kubectl describe pod <pod-name> -n <namespace>
+  ```
+  Read the specific error message to identify the missing dependency.
+
+**Deprecation & Schema Compliance**
+
+- **Treat deprecation warnings as Critical Errors.** If a tool (like CNPG, Helm, or kubectl) warns that a feature is deprecated, stop immediately. Do not attempt to use the deprecated field. Search the official documentation for the specific migration path and implement the modern standard.
+- **Never hallucinate YAML fields.** If the API server rejects a manifest with "field not declared in schema," do not guess variations of the spelling. Use `kubectl explain <resource>.<field>` or fetch the official CRD documentation to validate the schema before attempting a fix.
+
+**State Verification vs. Assumption**
+
+- **`kubectl apply` ≠ "Success".** Applying a manifest only validates syntax, not functionality. After applying a change, actively check the status of the resource to confirm it has reconciled successfully:
+  ```bash
+  kubectl get <resource> <name> -n <namespace>
+  kubectl describe <resource> <name> -n <namespace>
+  ```
+- **When migrating between systems** (e.g., Zalando to CNPG, or upgrading operators), explicitly identify which resources belong to which system. Do not look at an existing "Running" pod and assume it is the new deployment. Check labels, age, and controller references to distinguish legacy infrastructure from new infrastructure:
+  ```bash
+  kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
+  ```
+
 ## 4. Deployment, Routing, Gateway & Secrets
 
 This section captures conceptual deployment and routing so an agent can reason about adding services or routes.
