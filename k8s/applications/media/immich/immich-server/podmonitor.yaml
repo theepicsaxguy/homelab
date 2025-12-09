@@ -1,0 +1,19 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: immich-postgresql
+  namespace: immich
+  labels:
+    app.kubernetes.io/name: postgresql
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+      cnpg.io/cluster: immich-postgresql
+  podMetricsEndpoints:
+    - port: metrics
+      path: /metrics
+  namespaceSelector:
+    matchNames:
+      - immich

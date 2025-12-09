@@ -8,6 +8,7 @@ resources:
   - database-credentials.yaml
   - database.yaml
   - database-scheduled-backup.yaml
+  - podmonitor.yaml
   - zalando-k8s-store.yaml
   - serviceaccount.yaml
   - service.yaml

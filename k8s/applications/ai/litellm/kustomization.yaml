@@ -14,3 +14,4 @@ resources:
 - database-credentials.yaml
 - database.yaml
 - database-scheduled-backup.yaml
+- podmonitor.yaml
