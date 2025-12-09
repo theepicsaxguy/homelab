@@ -1,5 +1,23 @@
-apiVersion: "acid.zalan.do/v1"
-kind: postgresql
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: authentik-minio-store
+  namespace: auth
+spec:
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
+    endpointURL: https://truenas.pc-tips.se:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
   name: authentik-postgresql
   namespace: auth
@@ -7,24 +25,60 @@ metadata:
     recurring-job.longhorn.io/source: enabled
     recurring-job-group.longhorn.io/gfs: enabled
 spec:
-  teamId: "auth"
-  volume:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+
+  storage:
     size: 20Gi
-  numberOfInstances: 2
-  users:
-    authentik_user:
-      - superuser
-      - createdb
-  databases:
-    authentik: authentik_user
-  enableLogicalBackup: false
-  postgresql:
-    version: "17"
-  enableConnectionPooler: false
+    storageClass: longhorn
+
+  walStorage:
+    size: 4Gi
+    storageClass: longhorn
+
   resources:
     requests:
-      cpu: 200m
       memory: 512Mi
+      cpu: 200m
     limits:
-      cpu: 1000m
       memory: 1Gi
+      cpu: 1000m
+
+  postgresql:
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"
+      effective_cache_size: "768MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2621kB"
+      huge_pages: "off"
+      min_wal_size: "1GB"
+      max_wal_size: "3GB"
+
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: authentik-minio-store
+
+  bootstrap:
+    initdb:
+      database: authentik
+      owner: authentik_user
+      secret:
+        name: authentik-postgresql-app
+
+  monitoring:
+    enablePodMonitor: false
+
+  minSyncReplicas: 1
+  maxSyncReplicas: 1
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
