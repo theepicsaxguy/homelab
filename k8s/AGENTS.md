@@ -72,6 +72,93 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 - Do not change `k8s/infrastructure/application-set.yaml` without review — it affects discovery and sync ordering.
 - Do not modify CRD definitions unless you understand operator compatibility.
 
+## Kubernetes-Specific Operational Rules
+
+### Secret Management & References
+
+**Auto-Generated Secret Names**
+
+- **When using operators that auto-generate secrets** (like CloudNativePG/CNPG, Zalando Postgres Operator), verify the generated secret name before referencing it in applications. Operators often append suffixes like `-app`, `-superuser`, or `-owner`.
+- **Always query the cluster** to confirm the exact secret name:
+  ```bash
+  kubectl get secrets -n <namespace> | grep <cluster-name>
+  ```
+- **Before updating `kustomization.yaml` or Deployment manifests** with a secret reference, decode the secret to verify its structure and keys:
+  ```bash
+  kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data}' | jq 'keys'
+  ```
+
+### Operator & CRD Logic
+
+**Connection Secrets & Endpoints**
+
+- **Check for existing connection secrets or endpoints** before creating new ones. For backup/objectStore configuration (e.g., MinIO/S3 for CNPG or Longhorn), search for existing secrets:
+  ```bash
+  kubectl get secrets -n <namespace> | grep -E 'minio|s3|backup'
+  ```
+- **Decode existing secrets** to verify endpoint URLs and credentials rather than assuming `localhost` or default values:
+  ```bash
+  kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data.MINIO_ENDPOINT}' | base64 -d
+  ```
+
+**CloudNativePG (CNPG) Specific Rules**
+
+- **Verify the installed CNPG operator version** before writing manifests:
+  ```bash
+  kubectl get deployment -n cnpg-system cnpg-controller-manager -o jsonpath='{.spec.template.spec.containers[0].image}'
+  ```
+- **Version-specific behavior:**
+  - Version < 1.29: May require the deprecated `Barman Cloud Plugin` via `Cluster.spec.backup.barmanObjectStore`.
+  - Version ≥ 1.29: Use `Cluster.spec.backup.barmanObjectStore` with the plugin architecture.
+  - Always consult the official CNPG documentation for the installed version.
+- **Always validate the `Cluster` status immediately after creation:**
+  ```bash
+  kubectl get cluster <cluster-name> -n <namespace>
+  kubectl describe cluster <cluster-name> -n <namespace>
+  ```
+- **If a Cluster is stuck in "Setting up primary,"** check the operator logs first, not just the Pod logs:
+  ```bash
+  kubectl logs -n cnpg-system deployment/cnpg-controller-manager --tail=100
+  ```
+
+### Destructive Action Protocol
+
+**Never Delete Without Evidence**
+
+- **Never delete a Job, Pod, or PVC to "fix" a config error** unless you have proof via logs that the resource is in an unrecoverable state or holding stale configuration.
+- **Required evidence before deletion:**
+  ```bash
+  # Check Pod logs
+  kubectl logs <pod-name> -n <namespace>
+
+  # Check Pod events and configuration
+  kubectl describe pod <pod-name> -n <namespace>
+
+  # Check Job status (if applicable)
+  kubectl describe job <job-name> -n <namespace>
+  ```
+- **Blindly deleting resources masks the root cause.** If a resource is failing, identify why it's failing first. Common non-destructive fixes:
+  - Update the manifest and re-apply (for Deployments, StatefulSets).
+  - Delete and recreate only ConfigMaps or Secrets that have changed.
+  - Use `kubectl rollout restart` for Deployments/StatefulSets when only env vars or mounts changed.
+
+### Resource Identification & Migration
+
+**Distinguishing Old vs. New Resources**
+
+- **When migrating infrastructure** (e.g., Zalando Postgres → CNPG), use labels and metadata to distinguish resources:
+  ```bash
+  # Check resource ownership
+  kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+
+  # Check resource age
+  kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'
+
+  # Check resource labels
+  kubectl get pod <pod-name> -n <namespace> --show-labels
+  ```
+- **Do not assume a "Running" pod belongs to the new system** without verifying its controller reference and creation timestamp.
+
 ---
 # Kubernetes Infrastructure - Agent Guidelines
 
