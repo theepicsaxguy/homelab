@@ -1,36 +1,81 @@
-apiVersion: acid.zalan.do/v1
-kind: postgresql
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
   name: immich-postgresql
   namespace: immich
 spec:
-  teamId: immich
-  volume:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  
+  storage:
     size: 15Gi
-  dockerImage: ghcr.io/theepicsaxguy/spilo17-vchord:0.1.0
-  numberOfInstances: 2
-  users:
-    immich:
-      - superuser
-      - createdb
-  databases:
-    immich: immich
-  enableLogicalBackup: false
-  preparedDatabases:
-    immich:
-      extensions:
-        earthdistance: public
-        vector: public
-        vchord: public
-  postgresql:
-    version: "17"
-    parameters:
-      shared_preload_libraries: "bg_mon,pg_stat_statements,pgextwlist,pg_auth_mon,set_user,timescaledb,pg_cron,pg_stat_kcache,vchord.so"
-  enableConnectionPooler: false
+    storageClass: longhorn
+  
+  walStorage:
+    size: 3Gi
+    storageClass: longhorn
+  
   resources:
     requests:
-      cpu: 200m
       memory: 512Mi
+      cpu: 200m
     limits:
-      cpu: 1000m
       memory: 1Gi
+      cpu: 1000m
+  
+  postgresql:
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"
+      effective_cache_size: "768MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2621kB"
+      huge_pages: "off"
+      min_wal_size: "1GB"
+      max_wal_size: "4GB"
+  
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      secret:
+        name: immich-postgresql-app-secret
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vector";
+        - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
+  
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://homelab-postgres-backups/immich/immich-postgresql
+      endpointURL: http://minio.minio.svc.cluster.local:9000
+      s3Credentials:
+        accessKeyId:
+          name: longhorn-minio-credentials
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: longhorn-minio-credentials
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        maxParallel: 8
+      data:
+        compression: gzip
+        immediateCheckpoint: true
+        jobs: 2
+    retentionPolicy: "30d"
+  
+  monitoring:
+    enablePodMonitor: true
+  
+  minSyncReplicas: 1
+  maxSyncReplicas: 1
+  
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

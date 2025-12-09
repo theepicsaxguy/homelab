@@ -2,10 +2,10 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: authentik-postgresql-cnpg-backup
-  namespace: auth
+  name: litellm-postgresql-backup
+  namespace: litellm
 spec:
   schedule: "0 0 2 * * *"
   backupOwnerReference: self
   cluster:
-    name: authentik-postgresql-cnpg
+    name: litellm-postgresql

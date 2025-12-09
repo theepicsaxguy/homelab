@@ -1,9 +1,0 @@
----
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: litellm
-resources:
-  - 00-s3-credentials.yaml
-  - 00-credentials.yaml
-  - 01-cluster.yaml
-  - 02-scheduled-backup.yaml

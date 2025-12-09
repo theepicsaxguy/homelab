@@ -2,10 +2,10 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: immich-postgresql-cnpg-backup
+  name: immich-postgresql-backup
   namespace: immich
 spec:
   schedule: "0 0 2 * * *"
   backupOwnerReference: self
   cluster:
-    name: immich-postgresql-cnpg
+    name: immich-postgresql
