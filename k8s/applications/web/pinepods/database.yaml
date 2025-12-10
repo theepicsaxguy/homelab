@@ -1,8 +1,29 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: pinepods-minio-store
+  namespace: pinepods
+spec:
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/pinepods/pinepods-db
+    endpointURL: https://truenas.pc-tips.se:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: pinepods-db
   namespace: pinepods
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:18
@@ -30,6 +51,11 @@ spec:
     parameters:
       max_connections: "200"
       shared_buffers: "256MB"
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: pinepods-minio-store
   resources:
     requests:
       cpu: "250m"

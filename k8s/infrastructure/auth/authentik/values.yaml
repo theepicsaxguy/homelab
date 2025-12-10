@@ -109,7 +109,7 @@ authentik:
     # -- Send PII (Personally identifiable information) data to sentry
     send_pii: false
   postgresql:
-    host: authentik-postgresql
+    host: authentik-postgresql-rw
     name: authentik
     user: file:///secrets/authentik/username
     password: file:///secrets/authentik/password

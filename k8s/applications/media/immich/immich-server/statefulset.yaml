@@ -38,18 +38,24 @@ spec:
             - name: DB_DATABASE_NAME
               value: immich
             - name: DB_HOSTNAME
-              value: immich-postgresql
+              value: immich-postgresql-rw
             - name: DB_PASSWORD
-              value: immich
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: immich-postgresql-app
             - name: DB_SSL
               value: 'true'
             - name: DB_URL
               valueFrom:
                 secretKeyRef:
-                  key: DB_URL
-                  name: immich-db-url
+                  key: uri
+                  name: immich-postgresql-app
             - name: DB_USERNAME
-              value: immich
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: immich-postgresql-app
             - name: IMMICH_CONFIG_FILE
               value: /config/immich-config.yaml
             - name: IMMICH_MACHINE_LEARNING_URL
