@@ -1,9 +1,29 @@
 ---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: immich-minio-store
+  namespace: immich
+spec:
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/immich/immich-postgresql
+    endpointURL: https://truenas.pc-tips.se:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: immich-postgresql
   namespace: immich
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:17
@@ -40,6 +60,12 @@ spec:
       min_wal_size: "1GB"
       max_wal_size: "2GB"
 
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: immich-minio-store
+
   bootstrap:
     initdb:
       database: immich
@@ -47,22 +73,6 @@ spec:
       postInitApplicationSQL:
         - CREATE EXTENSION IF NOT EXISTS "vector";
         - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
-
-  backup:
-    method: plugin
-    pluginConfiguration:
-      name: barman-cloud
-      parameters:
-        destinationPath: s3://homelab-postgres-backups/immich/immich-postgresql
-        endpointURL: http://minio.minio.svc.cluster.local:9000
-        s3Credentials:
-          accessKeyId:
-            name: longhorn-minio-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: longhorn-minio-credentials
-            key: AWS_SECRET_ACCESS_KEY
-    retentionPolicy: "30d"
 
   monitoring:
     enablePodMonitor: false
