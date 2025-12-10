@@ -32,6 +32,9 @@ Notes:
 ## Structure & Examples
 
 - `k8s/applications/` — user-facing apps organized by category (e.g., `ai/`, `media/`, `web/`). Each app should have its own `kustomization.yaml`.
+  - Active categories: `ai/`, `automation/`, `external/`, `media/`, `network/`, `tools/`, `web/`
+  - Category-level AGENTS.md template available: `k8s/applications/AGENTS-TEMPLATE.md`
+  - Create category-level AGENTS.md when categories develop unique patterns (5+ apps, shared resources, or special workflows)
 - `k8s/infrastructure/` — cluster-level components (controllers, network, storage, auth, database).
 - Example app layout:
 
