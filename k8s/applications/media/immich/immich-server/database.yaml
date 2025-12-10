@@ -44,8 +44,6 @@ spec:
     initdb:
       database: immich
       owner: immich
-      secret:
-        name: immich-postgresql-app-secret
       postInitApplicationSQL:
         - CREATE EXTENSION IF NOT EXISTS "vector";
         - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;

@@ -44,8 +44,6 @@ spec:
     initdb:
       database: litellm
       owner: litellm
-      secret:
-        name: litellm-postgresql-app-secret
 
   backup:
     method: plugin
