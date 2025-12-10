@@ -277,12 +277,37 @@ Before merging changes that affect architecture, workflows, or structure, ensure
 
 ---
 
-Directory Map (high-level):
+## Directory Map & Nested AGENTS
 
-- `k8s/` — Kubernetes manifests and kustomize overlays. See `k8s/AGENTS.md` (if present).
-- `tofu/` — OpenTofu/terraform for provisioning. See `tofu/AGENTS.md` (if present).
-- `images/` — custom container images and Dockerfiles. See `images/AGENTS.md` (if present).
-- `website/` — docs website (Docusaurus). See `website/AGENTS.md` (if present).
+This repository follows a hierarchical AGENTS.md structure. The closest AGENTS.md to a target file takes precedence for that scope.
 
+### Active Nested AGENTS.md Files
+
+The following directories have their own AGENTS.md files with scope-specific guidance:
+
+- **`k8s/AGENTS.md`** — Kubernetes manifests, kustomize overlays, and GitOps patterns. Covers both `k8s/applications/` and `k8s/infrastructure/`.
+- **`tofu/AGENTS.md`** — OpenTofu/Terraform infrastructure provisioning (VMs, networking, cluster bootstrap).
+- **`images/AGENTS.md`** — Custom container images and Dockerfiles, CI build patterns.
+- **`website/AGENTS.md`** — Docusaurus documentation site, build and lint commands.
+
+### Application Categories
+
+Application categories under `k8s/applications/` follow the patterns defined in `k8s/AGENTS.md`:
+
+- `k8s/applications/ai/` — AI and ML applications (LiteLLM, OpenHands, etc.)
+- `k8s/applications/automation/` — Home automation (Home Assistant, Frigate, MQTT, Zigbee2MQTT)
+- `k8s/applications/external/` — External service proxies (Proxmox, TrueNAS)
+- `k8s/applications/media/` — Media management (Jellyfin, Immich, arr-stack, Audiobookshelf)
+- `k8s/applications/network/` — Network services (Unifi)
+- `k8s/applications/tools/` — Utility applications (IT-Tools, Unrar)
+- `k8s/applications/web/` — Web applications (BabyBuddy, HeadlessX, Pinepods)
+
+Note: Category-level AGENTS.md files can be added when a category develops unique patterns or workflows not covered by `k8s/AGENTS.md`.
+
+### Agent Maintenance
+
+AGENTS.md files are maintained according to the specification in `.github/agents/agents-maintainer.agent.md`. When making architectural or workflow changes, update the relevant AGENTS.md files in the same PR.
+
+---
 
 Completion note: keep AGENTS files concise, example-rich, and always up-to-date with infra and repo changes.

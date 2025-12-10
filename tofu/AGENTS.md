@@ -51,4 +51,29 @@ Notes:
 - Static: `tofu validate` and `tofu fmt`.
 - Human review: `tofu plan` outputs must be reviewed before applying.
 
+## Code Style & Patterns
+
+- Use consistent naming: `snake_case` for resource names and variables
+- Group related resources in separate files (e.g., `network.tf`, `compute.tf`)
+- Use variables for values that differ between environments
+- Include descriptions for all variables and outputs
+- Use `locals` for computed values used multiple times
+- Reference existing resources: see `main.tf`, `providers.tf` for patterns
+
+## Pre-Merge Checklist
+
+Before merging OpenTofu/Terraform changes, verify:
+
+- [ ] All `.tf` files are formatted: `tofu fmt` reports no changes
+- [ ] Configuration validates: `tofu validate` passes
+- [ ] Plan has been generated and reviewed: `tofu plan` output attached to PR
+- [ ] No secrets or credentials in code (use variables and `.tfvars` files)
+- [ ] State files (`.tfstate`) are not modified or committed
+- [ ] Changes include rollback plan and migration steps
+- [ ] Variables have descriptions and appropriate defaults
+- [ ] Outputs are defined for values needed by other systems
+- [ ] Changes reviewed by infra team with platform access
+- [ ] Breaking changes documented with upgrade path
+
 ---
+

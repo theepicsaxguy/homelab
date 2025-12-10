@@ -32,6 +32,9 @@ Notes:
 ## Structure & Examples
 
 - `k8s/applications/` — user-facing apps organized by category (e.g., `ai/`, `media/`, `web/`). Each app should have its own `kustomization.yaml`.
+  - Active categories: `ai/`, `automation/`, `external/`, `media/`, `network/`, `tools/`, `web/`
+  - Category-level AGENTS.md template available: `k8s/applications/AGENTS-TEMPLATE.md`
+  - Create category-level AGENTS.md when categories develop unique patterns (5+ apps, shared resources, or special workflows)
 - `k8s/infrastructure/` — cluster-level components (controllers, network, storage, auth, database).
 - Example app layout:
 
@@ -280,4 +283,21 @@ The backup jobs are defined in [k8s/infrastructure/storage/longhorn/recurringjob
 - More frequent backups = shorter retention (e.g., hourly keeps 48, daily keeps 14)
 - Less frequent backups = longer retention (e.g., weekly keeps 8)
 - Snapshot cleanup runs across all groups to prevent temporary snapshot accumulation
+
+## Pre-Merge Checklist
+
+Before merging Kubernetes manifest changes, verify:
+
+- [ ] All kustomizations build successfully: `kustomize build --enable-helm k8s/applications` and `kustomize build --enable-helm k8s/infrastructure`
+- [ ] No hardcoded secrets in manifests (use ExternalSecrets/SecretProvider)
+- [ ] PVCs have appropriate backup labels (`recurring-job.longhorn.io/source` + tier label)
+- [ ] Resources have appropriate requests/limits for the workload
+- [ ] Network policies allow required traffic patterns
+- [ ] HTTPRoutes/Ingress configs follow security best practices (auth, CORS)
+- [ ] Deployment/StatefulSet follows non-root container patterns
+- [ ] Changes to ApplicationSet or CRDs have been reviewed by infra team
+- [ ] Database credentials use auto-generated secrets (for CNPG) or verified ExternalSecrets
+- [ ] Backup tier matches criticality: GFS for critical data, Daily for standard apps, None for ephemeral
+- [ ] Changes tested locally and validated against cluster (if access available)
+
 

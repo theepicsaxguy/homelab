@@ -46,9 +46,35 @@ Notes:
 2. Run `npm run lint:all` and `npm run typecheck` locally.
 3. Open a PR. Include a brief summary of changes and the pages affected.
 
+## Code Style & Patterns
+
+- Use MDX format for interactive documentation components
+- Follow naming: kebab-case for files and directories (e.g., `getting-started.md`)
+- Use frontmatter for page metadata (title, description, sidebar position)
+- Reference existing docs for patterns: `website/docs/` structure
+- Use relative links for internal navigation: `[text](../other-page.md)`
+- Include code blocks with language tags for syntax highlighting
+- Use Docusaurus components (Admonitions, Tabs) for rich content
+
 ## Boundaries
 
 - Do not commit `website/build/` or other generated output.
 - Do not add large binary assets to the repo; use external storage and reference by URL.
 
+## Pre-Merge Checklist
+
+Before merging documentation changes, verify:
+
+- [ ] Site builds successfully: `npm run build` passes
+- [ ] TypeScript type checking passes: `npm run typecheck`
+- [ ] Markdown linting passes: `npm run lint:all`
+- [ ] Local dev server shows changes correctly: `npm start`
+- [ ] Internal links work and don't create 404s
+- [ ] Code examples are tested and accurate
+- [ ] Images are optimized and appropriately sized
+- [ ] Frontmatter includes title and description
+- [ ] Changes don't break existing navigation/sidebar
+- [ ] No build artifacts committed (`website/build/`, `node_modules/`)
+
 ---
+
