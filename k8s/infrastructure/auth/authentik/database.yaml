@@ -70,8 +70,6 @@ spec:
     initdb:
       database: authentik
       owner: authentik_user
-      secret:
-        name: authentik-postgresql-app
 
   monitoring:
     enablePodMonitor: false
