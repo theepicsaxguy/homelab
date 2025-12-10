@@ -57,7 +57,7 @@ spec:
       effective_io_concurrency: "200"
       work_mem: "2621kB"
       huge_pages: "off"
-      min_wal_size: "1GB"
+      min_wal_size: "512MB"
       max_wal_size: "1GB"
 
   plugins:
