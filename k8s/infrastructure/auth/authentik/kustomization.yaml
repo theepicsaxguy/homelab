@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: auth
 resources:
 - database.yaml
-- database-credentials.yaml
 - database-scheduled-backup.yaml
 - podmonitor.yaml
 - httproute.yaml

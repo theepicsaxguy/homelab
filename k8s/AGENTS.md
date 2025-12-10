@@ -121,6 +121,43 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
   kubectl logs -n cnpg-system deployment/cnpg-controller-manager --tail=100
   ```
 
+### CNPG Database Management Patterns
+
+**Auto-Generated Credentials (Preferred)**
+
+- **CNPG automatically generates database credentials** when no `bootstrap.initdb.secret` is specified
+- **Never use ExternalSecrets for CNPG app credentials** - this creates circular dependencies
+- **Auto-generated secret naming:** `<cluster-name>-app` (e.g., `immich-postgresql-app`)
+- **Secret contains:** `username`, `password`, `dbname`, `host`, `port`, `uri`, `jdbc-uri`, etc.
+
+**Common Anti-Pattern (Avoid):**
+- Using ExternalSecrets to create CNPG app secrets creates circular dependencies
+- CNPG clusters fail to initialize because they expect the secret to exist before they can create it
+- Always remove `bootstrap.initdb.secret` references and let CNPG auto-generate credentials
+
+**Correct Pattern:**
+- Omit `bootstrap.initdb.secret` from Cluster manifests
+- CNPG will automatically create `<cluster-name>-app` secret with random credentials
+- Applications reference the auto-generated secret directly
+
+**Barman Cloud Backup Setup**
+
+- **Use ObjectStore + plugins architecture** (modern approach)
+- **ObjectStore resource** defines S3 backup destination
+- **Cluster plugins section** references the ObjectStore
+- **ScheduledBackup** uses `method: plugin` with `barman-cloud.cloudnative-pg.io`
+
+**Complete Backup Setup:**
+- Create ObjectStore resource with S3 destination path and credentials
+- Add plugins section to Cluster spec referencing the ObjectStore
+- Create ScheduledBackup with plugin method and barman-cloud configuration
+- Add backup labels: `recurring-job.longhorn.io/source: enabled` and tier label (`gfs` or `daily`)
+
+**Backup Tier Guidelines:**
+- **GFS (Grandfather-Father-Son):** Critical databases needing point-in-time recovery
+- **Daily:** Standard applications with daily retention
+- **None:** Caches, ephemeral data
+
 ### Destructive Action Protocol
 
 **Never Delete Without Evidence**

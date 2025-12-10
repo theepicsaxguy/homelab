@@ -12,6 +12,7 @@ resources:
   - desktop/deployment.yaml
   - desktop/service.yaml
   - postgres/database.yaml
+  - postgres/database-scheduled-backup.yaml
   - httproute.yaml
 
 images:
