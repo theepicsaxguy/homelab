@@ -38,7 +38,7 @@ spec:
             - name: DB_DATABASE_NAME
               value: immich
             - name: DB_HOSTNAME
-              value: immich-postgresql
+              value: immich-postgresql-rw
             - name: DB_PASSWORD
               value: immich
             - name: DB_SSL
