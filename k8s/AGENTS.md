@@ -284,3 +284,20 @@ The backup jobs are defined in [k8s/infrastructure/storage/longhorn/recurringjob
 - Less frequent backups = longer retention (e.g., weekly keeps 8)
 - Snapshot cleanup runs across all groups to prevent temporary snapshot accumulation
 
+## Pre-Merge Checklist
+
+Before merging Kubernetes manifest changes, verify:
+
+- [ ] All kustomizations build successfully: `kustomize build --enable-helm k8s/applications` and `kustomize build --enable-helm k8s/infrastructure`
+- [ ] No hardcoded secrets in manifests (use ExternalSecrets/SecretProvider)
+- [ ] PVCs have appropriate backup labels (`recurring-job.longhorn.io/source` + tier label)
+- [ ] Resources have appropriate requests/limits for the workload
+- [ ] Network policies allow required traffic patterns
+- [ ] HTTPRoutes/Ingress configs follow security best practices (auth, CORS)
+- [ ] Deployment/StatefulSet follows non-root container patterns
+- [ ] Changes to ApplicationSet or CRDs have been reviewed by infra team
+- [ ] Database credentials use auto-generated secrets (for CNPG) or verified ExternalSecrets
+- [ ] Backup tier matches criticality: GFS for critical data, Daily for standard apps, None for ephemeral
+- [ ] Changes tested locally and validated against cluster (if access available)
+
+
