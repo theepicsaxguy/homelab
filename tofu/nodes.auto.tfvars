@@ -5,7 +5,6 @@ nodes_config = {
     mac_address   = "bc:24:11:e6:ba:07"
     startup_order = 3
     vm_id         = 8101
-    ram_dedicated = 7168
   }
   "ctrl-01" = {
     machine_type  = "controlplane"
@@ -13,6 +12,7 @@ nodes_config = {
     mac_address   = "bc:24:11:44:94:5c"
     startup_order = 4
     vm_id         = 8102
+    datastore_id  = "velocity"
   }
   "ctrl-02" = {
     machine_type  = "controlplane"
@@ -20,6 +20,7 @@ nodes_config = {
     mac_address   = "bc:24:11:1e:1d:2f"
     startup_order = 5
     vm_id         = 8103
+    datastore_id  = "rpool2"
   }
   "work-00" = {
     machine_type  = "worker"
@@ -41,32 +42,14 @@ nodes_config = {
     mac_address   = "bc:24:11:6f:20:03"
     startup_order = 8
     vm_id         = 8203
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "180G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
   }
   "work-03" = {
     machine_type  = "worker"
     ip            = "10.25.150.24"
     mac_address   = "bc:24:11:6f:20:04"
+    startup_order = 9
     vm_id         = 8204
-    ram_dedicated = 5168
-    datastore_id  = "Nvme1"
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "220G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    datastore_id  = "rpool2"
   }
   # "work-04" = {
   #   machine_type       = "worker"

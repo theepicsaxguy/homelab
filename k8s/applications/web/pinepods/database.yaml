@@ -38,10 +38,10 @@ spec:
         inRoles:
           - pg_read_all_data
           - pg_write_all_data
-  bootstrap:
-    initdb:
-      database: pinepods
-      owner: app
+  # bootstrap:
+  #   initdb:
+  #     database: pinepods
+  #     owner: app
   storage:
     size: 20Gi
     storageClass: longhorn

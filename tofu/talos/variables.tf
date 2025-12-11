@@ -14,8 +14,8 @@ variable "talos_image" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name               = string
-    endpoint           = string
+    name     = string
+    endpoint = string
     # gateway and vip are now in var.network
     talos_version      = string
     proxmox_cluster    = string
@@ -52,23 +52,23 @@ variable "oidc" {
 variable "proxmox_datastore" {
   description = "Proxmox datastore to use for VM disks"
   type        = string
-  default     = "velocity"
+  default     = "Nvme1"
 }
 
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    host_node     = string
-    machine_type  = string
-    datastore_id  = optional(string)
-    ip            = string
-    mac_address   = optional(string)
-    vm_id         = optional(number)
-    is_external   = optional(bool, false)
-    cpu           = number
-    ram_dedicated = number
-    update        = optional(bool, false)
-    igpu          = optional(bool, false)
+    host_node          = string
+    machine_type       = string
+    datastore_id       = optional(string)
+    ip                 = string
+    mac_address        = optional(string)
+    vm_id              = optional(number)
+    is_external        = optional(bool, false)
+    cpu                = number
+    ram_dedicated      = number
+    update             = optional(bool, false)
+    igpu               = optional(bool, false)
     gpu_node_exclusive = optional(bool, true)
     disks = optional(map(object({
       device      = string
@@ -80,9 +80,9 @@ variable "nodes" {
     gpu_devices = optional(list(string), []),
     gpu_device_meta = optional(
       map(object({
-        id            = string
-        subsystem_id  = string
-        iommu_group   = number
+        id           = string
+        subsystem_id = string
+        iommu_group  = number
       })),
       {}
     )
@@ -99,7 +99,7 @@ variable "nodes" {
   }
 
   validation {
-    condition = length(distinct([for n in values(var.nodes) : n.vm_id if !lookup(n, "is_external", false) && n.vm_id != null])) == length([for n in values(var.nodes) : n if !lookup(n, "is_external", false)])
+    condition     = length(distinct([for n in values(var.nodes) : n.vm_id if !lookup(n, "is_external", false) && n.vm_id != null])) == length([for n in values(var.nodes) : n if !lookup(n, "is_external", false)])
     error_message = "VM IDs must be unique among internal nodes."
   }
 
@@ -113,7 +113,7 @@ variable "nodes" {
 
   validation {
     condition = alltrue([
-      for n in values(var.nodes) : 
+      for n in values(var.nodes) :
       lookup(n, "is_external", false) || can(regex("^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$", n.mac_address))
     ])
     error_message = "MAC addresses must use the format 00:11:22:33:44:55."
