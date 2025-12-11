@@ -46,6 +46,6 @@ variable "defaults_controlplane" {
     machine_type  = "controlplane"
     cpu           = 6
     cpu_units     = 1024
-    ram_dedicated = 6144
+    ram_dedicated = 7168
   }
 }

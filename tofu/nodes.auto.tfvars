@@ -44,11 +44,12 @@ nodes_config = {
     vm_id         = 8203
   }
   "work-03" = {
-    machine_type = "worker"
-    ip           = "10.25.150.24"
-    mac_address  = "bc:24:11:6f:20:04"
-    vm_id        = 8204
-    datastore_id = "rpool2"
+    machine_type  = "worker"
+    ip            = "10.25.150.24"
+    mac_address   = "bc:24:11:6f:20:04"
+    startup_order = 9
+    vm_id         = 8204
+    datastore_id  = "rpool2"
   }
   # "work-04" = {
   #   machine_type       = "worker"
