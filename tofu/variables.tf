@@ -153,7 +153,7 @@ variable "nodes_config" {
 variable "proxmox_datastore" {
   description = "Default Proxmox datastore for all nodes"
   type        = string
-  default     = "velocity"
+  default     = "Nvme1"
 }
 
 variable "cluster_name" {

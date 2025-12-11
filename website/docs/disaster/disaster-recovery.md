@@ -203,23 +203,44 @@ Perform application-specific data validation:
 
 ## Troubleshooting Common Issues
 
-### Volume Restore Failures
 
-- Verify S3 connectivity and credentials
-- Check backup integrity in S3
-- Ensure sufficient storage space on nodes
+### Real-World Issues Encountered
 
-### PVC Binding Issues
+#### PVC Immutability Errors
+When restoring volumes, you may encounter errors like:
 
-- Confirm volume names exactly match PVC names
-- Check StorageClass compatibility
-- Verify node scheduling is enabled
+```
+The PersistentVolumeClaim "pinepods-downloads" is invalid: spec: Forbidden: spec is immutable after creation except resources.requests and volumeAttributesClassName for bound claims
+```
 
-### Application Startup Problems
+This means you cannot change `accessModes` or other immutable fields on an existing PVC. To fix, delete and recreate the PVC with the correct spec before restoring data.
 
-- Review pod events: `kubectl describe pod <pod-name>`
-- Check persistent volume mount points
-- Verify application configuration and secrets
+#### Volume Health and Replica Issues
+Longhorn volumes may be stuck in a degraded state after restore, preventing pods from starting. To resolve:
+- Scale the volume's replica count to 1 (using Longhorn UI or `kubectl patch`) to force the volume to use a healthy replica.
+- Wait for the volume status to show `healthy` before proceeding.
+
+#### CNPG PostgreSQL Recovery Pitfalls
+When restoring a CNPG cluster from a VolumeSnapshot, you may see pods stuck in `Init` or `CrashLoopBackOff` due to:
+- Data directory structure mismatches (e.g., leftover `pgroot` from Zalando, missing `pgdata`)
+- Missing or extra files (e.g., `bg_mon` from Zalando, not needed by CNPG)
+- Permissions issues on restored files
+
+Fixes include:
+- Running a job to restructure the data directory (move `pgroot/data` to `pgdata`)
+- Removing Zalando-specific files (`bg_mon`, `patroni.dynamic.json`) if not needed
+- Ensuring correct ownership and permissions (typically UID/GID 101:26 for CNPG)
+
+#### Application Startup Problems After Restore
+Applications may fail to start due to:
+- Incorrect database credentials (e.g., referencing old secrets)
+- Data corruption or missing migrations
+- Persistent volume not yet healthy or attached
+
+Troubleshooting steps:
+- Review pod logs and events: `kubectl logs` and `kubectl describe pod`
+- Check PVC and volume health in Longhorn UI
+- Verify application configuration and secrets are up to date
 
 ---
 
