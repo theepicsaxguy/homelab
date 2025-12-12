@@ -13,6 +13,13 @@ on:
     paths:
       - 'images/**'
 
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Image name to build (leave empty to build all changed images)'
+        required: false
+        type: string
+
 permissions:
   contents: read
   packages: write
@@ -32,22 +39,48 @@ jobs:
       - name: Detect Dockerfiles
         id: detect
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          # Handle manual workflow dispatch
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.image }}" ]; then
+              # Build specific image from input
+              IMAGE_NAME="${{ github.event.inputs.image }}"
+              if [ -d "images/$IMAGE_NAME" ]; then
+                JSON=$(echo "$IMAGE_NAME" | jq -R . | jq -s .)
+              else
+                echo "Error: Image directory 'images/$IMAGE_NAME' not found"
+                exit 1
+              fi
+            else
+              # Build all images when no specific image is provided
+              IMAGES=$(find images -mindepth 1 -maxdepth 1 -type d ! -name '.*' -exec basename {} \; | sort)
+              if [ -n "$IMAGES" ]; then
+                JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
+              else
+                JSON='[]'
+              fi
+            fi
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
             CHANGED=$(git diff --name-only "origin/${{ github.base_ref }}" "origin/${{ github.head_ref }}" -- 'images/*')
+            # Get image directories from changed non-Markdown files
+            IMAGES=$(echo "$CHANGED" | grep -v -E '\.(md|MD)$' | grep -v '^$' | \
+              xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
+            if [ -n "$IMAGES" ]; then
+              JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
+            else
+              JSON='[]'
+            fi
           else
             BEFORE_REF="${{ github.event.before }}"
             [ -z "$BEFORE_REF" ] && BEFORE_REF="HEAD~1"
             CHANGED=$(git diff --name-only "$BEFORE_REF" "${{ github.sha }}" -- 'images/*')
-          fi
-
-          # Get image directories from changed non-Markdown files
-          IMAGES=$(echo "$CHANGED" | grep -v -E '\.(md|MD)$' | grep -v '^$' | \
-            xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
-
-          if [ -n "$IMAGES" ]; then
-            JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
-          else
-            JSON='[]'
+            # Get image directories from changed non-Markdown files
+            IMAGES=$(echo "$CHANGED" | grep -v -E '\.(md|MD)$' | grep -v '^$' | \
+              xargs -n1 dirname | sed 's|images/||' | sort -u | grep -v '^$' || true)
+            if [ -n "$IMAGES" ]; then
+              JSON=$(printf '%s\n' "$IMAGES" | jq -R . | jq -s .)
+            else
+              JSON='[]'
+            fi
           fi
 
           # Remove spaces/newlines before writing to GITHUB_OUTPUT
