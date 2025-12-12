@@ -18,7 +18,7 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 # Stage 1: build SABnzbd from source + venv (includes native deps)
 ###############################################################################
 FROM alpine:3.23 AS sab-build
-ARG IMAGE_VERSION=4.5.3 # renovate: github-releases=sabnzbd/sabnzbd
+ARG IMAGE_VERSION=4.5.5 # renovate: github-releases=sabnzbd/sabnzbd
 
 RUN apk add --no-cache \
      git ca-certificates tzdata \
