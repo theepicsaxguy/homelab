@@ -1,7 +1,7 @@
 FROM ghcr.io/zalando/spilo-17:4.0-p2
 LABEL org.opencontainers.image.description="PostgreSQL 17 with VectorChord extension"
 
-ARG VCHORD_VERSION=0.3.0 # renovate: github-releases=tensorchord/VectorChord
+ARG VCHORD_VERSION=1.0.0 # renovate: github-releases=tensorchord/VectorChord
 ARG IMAGE_VERSION=0.1.0
 
 
