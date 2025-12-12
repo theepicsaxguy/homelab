@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-audiobook-script
+  namespace: media
+data:
+  move-audiobook.sh: |
+    #!/bin/bash
+    # SABnzbd post-processing script parameters
+    FINAL_DIR="$1"          # Job's final directory (completed download)
+    ORIGINAL_NAME="$2"      # Original NZB name
+    CLEAN_NAME="$3"         # Clean version of original name
+    INDEXER="$4"            # Indexer report number
+    CATEGORY="$5"           # User-defined category
+    GROUP="$6"              # Group
+    STATUS="$7"             # Download status (0=success)
+    
+    # Only process audiobook category and successful downloads
+    if [ "$CATEGORY" != "audiobook" ]; then
+        echo "Category '$CATEGORY' is not audiobook, skipping..."
+        exit 0
+    fi
+    
+    if [ "$STATUS" != "0" ]; then
+        echo "Download failed (status: $STATUS), skipping move..."
+        exit 1
+    fi
+    
+    # Destination is the shared audiobooks volume
+    DEST_DIR="/app/data/audiobooks"
+    
+    # Get the basename of the final directory
+    AUDIOBOOK_NAME=$(basename "$FINAL_DIR")
+    
+    echo "Moving audiobook '$AUDIOBOOK_NAME' from downloads to shared volume..."
+    echo "Source: $FINAL_DIR"
+    echo "Destination: $DEST_DIR/$AUDIOBOOK_NAME"
+    
+    # Create destination directory if it doesn't exist
+    mkdir -p "$DEST_DIR"
+    
+    # Move the entire audiobook directory to the shared location
+    if mv "$FINAL_DIR" "$DEST_DIR/$AUDIOBOOK_NAME"; then
+        echo "SUCCESS: Audiobook '$AUDIOBOOK_NAME' moved to shared volume"
+        exit 0
+    else
+        echo "ERROR: Failed to move audiobook '$AUDIOBOOK_NAME'"
+        exit 1
+    fi
