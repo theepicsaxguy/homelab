@@ -16,6 +16,8 @@ proxmox_cluster = "host3"
 versions = {
   talos      = "v1.10.3"
   kubernetes = "1.33.2"
+  #talos      = "v1.11.5"
+  #kubernetes = "1.34.3"
 }
 
 oidc = {

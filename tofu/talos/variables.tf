@@ -1,14 +1,12 @@
 variable "talos_image" {
   description = "Talos image configuration"
   type = object({
-    factory_url           = optional(string, "https://factory.talos.dev")
-    schematic_path        = string
-    version               = string
-    update_schematic_path = optional(string)
-    update_version        = optional(string)
-    arch                  = optional(string, "amd64")
-    platform              = optional(string, "nocloud")
-    proxmox_datastore     = optional(string, "local")
+    factory_url       = optional(string, "https://factory.talos.dev")
+    schematic_path    = string
+    version           = string
+    arch              = optional(string, "amd64")
+    platform          = optional(string, "nocloud")
+    proxmox_datastore = optional(string, "local")
   })
 }
 variable "cluster" {
@@ -67,7 +65,6 @@ variable "nodes" {
     is_external        = optional(bool, false)
     cpu                = number
     ram_dedicated      = number
-    update             = optional(bool, false)
     igpu               = optional(bool, false)
     gpu_node_exclusive = optional(bool, true)
     disks = optional(map(object({

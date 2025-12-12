@@ -66,7 +66,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_format  = lookup(each.value, "root_disk_file_format", "raw")
     size         = lookup(each.value, "root_disk_size", 40)
     file_id = proxmox_virtual_environment_download_file.iso[
-      "${each.value.host_node}-${lookup(each.value, "update", false) ? "upd" : "inst"}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"
+      "${each.value.host_node}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"
     ].id
   }
 
