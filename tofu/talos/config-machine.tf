@@ -21,7 +21,7 @@ data "talos_machine_configuration" "this" {
       oidc            = var.oidc
       vip             = var.network.vip
     })
-  ] : concat(
+    ] : concat(
     [
       templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
         hostname           = each.key

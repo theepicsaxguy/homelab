@@ -10,23 +10,6 @@ variable "proxmox" {
   sensitive = true
 }
 
-variable "upgrade_control" {
-  description = "Controls sequential node upgrades. Set enabled=true and specify index to upgrade a specific node."
-  type = object({
-    enabled = bool
-    index   = number
-  })
-  default = {
-    enabled = false
-    index   = -1
-  }
-
-  validation {
-    condition     = var.upgrade_control.index >= -1
-    error_message = "Index must be -1 (disabled) or a valid node position (0+)."
-  }
-}
-
 variable "talos_image" {
   description = "Talos image configuration"
   type = object({
