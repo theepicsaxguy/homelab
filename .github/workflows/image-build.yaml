@@ -106,8 +106,7 @@ jobs:
           FROM_LINE=$(grep -m 1 "^FROM" "$DOCKERFILE")
           FROM_IMG=$(echo "$FROM_LINE" | sed -E 's/^FROM[[:space:]]+//; s/[[:space:]]+AS[[:space:]].*$//; s/^--platform=[^[:space:]]+[[:space:]]+//')
           BASE_IMAGE_TAG=$(echo "$FROM_IMG" | awk -F':' 'NF>1{print $NF; next}{print "latest"}')
-          IMAGE_VERSION=$(grep -m1 "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
-          [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION=$(grep -m1 "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 || true)
+          IMAGE_VERSION=$(grep -m1 "ARG IMAGE_VERSION=" "$DOCKERFILE" | cut -d'=' -f2 | sed 's/#.*$//' | xargs || true)
           [ -z "$IMAGE_VERSION" ] && IMAGE_VERSION="latest"
 
           # Fixed: Use Bash glob instead of invalid startsWith()
