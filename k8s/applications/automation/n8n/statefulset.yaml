@@ -23,14 +23,14 @@ spec:
     spec:
       initContainers:
         - name: volume-permissions
-          image: busybox:1.36
+          image: busybox:1.37
           command: ["sh", "-c", "chown 1000:1000 /data"]
           volumeMounts:
             - name: n8n-data
               mountPath: /data
       containers:
         - name: n8n
-          image: n8nio/n8n:1.71.3
+          image: n8nio/n8n:1.123.5
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
