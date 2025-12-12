@@ -7,7 +7,7 @@
 ###############################################################################
 FROM alpine:3.23 AS source
 
-ARG IMAGE_VERSION=1.2.0
+ARG IMAGE_VERSION=1.2.0 # renovate: github-releases=saifyxpro/HeadlessX
 ARG HEADLESSX_REPO=https://github.com/saifyxpro/HeadlessX
 
 RUN apk add --no-cache git ca-certificates
@@ -45,9 +45,9 @@ WORKDIR /app
 # Install Node.js dependencies
 COPY --from=source /src/package*.json ./
 RUN if [ -f "package-lock.json" ]; then \
-        npm ci --omit=dev --prefer-offline --no-audit; \
+    npm ci --omit=dev --prefer-offline --no-audit; \
     else \
-        npm install --production --prefer-offline --no-audit; \
+    npm install --production --prefer-offline --no-audit; \
     fi && \
     npm cache clean --force
 
