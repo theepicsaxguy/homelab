@@ -7,3 +7,4 @@ resources:
 - mqtt
 - hassio
 - zigbee2mqtt
+- n8n
