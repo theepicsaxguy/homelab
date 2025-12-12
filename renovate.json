@@ -22,11 +22,22 @@
       "managerFilePatterns": [
         "/\\.tf$/",
         "/\\.tftpl$/",
+        "/\\.tfvars$/",
         "/\\.yaml$/",
         "/\\.sh$/"
       ],
       "matchStrings": [
         "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?"
+      ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/Dockerfile$/",
+        "/Dockerfile\\..*$/"
+      ],
+      "matchStrings": [
+        "ARG\\s+\\w+=(?<currentValue>[\\w+\\.\\-]*)['\"]?\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(versioning=(?<versioning>\\S+))?"
       ]
     }
   ],
@@ -66,6 +77,14 @@
     {
       "groupName": "all dependencies",
       "matchPackageNames": ["*"]
+    },
+    {
+      "description": "Prevent automatic upgrades for Talos and Kubernetes versions in tofu/ - require manual review",
+      "matchFileNames": ["/tofu/.*\\.(tf|tfvars|tftpl)$/"],
+      "matchPackageNames": ["siderolabs/talos", "kubernetes/kubernetes"],
+      "automerge": false,
+      "automergeType": "pr",
+      "schedule": ["before 10am on monday"]
     }
   ],
   "kubernetes": {

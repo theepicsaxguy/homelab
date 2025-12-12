@@ -5,7 +5,7 @@
 # Stage 0: build unrar from source (matches LSIO pattern)
 ###############################################################################
 FROM alpine:3.23 AS unrar-build
-ARG UNRAR_VER=6.2.12
+ARG UNRAR_VER=6.2.12 # renovate: github-releases=rarlab/unrar
 
 RUN apk add --no-cache build-base ca-certificates curl tar \
      && update-ca-certificates \
@@ -18,7 +18,7 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 # Stage 1: build SABnzbd from source + venv (includes native deps)
 ###############################################################################
 FROM alpine:3.23 AS sab-build
-ARG IMAGE_VERSION=4.5.3
+ARG IMAGE_VERSION=4.5.3 # renovate: github-releases=sabnzbd/sabnzbd
 
 RUN apk add --no-cache \
      git ca-certificates tzdata \
@@ -73,4 +73,4 @@ COPY entrypoint.py /entrypoint.py
 
 VOLUME ["/config", "/downloads"]
 EXPOSE 8080
-ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"] 
+ENTRYPOINT ["/sbin/tini","-g","--","/venv/bin/python","/entrypoint.py"]
