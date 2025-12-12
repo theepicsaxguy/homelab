@@ -26,7 +26,7 @@ metadata:
     recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 2
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
 
   storage:
     size: 15Gi
