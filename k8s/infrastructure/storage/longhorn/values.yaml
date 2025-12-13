@@ -59,7 +59,7 @@ defaultSettings:
   defaultDataPath: /var/lib/longhorn/
   autoDeletePodWhenVolumeDetachedUnexpectedly: true
   autoSalvage: true
-  replicaZoneSoftAntiAffinity: false
+  replicaZoneSoftAntiAffinity: true
   concurrentReplicaRebuildPerNodeLimit: 1
   replicaReplenishmentWaitInterval: 600
   backupstorePollInterval: 300
