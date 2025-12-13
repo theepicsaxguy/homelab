@@ -1,7 +1,3 @@
-resource "terraform_data" "image_version" {
-  input = var.talos_image.version
-}
-
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = local.internal_nodes
 
@@ -66,7 +62,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     file_format  = lookup(each.value, "root_disk_file_format", "raw")
     size         = lookup(each.value, "root_disk_size", 40)
     file_id = proxmox_virtual_environment_download_file.iso[
-      "${each.value.host_node}-${lookup(each.value, "igpu", false) ? "gpu" : "std"}"
+      local.node_image_key[each.key]
     ].id
   }
 
@@ -90,8 +86,10 @@ resource "proxmox_virtual_environment_vm" "this" {
       disk[0].file_id,
     ]
 
+    # Marker-based upgrade: VM replaces when its effective version changes
+    # Control upgrade order by setting nodes in var.node_upgrade_versions
     replace_triggered_by = [
-      terraform_data.image_version
+      terraform_data.node_upgrade_trigger[each.key]
     ]
   }
   boot_order = lookup(each.value, "boot_order", ["scsi0"])

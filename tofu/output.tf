@@ -26,3 +26,8 @@ output "talos_config" {
   value     = module.talos.client_configuration.talos_config
   sensitive = true
 }
+
+output "upgrade_status" {
+  value       = module.talos.upgrade_sequence
+  description = "Talos upgrade status - shows which nodes need upgrading"
+}

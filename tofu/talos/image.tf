@@ -14,19 +14,20 @@ moved {
 locals {
   has_gpu_nodes = anytrue([for name, node in var.nodes : lookup(node, "igpu", false)])
 
+  # Target version for upgrades
+  target_version = coalesce(var.talos_image.update_version, var.talos_image.version)
+
   # Simplified schematic configs - only one version per type (std/gpu)
   schematic_configs = merge(
     {
       "std" = {
         needs_nvidia_extensions = false
-        version                 = var.talos_image.version
         schematic_path          = var.talos_image.schematic_path
       }
     },
     local.has_gpu_nodes ? {
       "gpu" = {
         needs_nvidia_extensions = true
-        version                 = var.talos_image.version
         schematic_path          = var.talos_image.schematic_path
       }
     } : {}
@@ -37,21 +38,39 @@ locals {
     name => lookup(node, "igpu", false) ? "gpu" : "std"
   }
 
-  # one stable key per host+schematic-type
-  #   <host>-<gpu|std>
-  image_download_groups = {
-    for name, node in var.nodes :
-    "${node.host_node}-${lookup(node, "igpu", false) ? "gpu" : "std"}" => {
-      host_node    = node.host_node
-      schematic_id = talos_image_factory_schematic.main[local.get_schematic_key[name]].id
-      version      = var.talos_image.version
-    }...
-    # External nodes manage their own images, skip factory download
-    if !lookup(node, "is_external", false)
+  # Effective version per node (matches upgrade-nodes.tf logic)
+  node_effective_versions = {
+    for name, config in var.nodes : name =>
+    coalesce(config.upgrade, false) ? local.target_version : var.talos_image.version
   }
 
+  # Collect all version+host+schematic combinations needed
+  # Key format: <host>-<std|gpu>-<version>
+  image_download_list = flatten([
+    for name, node in var.nodes : {
+      key          = "${node.host_node}-${local.get_schematic_key[name]}-${local.node_effective_versions[name]}"
+      host_node    = node.host_node
+      schematic_id = talos_image_factory_schematic.main[local.get_schematic_key[name]].id
+      version      = local.node_effective_versions[name]
+    }
+    if !lookup(node, "is_external", false)
+  ])
+
+  # Deduplicate - only one download per unique key
   image_downloads = {
-    for k, v in local.image_download_groups : k => v[0]
+    for item in local.image_download_list : item.key => item...
+  }
+
+  # Final downloads map (take first item from each group)
+  image_downloads_final = {
+    for k, v in local.image_downloads : k => v[0]
+  }
+
+  # Map each node to its image download key
+  node_image_key = {
+    for name, node in var.nodes :
+    name => "${node.host_node}-${local.get_schematic_key[name]}-${local.node_effective_versions[name]}"
+    if !lookup(node, "is_external", false)
   }
 }
 
@@ -63,7 +82,7 @@ resource "talos_image_factory_schematic" "main" {
 }
 
 resource "proxmox_virtual_environment_download_file" "iso" {
-  for_each                = local.image_downloads
+  for_each                = local.image_downloads_final
   node_name               = each.value.host_node
   content_type            = "iso"
   datastore_id            = var.talos_image.proxmox_datastore
