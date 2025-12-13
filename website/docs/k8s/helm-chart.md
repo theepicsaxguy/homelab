@@ -167,7 +167,7 @@ Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{ser
     ```
 
 ### Database Integration
-*   **Description:** PostgreSQL database configuration using Zalando operator
+*   **Description:** PostgreSQL database configuration using CloudNativePG operator
 
 *   **Type:** `yaml`
 
@@ -175,24 +175,34 @@ Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{ser
 
 *   **Example:**
     ```yaml
-    apiVersion: "acid.zalan.do/v1"
-    kind: postgresql
+    apiVersion: postgresql.cnpg.io/v1
+    kind: Cluster
     metadata:
-      name: <app-name>-postgresql
+      name: <app-name>-db
       namespace: <app-name>
+      labels:
+        recurring-job.longhorn.io/source: enabled
+        recurring-job-group.longhorn.io/gfs: enabled
     spec:
-      teamId: "<team>"
-      volume:
-        size: <size>
-      numberOfInstances: 2
+      instances: 1
+      imageName: ghcr.io/cloudnative-pg/postgresql:18
+      storage:
+        size: 10Gi
+        storageClass: longhorn
+      bootstrap:
+        initdb:
+          database: <database-name>
+          owner: <owner>
       resources:
         requests:
-          cpu: 100m
+          cpu: 200m
           memory: 256Mi
         limits:
           cpu: 500m
           memory: 512Mi
     ```
+
+CloudNativePG automatically creates a secret named `<cluster-name>-app` containing connection credentials. Applications should reference this secret directly for database credentials.
 
 ### ConfigMap Generator
 *   **Description:** Generates ConfigMaps for application configuration

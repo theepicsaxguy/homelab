@@ -12,11 +12,11 @@ This `AGENTS.md` covers custom container images stored under `images/`.
 Run from repository root or the image directory.
 
 ```bash
-# Build an image locally (example: images/spilo17-vchord)
-docker build -t local/spilo17-vchord:dev images/spilo17-vchord/
+# Build an image locally (example: images/vllm-cpu)
+docker build -t local/vllm-cpu:dev images/vllm-cpu/
 
 # Run container locally
-docker run --rm -it local/spilo17-vchord:dev /bin/bash
+docker run --rm -it local/vllm-cpu:dev /bin/bash
 
 # For testing Python-based images, use a virtualenv and run test harness inside container
 ```
@@ -28,7 +28,7 @@ Notes:
 ## Structure & Examples
 
 - Typical image dir: `images/<name>/Dockerfile`, `entrypoint.py`, `README.MD`.
-- Example images present: `headlessx/`, `sabnzbd/`, `spilo17-vchord/`, `vllm-cpu/`.
+- Example images present: `headlessx/`, `sabnzbd/`, `vllm-cpu/`.
 
 ## CI & Publishing
 
@@ -47,7 +47,7 @@ Notes:
 - Pin base image versions for reproducibility (e.g., `python:3.11-slim`, not `python:latest`)
 - Label images with metadata (maintainer, description, version)
 - Use `.dockerignore` to exclude unnecessary files from build context
-- Reference existing images for patterns: `images/spilo17-vchord/Dockerfile`, `images/vllm-cpu/Dockerfile`
+- Reference existing images for patterns: `images/vllm-cpu/Dockerfile`, `images/headlessx/Dockerfile`
 
 ## How to Add a New Image
 
