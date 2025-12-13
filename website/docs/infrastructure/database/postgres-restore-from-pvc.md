@@ -1,390 +1,173 @@
 ---
 sidebar_position: 2
-title: Restore PostgreSQL From PVC
-description: Restore a Zalando Postgres Operator cluster using Patroni when PGDATA exists on a PVC
+title: Restore PostgreSQL From Backup
+description: Restore a CloudNativePG cluster from Barman backups or VolumeSnapshots
 ---
 
-# Restore PostgreSQL From PVC (Zalando Postgres Operator)
+# Restore PostgreSQL (CloudNativePG)
 
-This document describes how to restore a Zalando Postgres Operator cluster when the Patroni cluster is stopped but valid PGDATA exists on a PVC. This situation occurs when:
-- The cluster failed to bootstrap (e.g., network issues, configuration problems)
-- The postgresql CR was recreated and bound to empty PVCs instead of existing data
-- Patroni shows replicas as "stopped" with no leader
+This document describes how to restore a CloudNativePG cluster from backups or VolumeSnapshots.
 
-## Current Situation Analysis
+## Recovery Options
 
-Based on the actual cluster state:
-```
-+ Cluster: authentik-postgresql (7511307886480003131) ------+----+-----------+
-| Member                 | Host         | Role    | State   | TL | Lag in MB |
-+------------------------+--------------+---------+---------+----+-----------+
-| authentik-postgresql-0 | 10.244.4.222 | Replica | stopped |    |   unknown |
-+------------------------+--------------+---------+---------+----+-----------+
-```
+CloudNativePG supports multiple recovery methods:
 
-Issues identified:
-- Patroni cluster exists but member is in "stopped" state
-- No leader elected (cannot perform `patronictl reinit` without a leader)
-- Current PVC `pgdata-authentik-postgresql-0` is empty (new)
-- Data exists on old PVC `pgdata-authentik-postgresql-1`
+1. **Barman Cloud Backup** - Restore from S3-stored backups
+2. **VolumeSnapshot** - Restore from Longhorn snapshots
+3. **pg_basebackup** - Clone from an existing cluster
 
-## Prerequisites
+## Recovery from Barman Cloud Backup
 
-- `kubectl` access with permissions to delete/create resources in the target namespace
-- The Zalando postgres-operator is running
-- You have identified the PVC containing valid PGDATA
-- You understand that this procedure will delete and recreate the postgresql CR
+### Prerequisites
 
-## Recovery Strategy
+- ObjectStore resource configured with S3 credentials
+- Existing backups in the S3 bucket
+- CNPG operator running
 
-The Zalando operator does not support `patronictl reinit` when no leader exists. The correct procedure is:
+### Recovery Cluster Manifest
 
-1. **Delete the postgresql CR** - This removes the StatefulSet and stops operator reconciliation
-2. **Delete the empty PVC(s)** - Remove PVCs that don't contain data
-3. **Rename the PVC with data** - Ensure it matches the expected naming pattern
-4. **Recreate the postgresql CR** - Operator will discover existing PGDATA and bootstrap from it
-5. **Verify Patroni bootstrap** - Confirm cluster starts with existing data
-
-## Step-by-Step Procedure
-
-### 1. Verify which PVC contains data
-
-List PVCs and inspect their mount structure:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl get pvc -n auth
-
-# For authentik example:
-# pgdata-authentik-postgresql-0 (20Gi) - EMPTY (newly created)
-# pgdata-authentik-postgresql-1 (15Gi) - CONTAINS DATA (old cluster)
-```
-
-Create an inspection pod to verify PGDATA structure:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-cat <<'EOF' | kubectl apply -f -
-apiVersion: v1
-kind: Pod
+```yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
-  name: inspect-old-pvc
-  namespace: auth
+  name: <app>-db-recovered
+  namespace: <namespace>
 spec:
-  restartPolicy: Never
-  containers:
-  - name: inspect
-    image: postgres:17
-    command: ["sh", "-c", "ls -la /mnt/pgroot/data/ && cat /mnt/pgroot/data/PG_VERSION 2>/dev/null && sleep 300"]
-    volumeMounts:
-    - name: olddata
-      mountPath: /mnt
-  volumes:
-  - name: olddata
-    persistentVolumeClaim:
-      claimName: pgdata-authentik-postgresql-1
-EOF
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18
 
-# Watch logs to see directory contents
-kubectl logs -n auth inspect-old-pvc -f
+  storage:
+    size: 20Gi
+    storageClass: longhorn
 
-# Clean up
-kubectl delete pod -n auth inspect-old-pvc
+  bootstrap:
+    recovery:
+      source: <app>-backup
+
+  externalClusters:
+    - name: <app>-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: <app>-minio-store
 ```
 
-Expected output should show `base/`, `global/`, `pg_wal/`, `PG_VERSION`, etc.
+### Point-in-Time Recovery (PITR)
 
-### 2. Delete the postgresql CR
+To recover to a specific point in time:
 
-This stops the operator from managing the cluster and removes the StatefulSet:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl delete postgresql -n auth authentik-postgresql
+```yaml
+bootstrap:
+  recovery:
+    source: <app>-backup
+    recoveryTarget:
+      targetTime: "2024-01-15 10:30:00"
 ```
 
-Wait for pods to terminate:
+## Recovery from VolumeSnapshot
 
-```bash
-kubectl get pods -n auth -w
-```
+### Prerequisites
 
-### 3. Delete empty PVCs and rename the data PVC
+- Longhorn VolumeSnapshot exists
+- Snapshot contains valid PGDATA
 
-Delete the empty PVC(s):
+### Create Snapshot (if needed)
 
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl delete pvc -n auth pgdata-authentik-postgresql-0
-```
-
-The operator expects PVCs named `pgdata-<cluster-name>-<ordinal>`. For a 2-replica cluster starting fresh:
-- The first replica (pod 0) needs `pgdata-authentik-postgresql-0`
-- The second replica (pod 1) needs `pgdata-authentik-postgresql-1`
-
-**Option A: Single replica (recommended for recovery)**
-
-If you want to start with 1 replica, rename the data PVC to match ordinal 0:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-
-# Create a VolumeSnapshot if your storage class supports it (recommended for safety)
-cat <<EOF | kubectl apply -f -
+```yaml
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
-  name: authentik-pgdata-backup
-  namespace: auth
+  name: <app>-pgdata-backup
+  namespace: <namespace>
 spec:
   volumeSnapshotClassName: longhorn-snapshot
   source:
-    persistentVolumeClaimName: pgdata-authentik-postgresql-1
-EOF
-
-# Clone the PVC to the expected name
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pgdata-authentik-postgresql-0
-  namespace: auth
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  dataSource:
-    name: authentik-pgdata-backup
-    kind: VolumeSnapshot
-    apiGroup: snapshot.storage.k8s.io
-  resources:
-    requests:
-      storage: 20Gi
-EOF
+    persistentVolumeClaimName: <app>-db-1
 ```
 
-**Option B: Use existing PVC-1 directly (if keeping 2 replicas)**
-
-If `pgdata-authentik-postgresql-1` already has data and you want 2 replicas, keep it and create a new empty PVC for ordinal 0. The operator will use PVC-1's data as the source for initialization.
-
-### 4. Update the postgresql CR for recovery
-
-Modify `k8s/infrastructure/auth/authentik/database.yaml` to temporarily use 1 replica for bootstrap:
+### Recovery from Snapshot
 
 ```yaml
-apiVersion: "acid.zalan.do/v1"
-kind: postgresql
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
 metadata:
-  name: authentik-postgresql
-  namespace: auth
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
+  name: <app>-db-recovered
+  namespace: <namespace>
 spec:
-  teamId: "auth"
-  volume:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18
+
+  storage:
     size: 20Gi
-  numberOfInstances: 1  # Changed from 2 to 1 for recovery
-  users:
-    authentik_user:
-      - superuser
-      - createdb
-  databases:
-    authentik: authentik_user
-  enableLogicalBackup: false
-  postgresql:
-    version: "17"
-  enableConnectionPooler: false
-  resources:
-    requests:
-      cpu: 200m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 1Gi
+    storageClass: longhorn
+
+  bootstrap:
+    recovery:
+      volumeSnapshots:
+        storage:
+          name: <app>-pgdata-backup
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
 ```
 
-Apply the CR:
+## Verification Steps
+
+### Check Cluster Status
 
 ```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl apply -f k8s/infrastructure/auth/authentik/database.yaml
+# Watch cluster initialization
+kubectl get cluster <cluster-name> -n <namespace> -w
+
+# Check pod logs during recovery
+kubectl logs -n <namespace> <cluster-name>-1 -f
 ```
 
-### 5. Monitor Patroni bootstrap
-
-Watch the pod logs to confirm Patroni discovers existing PGDATA and bootstraps:
+### Verify Data Integrity
 
 ```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl logs -n auth authentik-postgresql-0 -f
-```
-
-Expected log messages:
-- Patroni should detect existing PGDATA
-- Bootstrap from existing data directory
-- Leader election occurs
-- Cluster becomes healthy
-
-Check Patroni cluster status:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl exec -n auth authentik-postgresql-0 -- patronictl list
-```
-
-Expected output:
-```
-+ Cluster: authentik-postgresql (7511307886480003131) -------+----+-----------+
-| Member                 | Host         | Role   | State    | TL | Lag in MB |
-+------------------------+--------------+--------+----------+----+-----------+
-| authentik-postgresql-0 | 10.244.x.x   | Leader | running  |  X |           |
-+------------------------+--------------+--------+----------+----+-----------+
-```
-
-### 6. Verify database contents
-
-Once the cluster is running, verify data integrity:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl port-forward -n auth svc/authentik-postgresql 5432:5432 &
+# Port forward to the cluster
+kubectl port-forward -n <namespace> svc/<cluster-name>-rw 5432:5432 &
 
 # Connect and verify
-psql -h localhost -p 5432 -U authentik_user -d authentik -c '\dt'
-psql -h localhost -p 5432 -U authentik_user -d authentik -c 'SELECT COUNT(*) FROM authentik_core_user;'
-```
-
-### 7. Scale back to 2 replicas (optional)
-
-After confirming the leader is healthy, scale back to 2 replicas:
-
-```bash
-# Edit database.yaml and change numberOfInstances back to 2
-kubectl apply -f k8s/infrastructure/auth/authentik/database.yaml
-```
-
-The second replica will initialize from the leader using `pg_basebackup`.
-
-### 8. Verify application connectivity
-
-Check that authentik pods can connect:
-
-```bash
-export KUBECONFIG=/home/develop/homelab/config
-kubectl logs -n auth authentik-server-<pod-id> | grep -i database
-kubectl logs -n auth authentik-worker-<pod-id> | grep -i database
+psql -h localhost -U <user> -d <database> -c '\dt'
+psql -h localhost -U <user> -d <database> -c 'SELECT COUNT(*) FROM <table>;'
 ```
 
 ## Troubleshooting
 
-### Patroni shows "waiting for leader to bootstrap"
+### Cluster Stuck in Recovery
 
-This means Patroni cannot find valid PGDATA or initialize a new cluster. Causes:
-- PVC is empty or PGDATA path is wrong
-- Permissions issue (PGDATA not owned by postgres user)
-- Postgres version mismatch
-
-Check PGDATA contents:
+Check operator logs:
 
 ```bash
-kubectl exec -n auth authentik-postgresql-0 -- ls -la /home/postgres/pgdata/pgroot/data/
+kubectl logs -n cnpg-system deployment/cnpg-controller-manager --tail=100
 ```
 
-### "cluster doesn't have any members" error
+### VolumeSnapshot Issues
 
-This occurs when trying `patronictl reinit` without a running leader. You cannot reinitialize a completely stopped cluster. Use the delete/recreate procedure above instead.
-
-### PVC clone/snapshot fails
-
-If VolumeSnapshot is not available, use a manual copy:
+Verify snapshot is ready:
 
 ```bash
-export KUBECONFIG=/home/develop/homelab/config
-
-# Create target PVC
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: pgdata-authentik-postgresql-0
-  namespace: auth
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 20Gi
-EOF
-
-# Copy data
-cat <<'EOF' | kubectl apply -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: copy-pgdata
-  namespace: auth
-spec:
-  restartPolicy: Never
-  containers:
-  - name: copy
-    image: alpine:3.18
-    command: ["sh", "-c", "apk add rsync && rsync -av /src/ /dst/ && echo 'Copy complete'"]
-    volumeMounts:
-    - name: src
-      mountPath: /src
-    - name: dst
-      mountPath: /dst
-  volumes:
-  - name: src
-    persistentVolumeClaim:
-      claimName: pgdata-authentik-postgresql-1
-  - name: dst
-    persistentVolumeClaim:
-      claimName: pgdata-authentik-postgresql-0
-EOF
-
-# Monitor copy
-kubectl logs -n auth copy-pgdata -f
-
-# Clean up
-kubectl delete pod -n auth copy-pgdata
+kubectl get volumesnapshot -n <namespace>
+kubectl describe volumesnapshot <snapshot-name> -n <namespace>
 ```
 
-### Postgres version mismatch
+### Permission Issues
 
-Ensure the `postgresql.version` in the CR matches the `PG_VERSION` file in PGDATA. Check with:
+CNPG expects PGDATA owned by UID/GID 26:26. If restoring from a foreign snapshot:
 
 ```bash
-kubectl exec -n auth inspect-old-pvc -- cat /mnt/pgroot/data/PG_VERSION
+# Check permissions inside the pod
+kubectl exec -n <namespace> <pod-name> -- ls -la /var/lib/postgresql/data/
 ```
 
-## Alternative: Restore via logical backup
+## Post-Recovery Tasks
 
-If you prefer to start completely fresh instead of using existing PGDATA:
+1. **Update application configs** - Point applications to the new cluster service
+2. **Verify credentials** - Check the auto-generated `<cluster-name>-app` secret
+3. **Enable backups** - Add ObjectStore and ScheduledBackup resources
+4. **Scale replicas** - Increase instances after primary is healthy
 
-1. **Extract data from old PVC**: Mount the old PVC in a standalone Postgres pod and export with `pg_dump`
-2. **Create new cluster**: Apply the postgresql CR with empty PVCs
-3. **Import backup**: Restore the dump into the new cluster
+## Reference
 
-This approach is safer for major version upgrades or when the existing PGDATA is suspected to be corrupted.
-
-## Summary
-
-The Zalando postgres-operator expects to manage cluster lifecycle through Kubernetes resources. When Patroni fails to bootstrap due to missing or misconfigured PGDATA:
-
-1. **DO NOT** attempt `patronictl reinit` without a running leader
-2. **DO** delete and recreate the postgresql CR
-3. **DO** ensure PVC naming matches expected pattern: `pgdata-<cluster-name>-<ordinal>`
-4. **DO** verify PGDATA exists and matches the Postgres version in the CR
-5. **DO** use VolumeSnapshots before making changes to preserve rollback options
-
-The operator will automatically discover existing valid PGDATA and bootstrap Patroni from it.
-
+For detailed disaster recovery scenarios, see [Zalando to CNPG Migration](/docs/disaster/zalando-to-cnpg) which documents a real-world recovery case.
