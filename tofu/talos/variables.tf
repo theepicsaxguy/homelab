@@ -4,11 +4,13 @@ variable "talos_image" {
     factory_url       = optional(string, "https://factory.talos.dev")
     schematic_path    = string
     version           = string
+    update_version    = optional(string) # Target version for upgrades (set by Renovate)
     arch              = optional(string, "amd64")
     platform          = optional(string, "nocloud")
     proxmox_datastore = optional(string, "local")
   })
 }
+
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
@@ -83,6 +85,7 @@ variable "nodes" {
       })),
       {}
     )
+    upgrade = optional(bool, false)
   }))
 
   validation {
