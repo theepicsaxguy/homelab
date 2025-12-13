@@ -145,7 +145,7 @@ Each AGENTS file should follow this minimal structure. Keep it short and machine
 At root, include a short architecture summary. Example for this repo:
 
 - Multicomponent homelab on Kubernetes (Talos) using GitOps (Argo CD).
-- Top-level flow: frontend SPA (website) → API services in `k8s/applications/*` → controllers & infra in `k8s/infrastructure/*` → long-lived data in Postgres (Zalando Spilo) and Longhorn volumes.
+- Top-level flow: frontend SPA (website) → API services in `k8s/applications/*` → controllers & infra in `k8s/infrastructure/*` → long-lived data in Postgres (CloudNativePG) and Longhorn volumes.
 - Infrastructure provisioning via OpenTofu (Terraform fork) in `tofu/`.
 - Secrets are sourced via External Secrets Operator from Bitwarden and injected into pods as env vars or mounted volumes.
 
@@ -211,7 +211,7 @@ State environment assumptions (Node.js, npm versions) and where to run commands.
   kubectl get <resource> <name> -n <namespace>
   kubectl describe <resource> <name> -n <namespace>
   ```
-- **When migrating between systems** (e.g., Zalando to CNPG, or upgrading operators), explicitly identify which resources belong to which system. Do not look at an existing "Running" pod and assume it is the new deployment. Check labels, age, and controller references to distinguish legacy infrastructure from new infrastructure:
+- **When migrating between systems** (e.g., between database operators, or upgrading operators), explicitly identify which resources belong to which system. Do not look at an existing "Running" pod and assume it is the new deployment. Check labels, age, and controller references to distinguish legacy infrastructure from new infrastructure:
   ```bash
   kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
   ```

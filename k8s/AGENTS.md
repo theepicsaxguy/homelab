@@ -81,7 +81,7 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Auto-Generated Secret Names**
 
-- **When using operators that auto-generate secrets** (like CloudNativePG/CNPG, Zalando Postgres Operator), verify the generated secret name before referencing it in applications. Operators often append suffixes like `-app`, `-superuser`, or `-owner`.
+- **When using operators that auto-generate secrets** (like CloudNativePG/CNPG), verify the generated secret name before referencing it in applications. Operators often append suffixes like `-app`, `-superuser`, or `-owner`.
 - **Always query the cluster** to confirm the exact secret name:
   ```bash
   kubectl get secrets -n <namespace> | grep <cluster-name>
@@ -186,7 +186,7 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Distinguishing Old vs. New Resources**
 
-- **When migrating infrastructure** (e.g., Zalando Postgres → CNPG), use labels and metadata to distinguish resources:
+- **When migrating infrastructure** (e.g., between database operators), use labels and metadata to distinguish resources:
   ```bash
   # Check resource ownership
   kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'

@@ -6,47 +6,65 @@ This guide summarizes key configuration details for running Immich with GitOps.
 
 ## Prerequisites
 
-* Kubernetes cluster with the Zalando Postgres Operator (`acid.zalan.do/v1`) installed
+* Kubernetes cluster with the CloudNativePG operator (`postgresql.cnpg.io/v1`) installed
 * `immich` namespace created
 * External Secrets Operator available
 * Helm CLI and `kubectl` configured
 
 ## Configuration Overview
 
-### PostgreSQL Extensions
+### PostgreSQL with VectorChord Extension
 
-Ensure the Immich database includes the `pgvector` and `vectorchord` extensions:
+The Immich database uses CloudNativePG with a custom image that includes vector extensions:
 
 ```yaml
-# k8s/applications/media/immich/database.yaml
+# k8s/applications/media/immich/immich-server/database.yaml
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgresql
+  namespace: immich
 spec:
-  preparedDatabases:
-    immich:
-      extensions:
-        pgvector: public
-        vectorchord: public
+  instances: 2
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vector";
+        - CREATE EXTENSION IF NOT EXISTS "earthdistance" CASCADE;
 ```
+
+### Database Connection
 
 <!-- vale off -->
-### Templated DB_URL
-The application expects a single `DB_URL`. Use ExternalSecrets to assemble the connection string:
+CloudNativePG automatically generates the `immich-postgresql-app` secret containing all connection details. The StatefulSet references this secret directly:
 
 ```yaml
-# k8s/applications/media/immich/externalsecret.yaml
-template:
-  data:
-    DB_URL: >-
-      postgres://immich:{{ .password }}@immich-postgresql:5432/immich?sslmode=require&sslmode=no-verify
+# k8s/applications/media/immich/immich-server/statefulset.yaml
+env:
+  - name: DB_DATABASE_NAME
+    value: immich
+  - name: DB_HOSTNAME
+    value: immich-postgresql-rw
+  - name: DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: immich-postgresql-app
+  - name: DB_URL
+    valueFrom:
+      secretKeyRef:
+        key: uri
+        name: immich-postgresql-app
+  - name: DB_USERNAME
+    valueFrom:
+      secretKeyRef:
+        key: username
+        name: immich-postgresql-app
 ```
-
 <!-- vale on -->
-
-### External Secrets Permissions
-
-Reference the cluster CA and grant read access to the Zalando secret:
-
-1. `zalando-k8s-store.yaml` references `kube-root-ca.crt`.
-2. `serviceaccount.yaml` grants `get`, `list`, and `watch` on secrets as well as `selfsubjectrulesreviews`.
 
 ### Kustomization Layout
 
@@ -54,13 +72,15 @@ Use a root `kustomization.yaml` to track all resources:
 
 ```yaml
 resources:
-  - namespace.yaml
-  - http-route.yaml
-  - externalsecret.yaml
+  - immich-config-external-secret.yaml
+  - minio-externalsecret.yaml
   - database.yaml
-  - pvc.yaml
-  - zalando-k8s-store.yaml
+  - database-scheduled-backup.yaml
+  - podmonitor.yaml
   - serviceaccount.yaml
+  - service.yaml
+  - servicemonitor.yaml
+  - statefulset.yaml
 ```
 
 ### OAuth Configuration via ExternalSecret
@@ -122,11 +142,15 @@ spec:
 
 ### Backups
 
-Database backups use MinIO credentials from an ExternalSecret:
+Database backups use MinIO credentials from an ExternalSecret and are configured through CloudNativePG's native backup integration:
 
 ```yaml
-# k8s/applications/media/immich/immich-server/minio-externalsecret.yaml
-spec:
-  target:
-    name: longhorn-minio-credentials
+# k8s/applications/media/immich/immich-server/database.yaml
+plugins:
+- name: barman-cloud.cloudnative-pg.io
+  isWALArchiver: true
+  parameters:
+    barmanObjectName: immich-minio-store
 ```
+
+Scheduled backups are configured via `database-scheduled-backup.yaml` using the ScheduledBackup CRD.

@@ -41,11 +41,6 @@ updates:
     directory: '/k8s/' # Update to scan a single directory for Docker dependencies
     schedule:
       interval: 'daily'
-  - package-ecosystem: 'docker'
-    directory: '/images/spilo17-vchord/'
-    schedule:
-      interval: 'daily'
-
   # --- GitHub Actions dependencies ---
   - package-ecosystem: 'github-actions'
     directory: '/' # Root directory required; Dependabot automatically checks .github/workflows

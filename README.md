@@ -23,7 +23,7 @@ I'm sharing it to document my own journey and to help others build a stable, mai
 | **Authentication** | [Authentik](https://goauthentik.io/)                                                               | Single Sign‑On (SSO) across all services.                     |
 | **Certificates**   | [cert‑manager](https://cert-manager.io/)                                                           | Automates TLS certificate issuance and renewal.               |
 | **API Gateway**    | [Gateway API](https://gateway-api.sigs.k8s.io/)                                                    | Next‑generation Kubernetes ingress and traffic management.    |
-| **Database**       | [Zalando Postgres Operator](https://opensource.zalando.com/postgres-operator/docs/quickstart.html) | Manages highly‑available PostgreSQL clusters.                 |
+| **Database**       | [CloudNativePG](https://cloudnative-pg.io/) | Manages highly‑available PostgreSQL clusters with native K8s integration.                 |
 | **CI / Checks**    | [Kubechecks](https://github.com/zapier/kubechecks)                                                 | Validates Argo CD changes before rollout.                     |
 | **Tunnel**         | [Cloudflared](https://github.com/cloudflare/cloudflared)                                           | Creates secure Cloudflare tunnels for private services.       |
 
