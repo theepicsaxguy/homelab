@@ -79,7 +79,8 @@ variable "nodes_config" {
     additional_disk_file_format = optional(string),
     boot_order                  = optional(list(string)),
     os_type                     = optional(string),
-    dns_servers                 = optional(list(string))
+    dns_servers                 = optional(list(string)),
+    upgrade                     = optional(bool, false)
   }))
 
   validation {

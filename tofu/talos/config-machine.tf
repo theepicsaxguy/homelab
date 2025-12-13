@@ -46,17 +46,17 @@ data "talos_machine_configuration" "this" {
 
 resource "talos_machine_configuration_apply" "this" {
   depends_on = [
-    proxmox_virtual_environment_vm.this,
     talos_image_factory_schematic.main,
   ]
   for_each                    = var.nodes
   node                        = each.value.ip
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this[each.key].machine_configuration
+
   lifecycle {
-    # External nodes will handle missing VM dependencies gracefully
+    # Depend on THIS specific VM - triggers reapply when VM is replaced
     replace_triggered_by = [
-      proxmox_virtual_environment_vm.this
+      proxmox_virtual_environment_vm.this[each.key]
     ]
   }
 }
