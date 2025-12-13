@@ -67,7 +67,7 @@ jobs:
         run: cd website && npm run build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: website-build
