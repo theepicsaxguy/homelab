@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: check-ssl-config
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 26
+        runAsGroup: 26
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: check
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          cd /data/pgdata
+          echo "=== Checking postgresql.conf ==="
+          if [ -f postgresql.conf ]; then
+            echo "File exists"
+            echo ""
+            echo "=== SSL settings ==="
+            grep -i "^ssl" postgresql.conf || echo "No SSL settings found"
+            echo ""
+            echo "=== First 20 lines ==="
+            head -20 postgresql.conf
+          else
+            echo "postgresql.conf NOT FOUND"
+            echo ""
+            echo "=== Directory contents ==="
+            ls -la
+          fi
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1
+

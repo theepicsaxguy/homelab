@@ -1,0 +1,50 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: authentik-postgresql
+  namespace: auth
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/gfs: enabled
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  enablePDB: false
+
+  # Bootstrap from volume snapshot (comprehensively cleaned)
+  bootstrap:
+    recovery:
+      volumeSnapshots:
+        storage:
+          name: auth-postgres-recovery-final-clean  # All Zalando/Patroni artifacts removed
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+
+  storage:
+    size: 20Gi
+    storageClass: longhorn
+
+  monitoring:
+    enablePodMonitor: false
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "256MB"
+
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: auth-minio-store
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      memory: "1Gi"
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

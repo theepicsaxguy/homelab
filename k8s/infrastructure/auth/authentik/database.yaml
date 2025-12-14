@@ -66,10 +66,7 @@ spec:
     parameters:
       barmanObjectName: authentik-minio-store
 
-  bootstrap:
-    initdb:
-      database: authentik
-      owner: authentik_user
+  # Bootstrap section removed - migration complete, cluster running in normal operational mode
 
   monitoring:
     enablePodMonitor: false

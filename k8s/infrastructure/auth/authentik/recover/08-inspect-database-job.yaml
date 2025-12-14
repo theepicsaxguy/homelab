@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: inspect-postgres-database
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 26  # postgres user
+        runAsGroup: 26
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: inspect
+        image: ghcr.io/cloudnative-pg/postgresql:17
+        command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "=== Inspecting PostgreSQL Database Structure ==="
+
+          cd /data/pgdata
+
+          echo ""
+          echo "=== Starting PostgreSQL temporarily to inspect ==="
+          postgres -D /data/pgdata -c unix_socket_directories=/tmp &
+          PG_PID=$!
+
+          # Wait for PostgreSQL to start
+          for i in $(seq 1 30); do
+            if pg_isready -h /tmp > /dev/null 2>&1; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL to start... ($i/30)"
+            sleep 1
+          done
+
+          echo ""
+          echo "=== Listing all databases ==="
+          psql -h /tmp -U postgres -c "\l"
+
+          echo ""
+          echo "=== Listing all users ==="
+          psql -h /tmp -U postgres -c "\du"
+
+          echo ""
+          echo "=== Checking if authentik database exists ==="
+          psql -h /tmp -U postgres -d authentik -c "\dt" || echo "WARNING: Could not connect to authentik database"
+
+          echo ""
+          echo "=== Stopping PostgreSQL ==="
+          kill $PG_PID
+          wait $PG_PID || true
+
+          echo ""
+          echo "=== Inspection complete - check logs above for database/user info ==="
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1

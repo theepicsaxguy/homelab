@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fix-running-pvc-restructure
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 26
+        runAsGroup: 26
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: restructure
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          echo "=== Checking data directory structure ==="
+          ls -la /data/
+          echo ""
+          if [ -d /data/pgroot/data ] && [ ! -d /data/pgdata ]; then
+            echo "⚠️  Zalando structure detected (/data/pgroot/data)"
+            echo "Restructuring: moving pgroot/data to pgdata..."
+            mv /data/pgroot/data /data/pgdata
+            echo "✓ Data restructured to CNPG format"
+            ls -la /data/
+          elif [ -d /data/pgdata ]; then
+            echo "✓ CNPG structure already exists (/data/pgdata)"
+          else
+            echo "⚠️  WARNING: Neither pgroot/data nor pgdata found!"
+            ls -la /data/
+            exit 1
+          fi
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1

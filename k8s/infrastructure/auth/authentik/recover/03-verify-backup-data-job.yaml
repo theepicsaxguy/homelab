@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: verify-backup-data
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 26  # postgres user
+        runAsGroup: 26
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: verify
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          echo "=== Verifying Restored Backup Data Structure ==="
+          echo ""
+          echo "Checking if data exists..."
+          ls -la /data/ || {
+            echo "ERROR: /data directory is empty or doesn't exist!"
+            exit 1
+          }
+
+          echo ""
+          echo "Looking for PostgreSQL data directory..."
+          if [ -d "/data/pgroot" ]; then
+            echo "✓ Found Zalando structure: /data/pgroot"
+            ls -la /data/pgroot/
+          fi
+
+          if [ -d "/data/pgdata" ]; then
+            echo "✓ Found CNPG structure: /data/pgdata"
+            ls -la /data/pgdata/ | head -20
+          fi
+
+          if [ ! -d "/data/pgroot" ] && [ ! -d "/data/pgdata" ]; then
+            echo "ERROR: Could not find PostgreSQL data in expected locations!"
+            echo "Directory contents:"
+            find /data -maxdepth 3 -type d
+            exit 1
+          fi
+
+          echo ""
+          echo "=== Verification complete - backup data is accessible ==="
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1

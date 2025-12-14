@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fix-running-pvc-permissions
+  namespace: auth
+  annotations:
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 0  # Required to chown files
+        runAsGroup: 0
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: fix-perms
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          echo "=== Fixing file permissions ==="
+          echo "Current state:"
+          ls -ld /data/pgdata
+          stat -c '%a %U:%G (%u:%g)' /data/pgdata 2>/dev/null || true
+          echo ""
+          echo "Step 1: Remove setgid and make accessible..."
+          chmod -R 777 /data/pgdata
+          find /data/pgdata -type d -exec chmod g-s {} \;
+          echo ""
+          echo "Step 2: Set correct permissions (700 for dirs, 600 for files)..."
+          find /data/pgdata -type d -exec chmod 700 {} \;
+          find /data/pgdata -type f -exec chmod 600 {} \;
+          echo ""
+          echo "Step 3: Fix ownership to postgres (26:26)..."
+          chown -R 26:26 /data/pgdata
+          echo ""
+          echo "Verification:"
+          ls -ld /data/pgdata
+          stat -c '%a %U:%G (%u:%g)' /data/pgdata
+          echo "✓ Permissions fixed!"
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - CHOWN
+            - FOWNER
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1
