@@ -60,3 +60,4 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: authentik-postgresql-1
+

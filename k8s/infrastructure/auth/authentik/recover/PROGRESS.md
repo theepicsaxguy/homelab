@@ -1,5 +1,8 @@
 # Authentik PostgreSQL Migration to CNPG - Progress Log
 
+> **👋 Next Agent:** Start with [`HANDOFF.md`](HANDOFF.md) for execution steps. This file contains the full history and
+> analysis.
+
 **Session Started:** 2025-12-14 **Status:** READY TO EXECUTE - Root cause identified, cleanup job updated with CNPG
 compatibility fixes **Approach:** Single comprehensive cleanup job with CNPG path fixes before cluster creation
 
@@ -478,3 +481,4 @@ PostgreSQL pod healthy (pending execution) ⏳ Post-cluster configuration job (p
 
 **Note:** This migration uses a streamlined approach with one comprehensive cleanup job. All Zalando/Patroni artifacts
 are removed before creating the snapshot, ensuring the cluster starts successfully when recreated.
+

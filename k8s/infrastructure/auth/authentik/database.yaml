@@ -27,6 +27,7 @@ metadata:
 spec:
   instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:17
+  enableSuperuserAccess: true  # Required for recovery scripts that need postgres superuser access
 
   storage:
     size: 20Gi
@@ -59,6 +60,11 @@ spec:
       huge_pages: "off"
       min_wal_size: "1GB"
       max_wal_size: "3GB"
+    # Allow password authentication for postgres user on local connections
+    # This is required when enableSuperuserAccess is true so the operator can connect
+    # and set the postgres user password
+    pg_hba:
+      - local all postgres scram-sha-256
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io

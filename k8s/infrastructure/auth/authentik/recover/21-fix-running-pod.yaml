@@ -1,0 +1,76 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fix-running-pod-structure
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 26
+        runAsGroup: 26
+        fsGroup: 26
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: fix
+        image: busybox
+        command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "=== FIXING RUNNING POD DATA STRUCTURE ==="
+
+          # The volume is mounted at /var/lib/postgresql/data in CNPG
+          # But we need to work with what's actually there
+          cd /data
+
+          echo "Current structure:"
+          ls -la /data/
+
+          # Remove leftover pgroot if it exists and pgdata exists
+          if [ -d /data/pgroot ] && [ -d /data/pgdata ]; then
+            echo "Removing leftover pgroot directory..."
+            rm -rf /data/pgroot
+            echo "✓ Removed pgroot"
+          fi
+
+          # Fix postgresql.conf to remove data_directory and hba_file pointing to pgroot
+          if [ -f /data/pgdata/postgresql.conf ]; then
+            echo "Fixing postgresql.conf..."
+            cd /data/pgdata
+
+            # Remove data_directory and hba_file settings pointing to pgroot paths
+            sed -i '/^data_directory.*pgroot/d' postgresql.conf
+            sed -i '/^hba_file.*pgroot/d' postgresql.conf
+
+            echo "✓ Fixed postgresql.conf"
+          fi
+
+          # Fix permissions
+          echo "Fixing permissions..."
+          chown -R 26:26 /data/pgdata 2>&1 || true
+          find /data/pgdata -type d -exec chmod 700 {} \; 2>&1 || true
+          find /data/pgdata -type f -exec chmod 600 {} \; 2>&1 || true
+          chmod 700 /data/pgdata 2>&1 || true
+
+          echo "✓ Permissions fixed"
+          echo "=== FIX COMPLETE ==="
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: authentik-postgresql-1
+
+
