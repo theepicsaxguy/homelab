@@ -54,7 +54,7 @@ spec:
           emptyDir: {}
       containers:
         - name: opencode-web
-          image: ghcr.io/chriswritescode-dev/opencode-manager:0.4.2
+          image: ghcr.io/chriswritescode-dev/opencode-manager:0.4.3
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
