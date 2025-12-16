@@ -1,5 +1,6 @@
 # Authentik PostgreSQL Recovery - Zalando to CloudNativePG Migration
 
+<<<<<<< Updated upstream
 This directory contains the complete **fully automated** recovery process for migrating Authentik's PostgreSQL database
 from Zalando PostgreSQL to CloudNativePG (CNPG) after a disaster.
 
@@ -7,22 +8,38 @@ from Zalando PostgreSQL to CloudNativePG (CNPG) after a disaster.
 
 - PVC `pvc-d90367da-3a78-4f7f-b112-4fbcb13cb7f4` has been restored from Zalando Spilo backup and exists in the `auth`
   namespace
+=======
+This directory contains the complete **fully automated** recovery process for migrating Authentik's PostgreSQL database from Zalando PostgreSQL to CloudNativePG (CNPG) after a disaster.
+
+## Prerequisites
+
+- Longhorn backup `backup-14c8704f5cbd43d0` exists (from 2025-12-02, ~16GB PostgreSQL data)
+>>>>>>> Stashed changes
 - CloudNativePG operator 1.28.0+ installed
 - Longhorn CSI snapshot support (VolumeSnapshot CRDs and snapshot-controller)
 - MinIO credentials secret `longhorn-minio-credentials` in the `auth` namespace
 
 ## Recovery Process Overview
 
+<<<<<<< Updated upstream
 This optimized recovery process: 0. **Verification Phase**: Verifies the restored PVC exists and is ready
 
 1. **Preparation Phase**: Creates snapshots for safety
+=======
+This optimized recovery process:
+0. **Restore Phase**: Restores Longhorn backup to a PVC
+1. **Preparation Phase**: Creates snapshots and temporary workspace
+>>>>>>> Stashed changes
 2. **Data Transformation Phase**: Restructures, fixes permissions, and removes Zalando artifacts
 3. **Inspection Phase**: Verifies database structure before migration
 4. **Migration Phase**: Creates clean snapshot and bootstraps CNPG cluster
 5. **Configuration Phase**: ONE consolidated job handles all post-cluster setup
 
 **Key Improvements:**
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 - Zero manual steps - everything via `kubectl apply`
 - Consolidated post-cluster configuration into ONE efficient job
 - Proper ordering - all data manipulation happens BEFORE cluster creation
@@ -33,13 +50,19 @@ This optimized recovery process: 0. **Verification Phase**: Verifies the restore
 
 Execute these commands **in order**. Each step includes the wait command to ensure completion before proceeding.
 
+<<<<<<< Updated upstream
 ### Step 0: Verify Restored PVC
 
 This verifies that the PVC restored from Zalando Spilo backup exists and is ready for recovery.
+=======
+### Step 0: Restore Longhorn Backup to PVC
+This restores the backup from December 2nd (before the disaster) to a new PVC.
+>>>>>>> Stashed changes
 
 ```bash
 kubectl apply -f 00-restore-longhorn-backup.yaml
 
+<<<<<<< Updated upstream
 # Wait for verification job to complete
 kubectl wait --for=condition=complete --timeout=120s job/verify-restored-pvc -n auth
 
@@ -52,12 +75,26 @@ kubectl get pvc pvc-d90367da-3a78-4f7f-b112-4fbcb13cb7f4 -n auth
 
 ### Step 1: Create VolumeSnapshotClass
 
+=======
+# Wait for the PVC to be bound (this may take 5-15 minutes for a 16GB restore)
+kubectl wait --for=jsonpath='{.status.phase}'=Bound \
+  pvc/backup-14c8704f5cbd43d0 -n auth --timeout=900s
+
+# Check Longhorn volume status
+kubectl get volume -n longhorn-system -l pvc=backup-14c8704f5cbd43d0
+```
+
+### Step 1: Create VolumeSnapshotClass
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 01-volumesnapshotclass.yaml
 ```
 
 ### Step 2: Create Initial Snapshot from Restored Backup
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 02-volumesnapshot.yaml
 
@@ -67,7 +104,10 @@ kubectl wait --for=jsonpath='{.status.readyToUse}'=true \
 ```
 
 ### Step 3: Verify Backup Data Structure
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 03-verify-backup-data-job.yaml
 
@@ -77,6 +117,7 @@ kubectl logs -n auth job/verify-backup-data
 ```
 
 ### Step 4: Create Temporary PVC for Data Manipulation
+<<<<<<< Updated upstream
 
 **⚠️ SKIPPED**: Longhorn's CSI driver doesn't support creating PVCs from Kubernetes VolumeSnapshots. Instead, we work
 directly on the restored PVC (`pvc-d90367da-3a78-4f7f-b112-4fbcb13cb7f4`) since we already have a snapshot
@@ -92,6 +133,17 @@ The transformation jobs (Steps 5-7) now work directly on the restored PVC. This 
 
 ### Step 5: Restructure PostgreSQL Data Directory
 
+=======
+```bash
+kubectl apply -f 04-temp-restore-pvc.yaml
+
+# Wait for PVC to be bound (may take several minutes while Longhorn restores data)
+kubectl wait --for=jsonpath='{.status.phase}'=Bound \
+  pvc/temp-postgres-fix -n auth --timeout=600s
+```
+
+### Step 5: Restructure PostgreSQL Data Directory
+>>>>>>> Stashed changes
 Moves data from Zalando's `/pgroot/data` structure to CNPG's `/pgdata` structure.
 
 ```bash
@@ -103,7 +155,10 @@ kubectl logs -n auth job/restructure-pgdata
 ```
 
 ### Step 6: Fix File Permissions
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 Sets correct ownership (postgres 26:26) and permissions (700).
 
 ```bash
@@ -115,7 +170,10 @@ kubectl logs -n auth job/fix-pgdata-permissions
 ```
 
 ### Step 7: Clean Up Zalando Artifacts
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 Removes Zalando-specific PostgreSQL extensions (bg_mon) and Patroni configuration.
 
 ```bash
@@ -127,7 +185,10 @@ kubectl logs -n auth job/fix-postgresql-conf
 ```
 
 ### Step 8: Inspect Database (Optional but Recommended)
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 Temporarily starts PostgreSQL to inspect database structure, users, and tables.
 
 ```bash
@@ -144,7 +205,10 @@ kubectl logs -n auth job/inspect-postgres-database
 ```
 
 ### Step 9: Create Final Snapshot with Clean Data
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 09-volumesnapshot-fixed.yaml
 
@@ -154,13 +218,19 @@ kubectl wait --for=jsonpath='{.status.readyToUse}'=true \
 ```
 
 ### Step 10: Create MinIO ObjectStore for Backups
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 10-objectstore.yaml
 ```
 
 ### Step 11: Bootstrap CNPG Cluster from Fixed Snapshot
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl apply -f 11-cluster-recovery.yaml
 
@@ -176,9 +246,13 @@ kubectl logs -n auth authentik-postgresql-1 | grep "database system is ready"
 ```
 
 ### Step 12: Run Post-Cluster Configuration (ONE CONSOLIDATED JOB)
+<<<<<<< Updated upstream
 
 This single job handles:
 
+=======
+This single job handles:
+>>>>>>> Stashed changes
 - Detecting and renaming user if needed (app → authentik_user)
 - Granting CNPG-required permissions
 - Syncing database password with CNPG secret
@@ -217,10 +291,17 @@ echo "Host: $(kubectl get secret -n auth authentik-postgresql-app -o jsonpath='{
 Once the CNPG cluster is running and verified:
 
 ```bash
+<<<<<<< Updated upstream
 # Note: temp-postgres-fix PVC is not created (Step 4 skipped due to Longhorn limitation)
 
 # Delete all completed jobs
 kubectl delete job -n auth verify-restored-pvc
+=======
+# Delete temporary PVC
+kubectl delete pvc temp-postgres-fix -n auth
+
+# Delete all completed jobs
+>>>>>>> Stashed changes
 kubectl delete job -n auth verify-backup-data
 kubectl delete job -n auth restructure-pgdata
 kubectl delete job -n auth fix-pgdata-permissions
@@ -234,21 +315,30 @@ kubectl delete role -n auth authentik-post-recovery
 kubectl delete rolebinding -n auth authentik-post-recovery
 
 # Keep snapshots for disaster recovery:
+<<<<<<< Updated upstream
 # - auth-postgres-recovery (original from restored PVC)
 # - auth-postgres-recovery-fixed (cleaned and ready for re-use)
 
 # Optional: Delete the restored PVC after successful migration (only if you're certain)
 # kubectl delete pvc pvc-d90367da-3a78-4f7f-b112-4fbcb13cb7f4 -n auth
+=======
+# - auth-postgres-recovery (original)
+# - auth-postgres-recovery-fixed (cleaned and ready for re-use)
+>>>>>>> Stashed changes
 ```
 
 ## Post-Recovery Steps
 
 ### 1. Update database.yaml
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 Remove the `bootstrap` section from `../database.yaml`:
 
 ```yaml
 # Remove this entire section:
+<<<<<<< Updated upstream
 bootstrap:
   initdb:
     database: authentik
@@ -257,6 +347,15 @@ bootstrap:
 
 ### 2. Add Managed Roles (Recommended)
 
+=======
+  bootstrap:
+    initdb:
+      database: authentik
+      owner: authentik_user
+```
+
+### 2. Add Managed Roles (Recommended)
+>>>>>>> Stashed changes
 Add to `../database.yaml` for future user management:
 
 ```yaml
@@ -278,14 +377,20 @@ spec:
 ```
 
 ### 3. Scale to 2 Instances (Optional)
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl patch cluster -n auth authentik-postgresql --type='json' \
   -p='[{"op": "replace", "path": "/spec/instances", "value": 2}]'
 ```
 
 ### 4. Restart Authentik Application
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 kubectl rollout restart deployment -n auth authentik-server
 kubectl rollout restart deployment -n auth authentik-worker
@@ -297,7 +402,10 @@ kubectl logs -n auth -l app.kubernetes.io/name=authentik-server -f
 ## Troubleshooting
 
 ### Job Fails
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 # Check job logs
 kubectl logs -n auth job/<job-name>
@@ -311,7 +419,10 @@ kubectl apply -f <step-number>-<filename>.yaml
 ```
 
 ### VolumeSnapshot Stuck
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 # Check snapshot status
 kubectl describe volumesnapshot -n auth <snapshot-name>
@@ -321,7 +432,10 @@ kubectl describe volumesnapshot -n auth <snapshot-name>
 ```
 
 ### CNPG Cluster Won't Start
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 ```bash
 # Check pod logs
 kubectl logs -n auth authentik-postgresql-1
@@ -334,9 +448,13 @@ kubectl logs -n auth -l cnpg.io/cluster=authentik-postgresql,role=bootstrap
 ```
 
 ### Post-Recovery Job Fails
+<<<<<<< Updated upstream
 
 The job is designed to be idempotent - it can be safely re-run:
 
+=======
+The job is designed to be idempotent - it can be safely re-run:
+>>>>>>> Stashed changes
 ```bash
 kubectl delete job -n auth authentik-post-recovery-config
 kubectl apply -f 12-post-cluster-configuration-job.yaml
@@ -344,6 +462,7 @@ kubectl apply -f 12-post-cluster-configuration-job.yaml
 
 ## File Manifest
 
+<<<<<<< Updated upstream
 | File                                     | Purpose                                                                              |
 | ---------------------------------------- | ------------------------------------------------------------------------------------ |
 | `00-restore-longhorn-backup.yaml`        | Verifies restored PVC `pvc-d90367da-3a78-4f7f-b112-4fbcb13cb7f4` exists and is ready |
@@ -359,6 +478,23 @@ kubectl apply -f 12-post-cluster-configuration-job.yaml
 | `10-objectstore.yaml`                    | MinIO backup configuration for CNPG                                                  |
 | `11-cluster-recovery.yaml`               | CNPG cluster bootstrap from fixed snapshot                                           |
 | `12-post-cluster-configuration-job.yaml` | **Consolidated** user/password/secret configuration                                  |
+=======
+| File | Purpose |
+|------|---------|
+| `00-restore-longhorn-backup.yaml` | **NEW**: Restores Longhorn backup to PVC via VolumeSnapshot |
+| `01-volumesnapshotclass.yaml` | VolumeSnapshotClass for Longhorn in-cluster snapshots |
+| `02-volumesnapshot.yaml` | Initial snapshot from restored backup PVC |
+| `03-verify-backup-data-job.yaml` | Verifies backup PVC contains PostgreSQL data |
+| `04-temp-restore-pvc.yaml` | Temporary PVC for data manipulation |
+| `05-restructure-pgdata-job.yaml` | Converts Zalando → CNPG directory structure |
+| `06-fix-permissions-job.yaml` | Fixes ownership to postgres (26:26) and chmod 700 |
+| `07-cleanup-zalando-artifacts-job.yaml` | Removes bg_mon extension and patroni.dynamic.json |
+| `08-inspect-database-job.yaml` | Inspects database/user structure before migration |
+| `09-volumesnapshot-fixed.yaml` | Final snapshot with all fixes applied |
+| `10-objectstore.yaml` | MinIO backup configuration for CNPG |
+| `11-cluster-recovery.yaml` | CNPG cluster bootstrap from fixed snapshot |
+| `12-post-cluster-configuration-job.yaml` | **Consolidated** user/password/secret configuration |
+>>>>>>> Stashed changes
 
 ## Design Principles
 
@@ -371,6 +507,7 @@ kubectl apply -f 12-post-cluster-configuration-job.yaml
 
 ## Migration Time Estimate
 
+<<<<<<< Updated upstream
 | Phase                           | Time               |
 | ------------------------------- | ------------------ |
 | Verification (Step 0)           | < 1 minute         |
@@ -390,6 +527,28 @@ _Times may vary based on data size and storage performance_
 ✅ All jobs completed successfully (check with `kubectl get jobs -n auth`) ✅ Cluster shows 1/1 ready instances ✅
 Database "authentik" exists and contains tables ✅ User "authentik_user" has correct permissions ✅ Secret has database
 name "authentik" ✅ Authentik application can connect and function
+=======
+| Phase | Time |
+|-------|------|
+| Snapshots (Steps 1-4) | 5-10 minutes |
+| Data transformation (Steps 5-7) | 2-3 minutes |
+| Inspection (Step 8) | 1-2 minutes |
+| Final snapshot (Step 9) | 3-5 minutes |
+| Cluster bootstrap (Steps 10-11) | 5-10 minutes |
+| Post-config (Step 12) | 1-2 minutes |
+| **Total** | **~20-30 minutes** |
+
+*Times may vary based on data size and storage performance*
+
+## Success Criteria
+
+✅ All jobs completed successfully (check with `kubectl get jobs -n auth`)
+✅ Cluster shows 1/1 ready instances
+✅ Database "authentik" exists and contains tables
+✅ User "authentik_user" has correct permissions
+✅ Secret has database name "authentik"
+✅ Authentik application can connect and function
+>>>>>>> Stashed changes
 
 ## References
 

@@ -13,13 +13,13 @@ spec:
   enableSuperuserAccess: true  # Required for recovery scripts that need postgres superuser access
 
   # Bootstrap from volume snapshot (comprehensively cleaned)
-  bootstrap:
-    recovery:
-      volumeSnapshots:
-        storage:
-          name: auth-postgres-recovery-final-clean  # All Zalando/Patroni artifacts removed
-          kind: VolumeSnapshot
-          apiGroup: snapshot.storage.k8s.io
+  # bootstrap:
+  #   recovery:
+  #     volumeSnapshots:
+  #       storage:
+  #         name: auth-postgres-recovery-final-clean  # All Zalando/Patroni artifacts removed
+  #         kind: VolumeSnapshot
+  #         apiGroup: snapshot.storage.k8s.io
 
   storage:
     size: 20Gi

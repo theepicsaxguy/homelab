@@ -1,10 +1,9 @@
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshot
 metadata:
-  name: auth-postgres-recovery-final-clean
-  namespace: auth
+  name: immich-postgres-recovery
+  namespace: immich
 spec:
   volumeSnapshotClassName: longhorn-snapshot-vsc
   source:
-    persistentVolumeClaimName: authentik-postgresql-source
-
+    persistentVolumeClaimName: backup-2bf0caf0a22e4788
