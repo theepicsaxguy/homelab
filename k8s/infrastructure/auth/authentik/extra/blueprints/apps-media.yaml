@@ -559,3 +559,71 @@ entries:
       group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 2
+
+  - id: provider-audiobookshelf
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s.pc-tips.se/media/audiobookshelf
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
+      client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
+      redirect_uris:
+        - url: https://audiobookshelf.pc-tips.se/auth/openid/callback
+          matching_mode: strict
+        - url: https://audiobookshelf.pc-tips.se/auth/openid/mobile-redirect
+          matching_mode: strict
+
+      access_code_validity: minutes=1
+      access_token_validity: hours=1
+      refresh_token_validity: days=30
+
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+          ]
+
+  - id: application-audiobookshelf
+    model: authentik_core.application
+    identifiers:
+      slug: audiobookshelf
+    attrs:
+      name: Audiobookshelf
+      group: Media
+      meta_description: Audiobook and podcast management
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/audiobookshelf.png
+      provider: !KeyOf provider-audiobookshelf
+      policy_engine_mode: any
+
+  - model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application-audiobookshelf
+      group: !Find [authentik_core.group, [name, "Media Users"]]
+    attrs:
+      order: 1

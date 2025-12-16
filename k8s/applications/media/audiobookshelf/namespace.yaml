@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: audiobookshelf
-  labels:
-    kubernetes.io/metadata.name: audiobookshelf
-    app.kubernetes.io/managed-by: argocd
-    app.kubernetes.io/part-of: applications

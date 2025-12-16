@@ -19,12 +19,12 @@ variable "defaults_worker" {
     machine_type  = "worker"
     cpu           = 8
     cpu_units     = 1024
-    ram_dedicated = 15896
+    ram_dedicated = 21504
     igpu          = false
     disks = {
       longhorn = {
         device      = "/dev/sdb"
-        size        = "220G"
+        size        = "300G"
         type        = "scsi"
         mountpoint  = "/var/lib/longhorn"
         unit_number = 1
