@@ -53,18 +53,22 @@ defaultSettings:
   defaultReplicaCount: 3
   guaranteedEngineManagerCPU: 0.2
   guaranteedReplicaManagerCPU: 0.2
-  storageOverProvisioningPercentage: 200
+  storageOverProvisioningPercentage: 300
   storageMinimalAvailablePercentage: 10
   taintToleration: 'true'
   defaultDataPath: /var/lib/longhorn/
   autoDeletePodWhenVolumeDetachedUnexpectedly: true
   autoSalvage: true
   replicaZoneSoftAntiAffinity: true
-  concurrentReplicaRebuildPerNodeLimit: 1
-  replicaReplenishmentWaitInterval: 600
+  concurrentReplicaRebuildPerNodeLimit: 5
+  replicaReplenishmentWaitInterval: 60
   backupstorePollInterval: 300
   replicaSoftAntiAffinity: false
   concurrentAutomaticEngineUpgradePerNodeLimit: 3
+  # Replica balancing and maintenance settings
+  replicaAutoBalance: least-effort
+  removeSnapshotsDuringFilesystemTrim: "enabled"
+  offlineReplicaRebuilding: '{"v1":"enabled"}'
 persistence:
   defaultClass: true
   defaultClassReplicaCount: 3

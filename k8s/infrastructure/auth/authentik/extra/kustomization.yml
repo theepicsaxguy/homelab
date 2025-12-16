@@ -5,7 +5,7 @@ resources:
   - secrets.yml
 
 generatorOptions:
-  disableNameSuffixHash: true
+  disableNameSuffixHash: false
 
 configMapGenerator:
   - name: authentik-blueprints
@@ -18,6 +18,7 @@ configMapGenerator:
       - ./blueprints/apps-jellyfin.yaml
       - ./blueprints/apps-media.yaml
       - ./blueprints/apps-openwebui.yaml
+      - ./blueprints/apps-litellm.yaml
       - ./blueprints/apps-karakeep.yaml
       - ./blueprints/apps-kubernetes.yaml
       - ./blueprints/groups.yaml

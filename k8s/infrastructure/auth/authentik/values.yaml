@@ -110,7 +110,7 @@ authentik:
     send_pii: false
   postgresql:
     host: authentik-postgresql-rw
-    name: authentik
+    name: app
     user: file:///secrets/authentik/username
     password: file:///secrets/authentik/password
     port: "5432"

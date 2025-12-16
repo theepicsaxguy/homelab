@@ -1,0 +1,10 @@
+# infrastructure/auth/authentik/recover/02-volumesnapshot.yaml
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: auth-postgres-recovery
+  namespace: auth
+spec:
+  volumeSnapshotClassName: longhorn-snapshot-vsc
+  source:
+    persistentVolumeClaimName: backup-14c8704f5cbd43d0

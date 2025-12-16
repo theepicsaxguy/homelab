@@ -1,0 +1,159 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: authentik-post-recovery
+  namespace: auth
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: authentik-post-recovery
+  namespace: auth
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["authentik-postgresql-app"]
+  verbs: ["get", "patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list"]
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: authentik-post-recovery
+  namespace: auth
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: authentik-post-recovery
+subjects:
+- kind: ServiceAccount
+  name: authentik-post-recovery
+  namespace: auth
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentik-post-recovery-config
+  namespace: auth
+spec:
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534  # nobody
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: authentik-post-recovery
+      containers:
+      - name: configure
+        image: bitnami/kubectl:latest
+        command:
+        - sh
+        - -c
+        - |
+          set -e
+          echo "=== Post-Recovery Configuration for Authentik PostgreSQL ==="
+
+          # Wait for PostgreSQL pod to be ready
+          echo "Waiting for PostgreSQL pod to be ready..."
+          kubectl wait --for=condition=ready --timeout=300s pod/authentik-postgresql-1 -n auth
+
+          # Get the postgres password
+          POSTGRES_PASSWORD=$(kubectl get secret authentik-postgresql-superuser -n auth -o jsonpath='{.data.password}' | base64 -d)
+
+          echo ""
+          echo "=== Step 1: Checking current database state ==="
+          kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -c '\l'"
+
+          echo ""
+          echo "=== Step 2: Checking users and their permissions ==="
+          kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -c '\du'"
+
+          # Check if authentik_user exists, if not check for 'app' user from Zalando
+          echo ""
+          echo "=== Step 3: Identifying application user ==="
+          USER_EXISTS=$(kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -t -c \"SELECT 1 FROM pg_roles WHERE rolname='authentik_user'\" | xargs" || echo "0")
+
+          if [ "$USER_EXISTS" = "1" ]; then
+            APP_USER="authentik_user"
+            echo "✓ Found user: authentik_user"
+          else
+            APP_USER_EXISTS=$(kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -t -c \"SELECT 1 FROM pg_roles WHERE rolname='app'\" | xargs" || echo "0")
+            if [ "$APP_USER_EXISTS" = "1" ]; then
+              APP_USER="app"
+              echo "✓ Found Zalando user: app (will rename to authentik_user)"
+            else
+              echo "ERROR: Could not find authentik_user or app user!"
+              exit 1
+            fi
+          fi
+
+          # Rename user if needed
+          if [ "$APP_USER" = "app" ]; then
+            echo ""
+            echo "=== Step 4: Renaming user 'app' to 'authentik_user' ==="
+            kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -c \"ALTER USER app RENAME TO authentik_user;\""
+            APP_USER="authentik_user"
+            echo "✓ User renamed successfully"
+          else
+            echo ""
+            echo "=== Step 4: User already named correctly (authentik_user) ==="
+          fi
+
+          echo ""
+          echo "=== Step 5: Granting CNPG required permissions ==="
+          kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres <<EOF
+GRANT pg_read_all_data TO authentik_user;
+GRANT pg_write_all_data TO authentik_user;
+GRANT CREATE ON DATABASE authentik TO authentik_user;
+ALTER USER authentik_user CREATEDB;
+EOF"
+
+          echo ""
+          echo "=== Step 6: Syncing password with CNPG secret ==="
+          NEW_PASSWORD=\$(kubectl get secret authentik-postgresql-app -n auth -o jsonpath='{.data.password}' | base64 -d)
+          kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -c \"ALTER USER authentik_user WITH PASSWORD '\$NEW_PASSWORD';\""
+          echo "✓ Password synced"
+
+          echo ""
+          echo "=== Step 7: Fixing database name in secret ==="
+          CURRENT_DBNAME=\$(kubectl get secret authentik-postgresql-app -n auth -o jsonpath='{.data.dbname}' | base64 -d)
+          echo "Current dbname: \$CURRENT_DBNAME"
+
+          if [ "\$CURRENT_DBNAME" != "authentik" ]; then
+            echo "Patching secret to use 'authentik'..."
+            kubectl patch secret authentik-postgresql-app -n auth --type='json' -p='[
+              {"op": "replace", "path": "/data/dbname", "value": "'\$(echo -n "authentik" | base64)'"}
+            ]'
+            echo "✓ Database name fixed"
+          else
+            echo "✓ Database name already correct"
+          fi
+
+          echo ""
+          echo "=== Step 8: Verifying final configuration ==="
+          echo "Users and their roles:"
+          kubectl exec -n auth authentik-postgresql-1 -- bash -c "PGPASSWORD='$POSTGRES_PASSWORD' psql -U postgres -c \"SELECT r.rolname, m.rolname as member_of FROM pg_roles r LEFT JOIN pg_auth_members am ON r.oid = am.member LEFT JOIN pg_roles m ON am.roleid = m.oid WHERE r.rolname = 'authentik_user';\""
+
+          echo ""
+          echo "Secret configuration:"
+          echo "  Database: \$(kubectl get secret authentik-postgresql-app -n auth -o jsonpath='{.data.dbname}' | base64 -d)"
+          echo "  Username: \$(kubectl get secret authentik-postgresql-app -n auth -o jsonpath='{.data.username}' | base64 -d)"
+          echo "  Host: \$(kubectl get secret authentik-postgresql-app -n auth -o jsonpath='{.data.host}' | base64 -d)"
+
+          echo ""
+          echo "=== Post-recovery configuration completed successfully ==="
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
