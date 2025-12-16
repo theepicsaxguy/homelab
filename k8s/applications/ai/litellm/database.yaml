@@ -66,11 +66,6 @@ spec:
     parameters:
       barmanObjectName: litellm-minio-store
 
-  bootstrap:
-    initdb:
-      database: litellm
-      owner: litellm
-
   monitoring:
     enablePodMonitor: false
 
