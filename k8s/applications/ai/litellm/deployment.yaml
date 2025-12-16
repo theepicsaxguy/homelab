@@ -8,6 +8,8 @@ spec:
   selector:
     matchLabels:
       app: litellm
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
