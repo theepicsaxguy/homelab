@@ -1,0 +1,50 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgresql
+  namespace: immich
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/gfs: enabled
+spec:
+  instances: 1
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
+  enablePDB: false
+
+  # Bootstrap from volume snapshot
+  bootstrap:
+    recovery:
+      volumeSnapshots:
+        storage:
+          name: immich-postgres-recovery
+          kind: VolumeSnapshot
+          apiGroup: snapshot.storage.k8s.io
+
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+
+  monitoring:
+    enablePodMonitor: false
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "256MB"
+
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: immich-minio-store
+
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      memory: "1Gi"
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

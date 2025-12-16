@@ -8,6 +8,8 @@ spec:
   selector:
     matchLabels:
       app: litellm
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
@@ -15,7 +17,7 @@ spec:
     spec:
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm:main-v1.80.0.dev6
+        image: ghcr.io/berriai/litellm:main-v1.80.10-nightly
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
@@ -29,13 +31,18 @@ spec:
         - name: PGUSER
           valueFrom:
             secretKeyRef:
-              name: litellm.litellm-postgresql.credentials.postgresql.acid.zalan.do
+              name: litellm-postgresql-app
               key: username
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
-              name: litellm.litellm-postgresql.credentials.postgresql.acid.zalan.do
+              name: litellm-postgresql-app
               key: password
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: litellm-postgresql-app
+              key: username
         - name: DATABASE_URL
           value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql-rw.litellm.svc.kube.pc-tips.se:5432/litellm
         - name: QDRANT_API_BASE
@@ -50,6 +57,16 @@ spec:
           value: "false"
         - name: COLD_STORAGE_CUSTOM_LOGGER
           value: "s3_v2"
+        - name: GENERIC_AUTHORIZATION_ENDPOINT
+          value: "https://sso.pc-tips.se/application/o/authorize/"
+        - name: GENERIC_TOKEN_ENDPOINT
+          value: "https://sso.pc-tips.se/application/o/token/"
+        - name: GENERIC_USERINFO_ENDPOINT
+          value: "https://sso.pc-tips.se/application/o/userinfo/"
+        - name: PROXY_BASE_URL
+          value: "https://litellm.pc-tips.se"
+        - name: GENERIC_SCOPE
+          value: "openid profile email"
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml

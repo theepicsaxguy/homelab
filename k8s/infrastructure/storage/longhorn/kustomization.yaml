@@ -8,6 +8,7 @@ resources:
   - recurringjob.yaml
   - http-route.yaml
   - externalsecret.yaml
+  - prometheusrule.yaml
 
 helmCharts:
   - name: longhorn

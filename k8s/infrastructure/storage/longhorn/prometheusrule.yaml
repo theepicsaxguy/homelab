@@ -1,0 +1,77 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: longhorn-alerts
+  namespace: longhorn-system
+  labels:
+    prometheus: kube-prometheus-stack
+    release: kube-prometheus-stack
+spec:
+  groups:
+    - name: longhorn.rules
+      rules:
+        # Alert when volumes are degraded for more than 30 minutes
+        - alert: LonghornVolumeDegraded
+          expr: |
+            longhorn_volume_robustness == 2
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn volume {{ $labels.volume }} is degraded"
+            description: "Volume {{ $labels.volume }} (PVC: {{ $labels.pvc }} in {{ $labels.pvc_namespace }}) has been degraded for more than 30 minutes. Check replica health."
+
+        # Alert when volumes are degraded for more than 2 hours - likely stuck
+        - alert: LonghornVolumeStuckDegraded
+          expr: |
+            longhorn_volume_robustness == 2
+          for: 2h
+          labels:
+            severity: critical
+          annotations:
+            summary: "Longhorn volume {{ $labels.volume }} stuck in degraded state"
+            description: |
+              Volume {{ $labels.volume }} (PVC: {{ $labels.pvc }} in {{ $labels.pvc_namespace }}) has been degraded for over 2 hours.
+              This may indicate zombie replicas blocking rebuild. Check for replicas with high rebuildRetryCount:
+              kubectl get replicas.longhorn.io -n longhorn-system -o json | jq '.items[] | select(.status.currentState=="running" and .spec.healthyAt==null) | .metadata.name'
+
+        # Alert when rebuild queue is empty but volumes are degraded (zombie replicas)
+        - alert: LonghornRebuildStalled
+          expr: |
+            (longhorn_workqueue_depth{name="longhorn-volume-rebuilding"} == 0)
+            and
+            (count(longhorn_volume_robustness == 2) > 0)
+          for: 1h
+          labels:
+            severity: critical
+          annotations:
+            summary: "Longhorn rebuild queue stalled with degraded volumes"
+            description: |
+              Rebuild queue is empty but {{ $value }} volumes are still degraded.
+              This indicates zombie replicas blocking the concurrent rebuild limit.
+              Fix: Find and delete zombie replicas (running but not healthy with high retry count).
+
+        # Alert when node has disk pressure
+        - alert: LonghornNodeDiskPressure
+          expr: |
+            longhorn_node_status{condition="schedulable"} == 0
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Longhorn node {{ $labels.node }} has disk pressure"
+            description: "Node {{ $labels.node }} is not schedulable. Check disk space and storage-over-provisioning-percentage setting."
+
+        # Alert when multiple volumes are faulted
+        - alert: LonghornVolumesFaulted
+          expr: |
+            count(longhorn_volume_robustness == 3) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "{{ $value }} Longhorn volumes are faulted"
+            description: "One or more Longhorn volumes are in faulted state. Immediate attention required - data may be at risk."
+
+
+

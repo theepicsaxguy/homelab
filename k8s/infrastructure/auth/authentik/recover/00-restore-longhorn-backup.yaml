@@ -1,0 +1,29 @@
+# Method 1: Simple PVC with fromBackup URL
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-14c8704f5cbd43d0
+  namespace: auth
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 16Gi
+  dataSource:
+    apiGroup: longhorn.io
+    kind: Volume
+    name: restore-from-backup-14c8704f5cbd43d0
+---
+apiVersion: longhorn.io/v1beta2
+kind: Volume
+metadata:
+  name: restore-from-backup-14c8704f5cbd43d0
+  namespace: longhorn-system
+spec:
+  size: "16106127360"
+  numberOfReplicas: 1
+  frontend: blockdev
+  accessMode: rwo
+  fromBackup: "s3://longhorn@us-west-1/?backup=backup-14c8704f5cbd43d0&volume=pvc-4648b018-99c6-49e7-96ba-12844e45cfb0"

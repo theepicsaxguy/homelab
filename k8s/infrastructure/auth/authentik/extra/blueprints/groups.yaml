@@ -91,3 +91,9 @@ entries:
       name: Kubectl Users
     attrs:
       name: Kubectl Users
+  - id: litellm-users
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Users
+    attrs:
+      name: Litellm Users
