@@ -16,6 +16,23 @@ spec:
         name: longhorn-minio-credentials
         key: AWS_SECRET_ACCESS_KEY
 ---
+# apiVersion: barmancloud.cnpg.io/v1
+# kind: ObjectStore
+# metadata:
+#   name: database-backup-recovered
+#   namespace: litellm
+# spec:
+#   configuration:
+#     destinationPath: s3://homelab-postgres-backups/litellm/litellm-postgresql-recovered
+#     endpointURL: https://truenas.pc-tips.se:9000
+#     s3Credentials:
+#       accessKeyId:
+#         name: longhorn-minio-credentials
+#         key: AWS_ACCESS_KEY_ID
+#       secretAccessKey:
+#         name: longhorn-minio-credentials
+#         key: AWS_SECRET_ACCESS_KEY
+# ---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -25,6 +42,26 @@ metadata:
     recurring-job.longhorn.io/source: enabled
     recurring-job-group.longhorn.io/gfs: enabled
 spec:
+  # bootstrap:
+  #   recovery:
+  #     source: backup-source
+  #     # Point-in-time recovery settings
+  #     # Use ISO 8601 timestamp in UTC. Example: 2025-12-15T14:00:00Z
+  #     # recoveryTarget:
+  #     #   targetTime: "2025-12-15 14:00:00+00"
+  #     #   # Optional: pin to a specific timeline to avoid mismatches (e.g., 4)
+  #     #   # If omitted, CNPG/PostgreSQL defaults to the latest timeline available
+  #     #   targetTLI: "4"
+
+  # # Reference to the backup source using Barman Cloud Plugin
+  # externalClusters:
+  #   - name: backup-source
+  #     plugin:
+  #       name: barman-cloud.cloudnative-pg.io
+  #       parameters:
+  #         barmanObjectName: litellm-minio-store
+  #         serverName: litellm-postgresql  # Must match original cluster name in S3 backups
+
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:17
 
@@ -60,11 +97,29 @@ spec:
       min_wal_size: "512MB"
       max_wal_size: "1GB"
 
+  # Enable WAL archiving for the recovered cluster with DIFFERENT serverName and path
+  # CRITICAL: Different serverName prevents "WAL archive check failed" errors
+  # CloudNativePG will write backups to mastodon-database-recovered path, NOT mastodon-database
   plugins:
-  - name: barman-cloud.cloudnative-pg.io
-    isWALArchiver: true
-    parameters:
-      barmanObjectName: litellm-minio-store
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: database-backup-recovered
+        serverName: database-cnpg-recovered
+
+  managed:
+    roles:
+    - name: app
+      ensure: present
+      login: true
+      superuser: false
+      createdb: false
+      createrole: false
+      inherit: true
+      replication: false
+      connectionLimit: -1
+      inRoles:
+      - litellm
 
   monitoring:
     enablePodMonitor: false

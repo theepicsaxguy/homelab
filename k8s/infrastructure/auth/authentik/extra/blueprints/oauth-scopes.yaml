@@ -9,14 +9,14 @@ metadata:
 entries:
   - model: authentik_providers_oauth2.scopemapping
     identifiers:
-      name: "OAuth mapping: OpenID 'email' with mailPrimaryAddress"
+      name: "authentik default OAuth Mapping: OpenID 'email'"
     attrs:
       scope_name: email
       description: Email address
       expression: |
         return {
-          "email": request.user.attributes.get("mailPrimaryAddress", request.user.email),
-          "email_verified": True,
+          "email": request.user.email,
+          "email_verified": False,
         }
 
   - model: authentik_providers_oauth2.scopemapping
@@ -50,4 +50,15 @@ entries:
       expression: |
         return {
           "id": request.user.pk,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "authentik default OAuth Mapping: OpenID 'groups'"
+    attrs:
+      scope_name: groups
+      description: User groups
+      expression: |
+        return {
+          "groups": [group.name for group in request.user.ak_groups.all()],
         }

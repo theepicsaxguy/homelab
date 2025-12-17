@@ -20,6 +20,7 @@ data "talos_machine_configuration" "this" {
       coredns_install = var.coredns.install
       oidc            = var.oidc
       vip             = var.network.vip
+      disks           = each.value.disks
     })
     ] : concat(
     [

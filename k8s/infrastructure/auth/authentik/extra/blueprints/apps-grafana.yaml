@@ -63,7 +63,7 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
-            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
           ]
 
   - id: grafana_application
@@ -78,13 +78,15 @@ entries:
       provider: !KeyOf grafana_provider
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: grafana_users_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf grafana_application
       group: !Find [authentik_core.group, [name, "Grafana Users"]]
     attrs:
       order: 1
-  - model: authentik_policies.policybinding
+  - id: grafana_admins_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf grafana_application
       group: !Find [authentik_core.group, [name, "Grafana Admins"]]

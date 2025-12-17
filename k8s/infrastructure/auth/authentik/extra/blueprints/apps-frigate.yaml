@@ -52,7 +52,8 @@ entries:
       provider: !KeyOf frigate_proxy_provider
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: frigate_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf frigate_application
       group: !Find [authentik_core.group, [name, "Frigate Users"]]
