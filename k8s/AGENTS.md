@@ -284,6 +284,24 @@ The backup jobs are defined in [k8s/infrastructure/storage/longhorn/recurringjob
 - Less frequent backups = longer retention (e.g., weekly keeps 8)
 - Snapshot cleanup runs across all groups to prevent temporary snapshot accumulation
 
+### Troubleshooting Disk Expansion Issues
+
+If Longhorn fails to recognize expanded disk space after increasing node disk capacity, check the `node.longhorn.io` objects for missing `spec.name` field. This field is required for the node controller to sync disk status.
+
+**Symptoms:**
+- Disk expansion at OS level successful
+- Longhorn UI shows old disk capacity
+- Manager logs show: `"failed to sync node for longhorn-system/<node>: no node name provided to check node down or deleted"`
+
+**Resolution:**
+1. Identify affected nodes: `kubectl get node.longhorn.io -n longhorn-system`
+2. Check if `spec.name` is missing: `kubectl get node.longhorn.io <node> -n longhorn-system -o yaml`
+3. If missing, edit the resource: `kubectl edit node.longhorn.io <node> -n longhorn-system`
+4. Add under `spec:`: `name: <node>` (matching `metadata.name`)
+5. Save and verify disk status updates automatically
+
+**Prevention:** Ensure `spec.name` is always present in `node.longhorn.io` objects. This is a known issue with enhancement request for validation (longhorn/longhorn#6793).
+
 ## Pre-Merge Checklist
 
 Before merging Kubernetes manifest changes, verify:
