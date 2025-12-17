@@ -65,7 +65,7 @@ data:
               ]
             - !Find [
                 authentik_core.propertymapping,
-                [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+                [name, "authentik default OAuth Mapping: OpenID 'email'"],
               ]
             - !Find [
                 authentik_core.propertymapping,
@@ -84,7 +84,8 @@ data:
           provider: !KeyOf litellm_provider
           policy_engine_mode: any
 
-      - model: authentik_policies.policybinding
+      - id: litellm_policy_binding
+        model: authentik_policies.policybinding
         identifiers:
           target: !KeyOf litellm_application
           group: !Find [authentik_core.group, [name, "Litellm Users"]]

@@ -7,26 +7,6 @@ version: 1
 metadata:
   name: Apps - Home assistant
 entries:
-  - id: homeassistant_application
-    model: authentik_core.application
-    identifiers:
-      slug: home-assistant
-    attrs:
-      name: Home assistant
-      group: Maison
-      description: Home automation
-      meta_launch_url: https://pc-tips.se
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png
-      policy_engine_mode: any
-      provider: !KeyOf provider-homeassistant
-
-  - model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf homeassistant_application
-      group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
-    attrs:
-      order: 1
-
   - id: provider-homeassistant
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -71,8 +51,29 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
-            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
           ]
+
+  - id: homeassistant_application
+    model: authentik_core.application
+    identifiers:
+      slug: home-assistant
+    attrs:
+      name: Home assistant
+      group: Maison
+      description: Home automation
+      meta_launch_url: https://pc-tips.se
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png
+      policy_engine_mode: any
+      provider: !KeyOf provider-homeassistant
+
+  - id: homeassistant_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf homeassistant_application
+      group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
+    attrs:
+      order: 1
 
   - id: provider-zigbee2mqtt
     model: authentik_providers_oauth2.oauth2provider
@@ -114,6 +115,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
 
@@ -129,7 +138,8 @@ entries:
       provider: !KeyOf provider-zigbee2mqtt
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: zigbee2mqtt_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-zigbee2mqtt
       group: !Find [authentik_core.group, [name, "Home Assistant Users"]]

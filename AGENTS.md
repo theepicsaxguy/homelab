@@ -216,6 +216,51 @@ State environment assumptions (Node.js, npm versions) and where to run commands.
   kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
   ```
 
+**External Libraries Requirement**
+
+- **MCP tools required:** When an agent or developer adds, updates, or references an external library (package, SDK, or third-party API client) they MUST use the MCP Context7 and DeepWiki tools to resolve the library and fetch authoritative, up-to-date documentation and code examples before making changes. Use the resolver to obtain a Context7-compatible library ID and the docs endpoints to retrieve relevant pages; do not rely on memory or informal web searches.
+- **Record provenance:** Include which MCP calls and the resolved library ID(s) in the PR description so reviewers can verify sources.
+
+**Context7 (resolver + docs - `code` mode)**
+
+- **Resolve the library:** Use the MCP resolver to get the Context7-compatible library ID before fetching API docs. Example: call the resolver with `library-name` to get an ID like `/org/project` or `/org/project/version`.
+
+- **Fetch API references:** With the resolved ID, call the MCP docs endpoint in `code` mode to retrieve API references, signatures, and code examples. Start with `page=1` and paginate if needed.
+
+**OpenWiki / DeepWiki (docs - `info` mode)**
+
+- **Fetch conceptual guides:** Use the MCP docs endpoint in `info` mode or query DeepWiki/OpenWiki for narrative guides, migration notes, and best-practices that explain design intent and upgrade paths.
+
+**DeepWiki (#cognitionai/deepwiki) usage**
+
+- **Preferred source for narrative guidance:** When seeking conceptual guidance, migration notes, rationale, or best-practices prefer `#cognitionai/deepwiki` as the authoritative DeepWiki collection.
+- **How to call (resolver + docs):**
+  1. If you don't have the exact library ID, call `mcp_io_github_ups_resolve-library-id` with `libraryName` to resolve the library to a Context7-compatible ID.
+  2. Call `mcp_io_github_ups_get-library-docs` with `context7CompatibleLibraryID` and `mode=info` to fetch DeepWiki/OpenWiki-style narrative pages. If you specifically want `#cognitionai/deepwiki`, include that as the `libraryName` in the resolver or reference its pages in the docs call.
+  3. Use `page=1` initially and increment pages if the topic is large.
+
+- **What to include in the PR:**
+  - Which resolver call you ran and the returned `context7CompatibleLibraryID`.
+  - Which DeepWiki/OpenWiki pages you referenced (copy URLs or page titles).
+  - A short summary of the guidance you used and how it affected the change.
+
+- **Example sequence (pseudo):**
+  1. `mcp_io_github_ups_resolve-library-id { libraryName: "some-lib" }` → returns `/org/some-lib`
+  2. `mcp_io_github_ups_get-library-docs { context7CompatibleLibraryID: "/org/some-lib", mode: "info", page: 1 }` → returns narrative pages
+  3. Paste resolved ID and pages into PR: "Resolved `/org/some-lib` via resolver; used DeepWiki pages X,Y for migration guidance."
+
+
+**Practical workflow**
+
+1. Run the resolver for `library-name` → obtain `context7CompatibleLibraryID`.
+2. Call docs with `mode=code` and `context7CompatibleLibraryID` to collect API examples and reference snippets.
+3. Call docs with `mode=info` (or DeepWiki/OpenWiki) to collect conceptual guidance and migration notes.
+4. Copy the exact `context7CompatibleLibraryID` and the docs page URLs into the PR description as provenance.
+
+**Example PR note**
+
+Resolved library `/vercel/next.js/v14.3.0-canary.87` via MCP resolver; used Context7 docs pages A,B for API examples and OpenWiki page Z for migration guidance.
+
 ### Agent Session Efficiency Rules
 
 These rules prevent wasted turns, repeated mistakes, and user frustration, especially in infra/Kubernetes/DB debugging contexts.

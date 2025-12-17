@@ -47,6 +47,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-bazarr
@@ -60,7 +68,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/bazarr.png
       provider: !KeyOf provider-bazarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: bazarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-bazarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -107,6 +116,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-lidarr
@@ -120,7 +137,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/lidarr.png
       provider: !KeyOf provider-lidarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: lidarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-lidarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -167,6 +185,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-prowlarr
@@ -180,7 +206,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/prowlarr.png
       provider: !KeyOf provider-prowlarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: prowlarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-prowlarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -227,6 +254,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-radarr
@@ -240,7 +275,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/radarr.png
       provider: !KeyOf provider-radarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: radarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-radarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -287,6 +323,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-readarr
@@ -300,7 +344,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/readarr.png
       provider: !KeyOf provider-readarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: readarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-readarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -347,6 +392,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-sonarr
@@ -360,7 +413,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sonarr.png
       provider: !KeyOf provider-sonarr
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: sonarr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-sonarr
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -407,6 +461,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-qbittorrent
@@ -420,7 +482,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png
       provider: !KeyOf provider-qbittorrent
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: qbittorrent_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-qbittorrent
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -467,6 +530,14 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
+          ]
+        - !Find [
+            authentik_core.propertymapping,
             [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
           ]
   - id: application-sabnzbd
@@ -480,7 +551,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/sabnzbd.png
       provider: !KeyOf provider-sabnzbd
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: sabnzbd_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-sabnzbd
       group: !Find [authentik_core.group, [name, "Media Users"]]
@@ -532,7 +604,7 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
-            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
           ]
 
   - id: application-jellyseerr
@@ -547,18 +619,13 @@ entries:
       provider: !KeyOf provider-jellyseerr
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: jellyseerr_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-jellyseerr
       group: !Find [authentik_core.group, [name, "Media Users"]]
     attrs:
       order: 1
-  - model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf application-jellyseerr
-      group: !Find [authentik_core.group, [name, "Media Users"]]
-    attrs:
-      order: 2
 
   - id: provider-audiobookshelf
     model: authentik_providers_oauth2.oauth2provider
@@ -606,7 +673,7 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
-            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
           ]
 
   - id: application-audiobookshelf
@@ -621,7 +688,8 @@ entries:
       provider: !KeyOf provider-audiobookshelf
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: audiobookshelf_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-audiobookshelf
       group: !Find [authentik_core.group, [name, "Media Users"]]
