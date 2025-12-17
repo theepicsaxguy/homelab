@@ -305,6 +305,14 @@ general_settings:
   database_connection_pool_limit: 50
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
+  litellm_jwtauth:
+    user_roles_jwt_field: "groups"
+    sync_user_role_and_teams: true
+    jwt_litellm_role_map:
+      - jwt_role: "Litellm Admins"
+        litellm_role: "proxy_admin"
+      - jwt_role: "Litellm Users"
+        litellm_role: "internal_user"
   user_header_mappings:
     - header_name: X-OpenWebUI-User-Id
       litellm_user_role: internal_user
