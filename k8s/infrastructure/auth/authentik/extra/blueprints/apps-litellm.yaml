@@ -60,6 +60,10 @@ entries:
             authentik_core.propertymapping,
             [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
           ]
+        - !Find [
+            authentik_core.propertymapping,
+            [name, "authentik default OAuth Mapping: OpenID 'groups'"],
+          ]
 
   - id: litellm_application
     model: authentik_core.application

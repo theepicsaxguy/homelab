@@ -107,6 +107,20 @@ spec:
         barmanObjectName: database-backup-recovered
         serverName: database-cnpg-recovered
 
+  managed:
+    roles:
+    - name: app
+      ensure: present
+      login: true
+      superuser: false
+      createdb: false
+      createrole: false
+      inherit: true
+      replication: false
+      connectionLimit: -1
+      inRoles:
+      - litellm
+
   monitoring:
     enablePodMonitor: false
 

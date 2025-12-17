@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprints
+  namespace: auth
+data:
+  apps-litellm.yaml: |
+    # k8s/infrastructure/auth/authentik/extra/blueprints/apps-litellm.yaml
+    # yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+    # yamllint disable-file
+    # prettier-ignore-start
+    # eslint-disable
+    ---
+    version: 1
+    metadata:
+      name: Apps - Litellm
+    entries:
+      - id: litellm-user-group
+        model: authentik_core.group
+        identifiers:
+          name: Litellm Users
+        attrs:
+          name: Litellm Users
+      - id: litellm_provider
+        model: authentik_providers_oauth2.oauth2provider
+        identifiers:
+          name: k8s.pc-tips.se/ai/litellm
+        attrs:
+          authorization_flow:
+            !Find [
+              authentik_flows.flow,
+              [slug, "default-provider-authorization-implicit-consent"],
+            ]
+          signing_key:
+            !Find [
+              authentik_crypto.certificatekeypair,
+              [name, "authentik Self-signed Certificate"],
+            ]
+          invalidation_flow:
+            !Find [
+              authentik_flows.flow,
+              [slug, "default-provider-invalidation-flow"],
+            ]
+
+          client_type: confidential
+          client_id: !Env LITELLM_CLIENT_ID
+          client_secret: !Env LITELLM_CLIENT_SECRET
+          redirect_uris:
+            - url: https://litellm.pc-tips.se/sso/callback
+              matching_mode: strict
+
+          access_code_validity: minutes=1
+          access_token_validity: hours=1
+          refresh_token_validity: days=30
+
+          sub_mode: hashed_user_id
+          property_mappings:
+            - !Find [
+                authentik_core.propertymapping,
+                [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+              ]
+            - !Find [
+                authentik_core.propertymapping,
+                [name, "authentik default OAuth Mapping: OpenID 'profile'"],
+              ]
+            - !Find [
+                authentik_core.propertymapping,
+                [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+              ]
+            - !Find [
+                authentik_core.propertymapping,
+                [name, "authentik default OAuth Mapping: OpenID 'groups'"],
+              ]
+
+      - id: litellm_application
+        model: authentik_core.application
+        identifiers:
+          slug: litellm
+        attrs:
+          name: Litellm
+          group: AI
+          meta_description: AI Model Proxy
+          icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/litellm.png
+          provider: !KeyOf litellm_provider
+          policy_engine_mode: any
+
+      - model: authentik_policies.policybinding
+        identifiers:
+          target: !KeyOf litellm_application
+          group: !Find [authentik_core.group, [name, "Litellm Users"]]
+        attrs:
+          order: 1

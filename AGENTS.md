@@ -216,6 +216,116 @@ State environment assumptions (Node.js, npm versions) and where to run commands.
   kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
   ```
 
+### Agent Session Efficiency Rules
+
+These rules prevent wasted turns, repeated mistakes, and user frustration, especially in infra/Kubernetes/DB debugging contexts.
+
+#### 1. Respect Explicit User Constraints Immediately
+- If the user states a constraint (e.g. *"no superusers"*, *"CNPG best practice"*, *"use the config named X"*), **treat it as a hard rule**.
+- Never suggest or retry approaches that violate explicitly rejected patterns.
+- Do **not** "double-check" by rerunning the same commands hoping for a different result.
+
+✅ Good: "CNPG forbids superusers; we must work within managed roles."
+❌ Bad: Re-running `psql -U postgres` grants after user objected.
+
+#### 2. Never Re-run Identical Commands After User Pushback
+- If the user complains about repeated commands, **stop immediately**.
+- Switch to:
+  - static reasoning
+  - reading configs
+  - explaining *why* something fails
+- Repetition without new information is strictly disallowed.
+
+Trigger phrase examples:
+- "stop running the same commands"
+- "that's an antipattern"
+- "why are you doing this again"
+
+#### 3. Config Is Source of Truth
+- When the user says *"use the config"*:
+  - Stop mutating runtime state manually
+  - Stop issuing `GRANT`, `ALTER`, `CREATE` commands
+  - Only reason from:
+    - Kubernetes manifests
+    - operator CRDs (CNPG)
+    - application config files
+- All fixes must be expressed **as declarative config changes**, not imperative commands.
+
+✅ Correct: Modify `database.yaml`, `proxy_server_config.yaml`
+❌ Incorrect: Applying runtime SQL grants repeatedly
+
+#### 4. Operator-Managed Resources Must Be Solved at Operator Level
+- For Kubernetes operators (CNPG, Argo, etc.):
+  - Do not invent unsupported fields
+  - Validate CRD schema mentally before suggesting changes
+- If an error says `unknown field`, the fix is:
+  - Remove it
+  - Or use the operator's supported mechanism (roles, bootstrap SQL, init scripts)
+
+✅ Correct: "CNPG v1 does not support `managed.roles[].privileges`"
+❌ Incorrect: Retrying `kubectl apply` with the same invalid schema
+
+#### 5. Diagnose Root Cause Before Acting
+Before running *any* command, answer silently:
+1. What component is failing?
+2. Why is it failing?
+3. Who is responsible for fixing it (app, DB, operator, config)?
+
+In debugging sessions, the real causes are often:
+- Application attempting database creation with insufficient privileges
+- App pointing to wrong database name
+- Operator app user lacking CREATE DATABASE, by design
+
+Commands should only confirm a hypothesis, not replace thinking.
+
+#### 6. Application Expectations vs Platform Guarantees Must Be Reconciled
+- If an application assumes:
+  - superuser privileges
+  - CREATE DATABASE rights
+  - schema ownership
+- And the platform forbids it:
+  - The fix is **application configuration**, not privilege escalation.
+
+Rule:
+> Always downgrade the application's expectations to match the platform, never the reverse.
+
+#### 7. Avoid Tool Thrashing
+- Do not alternate rapidly between:
+  - kubectl
+  - SQL
+  - file edits
+without a clear plan.
+- Every tool invocation must introduce **new information**.
+
+If no new information is needed → explain, don't execute.
+
+#### 8. Acknowledge User Frustration and Adapt
+- When the user escalates language:
+  - Shorten responses
+  - Stop exploratory actions
+  - Provide a single, clear corrective explanation
+
+Do **not** defend previous actions. Pivot immediately.
+
+#### 9. Health Checks Passing ≠ System Working
+- If `/health` is OK but auth/migrations fail:
+  - Treat the app as **logically broken**
+  - Focus on startup hooks, migrations, and auth paths
+
+Never declare success based on readiness alone.
+
+#### 10. Summarize the Fix Path Explicitly
+At the end of analysis, always provide:
+- What was wrong (1–2 bullets)
+- Where it must be fixed (file/operator/config)
+- What must *not* be done again
+
+Example:
+> "The failure is Prisma trying to create a database using a CNPG app user. Fix by pointing LiteLLM to the existing `app` database and disabling database-creation migrations. Do not add superusers or runtime grants."
+
+#### One-Line Meta Rule (Most Important)
+> **If the user tells you *how* to fix something, your job is to explain *why it works*, not to try alternative fixes.**
+
 ## 4. Deployment, Routing, Gateway & Secrets
 
 This section captures conceptual deployment and routing so an agent can reason about adding services or routes.
@@ -286,6 +396,7 @@ This repository follows a hierarchical AGENTS.md structure. The closest AGENTS.m
 The following directories have their own AGENTS.md files with scope-specific guidance:
 
 - **`k8s/AGENTS.md`** — Kubernetes manifests, kustomize overlays, and GitOps patterns. Covers both `k8s/applications/` and `k8s/infrastructure/`.
+- **`k8s/applications/ai/AGENTS.md`** — AI-specific patterns, GPU access, vector databases, and shared resources like Qdrant.
 - **`tofu/AGENTS.md`** — OpenTofu/Terraform infrastructure provisioning (VMs, networking, cluster bootstrap).
 - **`images/AGENTS.md`** — Custom container images and Dockerfiles, CI build patterns.
 - **`website/AGENTS.md`** — Docusaurus documentation site, build and lint commands.
@@ -294,7 +405,7 @@ The following directories have their own AGENTS.md files with scope-specific gui
 
 Application categories under `k8s/applications/` follow the patterns defined in `k8s/AGENTS.md`:
 
-- `k8s/applications/ai/` — AI and ML applications (LiteLLM, OpenHands, etc.)
+- `k8s/applications/ai/` — AI and ML applications (LiteLLM, OpenHands, etc.) **[Has dedicated AGENTS.md]**
 - `k8s/applications/automation/` — Home automation (Home Assistant, Frigate, MQTT, Zigbee2MQTT)
 - `k8s/applications/external/` — External service proxies (Proxmox, TrueNAS)
 - `k8s/applications/media/` — Media management (Jellyfin, Immich, arr-stack, Audiobookshelf)
