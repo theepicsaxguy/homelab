@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: kiwix-serve
-          image: ghcr.io/kiwix/kiwix-serve:3.8.1 # renovate: docker=ghcr.io/kiwix/kiwix-serve
+          image: ghcr.io/kiwix/kiwix-serve:3.8.1
           imagePullPolicy: IfNotPresent
           env:
             - name: DOWNLOAD
@@ -47,19 +47,18 @@ spec:
             limits:
               cpu: "2000m"
               memory: 8Gi
-          readinessProbe:
+          startupProbe:
             httpGet:
               path: /
               port: 8080
             initialDelaySeconds: 60
-            periodSeconds: 30
+            periodSeconds: 60
             timeoutSeconds: 10
-            failureThreshold: 3
+            failureThreshold: 180  # 180 * 60s = 3 hours for initial download
           livenessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
