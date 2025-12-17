@@ -8,7 +8,7 @@ metadata:
   name: zigbee2mqtt-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 400Mi

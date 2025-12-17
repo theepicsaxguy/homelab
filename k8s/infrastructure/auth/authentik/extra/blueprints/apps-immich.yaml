@@ -56,7 +56,7 @@ entries:
           ]
         - !Find [
             authentik_core.propertymapping,
-            [name, "OAuth mapping: OpenID 'email' with mailPrimaryAddress"],
+            [name, "authentik default OAuth Mapping: OpenID 'email'"],
           ]
 
   - id: immich_application
@@ -71,15 +71,10 @@ entries:
       provider: !KeyOf immich_provider
       policy_engine_mode: any
 
-  - model: authentik_policies.policybinding
+  - id: immich_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf immich_application
       group: !Find [authentik_core.group, [name, "Immich Users"]]
     attrs:
       order: 1
-  - model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf immich_application
-      group: !Find [authentik_core.group, [name, "Immich Users"]]
-    attrs:
-      order: 2

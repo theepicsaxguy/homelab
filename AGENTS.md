@@ -216,6 +216,161 @@ State environment assumptions (Node.js, npm versions) and where to run commands.
   kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
   ```
 
+**External Libraries Requirement**
+
+- **MCP tools required:** When an agent or developer adds, updates, or references an external library (package, SDK, or third-party API client) they MUST use the MCP Context7 and DeepWiki tools to resolve the library and fetch authoritative, up-to-date documentation and code examples before making changes. Use the resolver to obtain a Context7-compatible library ID and the docs endpoints to retrieve relevant pages; do not rely on memory or informal web searches.
+- **Record provenance:** Include which MCP calls and the resolved library ID(s) in the PR description so reviewers can verify sources.
+
+**Context7 (resolver + docs - `code` mode)**
+
+- **Resolve the library:** Use the MCP resolver to get the Context7-compatible library ID before fetching API docs. Example: call the resolver with `library-name` to get an ID like `/org/project` or `/org/project/version`.
+
+- **Fetch API references:** With the resolved ID, call the MCP docs endpoint in `code` mode to retrieve API references, signatures, and code examples. Start with `page=1` and paginate if needed.
+
+**OpenWiki / DeepWiki (docs - `info` mode)**
+
+- **Fetch conceptual guides:** Use the MCP docs endpoint in `info` mode or query DeepWiki/OpenWiki for narrative guides, migration notes, and best-practices that explain design intent and upgrade paths.
+
+**DeepWiki (#cognitionai/deepwiki) usage**
+
+- **Preferred source for narrative guidance:** When seeking conceptual guidance, migration notes, rationale, or best-practices prefer `#cognitionai/deepwiki` as the authoritative DeepWiki collection.
+- **How to call (resolver + docs):**
+  1. If you don't have the exact library ID, call `mcp_io_github_ups_resolve-library-id` with `libraryName` to resolve the library to a Context7-compatible ID.
+  2. Call `mcp_io_github_ups_get-library-docs` with `context7CompatibleLibraryID` and `mode=info` to fetch DeepWiki/OpenWiki-style narrative pages. If you specifically want `#cognitionai/deepwiki`, include that as the `libraryName` in the resolver or reference its pages in the docs call.
+  3. Use `page=1` initially and increment pages if the topic is large.
+
+- **What to include in the PR:**
+  - Which resolver call you ran and the returned `context7CompatibleLibraryID`.
+  - Which DeepWiki/OpenWiki pages you referenced (copy URLs or page titles).
+  - A short summary of the guidance you used and how it affected the change.
+
+- **Example sequence (pseudo):**
+  1. `mcp_io_github_ups_resolve-library-id { libraryName: "some-lib" }` → returns `/org/some-lib`
+  2. `mcp_io_github_ups_get-library-docs { context7CompatibleLibraryID: "/org/some-lib", mode: "info", page: 1 }` → returns narrative pages
+  3. Paste resolved ID and pages into PR: "Resolved `/org/some-lib` via resolver; used DeepWiki pages X,Y for migration guidance."
+
+
+**Practical workflow**
+
+1. Run the resolver for `library-name` → obtain `context7CompatibleLibraryID`.
+2. Call docs with `mode=code` and `context7CompatibleLibraryID` to collect API examples and reference snippets.
+3. Call docs with `mode=info` (or DeepWiki/OpenWiki) to collect conceptual guidance and migration notes.
+4. Copy the exact `context7CompatibleLibraryID` and the docs page URLs into the PR description as provenance.
+
+**Example PR note**
+
+Resolved library `/vercel/next.js/v14.3.0-canary.87` via MCP resolver; used Context7 docs pages A,B for API examples and OpenWiki page Z for migration guidance.
+
+### Agent Session Efficiency Rules
+
+These rules prevent wasted turns, repeated mistakes, and user frustration, especially in infra/Kubernetes/DB debugging contexts.
+
+#### 1. Respect Explicit User Constraints Immediately
+- If the user states a constraint (e.g. *"no superusers"*, *"CNPG best practice"*, *"use the config named X"*), **treat it as a hard rule**.
+- Never suggest or retry approaches that violate explicitly rejected patterns.
+- Do **not** "double-check" by rerunning the same commands hoping for a different result.
+
+✅ Good: "CNPG forbids superusers; we must work within managed roles."
+❌ Bad: Re-running `psql -U postgres` grants after user objected.
+
+#### 2. Never Re-run Identical Commands After User Pushback
+- If the user complains about repeated commands, **stop immediately**.
+- Switch to:
+  - static reasoning
+  - reading configs
+  - explaining *why* something fails
+- Repetition without new information is strictly disallowed.
+
+Trigger phrase examples:
+- "stop running the same commands"
+- "that's an antipattern"
+- "why are you doing this again"
+
+#### 3. Config Is Source of Truth
+- When the user says *"use the config"*:
+  - Stop mutating runtime state manually
+  - Stop issuing `GRANT`, `ALTER`, `CREATE` commands
+  - Only reason from:
+    - Kubernetes manifests
+    - operator CRDs (CNPG)
+    - application config files
+- All fixes must be expressed **as declarative config changes**, not imperative commands.
+
+✅ Correct: Modify `database.yaml`, `proxy_server_config.yaml`
+❌ Incorrect: Applying runtime SQL grants repeatedly
+
+#### 4. Operator-Managed Resources Must Be Solved at Operator Level
+- For Kubernetes operators (CNPG, Argo, etc.):
+  - Do not invent unsupported fields
+  - Validate CRD schema mentally before suggesting changes
+- If an error says `unknown field`, the fix is:
+  - Remove it
+  - Or use the operator's supported mechanism (roles, bootstrap SQL, init scripts)
+
+✅ Correct: "CNPG v1 does not support `managed.roles[].privileges`"
+❌ Incorrect: Retrying `kubectl apply` with the same invalid schema
+
+#### 5. Diagnose Root Cause Before Acting
+Before running *any* command, answer silently:
+1. What component is failing?
+2. Why is it failing?
+3. Who is responsible for fixing it (app, DB, operator, config)?
+
+In debugging sessions, the real causes are often:
+- Application attempting database creation with insufficient privileges
+- App pointing to wrong database name
+- Operator app user lacking CREATE DATABASE, by design
+
+Commands should only confirm a hypothesis, not replace thinking.
+
+#### 6. Application Expectations vs Platform Guarantees Must Be Reconciled
+- If an application assumes:
+  - superuser privileges
+  - CREATE DATABASE rights
+  - schema ownership
+- And the platform forbids it:
+  - The fix is **application configuration**, not privilege escalation.
+
+Rule:
+> Always downgrade the application's expectations to match the platform, never the reverse.
+
+#### 7. Avoid Tool Thrashing
+- Do not alternate rapidly between:
+  - kubectl
+  - SQL
+  - file edits
+without a clear plan.
+- Every tool invocation must introduce **new information**.
+
+If no new information is needed → explain, don't execute.
+
+#### 8. Acknowledge User Frustration and Adapt
+- When the user escalates language:
+  - Shorten responses
+  - Stop exploratory actions
+  - Provide a single, clear corrective explanation
+
+Do **not** defend previous actions. Pivot immediately.
+
+#### 9. Health Checks Passing ≠ System Working
+- If `/health` is OK but auth/migrations fail:
+  - Treat the app as **logically broken**
+  - Focus on startup hooks, migrations, and auth paths
+
+Never declare success based on readiness alone.
+
+#### 10. Summarize the Fix Path Explicitly
+At the end of analysis, always provide:
+- What was wrong (1–2 bullets)
+- Where it must be fixed (file/operator/config)
+- What must *not* be done again
+
+Example:
+> "The failure is Prisma trying to create a database using a CNPG app user. Fix by pointing LiteLLM to the existing `app` database and disabling database-creation migrations. Do not add superusers or runtime grants."
+
+#### One-Line Meta Rule (Most Important)
+> **If the user tells you *how* to fix something, your job is to explain *why it works*, not to try alternative fixes.**
+
 ## 4. Deployment, Routing, Gateway & Secrets
 
 This section captures conceptual deployment and routing so an agent can reason about adding services or routes.
@@ -286,6 +441,7 @@ This repository follows a hierarchical AGENTS.md structure. The closest AGENTS.m
 The following directories have their own AGENTS.md files with scope-specific guidance:
 
 - **`k8s/AGENTS.md`** — Kubernetes manifests, kustomize overlays, and GitOps patterns. Covers both `k8s/applications/` and `k8s/infrastructure/`.
+- **`k8s/applications/ai/AGENTS.md`** — AI-specific patterns, GPU access, vector databases, and shared resources like Qdrant.
 - **`tofu/AGENTS.md`** — OpenTofu/Terraform infrastructure provisioning (VMs, networking, cluster bootstrap).
 - **`images/AGENTS.md`** — Custom container images and Dockerfiles, CI build patterns.
 - **`website/AGENTS.md`** — Docusaurus documentation site, build and lint commands.
@@ -294,7 +450,7 @@ The following directories have their own AGENTS.md files with scope-specific gui
 
 Application categories under `k8s/applications/` follow the patterns defined in `k8s/AGENTS.md`:
 
-- `k8s/applications/ai/` — AI and ML applications (LiteLLM, OpenHands, etc.)
+- `k8s/applications/ai/` — AI and ML applications (LiteLLM, OpenHands, etc.) **[Has dedicated AGENTS.md]**
 - `k8s/applications/automation/` — Home automation (Home Assistant, Frigate, MQTT, Zigbee2MQTT)
 - `k8s/applications/external/` — External service proxies (Proxmox, TrueNAS)
 - `k8s/applications/media/` — Media management (Jellyfin, Immich, arr-stack, Audiobookshelf)

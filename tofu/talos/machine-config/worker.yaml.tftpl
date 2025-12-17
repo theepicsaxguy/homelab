@@ -9,19 +9,6 @@ machine:
       - 10.96.0.10
     extraArgs:
       rotate-server-certificates: true
-    extraMounts:
-%{ if length(disks) > 0 }
-%{ for disk_name, disk in disks }
-      # bind‑mount each extra disk’s mountpoint
-      - destination: ${disk.mountpoint}
-        type: bind
-        source: ${disk.mountpoint}
-        options:
-          - bind
-          - rshared
-          - rw
-%{ endfor }
-%{ endif }
   %{ if igpu && gpu_node_exclusive }
   nodeTaints:
     gpu: "true:NoSchedule"

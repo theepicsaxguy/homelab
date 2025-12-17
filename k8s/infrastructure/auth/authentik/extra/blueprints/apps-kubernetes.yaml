@@ -38,7 +38,7 @@ entries:
       client_secret: !Env KUBECTL_CLIENT_SECRET
       redirect_uris:
         - url: http://localhost:8000
-          matching_mode: exact
+          matching_mode: strict
       access_code_validity: minutes=1
       access_token_validity: minutes=5
       refresh_token_validity: days=30
@@ -46,6 +46,7 @@ entries:
       property_mappings:
         - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'openid'"]]
         - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'profile'"]]
+        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'email'"]]
   - id: kubectl_application
     model: authentik_core.application
     identifiers:
@@ -57,7 +58,8 @@ entries:
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/kubernetes.png
       provider: !KeyOf kubectl_provider
       policy_engine_mode: any
-  - model: authentik_policies.policybinding
+  - id: kubectl_policy_binding
+    model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf kubectl_application
       group: !Find [authentik_core.group, [name, "Kubectl Users"]]

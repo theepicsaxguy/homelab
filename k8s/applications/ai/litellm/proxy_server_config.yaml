@@ -310,3 +310,15 @@ general_settings:
       litellm_user_role: internal_user
     - header_name: X-OpenWebUI-User-Email
       litellm_user_role: customer
+  generic_oauth:
+    client_id: "os.environ/GENERIC_CLIENT_ID"
+    client_secret: "os.environ/GENERIC_CLIENT_SECRET"
+    redirect_url: "https://litellm.pc-tips.se/sso/callback"
+    authorization_url: "https://sso.pc-tips.se/application/o/authorize/"
+    token_url: "https://sso.pc-tips.se/application/o/token/"
+    user_info_url: "https://sso.pc-tips.se/application/o/userinfo/"
+    user_id_field: "sub"
+    user_email_field: "email"
+    user_name_field: "name"
+    user_role_field: "groups"
+    scope: "openid profile email"

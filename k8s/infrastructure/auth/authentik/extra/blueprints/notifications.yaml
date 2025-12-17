@@ -26,7 +26,8 @@ entries:
       severity: alert
       group: !Find [authentik_core.group, [name, "authentik Admins"]]
 
-  - model: authentik_policies.policybinding
+  - id: notification_policy_binding_0
+    model: authentik_policies.policybinding
     identifiers:
       order: 0
       policy:
@@ -36,7 +37,8 @@ entries:
         ]
       target: !KeyOf rule
 
-  - model: authentik_policies.policybinding
+  - id: notification_policy_binding_1
+    model: authentik_policies.policybinding
     identifiers:
       order: 1
       policy:
@@ -46,7 +48,8 @@ entries:
         ]
       target: !KeyOf rule
 
-  - model: authentik_policies.policybinding
+  - id: notification_policy_binding_2
+    model: authentik_policies.policybinding
     identifiers:
       order: 2
       policy:
