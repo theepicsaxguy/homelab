@@ -52,7 +52,7 @@ spec:
               path: /
               port: 8080
             initialDelaySeconds: 60
-            periodSeconds: 60
+            periodSeconds: 90
             timeoutSeconds: 10
             failureThreshold: 180  # 180 * 60s = 3 hours for initial download
           livenessProbe:
