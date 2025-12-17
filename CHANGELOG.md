@@ -1,5 +1,164 @@
 # Changelog
 
+## 4.0.0 (2025-12-17)
+
+## What's Changed
+* Fix(configmap,-webui)--update-qdrant-semantic-cache-embedding-model-to-@cf/qwen/qwen3-embedding-0.6b by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1766
+* fix(configmap): add qdrant vector size to configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1767
+* chore(deps): update portkeyai/gateway docker tag to v1.14.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1769
+* chore(deps): update portkeyai/gateway docker tag to v1.14.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1771
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.11.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1772
+* chore(infra): reduce unnecessary HA configurations for homelab by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1765
+* Enable per-user spend tracking for LiteLLM via Open WebUI headers by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1773
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1761
+* feat(openwebui): add general tools and document search pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1774
+* chore(deps): bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/1770
+* Update document_search_pipeline.py by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1776
+* Add writable volume mount for /app/pipelines to fix pipeline loading by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1775
+* Fix Python 3.8 syntax errors and missing Pipeline class in document_search_pipeline.py by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1777
+* fix(k8s/openwebui): add persistent storage and API key for pipelines by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1778
+* Package pipeline files via ConfigMap instead of downloading from GitHub URLs by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1779
+* chore(deps): update helm release argo-cd to v9.1.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1780
+* chore(deps): update busybox docker tag to v1.37 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1781
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.37 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1782
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.38 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1783
+* chore(deps): update getmeili/meilisearch docker tag to v1.27.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1785
+* chore(deps): update mcr.microsoft.com/playwright docker tag to v1.57.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1787
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.40 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1786
+* chore(deps): update qdrant/qdrant docker tag to v1.16.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1788
+* chore(deps): update all dependencies to v79.8.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1789
+* chore(deps): update all dependencies to v79.8.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1790
+* chore(deps): update all dependencies to v79.8.2 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1791
+* chore(deps): update portkeyai/gateway docker tag to v1.14.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1792
+* feat(tofu): make load balancer deployment optional and disabled by default
+
+Add enable_lb feature flag to control load balancer deployment. This prevents
+tofu plan from prompting for lb-related variables when load balancer is not needed.
+
+Changes:
+- Add enable_lb variable (defaults to false)
+- Make lb_nodes, auth_pass, and lb_store optional with sensible defaults
+- Use count in lb module to conditionally deploy based on enable_lb flag
+
+To enable load balancer deployment, set enable_lb = true in your .tfvars file.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1794
+* Update nodes.auto.tfvars by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1793
+* feat(tofu): set CPU units default to 1024 for all nodes
+
+Add cpu_units configuration with default value of 1024 to prevent Proxmox
+from changing CPU units to 100 during VM updates. This ensures consistent
+CPU scheduling across control plane and worker nodes.
+
+Changes:
+- Add cpu_units field to defaults_worker and defaults_controlplane with default 1024
+- Add cpu_units to nodes_config variable type for per-node override capability
+- Update virtual-machines.tf cpu block to use cpu_units with fallback to 1024
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1795
+* feat(k8s/ai): add OpenHands AI coding agent with LiteLLM integration by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1796
+* chore(deps): update all dependencies to v24 (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1735
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1798
+* chore(deps): update dependency externalsecret to external-secrets.io/v1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1797
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1799
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1800
+* chore(deps): update all dependencies to v79.9.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1801
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.29.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1802
+* chore(deps): update helm release argo-cd to v9.1.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1803
+* chore(deps): update terraform proxmox to v0.88.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1804
+* chore(deps): update ghcr.io/jellyfin/jellyfin docker tag to v10.11.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1806
+* feat(authentik): require SSL mode for PostgreSQL connectiona by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1805
+* chore(deps): update getmeili/meilisearch docker tag to v1.28.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1807
+* chore(deps): update getmeili/meilisearch docker tag to v1.28.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1808
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1809
+* chore(deps): update helm release crossplane to v2.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1810
+* chore(deps): update helm release crossplane to v2.1.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1811
+* chore(config): update cache settings and add responses API documentation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1812
+* chore(deps): update all dependencies to v79.11.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1813
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.41 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1814
+* chore(deps): update getmeili/meilisearch docker tag to v1.28.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1815
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.29.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1817
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1818
+* Add OpenCode application deployment to k8s/applications/ai by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1816
+* fix(opencode): add emptyDir volume for /home/node/.local to fix read-… by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1819
+* chore(deps): update helm release argo-cd to v9.1.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1820
+* chore(kustomization): comment out unused resources in kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1821
+* chore(deps): update qdrant/qdrant docker tag to v1.16.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1822
+* chore(deps): update helm release gpu-operator to v25.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1823
+* fix(k8s): update authentik proxy references to ak-outpost-authentik-embedded-outpost by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1824
+* chore(kustomization): comment out unused headlessx resource by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1825
+* Remove FOSSA license check badges by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1827
+* Replace privileged mode with SYS_ADMIN capability in openhands DinD container by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1826
+* chore(deps): update helm release external-secrets to v1.1.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1830
+* chore(deps): update all dependencies to v79.12.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1831
+* feat(media): add audiobookshelf deployment by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1829
+* chore(deps): update terraform kubernetes to v3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1828
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.12.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1832
+* feat(k8s): update audiobookshelf deployment and add audiobookrequest service by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1833
+* chore(deps): update ghcr.io/blakeblackshear/frigate docker tag to v0.16.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1834
+* chore(deps): update terraform proxmox to v0.89.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1835
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.7.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1838
+* Feat(storage)--add-recurring-jobs-for-hourly-and-GFS-backup-tiers by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1837
+* chore(deps): update all dependencies to v80 (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1839
+* chore(deps): update getmeili/meilisearch docker tag to v1.29.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1841
+* chore(database): update postgresql volume size and labels by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1842
+* chore(deps): update lscr.io/linuxserver/unifi-network-application docker tag to v10.0.162 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1843
+* Add GPT-Researcher application with litellm integration by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1840
+* Update manager-hotfix-patch.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1844
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1845
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1847
+* chore(deps): update all dependencies to v80.1.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1848
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1849
+* refactor(database): replace Zalando Postgres with CloudNativePG in-place by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1846
+* chore(deps): update coredns/coredns docker tag to v1.13.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1850
+* Chore(auth)--remove-database-credentials.yaml-from-kustomization by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1851
+* chore(deps): update node.js to v24.12.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1852
+* docs(authentik): add AGENTS.md for blueprint creation and maintenance by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1854
+* chore(deps): update helm release redis to v24.0.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1855
+* docs(agents): Implement AGENTS.md maintenance structure per agents-maintainer spec by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1853
+* feat(auth): complete OIDC blueprint configuration for all applications by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1856
+* chore(deps): update helm release redis to v24.0.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1857
+* feat(k8s)!: migrate from Zalando PostgreSQL to CloudNativePG by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1858
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1859
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1860
+* Update database.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1861
+* Automated-Node-Upgrade-Plan by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1863
+* Kubernetes n8n deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1864
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1865
+* chore(deps): update all dependencies to v80.3.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1866
+* chore(deps): enhance renovate configuration and update Dockerfiles by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1867
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1862
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1868
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1869
+* fix(image-build): improve IMAGE_VERSION extraction in Dockerfile processing by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1870
+* feat(image-build): add manual workflow dispatch for image building by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1871
+* Feat(upgrade)--implement-sequential-node-upgrade-mechanism-and-enhance-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1873
+* chore(deps): update all dependencies to v80.3.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1874
+* chore(deps): update actions/upload-artifact action to v6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1872
+* chore(deps): update all dependencies to v80.4.1 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1875
+* Psql migration to cnpg by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1876
+* Longhorn replica zone anti-affinity by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1877
+* chore(deps): update helm release redis to v24.0.8 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1878
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1879
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.4.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1880
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1882
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1883
+* chore(deps): update helm release argo-cd to v9.1.8 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1884
+* Feat(longhorn)--enhance-storage-configuration-and-add-Prometheus-alerts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1881
+* feat(k8s): update audiobookshelf configuration and add OIDC support by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1885
+* Docs(k8s)--add-troubleshooting-section-for-Longhorn-disk-expansion-issues by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1887
+* Authentik group to litellm role mapping by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1888
+* Kiwix wikipedia deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1889
+* Authentik argocd redirect issue by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1890
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1886
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v3.10.0...v4.0.0
+
 ## 3.10.0 (2025-11-20)
 
 ## What's Changed
