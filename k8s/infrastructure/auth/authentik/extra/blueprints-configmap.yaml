@@ -21,6 +21,12 @@ data:
           name: Litellm Users
         attrs:
           name: Litellm Users
+      - id: litellm-admin-group
+        model: authentik_core.group
+        identifiers:
+          name: Litellm Admins
+        attrs:
+          name: Litellm Admins
       - id: litellm_provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:
