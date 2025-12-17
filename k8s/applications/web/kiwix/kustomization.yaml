@@ -3,9 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - pedro-bot-external-secret.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml
   - http-route.yaml
-  - mongodb-statefulset.yaml
