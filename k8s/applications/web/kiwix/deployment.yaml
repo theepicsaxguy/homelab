@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: kiwix
     app.kubernetes.io/part-of: kiwix
     app.kubernetes.io/component: service
-    app.kubernetes.io/version: "3.7.0"
+    app.kubernetes.io/version: "3.8.1"
 spec:
   replicas: 1
   strategy:
@@ -19,7 +19,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kiwix
-        app.kubernetes.io/version: "3.7.0"
+        app.kubernetes.io/version: "3.8.1"
     spec:
       securityContext:
         runAsNonRoot: true
@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: kiwix-serve
-          image: ghcr.io/kiwix/kiwix-serve:3.7.0-3 # renovate: docker=ghcr.io/kiwix/kiwix-serve
+          image: ghcr.io/kiwix/kiwix-serve:3.8.1 # renovate: docker=ghcr.io/kiwix/kiwix-serve
           imagePullPolicy: IfNotPresent
           env:
             - name: DOWNLOAD
