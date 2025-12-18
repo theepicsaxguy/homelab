@@ -15,9 +15,9 @@ variable "talos_image" {
   type = object({
     factory_url           = optional(string, "https://factory.talos.dev")
     schematic_path        = string
-    version               = string
+    version               = optional(string) # Defaults to var.versions.talos if not set
     update_schematic_path = optional(string)
-    update_version        = optional(string)
+    update_version        = optional(string) # Defaults to var.versions.talos if not set
     arch                  = optional(string, "amd64")
     platform              = optional(string, "nocloud")
     proxmox_datastore     = optional(string, "local")
@@ -216,4 +216,16 @@ variable "lb_store" {
   description = "datastore for loadbalancers"
   type        = string
   default     = "local"
+}
+
+variable "bootstrap_volumes" {
+  description = "Bootstrap volumes for Kubernetes persistent volumes"
+  type = map(object({
+    node    = string
+    size    = string
+    storage = optional(string, "local-zfs")
+    vmid    = optional(number, 9999)
+    format  = optional(string, "raw")
+  }))
+  default = {}
 }

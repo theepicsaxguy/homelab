@@ -70,7 +70,7 @@ defaultSettings:
   removeSnapshotsDuringFilesystemTrim: "enabled"
   offlineReplicaRebuilding: '{"v1":"enabled"}'
 persistence:
-  defaultClass: true
+  defaultClass: false  # Changed to false - proxmox-csi is now the default
   defaultClassReplicaCount: 3
   reclaimPolicy: Retain
   defaultFsType: ext4

@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
 - project.yaml
 - longhorn
+- proxmox-csi
 
 labels:
 - includeSelectors: true

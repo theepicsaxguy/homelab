@@ -12,6 +12,10 @@ terraform {
       source  = "siderolabs/talos"
       version = "0.9.0"
     }
+    restapi = {
+      source  = "Mastercard/restapi"
+      version = ">= 2.0.0"
+    }
   }
 }
 
@@ -32,4 +36,15 @@ provider "kubernetes" {
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
+}
+
+provider "restapi" {
+  uri                  = var.proxmox.endpoint
+  insecure             = var.proxmox.insecure
+  write_returns_object = true
+
+  headers = {
+    "Authorization" = var.proxmox.api_token
+    "Content-Type"  = "application/x-www-form-urlencoded"
+  }
 }

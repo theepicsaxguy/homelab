@@ -6,7 +6,4 @@ resources:
 - argocd
 - cert-manager
 - external-secrets
-#- crossplane
-#- node-feature-discovery
-#- nvidia-device-plugin
-#- velero
+- velero

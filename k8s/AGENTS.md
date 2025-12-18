@@ -52,7 +52,60 @@ k8s/applications/ai/litellm/
 - Sync waves: infrastructure is applied before applications (use ApplicationSet ordering when adding infra components).
 - Use `generatorOptions.disableNameSuffixHash: true` in kustomizations when you need stable resource names.
 
+## Storage
+
+### StorageClasses
+
+The cluster has multiple storage classes available:
+
+- **`proxmox-csi`** (Primary, `csi.proxmox.sinextra.dev`) — **Use this for all new workloads**. Provides dynamic provisioning directly from Proxmox Nvme1 ZFS datastore.
+  - Reclaim Policy: `Retain`
+  - Volume Binding Mode: `WaitForFirstConsumer` (binds when pod is scheduled)
+  - Supports volume expansion: Yes
+  - Backend: Proxmox datastore with direct ZFS volumes
+  - Configuration: `k8s/infrastructure/storage/proxmox-csi/`
+
+- **`longhorn`** (Legacy, `driver.longhorn.io`) — Default storage class for existing workloads. Being phased out for new applications.
+  - Reclaim Policy: `Retain`
+  - Supports replicated storage across nodes
+  - Use only for legacy apps that require Longhorn-specific features
+
+- **`longhorn-static`** (Legacy) — Static provisioning for manually-created Longhorn volumes
+
+### When to Use Each StorageClass
+
+**Use `proxmox-csi` for:**
+- All new applications and databases
+- Single-node stateful workloads (most common case)
+- Direct high-performance storage access
+
+**Use `longhorn` only for:**
+- Existing workloads already using it (migration pending)
+- Workloads requiring replicated storage across multiple nodes
+- Applications with existing backup jobs configured in Longhorn
+
+### Creating PersistentVolumeClaims
+
+For new applications, always specify `storageClassName: proxmox-csi`:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-app-data
+  namespace: my-namespace
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi  # Always use proxmox-csi for new workloads
+  resources:
+    requests:
+      storage: 10Gi
+```
+
 ## Backups (Longhorn)
+
+**Note:** Longhorn backup rules only apply to volumes using the `longhorn` StorageClass. Proxmox CSI volumes should be backed up using Proxmox native snapshot/backup mechanisms.
 
 See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup rules. Key rule: PVCs without backup labels are not backed up. Use labels `recurring-job.longhorn.io/source: enabled` plus group label `recurring-job-group.longhorn.io/gfs=enabled` or `.../daily=enabled`.
 
