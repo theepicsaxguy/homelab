@@ -307,6 +307,7 @@ general_settings:
   allow_requests_on_db_unavailable: false
   litellm_jwtauth:
     user_roles_jwt_field: "groups"
+    user_allowed_roles: ["Litellm Admins", "Litellm Users"]
     sync_user_role_and_teams: true
     jwt_litellm_role_map:
       - jwt_role: "Litellm Admins"
