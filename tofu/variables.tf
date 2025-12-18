@@ -15,9 +15,9 @@ variable "talos_image" {
   type = object({
     factory_url           = optional(string, "https://factory.talos.dev")
     schematic_path        = string
-    version               = string
+    version               = optional(string) # Defaults to var.versions.talos if not set
     update_schematic_path = optional(string)
-    update_version        = optional(string)
+    update_version        = optional(string) # Defaults to var.versions.talos if not set
     arch                  = optional(string, "amd64")
     platform              = optional(string, "nocloud")
     proxmox_datastore     = optional(string, "local")
