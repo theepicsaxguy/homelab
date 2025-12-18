@@ -50,7 +50,7 @@ entries:
       name: Karakeep
       group: AI
       meta_description: "A self-hostable bookmark-everything app with AI-based automatic tagging."
-      icon: https://raw.githubusercontent.com/karakeep/karakeep/main/public/logo_512.png
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/karakeep.png
       provider: !KeyOf karakeep-provider
       policy_engine_mode: any
 

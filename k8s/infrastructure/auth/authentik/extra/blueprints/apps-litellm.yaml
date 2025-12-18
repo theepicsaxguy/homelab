@@ -14,6 +14,12 @@ entries:
       name: Litellm Users
     attrs:
       name: Litellm Users
+  - id: litellm-admin-group
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Admins
+    attrs:
+      name: Litellm Admins
   - id: litellm_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -73,14 +79,21 @@ entries:
       name: Litellm
       group: AI
       meta_description: AI Model Proxy
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/litellm.png
+      icon: https://cdn.prod.website-files.com/66f2feef6cd182361acd52e8/67fe1c2809428a7beab6cd9b_litellm.jpg
       provider: !KeyOf litellm_provider
       policy_engine_mode: any
 
-  - id: litellm_policy_binding
+  - id: litellm_users_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf litellm_application
       group: !Find [authentik_core.group, [name, "Litellm Users"]]
     attrs:
       order: 1
+  - id: litellm_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf litellm_application
+      group: !Find [authentik_core.group, [name, "Litellm Admins"]]
+    attrs:
+      order: 2

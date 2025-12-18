@@ -10,6 +10,8 @@ spec:
       app: litellm
   strategy:
     type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -66,7 +68,9 @@ spec:
         - name: PROXY_BASE_URL
           value: "https://litellm.pc-tips.se"
         - name: GENERIC_SCOPE
-          value: "openid profile email"
+          value: "openid profile email groups"
+        - name: PROXY_LOGOUT_URL
+          value: "https://sso.pc-tips.se/application/o/litellm/end-session/"
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml
@@ -81,11 +85,11 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            path: /health/readiness
-            port: 4001
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 2
+            path: /
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
           failureThreshold: 3
         startupProbe:
           httpGet:

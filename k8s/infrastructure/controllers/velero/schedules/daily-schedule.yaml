@@ -1,0 +1,27 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily
+  namespace: velero
+  labels:
+    backup-tier: daily
+  annotations:
+    backup-policy.k8s.local/notes: "Daily backups: 14d TTL"
+spec:
+  schedule: "0 2 * * *" # daily at 02:00
+  template:
+    includedNamespaces:
+      - '*'
+    excludedNamespaces:
+      - velero
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    includeClusterResources: null
+    snapshotVolumes: null
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    ttl: 336h # 14 days

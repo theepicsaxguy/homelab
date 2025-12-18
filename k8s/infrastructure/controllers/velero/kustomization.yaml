@@ -5,6 +5,7 @@ namespace: velero
 resources:
   - namespace.yaml
   - externalsecret.yaml
+  - schedules/
 
 helmCharts:
   - name: velero

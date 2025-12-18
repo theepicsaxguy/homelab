@@ -69,7 +69,7 @@ entries:
       name: Open WebUI
       group: AI
       meta_description: Self-hosted AI platform
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openwebui.png
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-webui.png
       provider: !KeyOf openwebui_provider
       policy_engine_mode: any
 
