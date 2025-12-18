@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stalwart
+  namespace: stalwart
+  labels:
+    app.kubernetes.io/name: stalwart
+    app.kubernetes.io/part-of: stalwart
+    app.kubernetes.io/component: mail-server
+    app.kubernetes.io/version: "0.15.1"
+spec:
+  serviceName: stalwart
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stalwart
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: stalwart
+        app.kubernetes.io/version: "0.15.1"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: stalwart
+          image: stalwartlabs/stalwart:v0.15.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: HOSTNAME
+              value: "mail.peekoff.com"
+          ports:
+            - containerPort: 25
+              name: smtp
+              protocol: TCP
+            - containerPort: 587
+              name: submission
+              protocol: TCP
+            - containerPort: 465
+              name: smtps
+              protocol: TCP
+            - containerPort: 143
+              name: imap
+              protocol: TCP
+            - containerPort: 993
+              name: imaps
+              protocol: TCP
+            - containerPort: 110
+              name: pop3
+              protocol: TCP
+            - containerPort: 995
+              name: pop3s
+              protocol: TCP
+            - containerPort: 4190
+              name: managesieve
+              protocol: TCP
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 443
+              name: https
+              protocol: TCP
+          resources:
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+            limits:
+              cpu: "2000m"
+              memory: 4Gi
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+          volumeMounts:
+            - name: data
+              mountPath: /opt/stalwart
+            - name: config
+              mountPath: /opt/stalwart/etc/config-override.toml
+              subPath: config-override.toml
+            - name: secrets
+              mountPath: /opt/stalwart/secrets
+              readOnly: true
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: stalwart-data
+        - name: config
+          configMap:
+            name: stalwart-config
+        - name: secrets
+          secret:
+            secretName: stalwart-secret

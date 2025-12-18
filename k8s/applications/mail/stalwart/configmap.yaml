@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stalwart-config
+  namespace: stalwart
+data:
+  config-override.toml: |
+    # Stalwart Configuration Override
+    # This file supplements the default configuration
+
+    [server]
+    hostname = "mail.peekoff.com"
+
+    [server.listener."smtp"]
+    bind = ["0.0.0.0:25"]
+    protocol = "smtp"
+
+    [server.listener."submission"]
+    bind = ["0.0.0.0:587"]
+    protocol = "smtp"
+    tls.implicit = false
+
+    [server.listener."smtps"]
+    bind = ["0.0.0.0:465"]
+    protocol = "smtp"
+    tls.implicit = true
+
+    [server.listener."imap"]
+    bind = ["0.0.0.0:143"]
+    protocol = "imap"
+    tls.implicit = false
+
+    [server.listener."imaps"]
+    bind = ["0.0.0.0:993"]
+    protocol = "imap"
+    tls.implicit = true
+
+    [server.listener."pop3"]
+    bind = ["0.0.0.0:110"]
+    protocol = "pop3"
+    tls.implicit = false
+
+    [server.listener."pop3s"]
+    bind = ["0.0.0.0:995"]
+    protocol = "pop3"
+    tls.implicit = true
+
+    [server.listener."sieve"]
+    bind = ["0.0.0.0:4190"]
+    protocol = "managesieve"
+
+    [server.listener."http"]
+    bind = ["0.0.0.0:8080"]
+    protocol = "http"
+
+    [server.listener."https"]
+    bind = ["0.0.0.0:443"]
+    protocol = "http"
+    tls.implicit = true
+
+    # SMTP Relay Configuration (mailbox.org)
+    [session.relay."mailbox-org"]
+    host = "smtp.mailbox.org"
+    port = 587
+    protocol = "smtp"
+    auth.username = "%{file:/opt/stalwart/secrets/RELAY_USERNAME}%"
+    auth.secret = "%{file:/opt/stalwart/secrets/RELAY_PASSWORD}%"
+    tls.enable = true
+    tls.allow-invalid-certs = false
+
+    [session.ehlo.script]
+    # Route external emails through mailbox.org relay
+    if remote_ip.is_loopback() || remote_ip.is_private() {
+        # Local/internal emails, send directly
+    } else {
+        # External emails, use relay
+        set "envelope.rcpt.relay" "mailbox-org";
+    }

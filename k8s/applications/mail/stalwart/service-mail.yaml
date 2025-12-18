@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stalwart-mail
+  namespace: stalwart
+  labels:
+    app.kubernetes.io/name: stalwart
+  annotations:
+    # Preserve client source IPs for proper SPF/DKIM
+    metallb.universe.tf/allow-shared-ip: "stalwart-mail"
+spec:
+  selector:
+    app.kubernetes.io/name: stalwart
+  ports:
+    - name: smtp
+      protocol: TCP
+      port: 25
+      targetPort: 25
+    - name: submission
+      protocol: TCP
+      port: 587
+      targetPort: 587
+    - name: smtps
+      protocol: TCP
+      port: 465
+      targetPort: 465
+    - name: imap
+      protocol: TCP
+      port: 143
+      targetPort: 143
+    - name: imaps
+      protocol: TCP
+      port: 993
+      targetPort: 993
+    - name: pop3
+      protocol: TCP
+      port: 110
+      targetPort: 110
+    - name: pop3s
+      protocol: TCP
+      port: 995
+      targetPort: 995
+  type: LoadBalancer
+  externalTrafficPolicy: Local
