@@ -1,248 +1,483 @@
 model_list:
-      - model_name: qwen3-embedding-0.6b
-        litellm_params:
-          model: "openai/@cf/qwen/qwen3-embedding-0.6b"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: embedding
-      - model_name: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
-        litellm_params:
-          model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 3072
-          max_output_tokens: 3072
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 3072
-      - model_name: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
-        litellm_params:
-          model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 2048
-          max_output_tokens: 2048
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 2048
-      - model_name: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
-        litellm_params:
-          model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 8192
-          max_output_tokens: 8192
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 8192
-      - model_name: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
-        litellm_params:
-          model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 4096
-          max_output_tokens: 4096
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 4096
-      - model_name: gpt-5.2-chat
-        litellm_params:
-          model: gpt-5.2-chat
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 128000
-          max_output_tokens: 16384
-          input_cost_per_token: 0.00000175
-          output_cost_per_token: 0.000014
-          cache_read_input_token_cost: 0.000000175
-          cache_read_input_token_cost_priority: 0.00000035
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 16384
-          output_cost_per_token_priority: 0.000028
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-5.2
-        litellm_params:
-          model: gpt-5.2
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 400000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000175
-          output_cost_per_token: 0.000014
-          cache_read_input_token_cost: 0.000000175
-          cache_read_input_token_cost_priority: 0.00000035
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.000028
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-            - "image"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_service_tier: true
-          supports_vision: true
-      - model_name: gpt-5.1
-        litellm_params:
-          model: gpt-5.1
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000125
-          output_cost_per_token: 0.00001
-          cache_read_input_token_cost: 0.000000125
-          cache_read_input_token_cost_priority: 0.00000025
-          input_cost_per_token_priority: 0.0000025
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.00002
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-            - "image"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_service_tier: true
-          supports_vision: true
-      - model_name: gpt-5.1-codex
-        litellm_params:
-          model: gpt-5.1-codex
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000125
-          output_cost_per_token: 0.00001
-          cache_read_input_token_cost: 0.000000125
-          cache_read_input_token_cost_priority: 0.00000025
-          input_cost_per_token_priority: 0.0000025
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.00002
-          supported_endpoints:
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: false
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-5.1-codex-mini
-        litellm_params:
-          model: gpt-5.1-codex-mini
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000025
-          output_cost_per_token: 0.000002
-          cache_read_input_token_cost: 0.000000025
-          cache_read_input_token_cost_priority: 0.000000045
-          input_cost_per_token_priority: 0.00000045
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.0000036
-          supported_endpoints:
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: false
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-4.1
-        litellm_params:
-          model: gpt41
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: chat
-          max_input_tokens: 1047576
-          max_output_tokens: 32768
-          input_cost_per_token: 0.000002
-          output_cost_per_token: 0.000008
-          cache_read_input_token_cost: 0.0000005
-          cache_read_input_token_cost_priority: 0.000000875
-          input_cost_per_token_batches: 0.000001
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 32768
-          supports_vision: true
+  - model_name: qwen3-embedding-0.6b
+    litellm_params:
+      model: "openai/@cf/qwen/qwen3-embedding-0.6b"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: embedding
+
+  - model_name: cloudflare/@cf/meta/llama-2-7b-chat-fp16
+    litellm_params:
+      model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 3072
+      max_output_tokens: 3072
+
+  - model_name: cloudflare/@cf/meta/llama-2-7b-chat-int8
+    litellm_params:
+      model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 2048
+      max_output_tokens: 2048
+
+  - model_name: cloudflare/@cf/mistral/mistral-7b-instruct-v0.1
+    litellm_params:
+      model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 8192
+      max_output_tokens: 8192
+
+  - model_name: cloudflare/@hf/thebloke/codellama-7b-instruct-awq
+    litellm_params:
+      model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 4096
+      max_output_tokens: 2048
+
+# Azure/OpenAI models (cleaned, deduplicated, using openai_api_key_1 and openai_base_url_1)
+  - model_name: codex-mini
+    litellm_params:
+      model: codex-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+
+  - model_name: computer-use-preview
+    litellm_params:
+      model: computer-use-preview
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000012
+
+  - model_name: dall-e-3
+    litellm_params:
+      model: dall-e-3
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+
+  - model_name: embedding3large
+    litellm_params:
+      model: embedding3large
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 705000
+      input_cost_per_token: 0.00000013
+      output_cost_per_token: 0.00000026
+
+  - model_name: embeddingada
+    litellm_params:
+      model: embeddingada
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 350000
+
+  - model_name: text-embedding-3-small
+    litellm_params:
+      model: text-embedding-3-small
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 10000000
+      input_cost_per_token: 0.00000002
+      output_cost_per_token: 0.00000002
+
+  - model_name: gpt-4o-transcribe-diarize
+    litellm_params:
+      model: gpt-4o-transcribe-diarize
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 400000
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
+
+  - model_name: gpt-5.1
+    litellm_params:
+      model: gpt41
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      # Set a practical large context window for modern multipurpose GPT-4.x models
+      max_input_tokens: 5000000
+      max_output_tokens: 16384
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.1-mini
+    litellm_params:
+      model: gpt-4.1-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 5000000
+      max_output_tokens: 2048
+      input_cost_per_token: 0.0000004
+      output_cost_per_token: 0.0000016
+      input_cost_per_token_cached: 0.0000001
+
+  - model_name: gpt-5.1-nano
+    litellm_params:
+      model: gpt-4.1-nano
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 5000000
+      max_output_tokens: 1024
+      input_cost_per_token: 0.0000001
+      output_cost_per_token: 0.0000004
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: gpt-5
+    litellm_params:
+      model: gpt-5
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      # GPT-5 family (hosted) - expose a very large context window while keeping outputs bounded
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5-chat
+    litellm_params:
+      model: gpt-5-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5-codex
+    litellm_params:
+      model: gpt-5-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5-mini
+    litellm_params:
+      model: gpt-5-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: gpt-5-nano
+    litellm_params:
+      model: gpt-5-nano
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 150000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000005
+      output_cost_per_token: 0.0000004
+      input_cost_per_token_cached: 0.00000001
+
+  - model_name: gpt-5-pro
+    litellm_params:
+      model: gpt-5-pro
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 1000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00012
+
+  - model_name: gpt-5.1
+    litellm_params:
+      model: gpt-5.1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 9107000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.1-chat
+    litellm_params:
+      model: gpt-5.1-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.1-codex
+    litellm_params:
+      model: gpt-5.1-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 9006000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.1-codex-max
+    litellm_params:
+      model: gpt-5.1-codex-max
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.1-codex-mini
+    litellm_params:
+      model: gpt-5.1-codex-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: gpt-5.2
+    litellm_params:
+      model: gpt-5.2
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-5.2-chat
+    litellm_params:
+      model: gpt-5.2-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: gpt-audio
+    litellm_params:
+      model: gpt-audio
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
+
+  - model_name: gpt-image-1
+    litellm_params:
+      model: gpt-image-1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000005
+      output_cost_per_token: 0.00004
+
+  - model_name: gpt-image-1-mini
+    litellm_params:
+      model: gpt-image-1-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000002
+
+  - model_name: gpt-realtime
+    litellm_params:
+      model: gpt-realtime
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: realtime
+      max_input_tokens: 100000
+      input_cost_per_token: 0.000004
+      output_cost_per_token: 0.000016
+      input_cost_per_token_cached: 0.0000004
+      max_output_tokens: 4096
+
+  - model_name: model-router
+    litellm_params:
+      model: model-router
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 100000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: o1
+    litellm_params:
+      model: o1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00006
+      input_cost_per_token_cached: 0.0000075
+
+  - model_name: o1-mini
+    litellm_params:
+      model: o1-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 5000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+      input_cost_per_token_cached: 0.00000055
+
+  - model_name: o3
+    litellm_params:
+      model: o3
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000005
+  - model_name: o3-mini
+    litellm_params:
+      model: o3-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 50000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+      input_cost_per_token_cached: 0.00000055
+
+  - model_name: o3-pro
+    litellm_params:
+      model: o3-pro
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 16000000
+      max_output_tokens: 4096
+
+  - model_name: o4-mini
+    litellm_params:
+      model: o4-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+
+  - model_name: sora
+    litellm_params:
+      model: sora
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+
+  - model_name: sora-2
+    litellm_params:
+      model: sora-2
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
 
 litellm_settings:
   callbacks: ["prometheus"]
@@ -264,7 +499,6 @@ litellm_settings:
   turn_off_message_logging: false
   redact_user_api_key_info: true
   enable_json_schema_validation: true
-  set_verbose: true
   drop_params: true
   extra_spend_tag_headers:
     - "X-OpenWebUI-User-Id"
@@ -299,8 +533,6 @@ general_settings:
   background_health_checks: false
   health_check_interval: 300
   health_check_details: true
-  max_request_size_mb: 20
-  max_response_size_mb: 25
   database_connection_pool_limit: 50
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
