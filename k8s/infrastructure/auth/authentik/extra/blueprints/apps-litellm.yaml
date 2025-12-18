@@ -14,6 +14,12 @@ entries:
       name: Litellm Users
     attrs:
       name: Litellm Users
+  - id: litellm-admin-group
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Admins
+    attrs:
+      name: Litellm Admins
   - id: litellm_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
@@ -77,10 +83,17 @@ entries:
       provider: !KeyOf litellm_provider
       policy_engine_mode: any
 
-  - id: litellm_policy_binding
+  - id: litellm_users_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf litellm_application
       group: !Find [authentik_core.group, [name, "Litellm Users"]]
     attrs:
       order: 1
+  - id: litellm_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf litellm_application
+      group: !Find [authentik_core.group, [name, "Litellm Admins"]]
+    attrs:
+      order: 2
