@@ -97,3 +97,9 @@ entries:
       name: Litellm Users
     attrs:
       name: Litellm Users
+  - id: litellm-admins
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Admins
+    attrs:
+      name: Litellm Admins
