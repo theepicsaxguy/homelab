@@ -217,3 +217,15 @@ variable "lb_store" {
   type        = string
   default     = "local"
 }
+
+variable "bootstrap_volumes" {
+  description = "Bootstrap volumes for Kubernetes persistent volumes"
+  type = map(object({
+    node    = string
+    size    = string
+    storage = optional(string, "local-zfs")
+    vmid    = optional(number, 9999)
+    format  = optional(string, "raw")
+  }))
+  default = {}
+}
