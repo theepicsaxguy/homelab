@@ -7,15 +7,14 @@ version: 1
 metadata:
   name: Users
 entries:
-  - id: user-admin
+  - id: !Env ADMIN_USERNAME
     model: authentik_core.user
     identifiers:
-      username: admin-user
+      username: !Env ADMIN_USERNAME
     attrs:
-      username: admin-user
-      name: Admin User
+      username: !Env ADMIN_USERNAME
+      name: !Env ADMIN_NAME
       email: !Env ADMIN_EMAIL
-      password: !Env ADMIN_PASSWORD
       groups:
         # admin-level groups
         - !Find [authentik_core.group, [name, "ArgoCD Admins"]]
@@ -31,16 +30,17 @@ entries:
         - !Find [authentik_core.group, [name, "Open WebUI Users"]]
         - !Find [authentik_core.group, [name, "Karakeep Users"]]
         - !Find [authentik_core.group, [name, "Kubectl Users"]]
+        - !Find [authentik_core.group, [name, "Litellm Admins"]]
+        - !Find [authentik_core.group, [name, "Litellm Users"]]
 
-  - id: user-standard
+  - id: !Env USER_USERNAME
     model: authentik_core.user
     identifiers:
-      username: standard-user
+      username: !Env USER_USERNAME
     attrs:
-      username: standard-user
-      name: Standard User
+      username: !Env USER_USERNAME
+      name: !Env USER_NAME
       email: !Env USER_EMAIL
-      password: !Env USER_PASSWORD
       groups:
         - !Find [authentik_core.group, [name, "ArgoCD Viewers"]]
         - !Find [authentik_core.group, [name, "Grafana Users"]]
@@ -52,3 +52,4 @@ entries:
         - !Find [authentik_core.group, [name, "Open WebUI Users"]]
         - !Find [authentik_core.group, [name, "Karakeep Users"]]
         - !Find [authentik_core.group, [name, "Kubectl Users"]]
+        - !Find [authentik_core.group, [name, "Litellm Users"]]
