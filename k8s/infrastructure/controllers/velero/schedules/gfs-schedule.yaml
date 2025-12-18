@@ -1,0 +1,30 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-gfs
+  namespace: velero
+  labels:
+    backup-tier: gfs
+spec:
+  schedule: "0 * * * *" # hourly at :00 for GFS hourly window (adjust as needed)
+  template:
+    includedNamespaces:
+      - '*'
+    excludedNamespaces:
+      - velero
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - events.events.k8s.io
+      - storageclasses.storage.k8s.io
+    includeClusterResources: null
+    snapshotVolumes: null
+    storageLocation: default
+    volumeSnapshotLocations:
+      - default
+    # GFS intentions: keep hourly backups shorter, daily/weekly longer.
+    # Here TTL=14d for the schedule-created backups; longer-term retention
+    # (hourly/daily/weekly mix) can be adjusted via separate schedules or
+    # object lifecycle rules on the object store.
+    ttl: 336h # 14 days

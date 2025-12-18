@@ -36,11 +36,17 @@ spec:
           # only allows 1 download at a time. uncomment download until downloaded. then comment it out again to avoid re-downloading on pod restarts.
           # https://download.kiwix.org/zim/wikipedia_en_all_maxi.zim
           # https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim
-          # https://download.kiwix.org/zim/stack_exchange/stackoverflow.com_en_all_2023-11.zim
-            - name: DOWNLOAD
-              value: "https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim"
+          # https://download.kiwix.org/zim/wikibooks/wikibooks_sv_all_maxi_2025-10.zim
+          # https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim
+            # - name: DOWNLOAD
+            #   value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
             - name: PORT
               value: "8080"
+            - name: LANG
+              value: swe
+          # rely on image's default entrypoint so it can expand globs
+          args:
+            - "*.zim"
           ports:
             - containerPort: 8080
               name: http
@@ -55,24 +61,27 @@ spec:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 120
-            periodSeconds: 120
-            timeoutSeconds: 10
-            failureThreshold: 216  # 120s + (216 * 120s) = ~7.2 hours for initial 100GB download
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2160  # 2160*5s = 10800s = 3 hours
+
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 0
+            periodSeconds: 5
+            timeoutSeconds: 2
             failureThreshold: 3
+
           livenessProbe:
             httpGet:
               path: /
               port: 8080
-            periodSeconds: 30
-            timeoutSeconds: 10
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 2
             failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false

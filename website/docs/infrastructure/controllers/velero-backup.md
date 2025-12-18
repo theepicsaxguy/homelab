@@ -10,14 +10,13 @@ Velero manages cluster backups and restores. The configuration deploys the Helm 
 
 ## Key Points
 
-- Credentials come from the `ExternalSecret` named `velero-minio-credentials`.
-- Backups are stored in the `velero` bucket on the cluster's Minio instance.
-- Snapshots are handled by the Velero CSI plugin.
+- Velero is deployed via the Helm chart under `k8s/infrastructure/controllers/velero`.
+- BackupStorageLocation and VolumeSnapshotLocation are configured by the Helm chart using `values.yaml` (the chart creates the CRs when `upgradeCRDs` is enabled).
+- Credentials are provisioned via the `ExternalSecret` named `velero-minio-credentials` in the `velero` namespace; the chart is configured to use this secret.
+- Backups are stored in the `velero` bucket on the cluster's MinIO/Truenas S3 endpoint as configured in the chart values.
+- Snapshots are handled by the Velero CSI plugin; `features: EnableCSI` is enabled in the chart values.
 - Metrics are exposed via a ServiceMonitor for Prometheus.
 - The `velero` namespace is labeled `pod-security.kubernetes.io/enforce: privileged` so the node agent can mount required host paths.
-
-Once ArgoCD syncs the manifests, verify pods are running in `velero` before creating backups.
-
 ## Credentials Format
 
 The `velero-minio-credentials` secret must expose three values:
@@ -28,3 +27,4 @@ The `velero-minio-credentials` secret must expose three values:
 
 These values come from Bitwarden. The `ExternalSecret` assembles them into a
 `cloud` file so Velero can read standard AWS credentials.
+
