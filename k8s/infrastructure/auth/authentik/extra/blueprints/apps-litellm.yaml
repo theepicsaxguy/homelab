@@ -73,7 +73,7 @@ entries:
       name: Litellm
       group: AI
       meta_description: AI Model Proxy
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/litellm.png
+      icon: https://cdn.prod.website-files.com/66f2feef6cd182361acd52e8/67fe1c2809428a7beab6cd9b_litellm.jpg
       provider: !KeyOf litellm_provider
       policy_engine_mode: any
 
