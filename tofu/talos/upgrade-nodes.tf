@@ -33,7 +33,7 @@ locals {
   # Nodes that will actually change (marked AND versions differ)
   nodes_pending_upgrade = [
     for name in local.nodes_marked_for_upgrade : name
-    if local.target_version != var.talos_image.version
+    if local.target_version != local.effective_version
   ]
 }
 
@@ -52,7 +52,7 @@ output "upgrade_sequence" {
   value = {
     recommended_order        = local.upgrade_sequence
     total_nodes              = length(local.upgrade_sequence)
-    current_version          = var.talos_image.version
+    current_version          = local.effective_version
     target_version           = local.target_version
     nodes_marked_for_upgrade = local.nodes_marked_for_upgrade
     pending_upgrades         = local.nodes_pending_upgrade

@@ -51,10 +51,10 @@ spec:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 90
+            initialDelaySeconds: 120
+            periodSeconds: 120
             timeoutSeconds: 10
-            failureThreshold: 180  # 180 * 60s = 3 hours for initial download
+            failureThreshold: 216  # 120s + (216 * 120s) = ~7.2 hours for initial 100GB download
           livenessProbe:
             httpGet:
               path: /
