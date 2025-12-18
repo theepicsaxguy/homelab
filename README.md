@@ -1,6 +1,6 @@
 # Over-Engineered GitOps Homelab
 
-[![CI](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml/badge.svg)](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml) ![License](https://img.shields.io/github/license/theepicsaxguy/homelab)
+[![CI](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml/badge.svg)](https://github.com/theepicsaxguy/homelab/actions/workflows/image-build.yaml) [![Security Scan](https://github.com/theepicsaxguy/homelab/actions/workflows/security-scan.yaml/badge.svg)](https://github.com/theepicsaxguy/homelab/actions/workflows/security-scan.yaml) ![License](https://img.shields.io/github/license/theepicsaxguy/homelab)
 
 After rebuilding my homelab one too many times, I committed to managing it entirely with GitOps. This repository is the result: a blueprint for a resilient, production-inspired Kubernetes cluster.
 
