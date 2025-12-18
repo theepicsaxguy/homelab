@@ -56,7 +56,7 @@ model_list:
           max_tokens: 4096
       - model_name: gpt-5.2-chat
         litellm_params:
-          model: gpt-5.2-chat-latest
+          model: gpt-5.2-chat
           api_key: "os.environ/openai_api_key_1"
           api_base: "os.environ/openai_base_url_1"
         model_info:
@@ -228,7 +228,7 @@ model_list:
           supports_vision: true
       - model_name: gpt-4.1
         litellm_params:
-          model: gpt-4.1
+          model: gpt41
           api_key: "os.environ/openai_api_key_1"
           api_base: "os.environ/openai_base_url_1"
         model_info:
