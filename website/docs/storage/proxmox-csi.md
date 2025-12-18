@@ -4,44 +4,56 @@ This guide explains how storage works in the homelab using the Proxmox CSI (Cont
 
 ## Overview
 
-The homelab uses the [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) to provide dynamic storage provisioning for Kubernetes workloads. This allows applications to automatically request and receive persistent storage without manual intervention.
+The homelab uses the [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) (`csi.proxmox.sinextra.dev`) as the **primary storage provisioner** for new Kubernetes workloads. This provides dynamic volume provisioning directly from Proxmox datastores without requiring additional storage layers.
 
-## Architecture
+**Current Storage Classes:**
+- `proxmox-csi` — Primary storage class (Retain policy, WaitForFirstConsumer binding, expandable)
+- `longhorn` — Legacy storage class for existing workloads (being phased out)
+- `longhorn-static` — Legacy static provisioning
 
-### Dynamic Storage Provisioning (Recommended)
+The Proxmox CSI plugin allows applications to automatically request and receive persistent storage without manual intervention, with volumes created directly on the Proxmox Nvme1 ZFS datastore.
 
-The Proxmox CSI plugin enables **dynamic provisioning** through Kubernetes StorageClasses. When a PersistentVolumeClaim (PVC) is created, Kubernetes automatically:
+## How Dynamic Provisioning Works
 
-1. Creates a volume on Proxmox storage
-2. Creates a PersistentVolume (PV) in Kubernetes
-3. Binds the PVC to the PV
-4. Mounts the volume to the requesting pod
+The Proxmox CSI plugin provides **fully automatic storage provisioning**. You don't need to pre-create volumes, manually attach disks, or configure storage backends. Just create a PVC and the CSI plugin handles everything.
 
-**This is the recommended approach for most workloads.**
+### The Process (Completely Automatic)
 
-```yaml
-# Example PVC using dynamic provisioning
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: my-app-data
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: proxmox-csi  # Uses the Proxmox CSI StorageClass
-  resources:
-    requests:
-      storage: 10Gi
-```
+1. **You create a PVC:**
+   ```yaml
+   apiVersion: v1
+   kind: PersistentVolumeClaim
+   metadata:
+     name: my-app-data
+   spec:
+     storageClassName: proxmox-csi  # References the StorageClass
+     resources:
+       requests:
+         storage: 10Gi
+   ```
 
-### Static Volume Provisioning (Legacy)
+2. **CSI Controller sees the PVC and automatically:**
+   - Calls Proxmox API to create a new virtual disk: `vm-XXXX-pvc-<uuid>`
+   - Attaches the disk to the appropriate Proxmox node
+   - Formats the disk with ext4 (or specified filesystem)
+   - Creates a PersistentVolume (PV) in Kubernetes
+   - Binds the PVC to the PV
 
-For specific use cases like migrating existing data or manual volume placement, you can pre-provision static volumes. The `bootstrap/volumes` module supports this workflow.
+3. **Done!** Your pod can now mount the volume. The entire process is automatic - no manual intervention needed.
 
-**Use static provisioning only when:**
-- Migrating existing Proxmox volumes into Kubernetes
-- Requiring specific volume placement across Proxmox nodes
-- Working with legacy applications that need pre-created volumes
+### Key Benefits
+
+- **Zero manual steps**: No need to SSH into Proxmox or run `pvesm` commands
+- **Automatic placement**: Volumes are created on the same node where the pod is scheduled (WaitForFirstConsumer)
+- **Direct ZFS access**: Volumes are ZFS datasets on Nvme1, providing high performance
+- **Volume expansion**: Resize PVCs dynamically without recreating them
+- **Clean lifecycle**: When you delete a PVC, the volume is retained (Retain policy) for data safety
+
+## Why Not Pre-Provision Volumes?
+
+Unlike older storage systems, **you should never pre-create volumes manually**. The CSI plugin is designed for dynamic provisioning - it creates volumes on-demand as applications request them.
+
+The `bootstrap/volumes` Terraform module exists only for migrating pre-existing Proxmox volumes into Kubernetes, not for creating new storage.
 
 ## Bootstrap Configuration
 
@@ -118,40 +130,16 @@ spec:
           claimName: postgres-data
 ```
 
-### Static Volume Example (Optional)
+### That's It!
 
-To pre-provision volumes, add them to `tofu/bootstrap_volumes.auto.tfvars`:
+Notice what you **didn't** have to do:
+- No manual volume creation in Proxmox
+- No SSH into Proxmox nodes
+- No `pvesm alloc` commands
+- No manual PV creation
+- No volume attachment configuration
 
-```hcl
-bootstrap_volumes = {
-  "pv-prometheus" = {
-    node    = "host3"        # Proxmox node
-    size    = "50G"          # Volume size
-    storage = "local-zfs"    # Storage backend
-  }
-  "pv-postgres" = {
-    node    = "host3"
-    size    = "20G"
-  }
-}
-```
-
-Then reference the pre-created volume in your PVC:
-
-```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: prometheus-data
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: proxmox-csi
-  volumeName: pv-prometheus  # Bind to pre-created PV
-  resources:
-    requests:
-      storage: 50Gi
-```
+The CSI plugin handles all of this automatically when you create the PVC. This is the power of dynamic provisioning!
 
 ## StorageClass Configuration
 

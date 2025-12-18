@@ -145,7 +145,12 @@ Each AGENTS file should follow this minimal structure. Keep it short and machine
 At root, include a short architecture summary. Example for this repo:
 
 - Multicomponent homelab on Kubernetes (Talos) using GitOps (Argo CD).
-- Top-level flow: frontend SPA (website) → API services in `k8s/applications/*` → controllers & infra in `k8s/infrastructure/*` → long-lived data in Postgres (CloudNativePG) and Longhorn volumes.
+- Top-level flow: frontend SPA (website) → API services in `k8s/applications/*` → controllers & infra in `k8s/infrastructure/*` → long-lived data in Postgres (CloudNativePG) and persistent storage.
+- **Storage**: Proxmox CSI (`csi.proxmox.sinextra.dev`) is the primary storage provisioner for new workloads, providing dynamic volume provisioning directly from Proxmox datastores. Legacy workloads may still use Longhorn (`driver.longhorn.io`).
+  - StorageClass: `proxmox-csi` (Retain policy, WaitForFirstConsumer binding)
+  - Backend: Proxmox Nvme1 datastore with ZFS
+  - Bootstrap: Terraform creates Proxmox user/role/token in `tofu/bootstrap/proxmox-csi-plugin/`
+  - Deployment: Helm chart deployed via Kustomize in `k8s/infrastructure/storage/proxmox-csi/`
 - Infrastructure provisioning via OpenTofu (Terraform fork) in `tofu/`.
 - Secrets are sourced via External Secrets Operator from Bitwarden and injected into pods as env vars or mounted volumes.
 

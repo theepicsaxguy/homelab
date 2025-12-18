@@ -31,8 +31,13 @@ Notes:
 
 ## Structure & Examples
 
-- `tofu/` holds variables, provider blocks, and modules for Talos, load balancer, and node definitions.
-- Example files: `main.tf`, `providers.tf`, `output.tf`, `config.auto.tfvars`.
+- `tofu/` holds variables, provider blocks, and modules for Talos, load balancer, node definitions, and bootstrap resources.
+- Main configuration files: `main.tf`, `providers.tf`, `output.tf`, `config.auto.tfvars`, `bootstrap.tf`
+- `tofu/talos/` — Talos Linux cluster configuration and node provisioning
+- `tofu/lb/` — Load balancer configuration
+- `tofu/bootstrap/` — Bootstrap modules for cluster infrastructure:
+  - `bootstrap/proxmox-csi-plugin/` — Creates Proxmox user, role, and API token for Kubernetes CSI storage plugin
+  - `bootstrap/volumes/` — Optional static volume provisioning (rarely used; prefer dynamic provisioning via StorageClass)
 
 ## Safety & Boundaries
 
