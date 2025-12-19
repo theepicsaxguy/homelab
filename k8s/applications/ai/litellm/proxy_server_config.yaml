@@ -1,4 +1,5 @@
 model_list:
+
   - model_name: qwen3-embedding-0.6b
     litellm_params:
       model: "openai/@cf/qwen/qwen3-embedding-0.6b"
@@ -48,7 +49,7 @@ model_list:
       max_output_tokens: 2048
 
 # Azure/OpenAI models (cleaned, deduplicated, using openai_api_key_1 and openai_base_url_1)
-  - model_name: codex-mini
+  - model_name: azure/codex-mini
     litellm_params:
       model: codex-mini
       api_key: "os.environ/openai_api_key_1"
@@ -58,7 +59,7 @@ model_list:
       max_input_tokens: 10000000
       max_output_tokens: 4096
 
-  - model_name: computer-use-preview
+  - model_name: azure/computer-use-preview
     litellm_params:
       model: computer-use-preview
       api_key: "os.environ/openai_api_key_1"
@@ -70,7 +71,7 @@ model_list:
       input_cost_per_token: 0.000003
       output_cost_per_token: 0.000012
 
-  - model_name: dall-e-3
+  - model_name: azure/dall-e-3
     litellm_params:
       model: dall-e-3
       api_key: "os.environ/openai_api_key_1"
@@ -78,7 +79,7 @@ model_list:
     model_info:
       mode: image_generation
 
-  - model_name: embedding3large
+  - model_name: azure/embedding3large
     litellm_params:
       model: embedding3large
       api_key: "os.environ/openai_api_key_1"
@@ -89,7 +90,7 @@ model_list:
       input_cost_per_token: 0.00000013
       output_cost_per_token: 0.00000026
 
-  - model_name: embeddingada
+  - model_name: azure/embeddingada
     litellm_params:
       model: embeddingada
       api_key: "os.environ/openai_api_key_1"
@@ -98,7 +99,7 @@ model_list:
       mode: embedding
       max_input_tokens: 350000
 
-  - model_name: text-embedding-3-small
+  - model_name: azure/text-embedding-3-small
     litellm_params:
       model: text-embedding-3-small
       api_key: "os.environ/openai_api_key_1"
@@ -109,7 +110,7 @@ model_list:
       input_cost_per_token: 0.00000002
       output_cost_per_token: 0.00000002
 
-  - model_name: gpt-4o-transcribe-diarize
+  - model_name: azure/gpt-4o-transcribe-diarize
     litellm_params:
       model: gpt-4o-transcribe-diarize
       api_key: "os.environ/openai_api_key_1"
@@ -120,7 +121,7 @@ model_list:
       input_cost_per_token: 0.0000025
       output_cost_per_token: 0.00001
 
-  - model_name: gpt-5.1
+  - model_name: azure/gpt-5.1
     litellm_params:
       model: gpt41
       api_key: "os.environ/openai_api_key_1"
@@ -134,7 +135,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.1-mini
+  - model_name: azure/gpt-5.1-mini
     litellm_params:
       model: gpt-4.1-mini
       api_key: "os.environ/openai_api_key_1"
@@ -147,7 +148,7 @@ model_list:
       output_cost_per_token: 0.0000016
       input_cost_per_token_cached: 0.0000001
 
-  - model_name: gpt-5.1-nano
+  - model_name: azure/gpt-5.1-nano
     litellm_params:
       model: gpt-4.1-nano
       api_key: "os.environ/openai_api_key_1"
@@ -160,7 +161,7 @@ model_list:
       output_cost_per_token: 0.0000004
       input_cost_per_token_cached: 0.00000003
 
-  - model_name: gpt-5
+  - model_name: azure/gpt-5
     litellm_params:
       model: gpt-5
       api_key: "os.environ/openai_api_key_1"
@@ -174,7 +175,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5-chat
+  - model_name: azure/gpt-5-chat
     litellm_params:
       model: gpt-5-chat
       api_key: "os.environ/openai_api_key_1"
@@ -187,7 +188,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5-codex
+  - model_name: azure/gpt-5-codex
     litellm_params:
       model: gpt-5-codex
       api_key: "os.environ/openai_api_key_1"
@@ -200,7 +201,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5-mini
+  - model_name: azure/gpt-5-mini
     litellm_params:
       model: gpt-5-mini
       api_key: "os.environ/openai_api_key_1"
@@ -213,7 +214,7 @@ model_list:
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
 
-  - model_name: gpt-5-nano
+  - model_name: azure/gpt-5-nano
     litellm_params:
       model: gpt-5-nano
       api_key: "os.environ/openai_api_key_1"
@@ -226,7 +227,7 @@ model_list:
       output_cost_per_token: 0.0000004
       input_cost_per_token_cached: 0.00000001
 
-  - model_name: gpt-5-pro
+  - model_name: azure/gpt-5-pro
     litellm_params:
       model: gpt-5-pro
       api_key: "os.environ/openai_api_key_1"
@@ -238,7 +239,7 @@ model_list:
       input_cost_per_token: 0.000015
       output_cost_per_token: 0.00012
 
-  - model_name: gpt-5.1
+  - model_name: azure/gpt-5.1
     litellm_params:
       model: gpt-5.1
       api_key: "os.environ/openai_api_key_1"
@@ -251,7 +252,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.1-chat
+  - model_name: azure/gpt-5.1-chat
     litellm_params:
       model: gpt-5.1-chat
       api_key: "os.environ/openai_api_key_1"
@@ -264,7 +265,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.1-codex
+  - model_name: azure/gpt-5.1-codex
     litellm_params:
       model: gpt-5.1-codex
       api_key: "os.environ/openai_api_key_1"
@@ -277,7 +278,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.1-codex-max
+  - model_name: azure/gpt-5.1-codex-max
     litellm_params:
       model: gpt-5.1-codex-max
       api_key: "os.environ/openai_api_key_1"
@@ -290,7 +291,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.1-codex-mini
+  - model_name: azure/gpt-5.1-codex-mini
     litellm_params:
       model: gpt-5.1-codex-mini
       api_key: "os.environ/openai_api_key_1"
@@ -303,7 +304,7 @@ model_list:
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
 
-  - model_name: gpt-5.2
+  - model_name: azure/gpt-5.2
     litellm_params:
       model: gpt-5.2
       api_key: "os.environ/openai_api_key_1"
@@ -316,7 +317,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-5.2-chat
+  - model_name: azure/gpt-5.2-chat
     litellm_params:
       model: gpt-5.2-chat
       api_key: "os.environ/openai_api_key_1"
@@ -329,7 +330,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: gpt-audio
+  - model_name: azure/gpt-audio
     litellm_params:
       model: gpt-audio
       api_key: "os.environ/openai_api_key_1"
@@ -341,7 +342,7 @@ model_list:
       input_cost_per_token: 0.0000025
       output_cost_per_token: 0.00001
 
-  - model_name: gpt-image-1
+  - model_name: azure/gpt-image-1
     litellm_params:
       model: gpt-image-1
       api_key: "os.environ/openai_api_key_1"
@@ -351,7 +352,7 @@ model_list:
       input_cost_per_token: 0.000005
       output_cost_per_token: 0.00004
 
-  - model_name: gpt-image-1-mini
+  - model_name: azure/gpt-image-1-mini
     litellm_params:
       model: gpt-image-1-mini
       api_key: "os.environ/openai_api_key_1"
@@ -362,7 +363,7 @@ model_list:
       output_cost_per_token: 0.000008
       input_cost_per_token_cached: 0.0000002
 
-  - model_name: gpt-realtime
+  - model_name: azure/gpt-realtime
     litellm_params:
       model: gpt-realtime
       api_key: "os.environ/openai_api_key_1"
@@ -375,7 +376,7 @@ model_list:
       input_cost_per_token_cached: 0.0000004
       max_output_tokens: 4096
 
-  - model_name: model-router
+  - model_name: azure/model-router
     litellm_params:
       model: model-router
       api_key: "os.environ/openai_api_key_1"
@@ -388,7 +389,7 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: o1
+  - model_name: azure/o1
     litellm_params:
       model: o1
       api_key: "os.environ/openai_api_key_1"
@@ -401,7 +402,7 @@ model_list:
       output_cost_per_token: 0.00006
       input_cost_per_token_cached: 0.0000075
 
-  - model_name: o1-mini
+  - model_name: azure/o1-mini
     litellm_params:
       model: o1-mini
       api_key: "os.environ/openai_api_key_1"
@@ -414,7 +415,7 @@ model_list:
       output_cost_per_token: 0.0000044
       input_cost_per_token_cached: 0.00000055
 
-  - model_name: o3
+  - model_name: azure/o3
     litellm_params:
       model: o3
       api_key: "os.environ/openai_api_key_1"
@@ -426,7 +427,7 @@ model_list:
       input_cost_per_token: 0.000002
       output_cost_per_token: 0.000008
       input_cost_per_token_cached: 0.0000005
-  - model_name: o3-mini
+  - model_name: azure/o3-mini
     litellm_params:
       model: o3-mini
       api_key: "os.environ/openai_api_key_1"
@@ -439,7 +440,7 @@ model_list:
       output_cost_per_token: 0.0000044
       input_cost_per_token_cached: 0.00000055
 
-  - model_name: o3-pro
+  - model_name: azure/o3-pro
     litellm_params:
       model: o3-pro
       api_key: "os.environ/openai_api_key_1"
@@ -449,7 +450,7 @@ model_list:
       max_input_tokens: 16000000
       max_output_tokens: 4096
 
-  - model_name: o4-mini
+  - model_name: azure/o4-mini
     litellm_params:
       model: o4-mini
       api_key: "os.environ/openai_api_key_1"
@@ -463,7 +464,7 @@ model_list:
       input_cost_per_token: 0.0000011
       output_cost_per_token: 0.0000044
 
-  - model_name: sora
+  - model_name: azure/sora
     litellm_params:
       model: sora
       api_key: "os.environ/openai_api_key_1"
@@ -471,7 +472,7 @@ model_list:
     model_info:
       mode: image_generation
 
-  - model_name: sora-2
+  - model_name: azure/sora-2
     litellm_params:
       model: sora-2
       api_key: "os.environ/openai_api_key_1"
@@ -499,6 +500,7 @@ litellm_settings:
   turn_off_message_logging: false
   redact_user_api_key_info: true
   enable_json_schema_validation: true
+  set_verbose: true
   drop_params: true
   extra_spend_tag_headers:
     - "X-OpenWebUI-User-Id"
@@ -533,19 +535,19 @@ general_settings:
   background_health_checks: false
   health_check_interval: 300
   health_check_details: true
+  ui_access_mode: admin_only
+  max_request_size_mb: 20
+  max_response_size_mb: 25
   database_connection_pool_limit: 50
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
   litellm_jwtauth:
     user_roles_jwt_field: "groups"
-    user_allowed_roles: []
     sync_user_role_and_teams: true
     jwt_litellm_role_map:
       - jwt_role: "Litellm Admins"
         litellm_role: "proxy_admin"
       - jwt_role: "Litellm Users"
-        litellm_role: "internal_user"
-      - jwt_role: "internal_user_viewer"
         litellm_role: "internal_user"
   user_header_mappings:
     - header_name: X-OpenWebUI-User-Id
@@ -563,4 +565,4 @@ general_settings:
     user_email_field: "email"
     user_name_field: "name"
     user_role_field: "groups"
-    scope: "openid profile email groups"
+    scope: "openid profile email"
