@@ -33,23 +33,23 @@ spec:
           from: All
     - protocol: HTTPS
       port: 443
-      name: https-goingdark-gateway
-      hostname: goingdark.social
+      name: https-peekoff-gateway
+      hostname: peekoff.com
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-goingdark
+            name: cert-peekoff
       allowedRoutes:
         namespaces:
           from: All
     - protocol: HTTPS
       port: 443
-      name: https-domain-goingdark-gateway
-      hostname: "*.goingdark.social"
+      name: https-domain-peekoff-gateway
+      hostname: "*.peekoff.com"
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-goingdark
+            name: cert-peekoff
       allowedRoutes:
         namespaces:
           from: All
