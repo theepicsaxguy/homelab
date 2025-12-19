@@ -389,7 +389,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   postgresql:
     parameters:
@@ -637,7 +637,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   # ... rest of your config
 ```
@@ -849,7 +849,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   monitoring:
     enablePodMonitor: false

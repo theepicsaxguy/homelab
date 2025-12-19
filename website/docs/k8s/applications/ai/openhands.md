@@ -44,7 +44,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: longhorn
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 10Gi

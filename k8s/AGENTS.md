@@ -290,7 +290,7 @@ metadata:
     recurring-job.longhorn.io/source: enabled  # Required for PVC sync
     recurring-job-group.longhorn.io/gfs: enabled  # OR "daily" OR omit entirely
 spec:
-  storageClassName: longhorn
+  storageClassName: proxmox-csi
   accessModes:
     - ReadWriteOnce
   resources:

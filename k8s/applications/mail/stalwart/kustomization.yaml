@@ -3,9 +3,11 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - external-secret.yaml
+  - database.yaml
   - pvc.yaml
   - configmap.yaml
   - statefulset.yaml
   - service.yaml
   - service-mail.yaml
   - http-route.yaml
+  - http-route-admin.yaml

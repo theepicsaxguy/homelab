@@ -133,7 +133,7 @@ spec:
   - metadata:
       name: library
     spec:
-      storageClassName: longhorn
+      storageClassName: proxmox-csi
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:

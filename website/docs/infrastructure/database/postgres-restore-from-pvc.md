@@ -38,7 +38,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   bootstrap:
     recovery:
@@ -99,7 +99,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   bootstrap:
     recovery:

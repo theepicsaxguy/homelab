@@ -67,7 +67,6 @@ data:
     auth.secret = "%{file:/opt/stalwart/secrets/RELAY_PASSWORD}%"
     tls.enable = true
     tls.allow-invalid-certs = false
-
     [session.ehlo.script]
     # Route external emails through mailbox.org relay
     if remote_ip.is_loopback() || remote_ip.is_private() {
@@ -76,3 +75,10 @@ data:
         # External emails, use relay
         set "envelope.rcpt.relay" "mailbox-org";
     }
+    [store]
+    type = "postgresql"
+    host = "stalwart-postgresql-rw.stalwart.svc.cluster.local"
+    port = 5432
+    database = "stalwart"
+    username = "%{file:/opt/stalwart/db-secrets/username}%"
+    password = "%{file:/opt/stalwart/db-secrets/password}%"

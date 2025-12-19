@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  storageClassName: proxmox
+  storageClassName: proxmox-csi
