@@ -126,8 +126,6 @@ model_list:
       model: gpt41
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
     model_info:
       mode: chat
       # Set a practical large context window for modern multipurpose GPT-4.x models
@@ -136,44 +134,11 @@ model_list:
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/gpt-5.1-mini
-    litellm_params:
-      model: gpt-4.1-mini
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
-    model_info:
-      mode: chat
-      max_input_tokens: 5000000
-      max_output_tokens: 2048
-      input_cost_per_token: 0.0000004
-      output_cost_per_token: 0.0000016
-      input_cost_per_token_cached: 0.0000001
-
-  - model_name: azure/gpt-5.1-nano
-    litellm_params:
-      model: gpt-4.1-nano
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
-    model_info:
-      mode: chat
-      max_input_tokens: 5000000
-      max_output_tokens: 1024
-      input_cost_per_token: 0.0000001
-      output_cost_per_token: 0.0000004
-      input_cost_per_token_cached: 0.00000003
-
   - model_name: azure/gpt-5
     litellm_params:
       model: gpt-5
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
     model_info:
       mode: responses
       # GPT-5 family (hosted) - expose a very large context window while keeping outputs bounded
@@ -188,8 +153,6 @@ model_list:
       model: gpt-5-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 5000000
@@ -203,8 +166,6 @@ model_list:
       model: gpt-5-codex
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 10000000
@@ -218,8 +179,6 @@ model_list:
       model: gpt-5-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 10000000
@@ -233,8 +192,8 @@ model_list:
       model: gpt-5-nano
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 150000000
@@ -248,8 +207,8 @@ model_list:
       model: gpt-5-pro
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 1000000
@@ -262,8 +221,8 @@ model_list:
       model: gpt-5.1
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 9107000
@@ -277,8 +236,8 @@ model_list:
       model: gpt-5.1-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 5000000
@@ -292,8 +251,8 @@ model_list:
       model: gpt-5.1-codex
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 9006000
@@ -307,8 +266,8 @@ model_list:
       model: gpt-5.1-codex-max
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 10000000
@@ -322,8 +281,8 @@ model_list:
       model: gpt-5.1-codex-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 10000000
@@ -337,8 +296,8 @@ model_list:
       model: gpt-5.2
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 10000000
@@ -352,8 +311,8 @@ model_list:
       model: gpt-5.2-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
-      default_litellm_params:
-        reasoning_effort: "low"
+    default_litellm_params:
+      reasoning_effort: "low"
     model_info:
       mode: responses
       max_input_tokens: 5000000
