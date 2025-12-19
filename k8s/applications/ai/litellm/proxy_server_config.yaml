@@ -8,45 +8,45 @@ model_list:
     model_info:
       mode: embedding
 
-  - model_name: cloudflare/@cf/meta/llama-2-7b-chat-fp16
-    litellm_params:
-      model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
-      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-    model_info:
-      mode: chat
-      max_input_tokens: 3072
-      max_output_tokens: 3072
+  # - model_name: cloudflare/@cf/meta/llama-2-7b-chat-fp16
+  #   litellm_params:
+  #     model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 3072
+  #     max_output_tokens: 3072
 
-  - model_name: cloudflare/@cf/meta/llama-2-7b-chat-int8
-    litellm_params:
-      model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
-      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-    model_info:
-      mode: chat
-      max_input_tokens: 2048
-      max_output_tokens: 2048
+  # - model_name: cloudflare/@cf/meta/llama-2-7b-chat-int8
+  #   litellm_params:
+  #     model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 2048
+  #     max_output_tokens: 2048
 
-  - model_name: cloudflare/@cf/mistral/mistral-7b-instruct-v0.1
-    litellm_params:
-      model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
-      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-    model_info:
-      mode: chat
-      max_input_tokens: 8192
-      max_output_tokens: 8192
+  # - model_name: cloudflare/@cf/mistral/mistral-7b-instruct-v0.1
+  #   litellm_params:
+  #     model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 8192
+  #     max_output_tokens: 8192
 
-  - model_name: cloudflare/@hf/thebloke/codellama-7b-instruct-awq
-    litellm_params:
-      model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
-      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-    model_info:
-      mode: chat
-      max_input_tokens: 4096
-      max_output_tokens: 2048
+  # - model_name: cloudflare/@hf/thebloke/codellama-7b-instruct-awq
+  #   litellm_params:
+  #     model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 4096
+  #     max_output_tokens: 2048
 
 # Azure/OpenAI models (cleaned, deduplicated, using openai_api_key_1 and openai_base_url_1)
   - model_name: azure/codex-mini
@@ -55,7 +55,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 10000000
       max_output_tokens: 4096
 
@@ -427,7 +427,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 30000000
       max_output_tokens: 4096
       input_cost_per_token: 0.000015
@@ -440,7 +440,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 5000000
       max_output_tokens: 4096
       input_cost_per_token: 0.0000011
@@ -453,7 +453,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 10000000
       max_output_tokens: 32768
       input_cost_per_token: 0.000002
@@ -465,7 +465,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 50000000
       max_output_tokens: 4096
       input_cost_per_token: 0.0000011
@@ -478,7 +478,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 16000000
       max_output_tokens: 4096
 
@@ -488,7 +488,7 @@ model_list:
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
-      mode: chat
+      mode: responses
       max_input_tokens: 10000000
       max_output_tokens: 4096
       input_cost_per_token: 0.0000011
@@ -516,10 +516,12 @@ model_list:
     litellm_params:
       model: "cerebras/zai-glm-4.6"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 0.6
         top_p: 0.95
         max_tokens: 40960
+        stream: true
     model_info:
       mode: chat
       max_input_tokens: 100000
@@ -529,6 +531,7 @@ model_list:
     litellm_params:
       model: "cerebras/llama-3.3-70b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 0.2
         top_p: 1
@@ -542,6 +545,7 @@ model_list:
     litellm_params:
       model: "cerebras/qwen-3-235b-a22b-instruct-2507"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 0.7
         top_p: 0.8
@@ -555,6 +559,7 @@ model_list:
     litellm_params:
       model: "cerebras/qwen-3-32b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 0.6
         top_p: 0.95
@@ -568,6 +573,7 @@ model_list:
     litellm_params:
       model: "cerebras/gpt-oss-120b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 1
         top_p: 1
@@ -582,6 +588,7 @@ model_list:
     litellm_params:
       model: "cerebras/llama3.1-8b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      custom_llm_provider: "cerebras"
       default_litellm_params:
         temperature: 0.2
         top_p: 1
@@ -655,6 +662,10 @@ general_settings:
   litellm_jwtauth:
     user_roles_jwt_field: "groups"
     sync_user_role_and_teams: true
+    user_allowed_roles:
+      - proxy_admin
+      - internal_user
+      - customer
     jwt_litellm_role_map:
       - jwt_role: "Litellm Admins"
         litellm_role: "proxy_admin"
