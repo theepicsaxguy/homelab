@@ -411,8 +411,6 @@ model_list:
       max_output_tokens: 4096
       input_cost_per_token: 0.0000011
       output_cost_per_token: 0.0000044
-      input_cost_per_token: 0.0000011
-      output_cost_per_token: 0.0000044
 
   - model_name: azure/sora
     litellm_params:
@@ -801,8 +799,6 @@ model_list:
       max_output_tokens: 4096
       input_cost_per_token: 0.0000011
       output_cost_per_token: 0.0000044
-      input_cost_per_token: 0.0000011
-      output_cost_per_token: 0.0000044
 
   - model_name: openai/sora
     litellm_params:
@@ -899,6 +895,228 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 2048
+
+# Mistral models
+  # Frontier Models - Generalist
+  - model_name: mistral/mistral-large-3
+    litellm_params:
+      model: "mistral/mistral-large-3"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+      max_output_tokens: 8192
+
+  - model_name: mistral/mistral-medium-3.1
+    litellm_params:
+      model: "mistral/mistral-medium-3.1"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/mistral-small-3.2
+    litellm_params:
+      model: "mistral/mistral-small-3.2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/ministral-3-14b
+    litellm_params:
+      model: "mistral/ministral-3-14b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/ministral-3-8b
+    litellm_params:
+      model: "mistral/ministral-3-8b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/ministral-3-3b
+    litellm_params:
+      model: "mistral/ministral-3-3b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/magistral-medium-1.2
+    litellm_params:
+      model: "mistral/magistral-medium-1.2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/magistral-small-1.2
+    litellm_params:
+      model: "mistral/magistral-small-1.2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  # Specialist Models
+  - model_name: mistral/ocr-3
+    litellm_params:
+      model: "mistral/ocr-3"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: ocr
+
+  - model_name: mistral/voxtral-mini-transcribe
+    litellm_params:
+      model: "mistral/voxtral-mini-transcribe"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: audio_transcription
+
+  - model_name: mistral/codestral
+    litellm_params:
+      model: "mistral/codestral"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 32000
+      max_output_tokens: 8192
+
+  - model_name: mistral/devstral-2
+    litellm_params:
+      model: "mistral/devstral-2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/codestral-embed
+    litellm_params:
+      model: "mistral/codestral-embed"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
+
+  - model_name: mistral/voxtral-mini
+    litellm_params:
+      model: "mistral/voxtral-mini"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: audio_transcription
+
+  - model_name: mistral/voxtral-small
+    litellm_params:
+      model: "mistral/voxtral-small"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: audio_transcription
+
+  - model_name: mistral/mistral-moderation
+    litellm_params:
+      model: "mistral/mistral-moderation"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+
+  # Other Models
+  - model_name: mistral/mistral-small-creative
+    litellm_params:
+      model: "mistral/mistral-small-creative"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/devstral-small-2
+    litellm_params:
+      model: "mistral/devstral-small-2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/devstral-medium-1.0
+    litellm_params:
+      model: "mistral/devstral-medium-1.0"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/devstral-small-1.1
+    litellm_params:
+      model: "mistral/devstral-small-1.1"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/ocr-2
+    litellm_params:
+      model: "mistral/ocr-2"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: ocr
+
+  - model_name: mistral/mistral-medium-3
+    litellm_params:
+      model: "mistral/mistral-medium-3"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/mistral-large-2.1
+    litellm_params:
+      model: "mistral/mistral-large-2.1"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/pixtral-large
+    litellm_params:
+      model: "mistral/pixtral-large"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/mistral-nemo-12b
+    litellm_params:
+      model: "mistral/mistral-nemo-12b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 128000
+      max_output_tokens: 8192
+
+  - model_name: mistral/mistral-embed
+    litellm_params:
+      model: "mistral/mistral-embed"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
 
 litellm_settings:
   callbacks: ["prometheus"]
