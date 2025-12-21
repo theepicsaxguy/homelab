@@ -7,6 +7,7 @@ resources:
 - jellyfin
 - arr
 - media-share-pvc.yaml
+- audiobooks-shared-pvc.yaml
 - nfs-pv.yaml
 - jellyseerr-secrets.yaml
 - jellyseerr
