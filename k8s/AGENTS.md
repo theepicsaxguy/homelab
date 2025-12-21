@@ -1,11 +1,14 @@
 # Kubernetes Infrastructure - Agent Guidelines
 
-This document provides guidance for agents working with the Kubernetes infrastructure in this repository. It is a scoped `AGENTS.md` meant to be the authoritative source for anything under `k8s/`.
+This document provides guidance for agents working with the Kubernetes infrastructure in this repository. It is a scoped
+`AGENTS.md` meant to be the authoritative source for anything under `k8s/`.
 
 ## Purpose & Scope
 
-- Scope: `k8s/` (all files and subdirectories). Use this file as the primary reference for Kubernetes manifests, kustomize, Argo CD ApplicationSets, and operational patterns.
-- Goal: enable an agent to validate, extend, and reason about Kubernetes manifests and operational policies without external tools or secrets.
+- Scope: `k8s/` (all files and subdirectories). Use this file as the primary reference for Kubernetes manifests,
+  kustomize, Argo CD ApplicationSets, and operational patterns.
+- Goal: enable an agent to validate, extend, and reason about Kubernetes manifests and operational policies without
+  external tools or secrets.
 
 ## Quick-start Commands (verify locally)
 
@@ -26,15 +29,18 @@ kustomize build k8s/applications | kubeval --strict --ignore-missing-schemas
 ```
 
 Notes:
+
 - Use `--enable-helm` when a kustomization pulls in Helm charts.
 - `yq` and `kubeval` are recommended but optional; fall back to manual inspection if not available.
 
 ## Structure & Examples
 
-- `k8s/applications/` — user-facing apps organized by category (e.g., `ai/`, `media/`, `web/`). Each app should have its own `kustomization.yaml`.
+- `k8s/applications/` — user-facing apps organized by category (e.g., `ai/`, `media/`, `web/`). Each app should have its
+  own `kustomization.yaml`.
   - Active categories: `ai/`, `automation/`, `external/`, `media/`, `network/`, `tools/`, `web/`
   - Category-level AGENTS.md template available: `k8s/applications/AGENTS-TEMPLATE.md`
-  - Create category-level AGENTS.md when categories develop unique patterns (5+ apps, shared resources, or special workflows)
+  - Create category-level AGENTS.md when categories develop unique patterns (5+ apps, shared resources, or special
+    workflows)
 - `k8s/infrastructure/` — cluster-level components (controllers, network, storage, auth, database).
 - Example app layout:
 
@@ -58,14 +64,18 @@ k8s/applications/ai/litellm/
 
 The cluster has multiple storage classes available:
 
-- **`proxmox-csi`** (Primary, `csi.proxmox.sinextra.dev`) — **Use this for all new workloads**. Provides dynamic provisioning directly from Proxmox Nvme1 ZFS datastore.
+- **`proxmox-csi`** (Primary, `csi.proxmox.sinextra.dev`) — **Use this for all new workloads**. Provides dynamic
+  provisioning directly from Proxmox Nvme1 ZFS datastore.
+
   - Reclaim Policy: `Retain`
   - Volume Binding Mode: `WaitForFirstConsumer` (binds when pod is scheduled)
   - Supports volume expansion: Yes
   - Backend: Proxmox datastore with direct ZFS volumes
   - Configuration: `k8s/infrastructure/storage/proxmox-csi/`
 
-- **`longhorn`** (Legacy, `driver.longhorn.io`) — Default storage class for existing workloads. Being phased out for new applications.
+- **`longhorn`** (Legacy, `driver.longhorn.io`) — Default storage class for existing workloads. Being phased out for new
+  applications.
+
   - Reclaim Policy: `Retain`
   - Supports replicated storage across nodes
   - Use only for legacy apps that require Longhorn-specific features
@@ -75,11 +85,13 @@ The cluster has multiple storage classes available:
 ### When to Use Each StorageClass
 
 **Use `proxmox-csi` for:**
+
 - All new applications and databases
 - Single-node stateful workloads (most common case)
 - Direct high-performance storage access
 
 **Use `longhorn` only for:**
+
 - Existing workloads already using it (migration pending)
 - Workloads requiring replicated storage across multiple nodes
 - Applications with existing backup jobs configured in Longhorn
@@ -97,17 +109,50 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: proxmox-csi  # Always use proxmox-csi for new workloads
+  storageClassName: proxmox-csi # Always use proxmox-csi for new workloads
   resources:
     requests:
       storage: 10Gi
 ```
 
-## Backups (Longhorn)
+## Backups
 
-**Note:** Longhorn backup rules only apply to volumes using the `longhorn` StorageClass. Proxmox CSI volumes should be backed up using Proxmox native snapshot/backup mechanisms.
+### Longhorn Backup Strategy (for `longhorn` StorageClass only)
 
-See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup rules. Key rule: PVCs without backup labels are not backed up. Use labels `recurring-job.longhorn.io/source: enabled` plus group label `recurring-job-group.longhorn.io/gfs=enabled` or `.../daily=enabled`.
+**Note:** Longhorn backup rules **only apply to volumes using the `longhorn` StorageClass**. PVCs using `proxmox-csi`
+StorageClass are automatically backed up via Velero (see Velero Backup Strategy section below).
+
+See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup rules. Key rule: PVCs without backup
+labels are not backed up. Use labels `recurring-job.longhorn.io/source: enabled` plus group label
+`recurring-job-group.longhorn.io/gfs=enabled` or `.../daily=enabled`.
+
+### Velero Backup Strategy (for `proxmox-csi` StorageClass)
+
+**Overview:** Velero automatically backs up all resources in all namespaces via namespace-based schedules. PVCs using
+`proxmox-csi` StorageClass are automatically included via CSI snapshots - **no annotations or labels needed**.
+
+**Velero Schedules:**
+
+- `velero-daily`: Daily backups at 02:00, 14-day TTL
+- `velero-gfs`: Hourly backups for GFS tier, 14-day TTL
+- `velero-weekly`: Weekly backups on Sundays at 03:00, 28-day TTL
+
+All schedules are configured in `k8s/infrastructure/controllers/velero/schedules/` and include all namespaces by default
+(except the `velero` namespace itself).
+
+**Opt-Out Approach:**
+
+- By default, all PVCs in all namespaces are backed up automatically
+- To exclude specific volumes from backup, annotate the pod with `backup.velero.io/exclude-from-backup: "true"` or use
+  `backup.velero.io/backup-volumes-excludes` to exclude specific volume names
+- No annotations needed on PVCs themselves unless you want to specify a custom `VolumeSnapshotClass` via
+  `velero.io/csi-volumesnapshot-class`
+
+**Best Practices:**
+
+- PVCs using `proxmox-csi` are automatically backed up - no configuration needed
+- Use pod-level annotations only if you need to exclude specific volumes (e.g., cache, temp data)
+- For critical workloads, ensure they're included in the appropriate Velero schedule (daily, gfs, or weekly)
 
 ## How to Add an Application
 
@@ -119,7 +164,8 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 ## Testing Manifests
 
 - Unit: Validate that each `kustomization.yaml` builds without error.
-- Integration: `kustomize build` for parent directories (`k8s/applications` and `k8s/infrastructure`) and run `kubeval` or CI validators.
+- Integration: `kustomize build` for parent directories (`k8s/applications` and `k8s/infrastructure`) and run `kubeval`
+  or CI validators.
 - CI: PRs should include `kustomize build --enable-helm` in their CI step (see repo workflows for examples).
 
 ## Boundaries & Safety
@@ -134,12 +180,14 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Auto-Generated Secret Names**
 
-- **When using operators that auto-generate secrets** (like CloudNativePG/CNPG), verify the generated secret name before referencing it in applications. Operators often append suffixes like `-app`, `-superuser`, or `-owner`.
+- **When using operators that auto-generate secrets** (like CloudNativePG/CNPG), verify the generated secret name before
+  referencing it in applications. Operators often append suffixes like `-app`, `-superuser`, or `-owner`.
 - **Always query the cluster** to confirm the exact secret name:
   ```bash
   kubectl get secrets -n <namespace> | grep <cluster-name>
   ```
-- **Before updating `kustomization.yaml` or Deployment manifests** with a secret reference, decode the secret to verify its structure and keys:
+- **Before updating `kustomization.yaml` or Deployment manifests** with a secret reference, decode the secret to verify
+  its structure and keys:
   ```bash
   kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data}' | jq 'keys'
   ```
@@ -148,11 +196,13 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Connection Secrets & Endpoints**
 
-- **Check for existing connection secrets or endpoints** before creating new ones. For backup/objectStore configuration (e.g., MinIO/S3 for CNPG or Longhorn), search for existing secrets:
+- **Check for existing connection secrets or endpoints** before creating new ones. For backup/objectStore configuration
+  (e.g., MinIO/S3 for CNPG or Longhorn), search for existing secrets:
   ```bash
   kubectl get secrets -n <namespace> | grep -E 'minio|s3|backup'
   ```
-- **Decode existing secrets** to verify endpoint URLs and credentials rather than assuming `localhost` or default values:
+- **Decode existing secrets** to verify endpoint URLs and credentials rather than assuming `localhost` or default
+  values:
   ```bash
   kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data.MINIO_ENDPOINT}' | base64 -d
   ```
@@ -187,11 +237,13 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 - **Secret contains:** `username`, `password`, `dbname`, `host`, `port`, `uri`, `jdbc-uri`, etc.
 
 **Common Anti-Pattern (Avoid):**
+
 - Using ExternalSecrets to create CNPG app secrets creates circular dependencies
 - CNPG clusters fail to initialize because they expect the secret to exist before they can create it
 - Always remove `bootstrap.initdb.secret` references and let CNPG auto-generate credentials
 
 **Correct Pattern:**
+
 - Omit `bootstrap.initdb.secret` from Cluster manifests
 - CNPG will automatically create `<cluster-name>-app` secret with random credentials
 - Applications reference the auto-generated secret directly
@@ -204,12 +256,14 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 - **ScheduledBackup** uses `method: plugin` with `barman-cloud.cloudnative-pg.io`
 
 **Complete Backup Setup:**
+
 - Create ObjectStore resource with S3 destination path and credentials
 - Add plugins section to Cluster spec referencing the ObjectStore
 - Create ScheduledBackup with plugin method and barman-cloud configuration
 - Add backup labels: `recurring-job.longhorn.io/source: enabled` and tier label (`gfs` or `daily`)
 
 **Backup Tier Guidelines:**
+
 - **GFS (Grandfather-Father-Son):** Critical databases needing point-in-time recovery
 - **Daily:** Standard applications with daily retention
 - **None:** Caches, ephemeral data
@@ -218,8 +272,10 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Never Delete Without Evidence**
 
-- **Never delete a Job, Pod, or PVC to "fix" a config error** unless you have proof via logs that the resource is in an unrecoverable state or holding stale configuration.
+- **Never delete a Job, Pod, or PVC to "fix" a config error** unless you have proof via logs that the resource is in an
+  unrecoverable state or holding stale configuration.
 - **Required evidence before deletion:**
+
   ```bash
   # Check Pod logs
   kubectl logs <pod-name> -n <namespace>
@@ -230,7 +286,9 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
   # Check Job status (if applicable)
   kubectl describe job <job-name> -n <namespace>
   ```
-- **Blindly deleting resources masks the root cause.** If a resource is failing, identify why it's failing first. Common non-destructive fixes:
+
+- **Blindly deleting resources masks the root cause.** If a resource is failing, identify why it's failing first. Common
+  non-destructive fixes:
   - Update the manifest and re-apply (for Deployments, StatefulSets).
   - Delete and recreate only ConfigMaps or Secrets that have changed.
   - Use `kubectl rollout restart` for Deployments/StatefulSets when only env vars or mounts changed.
@@ -239,7 +297,9 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
 
 **Distinguishing Old vs. New Resources**
 
-- **When migrating infrastructure** (e.g., between database operators), use labels and metadata to distinguish resources:
+- **When migrating infrastructure** (e.g., between database operators), use labels and metadata to distinguish
+  resources:
+
   ```bash
   # Check resource ownership
   kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
@@ -250,27 +310,36 @@ See the repository-level `k8s/AGENTS.md` Longhorn section for label-based backup
   # Check resource labels
   kubectl get pod <pod-name> -n <namespace> --show-labels
   ```
-- **Do not assume a "Running" pod belongs to the new system** without verifying its controller reference and creation timestamp.
+
+- **Do not assume a "Running" pod belongs to the new system** without verifying its controller reference and creation
+  timestamp.
 
 ---
+
 # Kubernetes Infrastructure - Agent Guidelines
 
 This document provides guidance for agents working with the Kubernetes infrastructure in this repository.
 
 ## Longhorn Backup Strategy
 
+**Note:** This section applies **only to PVCs using the `longhorn` StorageClass**. PVCs using `proxmox-csi` StorageClass
+are automatically backed up via Velero (see Velero Backup Strategy section below).
+
 ### Overview
+
 Our cluster uses Longhorn with a label-based backup approach. **PVCs without backup labels are NOT backed up.**
 
 ### Backup Tiers
 
 - **GFS (Grandfather-Father-Son)**: For critical databases and stateful apps
+
   - Hourly backups: retained 48 (2 days)
   - Daily backups: retained 14 (2 weeks)
   - Weekly backups: retained 8 (2 months)
   - Label: `recurring-job-group.longhorn.io/gfs=enabled`
 
 - **Daily**: For standard applications
+
   - Daily backups at 2 AM: retained 14 (2 weeks)
   - Label: `recurring-job-group.longhorn.io/daily=enabled`
 
@@ -287,8 +356,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: my-data
   labels:
-    recurring-job.longhorn.io/source: enabled  # Required for PVC sync
-    recurring-job-group.longhorn.io/gfs: enabled  # OR "daily" OR omit entirely
+    recurring-job.longhorn.io/source: enabled # Required for PVC sync
+    recurring-job-group.longhorn.io/gfs: enabled # OR "daily" OR omit entirely
 spec:
   storageClassName: longhorn
   accessModes:
@@ -300,14 +369,14 @@ spec:
 
 ### Decision Guide
 
-| Workload | Tier | Rationale |
-|----------|------|-----------|
-| Postgres, MySQL, MongoDB | `gfs` | Critical data, need point-in-time recovery |
-| GitLab, Vault, Keycloak | `gfs` | Configuration/state is critical |
-| Harbor, Nexus | `daily` | Important but not time-critical |
-| RabbitMQ, Kafka | `daily` | Can replay messages |
-| Prometheus, Loki | `daily` or none | Metrics are replaceable |
-| Redis (cache), temp storage | none | Ephemeral data |
+| Workload                    | Tier            | Rationale                                  |
+| --------------------------- | --------------- | ------------------------------------------ |
+| Postgres, MySQL, MongoDB    | `gfs`           | Critical data, need point-in-time recovery |
+| GitLab, Vault, Keycloak     | `gfs`           | Configuration/state is critical            |
+| Harbor, Nexus               | `daily`         | Important but not time-critical            |
+| RabbitMQ, Kafka             | `daily`         | Can replay messages                        |
+| Prometheus, Loki            | `daily` or none | Metrics are replaceable                    |
+| Redis (cache), temp storage | none            | Ephemeral data                             |
 
 ### Important Notes
 
@@ -331,7 +400,9 @@ This shows which PVCs would lose backups after applying changes (if they relied 
 
 ### RecurringJob Configuration
 
-The backup jobs are defined in [k8s/infrastructure/storage/longhorn/recurringjob.yaml](../infrastructure/storage/longhorn/recurringjob.yaml). Each job targets a specific group (`gfs` or `daily`), and retention policies scale appropriately:
+The backup jobs are defined in
+[k8s/infrastructure/storage/longhorn/recurringjob.yaml](../infrastructure/storage/longhorn/recurringjob.yaml). Each job
+targets a specific group (`gfs` or `daily`), and retention policies scale appropriately:
 
 - More frequent backups = shorter retention (e.g., hourly keeps 48, daily keeps 14)
 - Less frequent backups = longer retention (e.g., weekly keeps 8)
@@ -339,29 +410,80 @@ The backup jobs are defined in [k8s/infrastructure/storage/longhorn/recurringjob
 
 ### Troubleshooting Disk Expansion Issues
 
-If Longhorn fails to recognize expanded disk space after increasing node disk capacity, check the `node.longhorn.io` objects for missing `spec.name` field. This field is required for the node controller to sync disk status.
+If Longhorn fails to recognize expanded disk space after increasing node disk capacity, check the `node.longhorn.io`
+objects for missing `spec.name` field. This field is required for the node controller to sync disk status.
 
 **Symptoms:**
+
 - Disk expansion at OS level successful
 - Longhorn UI shows old disk capacity
-- Manager logs show: `"failed to sync node for longhorn-system/<node>: no node name provided to check node down or deleted"`
+- Manager logs show:
+  `"failed to sync node for longhorn-system/<node>: no node name provided to check node down or deleted"`
 
 **Resolution:**
+
 1. Identify affected nodes: `kubectl get node.longhorn.io -n longhorn-system`
 2. Check if `spec.name` is missing: `kubectl get node.longhorn.io <node> -n longhorn-system -o yaml`
 3. If missing, edit the resource: `kubectl edit node.longhorn.io <node> -n longhorn-system`
 4. Add under `spec:`: `name: <node>` (matching `metadata.name`)
 5. Save and verify disk status updates automatically
 
-**Prevention:** Ensure `spec.name` is always present in `node.longhorn.io` objects. This is a known issue with enhancement request for validation (longhorn/longhorn#6793).
+**Prevention:** Ensure `spec.name` is always present in `node.longhorn.io` objects. This is a known issue with
+enhancement request for validation (longhorn/longhorn#6793).
+
+## Velero Backup Strategy
+
+### Overview
+
+Velero automatically backs up all resources in all namespaces via namespace-based schedules. **PVCs using `proxmox-csi`
+StorageClass are automatically included via CSI snapshots - no annotations or labels needed.**
+
+### Velero Schedules
+
+The cluster has three Velero schedules configured in `k8s/infrastructure/controllers/velero/schedules/`:
+
+- **`velero-daily`**: Daily backups at 02:00, 14-day TTL
+- **`velero-gfs`**: Hourly backups for GFS tier, 14-day TTL
+- **`velero-weekly`**: Weekly backups on Sundays at 03:00, 28-day TTL
+
+All schedules include all namespaces by default (except the `velero` namespace itself) and back up all resources
+including PVCs.
+
+### Automatic Backup for proxmox-csi Volumes
+
+- **No configuration needed**: PVCs using `proxmox-csi` StorageClass are automatically backed up via Velero CSI
+  snapshots
+- **No annotations or labels required** on PVCs - Velero schedules include all resources in all namespaces
+- Volume snapshots are created automatically during backup operations
+
+### Opt-Out Approach
+
+If you need to exclude specific volumes from backup:
+
+- **Exclude entire pod volumes**: Add annotation `backup.velero.io/exclude-from-backup: "true"` to the pod
+- **Exclude specific volumes**: Add annotation `backup.velero.io/backup-volumes-excludes: "volume-name"` to the pod
+  (comma-separated for multiple volumes)
+- **Custom VolumeSnapshotClass**: Add annotation `velero.io/csi-volumesnapshot-class: "class-name"` to the PVC if you
+  need a specific snapshot class
+
+### Best Practices
+
+- **Default behavior**: All `proxmox-csi` PVCs are automatically backed up - no action needed
+- **Exclude only when necessary**: Use pod-level annotations only for volumes that shouldn't be backed up (e.g., cache,
+  temp data, ephemeral storage)
+- **Storage class selection**: Use `proxmox-csi` for new workloads to get automatic Velero backups; use `longhorn` only
+  for legacy workloads or when Longhorn-specific features are needed
 
 ## Pre-Merge Checklist
 
 Before merging Kubernetes manifest changes, verify:
 
-- [ ] All kustomizations build successfully: `kustomize build --enable-helm k8s/applications` and `kustomize build --enable-helm k8s/infrastructure`
+- [ ] All kustomizations build successfully: `kustomize build --enable-helm k8s/applications` and
+      `kustomize build --enable-helm k8s/infrastructure`
 - [ ] No hardcoded secrets in manifests (use ExternalSecrets/SecretProvider)
-- [ ] PVCs have appropriate backup labels (`recurring-job.longhorn.io/source` + tier label)
+- [ ] PVCs have appropriate backup configuration:
+  - For `longhorn` StorageClass: backup labels (`recurring-job.longhorn.io/source` + tier label)
+  - For `proxmox-csi` StorageClass: automatically backed up by Velero (no labels needed)
 - [ ] Resources have appropriate requests/limits for the workload
 - [ ] Network policies allow required traffic patterns
 - [ ] HTTPRoutes/Ingress configs follow security best practices (auth, CORS)
@@ -370,5 +492,3 @@ Before merging Kubernetes manifest changes, verify:
 - [ ] Database credentials use auto-generated secrets (for CNPG) or verified ExternalSecrets
 - [ ] Backup tier matches criticality: GFS for critical data, Daily for standard apps, None for ephemeral
 - [ ] Changes tested locally and validated against cluster (if access available)
-
-

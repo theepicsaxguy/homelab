@@ -7,7 +7,8 @@ resources:
 - karakeep
 - litellm
 - openhands
+- opencode
+- perplexica
 - qdrant
 - vllm-embed
-- opencode
 - gpt-researcher
