@@ -53,6 +53,36 @@ This page explains how GitHub Actions, Renovate, and Dependabot keep this homela
 - **When triggered:** Only when `.md` files change under `website/docs/`.
 - **How it works:** The workflow runs Vale only on the Markdown files that changed in the PR.
 
+### Security Scan (`security-scan.yaml`)
+
+- **File:** `.github/workflows/security-scan.yaml`
+- **Purpose:** Scans dependency lockfiles for known vulnerabilities using [Shai-Hulud Detector](https://github.com/marketplace/actions/shai-hulud-2-0-detector).
+- **When triggered:**
+  - Pull requests and pushes to `main` that modify dependency files (`package.json`, `package-lock.json`, `requirements.txt`, `go.mod`, etc.)
+  - Weekly scheduled scans every Monday at 9:00 UTC
+  - Manual workflow dispatch
+- **How it works:**
+  1. Scans lockfiles for known vulnerabilities in dependencies
+  2. Fails the build if critical vulnerabilities are detected
+  3. Warns about high-severity issues without failing
+  4. Respects an allowlist (`.shai-hulud-allowlist.json`) for accepted risks
+- **Configuration:**
+  - `fail-on-critical: true` - Blocks PRs with critical vulnerabilities
+  - `fail-on-high: false` - Reports but doesn't block high-severity issues
+  - `scan-lockfiles: true` - Analyzes lockfiles for accurate version detection
+  - `warn-on-allowlist: true` - Warns when allowlisted vulnerabilities are detected
+- **Allowlist management:**
+  - Edit `.shai-hulud-allowlist.json` in the repository root to exclude known/accepted vulnerabilities
+  - Use sparingly and document why each item is allowlisted
+- **Permissions:**
+  - `contents: read` (read repository files)
+  - `issues: write` (create security issue reports)
+  - `pull-requests: write` (comment on PRs with findings)
+- **Why:**
+  - **Proactive security:** Catches vulnerable dependencies before they reach production
+  - **Supply chain protection:** Prevents introduction of compromised packages
+  - **Continuous monitoring:** Weekly scans catch newly disclosed vulnerabilities
+
 ### Validation & CI (Implied Workflows)
 
 - **What:** While specific workflow YAMLs for all validation steps aren't detailed here, CI jobs automatically lint and validate configurations.

@@ -103,6 +103,19 @@ Before opening a pull request, please run these checks on any files you've modif
   npm run typecheck  # Check TypeScript types
   ```
 
+### Automated Security Checks
+
+All pull requests are automatically scanned for security vulnerabilities in dependencies:
+
+- **What's checked:** Dependency lockfiles (`package-lock.json`, `requirements.txt`, `go.sum`, etc.) are scanned for known vulnerabilities
+- **Critical vulnerabilities:** PRs with critical-severity issues will fail the security check and must be resolved before merging
+- **High/medium vulnerabilities:** These generate warnings but won't block your PR
+- **Allowlist exceptions:** If you need to temporarily accept a vulnerability (e.g., waiting for upstream fix), you can add it to `.shai-hulud-allowlist.json` with a justification comment
+
+If your PR triggers security warnings, please either:
+1. Update the vulnerable dependency to a patched version, or
+2. Discuss with maintainers if an allowlist exception is appropriate
+
 ## The Pull Request Process
 
 1. **Open an Issue (For Big Changes):** If you're planning to add a new application or make a significant architectural change, please [open an issue](https://github.com/theepicsaxguy/homelab/issues/new?template=feature_request.md) first. For small changes like version bumps or typo fixes, you can go straight to a PR.
