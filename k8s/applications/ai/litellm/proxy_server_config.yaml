@@ -814,22 +814,34 @@ model_list:
     litellm_params:
       model: "cerebras/zai-glm-4.6"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 0.6
         top_p: 0.95
         max_tokens: 40960
-        stream: true
     model_info:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 40960
+      supports_native_streaming: false
 
   - model_name: cerebras/llama-3.3-70b
     litellm_params:
       model: "cerebras/llama-3.3-70b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 0.2
         top_p: 1
@@ -838,12 +850,19 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 2048
+      supports_native_streaming: false
 
   - model_name: cerebras/qwen-3-235b-a22b-instruct-2507
     litellm_params:
       model: "cerebras/qwen-3-235b-a22b-instruct-2507"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 0.7
         top_p: 0.8
@@ -852,12 +871,19 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 20000
+      supports_native_streaming: false
 
   - model_name: cerebras/qwen-3-32b
     litellm_params:
       model: "cerebras/qwen-3-32b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 0.6
         top_p: 0.95
@@ -866,12 +892,19 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 16382
+      supports_native_streaming: false
 
   - model_name: cerebras/gpt-oss-120b
     litellm_params:
       model: "cerebras/gpt-oss-120b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 1
         top_p: 1
@@ -881,12 +914,19 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 32768
+      supports_native_streaming: false
 
   - model_name: cerebras/llama3.1-8b
     litellm_params:
       model: "cerebras/llama3.1-8b"
       api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
       custom_llm_provider: "cerebras"
+      supports_streaming: false
+      drop_params: true
+      additional_drop_params: ["stream"]
+      extra_headers:
+        X-Cerebras-3rd-Party-Integration: litellm
       default_litellm_params:
         temperature: 0.2
         top_p: 1
@@ -895,12 +935,13 @@ model_list:
       mode: chat
       max_input_tokens: 100000
       max_output_tokens: 2048
+      supports_native_streaming: false
 
 # Mistral models
   # Frontier Models - Generalist
   - model_name: mistral/mistral-large-3
     litellm_params:
-      model: "mistral/mistral-large-3"
+      model: "mistral/mistral-large-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -909,7 +950,7 @@ model_list:
 
   - model_name: mistral/mistral-medium-3.1
     litellm_params:
-      model: "mistral/mistral-medium-3.1"
+      model: "mistral/mistral-medium-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -918,7 +959,7 @@ model_list:
 
   - model_name: mistral/mistral-small-3.2
     litellm_params:
-      model: "mistral/mistral-small-3.2"
+      model: "mistral/mistral-small-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -927,7 +968,7 @@ model_list:
 
   - model_name: mistral/ministral-3-14b
     litellm_params:
-      model: "mistral/ministral-3-14b"
+      model: "mistral/ministral-14b-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -936,7 +977,7 @@ model_list:
 
   - model_name: mistral/ministral-3-8b
     litellm_params:
-      model: "mistral/ministral-3-8b"
+      model: "mistral/ministral-8b-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -945,7 +986,7 @@ model_list:
 
   - model_name: mistral/ministral-3-3b
     litellm_params:
-      model: "mistral/ministral-3-3b"
+      model: "mistral/ministral-3b-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -954,7 +995,7 @@ model_list:
 
   - model_name: mistral/magistral-medium-1.2
     litellm_params:
-      model: "mistral/magistral-medium-1.2"
+      model: "mistral/magistral-medium-2507"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -963,7 +1004,7 @@ model_list:
 
   - model_name: mistral/magistral-small-1.2
     litellm_params:
-      model: "mistral/magistral-small-1.2"
+      model: "mistral/magistral-small-2507"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -987,7 +1028,7 @@ model_list:
 
   - model_name: mistral/codestral
     litellm_params:
-      model: "mistral/codestral"
+      model: "mistral/codestral-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -1061,7 +1102,7 @@ model_list:
 
   - model_name: mistral/devstral-small-1.1
     litellm_params:
-      model: "mistral/devstral-small-1.1"
+      model: "mistral/devstral-small-2505"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -1077,7 +1118,7 @@ model_list:
 
   - model_name: mistral/mistral-medium-3
     litellm_params:
-      model: "mistral/mistral-medium-3"
+      model: "mistral/mistral-medium-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -1086,7 +1127,7 @@ model_list:
 
   - model_name: mistral/mistral-large-2.1
     litellm_params:
-      model: "mistral/mistral-large-2.1"
+      model: "mistral/mistral-large-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -1095,7 +1136,7 @@ model_list:
 
   - model_name: mistral/pixtral-large
     litellm_params:
-      model: "mistral/pixtral-large"
+      model: "mistral/pixtral-large-latest"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
@@ -1104,7 +1145,7 @@ model_list:
 
   - model_name: mistral/mistral-nemo-12b
     litellm_params:
-      model: "mistral/mistral-nemo-12b"
+      model: "mistral/open-mistral-nemo"
       api_key: "os.environ/MISTRAL_API_KEY"
     model_info:
       mode: chat
