@@ -6,6 +6,8 @@ metadata:
 spec:
   parentRefs:
     - name: internal
+      namespace: gateway:
+    - name: external
       namespace: gateway
   hostnames:
     - "kiwix.pc-tips.se"
