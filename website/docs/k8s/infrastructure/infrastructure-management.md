@@ -71,7 +71,7 @@ Three gateway types:
   - Cloudflare DNS validation
   - Internal CA for cluster services
   - Automatic certificate renewal
-  - Separate certificates for pc-tips.se and goingdark.social
+  - Separate certificates for pc-tips.se and peekoff.com
 
 - **External Secrets:**
   - Bitwarden integration

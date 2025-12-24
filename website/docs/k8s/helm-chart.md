@@ -188,7 +188,7 @@ Use the Bitwarden secret name rather than its ID. Names follow the `{scope}-{ser
       imageName: ghcr.io/cloudnative-pg/postgresql:18
       storage:
         size: 10Gi
-        storageClass: longhorn
+        storageClass: proxmox-csi
       bootstrap:
         initdb:
           database: <database-name>

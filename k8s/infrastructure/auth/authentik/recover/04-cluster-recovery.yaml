@@ -27,7 +27,7 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   monitoring:
     enablePodMonitor: false
