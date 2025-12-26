@@ -86,7 +86,7 @@ Create `config.auto.tfvars` with your environment settings. An example file `ter
 // tofu/config.auto.tfvars example
 
 cluster_name   = "talos"
-cluster_domain = "kube.peekoff.com"
+cluster_domain = "cluster.local"
 
 # Network settings
 # All nodes must be on the same L2 network

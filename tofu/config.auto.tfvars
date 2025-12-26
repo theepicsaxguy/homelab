@@ -1,5 +1,5 @@
 cluster_name   = "talos"
-cluster_domain = "kube.peekoff.com"
+cluster_domain = "cluster.local"
 
 network = {
   gateway     = "10.25.150.1"
