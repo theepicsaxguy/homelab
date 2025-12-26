@@ -912,7 +912,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-medium-2508
     litellm_params:
@@ -923,7 +922,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-medium-latest
     litellm_params:
@@ -934,7 +932,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-medium
     litellm_params:
@@ -945,7 +942,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/open-mistral-nemo
     litellm_params:
@@ -956,7 +952,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/open-mistral-nemo-2407
     litellm_params:
@@ -967,7 +962,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-tiny-2407
     litellm_params:
@@ -978,7 +972,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-tiny-latest
     litellm_params:
@@ -989,7 +982,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-large-2411
     litellm_params:
@@ -1000,7 +992,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/pixtral-large-2411
     litellm_params:
@@ -1011,7 +1002,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/pixtral-large-latest
     litellm_params:
@@ -1022,7 +1012,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-large-pixtral-2411
     litellm_params:
@@ -1033,7 +1022,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-large-2512
     litellm_params:
@@ -1044,7 +1032,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-large-latest
     litellm_params:
@@ -1055,7 +1042,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-small-2506
     litellm_params:
@@ -1066,7 +1052,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-small-latest
     litellm_params:
@@ -1077,7 +1062,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-3b-2512
     litellm_params:
@@ -1088,7 +1072,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-3b-latest
     litellm_params:
@@ -1099,7 +1082,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-8b-2512
     litellm_params:
@@ -1110,7 +1092,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-8b-latest
     litellm_params:
@@ -1121,7 +1102,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-14b-2512
     litellm_params:
@@ -1132,7 +1112,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/ministral-14b-latest
     litellm_params:
@@ -1143,7 +1122,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/magistral-medium-2509
     litellm_params:
@@ -1154,7 +1132,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/magistral-medium-latest
     litellm_params:
@@ -1165,7 +1142,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/magistral-small-2509
     litellm_params:
@@ -1176,7 +1152,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/magistral-small-latest
     litellm_params:
@@ -1187,7 +1162,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   # Specialist Models - Coding
   - model_name: mistral/codestral-2508
@@ -1199,7 +1173,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 256000
-      max_output_tokens: 8192
 
   - model_name: mistral/codestral-latest
     litellm_params:
@@ -1210,7 +1183,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 256000
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-small-2507
     litellm_params:
@@ -1221,7 +1193,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-medium-2507
     litellm_params:
@@ -1232,7 +1203,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-2512
     litellm_params:
@@ -1243,7 +1213,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/mistral-vibe-cli-latest
     litellm_params:
@@ -1254,7 +1223,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-medium-latest
     litellm_params:
@@ -1265,7 +1233,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-latest
     litellm_params:
@@ -1276,7 +1243,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/labs-devstral-small-2512
     litellm_params:
@@ -1287,7 +1253,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   - model_name: mistral/devstral-small-latest
     litellm_params:
@@ -1298,7 +1263,6 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 262144
-      max_output_tokens: 8192
 
   # Specialist Models - Audio
   - model_name: mistral/voxtral-mini-2507
@@ -1382,6 +1346,16 @@ model_list:
       mode: ocr
       max_input_tokens: 16384
 
+  - model_name: mistral/mistral-ocr-2503
+    litellm_params:
+      model: "mistral/mistral-ocr-2503"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: ocr
+      max_input_tokens: 16384
+
   # Specialist Models - Embeddings
   - model_name: mistral/mistral-embed-2312
     litellm_params:
@@ -1442,7 +1416,127 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 32768
-      max_output_tokens: 8192
+
+  # Deprecated Models
+  - model_name: mistral/open-mistral-7b
+    litellm_params:
+      model: "mistral/open-mistral-7b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/mistral-tiny
+    litellm_params:
+      model: "mistral/mistral-tiny"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/mistral-tiny-2312
+    litellm_params:
+      model: "mistral/mistral-tiny-2312"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/pixtral-12b-2409
+    litellm_params:
+      model: "mistral/pixtral-12b-2409"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-12b
+    litellm_params:
+      model: "mistral/pixtral-12b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-12b-latest
+    litellm_params:
+      model: "mistral/pixtral-12b-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-3b-2410
+    litellm_params:
+      model: "mistral/ministral-3b-2410"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-8b-2410
+    litellm_params:
+      model: "mistral/ministral-8b-2410"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/codestral-2501
+    litellm_params:
+      model: "mistral/codestral-2501"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/codestral-2412
+    litellm_params:
+      model: "mistral/codestral-2412"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/codestral-2411-rc5
+    litellm_params:
+      model: "mistral/codestral-2411-rc5"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/mistral-small-2501
+    litellm_params:
+      model: "mistral/mistral-small-2501"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
 
 litellm_settings:
   callbacks: ["prometheus"]
