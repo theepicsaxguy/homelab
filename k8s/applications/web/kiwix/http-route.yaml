@@ -6,7 +6,7 @@ metadata:
 spec:
   parentRefs:
     - name: internal
-      namespace: gateway:
+      namespace: gateway
     - name: external
       namespace: gateway
   hostnames:
