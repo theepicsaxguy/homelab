@@ -21,9 +21,6 @@ kind: Cluster
 metadata:
   name: pinepods-db
   namespace: pinepods
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:18
@@ -44,7 +41,7 @@ spec:
   #     owner: app
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
   monitoring:
     enablePodMonitor: false
   postgresql:

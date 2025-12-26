@@ -3,29 +3,23 @@ kind: PersistentVolumeClaim
 metadata:
   name: pinepods-downloads
   namespace: pinepods
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 30Gi
-  storageClassName: longhorn
+  storageClassName: proxmox-csi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pinepods-backups
   namespace: pinepods
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/daily: enabled
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 3Gi
-  storageClassName: longhorn
+  storageClassName: proxmox-csi

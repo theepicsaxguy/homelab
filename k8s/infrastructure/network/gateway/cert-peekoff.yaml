@@ -7,7 +7,6 @@ spec:
   dnsNames:
     - "*.peekoff.com"
     - peekoff.com
-    - cilium-gateway-external.gateway.svc.cluster.local
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
