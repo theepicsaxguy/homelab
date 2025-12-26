@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "hassio.pc-tips.se"
+    - "hassio.peekoff.com"
   rules:
     - matches:
         - path:

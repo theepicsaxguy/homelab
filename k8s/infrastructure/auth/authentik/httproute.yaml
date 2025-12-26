@@ -10,7 +10,7 @@ spec:
     - name: external
       namespace: gateway
   hostnames:
-    - "sso.pc-tips.se"
+    - "sso.peekoff.com"
   rules:
     - matches:
         - path:

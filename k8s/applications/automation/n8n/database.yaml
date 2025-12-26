@@ -7,7 +7,7 @@ metadata:
 spec:
   configuration:
     destinationPath: s3://homelab-postgres-backups/n8n/n8n-db
-    endpointURL: https://truenas.pc-tips.se:9000
+    endpointURL: https://truenas.peekoff.com:9000
     s3Credentials:
       accessKeyId:
         name: longhorn-minio-credentials

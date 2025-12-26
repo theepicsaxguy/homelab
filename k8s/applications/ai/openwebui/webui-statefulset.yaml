@@ -86,13 +86,13 @@ spec:
             - name: ENABLE_SIGNUP
               value: 'false'
             - name: OPENID_PROVIDER_URL
-              value: 'https://sso.pc-tips.se/application/o/openwebui/.well-known/openid-configuration'
+              value: 'https://sso.peekoff.com/application/o/openwebui/.well-known/openid-configuration'
             - name: OPENID_REDIRECT_URI
-              value: 'https://chat.pc-tips.se/oauth/oidc/callback'
+              value: 'https://chat.peekoff.com/oauth/oidc/callback'
             - name: ENABLE_OAUTH_SIGNUP
               value: 'true'
             - name: CORS_ALLOW_ORIGIN
-              value: 'https://chat.pc-tips.se'
+              value: 'https://chat.peekoff.com'
             - name: STARTUP_TIMEOUT
               value: '60'
             - name: USER_AGENT

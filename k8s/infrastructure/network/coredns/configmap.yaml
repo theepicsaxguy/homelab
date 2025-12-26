@@ -17,7 +17,7 @@ data:
         prometheus :9153
 
         # Kubernetes service domain
-        kubernetes cluster.local kube.pc-tips.se in-addr.arpa ip6.arpa {
+        kubernetes cluster.local kube.peekoff.com in-addr.arpa ip6.arpa {
             pods insecure
             ttl 30
             fallthrough

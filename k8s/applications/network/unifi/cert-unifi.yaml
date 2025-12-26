@@ -5,7 +5,7 @@ metadata:
   namespace: unifi
 spec:
   dnsNames:
-    - unifi.pc-tips.se
+    - unifi.peekoff.com
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer

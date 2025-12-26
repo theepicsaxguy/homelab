@@ -11,9 +11,9 @@ grafana:
       client_id: $__env{GRAFANA_OAUTH_CLIENT_ID}
       client_secret: $__env{GRAFANA_OAUTH_CLIENT_SECRET}
       scopes: openid profile email
-      auth_url: https://sso.pc-tips.se/application/o/grafana/authorize/
-      token_url: https://sso.pc-tips.se/application/o/grafana/token/
-      api_url: https://sso.pc-tips.se/application/o/grafana/userinfo/
+      auth_url: https://sso.peekoff.com/application/o/grafana/authorize/
+      token_url: https://sso.peekoff.com/application/o/grafana/token/
+      api_url: https://sso.peekoff.com/application/o/grafana/userinfo/
       login_attribute_path: preferred_username
       groups_attribute_path: groups
       name_attribute_path: name

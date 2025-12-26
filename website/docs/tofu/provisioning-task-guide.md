@@ -4,8 +4,6 @@ title: Provision Kubernetes with OpenTofu and Talos
 
 # Kubernetes Provisioning with OpenTofu
 
-
-
 ## Deployment Process
 
 Before you begin deployment, ensure your SSH key is loaded:
@@ -13,8 +11,6 @@ Before you begin deployment, ensure your SSH key is loaded:
 ```shell
 eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 ```
-
-
 
 # Deployment Process
 
@@ -30,15 +26,14 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
 
 ## Version Upgrades
 
-1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions can be specified in multiple
-   places:
+1. Update versions in `main.tf` or related `tfvars` files. Note that Talos versions can be specified in multiple places:
 
    - For the Talos image factory (e.g., `module "talos" { talos_image = { version = "vX.Y.Z" } }`)
    - For the machine configurations and cluster secrets (e.g.,
      `module "talos" { cluster = { talos_version = "vX.Y.Z" } }`)
    - Kubernetes version (e.g., `module "talos" { cluster = { kubernetes_version = "vA.B.C" } }`)
 
-    Example snippet from `main.tf` (actual structure can vary based on module inputs):
+   Example snippet from `main.tf` (actual structure can vary based on module inputs):
 
    ```hcl
    module "talos" {
@@ -51,8 +46,8 @@ eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa
    }
    ```
 
-2. Set `update = true` for affected nodes in `tofu/nodes.auto.tfvars` if your OpenTofu module supports this flag for triggering upgrades. Otherwise,
-   `tofu apply` will handle changes to version properties.
+2. Set `update = true` for affected nodes in `tofu/nodes.auto.tfvars` if your OpenTofu module supports this flag for
+   triggering upgrades. Otherwise, `tofu apply` will handle changes to version properties.
 
 3. Run:
 
@@ -91,7 +86,7 @@ Create `config.auto.tfvars` with your environment settings. An example file `ter
 // tofu/config.auto.tfvars example
 
 cluster_name   = "talos"
-cluster_domain = "kube.pc-tips.se"
+cluster_domain = "kube.peekoff.com"
 
 # Network settings
 # All nodes must be on the same L2 network
@@ -115,7 +110,7 @@ versions = {
 
 # OIDC settings (optional)
 oidc = {
-  issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
+  issuer_url = "https://sso.peekoff.com/application/o/kubectl/"
   client_id  = "kubectl"
 }
 ```
@@ -244,8 +239,6 @@ tofu taint 'module.talos.proxmox_virtual_environment_vm.this["failed-node"]'
 # Recreate node
 tofu apply -target='module.talos.proxmox_virtual_environment_vm.this["failed-node"]'
 ```
-
-
 
 ## Monitoring and Troubleshooting
 

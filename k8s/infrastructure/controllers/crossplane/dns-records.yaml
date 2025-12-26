@@ -5,7 +5,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: sso
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -22,7 +22,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: bebis
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -40,7 +40,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: frigate
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -58,7 +58,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: photo
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -76,7 +76,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: jellyfin
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -94,7 +94,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: ittools
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -112,7 +112,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: ansok
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com
@@ -130,7 +130,7 @@ metadata:
 spec:
   forProvider:
     zoneIdRef:
-      name: pc-tips.se
+      name: peekoff.com
     name: hassio
     type: CNAME
     value: c1d5dfa0-f165-489e-ade6-248160e48500.cfargotunnel.com

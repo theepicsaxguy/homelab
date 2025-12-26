@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'litellm.pc-tips.se'
+    - 'litellm.peekoff.com'
   rules:
     - matches:
         - path:

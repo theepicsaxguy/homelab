@@ -34,7 +34,7 @@ servers:
 
   # Required to query kubernetes API for data
   - name: kubernetes
-    parameters: kube.pc-tips.se in-addr.arpa ip6.arpa
+    parameters: kube.peekoff.com in-addr.arpa ip6.arpa
     configBlock: |-
       pods insecure
       fallthrough in-addr.arpa ip6.arpa
@@ -48,8 +48,8 @@ servers:
   - name: cache
     parameters: 30
     configBlock: |-
-      disable success kube.pc-tips.se
-      disable denial kube.pc-tips.se
+      disable success kube.peekoff.com
+      disable denial kube.peekoff.com
 
   - name: loop
   - name: reload

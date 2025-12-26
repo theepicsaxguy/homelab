@@ -2,11 +2,13 @@
 title: 'Qdrant Vector Store'
 ---
 
-Qdrant runs as a single replica Deployment with a 50Gi PersistentVolumeClaim mounted at `/qdrant/storage`. The Pod exposes HTTP on port 6333 and gRPC on port 6334, matching the defaults from the upstream image.
+Qdrant runs as a single replica Deployment with a 50Gi PersistentVolumeClaim mounted at `/qdrant/storage`. The Pod
+exposes HTTP on port 6333 and gRPC on port 6334, matching the defaults from the upstream image.
 
 ## Networking
 
-Traffic stays inside the cluster through the `qdrant` Service and can be published through both the internal and external Gateways on `qdrant.pc-tips.se`.
+Traffic stays inside the cluster through the `qdrant` Service and can be published through both the internal and
+external Gateways on `qdrant.peekoff.com`.
 
 ```yaml
 # k8s/applications/ai/qdrant/httproute.yaml
@@ -16,7 +18,7 @@ parentRefs:
   - name: internal
     namespace: gateway
 hostnames:
-  - 'qdrant.pc-tips.se'
+  - 'qdrant.peekoff.com'
 backendRefs:
   - name: qdrant
     port: 6333
@@ -24,7 +26,8 @@ backendRefs:
 
 ## Authentication
 
-Qdrant supports static API key auth using `service.api_key` or the env var `QDRANT__SERVICE__API_KEY`. The cluster stores this in Bitwarden and surfaces it via an ExternalSecret.
+Qdrant supports static API key auth using `service.api_key` or the env var `QDRANT__SERVICE__API_KEY`. The cluster
+stores this in Bitwarden and surfaces it via an ExternalSecret.
 
 ```yaml
 # k8s/applications/ai/qdrant/externalsecret.yaml
@@ -67,7 +70,8 @@ api-key: <API_KEY>
 Optional:
 
 - Read-only key: `QDRANT__SERVICE__READ_ONLY_API_KEY`
-- JWT RBAC (fine-grained access): set `QDRANT__SERVICE__JWT_RBAC=true` and use Bearer tokens (`Authorization: Bearer <JWT>`)
+- JWT RBAC (fine-grained access): set `QDRANT__SERVICE__JWT_RBAC=true` and use Bearer tokens
+  (`Authorization: Bearer <JWT>`)
 
 Security notes:
 
@@ -75,4 +79,6 @@ Security notes:
 - Future hardening: switch to unprivileged image variant and restrict egress with NetworkPolicies.
 - Only ports 6333 (HTTP) and 6334 (gRPC) are required for single-node access.
 
-````
+```
+
+```

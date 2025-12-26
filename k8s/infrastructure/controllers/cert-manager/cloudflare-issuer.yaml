@@ -6,7 +6,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: admin@pc-tips.se  # Kustomize will replace this
+    email: admin@peekoff.com  # Kustomize will replace this
     privateKeySecretRef:
       name: cloudflare-issuer-account-key  # Changed: Use a dedicated secret for ACME account
     solvers:

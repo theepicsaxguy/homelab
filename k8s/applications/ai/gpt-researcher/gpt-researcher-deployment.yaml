@@ -32,7 +32,7 @@ spec:
                   name: app-gpt-researcher-litellm-api-key
                   key: OPENAI_API_KEY
             - name: OPENAI_BASE_URL
-              value: "https://litellm.pc-tips.se"
+              value: "https://litellm.peekoff.com"
             - name: TAVILY_API_KEY
               valueFrom:
                 secretKeyRef:

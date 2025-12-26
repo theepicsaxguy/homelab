@@ -1,18 +1,18 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: cert-pc-tips
+  name: cert-peekoff
   namespace: gateway
 spec:
   dnsNames:
-    - "*.pc-tips.se"
-    - pc-tips.se
-    - cilium-gateway-external.gateway.svc.kube.pc-tips.se
+    - "*.peekoff.com"
+    - peekoff.com
+    - cilium-gateway-external.gateway.svc.cluster.local
   issuerRef:
     group: cert-manager.io
     kind: ClusterIssuer
     name: cloudflare-issuer
-  secretName: cert-pc-tips
+  secretName: cert-peekoff
   usages:
     - digital signature
     - key encipherment

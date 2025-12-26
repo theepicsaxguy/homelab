@@ -16,7 +16,7 @@ entries:
   - id: kubectl_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/kubectl
+      name: k8s.peekoff.com/kubectl
     attrs:
       authorization_flow:
         !Find [

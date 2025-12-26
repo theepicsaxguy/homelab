@@ -13,7 +13,7 @@ spec:
             key: token
             name: bitwarden-access-token
             namespace: external-secrets
-      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.kube.pc-tips.se:9998
+      bitwardenServerSDKURL: https://bitwarden-sdk-server.external-secrets.svc.cluster.local:9998
       caProvider:
         type: Secret
         name: bitwarden-tls-certs

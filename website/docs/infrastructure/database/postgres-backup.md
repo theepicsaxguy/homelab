@@ -6,7 +6,8 @@ description: WAL archiving and scheduled backups using CloudNativePG and Barman 
 
 # CloudNativePG Backup Configuration
 
-CloudNativePG provides native backup support through Barman Cloud. Backups are stored in the MinIO S3-compatible storage.
+CloudNativePG provides native backup support through Barman Cloud. Backups are stored in the MinIO S3-compatible
+storage.
 
 ## Backup Architecture
 
@@ -26,7 +27,7 @@ metadata:
 spec:
   configuration:
     destinationPath: s3://homelab-postgres-backups/<app>/<cluster-name>
-    endpointURL: https://truenas.pc-tips.se:9000
+    endpointURL: https://truenas.peekoff.com:9000
     s3Credentials:
       accessKeyId:
         name: longhorn-minio-credentials
@@ -36,7 +37,8 @@ spec:
         key: AWS_SECRET_ACCESS_KEY
 ```
 
-The `longhorn-minio-credentials` ExternalSecret supplies credentials. This same secret is reused across applications for S3 backup access.
+The `longhorn-minio-credentials` ExternalSecret supplies credentials. This same secret is reused across applications for
+S3 backup access.
 
 ## Cluster Backup Plugin
 
@@ -48,10 +50,10 @@ kind: Cluster
 spec:
   # ... other config ...
   plugins:
-  - name: barman-cloud.cloudnative-pg.io
-    isWALArchiver: true
-    parameters:
-      barmanObjectName: <app>-minio-store
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: <app>-minio-store
 ```
 
 ## Scheduled Backups
@@ -65,7 +67,7 @@ metadata:
   name: <cluster-name>-backup
   namespace: <namespace>
 spec:
-  schedule: "0 3 * * *"  # 03:00 UTC daily
+  schedule: '0 3 * * *' # 03:00 UTC daily
   backupOwnerReference: self
   cluster:
     name: <cluster-name>

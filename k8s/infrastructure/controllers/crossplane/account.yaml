@@ -4,6 +4,6 @@ metadata:
   name: cloudflare-account
 spec:
   forProvider:
-    name: pc-tips
+    name: peekoff
   providerConfigRef:
     name: cloudflare-provider

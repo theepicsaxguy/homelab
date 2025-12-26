@@ -27,7 +27,7 @@ auth_header:
 openid:
   client_id: !secret ha_oidc_client_id
   client_secret: !secret ha_oidc_client_secret
-  configure_url: "https://sso.pc-tips.se/application/o/home-assistant/.well-known/openid-configuration"
+  configure_url: "https://sso.peekoff.com/application/o/home-assistant/.well-known/openid-configuration"
   username_field: preferred_username
   scope: "openid profile email"
   block_login: false

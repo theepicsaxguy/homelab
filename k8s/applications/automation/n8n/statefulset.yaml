@@ -49,9 +49,9 @@ spec:
             - name: N8N_PORT
               value: "5678"
             - name: N8N_HOST
-              value: n8n.pc-tips.se
+              value: n8n.peekoff.com
             - name: WEBHOOK_URL
-              value: https://n8n.pc-tips.se/
+              value: https://n8n.peekoff.com/
             - name: GENERIC_TIMEZONE
               value: Europe/Stockholm
             - name: DB_TYPE
