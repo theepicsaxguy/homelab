@@ -13,7 +13,7 @@ resource "talos_cluster_kubeconfig" "this" {
     talos_machine_bootstrap.this
   ]
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
-  endpoint             = var.cluster.endpoint
+  endpoint             = coalesce(var.external_api_endpoint, var.cluster.endpoint)
   client_configuration = talos_machine_secrets.this.client_configuration
   timeouts = {
     read = "1m"

@@ -9,32 +9,34 @@ data "talos_machine_configuration" "this" {
 
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-      hostname        = each.key
-      node_name       = each.value.host_node
-      cluster_name    = var.cluster.proxmox_cluster
-      node_ip         = each.value.ip
-      cluster         = var.cluster
-      cluster_domain  = var.cluster_domain
-      cilium_values   = var.cilium.values
-      cilium_install  = var.cilium.install
-      coredns_install = var.coredns.install
-      oidc            = var.oidc
-      vip             = var.network.vip
-      disks           = each.value.disks
+      hostname             = each.key
+      node_name            = each.value.host_node
+      cluster_name         = var.cluster.proxmox_cluster
+      node_ip              = each.value.ip
+      cluster              = var.cluster
+      cluster_domain       = var.cluster_domain
+      external_api_endpoint = var.external_api_endpoint
+      cilium_values        = var.cilium.values
+      cilium_install        = var.cilium.install
+      coredns_install       = var.coredns.install
+      oidc                 = var.oidc
+      vip                  = var.network.vip
+      disks                = each.value.disks
     })
     ] : concat(
     [
       templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-        hostname           = each.key
-        node_name          = each.value.host_node
-        cluster_name       = var.cluster.proxmox_cluster
-        node_ip            = each.value.ip
-        cluster            = var.cluster
-        cluster_domain     = var.cluster_domain
-        disks              = each.value.disks
-        igpu               = each.value.igpu
-        gpu_node_exclusive = lookup(each.value, "gpu_node_exclusive", false)
-        vip                = var.network.vip
+        hostname             = each.key
+        node_name            = each.value.host_node
+        cluster_name         = var.cluster.proxmox_cluster
+        node_ip              = each.value.ip
+        cluster              = var.cluster
+        cluster_domain       = var.cluster_domain
+        external_api_endpoint = var.external_api_endpoint
+        disks                = each.value.disks
+        igpu                 = each.value.igpu
+        gpu_node_exclusive   = lookup(each.value, "gpu_node_exclusive", false)
+        vip                  = var.network.vip
       })
     ],
     # This conditionally adds the GPU patches

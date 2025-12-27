@@ -54,6 +54,8 @@ module "talos" {
 
   cluster_domain = var.cluster_domain
 
+  external_api_endpoint = var.external_api_endpoint
+
   # CHANGE: Replace the hardcoded cluster block with variables
   cluster = {
     name               = var.cluster_name
