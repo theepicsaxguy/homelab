@@ -8,6 +8,10 @@ resource "talos_machine_bootstrap" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
 }
 
+resource "terraform_data" "kubeconfig_endpoint_trigger" {
+  input = coalesce(var.external_api_endpoint, var.cluster.endpoint)
+}
+
 resource "talos_cluster_kubeconfig" "this" {
   depends_on = [
     talos_machine_bootstrap.this,
@@ -18,6 +22,12 @@ resource "talos_cluster_kubeconfig" "this" {
   client_configuration = talos_machine_secrets.this.client_configuration
   timeouts = {
     read = "1m"
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      terraform_data.kubeconfig_endpoint_trigger
+    ]
   }
 }
 

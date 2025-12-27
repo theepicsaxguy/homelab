@@ -67,8 +67,13 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   # Create additional disks defined in the node configuration
+  # Only creates disks that have size, type, and unit_number specified
+  # Disks without these fields are assumed to already exist in Proxmox
   dynamic "disk" {
-    for_each = each.value.disks
+    for_each = {
+      for k, v in each.value.disks : k => v
+      if v.size != null && v.type != null && v.unit_number != null
+    }
     content {
       datastore_id = each.value.datastore_id
       interface    = "${disk.value.type}${disk.value.unit_number}"
