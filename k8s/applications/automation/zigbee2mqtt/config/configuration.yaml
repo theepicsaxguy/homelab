@@ -1,6 +1,6 @@
 version: 4
 mqtt:
-  server: mqtt://mosquitto.mqtt.svc.kube.pc-tips.se:1883
+  server: mqtt://mosquitto.mqtt.svc.cluster.local:1883
   base_topic: zigbee2mqtt
 serial:
   port: tcp://10.0.10.160:20108

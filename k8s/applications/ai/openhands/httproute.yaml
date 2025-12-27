@@ -12,7 +12,7 @@ spec:
       namespace: gateway
       sectionName: https
   hostnames:
-    - openhands.pc-tips.se
+    - openhands.peekoff.com
   rules:
     - matches:
         - path:

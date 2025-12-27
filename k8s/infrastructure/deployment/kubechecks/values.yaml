@@ -19,7 +19,7 @@ deployment:
     - name: KUBECHECKS_ENABLE_HOOKS_RENDERER
       value: "true"
     - name: KUBECHECKS_WEBHOOK_URL_BASE
-      value: "https://kubechecks.pc-tips.se"
+      value: "https://kubechecks.peekoff.com"
     - name: KUBECHECKS_ENSURE_WEBHOOKS
       value: "true"
     # - name: KUBECHECKS_OPENAI_API_TOKEN
@@ -47,7 +47,7 @@ deployment:
     - name: KUBECHECKS_ARGOCD_API_INSECURE
       value: "true"
     - name: KUBECHECKS_ARGOCD_API_SERVER_ADDR
-      value: "argocd-server.argocd.svc.kube.pc-tips.se"
+      value: "argocd-server.argocd.svc.cluster.local"
     - name: KUBECHECKS_ARGOCD_API_PLAINTEXT
       value: "true"
     - name: KUBECHECKS_ARGOCD_REPOSITORY_INSECURE

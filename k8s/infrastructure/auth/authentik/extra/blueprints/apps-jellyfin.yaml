@@ -30,7 +30,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://film.pc-tips.se/sso/OID/redirect/authentik
+        - url: https://film.peekoff.com/sso/OID/redirect/authentik
           matching_mode: strict
       client_id: !Env JELLYFIN_CLIENT_ID
       client_secret: !Env JELLYFIN_CLIENT_SECRET
@@ -69,7 +69,7 @@ entries:
       name: Jellyfin
       group: Media
       meta_description: Media server for movies, TV shows, and music
-      meta_launch_url: https://film.pc-tips.se/sso/OID/start/authentik
+      meta_launch_url: https://film.peekoff.com/sso/OID/start/authentik
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png
       provider: !KeyOf jellyfin_oauth2_provider
       policy_engine_mode: any

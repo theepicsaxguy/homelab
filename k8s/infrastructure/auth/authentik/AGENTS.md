@@ -2,9 +2,11 @@
 
 ## 1. Purpose & Scope
 
-This AGENTS.md provides guidance for AI agents working with authentik, the open-source identity provider (IdP) used in this homelab for single sign-on (SSO) and authentication across all applications.
+This AGENTS.md provides guidance for AI agents working with authentik, the open-source identity provider (IdP) used in
+this homelab for single sign-on (SSO) and authentication across all applications.
 
 **What this covers:**
+
 - Understanding authentik's role in the homelab infrastructure
 - Creating and maintaining authentik blueprints (GitOps-style configuration)
 - Writing efficient and correct blueprint YAML files
@@ -12,7 +14,9 @@ This AGENTS.md provides guidance for AI agents working with authentik, the open-
 - Blueprint YAML tags and their proper usage
 - Testing and validation of blueprints
 
-**Key Concept:** Authentik uses **Blueprints** - declarative YAML files that define the entire authentication infrastructure as code. Blueprints work in a GitOps manner, automatically applying configuration changes when files are modified.
+**Key Concept:** Authentik uses **Blueprints** - declarative YAML files that define the entire authentication
+infrastructure as code. Blueprints work in a GitOps manner, automatically applying configuration changes when files are
+modified.
 
 ## 2. Architecture Overview
 
@@ -57,6 +61,7 @@ k8s/infrastructure/auth/authentik/
 ### 2.3 How Blueprints Work
 
 Blueprints are mounted into the authentik container at `/blueprints` and are:
+
 - **Automatically discovered** when created or modified (via file watch)
 - **Applied every 60 minutes** or on-demand via the authentik UI/API
 - **Idempotent**: Safe to apply multiple times (creates or updates objects)
@@ -121,27 +126,27 @@ Every blueprint must follow this structure:
 # prettier-ignore-start
 # eslint-disable
 ---
-version: 1                          # Required: always 1
+version: 1 # Required: always 1
 metadata:
-  name: Example Blueprint           # Required: human-readable name
-  labels:                           # Optional: special labels control behavior
-    blueprints.goauthentik.io/instantiate: "true"  # Auto-instantiate (default: true)
-    blueprints.goauthentik.io/description: "Brief description"
-    blueprints.goauthentik.io/system: "true"  # System blueprint (don't modify)
-context:                            # Optional: default context variables
+  name: Example Blueprint # Required: human-readable name
+  labels: # Optional: special labels control behavior
+    blueprints.goauthentik.io/instantiate: 'true' # Auto-instantiate (default: true)
+    blueprints.goauthentik.io/description: 'Brief description'
+    blueprints.goauthentik.io/system: 'true' # System blueprint (don't modify)
+context: # Optional: default context variables
   foo: bar
-entries:                            # Required: list of objects to create/update
-  - model: authentik_flows.flow    # Required: model in app.model notation
-    state: present                  # Optional: present|created|must_created|absent
-    id: flow-id                     # Optional: ID for !KeyOf references
-    identifiers:                    # Required: unique identifier(s)
+entries: # Required: list of objects to create/update
+  - model: authentik_flows.flow # Required: model in app.model notation
+    state: present # Optional: present|created|must_created|absent
+    id: flow-id # Optional: ID for !KeyOf references
+    identifiers: # Required: unique identifier(s)
       slug: my-flow
-    attrs:                          # Optional: attributes to set
+    attrs: # Optional: attributes to set
       name: My Flow
       designation: authentication
-    conditions:                     # Optional: conditions for evaluation
+    conditions: # Optional: conditions for evaluation
       - !Context some_var
-    permissions:                    # Optional: object-level permissions (v2024.8+)
+    permissions: # Optional: object-level permissions (v2024.8+)
       - permission: inspect_flow
         user: !Find [authentik_core.user, [username, akadmin]]
 ```
@@ -150,20 +155,22 @@ entries:                            # Required: list of objects to create/update
 
 The `state` field controls how entries are managed:
 
-| State | Behavior |
-|-------|----------|
+| State               | Behavior                                                                    |
+| ------------------- | --------------------------------------------------------------------------- |
 | `present` (default) | Creates if missing, updates `attrs` if exists (overwrites specified fields) |
-| `created` | Creates if missing, never updates (preserves manual changes) |
-| `must_created` | Creates only if missing, fails if exists (strict validation) |
-| `absent` | Deletes the object (may cascade to related objects) |
+| `created`           | Creates if missing, never updates (preserves manual changes)                |
+| `must_created`      | Creates only if missing, fails if exists (strict validation)                |
+| `absent`            | Deletes the object (may cascade to related objects)                         |
 
-**Best Practice:** Use `present` for most cases. Use `created` for objects with auto-generated fields (like OAuth client secrets) that shouldn't be overwritten.
+**Best Practice:** Use `present` for most cases. Use `created` for objects with auto-generated fields (like OAuth client
+secrets) that shouldn't be overwritten.
 
 ### 4.3 Identifiers vs Attrs
 
 Understanding the difference is critical:
 
 - **`identifiers`**: Used to **find** existing objects (OR logic if multiple)
+
   - On creation: merged with `attrs` to create the object
   - On lookup: used to match existing objects
   - On update: NOT applied (only `attrs` are updated)
@@ -173,10 +180,11 @@ Understanding the difference is critical:
   - On update: only these fields are modified (others unchanged)
 
 **Example:**
+
 ```yaml
 - model: authentik_providers_oauth2.oauth2provider
   identifiers:
-    name: my-app  # Used to find the provider
+    name: my-app # Used to find the provider
   attrs:
     # Only these fields are updated on existing providers
     redirect_uris:
@@ -192,6 +200,7 @@ Authentik blueprints support custom YAML tags for dynamic values and references.
 ### 5.1 Core Tags
 
 #### `!KeyOf` - Reference Another Entry
+
 References the primary key of an entry defined earlier in the same blueprint.
 
 ```yaml
@@ -204,7 +213,7 @@ References the primary key of an entry defined earlier in the same blueprint.
 
 - model: authentik_flows.flowstagebinding
   identifiers:
-    target: !KeyOf my-flow  # References the flow's primary key
+    target: !KeyOf my-flow # References the flow's primary key
     stage: !KeyOf my-stage
   attrs:
     order: 10
@@ -213,6 +222,7 @@ References the primary key of an entry defined earlier in the same blueprint.
 **Error if:** No matching `id` found in the blueprint.
 
 #### `!Find` - Lookup Existing Object
+
 Searches for an existing object in the database and returns its primary key.
 
 ```yaml
@@ -226,20 +236,19 @@ user: !Find [authentik_core.user, [username, admin]]
 flow: !Find [authentik_flows.flow, [!Context property_name, !Context property_value]]
 ```
 
-**Format:** `!Find [model_name, [field1, value1], [field2, value2], ...]`
-**Error if:** No matching object found.
+**Format:** `!Find [model_name, [field1, value1], [field2, value2], ...]` **Error if:** No matching object found.
 
 #### `!FindObject` - Lookup with Full Data (v2025.8+)
-Like `!Find`, but returns serialized object data instead of just the primary key. Available in authentik v2025.8 and later.
+
+Like `!Find`, but returns serialized object data instead of just the primary key. Available in authentik v2025.8 and
+later.
 
 ```yaml
-flow_designation: !AtIndex [
-  !FindObject [authentik_flows.flow, [slug, default-password-change]],
-  designation
-]
+flow_designation: !AtIndex [!FindObject [authentik_flows.flow, [slug, default-password-change]], designation]
 ```
 
 #### `!Env` - Environment Variable
+
 Reads from environment variables. Supports default values.
 
 ```yaml
@@ -253,6 +262,7 @@ password: !Env [MY_PASSWORD, default-value]
 **Best Practice:** Use for secrets and configuration that varies per environment. Set via `envFrom` in `values.yaml`.
 
 #### `!File` - Read File Contents
+
 Reads contents from a file path. Supports default values.
 
 ```yaml
@@ -264,12 +274,13 @@ certificate: !File [/path/to/cert.pem, default-content]
 ```
 
 #### `!Context` - Access Context Variables
+
 Accesses blueprint context variables (built-in or user-defined).
 
 ```yaml
 # Built-in contexts
-enabled: !Context goauthentik.io/enterprise/licensed  # Boolean
-models: !Context goauthentik.io/rbac/models          # Dictionary
+enabled: !Context goauthentik.io/enterprise/licensed # Boolean
+models: !Context goauthentik.io/rbac/models # Dictionary
 
 # With default value
 value: !Context [foo, default-value]
@@ -278,23 +289,21 @@ value: !Context [foo, default-value]
 ### 5.2 String Manipulation Tags
 
 #### `!Format` - String Formatting
+
 Python-style string formatting with `%` operator.
 
 ```yaml
 name: !Format [my-policy-%s, !Context instance_name]
 # Result: my-policy-production
 
-model: !Format [
-  "authentik_stages_authenticator_%s.authenticator%sstage",
-  !Value 0,
-  !Value 0
-]
+model: !Format ['authentik_stages_authenticator_%s.authenticator%sstage', !Value 0, !Value 0]
 # Result: authentik_stages_authenticator_totp.authenticatortotpstage
 ```
 
 ### 5.3 Conditional Tags
 
 #### `!If` - Conditional Values
+
 Evaluates a condition and returns one of two values.
 
 ```yaml
@@ -320,6 +329,7 @@ attributes: !If [
 ```
 
 #### `!Condition` - Boolean Logic
+
 Combines multiple conditions with boolean operators.
 
 ```yaml
@@ -330,18 +340,13 @@ conditions:
 
 # Valid modes: AND, NAND, OR, NOR, XOR, XNOR
 # Complex nested conditions
-required: !Condition [
-  AND,
-  !Context instance_name,
-  !Find [authentik_flows.flow, [slug, my-flow]],
-  "string value",
-  123
-]
+required: !Condition [AND, !Context instance_name, !Find [authentik_flows.flow, [slug, my-flow]], 'string value', 123]
 ```
 
 ### 5.4 Iteration Tags
 
 #### `!Enumerate`, `!Index`, `!Value` - Loop Over Collections
+
 Iterate over sequences or mappings to generate multiple entries.
 
 ```yaml
@@ -398,24 +403,26 @@ example: !Enumerate [
 ```
 
 **Key Points:**
+
 - `!Index <depth>`: Returns the index (sequence) or key (mapping) at the specified depth
 - `!Value <depth>`: Returns the value at the specified depth
 - Depth 0 = current enumerate, depth 1 = parent enumerate, etc.
 - **Cannot** iterate over `!Index 0` or `!Value 0` (cannot iterate over self)
 
 #### `!AtIndex` - Access Specific Index (v2024.12+)
+
 Access a specific index in a sequence or mapping.
 
 ```yaml
 # From sequence
-first_item: !AtIndex [["first", "second", "third"], 0]  # "first"
+first_item: !AtIndex [['first', 'second', 'third'], 0] # "first"
 
 # From mapping
-value: !AtIndex [{"foo": "bar", "other": "value"}, "foo"]  # "bar"
+value: !AtIndex [{ 'foo': 'bar', 'other': 'value' }, 'foo'] # "bar"
 
 # With default value
-safe_access: !AtIndex [["first"], 100, "default"]  # "default"
-default_value: !AtIndex [["first"], 100]  # Error: index out of range
+safe_access: !AtIndex [['first'], 100, 'default'] # "default"
+default_value: !AtIndex [['first'], 100] # Error: index out of range
 ```
 
 ## 6. Common Blueprint Patterns
@@ -442,7 +449,7 @@ entries:
   - id: myapp-provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/apps/myapp
+      name: k8s.peekoff.com/apps/myapp
     attrs:
       # Find default flows
       authorization_flow: !Find [
@@ -478,3 +485,4 @@ entries:
 
 
 Use Openwiki mcp for more details.
+```

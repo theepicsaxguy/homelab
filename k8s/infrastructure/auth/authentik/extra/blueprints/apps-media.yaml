@@ -10,7 +10,7 @@ entries:
   - id: provider-bazarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/bazarr
+      name: k8s.peekoff.com/services-media/bazarr
     attrs:
       authorization_flow:
         !Find [
@@ -32,7 +32,7 @@ entries:
       client_id: !Env BAZARR_CLIENT_ID
       client_secret: !Env BAZARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://bazarr.pc-tips.se/oauth2/callback
+        - url: https://bazarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -79,7 +79,7 @@ entries:
   - id: provider-lidarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/lidarr
+      name: k8s.peekoff.com/services-media/lidarr
     attrs:
       authorization_flow:
         !Find [
@@ -101,7 +101,7 @@ entries:
       client_id: !Env LIDARR_CLIENT_ID
       client_secret: !Env LIDARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://lidarr.pc-tips.se/oauth2/callback
+        - url: https://lidarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -148,7 +148,7 @@ entries:
   - id: provider-prowlarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/prowlarr
+      name: k8s.peekoff.com/services-media/prowlarr
     attrs:
       authorization_flow:
         !Find [
@@ -170,7 +170,7 @@ entries:
       client_id: !Env PROWLARR_CLIENT_ID
       client_secret: !Env PROWLARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://prowlarr.pc-tips.se/oauth2/callback
+        - url: https://prowlarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -217,7 +217,7 @@ entries:
   - id: provider-radarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/radarr
+      name: k8s.peekoff.com/services-media/radarr
     attrs:
       authorization_flow:
         !Find [
@@ -239,7 +239,7 @@ entries:
       client_id: !Env RADARR_CLIENT_ID
       client_secret: !Env RADARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://radarr.pc-tips.se/oauth2/callback
+        - url: https://radarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -286,7 +286,7 @@ entries:
   - id: provider-readarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/readarr
+      name: k8s.peekoff.com/services-media/readarr
     attrs:
       authorization_flow:
         !Find [
@@ -308,7 +308,7 @@ entries:
       client_id: !Env READARR_CLIENT_ID
       client_secret: !Env READARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://readarr.pc-tips.se/oauth2/callback
+        - url: https://readarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -355,7 +355,7 @@ entries:
   - id: provider-sonarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/sonarr
+      name: k8s.peekoff.com/services-media/sonarr
     attrs:
       authorization_flow:
         !Find [
@@ -377,7 +377,7 @@ entries:
       client_id: !Env SONARR_CLIENT_ID
       client_secret: !Env SONARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://sonarr.pc-tips.se/oauth2/callback
+        - url: https://sonarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -424,7 +424,7 @@ entries:
   - id: provider-qbittorrent
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/qbittorrent
+      name: k8s.peekoff.com/services-media/qbittorrent
     attrs:
       authorization_flow:
         !Find [
@@ -446,7 +446,7 @@ entries:
       client_id: !Env QBITTORRENT_CLIENT_ID
       client_secret: !Env QBITTORRENT_CLIENT_SECRET
       redirect_uris:
-        - url: https://qbittorrent.pc-tips.se/oauth2/callback
+        - url: https://qbittorrent.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -493,7 +493,7 @@ entries:
   - id: provider-sabnzbd
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/sabnzbd
+      name: k8s.peekoff.com/services-media/sabnzbd
     attrs:
       authorization_flow:
         !Find [
@@ -515,7 +515,7 @@ entries:
       client_id: !Env SABNZBD_CLIENT_ID
       client_secret: !Env SABNZBD_CLIENT_SECRET
       redirect_uris:
-        - url: https://sabnzbd.pc-tips.se/oauth2/callback
+        - url: https://sabnzbd.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -563,7 +563,7 @@ entries:
   - id: provider-jellyseerr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/jellyseerr
+      name: k8s.peekoff.com/services-media/jellyseerr
     attrs:
       authorization_flow:
         !Find [
@@ -583,7 +583,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://jellyseerr.pc-tips.se/login/oidc/callback
+        - url: https://jellyseerr.peekoff.com/login/oidc/callback
           matching_mode: strict
       client_id: !Env JELLYSEERR_CLIENT_ID
       client_secret: !Env JELLYSEERR_CLIENT_SECRET
@@ -630,7 +630,7 @@ entries:
   - id: provider-audiobookshelf
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/media/audiobookshelf
+      name: k8s.peekoff.com/media/audiobookshelf
     attrs:
       authorization_flow:
         !Find [
@@ -652,9 +652,9 @@ entries:
       client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
       client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
       redirect_uris:
-        - url: https://audiobookshelf.pc-tips.se/auth/openid/callback
+        - url: https://audiobookshelf.peekoff.com/auth/openid/callback
           matching_mode: strict
-        - url: https://audiobookshelf.pc-tips.se/auth/openid/mobile-redirect
+        - url: https://audiobookshelf.peekoff.com/auth/openid/mobile-redirect
           matching_mode: strict
 
       access_code_validity: minutes=1

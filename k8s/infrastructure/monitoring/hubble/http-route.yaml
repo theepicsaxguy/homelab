@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "hubble.pc-tips.se"
+    - "hubble.peekoff.com"
   rules:
     - matches:
         - path:

@@ -277,7 +277,7 @@ xpkg
 xpkg.crossplane.io
 xpkg.upbound.io
 goingdark.social
-pc-tips.se
+peekoff.com
 your.domain.tld
 Vectorizing
 ten-minute

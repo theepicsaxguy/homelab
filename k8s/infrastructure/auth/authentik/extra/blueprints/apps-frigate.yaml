@@ -10,7 +10,7 @@ entries:
   - id: frigate_proxy_provider
     model: authentik_providers_proxy.proxyprovider
     identifiers:
-      name: k8s.pc-tips.se/services-frigate
+      name: k8s.peekoff.com/services-frigate
     attrs:
       # Standard flows
       authorization_flow:
@@ -25,7 +25,7 @@ entries:
         ]
 
       # External URL that users will access
-      external_host: https://frigate.pc-tips.se
+      external_host: https://frigate.peekoff.com
 
       # Internal service URL - Frigate service in frigate namespace
       internal_host: http://frigate.frigate.svc.cluster.local:5000
