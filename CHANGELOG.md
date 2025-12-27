@@ -2349,7 +2349,7 @@ Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://gith
 
 ### Features
 
-- update common labels from dev.pctips to dev.peekoff across k8s configurations
+- update common labels from dev.pctips to dev.pc-tips across k8s configurations
   ([#32](https://github.com/theepicsaxguy/homelab/issues/32))
   ([d73b8a5](https://github.com/theepicsaxguy/homelab/commit/d73b8a50bc53f6a82ed328f4e372e660beb1a45b))
 

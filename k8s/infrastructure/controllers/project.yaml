@@ -4,7 +4,7 @@ metadata:
   name: controllers
   namespace: argocd
   labels:
-    dev.peekoff: controllers
+    dev.pc-tips: controllers
 spec:
   description: Project for core infrastructure controllers
   sourceRepos:

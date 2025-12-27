@@ -4,7 +4,7 @@ metadata:
   name: deployment
   namespace: argocd
   labels:
-    dev.peekoff: deployment
+    dev.pc-tips: deployment
 spec:
   description: Project for core infrastructure deployment
   sourceRepos:
