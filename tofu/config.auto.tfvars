@@ -1,5 +1,6 @@
-cluster_name   = "talos"
-cluster_domain = "cluster.local"
+cluster_name          = "talos"
+cluster_domain        = "cluster.local"
+external_api_endpoint = "api.kube.peekoff.com"
 
 network = {
   gateway     = "10.25.150.1"

@@ -1,0 +1,58 @@
+---
+# ExternalSecret for Backblaze B2 credentials
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: velero-b2-credentials
+  namespace: velero
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: velero-b2-credentials
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data:
+        cloud: |
+          [default]
+          aws_access_key_id={{ .B2_ACCESS_KEY_ID }}
+          aws_secret_access_key={{ .B2_SECRET_ACCESS_KEY }}
+        repository-password: "{{ .RESTIC_PASSWORD }}"
+  data:
+    - secretKey: B2_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-velero-offsite  # Bitwarden item name
+        property: AWS_ACCESS_KEY_ID
+    - secretKey: B2_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-velero-offsite
+        property: AWS_SECRET_ACCESS_KEY
+    - secretKey: RESTIC_PASSWORD
+      remoteRef:
+        key: backblaze-b2-velero-offsite
+        property: RESTIC_PASSWORD
+---
+# Backblaze B2 Backup Storage Location
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: backblaze-b2
+  namespace: velero
+spec:
+  provider: aws
+  objectStorage:
+    bucket: homelab-velero-b2
+    prefix: velero-backups  # Organize backups in subdirectory
+  config:
+    region: us-west-000
+    s3ForcePathStyle: "false"  # B2 uses virtual-hosted style
+    s3Url: https://s3.us-west-000.backblazeb2.com
+  credential:
+    name: velero-b2-credentials
+    key: cloud
+  default: false  # Keep MinIO as default for faster local restores
+  accessMode: ReadWrite
+  validationFrequency: 1h  # Verify B2 connectivity hourly

@@ -14,6 +14,8 @@ spec:
       - '*'
     excludedNamespaces:
       - velero
+      - kube-system
+      - default
     includedResources:
       - '*'
     excludedResources:
@@ -21,7 +23,7 @@ spec:
       - storageclasses.storage.k8s.io
     includeClusterResources: null
     snapshotVolumes: null
-    storageLocation: default
+    storageLocation: backblaze-b2
     volumeSnapshotLocations:
       - default
     ttl: 672h # 28 days
