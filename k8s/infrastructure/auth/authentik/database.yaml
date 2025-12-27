@@ -106,7 +106,7 @@ spec:
   - name: barman-cloud.cloudnative-pg.io
     isWALArchiver: true
     parameters:
-      barmanObjectName: authentik-b2-store  # Primary WAL archive to B2 (offsite)
+      barmanObjectName: authentik-b2-store
 
   # Backup configuration
   backup:

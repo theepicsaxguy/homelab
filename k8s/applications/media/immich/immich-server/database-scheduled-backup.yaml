@@ -5,7 +5,7 @@ metadata:
   name: immich-postgresql-backup
   namespace: immich
 spec:
-  schedule: "0 0 2 * * *"
+  schedule: "0 0 2 * * 0"
   backupOwnerReference: self
   cluster:
     name: immich-postgresql
