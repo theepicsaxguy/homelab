@@ -1,4 +1,29 @@
 ---
+# ExternalSecret for Backblaze B2 credentials (PostgreSQL backups)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: b2-cnpg-credentials
+  namespace: auth
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: b2-cnpg-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-cnpg-offsite  # Bitwarden item name
+        property: AWS_ACCESS_KEY_ID
+    - secretKey: AWS_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-cnpg-offsite
+        property: AWS_SECRET_ACCESS_KEY
+---
+# Local MinIO backup (fast recovery)
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
@@ -14,6 +39,24 @@ spec:
         key: AWS_ACCESS_KEY_ID
       secretAccessKey:
         name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+# Offsite Backblaze B2 backup (disaster recovery)
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: authentik-b2-store
+  namespace: auth
+spec:
+  configuration:
+    destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
+    endpointURL: https://s3.us-west-000.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: b2-cnpg-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: b2-cnpg-credentials
         key: AWS_SECRET_ACCESS_KEY
 ---
 apiVersion: postgresql.cnpg.io/v1
@@ -63,7 +106,61 @@ spec:
   - name: barman-cloud.cloudnative-pg.io
     isWALArchiver: true
     parameters:
-      barmanObjectName: authentik-minio-store
+      barmanObjectName: authentik-b2-store  # Primary WAL archive to B2 (offsite)
+
+  # Backup configuration
+  backup:
+    # Base backups stored in B2 (offsite, disaster recovery)
+    barmanObjectStore:
+      destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
+      endpointURL: https://s3.us-west-000.backblazeb2.com
+      s3Credentials:
+        accessKeyId:
+          name: b2-cnpg-credentials
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: b2-cnpg-credentials
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        encryption: AES256
+      data:
+        compression: gzip
+        encryption: AES256
+        jobs: 2
+    # Retention policy
+    retentionPolicy: "30d"  # Keep 30 days of backups
+
+  # External clusters for recovery (can restore from either location)
+  externalClusters:
+    - name: authentik-b2-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
+        endpointURL: https://s3.us-west-000.backblazeb2.com
+        s3Credentials:
+          accessKeyId:
+            name: b2-cnpg-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: b2-cnpg-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
+    - name: authentik-minio-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
+        endpointURL: https://truenas.peekoff.com:9000
+        s3Credentials:
+          accessKeyId:
+            name: longhorn-minio-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: longhorn-minio-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
 
   # Bootstrap section removed - migration complete, cluster running in normal operational mode
 

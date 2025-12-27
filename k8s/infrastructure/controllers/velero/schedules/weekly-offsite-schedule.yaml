@@ -1,0 +1,89 @@
+---
+# Weekly Offsite Backup to Backblaze B2
+# Runs every Sunday at 3:00 AM UTC
+# Retention: 90 days (12-13 weekly backups)
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: weekly-offsite
+  namespace: velero
+spec:
+  # Cron schedule: minute hour day month weekday
+  # 0 3 * * 0 = 3:00 AM every Sunday
+  schedule: "0 3 * * 0"
+
+  template:
+    # Include all namespaces except velero itself
+    includedNamespaces:
+      - "*"
+
+    excludedNamespaces:
+      - velero
+
+    # Include all resources
+    includedResources:
+      - "*"
+
+    # Exclude resources that shouldn't be backed up
+    excludedResources:
+      - events
+      - events.events.k8s.io
+      - backups.velero.io
+      - restores.velero.io
+      - resticrepositories.velero.io
+
+    # Backup persistent volumes using node agent (Restic)
+    defaultVolumesToFsBackup: true
+
+    # Storage location: Backblaze B2
+    storageLocation: backblaze-b2
+
+    # Snapshot volumes using CSI snapshots (if available)
+    snapshotVolumes: true
+
+    # Volume snapshot locations
+    volumeSnapshotLocations:
+      - default
+
+    # Retention: 90 days (approximately 12-13 weekly backups)
+    ttl: 2160h  # 90 days * 24 hours
+
+    # Include cluster-scoped resources
+    includeClusterResources: true
+
+    # Hooks for backup preparation (if needed)
+    # hooks:
+    #   resources:
+    #     - name: postgres-backup-hook
+    #       includedNamespaces:
+    #         - "*"
+    #       labelSelector:
+    #         matchLabels:
+    #           app.kubernetes.io/name: postgresql
+    #       pre:
+    #         - exec:
+    #             container: postgres
+    #             command:
+    #               - /bin/bash
+    #               - -c
+    #               - pg_dump -U postgres > /tmp/backup.sql
+
+    # Ordered backup (backup in specific order if needed)
+    orderedResources:
+      # Backup PVCs before pods
+      persistentvolumeclaims: ""
+      # Then backup pods
+      pods: ""
+
+    # Metadata
+    metadata:
+      labels:
+        backup-type: weekly-offsite
+        storage-location: backblaze-b2
+        disaster-recovery: "true"
+
+  # Don't use the last backup time as the start time for the next backup
+  useOwnerReferencesInBackup: false
+
+  # Pause the schedule (set to true to temporarily disable)
+  paused: false
