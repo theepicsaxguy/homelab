@@ -19,6 +19,8 @@ spec:
 
     excludedNamespaces:
       - velero
+      - kube-system
+      - default
 
     # Include all resources
     includedResources:

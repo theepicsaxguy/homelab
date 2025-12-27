@@ -3,6 +3,5 @@ kind: Kustomization
 
 resources:
   - daily-schedule.yaml
-  - gfs-schedule.yaml
   - weekly-schedule.yaml
 
