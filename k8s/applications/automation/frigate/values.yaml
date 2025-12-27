@@ -67,7 +67,7 @@ config: |
     # logs:
 
   mqtt:
-      host: mosquitto.mqtt.svc.kube.pc-tips.se
+      host: mosquitto.mqtt.svc.cluster.local
       port: 1883
       topic_prefix: frigate
       client_id: frigate

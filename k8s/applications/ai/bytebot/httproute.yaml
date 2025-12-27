@@ -5,7 +5,7 @@ metadata:
   namespace: bytebot
 spec:
   hostnames:
-    - bytebot.pc-tips.se
+    - bytebot.peekoff.com
   parentRefs:
     - name: internal
       namespace: gateway

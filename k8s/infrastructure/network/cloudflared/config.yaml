@@ -8,16 +8,16 @@ warp-routing:
 
 ingress:
 
-  - hostname: ittools.pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
-  - hostname: argocd.pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
-  - hostname: "*.pc-tips.se"
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+  - hostname: ittools.peekoff.com
+    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
+  - hostname: argocd.peekoff.com
+    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
+  - hostname: "*.peekoff.com"
+    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:
-      originServerName: "*.pc-tips.se"
-  - hostname: pc-tips.se
-    service: https://cilium-gateway-external.gateway.svc.kube.pc-tips.se:443
+      originServerName: "*.peekoff.com"
+  - hostname: peekoff.com
+    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
     originRequest:
-      originServerName: pc-tips.se
+      originServerName: peekoff.com
   - service: http_status:404

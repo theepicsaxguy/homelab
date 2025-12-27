@@ -8,7 +8,7 @@ spec:
     - name: tls-passthrough
       namespace: gateway
   hostnames:
-    - "truenas.pc-tips.se"
+    - "truenas.peekoff.com"
   rules:
     - backendRefs:
         - name: truenas

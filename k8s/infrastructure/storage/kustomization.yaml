@@ -10,4 +10,4 @@ labels:
 - includeSelectors: true
   pairs:
     app.kubernetes.io/managed-by: argocd
-    dev.pc-tips: storage
+    dev.peekoff: storage

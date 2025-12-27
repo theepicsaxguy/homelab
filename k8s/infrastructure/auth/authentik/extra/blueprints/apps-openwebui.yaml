@@ -17,7 +17,7 @@ entries:
   - id: openwebui_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/ai/openwebui
+      name: k8s.peekoff.com/ai/openwebui
     attrs:
       authorization_flow:
         !Find [
@@ -39,7 +39,7 @@ entries:
       client_id: !Env OPENWEBUI_CLIENT_ID
       client_secret: !Env OPENWEBUI_CLIENT_SECRET
       redirect_uris:
-        - url: https://chat.pc-tips.se/oauth/oidc/callback
+        - url: https://chat.peekoff.com/oauth/oidc/callback
           matching_mode: strict
 
       access_code_validity: minutes=1

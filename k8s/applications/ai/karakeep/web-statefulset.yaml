@@ -61,7 +61,7 @@ spec:
             - containerPort: 3000
           env:
             - name: OAUTH_WELLKNOWN_URL
-              value: https://sso.pc-tips.se/application/o/karakeep/.well-known/openid-configuration
+              value: https://sso.peekoff.com/application/o/karakeep/.well-known/openid-configuration
             - name: OAUTH_PROVIDER_NAME
               value: authentik
             - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING

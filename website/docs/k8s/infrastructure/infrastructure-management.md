@@ -43,15 +43,15 @@ spec:
 - **Purpose:** CNI, network security, load balancing
 - **Features:**
   - eBPF-based networking
-<!-- vale off -->
+  <!-- vale off -->
   - LoadBalancer IP pool: 10.25.150.220-255
-<!-- vale on -->
+  <!-- vale on -->
   - L2 announcements for LAN services
   - Kubernetes Gateway API support
 
 ### 2. DNS (CoreDNS)
 
-- Internal domain: `kube.pc-tips.se` (set in `tofu/locals.tf`)
+- Internal domain: `cluster.local` (set in `tofu/locals.tf`)
 - External forwarding to 10.25.150.1, 1.1.1.1, 8.8.8.8
 - Caching enabled
 - Runs as a non-root user (UID/GID 1000) with NET_BIND_SERVICE capability
@@ -71,7 +71,7 @@ Three gateway types:
   - Cloudflare DNS validation
   - Internal CA for cluster services
   - Automatic certificate renewal
-  - Separate certificates for pc-tips.se and goingdark.social
+  - Separate certificates for peekoff.com and goingdark.social
 
 - **External Secrets:**
   - Bitwarden integration

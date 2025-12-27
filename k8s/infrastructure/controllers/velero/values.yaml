@@ -26,7 +26,7 @@ configuration:
       config:
         region: us-west-1
         s3ForcePathStyle: "true"
-        s3Url: https://truenas.pc-tips.se:9000
+        s3Url: https://truenas.peekoff.com:9000
   volumeSnapshotLocation:
     - name: default
       provider: csi

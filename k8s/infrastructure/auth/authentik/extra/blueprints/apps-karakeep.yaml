@@ -11,7 +11,7 @@ entries:
   - id: karakeep-provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/ai-karakeep
+      name: k8s.peekoff.com/ai-karakeep
     attrs:
       authorization_flow:
         !Find [
@@ -30,7 +30,7 @@ entries:
         ]
       client_type: confidential
       redirect_uris:
-        - url: https://karakeep.pc-tips.se/api/auth/callback/custom
+        - url: https://karakeep.peekoff.com/api/auth/callback/custom
           matching_mode: strict
       client_id: !Env KARAKEEP_CLIENT_ID
       client_secret: !Env KARAKEEP_CLIENT_SECRET

@@ -6,11 +6,11 @@ metadata:
 spec:
   parentRefs:
     - name: internal
-      namespace: gateway:
+      namespace: gateway
     - name: external
       namespace: gateway
   hostnames:
-    - "kiwix.pc-tips.se"
+    - "kiwix.peekoff.com"
   rules:
     - matches:
         - path:

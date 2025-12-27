@@ -83,7 +83,7 @@ spec:
             - name: OIDC_ENABLED
               value: "true"
             - name: OIDC_ISSUER_URL
-              value: "https://auth.pc-tips.se/application/o/audiobookshelf/"
+              value: "https://auth.peekoff.com/application/o/audiobookshelf/"
             - name: OIDC_CLIENT_ID
               valueFrom:
                 secretKeyRef:

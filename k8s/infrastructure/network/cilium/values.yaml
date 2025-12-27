@@ -94,7 +94,7 @@ envoy:
 
 hubble:
   peerService:
-    clusterDomain: kube.pc-tips.se
+    clusterDomain: cluster.local
   enabled: true
   relay:
     enabled: true

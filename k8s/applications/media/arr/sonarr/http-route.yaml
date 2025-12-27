@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'sonarr.pc-tips.se'
+    - 'sonarr.peekoff.com'
   rules:
     - matches:
         - path:

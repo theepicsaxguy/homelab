@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - grafana.pc-tips.se
+    - grafana.peekoff.com
   rules:
     - matches:
         - path:

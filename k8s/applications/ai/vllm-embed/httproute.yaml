@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'embeddings.pc-tips.se'
+    - 'embeddings.peekoff.com'
   rules:
     - matches:
         - path:

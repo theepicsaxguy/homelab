@@ -8,7 +8,7 @@ spec:
     - name: tls-passthrough
       namespace: gateway
   hostnames:
-    - "unifi.pc-tips.se"
+    - "unifi.peekoff.com"
   rules:
     - backendRefs:
         - name: unifi-svc

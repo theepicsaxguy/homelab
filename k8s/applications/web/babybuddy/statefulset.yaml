@@ -40,7 +40,7 @@ spec:
             - name: TZ
               value: 'Europe/Stockholm'
             - name: CSRF_TRUSTED_ORIGINS
-              value: 'https://bebis.pc-tips.se,http://bebis.pc-tips.se'
+              value: 'https://bebis.peekoff.com,http://bebis.peekoff.com'
           envFrom:
             - secretRef:
                 name: es-babybuddy-secret-key

@@ -6,10 +6,10 @@ This guide summarizes key configuration details for running Immich with GitOps.
 
 ## Prerequisites
 
-* Kubernetes cluster with the CloudNativePG operator (`postgresql.cnpg.io/v1`) installed
-* `immich` namespace created
-* External Secrets Operator available
-* Helm CLI and `kubectl` configured
+- Kubernetes cluster with the CloudNativePG operator (`postgresql.cnpg.io/v1`) installed
+- `immich` namespace created
+- External Secrets Operator available
+- Helm CLI and `kubectl` configured
 
 ## Configuration Overview
 
@@ -39,7 +39,9 @@ spec:
 ### Database Connection
 
 <!-- vale off -->
-CloudNativePG automatically generates the `immich-postgresql-app` secret containing all connection details. The StatefulSet references this secret directly:
+
+CloudNativePG automatically generates the `immich-postgresql-app` secret containing all connection details. The
+StatefulSet references this secret directly:
 
 ```yaml
 # k8s/applications/media/immich/immich-server/statefulset.yaml
@@ -64,6 +66,7 @@ env:
         key: username
         name: immich-postgresql-app
 ```
+
 <!-- vale on -->
 
 ### Kustomization Layout
@@ -85,72 +88,74 @@ resources:
 
 ### OAuth Configuration via ExternalSecret
 
-Immich expects the OAuth client details inside its config file. The `immich-config-external-secret.yaml` resource pulls these values from Bitwarden and renders the full configuration as a Secret:
+Immich expects the OAuth client details inside its config file. The `immich-config-external-secret.yaml` resource pulls
+these values from Bitwarden and renders the full configuration as a Secret:
 
 ```yaml
 # k8s/applications/media/immich/immich-server/immich-config-external-secret.yaml
 spec:
   template:
     data:
-        immich-config.yaml: |
-          ...
-          server:
-            externalDomain: https://photo.pc-tips.se
-          oauth:
-            enabled: true
-            issuerUrl: "https://sso.pc-tips.se/application/o/immich/"
-            scope: "openid email profile"
-            autoLaunch: true
-            autoRegister: true
-            buttonText: "Login with SSO"
-            clientId: "{{ .clientId }}"
-            clientSecret: "{{ .clientSecret }}"
-          passwordLogin:
-            enabled: false
+      immich-config.yaml: |
+        ...
+        server:
+          externalDomain: https://photo.peekoff.com
+        oauth:
+          enabled: true
+          issuerUrl: "https://sso.peekoff.com/application/o/immich/"
+          scope: "openid email profile"
+          autoLaunch: true
+          autoRegister: true
+          buttonText: "Login with SSO"
+          clientId: "{{ .clientId }}"
+          clientSecret: "{{ .clientSecret }}"
+        passwordLogin:
+          enabled: false
 ```
 
-This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without additional environment variables.
-The machine learning deployment mounts the same Secret so both components read identical settings.
+This Secret is mounted by the StatefulSet at `/config/immich-config.yaml`, allowing the application to start without
+additional environment variables. The machine learning deployment mounts the same Secret so both components read
+identical settings.
 
 ### Resource Requests
 
 Both pods need enough memory to process photos without crashing. A good starting point is:
 
-| Component | CPU Request | Memory Request | CPU Limit | Memory Limit |
-| --------- | ----------- | -------------- | --------- | ------------ |
-| immich-server | 500m | 512Mi | 2000m | 2Gi |
-| immich-machine-learning | 200m | 1Gi | 1000m | 4Gi |
+| Component               | CPU Request | Memory Request | CPU Limit | Memory Limit |
+| ----------------------- | ----------- | -------------- | --------- | ------------ |
+| immich-server           | 500m        | 512Mi          | 2000m     | 2Gi          |
+| immich-machine-learning | 200m        | 1Gi            | 1000m     | 4Gi          |
 
 ### Library Storage
 
-Immich stores uploaded files on a Persistent Volume Claim named `library`. The claim
-requests 50Gi from Longhorn:
+Immich stores uploaded files on a Persistent Volume Claim named `library`. The claim requests 50Gi from Longhorn:
 
 ```yaml
 # k8s/applications/media/immich/immich-server/statefulset.yaml
 spec:
   volumeClaimTemplates:
-  - metadata:
-      name: library
-    spec:
-      storageClassName: longhorn
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 50Gi
+    - metadata:
+        name: library
+      spec:
+        storageClassName: longhorn
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 50Gi
 ```
 
 ### Backups
 
-Database backups use MinIO credentials from an ExternalSecret and are configured through CloudNativePG's native backup integration:
+Database backups use MinIO credentials from an ExternalSecret and are configured through CloudNativePG's native backup
+integration:
 
 ```yaml
 # k8s/applications/media/immich/immich-server/database.yaml
 plugins:
-- name: barman-cloud.cloudnative-pg.io
-  isWALArchiver: true
-  parameters:
-    barmanObjectName: immich-minio-store
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: immich-minio-store
 ```
 
 Scheduled backups are configured via `database-scheduled-backup.yaml` using the ScheduledBackup CRD.

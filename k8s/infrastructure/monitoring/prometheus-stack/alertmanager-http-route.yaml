@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - alertmanager.pc-tips.se
+    - alertmanager.peekoff.com
   rules:
     - matches:
         - path:

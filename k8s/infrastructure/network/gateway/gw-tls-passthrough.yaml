@@ -12,7 +12,7 @@ spec:
     - protocol: TLS
       port: 443
       name: proxmox
-      hostname: "proxmox.pc-tips.se"
+      hostname: "proxmox.peekoff.com"
       tls:
         mode: Passthrough
       allowedRoutes:
@@ -21,7 +21,7 @@ spec:
     - protocol: TLS
       port: 443
       name: truenas
-      hostname: "truenas.pc-tips.se"
+      hostname: "truenas.peekoff.com"
       tls:
         mode: Passthrough
       allowedRoutes:
@@ -30,7 +30,7 @@ spec:
     - protocol: TLS
       port: 443
       name: unifi
-      hostname: "unifi.pc-tips.se"
+      hostname: "unifi.peekoff.com"
       tls:
         mode: Passthrough
       allowedRoutes:
