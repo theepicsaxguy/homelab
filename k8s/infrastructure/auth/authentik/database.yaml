@@ -106,30 +106,19 @@ spec:
   - name: barman-cloud.cloudnative-pg.io
     isWALArchiver: true
     parameters:
-      barmanObjectName: authentik-b2-store
+      barmanObjectName: authentik-minio-store
 
-  # Backup configuration
+  # Backup configuration using plugin-based approach
   backup:
-    # Base backups stored in B2 (offsite, disaster recovery)
-    barmanObjectStore:
-      destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-      endpointURL: https://s3.us-west-000.backblazeb2.com
-      s3Credentials:
-        accessKeyId:
-          name: b2-cnpg-credentials
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: b2-cnpg-credentials
-          key: AWS_SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-        encryption: AES256
-      data:
-        compression: gzip
-        encryption: AES256
-        jobs: 2
     # Retention policy
     retentionPolicy: "30d"  # Keep 30 days of backups
+    target: prefer-standby
+    volumeSnapshot:
+      className: longhorn
+      online: true
+      onlineConfiguration:
+        waitForArchive: true
+        immediateCheckpoint: true
 
   # External clusters for recovery (can restore from either location)
   externalClusters:
