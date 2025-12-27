@@ -21,15 +21,7 @@ variable "defaults_worker" {
     cpu_units     = 1024
     ram_dedicated = 21504
     igpu          = false
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "300G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    disks         = {}
   }
 }
 
@@ -47,14 +39,6 @@ variable "defaults_controlplane" {
     cpu           = 6
     cpu_units     = 1024
     ram_dedicated = 8192
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "300G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    disks         = {}
   }
 }

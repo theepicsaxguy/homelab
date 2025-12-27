@@ -47,6 +47,7 @@ variable "network" {
   type = object({
     gateway     = string
     vip         = string
+    api_lb_vip  = optional(string)
     cidr_prefix = number
     dns_servers = list(string)
     bridge      = string

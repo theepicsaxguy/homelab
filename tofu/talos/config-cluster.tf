@@ -10,7 +10,8 @@ resource "talos_machine_bootstrap" "this" {
 
 resource "talos_cluster_kubeconfig" "this" {
   depends_on = [
-    talos_machine_bootstrap.this
+    talos_machine_bootstrap.this,
+    talos_machine_configuration_apply.this
   ]
   node                 = [for k, v in var.nodes : v.ip if v.machine_type == "controlplane"][0]
   endpoint             = coalesce(var.external_api_endpoint, var.cluster.endpoint)

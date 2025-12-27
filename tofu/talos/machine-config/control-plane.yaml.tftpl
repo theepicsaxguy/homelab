@@ -1,6 +1,9 @@
 machine:
   certSANs:
     - ${vip}
+%{ if network.api_lb_vip != null && network.api_lb_vip != "" ~}
+    - ${network.api_lb_vip}  # API load balancer VIP
+%{ endif ~}
     - ${node_ip}      # The node's own IP
     - ${cluster.endpoint}
 %{ if external_api_endpoint != null ~}

@@ -20,6 +20,7 @@ data "talos_machine_configuration" "this" {
       cilium_install        = var.cilium.install
       coredns_install       = var.coredns.install
       oidc                 = var.oidc
+      network              = var.network
       vip                  = var.network.vip
       disks                = each.value.disks
     })
