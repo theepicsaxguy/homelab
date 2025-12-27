@@ -250,23 +250,209 @@ All schedules are configured in `k8s/infrastructure/controllers/velero/schedules
 
 **Barman Cloud Backup Setup**
 
-- **Use ObjectStore + plugins architecture** (modern approach)
-- **ObjectStore resource** defines S3 backup destination
-- **Cluster plugins section** references the ObjectStore
-- **ScheduledBackup** uses `method: plugin` with `barman-cloud.cloudnative-pg.io`
+CNPG uses the official plugin-based backup architecture with dual backup destinations for redundancy:
 
-**Complete Backup Setup:**
+**Dual Backup Architecture:**
 
-- Create ObjectStore resource with S3 destination path and credentials
-- Add plugins section to Cluster spec referencing the ObjectStore
-- Create ScheduledBackup with plugin method and barman-cloud configuration
-- Add backup labels: `recurring-job.longhorn.io/source: enabled` and tier label (`gfs` or `daily`)
+1. **Local MinIO (Fast Recovery)**
+   - Destination: `s3://homelab-postgres-backups/<namespace>/<cluster-name>`
+   - Endpoint: `https://truenas.peekoff.com:9000`
+   - Purpose: Quick restores from local NAS
+   - Retention: Managed by backup job schedules
+
+2. **Backblaze B2 (Disaster Recovery)**
+   - Destination: `s3://homelab-cnpg-b2/<namespace>/<cluster-name>`
+   - Endpoint: `https://s3.us-west-000.backblazeb2.com`
+   - Purpose: Offsite disaster recovery
+   - Retention: 30 days (configurable per cluster)
+
+**Required Components:**
+
+- **ObjectStore resources** (2 per cluster):
+  - One for local MinIO (e.g., `<cluster-name>-minio-store`)
+  - One for Backblaze B2 (e.g., `<cluster-name>-b2-store`)
+
+- **ExternalSecret for B2 credentials**:
+  - Syncs `backblaze-b2-cnpg-offsite` Bitwarden item to `b2-cnpg-credentials` Secret
+  - Provides AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+
+- **Cluster plugins section**:
+  - Uses `barman-cloud.cloudnative-pg.io` plugin with `isWALArchiver: true`
+  - References B2 ObjectStore for continuous WAL archiving to offsite
+
+- **Cluster backup.barmanObjectStore section**:
+  - Configured for Backblaze B2 (primary offsite backup)
+  - Includes WAL and data compression (gzip) and encryption (AES256)
+  - Retention policy: 30 days (adjustable per cluster)
+
+- **ScheduledBackup resource**:
+  - Method: `plugin` with `barman-cloud.cloudnative-pg.io`
+  - Schedule: Weekly on Sundays at 02:00 (`0 0 2 * * 0`)
+  - Triggers base backup to B2 via plugin architecture
+  - WAL archiving runs continuously via plugin configuration
+
+- **Cluster externalClusters section** (for recovery):
+  - Defines both B2 and MinIO backup locations as external clusters
+  - Enables point-in-time recovery from either destination
+
+**Complete Backup Setup Pattern:**
+
+```yaml
+# 1. ExternalSecret for B2 credentials
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: b2-cnpg-credentials
+  namespace: <namespace>
+spec:
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: b2-cnpg-credentials
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-cnpg-offsite
+        property: AWS_ACCESS_KEY_ID
+    - secretKey: AWS_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-cnpg-offsite
+        property: AWS_SECRET_ACCESS_KEY
+
+---
+# 2. Local MinIO ObjectStore
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: <cluster-name>-minio-store
+  namespace: <namespace>
+spec:
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/<namespace>/<cluster-name>
+    endpointURL: https://truenas.peekoff.com:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+
+---
+# 3. Backblaze B2 ObjectStore
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: <cluster-name>-b2-store
+  namespace: <namespace>
+spec:
+  configuration:
+    destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
+    endpointURL: https://s3.us-west-000.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: b2-cnpg-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: b2-cnpg-credentials
+        key: AWS_SECRET_ACCESS_KEY
+
+---
+# 4. Cluster with plugin configuration
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: <cluster-name>
+  namespace: <namespace>
+spec:
+  plugins:
+  - name: barman-cloud.cloudnative-pg.io
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: <cluster-name>-b2-store
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
+      endpointURL: https://s3.us-west-000.backblazeb2.com
+      s3Credentials:
+        accessKeyId:
+          name: b2-cnpg-credentials
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: b2-cnpg-credentials
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        encryption: AES256
+      data:
+        compression: gzip
+        encryption: AES256
+        jobs: 2
+    retentionPolicy: "30d"
+
+  externalClusters:
+    - name: <cluster-name>-b2-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
+        endpointURL: https://s3.us-west-000.backblazeb2.com
+        s3Credentials:
+          accessKeyId:
+            name: b2-cnpg-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: b2-cnpg-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
+    - name: <cluster-name>-minio-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-postgres-backups/<namespace>/<cluster-name>
+        endpointURL: https://truenas.peekoff.com:9000
+        s3Credentials:
+          accessKeyId:
+            name: longhorn-minio-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: longhorn-minio-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
+
+---
+# 5. ScheduledBackup (weekly to B2)
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: <cluster-name>-backup
+  namespace: <namespace>
+spec:
+  schedule: "0 0 2 * * 0"
+  backupOwnerReference: self
+  cluster:
+    name: <cluster-name>
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+```
+
+**Key Configuration Details:**
+
+- **Plugin handles WAL archiving**: Continuous WAL shipping to B2 via `plugins` section
+- **ScheduledBackup triggers base backups**: Weekly full backups to B2 via plugin
+- **Compression & encryption**: Both WAL and data backups use gzip compression and AES256 encryption
+- **Retention policy**: 30 days of backups retained in B2 (adjust per cluster requirements)
+- **Recovery options**: Can restore from either B2 or MinIO via `externalClusters` definitions
 
 **Backup Tier Guidelines:**
 
-- **GFS (Grandfather-Father-Son):** Critical databases needing point-in-time recovery
-- **Daily:** Standard applications with daily retention
-- **None:** Caches, ephemeral data
+- **All CNPG clusters** should have both MinIO and B2 backup destinations configured
+- **Weekly base backups** to B2 provide disaster recovery coverage
+- **Continuous WAL archiving** to B2 enables point-in-time recovery
+- **MinIO backups** provide fast local restore option for non-disaster scenarios
 
 ### Destructive Action Protocol
 
