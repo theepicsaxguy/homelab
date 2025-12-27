@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: perplexica
-          image: itzcrazykns1337/perplexica:v1.11.2
+          image: itzcrazykns1337/perplexica:v1.12.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
