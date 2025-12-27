@@ -9,10 +9,10 @@ variable "defaults_worker" {
     igpu          = bool
     disks = map(object({
       device      = string
-      size        = string
-      type        = string
+      size        = optional(string)  # Optional - only needed if creating disk in Proxmox
+      type        = optional(string)  # Optional - only needed if creating disk in Proxmox
       mountpoint  = string
-      unit_number = number
+      unit_number = optional(number)  # Optional - only needed if creating disk in Proxmox
     }))
   })
   default = {
@@ -23,11 +23,9 @@ variable "defaults_worker" {
     igpu          = false
     disks = {
       longhorn = {
-        device      = "/dev/sdb"
-        size        = "300G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
+        device     = "/dev/sdc" # scsi1 in Proxmox - disk already exists, just mount it
+        mountpoint = "/var/lib/longhorn"
+        # size, type, unit_number omitted - disk already exists in Proxmox
       }
     }
   }
@@ -47,14 +45,6 @@ variable "defaults_controlplane" {
     cpu           = 6
     cpu_units     = 1024
     ram_dedicated = 8192
-    disks = {
-      longhorn = {
-        device      = "/dev/sdb"
-        size        = "300G"
-        type        = "scsi"
-        mountpoint  = "/var/lib/longhorn"
-        unit_number = 1
-      }
-    }
+    disks         = {}
   }
 }

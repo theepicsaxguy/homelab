@@ -1,9 +1,18 @@
 ---
-title: 'Disaster Recovery: Talos + Longhorn
-'
+title: 'Disaster Recovery: Talos + Longhorn'
 ---
 
-This walkthrough shows how I rebuild my Talos cluster and Longhorn volumes from S3 backups. It's specific to my environment, so adapt the steps for yours.
+:::warning Deprecated Documentation
+This document provides a general walkthrough for Talos + Longhorn recovery. For specific disaster scenarios with step-by-step procedures, see the new **[Disaster Recovery Scenarios](scenarios/)** documentation.
+
+**Quick Links:**
+- [Scenario 1: Accidental Deletion](scenarios/01-accidental-deletion.md)
+- [Scenario 2: Disk Failure](scenarios/02-disk-failure.md)
+- [Scenario 3: Host Failure](scenarios/03-host-failure.md)
+- [All Scenarios Overview](scenarios/)
+:::
+
+This walkthrough shows the general process for rebuilding a Talos cluster and Longhorn volumes from S3 backups. For specific disaster scenarios, use the scenario-based guides linked above.
 
 ## Prerequisites
 

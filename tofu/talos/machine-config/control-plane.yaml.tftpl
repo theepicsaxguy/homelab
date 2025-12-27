@@ -1,8 +1,13 @@
 machine:
   certSANs:
     - ${vip}
-    - ${node_ip}      # The node's own IP
-    - ${cluster.endpoint}
+%{ if network.api_lb_vip != null && network.api_lb_vip != "" ~}
+    - ${network.api_lb_vip}
+%{ endif ~}
+    - ${node_ip}
+%{ if external_api_endpoint != null ~}
+    - ${external_api_endpoint}
+%{ endif ~}
 
   kubelet:
     clusterDNS:

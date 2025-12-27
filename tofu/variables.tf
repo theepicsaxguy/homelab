@@ -150,6 +150,12 @@ variable "cluster_domain" {
   type        = string
 }
 
+variable "external_api_endpoint" {
+  description = "External API endpoint domain for kubectl access (e.g., api.kube.example.com). If not provided, uses internal cluster endpoint."
+  type        = string
+  default     = null
+}
+
 variable "network" {
   description = "Network configuration for the cluster."
   type = object({

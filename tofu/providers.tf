@@ -32,7 +32,7 @@ provider "proxmox" {
 
 
 provider "kubernetes" {
-  host                   = module.talos.kube_config.kubernetes_client_configuration.host
+  host                   = "https://${coalesce(var.external_api_endpoint, "api.${var.cluster_domain}")}:6443"
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
