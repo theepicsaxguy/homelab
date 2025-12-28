@@ -32,9 +32,11 @@ spec:
       - events.events.k8s.io
       - backups.velero.io
       - restores.velero.io
-      - resticrepositories.velero.io
+      - backuprepositories.velero.io
+      - podvolumebackups.velero.io
+      - podvolumerestores.velero.io
 
-    # Backup persistent volumes using node agent (Restic)
+    # Backup persistent volumes using node agent (Kopia)
     defaultVolumesToFsBackup: true
 
     # Storage location: Backblaze B2

@@ -98,8 +98,9 @@ Create three separate secrets in Secrets Manager:
 2. **Name**: `backblaze-b2-velero-secret-access-key`
    - **Value**: [applicationKey from Velero app key]
 
-3. **Name**: `backblaze-b2-velero-restic-password`
+3. **Name**: `backblaze-b2-velero-repository-password`
    - **Value**: [Generate a strong random password, e.g., `openssl rand -base64 32`]
+   - **Note**: This password encrypts Kopia backup data at rest (client-side encryption)
 
 ### Bitwarden Secrets 2: CNPG B2 Credentials
 
@@ -179,7 +180,7 @@ Based on your current backup sizes:
 2. **Application Keys are scoped** - each key can only access its designated bucket
 3. **Encryption at rest** - B2 server-side encryption is enabled
 4. **Encryption in transit** - All connections use HTTPS
-5. **Restic encryption** - Velero uses Restic with additional client-side encryption
+5. **Kopia encryption** - Velero uses Kopia with additional client-side encryption
 
 ## Next Steps
 

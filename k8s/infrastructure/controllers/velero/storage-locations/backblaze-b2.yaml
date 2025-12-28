@@ -13,14 +13,14 @@ spec:
   target:
     name: velero-b2-credentials
     creationPolicy: Owner
-    template:
-      engineVersion: v2
-      data:
-        cloud: |
-          [default]
-          aws_access_key_id={{ .B2_ACCESS_KEY_ID }}
-          aws_secret_access_key={{ .B2_SECRET_ACCESS_KEY }}
-        repository-password: "{{ .RESTIC_PASSWORD }}"
+  template:
+    engineVersion: v2
+    data:
+      cloud: |
+        [default]
+        aws_access_key_id={{ .B2_ACCESS_KEY_ID }}
+        aws_secret_access_key={{ .B2_SECRET_ACCESS_KEY }}
+      repository-password: "{{ .REPOSITORY_PASSWORD }}"
   data:
     - secretKey: B2_ACCESS_KEY_ID
       remoteRef:
@@ -28,9 +28,9 @@ spec:
     - secretKey: B2_SECRET_ACCESS_KEY
       remoteRef:
         key: backblaze-b2-velero-secret-access-key
-    - secretKey: RESTIC_PASSWORD
+    - secretKey: REPOSITORY_PASSWORD
       remoteRef:
-        key: backblaze-b2-velero-restic-password
+        key: backblaze-b2-velero-repository-password
 ---
 # Backblaze B2 Backup Storage Location
 apiVersion: velero.io/v1
