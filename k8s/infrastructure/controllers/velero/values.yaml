@@ -32,13 +32,6 @@ configuration:
         region: us-west-1
         s3ForcePathStyle: "true"
         s3Url: https://truenas.peekoff.com:9000
-    - name: backblaze-b2
-      provider: aws
-      bucket: velero
-      config:
-        region: us-west-1
-        s3ForcePathStyle: "true"
-        s3Url: https://truenas.peekoff.com:9000
 resources:
   requests:
     cpu: 200m

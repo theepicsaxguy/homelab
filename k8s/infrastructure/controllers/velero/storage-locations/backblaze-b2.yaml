@@ -44,9 +44,9 @@ spec:
     bucket: homelab-velero-b2
     prefix: velero-backups  # Organize backups in subdirectory
   config:
-    region: us-west-000
+    region: us-west-002
     s3ForcePathStyle: "false"  # B2 uses virtual-hosted style
-    s3Url: https://s3.us-west-000.backblazeb2.com
+    s3Url: https://s3.us-west-002.backblazeb2.com
   credential:
     name: velero-b2-credentials
     key: cloud

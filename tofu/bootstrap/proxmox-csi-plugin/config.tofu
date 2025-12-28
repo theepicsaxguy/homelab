@@ -3,12 +3,9 @@ resource "proxmox_virtual_environment_role" "csi" {
   privileges = [
     "Sys.Audit",
     "VM.Audit",
-    "VM.Allocate",
-    "VM.Clone",
     "VM.Config.Disk",
     "Datastore.Allocate",
     "Datastore.AllocateSpace",
-    "Datastore.AllocateTemplate",
     "Datastore.Audit"
   ]
 }
