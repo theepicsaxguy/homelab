@@ -1,6 +1,8 @@
-upgradeCRDs: true
+upgradeCRDs: false
 deployNodeAgent: true
 snapshotsEnabled: true
+# Velero 1.10+ uses Kopia by default for file-system backups
+# The deprecated Restic is no longer supported
 initContainers:
   - name: velero-plugin-for-aws
     image: velero/velero-plugin-for-aws:v1.13.1
@@ -18,6 +20,7 @@ credentials:
   useSecret: true
   existingSecret: velero-minio-credentials
 configuration:
+  uploaderType: kopia
   backupStorageLocation:
     - name: default
       provider: aws
