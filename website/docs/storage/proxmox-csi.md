@@ -61,16 +61,25 @@ The storage bootstrap is managed through Terraform in the `tofu/bootstrap.tf` fi
 
 ### Proxmox CSI Plugin Setup
 
-The `proxmox-csi-plugin` module automatically configures:
+The `proxmox-csi-plugin` module in `tofu/bootstrap.tf` automatically configures:
 
 1. **Proxmox User & Role**: Creates a `kubernetes-csi@pve` user with appropriate permissions
 2. **API Token**: Generates an API token for the CSI plugin to authenticate with Proxmox
 3. **Kubernetes Resources**:
-   - Creates the `csi-proxmox` namespace
-   - Stores the Proxmox credentials in a Kubernetes secret
+   - Creates `csi-proxmox` namespace
+   - Stores Proxmox credentials in a Kubernetes secret
+
+**Command to deploy:**
+
+```bash
+cd tofu
+tofu apply -target=module.proxmox-csi-plugin
+```
+
+**Terraform Module Reference:**
 
 ```hcl
-# Automatically configured when you run tofu apply
+# From tofu/bootstrap.tf
 module "proxmox-csi-plugin" {
   source = "./bootstrap/proxmox-csi-plugin"
 
@@ -84,12 +93,16 @@ module "proxmox-csi-plugin" {
 
 ### Required Proxmox Permissions
 
-The CSI plugin user is granted these permissions:
+The Terraform `proxmox-csi-plugin` module creates a Proxmox user and role with these minimal permissions:
+
+- `Sys.Audit` - Required for CSI controller to query system capacity
 - `VM.Audit` - View VM information
 - `VM.Config.Disk` - Modify VM disk configuration
 - `Datastore.Allocate` - Allocate storage space
 - `Datastore.AllocateSpace` - Manage datastore capacity
 - `Datastore.Audit` - View datastore information
+
+These permissions are sufficient for basic CSI operations (creating, attaching, deleting volumes).
 
 ## Using Storage in Applications
 

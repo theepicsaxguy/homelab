@@ -1,6 +1,6 @@
 upgradeCRDs: false
 deployNodeAgent: true
-snapshotsEnabled: true
+snapshotsEnabled: false  # Kopia filesystem backups enabled; CSI snapshots disabled
 # Velero 1.10+ uses Kopia by default for file-system backups
 # The deprecated Restic is no longer supported
 initContainers:
@@ -21,6 +21,8 @@ credentials:
   existingSecret: velero-minio-credentials
 configuration:
   uploaderType: kopia
+  uploaderConfig:
+    parallelFilesUpload: 5
   backupStorageLocation:
     - name: default
       provider: aws
@@ -30,11 +32,6 @@ configuration:
         region: us-west-1
         s3ForcePathStyle: "true"
         s3Url: https://truenas.peekoff.com:9000
-  volumeSnapshotLocation:
-    - name: default
-      provider: csi
-      config: {}
-features: "EnableCSI"
 resources:
   requests:
     cpu: 200m

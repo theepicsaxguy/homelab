@@ -10,7 +10,7 @@ This guide provides step-by-step instructions for setting up your homelab enviro
 
 ## Prerequisites
 
-- Proxmox access with your SSH key
+- Proxmox access with your SSH key (and `pveum` CLI installed on Proxmox)
 - `opentofu` 1.6+: [install](https://opentofu.org/docs/intro/install/)
 - `talosctl` 1.10+: [install](https://www.talos.dev/v1.10/talos-guides/install/talosctl/)
 - `kubectl` 1.28+: [install](https://kubernetes.io/docs/tasks/tools/)
