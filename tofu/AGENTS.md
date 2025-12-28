@@ -19,6 +19,7 @@ Architecture:
 - `tofu/talos/` - Talos Linux machine configuration and cluster bootstrap
 - `tofu/lb/` - Load balancer configuration
 - `tofu/bootstrap/` - Bootstrap modules for cluster infrastructure (Proxmox CSI plugin, persistent volumes)
+- `tofu/output/` - Generated configuration files (kube-config, talos-machine-config) - not committed
 
 ## QUICK-START COMMANDS
 
@@ -142,6 +143,10 @@ Deployment:
 - `bootstrap/` - Bootstrap modules
   - `proxmox-csi-plugin/` - Proxmox CSI user/role/token
   - `volumes/persistent-volume/` - Static volume provisioning
+- `output/` - Generated configuration files (not committed)
+  - `kube-config.yaml` - Kubernetes cluster config
+  - `talos-config.yaml` - Talos cluster config
+  - `talos-machine-config-*.yaml` - Per-node Talos configs
 
 ### Configuration Files
 - `config.auto.tfvars` - Variable values (do not commit with secrets)

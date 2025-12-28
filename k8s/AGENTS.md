@@ -108,12 +108,12 @@ Deployment:
 
 ### Infrastructure Components
 - `auth/`: Authentication services (Authentik SSO)
-- `controllers/`: Cluster operators (Argo CD, Velero, Kubechecks)
+- `controllers/`: Cluster operators (Argo CD, Velero, Cert Manager, External Secrets, CNPG, Crossplane, NVIDIA GPU, Node Feature Discovery)
 - `crd/`: Custom Resource Definitions for operators
 - `database/`: Database operators (CloudNativePG)
 - `deployment/`: Deployment utilities (Kubechecks)
 - `monitoring/`: Monitoring stack (Hubble)
-- `network/`: Network policies and CNI (Cilium)
+- `network/`: Network policies and CNI (Cilium), CoreDNS, Gateway API, Cloudflared
 - `storage/`: Storage providers (Longhorn, Proxmox CSI)
 
 ### Application Categories
@@ -215,6 +215,15 @@ For infrastructure provisioning (VMs, networking), see tofu/AGENTS.md
 
 For container image building, see images/AGENTS.md
 
-For AI application-specific patterns, see k8s/applications/ai/AGENTS.md
+### Application-Specific References
+- AI applications: k8s/applications/ai/AGENTS.md
+- Automation applications: k8s/applications/automation/AGENTS.md
+- Media applications: k8s/applications/media/AGENTS.md
+- Web applications: k8s/applications/web/AGENTS.md
 
-For Authentik identity provider specifics, see k8s/infrastructure/auth/authentik/AGENTS.md
+### Infrastructure-Specific References
+- Authentik identity provider: k8s/infrastructure/auth/authentik/AGENTS.md
+- Cluster controllers: k8s/infrastructure/controllers/AGENTS.md
+- Database management: k8s/infrastructure/database/AGENTS.md
+- Network configuration: k8s/infrastructure/network/AGENTS.md
+- Storage providers: k8s/infrastructure/storage/AGENTS.md

@@ -148,15 +148,25 @@ Action: Create or update the appropriate AGENTS.md file with missing context.
 ### Currently Available
 
 Domain-level:
-- k8s/AGENTS.md - Kubernetes patterns
-- tofu/AGENTS.md - Infrastructure provisioning
-- website/AGENTS.md - Documentation site
-- images/AGENTS.md - Container images
+- k8s/AGENTS.md - Kubernetes domain patterns
+- tofu/AGENTS.md - Infrastructure provisioning (OpenTofu)
+- website/AGENTS.md - Documentation website
+- images/AGENTS.md - Custom container images
 
 Component-level:
-- k8s/applications/ai/AGENTS.md - AI applications
-- k8s/infrastructure/auth/authentik/AGENTS.md - Authentik SSO
-- [Create more as needed when components have unique complexity]
+
+**Kubernetes Applications:**
+- k8s/applications/ai/AGENTS.md - AI applications (LiteLLM, Qdrant, VLLM, etc.)
+- k8s/applications/automation/AGENTS.md - Home automation (Home Assistant, Frigate, MQTT, Zigbee2MQTT, N8N)
+- k8s/applications/media/AGENTS.md - Media services (Jellyfin, Immich, arr-stack, Audiobookshelf)
+- k8s/applications/web/AGENTS.md - Web applications (BabyBuddy, Pinepods, HeadlessX, Kiwix)
+
+**Kubernetes Infrastructure:**
+- k8s/infrastructure/auth/authentik/AGENTS.md - Authentik SSO and identity provider
+- k8s/infrastructure/controllers/AGENTS.md - Cluster operators (Argo CD, Velero, Cert Manager, CNPG, etc.)
+- k8s/infrastructure/database/AGENTS.md - CloudNativePG database management
+- k8s/infrastructure/network/AGENTS.md - CNI (Cilium), Gateway API, DNS
+- k8s/infrastructure/storage/AGENTS.md - Storage providers (Proxmox CSI, Longhorn)
 
 ## Critical Boundaries
 
