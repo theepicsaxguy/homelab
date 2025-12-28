@@ -35,7 +35,7 @@ Create three buckets in your B2 account:
 - **Lifecycle Rules**: None (CNPG manages retention)
 
 ### Bucket 3: OpenTofu State
-- **Name**: `homelab-terraform-state`
+- **Name**: `homelab-terraform-state-b2`
 - **Files**: Private
 - **Encryption**: Server-Side Encryption (SSE-B2) enabled
 - **Object Lock**: Disabled
