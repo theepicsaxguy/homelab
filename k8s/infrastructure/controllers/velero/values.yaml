@@ -1,10 +1,6 @@
-upgradeCRDs: true
+upgradeCRDs: false
 deployNodeAgent: true
 snapshotsEnabled: true
-kubectl:
-  image:
-    repository: registry.k8s.io/kubectl
-    tag: v1.31.1
 # Velero 1.10+ uses Kopia by default for file-system backups
 # The deprecated Restic is no longer supported
 initContainers:
