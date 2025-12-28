@@ -93,45 +93,16 @@ module "proxmox-csi-plugin" {
 
 ### Required Proxmox Permissions
 
-The Terraform `proxmox-csi-plugin` module automatically creates a Proxmox user and role with these base permissions:
+The Terraform `proxmox-csi-plugin` module automatically creates a Proxmox user and role with these minimal permissions:
 
+- `Sys.Audit` - Required for CSI controller to query system capacity
 - `VM.Audit` - View VM information
 - `VM.Config.Disk` - Modify VM disk configuration
 - `Datastore.Allocate` - Allocate storage space
 - `Datastore.AllocateSpace` - Manage datastore capacity
 - `Datastore.Audit` - View datastore information
 
-**CSI Snapshot Permissions (Required for Velero CSI Backups)**
-
-To use Velero's CSI snapshot feature with Proxmox CSI, the `kubernetes-csi@pve` user **must have snapshot permissions**:
-
-```bash
-# Update the CSI user role to add snapshot permissions
-pveum role mod CSI -privs "Sys.Audit VM.Audit VM.Config.Disk Datastore.Allocate Datastore.AllocateSpace Datastore.Audit VM.Snapshot"
-```
-
-**Why This is Needed:**
-
-Velero uses CSI Volume Snapshots to create crash-consistent backups of PVCs. The Proxmox CSI driver calls the Proxmox API to create ZFS snapshots on the underlying storage. Without `VM.Snapshot` permission, the CSI driver receives an "unauthorized" error and snapshot creation fails.
-
-**Verification:**
-
-After updating permissions, verify the CSI user has the correct permissions:
-
-```bash
-# Check CSI user permissions
-pveum acl list | grep kubernetes-csi@pve
-
-# Should include VM.Snapshot in the output
-# Example: /acl/1/Storage.Allocate,Datastore.AllocateSpace,Datastore.Audit,VM.Audit,VM.Config.Disk,VM.Snapshot
-```
-
-If you don't add this permission, Velero backups will fail with:
-```
-Error: Timed out awaiting reconciliation of volumesnapshot
-Failed to wait for VolumeSnapshot to become ReadyToUse within timeout
-client rate limiter Wait returned an error: context deadline exceeded
-```
+These permissions are sufficient for basic CSI operations (creating, attaching, deleting volumes).
 
 ## Using Storage in Applications
 
