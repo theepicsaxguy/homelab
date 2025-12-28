@@ -24,16 +24,13 @@ spec:
   data:
     - secretKey: B2_ACCESS_KEY_ID
       remoteRef:
-        key: backblaze-b2-velero-offsite  # Bitwarden item name
-        property: AWS_ACCESS_KEY_ID
+        key: backblaze-b2-velero-access-key-id
     - secretKey: B2_SECRET_ACCESS_KEY
       remoteRef:
-        key: backblaze-b2-velero-offsite
-        property: AWS_SECRET_ACCESS_KEY
+        key: backblaze-b2-velero-secret-access-key
     - secretKey: RESTIC_PASSWORD
       remoteRef:
-        key: backblaze-b2-velero-offsite
-        property: RESTIC_PASSWORD
+        key: backblaze-b2-velero-restic-password
 ---
 # Backblaze B2 Backup Storage Location
 apiVersion: velero.io/v1

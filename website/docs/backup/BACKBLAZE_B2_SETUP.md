@@ -84,47 +84,44 @@ Create three separate Application Keys for security isolation:
    - `keyID`: `AWS_ACCESS_KEY_ID`
    - `applicationKey`: `AWS_SECRET_ACCESS_KEY`
 
-## Step 4: Add Credentials to Bitwarden
+## Step 4: Add Credentials to Bitwarden Secrets Manager
 
-Add the following items to your Bitwarden vault:
+Add the following secrets to your Bitwarden Secrets Manager (not the vault):
 
-### Bitwarden Item 1: "Backblaze B2 - Velero Offsite"
-- **Type**: Login or Secure Note
-- **Custom Fields**:
-  - `AWS_ACCESS_KEY_ID`: [keyID from Velero app key]
-  - `AWS_SECRET_ACCESS_KEY`: [applicationKey from Velero app key]
-  - `RESTIC_PASSWORD`: [Generate a strong random password, e.g., `openssl rand -base64 32`]
+### Bitwarden Secrets 1: Velero B2 Credentials
 
-### Bitwarden Item 2: "Backblaze B2 - CNPG Offsite"
-- **Type**: Login or Secure Note
-- **Custom Fields**:
-  - `AWS_ACCESS_KEY_ID`: [keyID from CNPG app key]
-  - `AWS_SECRET_ACCESS_KEY`: [applicationKey from CNPG app key]
+Create three separate secrets in Secrets Manager:
 
-### Bitwarden Item 3: "Backblaze B2 - Terraform State"
-- **Type**: Login or Secure Note
-- **Custom Fields**:
-  - `AWS_ACCESS_KEY_ID`: [keyID from OpenTofu app key]
-  - `AWS_SECRET_ACCESS_KEY`: [applicationKey from OpenTofu app key]
+1. **Name**: `backblaze-b2-velero-access-key-id`
+   - **Value**: [keyID from Velero app key]
 
-## Step 5: Verify Bitwarden Item IDs
+2. **Name**: `backblaze-b2-velero-secret-access-key`
+   - **Value**: [applicationKey from Velero app key]
 
-You'll need the Bitwarden item IDs for the External Secrets configuration. To find them:
+3. **Name**: `backblaze-b2-velero-restic-password`
+   - **Value**: [Generate a strong random password, e.g., `openssl rand -base64 32`]
 
-```bash
-# Login to Bitwarden CLI
-bw login
+### Bitwarden Secrets 2: CNPG B2 Credentials
 
-# Unlock vault (get session key)
-export BW_SESSION=$(bw unlock --raw)
+Create two separate secrets in Secrets Manager:
 
-# List items and find your new entries
-bw list items | jq '.[] | select(.name | contains("Backblaze"))'
+1. **Name**: `backblaze-b2-cnpg-access-key-id`
+   - **Value**: [keyID from CNPG app key]
 
-# Note the "id" field for each item
-```
+2. **Name**: `backblaze-b2-cnpg-secret-access-key`
+   - **Value**: [applicationKey from CNPG app key]
 
-Save these IDs - you'll need them for configuring ExternalSecrets.
+### Bitwarden Secrets 3: OpenTofu State B2 Credentials
+
+Create two separate secrets in Secrets Manager:
+
+1. **Name**: `backblaze-b2-tofu-state-access-key-id`
+   - **Value**: [keyID from OpenTofu app key]
+
+2. **Name**: `backblaze-b2-tofu-state-secret-access-key`
+   - **Value**: [applicationKey from OpenTofu app key]
+
+Note: Bitwarden Secrets Manager stores each secret as a single key-value pair. Do NOT use the vault or custom fields.
 
 ## Step 6: Test Connectivity
 

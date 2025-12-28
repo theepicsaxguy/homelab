@@ -16,12 +16,10 @@ spec:
   data:
     - secretKey: AWS_ACCESS_KEY_ID
       remoteRef:
-        key: backblaze-b2-cnpg-offsite
-        property: AWS_ACCESS_KEY_ID
+        key: backblaze-b2-cnpg-access-key-id
     - secretKey: AWS_SECRET_ACCESS_KEY
       remoteRef:
-        key: backblaze-b2-cnpg-offsite
-        property: AWS_SECRET_ACCESS_KEY
+        key: backblaze-b2-cnpg-secret-access-key
 ---
 # Local MinIO backup (fast recovery)
 apiVersion: barmancloud.cnpg.io/v1
