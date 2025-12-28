@@ -1,14 +1,15 @@
 # Kubernetes Infrastructure - Agent Guidelines
 
-This document provides guidance for agents working with the Kubernetes infrastructure in this repository. It is a scoped
-`AGENTS.md` meant to be the authoritative source for anything under `k8s/`.
+This document provides guidance for agents working with Kubernetes infrastructure in this repository. It is a scoped
+`AGENTS.md` meant to be authoritative source for anything under `k8s/`.
 
 ## Purpose & Scope
 
-- Scope: `k8s/` (all files and subdirectories). Use this file as the primary reference for Kubernetes manifests,
-  kustomize, Argo CD ApplicationSets, and operational patterns.
+- Scope: `k8s/` (all files and subdirectories). Use this file as primary reference for Kubernetes manifests,
+   kustomize, Argo CD ApplicationSets, and operational patterns.
 - Goal: enable an agent to validate, extend, and reason about Kubernetes manifests and operational policies without
-  external tools or secrets.
+   external tools or secrets.
+
 
 ## Quick-start Commands (verify locally)
 
@@ -207,6 +208,66 @@ All schedules are configured in `k8s/infrastructure/controllers/velero/schedules
   kubectl get secret <secret-name> -n <namespace> -o jsonpath='{.data.MINIO_ENDPOINT}' | base64 -d
   ```
 
+**Bitwarden Secrets Manager Pattern (Critical)**
+
+- **Bitwarden Secrets Manager (NOT the vault)** only supports `name` and `value` fields - no `property` or custom fields
+- **Always create separate Bitwarden Secrets Manager entries** for each secret value needed:
+  - Pattern: `<app-name>-<purpose>` (e.g., `backblaze-b2-velero-access-key-id`)
+  - Never use `property` field in `remoteRef` - only `key`
+  - Example: See `k8s/applications/ai/litellm/litellm-secrets.yaml` for correct pattern
+- **Bitwarden Vault custom fields work differently** - if using vault with custom fields, reference via `property` but this requires
+  Bitwarden Vault, not Secrets Manager
+
+**ExternalSecret Template Configuration (Bitwarden Secrets Manager)**
+
+When configuring ExternalSecrets with Bitwarden Secrets Manager backend:
+
+- **Must use `engineVersion: v2`** under `spec.target.template`:
+  ```yaml
+  apiVersion: external-secrets.io/v1
+  kind: ExternalSecret
+  spec:
+    target:
+      template:
+        engineVersion: v2  # REQUIRED for Bitwarden Secrets Manager
+        data:
+          cloud: |
+            [default]
+              aws_access_key_id={{ .B2_ACCESS_KEY_ID }}
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-velero-access-key-id  # NO 'property' field
+  ```
+- **Critical: Template indentation must be under `target:`**, not under `spec:`
+- **Multiple secret keys**: Create separate Bitwarden Secrets Manager entries for each (access-key-id, secret-access-key, password, etc.)
+
+**Velero Configuration (Kopia Data Mover)**
+
+- **Kopia is now the primary data mover** - Restic is deprecated (Velero 1.15+)
+- **Configuration**: `uploaderType: kopia` in Velero Helm values
+- **Node Agent hostPath access is required and expected**:
+  - PodSecurity warning `would violate PodSecurity "baseline:latest": hostPath volumes` is expected behavior
+  - Velero node-agent needs access to `/var/lib/kubelet/pods` for file system backups
+- **Repository password**: Required for Kopia client-side encryption (defense in depth with B2 SSE-B2 server-side encryption)
+
+**Velero CRDs (Restic vs Kopia)**
+
+When working with Velero manifests, be aware of the CRD migration:
+
+- **Legacy (deprecated)**: `resticrepositories.velero.io`
+- **Modern (Kopia)**:
+  - `backuprepositories.velero.io` - Manages Kopia backup repositories (per namespace)
+  - `podvolumebackups.velero.io` - File system backup operations
+  - `podvolumerestores.velero.io` - File system restore operations
+- **Exclude from backups**: Use modern CRD names in Schedule manifests:
+  ```yaml
+  excludedResources:
+    - backuprepositories.velero.io
+    - podvolumebackups.velero.io
+    - podvolumerestores.velero.io
+  ```
+
 **CloudNativePG (CNPG) Specific Rules**
 
 - **Verify the installed CNPG operator version** before writing manifests:
@@ -235,6 +296,22 @@ All schedules are configured in `k8s/infrastructure/controllers/velero/schedules
 - **Never use ExternalSecrets for CNPG app credentials** - this creates circular dependencies
 - **Auto-generated secret naming:** `<cluster-name>-app` (e.g., `immich-postgresql-app`)
 - **Secret contains:** `username`, `password`, `dbname`, `host`, `port`, `uri`, `jdbc-uri`, etc.
+
+**Alternative: ExternalSecrets (Non-Circular Pattern)**
+
+- If you MUST use Bitwarden Secrets Manager for CNPG credentials (not recommended):
+  - Create **separate Bitwarden entries** for each secret key (no `property` field)
+  - Pattern: `<cluster-name>-<purpose>-<key-name>` (e.g., `immich-db-password`, `immich-db-user`)
+  - Example ExternalSecret:
+    ```yaml
+    data:
+      - secretKey: password
+        remoteRef:
+          key: immich-db-password  # Separate entry for each key
+      - secretKey: username
+        remoteRef:
+          key: immich-db-user
+    ```
 
 **Common Anti-Pattern (Avoid):**
 
@@ -269,16 +346,16 @@ CNPG uses the official plugin-based backup architecture with dual backup destina
 **Required Components:**
 
 - **ObjectStore resources** (2 per cluster):
-  - One for local MinIO (e.g., `<cluster-name>-minio-store`)
-  - One for Backblaze B2 (e.g., `<cluster-name>-b2-store`)
-
-- **ExternalSecret for B2 credentials**:
-  - Syncs `backblaze-b2-cnpg-offsite` Bitwarden item to `b2-cnpg-credentials` Secret
-  - Provides AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
-
+   - One for local MinIO (e.g., `<cluster-name>-minio-store`)
+   - One for Backblaze B2 (e.g., `<cluster-name>-b2-store`)
+- **ExternalSecret for B2 credentials** (Bitwarden Secrets Manager):
+   - Create **separate Bitwarden Secrets Manager entries** for each secret (one per key):
+     - `backblaze-b2-cnpg-access-key-id` → AWS_ACCESS_KEY_ID
+     - `backblaze-b2-cnpg-secret-access-key` → AWS_SECRET_ACCESS_KEY
+   - Pattern: `<purpose>-<app-name>-<key-name>` (no `property` field with Secrets Manager)
 - **Cluster plugins section**:
-  - Uses `barman-cloud.cloudnative-pg.io` plugin with `isWALArchiver: true`
-  - References B2 ObjectStore for continuous WAL archiving to offsite
+   - Uses `barman-cloud.cloudnative-pg.io` plugin with `isWALArchiver: true`
+   - References B2 ObjectStore for continuous WAL archiving to offsite
 
 - **Cluster backup.barmanObjectStore section**:
   - Configured for Backblaze B2 (primary offsite backup)
@@ -632,8 +709,15 @@ The cluster has three Velero schedules configured in `k8s/infrastructure/control
 - **`velero-gfs`**: Hourly backups for GFS tier, 14-day TTL
 - **`velero-weekly`**: Weekly backups on Sundays at 03:00, 28-day TTL
 
-All schedules include all namespaces by default (except the `velero` namespace itself) and back up all resources
+All schedules include all namespaces by default (except `velero` namespace itself) and back up all resources
 including PVCs.
+
+**Velero Data Mover: Kopia (2025 Best Practices)**
+
+- Velero uses **Kopia** as primary data mover for file system backups
+- Restic is deprecated (Velero 1.15+)
+- Repository password encrypts backup data client-side (defense in depth with B2 SSE-B2 server-side encryption)
+- See: `k8s/infrastructure/controllers/velero/values.yaml` (uploaderType: kopia)
 
 ### Automatic Backup for proxmox-csi Volumes
 
@@ -665,16 +749,22 @@ If you need to exclude specific volumes from backup:
 Before merging Kubernetes manifest changes, verify:
 
 - [ ] All kustomizations build successfully: `kustomize build --enable-helm k8s/applications` and
-      `kustomize build --enable-helm k8s/infrastructure`
+       `kustomize build --enable-helm k8s/infrastructure`
 - [ ] No hardcoded secrets in manifests (use ExternalSecrets/SecretProvider)
 - [ ] PVCs have appropriate backup configuration:
-  - For `longhorn` StorageClass: backup labels (`recurring-job.longhorn.io/source` + tier label)
-  - For `proxmox-csi` StorageClass: automatically backed up by Velero (no labels needed)
-- [ ] Resources have appropriate requests/limits for the workload
+   - For `longhorn` StorageClass: backup labels (`recurring-job.longhorn.io/source` + tier label)
+   - For `proxmox-csi` StorageClass: automatically backed up by Velero (no labels needed)
+- [ ] Resources have appropriate requests/limits for → workload
 - [ ] Network policies allow required traffic patterns
 - [ ] HTTPRoutes/Ingress configs follow security best practices (auth, CORS)
 - [ ] Deployment/StatefulSet follows non-root container patterns
 - [ ] Changes to ApplicationSet or CRDs have been reviewed by infra team
 - [ ] Database credentials use auto-generated secrets (for CNPG) or verified ExternalSecrets
 - [ ] Backup tier matches criticality: GFS for critical data, Daily for standard apps, None for ephemeral
+- [ ] **Velero uses Kopia data mover**: `uploaderType: kopia` configured (not deprecated Restic)
+- [ ] **ExternalSecrets use correct backend pattern**:
+   - Bitwarden Secrets Manager: No `property` field, separate secrets for each key
+   - Bitwarden Vault: Custom fields allowed, use `property` in `remoteRef`
+- [ ] **ExternalSecret templates use `engineVersion: v2`** (required for Bitwarden Secrets Manager)
+- [ ] **Template indented under `spec.target.template:`** (not under `spec:`)
 - [ ] Changes tested locally and validated against cluster (if access available)
