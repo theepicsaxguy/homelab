@@ -1,5 +1,55 @@
 # Changelog
 
+## 4.1.0 (2025-12-28)
+
+## What's Changed
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1892
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1893
+* Update pvc.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1894
+* chore(deps): update dependency cilium/cilium to v1.18.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1895
+* Fix(tofu)--disable-upgrade-for-control-plane-and-worker-nodes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1897
+* chore(deps): update proxmox-csi-plugin docker tag to v0.3.18 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1898
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1899
+* chore(deps): update helm release argo-cd to v9.1.9 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1901
+* Feat(litellm)--add-user_allowed_roles-to-JWT-authentication-settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1900
+* Create worm-scan.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1903
+* Update worm-scan.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1904
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1905
+* chore(deps): update helm release redis to v24.1.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1908
+* chore(deps): update dependency vllm-project/vllm to v0.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1909
+* Chore(config)--update-model-names-to-include-azure-prefix by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1911
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1913
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1912
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.12.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1914
+* feat(perplexica): add new application deployment and configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1915
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.4.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1916
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.42 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1917
+* chore(deps): update ghcr.io/advplyr/audiobookshelf docker tag to v2.32.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1919
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.4.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1918
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.6.43 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1920
+* chore(deps): update n8nio/n8n docker tag to v2.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1921
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1922
+* chore(deps): update helm release argo-cd to v9.1.10 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1923
+* Feat(litellm)--add-Mistral-model-configurations-and-API-key-management by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1924
+* chore(deps): update n8nio/n8n docker tag to v2.2.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1926
+* chore(deps): update ghcr.io/advplyr/audiobookshelf docker tag to v2.32.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1927
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1925
+* Update http-route.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1928
+* chore(deps): update helm release argo-cd to v9.2.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1929
+* Refactor Mistral model configurations in proxy_server_config.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1930
+* Remove max_output_tokens parameter from Mistral model configurations … by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1931
+* chore(deps): update helm release argo-cd to v9.2.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1932
+* chore(deps): update helm release kube-prometheus-stack to v80.7.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1933
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1934
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1935
+* Update domain references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1936
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1937
+* feat(k8s): enhance external API endpoint and backup configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1938
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1939
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v4.0.0...v4.1.0
+
 ## 4.0.0 (2025-12-17)
 
 ## What's Changed
