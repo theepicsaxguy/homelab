@@ -1,84 +1,186 @@
-# Images (images/) - Agent Guidelines
+# Container Images - Domain Guidelines
 
-This `AGENTS.md` covers custom container images stored under `images/`.
+SCOPE: Custom container images and Dockerfiles
+INHERITS FROM: ../AGENTS.md
+TECHNOLOGIES: Docker, Docker Compose, GitHub Actions
 
-## Purpose & Scope
+## DOMAIN CONTEXT
 
-- Scope: `images/` directories containing Dockerfiles and supporting build files.
-- Goal: allow agents to add or update Dockerfiles, helper scripts, and local test harnesses; CI builds are handled by GitHub Actions.
+Purpose:
+Define and build custom container images for homelab applications, including Dockerfiles, build scripts, and CI/CD pipelines.
 
-## Quick-start Commands
+Boundaries:
+- Handles: Dockerfiles, multi-stage builds, local testing, CI build pipelines
+- Does NOT handle: Kubernetes manifests (see k8s/), infrastructure (see tofu/)
+- Integrates with: k8s/ (image references in manifests), GitHub Actions (CI builds)
 
-Run from repository root or the image directory.
+Architecture:
+- `images/<image-name>/` - Directory per image with Dockerfile and supporting files
+- `images/<image-name>/Dockerfile` - Multi-stage build definition
+- `images/<image-name>/entrypoint.py` - Entry point scripts (Python images)
+- `images/<image-name>/README.md` - Documentation and usage instructions
+- `images/<image-name>/.dockerignore` - Build context exclusions
+
+## QUICK-START COMMANDS
 
 ```bash
-# Build an image locally (example: images/vllm-cpu)
-docker build -t local/vllm-cpu:dev images/vllm-cpu/
+# Build an image locally
+docker build -t local/<image-name>:dev images/<image-name>/
 
 # Run container locally
-docker run --rm -it local/vllm-cpu:dev /bin/bash
+docker run --rm -it local/<image-name>:dev /bin/bash
 
-# For testing Python-based images, use a virtualenv and run test harness inside container
+# Test container with specific command
+docker run --rm local/<image-name>:dev <test-command>
+
+# Push to registry (manual)
+docker tag local/<image-name>:dev <registry>/<image-name>:<version>
+docker push <registry>/<image-name>:<version>
 ```
 
-Notes:
-- GitHub Actions `image-build.yaml` builds images when files under `images/<name>/` change or when a tag `image-<version>` is pushed.
-- Keep images small and multi-stage build optimized.
+## TECHNOLOGY CONVENTIONS
 
-## Structure & Examples
-
-- Typical image dir: `images/<name>/Dockerfile`, `entrypoint.py`, `README.MD`.
-- Example images present: `headlessx/`, `sabnzbd/`, `vllm-cpu/`.
-
-## CI & Publishing
-
-- CI builds images via `image-build.yaml`. If you modify an image, include a README and minimal changelog in the image directory.
-- Do not hardcode registry credentials; CI uses repository secrets to push.
-
-## Tests & Validation
-
-- Local build + smoke-run is usually sufficient.
-- For language-specific images, run their unit tests inside the container or by mounting source into the container at runtime.
-
-## Code Style & Patterns
-
+### Dockerfile Structure
 - Use multi-stage builds to minimize final image size
-- Run containers as non-root user (add `USER` directive)
-- Pin base image versions for reproducibility (e.g., `python:3.11-slim`, not `python:latest`)
-- Label images with metadata (maintainer, description, version)
-- Use `.dockerignore` to exclude unnecessary files from build context
-- Reference existing images for patterns: `images/vllm-cpu/Dockerfile`, `images/headlessx/Dockerfile`
+- Pin base images to specific versions (e.g., `python:3.11-slim`)
+- Add labels for metadata (maintainer, description, version)
+- Run as non-root user with `USER` directive
+- Use `.dockerignore` to exclude unnecessary files
 
-## How to Add a New Image
+### Image Tagging
+- Use semantic versioning: `1.0.0`, `1.1.0`, etc.
+- Use descriptive tags for variants: `1.0.0-cpu`, `1.0.0-gpu`
+- CI generates tags from git refs or tags
+- Never use `latest` tag in production
+
+### Base Images
+- Use official images when possible (`python`, `node`, `alpine`)
+- Pin to specific versions, not `latest` or rolling tags
+- Prefer slim or alpine variants for smaller images
+- Use distroless images for security-critical workloads
+
+## PATTERNS
+
+### Multi-Stage Build Pattern
+Use multiple FROM statements to create layers and discard build dependencies. Final stage contains only runtime dependencies. Example: Build stage compiles code, runtime stage copies binaries.
+
+### Security Pattern
+- Run as non-root user with `USER` directive
+- Don't include secrets or credentials in Dockerfile
+- Use `.dockerignore` to exclude sensitive files
+- Scan images with security tools (Trivy, Clair)
+- Keep base images updated with security patches
+
+### Optimization Pattern
+- Use `.dockerignore` to reduce build context size
+- Order Dockerfile instructions by change frequency (least frequently changed first)
+- Combine RUN commands to reduce layers
+- Use build cache effectively by layering correctly
+
+### CI/CD Pattern
+GitHub Actions workflow `image-build.yaml` builds images when:
+- Files under `images/<name>/` change
+- Git tag `image-<version>` is pushed
+- Images are pushed to registry and deployed via Kubernetes manifests
+
+## TESTING
+
+Strategy:
+- Local build test: Verify Dockerfile builds successfully
+- Smoke test: Run container and verify basic functionality
+- Language-specific tests: Run unit tests inside container or mount source
+- CI validation: GitHub Actions builds images on PR
+
+Requirements:
+- Dockerfile builds without errors
+- Container runs and exits cleanly
+- Entry point scripts work correctly
+- No secrets or credentials in Dockerfile
+- Non-root user execution
+
+Tools:
+- docker build: Build images locally
+- docker run: Test container execution
+- docker inspect: Verify image metadata
+- GitHub Actions: CI/CD builds and deployments
+
+## WORKFLOWS
+
+Development:
+- Create directory: `images/<image-name>/`
+- Write Dockerfile with multi-stage build
+- Add `.dockerignore` file
+- Add `README.md` with usage instructions
+- Test locally: `docker build -t local/<image-name>:dev images/<image-name>/`
+- Run smoke test: `docker run --rm local/<image-name>:dev <test-command>`
+- Language-specific: Run unit tests inside container
+
+Build:
+- Local: `docker build -t <tag> images/<image-name>/`
+- CI: Automatic on file changes or git tags
+- Tagging: Use semantic versioning in tags
+
+Deployment:
+- Commit Dockerfile and supporting files
+- GitHub Actions workflow triggers on PR/merge
+- CI builds and pushes image to registry
+- Kubernetes manifests reference new image tag
+- Argo CD deploys updated manifests to cluster
+
+## COMPONENTS
+
+### Existing Images
+- `headlessx/` - Headless browser automation
+- `sabnzbd/` - Usenet download client with custom entrypoint
+- `vllm-cpu/` - CPU-optimized LLM inference
+
+### CI/CD
+- `image-build.yaml` - GitHub Actions workflow for building images
+- Triggers: File changes, git tags
+
+## ANTI-PATTERNS
+
+Never commit secrets or credentials to Dockerfiles or build context.
+
+Never use `latest` tag for base images or production images. Pin specific versions.
+
+Never skip `.dockerignore` file. Exclude unnecessary files from build context.
+
+Never run containers as root user. Use `USER` directive to set non-root user.
+
+Never build large images. Use multi-stage builds and slim base images.
+
+Never skip local testing before committing. Build and run smoke tests.
+
+Never commit large binary assets to image directories. Use external storage if needed.
+
+## HOW TO ADD NEW IMAGE
 
 1. Create directory: `images/<image-name>/`
 2. Add `Dockerfile` with multi-stage build pattern
-3. Add `README.md` documenting purpose, build args, and usage
-4. Test locally: `docker build -t local/<image-name>:dev images/<image-name>/`
-5. Run smoke test: `docker run --rm -it local/<image-name>:dev <test-command>`
-6. Create PR (GitHub Actions will build and publish on merge)
+3. Add `.dockerignore` file to exclude unnecessary files
+4. Add `README.md` documenting purpose, build args, and usage
+5. Add entry point script if needed (e.g., `entrypoint.py`)
+6. Test locally: `docker build -t local/<image-name>:dev images/<image-name>/`
+7. Run smoke test: `docker run --rm local/<image-name>:dev <test-command>`
+8. Create PR (GitHub Actions will build and publish on merge)
 
-## Boundaries & Safety
+## CRITICAL BOUNDARIES
 
-- Never commit secrets or credentials to image files
-- Do not include sensitive data in build context
-- CI uses repository secrets for registry authentication
-- Image tags are generated from git tags or commits by CI
+Never commit secrets or credentials to Dockerfile or build context.
 
-## Pre-Merge Checklist
+Never include sensitive data in images (passwords, API keys, certificates).
 
-Before merging container image changes, verify:
+Never use `latest` tag for base images. Pin specific versions.
 
-- [ ] Image builds successfully locally: `docker build -t test images/<name>/`
-- [ ] Container runs and passes smoke tests
-- [ ] Dockerfile uses multi-stage build for optimization
-- [ ] Container runs as non-root user
-- [ ] Base images are pinned to specific versions (not `latest`)
-- [ ] README.md documents build args, usage, and entry points
-- [ ] `.dockerignore` excludes unnecessary files
-- [ ] Image includes proper labels (maintainer, version)
-- [ ] No secrets or credentials in Dockerfile or build context
-- [ ] CI workflow (`image-build.yaml`) will trigger on merge
+Never skip local testing before committing changes.
 
----
+Never build images without `.dockerignore` file.
 
+## REFERENCES
+
+For commit message format, see root AGENTS.md
+
+For Kubernetes deployment, see k8s/AGENTS.md
+
+For Docker best practices, see Docker documentation
