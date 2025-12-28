@@ -83,17 +83,9 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 
 ### CloudNativePG Database Operator
 - **Purpose**: PostgreSQL cluster management and backup automation
-- **Location**: See `k8s/infrastructure/database/` for complete database patterns
-- **Key Features**:
-  - High availability PostgreSQL clusters
-  - Automatic failover and recovery
-  - Scheduled backups to MinIO (local) and Backblaze B2 (offsite)
-  - WAL archiving for point-in-time recovery
+- **Location**: See k8s/infrastructure/database/AGENTS.md for complete database patterns
+- **Key Features**: High availability clusters, automatic failover, scheduled backups
 - **Credentials**: Auto-generated `<cluster-name>-app` secret (do not use ExternalSecrets)
-- **Backup Configuration**:
-  - Weekly scheduled backups to B2 via plugin architecture
-  - Continuous WAL archiving to B2
-  - Local MinIO storage for fast restores
 
 ### Crossplane
 - **Purpose**: Infrastructure as Code for cloud provider resources (DNS records)

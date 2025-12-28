@@ -14,77 +14,29 @@ Boundaries:
 - Does NOT handle: Media services (see media/), automation (see automation/)
 - Integrates with: network/ (Gateway API), storage/ (PVCs), auth/ (Authentik SSO)
 
-## COMMON PATTERNS
+## INHERITED PATTERNS
 
-### Storage Pattern
+For general Kubernetes patterns, see k8s/AGENTS.md:
+- Storage: proxmox-csi (all new web applications)
+- Network: Gateway API for external access
+- Authentication: Authentik SSO where supported
+- Database: CNPG for PostgreSQL with auto-generated credentials
+- Backup: Velero automatic backups for proxmox-csi PVCs
+- Large Storage: Exclude from backups if re-downloadable (Kiwix)
 
-**Web Applications Storage**:
-- **Proxmox CSI**: Primary storage for all web applications
-- **Large PVCs**: Applications with significant data storage (Kiwix, Pinepods)
-- **Standard PVCs**: Configuration and data storage (BabyBuddy, HeadlessX)
+## WEB-SPECIFIC PATTERNS
 
-**Storage Strategy**:
-- **Proxmox CSI**: Recommended for all new web applications
-- **Automatic Backups**: Velero backs up all proxmox-csi PVCs automatically
-- **No Manual Labels**: No Longhorn backup labels required (using proxmox-csi)
+### Browser Automation Pattern
+HeadlessX runs headless browser tasks with network policy restrictions. Requires OAuth2 via Authentik. Isolated namespace for security.
 
-### Network Pattern
+### Podcast Management Pattern
+Pinepods uses CNPG PostgreSQL with Valkey (Redis-compatible) for caching. Supports OAuth2 via Authentik. Large PVC for podcast data.
 
-**Gateway API Integration**:
-- All web applications expose via Gateway API
-- External access via `*.peekoff.com` hostname
-- TLS certificates from Cert Manager
-- Routes reference `external` Gateway from `gateway` namespace
+### Offline Content Pattern
+Kiwix stores large offline content (Wikipedia ZIM files, 200GB+). Exclude from Velero backups via pod annotation. Content can be re-downloaded.
 
-**Example HTTPRoute**:
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: babybuddy
-  namespace: babybuddy
-spec:
-  parentRefs:
-    - name: external
-      namespace: gateway
-  hostnames:
-    - babybuddy.peekoff.com
-  rules:
-    - backendRefs:
-        - name: babybuddy
-          port: 8000
-```
-
-### Database Pattern
-
-**CNPG for Web Applications**:
-- **Pinepods**: Uses CloudNativePG for PostgreSQL database
-- Auto-generated credentials via CNPG (`<cluster-name>-app` secret)
-- Scheduled backups to MinIO and Backblaze B2
-- ExternalSecrets for backup credentials only
-
-**MongoDB for Web Applications**:
-- **Pedrobot**: Uses MongoDB StatefulSet for data storage
-- Auto-generated or external secret for credentials
-- No CNPG backup strategy (separate backup mechanism)
-
-**Embedded Databases**:
-- **BabyBuddy, HeadlessX, Kiwix**: SQLite or no database
-- Database files embedded in application PVC
-- No separate database cluster needed
-
-### Authentication Pattern
-
-**Authentik SSO Integration**:
-- **BabyBuddy**: Supports OAuth2 via Authentik
-- **Pinepods**: Supports OAuth2 via Authentik
-- **HeadlessX**: Supports OAuth2 via Authentik
-- **Kiwix, Pedrobot**: No OAuth2 support, application-specific authentication
-
-**External Secrets Required**:
-- Applications with OAuth2: client_id and client_secret
-- Applications with basic auth: username/password
-- Database credentials: Auto-generated via CNPG (not ExternalSecrets)
+### Bot Service Pattern
+Pedrobot uses MongoDB StatefulSet (not CNPG). External secrets for bot API credentials. No OAuth2 support.
 
 ## APPLICATION-SPECIFIC GUIDANCE
 

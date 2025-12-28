@@ -14,74 +14,29 @@ Boundaries:
 - Does NOT handle: Home automation (see automation/), AI applications (see ai/), web utilities (see web/)
 - Integrates with: network/ (Gateway API routes), storage/ (PVCs), auth/ (Authentik SSO)
 
-## COMMON PATTERNS
+## INHERITED PATTERNS
 
-### Storage Pattern
+For general Kubernetes patterns, see k8s/AGENTS.md:
+- Storage: proxmox-csi (new), longhorn (legacy)
+- Network: Gateway API for external access
+- Authentication: Authentik SSO where supported
+- Database: CNPG for PostgreSQL with auto-generated credentials
+- Backup: Velero for proxmox-csi, Longhorn labels for legacy
+- Shared Storage: NFS PV for media libraries
 
-**Media Applications Storage**:
-- **Proxmox CSI**: Primary storage for new media applications
-- **Longhorn**: Legacy storage for existing media applications (Immich, Jellyfin)
-- **Shared Storage**: NFS PV (`k8s/applications/media/nfs-pv.yaml`) for media libraries
-- **Mount Pattern**: Applications mount shared NFS for media access
+## MEDIA-SPECIFIC PATTERNS
 
-**Storage Labels** (Longhorn only):
-- GFS tier for critical databases (Immich PostgreSQL)
-- Daily tier for application data
-- No labels for caches/temporary data
+### Content Automation Pattern
+arr-stack (Prowlarr, Sonarr, Radarr, Bazarr) automate content discovery, download, and organization. All arr services use shared NFS mount for media libraries. SQLite databases embedded in application PVCs.
 
-### Network Pattern
+### Photo Management Pattern
+Immich uses multi-service architecture with CNPG PostgreSQL, Redis, and ML pod. Supports OAuth2 via Authentik. Dual backup: MinIO (local) + Backblaze B2 (offsite).
 
-**Gateway API Integration**:
-- All media applications expose via Gateway API HTTPRoute
-- External access via `*.peekoff.com` hostname
-- TLS certificates from Cert Manager
-- Routes reference `external` Gateway from `gateway` namespace
+### Download Manager Pattern
+Sabnzbd manages Usenet downloads. PVC for download storage (proxmox-csi). ExternalSecrets for Usenet server credentials.
 
-**Example HTTPRoute**:
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: jellyfin
-  namespace: media
-spec:
-  parentRefs:
-    - name: external
-      namespace: gateway
-  hostnames:
-    - jellyfin.peekoff.com
-  rules:
-    - backendRefs:
-        - name: jellyfin
-          port: 8096
-```
-
-### Database Pattern
-
-**CNPG for Media Applications**:
-- Immich uses CloudNativePG for PostgreSQL database
-- Auto-generated credentials via CNPG (`<cluster-name>-app` secret)
-- Dual backup strategy: Local MinIO + Backblaze B2
-- WAL archiving to B2 for point-in-time recovery
-- ExternalSecrets for backup credentials only (not app credentials)
-
-**SQLite for Simple Applications**:
-- Jellyfin, arr-stack use SQLite databases (embedded)
-- No separate database cluster needed
-- Database files stored in application PVC
-
-### Authentication Pattern
-
-**Authentik SSO**:
-- Most media applications support OAuth2/OIDC
-- Configure OAuth2 provider in Authentik (see k8s/infrastructure/auth/authentik/AGENTS.md)
-- Create ExternalSecret for OAuth credentials (client_id, client_secret)
-- Application references OAuth endpoint for authentication
-
-**Application-Specific Notes**:
-- **Immich**: Supports OAuth2/OIDC via Authentik
-- **Jellyfin**: Supports OAuth2 via Authentik
-- **arr-stack**: No OAuth2 support, uses application-specific authentication
+### Offline Content Pattern
+WhisperASR caches AI models in PVC. No public access. Models can be re-downloaded if needed.
 
 ## APPLICATION-SPECIFIC GUIDANCE
 

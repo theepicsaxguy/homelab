@@ -14,61 +14,28 @@ Boundaries:
 - Does NOT handle: Media services (see media/), AI applications (see ai/)
 - Integrates with: network/ (Gateway API), auth/ (Authentik SSO), storage/ (PVCs)
 
-## COMMON PATTERNS
+## INHERITED PATTERNS
 
-### Storage Pattern
+For general Kubernetes patterns, see k8s/AGENTS.md:
+- Storage: proxmox-csi (new), longhorn (legacy)
+- Network: Gateway API for external access
+- Authentication: Authentik SSO where supported
+- Database: CNPG for PostgreSQL, auto-generated credentials
+- Backup: Velero for proxmox-csi, Longhorn labels for legacy
 
-**Automation Applications Storage**:
-- **Longhorn**: Primary storage for automation applications (Hass.io, MQTT, Zigbee2MQTT)
-- **Proxmox CSI**: Newer automation applications (N8N, Frigate)
-- **Database PVCs**: CNPG or embedded databases depending on application
-- **Configuration PVCs**: Long-lived storage for configuration and state
+## AUTOMATION-SPECIFIC PATTERNS
 
-**Storage Labels** (Longhorn):
-- GFS tier: Critical automation databases (N8N CNPG, Home Assistant)
-- Daily tier: Standard application data and configurations
-- No labels: Caches and temporary data
+### MQTT Pattern
+Internal-only message broker for IoT communication. All automation apps communicate via MQTT topics. No external access required. TCP route with Cilium 1.18+ required for full protocol support.
 
-### Network Pattern
+### Zigbee2MQTT Pattern
+Zigbee coordinator runs in separate VM (not Kubernetes). No USB device passthrough in cluster. Zigbee2MQTT app in Kubernetes connects to coordinator over network, publishes to MQTT broker.
 
-**Gateway API Integration**:
-- All automation applications expose via Gateway API
-- External access via `*.peekoff.com` hostname
-- TLS certificates from Cert Manager
-- Routes reference `external` Gateway from `gateway` namespace
+### RTSP Stream Pattern
+Frigate ingests camera feeds via RTSP. RTSP credentials managed via ExternalSecrets. No public RTSP exposure.
 
-**Special Network Requirements**:
-- **MQTT**: TCP route for MQTT broker (Cilium 1.18+ required)
-- **Frigate**: RTSP streams for camera ingestion
-- **Zigbee2MQTT**: USB device passthrough for Zigbee coordinator
-
-### Database Pattern
-
-**CNPG for Automation Applications**:
-- N8N uses CloudNativePG for PostgreSQL database
-- Auto-generated credentials via CNPG (`<cluster-name>-app` secret)
-- Scheduled backups to MinIO and Backblaze B2
-- ExternalSecrets for backup credentials only
-
-**Embedded Databases**:
-- **Home Assistant**: SQLite database embedded in PVC
-- **Zigbee2MQTT**: No database (stateless)
-- **MQTT**: No database (message broker, stateless)
-
-### Authentication Pattern
-
-**Authentik SSO Integration**:
-- **Home Assistant**: OAuth2/OpenID Connect via Authentik
-- **N8N**: Supports OAuth2 via Authentik
-- **Frigate**: No OAuth2 support, basic authentication or public
-- **MQTT**: Internal service, no external authentication
-- **Zigbee2MQTT**: Internal service, no external authentication
-
-**External Secrets Required**:
-- Home Assistant: OAuth2 client_id and client_secret
-- N8N: OAuth2 credentials (if using Authentik SSO)
-- Frigate: RTSP credentials (for cameras)
-- MQTT: Username/password for broker authentication
+### Workflow Orchestration Pattern
+N8N orchestrates cross-system workflows via MQTT and HTTP APIs. Uses CNPG PostgreSQL database with auto-generated credentials.
 
 ## APPLICATION-SPECIFIC GUIDANCE
 
@@ -328,15 +295,13 @@ kubectl exec -n home-assistant -l app=home-assistant -- ha --version
 
 **Fix**: Upgrade Cilium to 1.18 or later
 
-### USB Device Passthrough
+### Device Passthrough
 
-**Zigbee2MQTT**:
-- USB device passed through from host: `/dev/ttyUSB0`
-- Verify device availability: `ls -la /dev/ttyUSB0` on node
-- Check pod device access: `kubectl describe pod -n zigbee2mqtt`
+**No USB device passthrough in Kubernetes**. Zigbee2MQTT coordinator runs in separate VM. Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
 
-**Frigate Coral**:
-- USB Coral device passed through: `/dev/bus/usb`
+**Frigate Coral Accelerator**:
+- USB Coral device for AI inference (optional)
+- If used, passed through from host: `/dev/bus/usb`
 - Verify device availability on node
 - Check pod logs for device detection
 

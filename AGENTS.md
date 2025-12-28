@@ -131,14 +131,32 @@ Breaking changes require footer: `BREAKING CHANGE: <description>`
 └── website/                # Docusaurus documentation site
 ```
 
-## Nested AGENTS.md Files
+## AGENTS.md Discovery and Coverage
 
-For detailed domain-specific guidance, see:
-- `k8s/AGENTS.md` — Kubernetes manifests, Kustomize, storage classes, backups, operator patterns
-- `tofu/AGENTS.md` — OpenTofu/Terraform infrastructure provisioning
-- `website/AGENTS.md` — Docusaurus site, documentation writing standards
-- `images/AGENTS.md` — Custom container images and CI build patterns
-- `k8s/applications/ai/AGENTS.md` — AI-specific patterns, GPU access, shared resources
+### How to Find Context
+
+1. Look for AGENTS.md in current directory (most specific)
+2. Walk up to parent directory if not found
+3. Continue to root AGENTS.md (global)
+
+### Self-Healing Rule
+
+**If you need to look up information not in the closest AGENTS.md, that file is incomplete.**
+
+Action: Create or update the appropriate AGENTS.md file with missing context.
+
+### Currently Available
+
+Domain-level:
+- k8s/AGENTS.md - Kubernetes patterns
+- tofu/AGENTS.md - Infrastructure provisioning
+- website/AGENTS.md - Documentation site
+- images/AGENTS.md - Container images
+
+Component-level:
+- k8s/applications/ai/AGENTS.md - AI applications
+- k8s/infrastructure/auth/authentik/AGENTS.md - Authentik SSO
+- [Create more as needed when components have unique complexity]
 
 ## Critical Boundaries
 
