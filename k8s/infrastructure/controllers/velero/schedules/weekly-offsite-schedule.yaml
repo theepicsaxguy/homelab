@@ -21,6 +21,7 @@ spec:
       - velero
       - kube-system
       - default
+      - kiwix
 
     # Include all resources
     includedResources:
@@ -37,16 +38,11 @@ spec:
       - podvolumerestores.velero.io
 
     # Backup persistent volumes using node agent (Kopia)
+    # This uploads PVC data directly to S3 without needing CSI snapshots
     defaultVolumesToFsBackup: true
 
     # Storage location: Backblaze B2
     storageLocation: backblaze-b2
-
-    # Snapshot volumes using CSI snapshots (if available)
-    snapshotVolumes: true
-
-    # Move snapshot data to S3 for true disaster recovery
-    snapshotMoveData: true
 
     # Retention: 90 days (approximately 12-13 weekly backups)
     ttl: 2160h  # 90 days * 24 hours

@@ -16,13 +16,13 @@ spec:
       - velero
       - kube-system
       - default
+      - kiwix
     includedResources:
       - '*'
     excludedResources:
       - events
       - storageclasses.storage.k8s.io
     includeClusterResources: null
-    snapshotVolumes: null
+    defaultVolumesToFsBackup: true
     storageLocation: backblaze-b2
-    snapshotMoveData: true
     ttl: 672h # 28 days

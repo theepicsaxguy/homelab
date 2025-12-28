@@ -9,6 +9,3 @@ helmCharts:
     includeCRDs: true
     namespace: csi-proxmox
     valuesFile: values.yaml
-
-resources:
-  - volumesnapshotclass.yaml

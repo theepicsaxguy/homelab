@@ -32,8 +32,13 @@ configuration:
         region: us-west-1
         s3ForcePathStyle: "true"
         s3Url: https://truenas.peekoff.com:9000
-  volumeSnapshotLocation: []
-  features: "EnableCSI,EnableCSISnapshotDataMover"
+    - name: backblaze-b2
+      provider: aws
+      bucket: velero
+      config:
+        region: us-west-1
+        s3ForcePathStyle: "true"
+        s3Url: https://truenas.peekoff.com:9000
 resources:
   requests:
     cpu: 200m
