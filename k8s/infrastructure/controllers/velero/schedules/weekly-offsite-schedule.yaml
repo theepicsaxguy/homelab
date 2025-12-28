@@ -38,7 +38,7 @@ spec:
       - podvolumerestores.velero.io
 
     # Backup persistent volumes using node agent (Kopia)
-    # This uploads PVC data directly to S3 without needing CSI snapshots
+    # Uploads PVC data directly to S3 using Kopia
     defaultVolumesToFsBackup: true
 
     # Storage location: Backblaze B2

@@ -93,7 +93,7 @@ module "proxmox-csi-plugin" {
 
 ### Required Proxmox Permissions
 
-The Terraform `proxmox-csi-plugin` module automatically creates a Proxmox user and role with these minimal permissions:
+The Terraform `proxmox-csi-plugin` module creates a Proxmox user and role with these minimal permissions:
 
 - `Sys.Audit` - Required for CSI controller to query system capacity
 - `VM.Audit` - View VM information

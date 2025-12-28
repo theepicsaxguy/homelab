@@ -31,4 +31,4 @@ These values come from Bitwarden. The `ExternalSecret` assembles them into a
 
 ## Backup Strategy
 
-For detailed information about the backup strategy, including why we use Kopia filesystem backups instead of CSI snapshots, see the [Backup Strategy documentation](../../k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md) in the k8s directory.
+For detailed information about the backup strategy, including the rationale for using Kopia filesystem backups instead of CSI snapshots, see the [Backup Strategy documentation](../../k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md) in the k8s directory.

@@ -2,26 +2,26 @@
 
 ## Overview
 
-This cluster uses **Velero with Kopia filesystem backups** for disaster recovery. We explicitly chose **NOT** to use CSI volume snapshots despite initially exploring that option.
+The backup infrastructure uses **Velero with Kopia filesystem backups** for disaster recovery. CSI volume snapshots are not used.
 
 ## Why No CSI Snapshots?
 
-### Investigation Summary
+### Constraints
 
-We investigated using Proxmox CSI volume snapshots with Velero but discovered:
+Proxmox CSI volume snapshots with Velero are not viable due to:
 
 1. **Proxmox CSI snapshot feature is experimental** and requires `root@pam` credentials
 2. **API tokens cannot perform snapshot operations** - the CSI driver needs root-level access for disk copy operations
 3. **Snapshots create full disk copies**, not incremental deltas
-4. **Additional permissions would be needed** that are too broad for an automation user
+4. **Additional permissions required** are too broad for an automation user
 
-### Decision Rationale
+### Rationale
 
-**Velero's Kopia data mover is superior for our use case:**
+**Velero's Kopia data mover provides:**
 
-✅ **No CSI snapshots needed** - Direct filesystem backup to S3
+✅ **Direct filesystem backup to S3** - No CSI snapshots required
 ✅ **True disaster recovery** - All data in S3, not dependent on Proxmox storage
-✅ **More secure** - No need for root-level Proxmox credentials
+✅ **Secure credential model** - No root-level Proxmox credentials needed
 ✅ **Incremental backups** - Kopia deduplicates and compresses data efficiently
 ✅ **Simpler architecture** - Fewer moving parts, easier to maintain
 
@@ -65,7 +65,7 @@ We use **two independent S3-compatible storage locations**:
    - Velero node-agent mounts PVCs
    - Kopia streams data directly to S3
    - Deduplication & compression applied
-   - No intermediate snapshots needed
+   - No intermediate snapshots
 3. **Metadata** → Stored alongside data for easy restores
 
 ## Proxmox CSI Configuration
