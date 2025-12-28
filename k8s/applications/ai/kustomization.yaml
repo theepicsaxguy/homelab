@@ -6,7 +6,6 @@ resources:
 - openwebui
 - karakeep
 - litellm
-- openhands
 - opencode
 - perplexica
 - qdrant
