@@ -24,6 +24,5 @@ spec:
     includeClusterResources: null
     snapshotVolumes: null
     storageLocation: default
-    volumeSnapshotLocations:
-      - default
+    snapshotMoveData: true
     ttl: 336h # 14 days

@@ -61,16 +61,25 @@ The storage bootstrap is managed through Terraform in the `tofu/bootstrap.tf` fi
 
 ### Proxmox CSI Plugin Setup
 
-The `proxmox-csi-plugin` module automatically configures:
+The `proxmox-csi-plugin` module in `tofu/bootstrap.tf` automatically configures:
 
 1. **Proxmox User & Role**: Creates a `kubernetes-csi@pve` user with appropriate permissions
 2. **API Token**: Generates an API token for the CSI plugin to authenticate with Proxmox
 3. **Kubernetes Resources**:
-   - Creates the `csi-proxmox` namespace
-   - Stores the Proxmox credentials in a Kubernetes secret
+   - Creates `csi-proxmox` namespace
+   - Stores Proxmox credentials in a Kubernetes secret
+
+**Command to deploy:**
+
+```bash
+cd tofu
+tofu apply -target=module.proxmox-csi-plugin
+```
+
+**Terraform Module Reference:**
 
 ```hcl
-# Automatically configured when you run tofu apply
+# From tofu/bootstrap.tf
 module "proxmox-csi-plugin" {
   source = "./bootstrap/proxmox-csi-plugin"
 
@@ -84,12 +93,45 @@ module "proxmox-csi-plugin" {
 
 ### Required Proxmox Permissions
 
-The CSI plugin user is granted these permissions:
+The Terraform `proxmox-csi-plugin` module automatically creates a Proxmox user and role with these base permissions:
+
 - `VM.Audit` - View VM information
 - `VM.Config.Disk` - Modify VM disk configuration
 - `Datastore.Allocate` - Allocate storage space
 - `Datastore.AllocateSpace` - Manage datastore capacity
 - `Datastore.Audit` - View datastore information
+
+**CSI Snapshot Permissions (Required for Velero CSI Backups)**
+
+To use Velero's CSI snapshot feature with Proxmox CSI, the `kubernetes-csi@pve` user **must have snapshot permissions**:
+
+```bash
+# Update the CSI user role to add snapshot permissions
+pveum role mod CSI -privs "Sys.Audit VM.Audit VM.Config.Disk Datastore.Allocate Datastore.AllocateSpace Datastore.Audit VM.Snapshot"
+```
+
+**Why This is Needed:**
+
+Velero uses CSI Volume Snapshots to create crash-consistent backups of PVCs. The Proxmox CSI driver calls the Proxmox API to create ZFS snapshots on the underlying storage. Without `VM.Snapshot` permission, the CSI driver receives an "unauthorized" error and snapshot creation fails.
+
+**Verification:**
+
+After updating permissions, verify the CSI user has the correct permissions:
+
+```bash
+# Check CSI user permissions
+pveum acl list | grep kubernetes-csi@pve
+
+# Should include VM.Snapshot in the output
+# Example: /acl/1/Storage.Allocate,Datastore.AllocateSpace,Datastore.Audit,VM.Audit,VM.Config.Disk,VM.Snapshot
+```
+
+If you don't add this permission, Velero backups will fail with:
+```
+Error: Timed out awaiting reconciliation of volumesnapshot
+Failed to wait for VolumeSnapshot to become ReadyToUse within timeout
+client rate limiter Wait returned an error: context deadline exceeded
+```
 
 ## Using Storage in Applications
 

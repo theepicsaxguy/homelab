@@ -24,6 +24,5 @@ spec:
     includeClusterResources: null
     snapshotVolumes: null
     storageLocation: backblaze-b2
-    volumeSnapshotLocations:
-      - default
+    snapshotMoveData: true
     ttl: 672h # 28 days

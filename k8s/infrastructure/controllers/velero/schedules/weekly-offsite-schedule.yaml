@@ -45,9 +45,8 @@ spec:
     # Snapshot volumes using CSI snapshots (if available)
     snapshotVolumes: true
 
-    # Volume snapshot locations
-    volumeSnapshotLocations:
-      - default
+    # Move snapshot data to S3 for true disaster recovery
+    snapshotMoveData: true
 
     # Retention: 90 days (approximately 12-13 weekly backups)
     ttl: 2160h  # 90 days * 24 hours

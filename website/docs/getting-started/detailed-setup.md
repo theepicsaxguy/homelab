@@ -10,7 +10,7 @@ This guide provides step-by-step instructions for setting up your homelab enviro
 
 ## Prerequisites
 
-- Proxmox access with your SSH key
+- Proxmox access with your SSH key (and `pveum` CLI installed on Proxmox)
 - `opentofu` 1.6+: [install](https://opentofu.org/docs/intro/install/)
 - `talosctl` 1.10+: [install](https://www.talos.dev/v1.10/talos-guides/install/talosctl/)
 - `kubectl` 1.28+: [install](https://kubernetes.io/docs/tasks/tools/)
@@ -24,6 +24,21 @@ First, navigate to the OpenTofu directory:
 ```console
 cd tofu
 ```
+
+### Proxmox CSI Prerequisites
+
+**Important**: The `proxmox-csi-plugin` Terraform module will create a Proxmox user and role, but it does **not** include `VM.Snapshot` permission by default.
+
+**Note**: Do NOT use `opentofu` to manually create Proxmox users or roles. The `proxmox-csi-plugin` module uses the Proxmox Terraform provider (`telmate/proxmox`) which manages users, roles, and API tokens directly. Running `opentofu apply` would create resources that Terraform doesn't know about, causing configuration drift.
+
+For Velero CSI backups to work, you must manually add this permission after running `tofu apply`:
+
+```bash
+# After tofu apply completes, update the CSI role with snapshot permission
+pveum role mod CSI -privs "Sys.Audit VM.Audit VM.Config.Disk Datastore.Allocate Datastore.AllocateSpace Datastore.Audit VM.Snapshot"
+```
+
+See [Proxmox CSI Storage](../storage/proxmox-csi.md#csi-snapshot-permissions-required-for-velero) for more details on why this is needed and how to verify it works.
 
 Create a `terraform.tfvars` file with your configuration:
 
