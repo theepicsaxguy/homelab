@@ -1,0 +1,1992 @@
+- id: '1674991018383'
+  alias: "\U0001F4A1Vardagsrum - TV på - ljus minska"
+  description: ''
+  trigger:
+  - trigger: device
+    device_id: 8a4943af092b2647ebc056f72bb1db89
+    domain: media_player
+    entity_id: media_player.vardagsrum_tv
+    type: turned_on
+  condition: []
+  actions:
+  - action: script.slack_allt_utom_vardagsrum
+  mode: single
+- id: '1674992747938'
+  alias: "\U0001F3B5Hem - Cast på - pausa musik"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: media_player.android_tv
+    to: playing
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: remote.tv_vardagsrum
+      state: 'on'
+      for:
+        minutes: 10
+  actions:
+  - action: media_player.media_pause
+    target:
+      entity_id:
+      - media_player.hogtalare
+      - media_player.sovrum
+      - media_player.hallen
+  mode: single
+- id: '1675026206667'
+  alias: "\U0001F4A4Sovrum - Godnatt"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.telefoner_laddar_2
+    to: 'on'
+  - trigger: state
+    entity_id:
+    - binary_sensor.person2_charger
+    to: 'on'
+  conditions:
+  - condition: time
+    after: '21:00:00'
+    before: 05:00:00
+  actions:
+  - action: script.godnatt
+    data: {}
+  mode: restart
+- id: '1675367986470'
+  alias: "\U0001F3DB️ Hem - Kom hem - starta allt"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.is_anyone_home
+    from: 'off'
+    to: 'on'
+    for:
+      seconds: 10
+  conditions: []
+  actions:
+  - action: alarm_control_panel.alarm_disarm
+    target:
+      entity_id: alarm_control_panel.alarmo
+    data: {}
+  - action: script.volym_hogtalare_0_15
+    data: {}
+  - choose:
+    - conditions:
+      - condition: time
+        after: '18:00:00'
+        before: 08:00:00
+      sequence:
+      - action: script.musik_hogtalare_mys
+        data: {}
+    - conditions:
+      - condition: time
+        after: 08:00:00
+        before: '18:00:00'
+      sequence:
+      - action: script.musik_hogtalare_energi
+        data: {}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.post
+        state: 'on'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: zone
+            entity_id: person.benjamin
+            zone: zone.home
+          sequence:
+          - action: notify.mobile_app_person2
+            data:
+              title: Brevlåda
+              message: Glöm inte posten
+        - conditions:
+          - condition: zone
+            entity_id: person.wilma
+            zone: zone.home
+          sequence:
+          - action: notify.mobile_app_person1
+            data:
+              title: Brevlåda
+              message: Glöm inte posten
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.semester
+        state: 'on'
+      sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.semester
+        data: {}
+  - action: vacuum.return_to_base
+    target:
+      entity_id: vacuum.valetudo_bertil
+    data: {}
+  mode: single
+- id: '1675586881518'
+  alias: "\U0001F3E0 Hem - Lämna hem"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.is_anyone_home
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 1
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.rorelse_hemma
+      state: 'on'
+      for:
+        seconds: 10
+  actions:
+  - action: script.lamna_hem
+  - choose:
+    - conditions:
+      - condition: time
+        after: 07:00:00
+        before: '22:00:00'
+      sequence:
+      - action: script.starta_dammsugare_2_timmar
+        enabled: false
+  mode: restart
+- id: '1675587049009'
+  alias: "\U0001F508 Hem - 21:00 - Sätt volym"
+  description: ''
+  triggers:
+  - trigger: time
+    at: '21:00:00'
+  conditions:
+  - condition: time
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - sun
+  actions:
+  - action: script.volym_hogtalare_0_15
+  mode: single
+- id: '1675587109425'
+  alias: "\U0001F508 Hem - 07:00 helg - Sätt volym"
+  description: ''
+  triggers:
+  - trigger: time
+    at: 07:00:00
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.helg
+    state: 'on'
+  actions:
+  - action: script.volym_hogtalare_0_15
+    data: {}
+  mode: single
+- id: '1675587287667'
+  alias: "\U0001F3B5 Hem - Spela musik kl 9"
+  description: ''
+  trigger:
+  - trigger: time
+    at: 09:00:00
+  condition:
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.musik_helg
+    state: 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.helg
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.semester
+      state: 'on'
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: media_player.hogtalare
+      state: playing
+  actions:
+  - action: script.musik_hogtalare_mys
+  mode: single
+- id: '1675612760272'
+  alias: "\U0001F3B5 Hem - Spela musik 06:50"
+  description: ''
+  trigger:
+  - trigger: time
+    at: 06:50:00
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.helg
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.semester
+      state: 'on'
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'on'
+  actions:
+  - action: script.musik_hogtalare_mys
+  mode: single
+- id: '1676827612528'
+  alias: "\U0001F3AE Vardagsrum - Xbox på"
+  description: ''
+  trigger:
+  - trigger: device
+    device_id: 3b403e9645262ebc356e4cf155f59f63
+    domain: remote
+    entity_id: remote.xbox_vardagsrum_remote
+    type: turned_on
+  - trigger: state
+    entity_id: binary_sensor.skillman1328
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'on'
+  action:
+  - choose:
+    - conditions:
+      - condition: device
+        device_id: 5e2d9c6894cac198f94891150ad4a1ff
+        domain: media_player
+        entity_id: media_player.vardagsrum
+        type: is_playing
+      sequence:
+      - action: media_player.volume_set
+        data:
+          volume_level: 0.2
+        target:
+          entity_id: media_player.vardagsrum
+  - choose:
+    - conditions:
+      - condition: time
+        after: 06:00:00
+        before: '22:00:00'
+      sequence:
+      - action: scene.turn_on
+        target:
+          entity_id: scene.film_mys
+  mode: single
+- id: '1677141823067'
+  alias: "\U0001F6CC Sovrum - I sängen"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.telefoner_laddar
+  condition:
+  - condition: time
+    after: '20:00:00'
+    before: 09:00:00
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.i_sangen
+  mode: single
+- id: '1677343625262'
+  alias: ⏱️ Sovrum - Plattång på - timer
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: sensor.plattang_anvands
+    to: 'True'
+    for:
+      minutes: 1
+  condition: []
+  actions:
+  - action: timer.start
+    target:
+      entity_id: timer.platttang_tid
+  mode: single
+- id: '1677363001336'
+  alias: Sovrum - I sängen av
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.hogtalare
+    - media_player.hallen
+    - media_player.kok
+    - media_player.vardagsrum
+    - media_player.android_tv
+    - media_player.benjaminsxbox
+    to: playing
+  - trigger: state
+    entity_id: binary_sensor.telefoner_laddar
+    to: 'off'
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: '18:00:00'
+  - condition: state
+    entity_id: input_boolean.i_sangen
+    state: 'on'
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'on'
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.i_sangen
+      - input_boolean.godnatt
+    data: {}
+  - action: select.select_option
+    target:
+      entity_id: select.luftrenare_lage
+    data:
+      option: auto
+  - action: switch.turn_off
+    target:
+      entity_id: switch.sleep_al
+    data: {}
+  - action: script.volym_hogtalare_0_15
+    data: {}
+  mode: single
+- id: '1677610520406'
+  alias: "\U0001F3B5 Hem - 19:00 - spela mys"
+  description: ''
+  trigger:
+  - trigger: time
+    at: '19:00:00'
+  condition:
+  - condition: device
+    device_id: 86c7c9102f847c53a1b592f4d41e8298
+    domain: media_player
+    entity_id: media_player.hogtalare
+    type: is_playing
+  actions:
+  - action: script.musik_hogtalare_mys
+  mode: single
+- id: '1677777799912'
+  alias: "\U0001F508 Mobil - Samtal - Volym högtalare"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: sensor.person2_audio_mode
+    to: in_call
+  condition:
+  - condition: zone
+    entity_id: person.benjamin
+    zone: zone.home
+  actions:
+  - action: media_player.volume_set
+    data:
+      volume_level: 0.1
+    target:
+      entity_id: media_player.hogtalare
+  mode: single
+- id: '1677778681066'
+  alias: "\U0001F508 Mobil - Samtal avslutat - Volym"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: sensor.person2_phone_state
+    to: idle
+  - trigger: state
+    entity_id: sensor.person2_audio_mode
+    to: normal
+  condition:
+  - condition: zone
+    entity_id: person.benjamin
+    zone: zone.home
+  actions:
+  - action: media_player.volume_set
+    data:
+      volume_level: 0.25
+    target:
+      entity_id: media_player.hogtalare
+  mode: single
+- id: '1677880161932'
+  alias: ⏱️ Sovrum - Godnatt - timer klar
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.godnatt
+  condition: []
+  actions:
+  - action: media_player.media_pause
+    target:
+      entity_id: media_player.sovrum
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.godnatt
+  mode: single
+- id: '1679393558643'
+  alias: Sovrum - natt - musik stopp
+  description: ''
+  trigger:
+  - trigger: time
+    at: 02:00:00
+  condition: []
+  actions:
+  - action: media_player.media_stop
+    target:
+      entity_id:
+      - media_player.hallen
+      - media_player.hogtalare
+      - media_player.kok
+      - media_player.sovrum
+      - media_player.vardagsrum
+      - media_player.spotify_home_assistant
+  mode: single
+- id: '1680459087094'
+  alias: "\U0001F4A1 Hall - lampor av"
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.hall
+  condition: []
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 5
+    target:
+      entity_id: light.hall
+  mode: single
+- id: '1680459180990'
+  alias: Hall - rörelse - på
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.sensor_hall_motion_detection
+    to: 'on'
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.sensor_hall_illuminance
+    below: 80
+  - condition: template
+    value_template: '{{ (state_attr(''light.hall'', ''brightness'') or 0) | int <
+      255 }}'
+  actions:
+  - action: timer.cancel
+    target:
+      entity_id: timer.hall
+  - action: light.turn_on
+    target:
+      entity_id: light.hall
+  mode: single
+- id: '1680459282323'
+  alias: "\U0001F4A1 Hall - rörelse av - lampa av"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.sensor_hall_motion_detection
+    to: 'off'
+    for:
+      minutes: 1
+  condition:
+  - condition: template
+    value_template: '{{ (state_attr(''light.hall'', ''brightness'') or 0) | int <
+      255 }}'
+  action:
+  - choose:
+    - conditions:
+      - condition: time
+        after: '21:00:00'
+        before: 06:00:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - sun
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.hall
+    default:
+    - action: timer.start
+      target:
+        entity_id: timer.hall
+  mode: single
+- id: '1683111220649'
+  alias: Hem - 06:30 - Släng soporna
+  description: Denna automatik skickar en påminnelse att slänga soporna, aktiverar
+    en boolean och lägger till en uppgift på att-göra-listan. Aktiveras på tisdagar
+    och fredagar kl. 06:30.
+  triggers:
+  - trigger: time
+    at: 06:30:00
+  conditions:
+  - condition: time
+    weekday:
+    - tue
+    - fri
+  - condition: state
+    entity_id: input_boolean.semester
+    state: 'off'
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Sopor
+      message: Släng soporna innan jobbet!
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.tom_soporna
+  - action: script.todo_uppgift
+    data:
+      title: Släng soporna
+      list_name: Städ
+      due_date: '{{ now().strftime(''%Y-%m-%d'') }}'
+      reminder: '{{ now().strftime(''%Y-%m-%dT07:10:00'') }}'
+  mode: single
+- id: '1683139418219'
+  alias: "\U0001F4A1 Vardagsrum - rörelse - lampor på"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.sensor_vardagsrum_occupancy
+    to: 'on'
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: media_player.android_tv
+      state: 'on'
+    - condition: device
+      device_id: 1cfecb7f2f4658faeba2828a491c488e
+      domain: media_player
+      entity_id: 5d25fb4d0df99e0a17e0cfe4e1ae0aff
+      type: is_on
+  - condition: numeric_state
+    entity_id: sensor.kok_sensor_illuminance
+    below: 300
+  - condition: state
+    entity_id: input_boolean.godnatt
+    state: 'off'
+  - condition: or
+    conditions:
+    - condition: template
+      value_template: '{{ (state_attr(''light.fonsterlampor'', ''brightness'') or
+        0) | int < 255 }}'
+    - condition: template
+      value_template: '{{ (state_attr(''light.vardagsrum'', ''brightness'') or 0)
+        | int < 255 }}'
+  - condition: time
+    after: 06:00:00
+    before: '22:00:00'
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    - sun
+  actions:
+  - action: timer.cancel
+    target:
+      entity_id: timer.vardagsrum
+    data: {}
+  - action: light.turn_on
+    data: {}
+    target:
+      device_id: bac7f23911ba283dd51310d01bd90fd7
+  mode: single
+- id: '1683139866117'
+  alias: ⏱️ Vardagsrum - rörelse - Timer
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.sensor_vardagsrum_occupancy
+    to: 'off'
+    for:
+      minutes: 1
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: media_player.android_tv
+      state: playing
+    - condition: device
+      device_id: 1cfecb7f2f4658faeba2828a491c488e
+      domain: media_player
+      entity_id: 5d25fb4d0df99e0a17e0cfe4e1ae0aff
+      type: is_on
+  - condition: template
+    value_template: '{{ (state_attr(''light.vardagsrum'', ''brightness'') or 0) |
+      int < 255 }}'
+  actions:
+  - action: timer.start
+    target:
+      entity_id: timer.vardagsrum
+    data: {}
+  mode: single
+- id: '1683139920302'
+  alias: "\U0001F4A1 Vardagsrum - lampor - av"
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.vardagsrum
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ (state_attr(''light.fonsterlampor'', ''brightness'') or
+          0) | int < 255 }}'
+      sequence: []
+    default:
+    - action: light.turn_off
+      data:
+        transition: 10
+      target:
+        entity_id: light.vardagsrum
+  mode: single
+- id: '1683424165824'
+  alias: Hem - slå på musik helg. Knapp
+  description: ''
+  trigger:
+  - trigger: time
+    at: 09:10:00
+  condition: []
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.musik_helg
+  mode: single
+- id: '1683469071485'
+  alias: "\U0001F4A1 Kök - lampor av"
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kok
+  condition:
+  - condition: template
+    value_template: '{{ (state_attr(''light.kok'', ''brightness'') or 0) | int < 255
+      }}'
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 10
+    target:
+      entity_id: light.kok
+  mode: single
+- id: '1683489276573'
+  alias: HA - Start
+  description: ''
+  trigger:
+  - trigger: homeassistant
+    event: start
+  condition: []
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id:
+      - input_boolean.flux_dum
+      - input_boolean.xy_dum
+  - action: light.turn_on
+    data:
+      brightness_pct: 35
+      kelvin: 2000
+    target:
+      entity_id: light.flux_dum
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.fridge_always_on
+  mode: single
+- id: '1683522557421'
+  alias: "\U0001F508 Hem - kl7 vardagar - sätt volym"
+  description: ''
+  triggers:
+  - trigger: time
+    at: 07:00:00
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.helg
+    state: 'off'
+  actions:
+  - action: script.volym_hogtalare_0_15
+    data: {}
+  mode: single
+- id: '1684091078575'
+  alias: Sovrum - dimmer
+  description: ''
+  use_blueprint:
+    path: patpac9/Hue_Dimmer_Switch_Easy_Custom_Buttons.yaml
+    input:
+      controller: Dimmer - Sovrum
+      on_press:
+      - action: light.toggle
+        target:
+          entity_id: light.sovrum_tak
+        data: {}
+      off_released:
+      - action: switch.toggle
+        target:
+          entity_id: switch.skotbord
+        data: {}
+      up_pressed:
+      - device_id: ba21d90484abdabdd608069cc8174fd0
+        domain: light
+        entity_id: light.sovrum_tak
+        type: brightness_increase
+      down_pressed:
+      - device_id: ba21d90484abdabdd608069cc8174fd0
+        domain: light
+        entity_id: light.sovrum_tak
+        type: brightness_decrease
+- id: '1684860515911'
+  alias: "\U0001F4EC Brevlåda - offline"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.brevlada_occupancy
+    to: unavailable
+    for:
+      minutes: 2
+  condition: []
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Brevlåda
+      message: Brevlåda är offline
+  mode: single
+- id: '1684860603242'
+  alias: "\U0001F4EC Brevlåda - online"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.brevlada_occupancy
+    from: unavailable
+    to:
+    - 'on'
+    - 'off'
+    for:
+      minutes: 2
+  condition: []
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Brevlåda
+      message: Brevlåda är online
+  mode: single
+- id: '1684875229361'
+  alias: Kök - av kväll
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.kok_sensor_occupancy
+    to: 'off'
+    for:
+      minutes: 1
+  condition:
+  - condition: time
+    after: '21:00:00'
+    before: 06:00:00
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: input_boolean.kok_lampor_pa
+      state: 'on'
+  - condition: template
+    value_template: '{{ (state_attr(''light.kok'', ''brightness'') or 0) | int < 255
+      }}'
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.kok
+  mode: single
+- id: '1685209490385'
+  alias: Kontor - rörelse - på
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.kontor_occupancy
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 1
+  conditions:
+  - condition: template
+    value_template: '{{ (state_attr(''light.kontor_tak'', ''brightness'') or 0) |
+      int < 255 }}'
+  - condition: not
+    conditions:
+    - condition: time
+      after: 08:00:00
+      before: '17:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+  actions:
+  - action: timer.cancel
+    target:
+      entity_id: timer.kontor
+    data: {}
+  - action: timer.start
+    target:
+      entity_id:
+      - timer.kontor
+    data: {}
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kontor_tak
+  mode: single
+- id: '1685210077376'
+  alias: Kontor - rörelse - av
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kontor
+  conditions:
+  - condition: template
+    value_template: '{{ (state_attr(''light.kontor_tak'', ''brightness'') or 0) |
+      int < 255 }}'
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.kontor_tak
+  mode: single
+- id: '1685262467263'
+  alias: Sovrum rörelse på
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sovrum_sensor_occupancy
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.kok_sensor_illuminance
+    below: 300
+  - condition: template
+    value_template: '{{ (state_attr(''light.sovrum_tak'', ''brightness'') or 0) |
+      int < 255 }}'
+  - condition: state
+    entity_id: switch.adaptive_lighting_adapt_brightness_sovrum
+    state: 'on'
+  - condition: or
+    conditions:
+    - condition: time
+      after: 06:30:00
+      before: '21:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+    - condition: time
+      after: '10:00:00'
+      before: '21:00:00'
+      weekday:
+      - sat
+      - sun
+  actions:
+  - action: timer.cancel
+    data: {}
+    target:
+      entity_id: timer.sovrum_timer
+  - action: light.turn_on
+    target:
+      entity_id: light.sovrum_tak
+    data: {}
+  mode: single
+- id: '1685263412407'
+  alias: Sovrum - rörelse av
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.sovrum_sensor_occupancy
+    to: 'off'
+    for:
+      minutes: 1
+  conditions:
+  - condition: state
+    entity_id: light.sovrum_tak
+    state: 'on'
+  - condition: template
+    value_template: '{{ (state_attr(''light.sovrum_tak'', ''brightness'') or 0) |
+      int < 255 }}'
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        after: '21:00:00'
+        before: 06:00:00
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - sun
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.sovrum_tak
+        data: {}
+    default:
+    - action: timer.start
+      data: {}
+      target:
+        entity_id: timer.sovrum_timer
+  mode: single
+- id: '1686477269323'
+  alias: "\U0001F9F9 Hem - Dammsugare - pausad - Docka"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: vacuum.valetudo_bertil
+    to: paused
+    for:
+      minutes: 15
+  - trigger: state
+    entity_id: vacuum.valetudo_bertil
+    to: idle
+    for:
+      minutes: 15
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: vacuum.valetudo_bertil
+      state: error
+  actions:
+  - action: vacuum.return_to_base
+    target:
+      entity_id: vacuum.valetudo_bertil
+  mode: queued
+  max: 10
+- id: '1686477470708'
+  alias: "\U0001F4EC Dammsugare: Notis vid fel"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: vacuum.valetudo_bertil
+    to: error
+  condition: []
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Bertil
+      message: Jag har ett problem. Hjälp mig!
+  - action: notify.mobile_app_person1
+    data:
+      title: Bertil
+      message: Jag har ett problem. Hjälp mig!
+  mode: queued
+  max: 10
+- id: '1686513648088'
+  alias: "\U0001F9F9 Hem - Dammsugare - 13:00"
+  description: ''
+  triggers:
+  - trigger: time
+    at: '13:00:00'
+  conditions:
+  - condition: template
+    value_template: '{% set current_datetime = now().replace(microsecond=0).astimezone(now().tzinfo)
+      %} {% set last_clean_end = strptime(states(''sensor.bertil_last_clean_end''),
+      "%Y-%m-%dT%H:%M:%S%z") %} {% set time_difference = current_datetime - last_clean_end
+      %} {{ (time_difference.total_seconds() > 2 * 3600) or (current_datetime.date()
+      > last_clean_end.date()) }}
+
+      '
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.benjamin_home
+        state: 'on'
+      sequence:
+      - action: script.dammsuga_fraga_android
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.wilma_home
+        state: 'on'
+      sequence:
+      - action: script.dammsuga_fraga_ios
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.is_anyone_home
+        state: 'off'
+      sequence:
+      - action: script.starta_dammsugare_4_timmar
+        data: {}
+  mode: single
+- &id001
+  id: '1687441298508'
+  alias: "\U0001F9F9 Hem - Dammsugare - 18:00"
+  description: ''
+  triggers:
+  - trigger: time
+    at: '18:00:00'
+  conditions:
+  - condition: template
+    value_template: '{% set current_datetime = now().replace(microsecond=0).astimezone(now().tzinfo)
+      %} {% set last_clean_end = strptime(states(''sensor.bertil_last_clean_end''),
+      "%Y-%m-%dT%H:%M:%S%z") %} {% set time_difference = current_datetime - last_clean_end
+      %} {{ (time_difference.total_seconds() > 2 * 3600) or (current_datetime.date()
+      > last_clean_end.date()) }}
+
+      '
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.benjamin_home
+        state: 'on'
+      sequence:
+      - action: script.dammsuga_fraga_android
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.wilma_home
+        state: 'on'
+      sequence:
+      - action: script.dammsuga_fraga_ios
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.is_anyone_home
+        state: 'off'
+      sequence:
+      - action: script.starta_dammsugare_4_timmar
+        data: {}
+  mode: single
+- id: '1690184727163'
+  alias: Semester av
+  description: ''
+  trigger:
+  - trigger: time
+    at: 00:00:00
+  condition:
+  - condition: state
+    entity_id: input_boolean.semester
+    state: 'on'
+  - condition: template
+    value_template: '{{ now().date() >= (strptime(''2024-08-30'', ''%Y-%m-%d'')).date()
+      }}'
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.semester
+  mode: single
+- id: '1690268967641'
+  alias: Medicin - Wilma
+  description: ''
+  trigger:
+  - trigger: time
+    at: 06:30:00
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.medicin_wilma
+  - alias: Notify until the medication has been taken
+    repeat:
+      while:
+      - condition: state
+        entity_id: input_boolean.medicin_wilma
+        state: 'off'
+      sequence:
+      - action: logbook.log
+        data:
+          name: Medicin påminnelse!
+          message: Reminder sent
+          entity_id: input_boolean.medicin_wilma
+      - action: notify.mobile_app_person1
+        data:
+          title: Medicin påminnelse!
+          message: Det är dags att ta din medicin.
+          data:
+            actions:
+            - action: taken
+              title: Tagit den
+            - action: later
+              title: Fråga senare
+            - action: skip
+              title: Skippa
+          tag: input_boolean.medicin_wilma
+      - wait_for_trigger:
+        - trigger: event
+          event_type: mobile_app_notification_action
+          event_data:
+            tag: input_boolean.medicin_wilma
+        timeout: 00:30:00
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ wait.trigger.event.data.action == ''taken'' }}'
+          sequence:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.medicin_wilma
+          - action: logbook.log
+            data:
+              name: Medicin påminnelse!
+              message: Medication taken
+              entity_id: input_boolean.medicin_wilma
+        - conditions:
+          - condition: template
+            value_template: '{{ wait.trigger.event.data.action == ''later'' }}'
+          sequence:
+          - action: logbook.log
+            data:
+              name: Medicin påminnelse!
+              message: Postpone reminder
+              entity_id: input_boolean.medicin_wilma
+          - delay:
+              minutes: 30
+        - conditions:
+          - condition: template
+            value_template: '{{ wait.trigger.event.data.action == ''skip'' }}'
+          sequence:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.medicin_wilma
+          - action: logbook.log
+            data:
+              name: Medicin påminnelse!
+              message: Reminder skipped
+              entity_id: input_boolean.medicin_wilma
+        default:
+        - action: notify.mobile_app_person1
+          data:
+            message: clear_notification
+            tag: input_boolean.medicin_wilma
+        - action: logbook.log
+          data:
+            name: Medicin påminnelse!
+            message: No answer time out
+            entity_id: input_boolean.medicin_wilma
+  mode: restart
+- &id003
+  id: '1694497644623'
+  alias: "\U0001F9F9 Hem - dammsuga - lämna hem"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.is_anyone_home
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 1
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        after: 08:00:00
+        before: '20:00:00'
+      sequence:
+      - action: script.starta_dammsugare_med_standardvarden
+        data: {}
+  - action: vacuum.set_fan_speed
+    metadata: {}
+    data:
+      fan_speed: max
+    target:
+      entity_id: vacuum.valetudo_bertil
+  mode: single
+- &id002
+  id: '1695187909978'
+  alias: Hem - Godmorgon
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.rorelse_hemma
+    to: 'on'
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: '11:00:00'
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'on'
+  actions:
+  - action: alarm_control_panel.alarm_disarm
+    target:
+      entity_id: alarm_control_panel.alarmo
+    data: {}
+  - action: script.adaptive_lighting_sovlage_av
+  mode: single
+- *id001
+- id: '1691795511298'
+  alias: "\U0001F504 Uppdatering - omstart vid behov"
+  description: ''
+  trigger:
+  - trigger: template
+    value_template: '{% set active_issues = states(''sensor.active_issues'') | int
+      %} {% set uptime_timestamp = as_timestamp(states(''sensor.uptime'')) %} {% set
+      current_timestamp = as_timestamp(now()) %} {{ active_issues > 0 and (current_timestamp
+      - uptime_timestamp) > 86400 }}
+
+      '
+  condition: []
+  actions:
+  - action: homeassistant.restart
+  mode: single
+- id: '1694760722858'
+  alias: "\U0001F3B5 Hem - Wilma sover - pausa musik"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: device_tracker.person2
+    from: home
+    to: not_home
+  condition:
+  - condition: state
+    entity_id: binary_sensor.rorelse_hemma
+    state: 'off'
+  - condition: state
+    entity_id: person.wilma
+    state: home
+  actions:
+  - action: media_player.media_pause
+    target:
+      entity_id: media_player.hogtalare
+  mode: single
+- *id002
+- id: '1693585229358'
+  alias: "\U0001F4A1 Badrum - lampor på"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.badrum_motion_alarm_1
+    to: 'on'
+    for:
+      seconds: 2
+  conditions:
+  - condition: or
+    conditions:
+    - condition: time
+      after: 06:30:00
+      before: '22:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - sun
+    - condition: time
+      after: 06:30:00
+      before: '23:38:00'
+      weekday:
+      - fri
+      - sat
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.lampor_badrum
+    data: {}
+  - action: timer.cancel
+    target:
+      entity_id: timer.badrum_timer
+    data: {}
+  - action: timer.start
+    target:
+      entity_id: timer.badrum_timer
+    data: {}
+  mode: single
+- id: '1693588173406'
+  alias: "\U0001F4A1 Badrum - lampor av"
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.badrum_timer
+  condition: []
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.lampor_badrum
+  mode: single
+- id: '1693653263735'
+  alias: "\U0001F4A1 Garderob - rörelse - lampa på"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.matskal_occupancy
+    to: 'on'
+    for:
+      seconds: 1
+  conditions:
+  - condition: template
+    value_template: '{{ (state_attr(''light.garderob'', ''brightness'') or 0) | int
+      < 255 }}'
+  - condition: state
+    entity_id: binary_sensor.motion_bedroom
+    state: 'on'
+    enabled: false
+  - condition: state
+    entity_id: timer.godnatt
+    state: idle
+  actions:
+  - action: timer.cancel
+    target:
+      entity_id: timer.garderob
+    data: {}
+  - action: timer.start
+    target:
+      entity_id: timer.garderob
+    data: {}
+  - action: light.turn_on
+    target:
+      entity_id: light.garderob
+    data: {}
+  mode: single
+- id: '1693653448456'
+  alias: "\U0001F4A1 Garderob - rörelse av - lampa av"
+  description: ''
+  trigger:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.garderob
+  condition:
+  - condition: template
+    value_template: '{{ (state_attr(''light.garderob'', ''brightness'') or 0) | int
+      < 255 }}'
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.garderob
+  mode: single
+- id: '1694069359861'
+  alias: "\U0001F6CC Sovrum - Soluppgång - Gardin öppna"
+  description: ''
+  triggers:
+  - trigger: time
+    at: 08:00:00
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.helg
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.semester
+      state: 'on'
+  actions:
+  - choose:
+    - conditions:
+      - condition: time
+        after: 06:00:00
+        before: 08:00:00
+      sequence:
+      - action: cover.open_cover
+        target:
+          entity_id: cover.rullgardin_sovrum
+        data: {}
+    - conditions:
+      - condition: time
+        before: 06:00:00
+      sequence:
+      - delay:
+          hours: 6
+      - action: cover.open_cover
+        target:
+          entity_id: cover.rullgardin_sovrum
+        data: {}
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.trigger == ''time'' or now().hour == 8 }}'
+      sequence:
+      - action: cover.open_cover
+        target:
+          entity_id: cover.rullgardin_sovrum
+        data: {}
+  - action: select.select_option
+    target:
+      entity_id: select.luftrenare_lage
+    data:
+      option: auto
+  mode: single
+- id: '1694364887946'
+  alias: "\U0001F6CC Sovrum - Soluppgång helg - Gardin upp"
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: +06:00:00
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.helg
+    state: 'on'
+  actions:
+  - action: cover.open_cover
+    target:
+      entity_id: cover.rullgardin_sovrum
+    data: {}
+  mode: single
+- id: '1732357602757'
+  alias: "\U0001F384 Solnedgång - Julstjärna"
+  description: ''
+  trigger:
+  - trigger: sun
+    event: sunset
+  condition: []
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.julstjarnor
+  mode: single
+- id: '1726940642345'
+  alias: "\U0001F6AA Varna dörr"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.dorr_kontor_contact
+    to: 'on'
+    for:
+      minutes: 5
+  condition:
+  - condition: state
+    entity_id: binary_sensor.dorr_kontor_contact
+    state: 'on'
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.wilma_home
+        state: 'on'
+      sequence:
+      - action: notify.mobile_app_person1
+        data:
+          message: Stäng dörren, Tussen kan rymma.
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.benjamin_home
+        state: 'on'
+      sequence:
+      - action: notify.mobile_app_person2
+        data:
+          message: Stäng dörren, Tussen kan rymma.
+  mode: single
+- *id003
+- id: '1700818618355'
+  alias: "\U0001F9F9 Dammsugare - städar larma hemma"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: vacuum.valetudo_bertil
+    to: cleaning
+  condition:
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'off'
+  - condition: state
+    entity_id: alarm_control_panel.alarmo
+    state: armed_away
+  actions:
+  - action: alarmo.arm
+    data:
+      mode: home
+      skip_delay: false
+      force: true
+    target:
+      entity_id: alarm_control_panel.alarmo
+  mode: single
+- id: '1700818663094'
+  alias: "\U0001F9F9 Dammsugare - klar larma borta"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: vacuum.valetudo_bertil
+    to: docked
+  condition:
+  - condition: state
+    entity_id: binary_sensor.is_anyone_home
+    state: 'off'
+  - condition: state
+    entity_id: alarm_control_panel.alarmo
+    state: armed_home
+  actions:
+  - action: alarmo.arm
+    data:
+      mode: away
+      skip_delay: false
+      force: true
+    target:
+      entity_id: alarm_control_panel.alarmo
+  mode: single
+- id: '1701520849380'
+  alias: "\U0001F6A8 Larm - Bertil - hemma"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: alarm_control_panel.alarmo
+    to: armed_away
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: vacuum.valetudo_bertil
+      state: cleaning
+    - condition: state
+      entity_id: vacuum.valetudo_bertil
+      state: returning
+  actions:
+  - action: alarmo.arm
+    data:
+      mode: home
+      skip_delay: false
+      force: true
+    target:
+      entity_id: alarm_control_panel.alarmo
+  mode: single
+- id: '1695411149737'
+  alias: "\U0001F6CC Adaptive Lighting sovrum på"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.kok_sensor_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: switch.adaptive_lighting_sovrum
+    state: 'off'
+  - condition: time
+    after: 00:00:00
+    before: '12:00:00'
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.adaptive_lighting_sovrum
+  mode: single
+- id: '1713383632667'
+  alias: "\U0001F3E0 vagga - Temperatur notis"
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.vagga_temperature
+    above: 26
+    for:
+      seconds: 5
+  conditions: []
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Server Rack
+      message: Temperaturen är {{ states('sensor.rack_temperature') }}°C
+  mode: single
+- id: '1715889180272'
+  alias: "\U0001F3B5 Notify Time Alerts"
+  description: ''
+  trigger:
+  - trigger: time
+    at:
+    - '20:30:00'
+    - '21:00:00'
+    - '21:30:00'
+    - '22:00:00'
+    - '22:30:00'
+    - '23:00:00'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.helg
+    state: 'off'
+  actions:
+  - action: notify.android_tv
+    data_template:
+      message: "{% if now().strftime('%H:%M') == '20:30' %}\n  Klockan är 20:30, snart
+        dags att sova!\n{% elif now().strftime('%H:%M') == '21:00' %}\n  Klockan är
+        21:00, snart dags att sova!\n{% elif now().strftime('%H:%M') == '21:30' %}\n
+        \ Klockan är 21:30, snart dags att sova!\n{% elif now().strftime('%H:%M')
+        == '22:00' %}\n  Klockan är 22:00, snart dags att sova!\n{% elif now().strftime('%H:%M')
+        == '22:30' %}\n  Klockan är 22:30, snart dags att sova!\n{% elif now().strftime('%H:%M')
+        == '23:00' %}\n  Klockan är 23:00, gå och lägg er!\n{% else %}\n  Okänt klockslag\n{%
+        endif %}\n"
+      data:
+        duration: 8
+        position: bottom
+        fontsize: medium
+        transparency: 75%
+        color: teal
+        image:
+          url: https://media.tenor.com/Hx8fxpiyB4EAAAAe/sleepy-raccoon.png
+  mode: single
+- id: '1720352822022'
+  alias: "\U0001F4FA TV starta Jellyfin"
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 9fbc67c101aa421947ecd5f698ea5845
+    entity_id: 68303a8a2428dd85ad72fedc6b4b21eb
+    domain: remote
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  conditions:
+  - condition: not
+    conditions:
+    - condition: device
+      device_id: 1cfecb7f2f4658faeba2828a491c488e
+      domain: media_player
+      entity_id: 5d25fb4d0df99e0a17e0cfe4e1ae0aff
+      type: is_on
+  actions:
+  - action: script.starta_jellyfin
+    data: {}
+  mode: single
+- id: '1713941702047'
+  alias: "\U0001F3E0 Ladda om Android TV"
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - remote.tv_vardagsrum
+    to: unavailable
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - action: homeassistant.reload_config_entry
+    data:
+      entry_id: 807d10fead83eed41cdccf885c9ddbab
+  mode: single
+- id: '1702638314522'
+  alias: "\U0001F6E0️ Zigbee nere notis"
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id: binary_sensor.zigbee2mqtt_running
+    to: 'off'
+    for:
+      minutes: 1
+  condition: []
+  actions:
+  - action: notify.mobile_app_person2
+    data:
+      title: Zigbee
+      message: Zigbee2mqtt är nere!
+  mode: single
+- id: '1732357602757'
+  alias: "\U0001F384 Solnedgång julstjärna"
+  description: ''
+  trigger:
+  - trigger: sun
+    event: sunset
+  condition: []
+  actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.julstjarnor
+  mode: single
+- id: '1732379987384'
+  alias: Rörelse lampa på kök
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.kok_sensor_occupancy
+    to: 'on'
+    for:
+      seconds: 1
+  conditions:
+  - condition: template
+    value_template: '{{ (state_attr(''light.kok'', ''brightness'') or 0) | int < 255
+      }}'
+  - condition: state
+    entity_id: input_boolean.godnatt
+    state: 'off'
+  actions:
+  - action: timer.cancel
+    data: {}
+    target:
+      entity_id: timer.kok
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      area_id: kok
+  mode: single
+- id: '1733676141970'
+  alias: Lampa av kontor
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kontor
+  conditions: []
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.kontor_tak
+    data: {}
+  mode: single
+- id: '1733848502722'
+  alias: 'Kök rörelse av starta timer '
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.kok_sensor_occupancy
+    to: 'on'
+    for:
+      seconds: 1
+  conditions:
+  - condition: template
+    value_template: '{{ (state_attr(''light.kok'', ''brightness'') or 0) | int < 255
+      }}'
+  actions:
+  - action: timer.start
+    data: {}
+    target:
+      entity_id: timer.kok
+  mode: single
+- id: '1745966104954'
+  alias: 'Kök: Automatisk ljusstyrning sammanslagen'
+  description: Kombinerar rörelse, timer och kvällsläge för kökslampor.
+  triggers:
+  - id: motion_on
+    entity_id: binary_sensor.kok_sensor_occupancy
+    from: 'off'
+    to: 'on'
+    for:
+      seconds: 1
+    trigger: state
+  - id: motion_off
+    entity_id: binary_sensor.kok_sensor_occupancy
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 1
+    trigger: state
+  - id: timer_finished
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kok
+    trigger: event
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: timer_finished
+      sequence:
+      - data:
+          entity_id: light.kok
+          transition: 10
+        action: light.turn_off
+    - conditions:
+      - condition: trigger
+        id: motion_on
+      - condition: state
+        entity_id: binary_sensor.kok_sensor_occupancy
+        state: 'on'
+      - condition: or
+        conditions:
+        - condition: template
+          value_template: '{{ (state_attr(''light.kok'', ''brightness'') | int(0))
+            < 255 }}'
+        - condition: state
+          entity_id: light.kok
+          state: 'off'
+      sequence:
+      - data:
+          entity_id: timer.kok
+        action: timer.cancel
+      - target:
+          entity_id:
+          - light.kok_tak
+          - light.vask
+          - light.skafferi
+        action: light.turn_on
+    - conditions:
+      - condition: trigger
+        id: motion_off
+      - condition: state
+        entity_id: binary_sensor.kok_sensor_occupancy
+        state: 'off'
+      - condition: time
+        after: '21:00:00'
+        before: 06:00:00
+      - condition: state
+        entity_id: input_boolean.kok_lampor_pa
+        state: 'off'
+      sequence:
+      - target:
+          entity_id: light.kok
+        action: light.turn_off
+    - conditions:
+      - condition: trigger
+        id: motion_off
+      - condition: state
+        entity_id: binary_sensor.kok_sensor_occupancy
+        state: 'off'
+      sequence:
+      - data:
+          entity_id: timer.kok
+        action: timer.start
+    default: []
+  mode: single
+- id: '1746542205626'
+  alias: Ny automatisering
+  description: ''
+  triggers:
+  - type: changed_states
+    device_id: f1ec53d1079d2deab812bd26a6d831de
+    entity_id: 2f9cf8f2f61073b3de6e0cd4bd2af92a
+    domain: update
+    trigger: device
+  conditions: []
+  actions:
+  - action: notify.android_tv
+    metadata: {}
+    data:
+      message: Lopp
+      title: Loppan
+      data:
+        duration: 8
+        position: bottom
+        fontsize: medium
+        transparency: 75%
+        color: teal
+        image:
+          url: rtsp://admin:MVr4UZ4mP4GQGeo67zGrXDH@192.168.16.186:554/h264Preview_01_main
+    enabled: true
+  - action: camera.play_stream
+    metadata: {}
+    data:
+      media_player: media_player.android_tv
+    target:
+      entity_id: camera.sovrum
+  mode: single
+- id: '1746997548648'
+  alias: "\U0001F9F9 Hem - Dammsuga vid 15"
+  description: Denna automation startar dammsugaren varje dag klockan 15:00 för att
+    hålla hemmet rent.
+  triggers:
+  - trigger: time
+    at: '15:00:00'
+  conditions: []
+  actions:
+  - action: script.starta_dammsugare_med_standardvarden
+    data: {}
+    enabled: false
+  - action: vacuum.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: vacuum.valetudo_bertil
+    enabled: true
+  mode: single
+- id: '1747673962699'
+  alias: Kontroll skötbord
+  description: ''
+  use_blueprint:
+    path: mfarad/zigbee2mqtt-ikea-remote-styrbar-type-e2001-e2002.yaml
+    input:
+      action_sensor: sensor.vardagsrum_kontroll_battery
+      arrow_right_action:
+      - action: notify.mobile_app_person2
+        metadata: {}
+        data:
+          message: Aa
+- id: '1752482579277'
+  alias: Toggle Mullvad VPN
+  description: Opens Mullvad app (does not toggle VPN)
+  triggers: []
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_9
+    metadata: {}
+    data:
+      message: command_launch_app
+      data:
+        package_name: net.mullvad.mullvadvpn
+  mode: single
+- id: '1756037288831'
+  alias: Sovrum - timer av lampa
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.sovrum_timer
+  conditions: []
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 5
+    target:
+      device_id: ba21d90484abdabdd608069cc8174fd0
+  mode: single
+- id: '1756064544376'
+  alias: Timer - kok av
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: timer.finished
+    event_data:
+      entity_id: timer.kok
+  conditions: []
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 5
+    target:
+      area_id: kok
+  mode: single
+- id: '1758358914588'
+  alias: "\U0001F4A1Hall - Rörelse - Lampa på"
+  description: Slår på lampan i hallen när rörelse upptäcks. Om rörelsen inte längre
+    registreras släcks lampan efter en inställd tid.
+  use_blueprint:
+    path: homeassistant/motion_light.yaml
+    input:
+      motion_entity: binary_sensor.sensor_hall_motion_detection
+      light_target:
+        entity_id: light.hall
+- id: '1761257598624'
+  alias: "\U0001F4A1 Hem - Anpassad belysning av"
+  description: Denna automatisering stänger av manuell kontroll av all belysning varje
+    natt vid 03:00 för att återgå till automatisk anpassad belysning.
+  triggers:
+  - trigger: time
+    at: 03:00:00
+  conditions: []
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: false
+      lights:
+      - light.flux_dum
+      - light.garderob
+      - light.hall
+      - light.kok
+      - light.sovrum
+      - light.sovrum_tak
+      - light.sanglampor
+      - light.vardagsrum
+      - light.kontor_tak
+  mode: single

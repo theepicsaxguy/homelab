@@ -1,98 +1,147 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels:
-    app.kubernetes.io/instance: home-assistant
-    app.kubernetes.io/name: home-assistant
   name: home-assistant
   namespace: home-assistant
+  labels:
+    app.kubernetes.io/name: home-assistant
+    app.kubernetes.io/instance: home-assistant
 spec:
+  serviceName: home-assistant
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: home-assistant
       app.kubernetes.io/name: home-assistant
-  serviceName: home-assistant
+      app.kubernetes.io/instance: home-assistant
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: home-assistant
         app.kubernetes.io/name: home-assistant
+        app.kubernetes.io/instance: home-assistant
     spec:
+      serviceAccountName: home-assistant
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+      - name: config-init
+        image: busybox:latest
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /config/.storage
+
+          echo "Updating HA-managed config files from ConfigMaps"
+          cp -f /config-seed/automations.yaml /config/automations.yaml
+          cp -f /config-seed/scripts.yaml /config/scripts.yaml
+          cp -f /config-seed/scenes.yaml /config/scenes.yaml
+          cp -f /config-seed/lovelace.yaml /config/lovelace.yaml
+
+          echo "Init complete"
+        volumeMounts:
+        - name: data
+          mountPath: /config
+        - name: seed-config
+          mountPath: /config-seed
       containers:
-      - env:
-        - name: TZ
-          value: Europe/Stockholm
-        image: ghcr.io/home-assistant/home-assistant:2025.12.5
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: http
-            scheme: HTTP
-          periodSeconds: 20
-          successThreshold: 1
-          timeoutSeconds: 2
-        name: home-assistant
-        ports:
-        - containerPort: 8123
-          name: http
-          protocol: TCP
-        - containerPort: 8124
-          name: sia
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /
-            port: http
-            scheme: HTTP
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
+        - name: home-assistant
+          image: ghcr.io/home-assistant/home-assistant:2025.12.4
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8123
+              name: http
+              protocol: TCP
+            - containerPort: 8124
+              name: sia
+              protocol: TCP
+          env:
+            - name: TZ
+              value: Europe/Stockholm
+          resources:
+            requests:
+              memory: 1Gi
+            limits:
+              memory: 3Gi
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+                - NET_BROADCAST
+          volumeMounts:
+            - name: data
+              mountPath: /config
+            - name: core-config
+              mountPath: /config/configuration.yaml
+              readOnly: true
+              subPath: configuration.yaml
+            - name: secrets
+              mountPath: /config/secrets.yaml
+              readOnly: true
+              subPath: secrets.yaml
+            - name: packages
+              mountPath: /config/packages
+              readOnly: true
+            - name: speech
+              mountPath: /config/speech
+              readOnly: true
+            - name: custom-sentences
+              mountPath: /config/custom_sentences
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+      volumes:
+        - name: core-config
+          configMap:
+            name: ha-core-config
+            items:
+              - key: configuration.yaml
+                path: configuration.yaml
+        - name: seed-config
+          configMap:
+            name: ha-seed-config
+        - name: secrets
+          secret:
+            secretName: hassio-secrets
+            items:
+              - key: secrets.yaml
+                path: secrets.yaml
+        - name: packages
+          configMap:
+            name: ha-packages-config
+        - name: speech
+          configMap:
+            name: ha-speech-config
+        - name: custom-sentences
+          configMap:
+            name: ha-custom-sentences
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: home-assistant
+          app.kubernetes.io/instance: home-assistant
+          recurring-job.longhorn.io/source: enabled
+          recurring-job-group.longhorn.io/daily: enabled
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "proxmox-csi"
         resources:
           requests:
-            memory: "1Gi"
-          limits:
-            memory: "3Gi"
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-              - NET_RAW
-              - NET_BROADCAST
-        volumeMounts:
-        - name: home-assistant
-          mountPath: /config
-        - name: config
-          mountPath: /config/configuration.yaml
-          subPath: configuration.yaml
-          readOnly: true
-        - name: secrets
-          mountPath: /config/secrets.yaml
-          subPath: secrets.yaml
-          readOnly: true
-      serviceAccountName: home-assistant
-      volumes:
-      - name: config
-        configMap:
-          name: hass-configuration
-      - name: secrets
-        secret:
-          secretName: hassio-secrets
-  volumeClaimTemplates:
-  - metadata:
-      name: home-assistant
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/weekly: enabled
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: longhorn
-      resources:
-        requests:
-          storage: 20Gi
+            storage: 10Gi

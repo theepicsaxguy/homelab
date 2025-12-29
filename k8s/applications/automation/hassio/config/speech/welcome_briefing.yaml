@@ -1,0 +1,115 @@
+>
+  {# Event Report #}
+  {%- macro getReport() -%}
+  
+  {% set person = expand('group.people')| selectattr('state', 'eq', 'home') | map(attribute='name')|join(' och ') %}
+  {% set peoplecount = expand('group.people') | count %}
+  {% if peoplecount == 0 %}
+    Välkommen hem
+  {% else %}
+    {% if peoplecount == 1 %}
+      {% set is_are = ' är ' %}
+      {% set has_have = ' har ' %}
+    {% else %}
+      {% set is_are = ' är ' %}
+      {% set has_have = ' har ' %}
+    {% endif %}
+    {%- macro greeting_sentence(person, is_are, has_have) -%}
+      {{ [
+      "Välkommen tillbaka hem " ~ person + ".",
+      "Hej " ~ person + "! Hög fem! Skönt att du äntligen är hemma.",
+      "Välkommen hem " ~ person + "."
+      ] | random }}
+    {%- endmacro -%}
+    {{greeting_sentence(person, is_are, has_have)}}
+  {% endif %}
+  {{ [
+    'Det var ganska tyst medan du var borta.',
+    'Skönt att se att du kom tillbaka.',
+    'Förhoppningsvis hände inget alltför galet där ute.',
+    'Jag skulle vilja höra om dina äventyr. <break time="1s"/> Å andra sidan bryr jag mig inte.'
+    ] | random }}
+  
+
+  
+  {%- if is_state('climate.home','off') %}
+    Det interna klimatkontrollsystemet är avstängt. Temperaturen inne är {{ states.climate.home.attributes.current_temperature }} grader
+  {%- elif is_state('climate.home','heat_cool') %}
+    Det interna klimatkontrollsystemet kommer att försöka hålla temperaturen mellan {{ states.climate.home.attributes.target_temp_low }} och {{ states.climate.home.attributes.target_temp_high }}
+  {% else %}
+    Det interna klimatkontrollsystemet är inställt på {{ states.climate.home.state }} med en aktuell temperatur på {{ states.climate.home.attributes.current_temperature }}, vilket är
+
+      {%- if states.climate.home.attributes.current_temperature | int - states.climate.home.attributes.temperature | int |round > 0 %}
+        {{ states.climate.home.attributes.current_temperature | int - states.climate.home.attributes.temperature | int }} grader över 
+      {%- elif states.climate.home.attributes.current_temperature | int - states.climate.home.attributes.temperature | int |round < 0 %}
+        {{ (states.climate.home.attributes.current_temperature | int - states.climate.home.attributes.temperature | int) | abs }} grader under
+      {% else %}
+        precis vid 
+      {% endif %}
+      den inställda punkten på {{ states.climate.home.attributes.temperature }}
+    grader
+  {%- endif -%}
+  Och den interna luftfuktigheten är för närvarande {{ states.climate.home.attributes.current_humidity }} procent
+  
+
+  
+  {%- if is_state('sensor.washer_status','complete') %}
+    Tvättmaskinen avslutade sin cykel 
+    {% set seconds = now().timestamp() - as_timestamp(states.sensor.washer_status.last_changed) %}
+    {% set hours = seconds / 60 %}
+    {% if (seconds / ( 60 * 60 )) | int == 1 %}
+      för över en timme sedan.
+    {% elif (seconds / ( 60 * 60 )) | int > 1 and (seconds / ( 60 * 60 )) | int < 6 %}
+      för över {{ (seconds //  ( 60 * 60 )) | int }} timmar sedan.
+      {{ [
+      'Mycket längre och du kommer att behöva tvätta dem igen.',
+      'Någon behöver rotera tvätten.',
+      'Glöm inte bort kläderna i tvättmaskinen.',
+      'Säkert menade du inte att glömma bort kläderna. Misstag händer. Men du kan fortfarande fixa det.',
+      'Vill du att dina kläder ska lukta mögel? För det är vad som händer just nu.'
+      ] | random }}
+    {% elif (seconds / ( 60 * 60 )) | int > 6 %}
+      för över {{ (seconds //  ( 60 * 60 )) | int }} timmar sedan.
+      {{ [
+      'Det är en galen lång tid.',
+      'Bestämde du dig för att kläderna ska lida?',
+      'Du kan lika gärna tvätta om kläderna.',
+      'Jag kan nästan känna mögellukten virtuellt.',
+      'Säkert menade du inte att glömma bort kläderna.'
+      ] | random }}
+    {% else %}
+      för {{ (seconds // 60) | int }} minuter sedan.
+      {{ [
+      'Glöm inte att rotera kläderna.',
+      'Någon glömde flytta kläderna till torktumlaren. Jag tänker inte nämna några namn, men det finns en kamera där. Behöver jag skämma ut någon offentligt?',
+      'Du kanske vill flytta dem till torktumlaren.'
+      ] | random }}
+    {% endif %}
+  {% endif %}
+  
+
+  
+  {%- if is_state('sensor.front_door_motion_away_count','0') %}
+    Medan du var borta upptäcktes ingen rörelse vid framsidan.
+  {% else %}
+    Medan du var ute upptäckte jag rörelse vid framsidan {{ states.sensor.front_door_motion_away_count.state | int }} gånger.
+  {% endif %}
+  
+
+  {%- endmacro -%}
+
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+    {%- macro cleanup(data) -%}
+      {%- for item in data.split("\n")  if item | trim != "" -%}
+        {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+    {%- macro mother_of_all_macros() -%}
+      {{ getReport() }}
+    {%- endmacro -%}
+    
+    {# Call the macro  #}
+    {{- cleanup(mother_of_all_macros()) -}}

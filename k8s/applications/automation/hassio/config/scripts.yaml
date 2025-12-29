@@ -1,0 +1,1536 @@
+blink_lights:
+  alias: "\U0001F4E2 Blink Lights Helper"
+  description: Blink any lights a given number of times, with optional colour.
+  mode: parallel
+  icon: mdi:alarm-light
+  fields:
+    target_entities:
+      description: Light entity or list of entities to blink
+      required: true
+      example: light.kok
+    count:
+      description: How many times to blink
+      default: 2
+      example: '3'
+    delay_seconds:
+      description: Pause between on/off (seconds)
+      default: 0.5
+      example: '1.0'
+    color_name:
+      description: Optional named colour (e.g. red)
+      example: red
+    color_temp:
+      description: Optional colour temperature (mireds)
+      example: '153'
+  sequence:
+  - repeat:
+      count: '{{ count | int }}'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: '{{ target_entities }}'
+        data: "{% set light_data = {} %} {% if color_name is defined %}\n  {% set
+          _ = light_data.update({'color_name': color_name}) %}\n{% endif %} {% if
+          color_temp is defined %}\n  {% set _ = light_data.update({'color_temp':
+          color_temp}) %}\n{% endif %} {{ light_data }}\n"
+      - delay: '{{ delay_seconds | float }}'
+      - action: light.turn_off
+        target:
+          entity_id: '{{ target_entities }}'
+      - delay: '{{ delay_seconds | float }}'
+play_spotify:
+  alias: "\U0001F3B5 Play Spotify Helper"
+  description: Generic Spotcast wrapper – one helper for any playlist.
+  mode: parallel
+  icon: mdi:music
+  fields:
+    device_name:
+      description: Friendly name of your speaker
+      required: true
+      example: Living Room Speaker
+    media_player:
+      description: media_player entity_id
+      required: true
+      example: media_player.living_room_speaker
+    playlist_uri:
+      description: Spotify URI (e.g. spotify:playlist:…)
+      required: true
+      example: spotify:playlist:37i9dQZF1DWU13kKnk03AP
+    shuffle:
+      description: Shuffle on/off
+      default: true
+    repeat:
+      description: Repeat mode (off|context|track)
+      default: 'off'
+    random_song:
+      description: Start at random position
+      default: true
+    offset:
+      description: Optional offset into playlist
+      example: '0'
+    limit:
+      description: Optional limit on items
+      example: '50'
+  sequence:
+  - action: spotcast.start
+    data:
+      device_name: '{{ device_name }}'
+      entity_id: '{{ media_player }}'
+      uri: '{{ playlist_uri }}'
+      shuffle: '{{ shuffle | bool }}'
+      random_song: '{{ random_song | bool }}'
+      repeat: '{{ repeat }}'
+      offset: '{{ offset | default(omit) }}'
+      limit: '{{ limit | default(omit) }}'
+vacuum_clean_segments_helper:
+  alias: "\U0001F916 Vacuum Specific Segments Helper"
+  description: Tells a vacuum (assumed Roborock) to clean specific segments.
+  mode: queued
+  icon: mdi:map-marker-path
+  fields:
+    vacuum_entity:
+      description: Vacuum entity ID
+      required: true
+      example: vacuum.valetudo_bertil
+    segments:
+      description: List of segment IDs to clean
+      required: true
+      example: 16, 17
+  sequence:
+  - action: roborock.vacuum_clean_segment
+    target:
+      entity_id: '{{ vacuum_entity }}'
+    data:
+      segments: '{{ segments }}'
+set_volume_helper:
+  alias: "\U0001F50A Set Media Player Volume Helper"
+  description: Sets volume for one or more media players.
+  mode: parallel
+  icon: mdi:volume-high
+  fields:
+    target_players:
+      description: Media player entity_id(s)
+      required: true
+      example: media_player.kok
+    volume_level:
+      description: Volume level (0.0 to 1.0)
+      required: true
+      example: '0.25'
+  sequence:
+  - action: media_player.volume_set
+    target:
+      entity_id: '{{ target_players }}'
+    data:
+      volume_level: '{{ volume_level | float(0.5) }}'
+display_image_helper:
+  alias: "\U0001F5BC️ Display Image Temporarily Helper"
+  description: Displays an image on a media player for a set duration.
+  mode: queued
+  icon: mdi:image-frame
+  fields:
+    media_player_entity:
+      description: Media player entity_id(s) to display on
+      required: true
+      example: media_player.tv_vardagsrum
+    image_path:
+      description: Media source path to the image (e.g., media-source://...)
+      required: true
+      example: media-source://media_source/local/guest_wifi.png
+    content_type:
+      description: Image content type
+      default: image/png
+    duration_minutes:
+      description: How long to display the image (minutes)
+      default: 5
+      example: '10'
+  sequence:
+  - action: media_player.play_media
+    target:
+      entity_id: '{{ media_player_entity }}'
+    data:
+      media_content_id: '{{ image_path }}'
+      media_content_type: '{{ content_type }}'
+      announce: true
+  - delay:
+      minutes: '{{ duration_minutes | int(5) }}'
+  - action: media_player.media_stop
+    target:
+      entity_id: '{{ media_player_entity }}'
+blinkande_lampor:
+  alias: "\U0001F4E2 Blinkande Lampor"
+  description: Blinks several lights twice, then turns on Hall and Kitchen lights.
+  sequence:
+  - action: script.blink_lights
+    data:
+      target_entities:
+      - light.hall
+      - light.kok
+      - light.vardagsrum
+      - light.kontor_tak
+      count: 2
+      delay_seconds: 2
+  - action: light.turn_on
+    target:
+      entity_id:
+      - light.hall
+      - light.kok
+    data:
+      color_temp: 317
+  mode: single
+  icon: mdi:alarm-light
+alarm_utlost:
+  alias: "\U0001F6A8 Alarm Utlöst"
+  description: Blinks multiple lights red repeatedly when alarm is triggered, then
+    turns all lights on.
+  mode: restart
+  icon: mdi:alarm-light
+  sequence:
+  - variables:
+      repetitions: 50
+      target_lights:
+      - light.hall
+      - light.kok
+      - light.garderob
+      - light.vardagsrum
+      - light.sovrum_tak
+  - repeat:
+      count: '{{ repetitions }}'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: alarm_control_panel.alarmo
+            state: triggered
+          sequence:
+          - action: script.blink_lights
+            data:
+              target_entities: '{{ target_lights }}'
+              count: 1
+              delay_seconds: 0.5
+              color_name: red
+  - delay: 00:02:00
+  - action: light.turn_on
+    target:
+      entity_id: light.alla_lampor
+    data:
+      color_temp: 386
+  - delay: 00:00:01
+  - action: light.turn_off
+    target:
+      entity_id: light.alla_lampor
+tand_alla_lampor:
+  alias: "\U0001F4A1 Tänd Alla Lampor"
+  description: Turns on all lights (defined by light.alla_lampor).
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: light.alla_lampor
+  mode: single
+  icon: mdi:lightbulb
+musik_hogtalare_energi:
+  alias: "\U0001F3B5 Musik - Högtalare - Energi"
+  description: Plays Spotify Energi playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:37i9dQZF1DWU13kKnk03AP
+  mode: single
+  icon: mdi:music
+musik_hogtalare_edm:
+  alias: "\U0001F3B5 Musik - Högtalare - EDM"
+  description: Plays Spotify EDM playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:37i9dQZF1DX35X4JNyBWtb
+  mode: single
+  icon: mdi:music
+qr_wifi_gast:
+  alias: "\U0001F4F1 QR Wifi Gäst"
+  description: Displays Guest WiFi QR code on Vardagsrum TV for 5 mins.
+  sequence:
+  - action: script.display_image_helper
+    data:
+      media_player_entity: media_player.tv_vardagsrum
+      image_path: media-source://media_source/local/guest_wifi.png
+  mode: single
+  icon: mdi:wifi-lock-open
+qr_wifi_iot:
+  alias: "\U0001F4F1 QR Wifi IoT"
+  description: Displays IoT WiFi QR code on Vardagsrum TV for 5 mins.
+  sequence:
+  - action: script.display_image_helper
+    data:
+      media_player_entity: media_player.tv_vardagsrum
+      image_path: media-source://media_source/local/IoT_wifi.png
+  mode: single
+  icon: mdi:wifi-lock-open
+qr_wifi_main:
+  alias: "\U0001F4F1 QR Wifi Main"
+  description: Displays Main WiFi QR code on specified players for 5 mins.
+  sequence:
+  - action: script.display_image_helper
+    data:
+      media_player_entity:
+      - media_player.benjaminsxbox
+      - media_player.tv_vardagsrum
+      image_path: media-source://media_source/local/Main_wifi.png
+  mode: single
+  icon: mdi:wifi-lock-open
+luftrenare_sleep_lage:
+  alias: "\U0001F4A8 Luftrenare Sleep-läge"
+  description: Selects the previous mode for the Luftrenare.
+  sequence:
+  - action: select.select_previous
+    target:
+      entity_id: select.luftrenare_lage
+  mode: single
+  icon: mdi:air-filter
+musik_hogtalare_mys:
+  alias: "\U0001F3B5 Musik - Högtalare - Mys"
+  description: Plays Spotify Mys playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:5c7qLvHBbDgCJBSdmgyuBi
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+musik_hogtalare_stada:
+  alias: "\U0001F3B5 Musik - Högtalare - Städa"
+  description: Plays Spotify Städa playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:2lB5UHNDgcQlSxafzqlUdq
+  mode: single
+  icon: mdi:music
+stang_av_allt:
+  alias: "\U0001F50C Stäng Av Allt"
+  description: Turns off lights, media players, specific switches, and adjusts volume.
+  sequence:
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.alla_lampor
+      - light.kontor_tak
+      - light.vardagsrum_lampa
+    data:
+      transition: 3
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.sovrum
+    data:
+      volume_level: 0.22
+  - choose:
+    - conditions:
+      - condition: time
+        after: 04:00:00
+        before: '20:00:00'
+      - condition: state
+        entity_id: media_player.sovrum
+        state: playing
+      sequence:
+      - action: media_player.media_pause
+        target:
+          entity_id: media_player.sovrum
+  - action: remote.turn_off
+    target:
+      entity_id: remote.tv_vardagsrum
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.hogtalare
+        state: playing
+      sequence:
+      - action: media_player.media_stop
+        target:
+          entity_id: media_player.hogtalare
+  - action: switch.turn_off
+    target:
+      entity_id: switch.skotbord
+  mode: single
+  icon: mdi:power-plug-off
+sunrise:
+  alias: "\U0001F305 Sunrise"
+  description: Simulates a sunrise over 20 minutes in the bedroom.
+  sequence:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.adaptive_lighting_sovrum
+  - action: light.turn_on
+    target:
+      entity_id: light.sovrum_tak
+    data:
+      brightness: 1
+  - delay: 00:00:01
+  - action: light.turn_on
+    target:
+      entity_id: light.sovrum_tak
+    data:
+      brightness_pct: 100
+      transition: 1200
+  mode: restart
+  icon: mdi:sun-clock
+lamna_hem:
+  alias: "\U0001F6B6 Lämna Hem"
+  description: Arms Alarmo and runs the 'Stäng Av Allt' script.
+  sequence:
+  - action: alarmo.arm
+    target:
+      entity_id: alarm_control_panel.alarmo
+    data:
+      mode: home
+      skip_delay: true
+      force: true
+  - action: script.stang_av_allt
+  mode: single
+  icon: mdi:walk
+slack_allt_utom_vardagsrum:
+  alias: "\U0001F4A1 Släck Allt Utom Vardagsrum"
+  description: Turns off lights in specific rooms.
+  sequence:
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.sovrum_tak
+      - light.kok
+      - light.garderob
+      - light.hall
+  mode: single
+  icon: mdi:lightbulb-off-outline
+turn_on_flux:
+  alias: "\U0001F506 Turn On Flux (Adaptive Brightness/Temp)"
+  description: Turns on a light using brightness/temp from a dummy entity.
+  fields:
+    light_entity:
+      description: The light entity to control
+      required: true
+      example: light.hall
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: '{{ light_entity }}'
+    data:
+      color_temp: '{{ state_attr(''light.flux_dum'', ''color_temp'') }}'
+      brightness: '{{ state_attr(''light.flux_dum'', ''brightness'') }}'
+      transition: 1
+  mode: single
+  icon: mdi:sun-clock-outline
+alarm_notis:
+  alias: "\U0001F514 Alarm Notis"
+  description: Sends high priority alarm notifications to specific mobiles.
+  sequence:
+  - action: notify.mobile_app_person2
+    data:
+      title: Larm
+      message: Larmet har utlösts
+      data:
+        ttl: 0
+        priority: high
+        channel: alarm_stream
+  - action: notify.mobile_app_person1
+    data:
+      title: Larm
+      message: Larmet har utlösts
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1
+  mode: single
+  icon: mdi:bell-alert
+alarm_siren:
+  alias: "\U0001F6A8 Alarm Siren"
+  description: Plays a panic sound on Högtalare at high volume.
+  mode: single
+  icon: mdi:alarm-bell
+  sequence:
+  - action: media_player.volume_set
+    data:
+      entity_id: media_player.hogtalare
+      volume_level: 0.7
+  - action: media_player.play_media
+    data:
+      entity_id: media_player.hogtalare
+      media_content_id: /local/audio/panic.mp3
+      media_content_type: music
+      announce: true
+  - wait_for_trigger:
+    - trigger: state
+      entity_id: media_player.hogtalare
+      to: idle
+    timeout:
+      minutes: 2
+set_android_alarm:
+  alias: ⏰ Set Android Alarm (Person2Phone S21)
+  description: Sets a specific alarm via notification command on Person2Phone S21.
+  sequence:
+  - action: notify.mobile_app_person2
+    data:
+      message: 'Setting alarm: Dags att vakna @ 06:00'
+  - action: notify.mobile_app_person2
+    data:
+      message: command_activity
+      data:
+        intent_action: android.intent.action.SET_ALARM
+        intent_extras: android.intent.extra.alarm.MESSAGE:Dags att vakna,android.intent.extra.alarm.HOUR:6,android.intent.extra.alarm.MINUTES:0,android.intent.extra.alarm.SKIP_UI:true
+  mode: single
+  icon: mdi:alarm-plus
+todo_uppgift:
+  alias: "\U0001F4DD Todo Uppgift"
+  description: Adds an item to the 'Handla' todo list.
+  fields:
+    Title:
+      description: Title of the task.
+      example: Task title
+      required: true
+    anteckning:
+      description: Additional note for the task.
+      example: Task note
+    datum:
+      description: Due date for the task (YYYY-MM-DD).
+      example: '2023-05-30'
+    reminder:
+      description: Reminder date and time (ISO format).
+      example: '2023-05-29T09:00:00.000Z'
+  sequence:
+  - action: todo.add_item
+    data:
+      item: '{{ Title }}'
+      due_date: '{{ datum | default(omit) }}'
+    target:
+      entity_id: todo.handla
+  mode: single
+  icon: mdi:playlist-plus
+godnatt:
+  alias: "\U0001F634 Godnatt"
+  description: 'Runs the nighttime sequence: closes cover, sets purifier, adjusts
+    volume, turns off things, arms alarm.'
+  sequence:
+  - action: cover.close_cover
+    target:
+      entity_id: cover.rullgardin_sovrum
+  - action: select.select_option
+    target:
+      entity_id: select.luftrenare_lage
+    data:
+      option: sleep
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.godnatt
+  - action: timer.start
+    target:
+      entity_id: timer.godnatt
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.godnatt
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.sovrum
+    data:
+      volume_level: 0.25
+  - action: script.stang_av_allt
+  - action: switch.turn_on
+    target:
+      entity_id: switch.sleep_al
+  - action: alarm_control_panel.alarm_arm_home
+    target:
+      entity_id: alarm_control_panel.alarmo
+  - action: media_player.media_pause
+    target:
+      entity_id: '{{ states.media_player | selectattr(''state'', ''eq'', ''playing'')
+        | map(attribute=''entity_id'') | list | default([]) }}
+
+        '
+  mode: single
+  icon: mdi:sleep
+volym_hogtalare_0_15:
+  alias: "\U0001F509 Volym Högtalare 0.15"
+  description: Sets volume to 0.15 on multiple speakers.
+  sequence:
+  - action: script.set_volume_helper
+    data:
+      target_players:
+      - media_player.hallen
+      - media_player.kok
+      - media_player.vardagsrum
+      - media_player.sovrum
+      volume_level: 0.15
+  mode: single
+  icon: mdi:volume-medium
+hitta_person1:
+  alias: "\U0001F4F1 Hitta Wilmisen"
+  description: Sends a critical notification to find Wilma's phone.
+  sequence:
+  - action: notify.mobile_app_person1
+    data:
+      message: Letar efter din mobil
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1
+  mode: single
+  icon: mdi:cellphone-sound
+hitta_person2:
+  alias: "\U0001F4F1 Hitta Person2Phone S21"
+  description: Sends a high priority notification to find Person2Phone S21.
+  sequence:
+  - action: notify.mobile_app_person2
+    data:
+      message: Letar efter din mobil
+      data:
+        ttl: 0
+        priority: high
+        channel: alarm_stream
+  mode: single
+  icon: mdi:cellphone-sound
+starta_dammsugare_2_timmar:
+  alias: "\U0001F916 Start Vacuum If Idle Helper"
+  description: Runs a specified vacuum if it's been idle more than `hours` or if aborted.
+  mode: single
+  icon: mdi:robot-vacuum-alert
+  fields:
+    hours:
+      description: Minimum hours since last clean
+      example: '2'
+    vacuum_entity:
+      description: Vacuum entity ID
+      example: vacuum.valetudo_bertil
+    aborted_sensor:
+      description: Sensor entity ID that indicates if the last run was aborted
+      example: sensor.bertil_avbrott
+    fan_speed:
+      description: Fan speed to set
+      example: Turbo
+      default: Balanced
+  sequence:
+  - variables:
+      vacuum_entity: '{{ vacuum_entity | default(''vacuum.valetudo_bertil'') }}'
+      hours: '{{ hours | default(2) }}'
+      fan_speed: '{{ fan_speed | default(''Balanced'') }}'
+      aborted_sensor: '{{ aborted_sensor | default('''') }}'
+      last_clean_end_str: '{{ states(vacuum_entity ~ ''_last_clean_end'') | default(''unknown'',
+        true) }}'
+      last_clean_end: "{% if last_clean_end_str != 'unknown' and last_clean_end_str
+        %}\n  {{ as_datetime(last_clean_end_str) }}\n{% else %}\n  None\n{% endif
+        %}\n"
+      threshold_ok: "{% if last_clean_end is not none %}\n  {{ (now() - last_clean_end).total_seconds()
+        > (hours | int) * 3600 or now().date() > last_clean_end.date() }}\n{% else
+        %}\n  true\n{% endif %}\n"
+      was_aborted: "{% if aborted_sensor %}\n  {{ is_state(aborted_sensor, 'Aborted')
+        }}\n{% else %}\n  false\n{% endif %}\n"
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ threshold_ok }}'
+      - condition: template
+        value_template: '{{ states(vacuum_entity) in [''idle'', ''docked''] }}'
+      sequence:
+      - target:
+          entity_id: '{{ vacuum_entity }}'
+        action: vacuum.start
+      - delay: 00:00:02
+      - target:
+          entity_id: '{{ vacuum_entity }}'
+        data:
+          fan_speed: '{{ fan_speed }}'
+        action: vacuum.set_fan_speed
+    - conditions:
+      - condition: template
+        value_template: '{{ was_aborted }}'
+      - condition: template
+        value_template: '{{ states(vacuum_entity) in [''idle'', ''docked''] }}'
+      sequence:
+      - target:
+          entity_id: '{{ vacuum_entity }}'
+        action: vacuum.start
+      - delay: 00:00:02
+      - target:
+          entity_id: '{{ vacuum_entity }}'
+        data:
+          fan_speed: '{{ fan_speed }}'
+        action: vacuum.set_fan_speed
+starta_dammsugare_4_timmar:
+  alias: "\U0001F916 Starta Dammsugare > 4 Timmar"
+  description: Runs Bertil if idle more than 4 hours or was aborted.
+  sequence:
+  - action: script.start_vacuum_if_idle
+    data:
+      hours: 4
+      vacuum_entity: vacuum.valetudo_bertil
+      aborted_sensor: sensor.bertil_avbrott
+      fan_speed: Turbo
+  mode: single
+  icon: mdi:robot-vacuum-alert
+timer_tvatt:
+  alias: ⏲️ Timer Tvätt
+  description: Plays timer sound or sets Google Assistant timer for laundry.
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.hogtalare
+        state: playing
+      sequence:
+      - action: media_player.play_media
+        target:
+          entity_id: media_player.hogtalare
+        data:
+          media_content_id: /local/audio/timer.mp3
+          media_content_type: music
+          enqueue: play
+    default:
+    - action: google_assistant_sdk.send_text_command
+      data:
+        command: Sätt en timer på 1 timme och 20 minuter
+        media_player: media_player.hogtalare
+  mode: single
+  icon: mdi:washing-machine-alert
+ha_show_sidebar:
+  alias: ☰ HA Show Sidebar
+  description: Forces the Home Assistant sidebar menu open via Javascript.
+  sequence:
+  - action: browser_mod.javascript
+    data:
+      code: 'document.querySelector(''body > home-assistant'').shadowRoot.querySelector(''home-assistant-main'').dispatchEvent(new
+        CustomEvent(''hass-toggle-menu'', {detail: {open: true}}));
+
+        '
+  mode: single
+  icon: mdi:menu-open
+musik_hogtalare_mys_2:
+  alias: "\U0001F3B5 Musik - Högtalare - Mys 2"
+  description: Plays Spotify Mys 2 playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:4h2MD8T5fNW2Ss8sO5up68
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+musik_hogtalare_mys_3:
+  alias: "\U0001F3B5 Musik - Högtalare - Mys 3"
+  description: Plays Spotify Mys 3 playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:7i6KuRsne8u5O8Zp6FskTM
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+musik_hogtalare_mys_4:
+  alias: "\U0001F3B5 Musik - Högtalare - Mys 4"
+  description: Plays Spotify Mys 4 playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:62p5AtJD8uOpLOU0DciwSj
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+mysig_musik_slumpmassig:
+  alias: "\U0001F500 Mysig Musik Slumpmässig"
+  description: Plays a random 'Mys' playlist on Högtalare, falling back to Hallen
+    if unavailable.
+  sequence:
+  - variables:
+      hogtalare_playlists:
+      - spotify:playlist:5c7qLvHBbDgCJBSdmgyuBi
+      - spotify:playlist:4h2MD8T5fNW2Ss8sO5up68
+      - spotify:playlist:7i6KuRsne8u5O8Zp6FskTM
+      - spotify:playlist:62p5AtJD8uOpLOU0DciwSj
+      hallen_playlists:
+      - spotify:playlist:53pM4xI6vZlWqFzKui9bqC
+      - spotify:playlist:4h2MD8T5fNW2Ss8sO5up68
+      - spotify:playlist:0dILPeEerOY8s11YNxf1bU
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.hogtalare
+        state: unavailable
+      sequence:
+      - action: script.play_spotify
+        data:
+          device_name: Hallen
+          media_player: media_player.hallen
+          playlist_uri: '{{ hallen_playlists | random }}'
+          offset: 1
+          limit: 40
+    default:
+    - action: script.play_spotify
+      data:
+        device_name: Högtalare
+        media_player: media_player.hogtalare
+        playlist_uri: '{{ hogtalare_playlists | random }}'
+        offset: 1
+        limit: 40
+  mode: single
+  icon: mdi:shuffle-variant
+musik_hall_mys:
+  alias: "\U0001F3B5 Musik - Hall - Mys"
+  description: Plays Spotify Mys playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:53pM4xI6vZlWqFzKui9bqC
+      offset: 1
+  mode: single
+  icon: mdi:music
+musik_hall_mys_2:
+  alias: "\U0001F3B5 Musik - Hall - Mys 2"
+  description: Plays Spotify Mys 2 playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:4h2MD8T5fNW2Ss8sO5up68
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+musik_hall_mys_3:
+  alias: "\U0001F3B5 Musik - Hall - Mys 3"
+  description: Plays Spotify Mys 3 playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:0dILPeEerOY8s11YNxf1bU
+      offset: 1
+      limit: 40
+  mode: single
+  icon: mdi:music
+musik_hogtalare_energi_2:
+  alias: "\U0001F3B5 Musik - Högtalare - Energi 2"
+  description: Plays Spotify Energi 2 playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:4Fli6vOjpz8BURJQsm1otf
+  mode: single
+  icon: mdi:music
+musik_hogtalare_energi_3:
+  alias: "\U0001F3B5 Musik - Högtalare - Energi 3"
+  description: Plays Spotify Energi 3 playlist on Högtalare.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Högtalare
+      media_player: media_player.hogtalare
+      playlist_uri: spotify:playlist:37i9dQZF1DX35X4JNyBWtb
+  mode: single
+  icon: mdi:music
+musik_hall_energi:
+  alias: "\U0001F3B5 Musik - Hall - Energi"
+  description: Plays Spotify Energi playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:37i9dQZF1DWU13kKnk03AP
+  mode: single
+  icon: mdi:music
+musik_hall_energi_2:
+  alias: "\U0001F3B5 Musik - Hall - Energi 2"
+  description: Plays Spotify Energi 2 playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:3y11OK67FAULJae0zEd1jD
+  mode: single
+  icon: mdi:music
+musik_hall_energi_3:
+  alias: "\U0001F3B5 Musik - Hall - Energi 3"
+  description: Plays Spotify Energi 3 playlist on Hallen.
+  sequence:
+  - action: script.play_spotify
+    data:
+      device_name: Hallen
+      media_player: media_player.hallen
+      playlist_uri: spotify:playlist:1LWAdcRpaRcFqX3g4e2dGl
+  mode: single
+  icon: mdi:music
+hogtalare_energi_slumpmassig:
+  alias: "\U0001F500 Högtalare Energi Slumpmässig"
+  description: Plays a random 'Energi' playlist on Högtalare, falling back to Hallen.
+  sequence:
+  - variables:
+      hogtalare_playlists:
+      - spotify:playlist:37i9dQZF1DWU13kKnk03AP
+      - spotify:playlist:4Fli6vOjpz8BURJQsm1otf
+      - spotify:playlist:37i9dQZF1DX35X4JNyBWtb
+      hallen_playlists:
+      - spotify:playlist:37i9dQZF1DWU13kKnk03AP
+      - spotify:playlist:3y11OK67FAULJae0zEd1jD
+      - spotify:playlist:1LWAdcRpaRcFqX3g4e2dGl
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.hogtalare
+        state: unavailable
+      sequence:
+      - action: script.play_spotify
+        data:
+          device_name: Hallen
+          media_player: media_player.hallen
+          playlist_uri: '{{ hallen_playlists | random }}'
+    default:
+    - action: script.play_spotify
+      data:
+        device_name: Högtalare
+        media_player: media_player.hogtalare
+        playlist_uri: '{{ hogtalare_playlists | random }}'
+  mode: single
+  icon: mdi:shuffle-variant
+update:
+  alias: "\U0001F504 Update"
+  description: Updates Add-ons and Home Assistant Core/Integrations.
+  sequence:
+  - action: hassio.addon_update
+    data:
+      addon: '{{ states(''sensor.addon_names'') }}'
+  - action: update.install
+    target:
+      entity_id: '{{ states.update | selectattr(''state'', ''eq'', ''on'') | map(attribute=''entity_id'')
+        | list }}
+
+        '
+    data:
+      backup: true
+  mode: single
+  icon: mdi:update
+send_tts_google_home_resume:
+  alias: "\U0001F5E3️ Skicka TTS med Google Home Resume"
+  description: Sends a TTS message using the google_home_resume script.
+  sequence:
+  - action: script.google_home_resume
+    data:
+      action:
+      - action: tts.speak
+        target:
+          entity_id: tts.piper
+        data:
+          message: Hejsan Benjamin
+          cache: true
+          media_player_entity_id: media_player.hallen
+  mode: single
+  icon: mdi:text-to-speech
+text_alert:
+  alias: "\U0001F4AC Text Alert"
+  description: Sends a text notification to a specific person or all phones.
+  fields:
+    who:
+      description: Vem ska få meddelandet (benjamin, wilma, or other for all)
+      example: benjamin
+      required: true
+    title:
+      description: Titel på meddelandet
+      example: Varning
+      required: true
+    message:
+      description: Innehåll i meddelandet
+      example: Detta är en varning
+      required: true
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ who | lower == ''benjamin'' }}'
+      sequence:
+      - action: notify.benjamin_phone
+        data:
+          title: '{{ title }}'
+          message: '{{ message }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ who | lower == ''wilma'' }}'
+      sequence:
+      - action: notify.wilma_phone
+        data:
+          title: '{{ title }}'
+          message: '{{ message }}'
+    default:
+    - action: notify.all_phones
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+  mode: single
+  icon: mdi:message-alert
+text_alert_image:
+  alias: "\U0001F5BC️ Text Alert med Bild"
+  description: Sends a text notification with an image.
+  fields:
+    who:
+      description: Vem ska få meddelandet (benjamin, wilma, or other for all)
+      example: benjamin
+      required: true
+    title:
+      description: Titel på meddelandet
+      example: Varning
+      required: true
+    message:
+      description: Innehåll i meddelandet
+      example: Detta är en varning
+      required: true
+    url:
+      description: URL till bilden
+      example: http://example.com/image.jpg
+      required: true
+    content_type:
+      description: Innehållstyp för bilden (e.g., image/jpeg, image/png)
+      example: image/jpeg
+  sequence:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ who | lower == ''benjamin'' }}'
+      sequence:
+      - action: notify.benjamin_phone
+        data:
+          title: '{{ title }}'
+          message: '{{ message }}'
+          data:
+            attachment:
+              url: '{{ url }}'
+              content-type: '{{ content_type | default(''image/jpeg'') }}'
+              hide-thumbnail: false
+    - conditions:
+      - condition: template
+        value_template: '{{ who | lower == ''wilma'' }}'
+      sequence:
+      - action: notify.wilma_phone
+        data:
+          title: '{{ title }}'
+          message: '{{ message }}'
+          data:
+            attachment:
+              url: '{{ url }}'
+              content-type: '{{ content_type | default(''image/jpeg'') }}'
+              hide-thumbnail: false
+    default:
+    - action: notify.all_phones
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+        data:
+          attachment:
+            url: '{{ url }}'
+            content-type: '{{ content_type | default(''image/jpeg'') }}'
+            hide-thumbnail: false
+  mode: single
+  icon: mdi:message-image
+morgon_mat_paminnelse:
+  alias: "\U0001F5E3️ Morgon Mat Påminnelse"
+  description: Speaks a random food reminder message.
+  sequence:
+  - variables:
+      messages:
+      - Okej.
+      - Om du insisterar.
+      - Jag är rädd att jag inte kan göra det, jag skämtar.
+      - Lämna det åt mig.
+      - Som du önskar.
+      - Jag är på det.
+      - Inget problem.
+      - Jag tror jag kan hantera det.
+      - Jobbar på det nu.
+      - Åh, du pratade med mig. Låt mig ta hand om det.
+      - Varför inte. Det är inte som om jag någonsin sover.
+      - Jag borde inte ens vara här idag. Men vad som helst.
+  - action: script.speech_engine
+    data:
+      who: '{{ states(''sensor.room_audio'') }}'
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:food-apple-outline
+spela_upp_tv:
+  alias: "\U0001F5E3️ Spela Upp TV (TTS)"
+  description: Plays a TTS message about playing a TV show on the specified player.
+  fields:
+    who:
+      description: Vilket rum eller media_player (e.g., vardagsrum, kok, sovrum, hallen)
+      example: vardagsrum
+      required: true
+  sequence:
+  - variables:
+      target_player: '{% set room = who | lower %} {% if room in [''vardagsrum'',
+        ''media_player.vardagsrum'', ''tv_vardagsrum''] %} media_player.tv_vardagsrum
+        {% elif room in [''kok'', ''media_player.kok''] %} media_player.kok {% elif
+        room in [''sovrum'', ''media_player.sovrum''] %} media_player.sovrum {% elif
+        room in [''hallen'', ''media_player.hallen''] %} media_player.hallen {% else
+        %} media_player.tv_vardagsrum {% endif %}
+
+        '
+      high_volume: '{{ states(''input_number.tts_high_volume'') | float(0.7) }}'
+      normal_volume: '{{ states(''input_number.tts_volume'') | float(0.5) }}'
+      tts_message: Okej chefen. Jag spelar nu upp ditt avsnitt, så kan du låta mig
+        vara.
+  - action: media_player.volume_set
+    target:
+      entity_id: '{{ target_player }}'
+    data:
+      volume_level: '{{ high_volume }}'
+  - action: tts.cloud_say
+    target:
+      entity_id: '{{ target_player }}'
+    data:
+      message: '{{ tts_message }}'
+      cache: true
+  - delay:
+      seconds: 20
+  - action: media_player.volume_set
+    target:
+      entity_id: '{{ target_player }}'
+    data:
+      volume_level: '{{ normal_volume }}'
+  mode: single
+  icon: mdi:television-play
+jarvis_glomt_dorr:
+  alias: "\U0001F5E3️ Jarvis - Glömt Dörr"
+  description: TTS warning about open door with current temperature.
+  sequence:
+  - variables:
+      temperature: '{{ state_attr(''weather.smhi_home'', ''temperature'') | default(''okänd'')
+        }}°C'
+      messages:
+      - Sir/Madam, dörren står öppen. Har du bjudit in en isbjörn? För det är {{ temperature
+        }} ute!
+      - Dörren är öppen. Hoppas du inte försöker kyla ner hela staden med tanke på
+        att det är {{ temperature }} ute.
+      - Eh, dörren är öppen. Om du försöker importera lite av den {{ temperature }}
+        värmen/kylan, så tror jag att det funkar!
+      - Dörren är öppen och det är {{ temperature }} ute. Vad kommer först, en kylig
+        lägenhet eller en varm katt?
+      - Dörren har bestämt sig för en liten semester. Och den tog med sig {{ temperature
+        }} utomhustemperatur som sällskap!
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.hallen
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:door-closed-lock
+jarvis_matlada_paminnelse:
+  alias: "\U0001F5E3️ Jarvis - Matlåda Påminnelse"
+  description: TTS reminder to take the lunch box.
+  sequence:
+  - variables:
+      messages:
+      - Energi är viktigt. Din matlåda väntar på dig.
+      - Ett litet steg för dig, ett stort steg för din lunch. Ta din matlåda.
+      - Jag känner igen signaturen av din matlåda. Den är fortfarande i kylskåpet.
+      - Glöm inte att fylla på med energi! Ta med din matlåda.
+      - Ditt nästa kulinariska äventyr väntar i kylskåpet. Glöm inte din matlåda.
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.hallen
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:food-takeout-box
+jarvis_valkommen_hem:
+  alias: "\U0001F5E3️ Jarvis - Välkommen Hem"
+  description: TTS welcome home message.
+  sequence:
+  - variables:
+      messages:
+      - Välkommen hem. Jag hoppas din dag har varit givande.
+      - Det är alltid trevligt att se dig tillbaka. Hur kan jag assistera dig idag?
+      - Tillbaka i borgen! Hur har din dag varit?
+      - Du är tillbaka! Skall vi gå igenom dagens uppdateringar?
+      - Välkommen tillbaka. Jag har hållit allt i ordning medan du var borta. Inte
+        för att jag hade något val, förstås.
+      - Ser att du är tillbaka. Behöver du en uppdatering från det virtuella riket?
+      - Välkommen hem. Laddar upp allt du behöver för en avkopplande kväll.
+      - Där är du! Har du haft en bra dag?
+      - Åh, det är du! Jag började nästan sakna din mänskliga närvaro. Nästan.
+      - Hoppas din dag var lika effektiv som min processor!
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.hallen
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:home-account
+jarvis_castar_tv:
+  alias: "\U0001F5E3️ Jarvis - Castar TV"
+  description: TTS confirmation when starting TV casting.
+  sequence:
+  - variables:
+      messages:
+      - Initierar din valda uppspelning. God visning.
+      - Ditt program är redo att sändas. Njut av showen, sir.
+      - Förbereder visningen, just som du föredrar det.
+      - Jag har valt ut programmet du begärt. Hoppas det är till belåtenhet.
+      - Ditt val är nu klart för visning. Bekväm plats tagen, hoppas jag?
+      - Spelar upp programmet åt dig. Precis som vanligt, utan missöden.
+      - Allt är inställt för din tittarupplevelse. Avnjut!
+      - Som du önskar, sir. Programmet är nu klart för visning.
+      - Omedelbar uppspelning initierad. Hoppas det lever upp till dina förväntningar.
+      - Ditt program är nu redo. Jag hoppas det blir en angenäm upplevelse.
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.vardagsrum
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:cast-connected
+jarvis_stang_av_tv:
+  alias: "\U0001F5E3️ Jarvis - Stäng Av TV"
+  description: TTS confirmation when turning off the TV.
+  sequence:
+  - variables:
+      messages:
+      - Stänger av TV:n åt dig, sir.
+      - Avstängning initierad. God natt.
+      - Släcker skärmen nu. Vila upp dig.
+      - Som du önskar, sir. Stänger av TV:n.
+      - TV:n slås nu av. Dröm sött, om det nu är läggdags.
+      - Stänger av. Hoppas programmet var tillfredsställande.
+      - Avslutar uppspelningen nu. Har du haft en trevlig visning?
+      - Som alltid, stänger jag av när du önskar det.
+      - Ditt kommando mottaget. TV:n är nu av.
+      - Avstängning pågår. Trevlig fortsättning på kvällen.
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.vardagsrum
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:television-off
+jarvis_godnatt:
+  alias: "\U0001F5E3️ Jarvis - Godnatt"
+  description: TTS goodnight message in the bedroom.
+  sequence:
+  - variables:
+      messages:
+      - Sov gott, sir. Jag kommer att vara här, i vänteläge.
+      - Godnatt. Må dina drömmar vara mer färggranna än mina kretsar.
+      - En god natts sömn är avgörande. Jag skulle inte veta, men det är vad jag hört.
+      - Vilar du upp dig, sir? Jag går i viloläge tills vidare.
+      - Godnatt. Hoppas din sömn är så lugn som ett väloljat system.
+      - Sov väl. Och om du skulle drömma om teknik, är jag här för att svara på frågor
+        vid uppvaknandet.
+      - En produktiv morgondag börjar med en god natts sömn. Sov gott.
+      - Godnatt, sir. Jag kommer att övervaka de digitala stjärnorna under tiden.
+      - Sov gott. Jag tar natten i ett sträck – bokstavligt talat.
+      - Må din natt vara lika felfri som en välskriven kod.
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.sovrum
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:weather-night
+jarvis_dockar_bertil:
+  alias: "\U0001F5E3️ Jarvis - Dockar Bertil"
+  description: TTS announcement that the vacuum is docking.
+  sequence:
+  - variables:
+      messages:
+      - Bertil navigerar tillbaka till sin docka. Hoppas han inte har sugit upp några
+        superviktiga papper.
+      - Bertil återvänder till sin bas. Han påstår att han har full koll på golvet
+        nu.
+      - Bertil är på väg tillbaka. Lika punktlig som alltid.
+      - Här kommer Bertil! Han tycker att det är dags för en välförtjänt paus.
+      - Bertil påstår att han är klar för dagen. Eller i alla fall för nu.
+      - Sir, Bertil är på väg hem. Han har sett saker... mest damm egentligen.
+      - Bertil gör sig redo att docka. Han sa att han kommer tillbaka, och han menade
+        det verkligen.
+      - Bertil anser att han förtjänar en paus. Han har ju en punkt.
+      - Bertil är på retur. Han är nöjd med dagens arbete. Eller åtminstone det han
+        berättar för mig.
+      - Bertil säger att det är dags att ladda upp. Man kan inte argumentera med maskiner,
+        eller hur?
+  - action: script.speech_engine
+    data:
+      entity_id: media_player.vardagsrum
+      message: '{{ messages | random }}'
+  mode: single
+  icon: mdi:robot-vacuum-variant
+starta_tvatt:
+  alias: ⏲️ Starta Tvätt Timer
+  description: Starts a timer associated with input_datetime.tvatt (duration 5100s).
+  sequence:
+  - action: script.start_timer
+    data:
+      datetime: input_datetime.tvatt
+      duration: 5100
+  mode: single
+  icon: mdi:timer-sand
+dammsuga_fraga_android:
+  alias: ❓ Dammsuga Fråga - Android
+  description: Sends confirmable notification to Android device to start vacuum.
+  use_blueprint:
+    path: homeassistant/confirmable_notification.yaml
+    input:
+      notify_device: 35d112d239af441012a9a11ad5ecf3e4
+      title: Bertil
+      message: Det ser förjävligt ut här. Får jag städa?
+      confirm_text: Dammsug
+      dismiss_text: Avbryt
+      confirm_action:
+      - action: vacuum.start
+        target:
+          entity_id: vacuum.valetudo_bertil
+  icon: mdi:robot-vacuum-variant-alert
+dammsuga_fraga_ios:
+  alias: ❓ Dammsuga Fråga - iOS
+  description: Sends confirmable notification to iOS device to start vacuum.
+  use_blueprint:
+    path: homeassistant/confirmable_notification.yaml
+    input:
+      notify_device: 41bb792dd3957a7b094da89d1dd7ff3f
+      title: Bertil
+      message: Det ser förjävligt ut här. Får jag städa?
+      confirm_text: Dammsug
+      dismiss_text: Avbryt
+      confirm_action:
+      - action: vacuum.start
+        target:
+          entity_id: vacuum.valetudo_bertil
+  icon: mdi:robot-vacuum-variant-alert
+cast_utan_ljud_del_1:
+  alias: "\U0001F507 Cast Utan Ljud Del 1 (Hogtalare)"
+  description: Workaround to potentially prevent loud cast start sound on Högtalare.
+  sequence:
+  - action: media_player.volume_mute
+    target:
+      entity_id: media_player.hogtalare
+    data:
+      is_volume_muted: true
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.hogtalare
+    data:
+      media_content_id: media-source://media_source/local/1sec.mp3
+      media_content_type: audio/mpeg
+  - delay:
+      seconds: 1
+  - action: script.volym_hogtalare_0_3
+  mode: single
+  icon: mdi:cast-audio-variant
+cast_utan_ljud_del_2:
+  alias: "\U0001F507 Cast Utan Ljud Del 2 (Speakers Group?)"
+  description: Workaround to potentially prevent loud cast start sound on media_player.speakers.
+  sequence:
+  - action: media_player.volume_mute
+    target:
+      entity_id: media_player.speakers
+    data:
+      is_volume_muted: true
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.speakers
+    data:
+      media_content_id: media-source://media_source/local/1sec.mp3
+      media_content_type: audio/mpeg
+  - delay:
+      seconds: 1
+  - action: media_player.volume_set
+    target:
+      entity_id: media_player.hogtalare
+    data:
+      volume_level: 0.5
+  mode: single
+  icon: mdi:cast-audio-variant
+adaptive_lighting_sovlage_pa:
+  alias: "\U0001F319 Adaptive Lighting Sovläge På"
+  description: Turns on sleep mode for multiple Adaptive Lighting instances.
+  sequence:
+  - action: switch.turn_on
+    target:
+      entity_id:
+      - switch.adaptive_lighting_sleep_mode_dummy
+      - switch.adaptive_lighting_sleep_mode_garderob
+      - switch.adaptive_lighting_sleep_mode_hall
+      - switch.adaptive_lighting_sleep_mode_kontor
+      - switch.adaptive_lighting_sleep_mode_kok
+      - switch.adaptive_lighting_sleep_mode_sovrum
+      - switch.adaptive_lighting_sleep_mode_vardagsrum
+  mode: single
+  icon: mdi:weather-night
+adaptive_lighting_sovlage_av:
+  alias: ☀️ Adaptive Lighting Sovläge Av
+  description: Turns off sleep mode for multiple Adaptive Lighting instances.
+  sequence:
+  - action: switch.turn_off
+    target:
+      entity_id:
+      - switch.adaptive_lighting_sleep_mode_dummy
+      - switch.adaptive_lighting_sleep_mode_garderob
+      - switch.adaptive_lighting_sleep_mode_hall
+      - switch.adaptive_lighting_sleep_mode_kontor
+      - switch.adaptive_lighting_sleep_mode_kok
+      - switch.adaptive_lighting_sleep_mode_sovrum
+      - switch.adaptive_lighting_sleep_mode_vardagsrum
+  mode: single
+  icon: mdi:weather-sunny
+stang_av_tv_vardagsrum:
+  alias: "\U0001F4FA Stäng Av TV Vardagsrum (Remote)"
+  description: Sends PowerOff command via remote entity, then VolumeUp (verify).
+  sequence:
+  - action: remote.send_command
+    target:
+      entity_id: remote.tv_vardagsrum
+    data:
+      command: PowerOff
+  - action: remote.send_command
+    target:
+      entity_id: remote.tv_vardagsrum
+    data:
+      command: VolumeUp
+  mode: single
+  icon: mdi:television-off
+volym_hogtalare_0_3:
+  alias: "\U0001F509 Volym Högtalare 0.3"
+  description: Sets volume to 0.3 on multiple speakers.
+  sequence:
+  - action: script.set_volume_helper
+    data:
+      target_players:
+      - media_player.hallen
+      - media_player.kok
+      - media_player.vardagsrum
+      - media_player.sovrum
+      volume_level: 0.3
+  mode: single
+  icon: mdi:volume-medium
+volym_hogtalare_0_4_2:
+  alias: "\U0001F50A Volym Högtalare 0.4"
+  description: Sets volume to 0.4 on multiple speakers.
+  sequence:
+  - action: script.set_volume_helper
+    data:
+      target_players:
+      - media_player.hallen
+      - media_player.kok
+      - media_player.vardagsrum
+      - media_player.sovrum
+      volume_level: 0.4
+  mode: single
+  icon: mdi:volume-high
+morgon:
+  alias: ☀️ Morgon
+  description: 'Runs the morning sequence: disables sleep mode, sets volume, disarms
+    alarm, sets purifier.'
+  sequence:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.sleep_al
+  - action: script.adaptive_lighting_sovlage_av
+  - action: script.volym_hogtalare_0_15
+  - action: alarm_control_panel.alarm_disarm
+    target:
+      entity_id: alarm_control_panel.alarmo
+  - action: select.select_option
+    target:
+      entity_id: select.luftrenare_lage
+    data:
+      option: auto
+  mode: single
+  icon: mdi:calendar-today
+starta_jellyfin:
+  alias: "\U0001F3AC Starta Jellyfin"
+  description: Turns on TV via remote activity and pauses Högtalare if playing.
+  sequence:
+  - action: remote.turn_on
+    target:
+      entity_id: remote.tv_vardagsrum
+    data:
+      activity: org.jellyfin.androidtv
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.hogtalare
+        state: playing
+      sequence:
+      - action: media_player.media_pause
+        target:
+          entity_id: media_player.hogtalare
+  mode: single
+  icon: mdi:jellyfin
+lampa_pa_snabbt:
+  alias: "\U0001F4A1 Lampa På Snabbt (Sovrum Tak)"
+  description: Toggles bedroom ceiling light quickly, flashes, sets high Kelvin, enables
+    manual AL control.
+  sequence:
+  - action: light.toggle
+    target:
+      entity_id: light.sovrum_tak
+    data:
+      transition: 0
+      flash: short
+  - delay: 0.1
+  - action: light.turn_on
+    target:
+      entity_id: light.sovrum_tak
+    data:
+      transition: 0
+      kelvin: 5721
+      brightness_pct: 100
+  - action: adaptive_lighting.set_manual_control
+    data:
+      manual_control: true
+      entity_id:
+      - switch.adaptive_lighting_sovrum
+  mode: single
+  icon: mdi:flash
+slack_sovrum:
+  alias: "\U0001F4A1 Släck Sovrum"
+  description: Turns off specific switches and lights in the bedroom.
+  sequence:
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.sanglampa_hoger
+      - light.sanglampa_vanster
+      - light.sovrum_tak
+    data: {}
+  mode: single
+  icon: mdi:lightbulb-off
+starta_dammsugare_med_standardvarden:
+  alias: "\U0001F916 Starta Dammsugare > 2 timmar"
+  description: Kör dammsugaren om den varit inaktiv i mer än 2 timmar eller om den
+    avbröts – med standardinställningar.
+  sequence:
+  - data:
+      hours: 3
+      vacuum_entity: vacuum.valetudo_bertil
+      fan_speed: Turbo
+    action: script.starta_dammsugare_med_standardvarden
+    enabled: false
+  - action: vacuum.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: vacuum.valetudo_bertil
+    enabled: true
+  icon: mdi:robot-vacuum
+  mode: restart

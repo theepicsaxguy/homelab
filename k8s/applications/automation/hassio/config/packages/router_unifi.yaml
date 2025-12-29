@@ -1,0 +1,56 @@
+template:
+  - binary_sensor:
+      - unique_id: udm_internet
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'internet') | default }}
+        attributes:
+          friendly_name: Internet
+          icon: mdi:wan
+          device_class: connectivity
+
+  - sensor:
+      - unique_id: udm_cpu
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'cpu') | default }}
+        attributes:
+          friendly_name: Processor
+          icon: mdi:chip
+          unit_of_measurement: "%"
+
+      - unique_id: udm_cpu_temp
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'cpu_temp') | default }}
+        attributes:
+          friendly_name: Processortemperatur
+          icon: mdi:thermometer
+          unit_of_measurement: "°C"
+
+      - unique_id: udm_mem
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'mem') | default }}
+        attributes:
+          friendly_name: Minne
+          icon: mdi:memory
+          unit_of_measurement: "%"
+
+      - unique_id: udm_disk
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'disk') | default }}
+        attributes:
+          friendly_name: Lagring
+          icon: mdi:harddisk
+          unit_of_measurement: "%"
+
+      - unique_id: udm_uptime
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'uptime') | default }}
+        attributes:
+          friendly_name: Senaste omstart
+          device_class: timestamp
+
+      - unique_id: udm_version
+        state: >
+          {{ state_attr('sensor.udm_unifios', 'version') | default }}
+        attributes:
+          friendly_name: Version
+          icon: mdi:router-wireless
