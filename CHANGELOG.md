@@ -121,7 +121,7 @@ To enable load balancer deployment, set enable_lb = true in your .tfvars file.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1794
+Co-Authored-By: Claude \<noreply@anthropic.com\> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1794
 
 - Update nodes.auto.tfvars by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1793
 - feat(tofu): set CPU units default to 1024 for all nodes
@@ -137,7 +137,7 @@ Changes:
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude <noreply@anthropic.com> by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1795
+Co-Authored-By: Claude `<noreply@anthropic.com>` by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1795
 
 - feat(k8s/ai): add OpenHands AI coding agent with LiteLLM integration by @Copilot in
   https://github.com/theepicsaxguy/homelab/pull/1796

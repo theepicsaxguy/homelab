@@ -1,488 +1,212 @@
-# AGENTS.md - Authentik Identity Provider
-
-## 1. Purpose & Scope
-
-This AGENTS.md provides guidance for AI agents working with authentik, the open-source identity provider (IdP) used in
-this homelab for single sign-on (SSO) and authentication across all applications.
-
-**What this covers:**
-
-- Understanding authentik's role in the homelab infrastructure
-- Creating and maintaining authentik blueprints (GitOps-style configuration)
-- Writing efficient and correct blueprint YAML files
-- Managing applications, users, groups, flows, and providers
-- Blueprint YAML tags and their proper usage
-- Testing and validation of blueprints
-
-**Key Concept:** Authentik uses **Blueprints** - declarative YAML files that define the entire authentication
-infrastructure as code. Blueprints work in a GitOps manner, automatically applying configuration changes when files are
-modified.
-
-## 2. Architecture Overview
-
-### 2.1 Authentik's Role in the Homelab
+# Authentik Identity Provider - Component Guidelines
+
+SCOPE: Authentik identity provider (SSO) and authentication flows
+INHERITS FROM: /k8s/AGENTS.md
+
+## COMPONENT CONTEXT
+
+Purpose:
+Provide centralized authentication and authorization (SSO) for all homelab applications using Authentik as identity provider with GitOps-managed blueprints.
+
+Boundaries:
+- Handles: Authentik deployment, blueprint configuration, SSO/OAuth/SAML providers, user management, authentication flows
+- Does NOT handle: Application-specific auth implementations (apps use Authentik via OAuth/OIDC), general Kubernetes infrastructure
+- Delegates to: k8s/AGENTS.md for general Kubernetes patterns
+
+Architecture:
+- `k8s/infrastructure/auth/authentik/` - Authentik deployment manifests
+- `extra/blueprints/` - Declarative GitOps configuration (users, groups, apps, flows, providers)
+- PostgreSQL database: Stores all Authentik data (managed by CNPG)
+- Outposts: External auth instances for proxied applications
+
+File Organization:
+- `k8s/infrastructure/auth/authentik/` - Root directory with main manifests
+  - `kustomization.yaml` - Kustomize configuration
+  - `values.yaml` - Helm chart values
+  - `database.yaml` - CNPG PostgreSQL cluster
+  - `httproute.yaml` - Gateway API routing
+  - `extra/` - Additional configuration
+    - `blueprints/` - Blueprint YAML files (GitOps configuration)
+
+## INTEGRATION POINTS
+
+External Services:
+- Proxied applications: Home Assistant, Grafana, Argo CD, media services, etc. (use Authentik via OAuth/OIDC)
+- Email provider: SMTP service for password recovery and notifications
+- User directories: LDAP/AD integration (optional)
+
+Internal Services:
+- PostgreSQL database: CNPG-managed database for Authentik data
+- MinIO object storage: Stores backups and attachments
+- Kubernetes secrets: Database credentials and API tokens
+
+APIs Consumed:
+- PostgreSQL: Persistent data storage
+- SMTP: Email notifications
+- OAuth/OIDC providers: External identity providers (Google, GitHub, etc.)
+
+APIs Provided:
+- OAuth2 authorization endpoint
+- SAML assertion consumer service
+- OIDC discovery endpoint
+- Application management API (via blueprints)
+- User management API (via blueprints)
+
+## COMPONENT-SPECIFIC PATTERNS
+
+### Blueprint GitOps Pattern
+Authentik uses blueprints for declarative configuration. Blueprints are YAML files mounted into container at `/blueprints`. Auto-discovered when created or modified. Applied every 60 minutes or on-demand via UI/API. Idempotent (safe to apply multiple times). Atomic (all entries succeed or fail together in database transaction).
+
+### Blueprint File Structure
+Every blueprint follows this schema:
+- Version: Always `1`
+- Metadata: Name, labels, description
+- Entries: List of objects to create/update (model, identifiers, attrs, state)
+- Custom YAML tags: `!KeyOf`, `!Find`, `!Env`, `!File`, `!Context` for dynamic values
+
+### Blueprint Entry States
+State field controls how entries are managed:
+- `present` (default): Creates if missing, updates `attrs` if exists
+- `created`: Creates if missing, never updates (preserves manual changes)
+- `must_created`: Creates only if missing, fails if exists (strict validation)
+- `absent`: Deletes object (may cascade to related objects)
+
+### Identifiers vs Attrs Pattern
+Understanding difference is critical:
+- `identifiers`: Used to find existing objects (merged with attrs on creation, used for lookup on update, NOT applied on update)
+- `attrs`: Used to set attributes on object (merged with identifiers on creation, only these fields modified on update)
+
+### OAuth2 Application Pattern
+Create OAuth2 provider in blueprint with:
+- Name and client type (confidential/public)
+- Redirect URIs with matching mode (strict/regex)
+- Client ID and secret from `!Env` tags (ExternalSecrets)
+- Token validity settings (access_code, access_token, refresh_token)
+- Authorization and invalidation flows (use `!Find` to reference default flows)
+- Signing key (use `!Find` to reference self-signed certificate)
+
+### Flow and Stage Pattern
+Authentication flows consist of stages (login, MFA, password recovery, consent). Stages reference each other via `!KeyOf` tags. Flows reference stages via `!KeyOf`. Default flows created by Authentik can be referenced with `!Find`.
+
+### User and Group Pattern
+Users and groups defined in blueprints with `identifiers` (username, email, name). Groups organize users for permissions. Applications reference groups for access control. Users can belong to multiple groups.
+
+## DATA MODELS
+
+### Blueprint Models
+- `authentik_core.user` - User accounts
+- `authentik_core.group` - User groups
+- `authentik_flows.flow` - Authentication flows
+- `authentik_flows.flowstagebinding` - Flow-to-stage relationships
+- `authentik_stages_authenticator.*.stage` - Authenticator stages (TOTP, WebAuthn, etc.)
+- `authentik_providers_oauth2.oauth2provider` - OAuth2 providers
+- `authentik_providers_saml.samlprovider` - SAML providers
+- `authentik_core.application` - Application definitions
+- `authentik_blueprints.blueprint` - Blueprint definitions
 
-Authentik serves as the central authentication and authorization system for the homelab:
-
-- **Identity Provider (IdP)**: Provides SSO via OAuth2, SAML, LDAP, and OIDC protocols
-- **User Management**: Centralized user accounts, groups, and permissions
-- **Application Gateway**: Controls access to all applications (Grafana, ArgoCD, Home Assistant, media services, etc.)
-- **Flow-Based Authentication**: Customizable authentication flows (login, MFA, password recovery, consent)
-- **Policy Engine**: Fine-grained access control policies per application
-
-### 2.2 Deployment Structure
-
-```
-k8s/infrastructure/auth/authentik/
-├── AGENTS.md                  # This file
-├── kustomization.yaml         # Kustomize configuration
-├── values.yaml                # Helm chart values
-├── database.yaml              # PostgreSQL database for authentik
-├── database-scheduled-backup.yaml
-├── httproute.yaml             # Gateway API routing
-├── outpost-externalsecret.yaml
-├── minio-externalsecret.yaml
-├── referencegrant.yaml
-├── podmonitor.yaml
-└── extra/
-    ├── kustomization.yml
-    ├── secrets.yml
-    └── blueprints/            # Blueprint configuration files
-        ├── apps-*.yaml        # Application providers (OAuth2/SAML)
-        ├── groups.yaml        # User groups
-        ├── users.yaml         # User accounts
-        ├── flows-*.yaml       # Custom authentication flows
-        ├── brands.yaml        # Branding configuration
-        ├── notifications.yaml # Notification settings
-        ├── oauth-scopes.yaml  # Custom OAuth scopes
-        └── outposts.yaml      # Outpost configurations
-```
-
-### 2.3 How Blueprints Work
-
-Blueprints are mounted into the authentik container at `/blueprints` and are:
-
-- **Automatically discovered** when created or modified (via file watch)
-- **Applied every 60 minutes** or on-demand via the authentik UI/API
-- **Idempotent**: Safe to apply multiple times (creates or updates objects)
-- **Atomic**: All entries in a blueprint succeed or fail together (database transaction using Django's atomic wrapper)
-- **Version controlled**: Part of the GitOps workflow
-- **Discovery order is not guaranteed** - dependencies between blueprints should use meta models for proper ordering
-
-## 3. Quick Start Commands
-
-### 3.1 Validate Blueprint Syntax
-
-```bash
-# Validate blueprint YAML schema (requires network access)
-# Add this to the top of every blueprint file:
-# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
-
-# Build kustomize to check for syntax errors
-cd /home/runner/work/homelab/homelab/k8s/infrastructure/auth/authentik
-kustomize build --enable-helm .
-
-# Check YAML syntax with yamllint (if available)
-yamllint extra/blueprints/*.yaml
-```
-
-### 3.2 View Applied Blueprints
-
-```bash
-# List all blueprints in the authentik namespace
-kubectl get blueprints -n auth
-
-# Describe a specific blueprint instance
-kubectl describe blueprint <name> -n auth
-
-# Check authentik pod logs for blueprint application
-kubectl logs -n auth -l app.kubernetes.io/name=authentik --tail=100 | grep -i blueprint
-```
-
-### 3.3 Test Blueprint Changes
-
-```bash
-# After modifying a blueprint, check if it's valid
-kustomize build --enable-helm k8s/infrastructure/auth/authentik
-
-# Apply changes via GitOps (commit and push)
-git add k8s/infrastructure/auth/authentik/extra/blueprints/<file>.yaml
-git commit -m "feat(authentik): update <blueprint-name> blueprint"
-git push
-
-# Monitor blueprint application in authentik
-kubectl logs -n auth -l app.kubernetes.io/name=authentik -f | grep blueprint
-```
-
-## 4. Blueprint File Structure
-
-### 4.1 Schema and Metadata
-
-Every blueprint must follow this structure:
-
-```yaml
-# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
-# yamllint disable-file
-# prettier-ignore-start
-# eslint-disable
----
-version: 1 # Required: always 1
-metadata:
-  name: Example Blueprint # Required: human-readable name
-  labels: # Optional: special labels control behavior
-    blueprints.goauthentik.io/instantiate: 'true' # Auto-instantiate (default: true)
-    blueprints.goauthentik.io/description: 'Brief description'
-    blueprints.goauthentik.io/system: 'true' # System blueprint (don't modify)
-context: # Optional: default context variables
-  foo: bar
-entries: # Required: list of objects to create/update
-  - model: authentik_flows.flow # Required: model in app.model notation
-    state: present # Optional: present|created|must_created|absent
-    id: flow-id # Optional: ID for !KeyOf references
-    identifiers: # Required: unique identifier(s)
-      slug: my-flow
-    attrs: # Optional: attributes to set
-      name: My Flow
-      designation: authentication
-    conditions: # Optional: conditions for evaluation
-      - !Context some_var
-    permissions: # Optional: object-level permissions (v2024.8+)
-      - permission: inspect_flow
-        user: !Find [authentik_core.user, [username, akadmin]]
-```
+## WORKFLOWS
 
-### 4.2 Entry States
+Development:
+- Create blueprint file: `k8s/infrastructure/auth/authentik/extra/blueprints/<name>.yaml`
+- Add schema reference at top: `# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json`
+- Define entries with models, identifiers, attrs, and state
+- Use `!KeyOf` to reference entries within same blueprint
+- Use `!Find` to lookup existing Authentik objects (flows, stages, certificates)
+- Use `!Env` for secrets (from ExternalSecrets)
+- Test blueprint syntax: `kustomize build --enable-helm k8s/infrastructure/auth/authentik`
+- Commit changes: GitOps applies blueprints automatically
 
-The `state` field controls how entries are managed:
+Testing:
+- Validate blueprint YAML syntax: `yamllint extra/blueprints/*.yaml` (if available)
+- Build kustomization: `kustomize build --enable-helm k8s/infrastructure/auth/authentik`
+- Check blueprint logs: `kubectl logs -n auth -l app.kubernetes.io/name=authentik --tail=100 | grep -i blueprint`
+- Monitor blueprint application in Authentik UI (System → Blueprints)
+- Verify objects created: Check Authentik UI or API
 
-| State               | Behavior                                                                    |
-| ------------------- | --------------------------------------------------------------------------- |
-| `present` (default) | Creates if missing, updates `attrs` if exists (overwrites specified fields) |
-| `created`           | Creates if missing, never updates (preserves manual changes)                |
-| `must_created`      | Creates only if missing, fails if exists (strict validation)                |
-| `absent`            | Deletes the object (may cascade to related objects)                         |
+Deployment:
+- Blueprints auto-discover when files change in Git
+- Argo CD syncs blueprint files to cluster
+- Authentik applies blueprints every 60 minutes or on-demand
+- Monitor logs for blueprint application errors
+- Validate objects appear in Authentik UI
 
-**Best Practice:** Use `present` for most cases. Use `created` for objects with auto-generated fields (like OAuth client
-secrets) that shouldn't be overwritten.
+## CONFIGURATION
 
-### 4.3 Identifiers vs Attrs
+Required:
+- PostgreSQL database (CNPG cluster) with external secret
+- Blueprint files in `extra/blueprints/` directory
+- External secrets for SMTP credentials, application client secrets
+- Self-signed certificate key for OAuth signing
 
-Understanding the difference is critical:
+Optional:
+- LDAP/AD integration for user directory
+- External identity providers (Google, GitHub) for OAuth
+- Custom authentication flows and stages
+- Email provider for notifications
+- Outposts for proxied applications
 
-- **`identifiers`**: Used to **find** existing objects (OR logic if multiple)
+Environment Variables:
+- Database credentials (from CNPG auto-generated secret)
+- SMTP settings (from ExternalSecrets)
+- Secret key for encryption
+- Redis configuration (if using Redis)
+- Outpost tokens (if using outposts)
 
-  - On creation: merged with `attrs` to create the object
-  - On lookup: used to match existing objects
-  - On update: NOT applied (only `attrs` are updated)
+## YAML CUSTOM TAGS REFERENCE
 
-- **`attrs`**: Used to **set** attributes on the object
-  - On creation: merged with `identifiers`
-  - On update: only these fields are modified (others unchanged)
+### Core Tags
+- `!KeyOf` - Reference primary key of entry defined earlier in same blueprint
+- `!Find` - Lookup existing object in database by model and fields
+- `!FindObject` - Lookup with full data (v2025.8+), returns serialized object instead of just primary key
+- `!Env` - Read from environment variables, supports default values
+- `!File` - Read file contents, supports default values
+- `!Context` - Access blueprint context variables (built-in or user-defined)
 
-**Example:**
+### String Manipulation
+- `!Format` - Python-style string formatting with `%` operator
 
-```yaml
-- model: authentik_providers_oauth2.oauth2provider
-  identifiers:
-    name: my-app # Used to find the provider
-  attrs:
-    # Only these fields are updated on existing providers
-    redirect_uris:
-      - url: https://app.example.com/callback
-    client_id: !Env MYAPP_CLIENT_ID
-    # Auto-generated fields like client_secret are NOT overwritten
-```
+### Conditional Tags
+- `!If` - Evaluates condition and returns one of two values (short form returns boolean, full form with true/false values)
+- `!Condition` - Combines multiple conditions with boolean operators (AND, OR, NAND, NOR, XOR, XNOR, NOT)
 
-## 5. YAML Custom Tags Reference
+### Iteration Tags
+- `!Enumerate` - Loop over sequences or mappings to generate multiple entries
+- `!Index <depth>` - Returns index (sequence) or key (mapping) at specified depth
+- `!Value <depth>` - Returns value at specified depth
+- `!AtIndex` - Access specific index in sequence or mapping (v2024.12+)
 
-Authentik blueprints support custom YAML tags for dynamic values and references.
+## KNOWN ISSUES
 
-### 5.1 Core Tags
+Blueprint discovery order is not guaranteed. Dependencies between blueprints should use meta models or manual ordering.
 
-#### `!KeyOf` - Reference Another Entry
+External secrets with `!Env` tags require envFrom in values.yaml to inject into container.
 
-References the primary key of an entry defined earlier in the same blueprint.
+Blueprint errors can prevent application of entire blueprint file (atomic transaction). Test individual entries if errors occur.
 
-```yaml
-- id: my-flow
-  model: authentik_flows.flow
-  identifiers:
-    slug: my-flow
-  attrs:
-    name: My Flow
+## GOTCHAS
 
-- model: authentik_flows.flowstagebinding
-  identifiers:
-    target: !KeyOf my-flow # References the flow's primary key
-    stage: !KeyOf my-stage
-  attrs:
-    order: 10
-```
+Blueprint auto-generated fields (like OAuth client secrets) are NOT overwritten on update if state is `present`. Use `created` state for objects with auto-generated fields that shouldn't change.
 
-**Error if:** No matching `id` found in the blueprint.
+Blueprint identifiers use OR logic if multiple fields specified (matches any field). Attrs use AND logic (all fields must match).
 
-#### `!Find` - Lookup Existing Object
+Blueprint `!Find` fails if no matching object found. Use with `!If` for conditional lookups.
 
-Searches for an existing object in the database and returns its primary key.
+Blueprint `!KeyOf` references must match an `id` field defined earlier in same blueprint. Verify ID names are correct.
 
-```yaml
-# Find by single field
-flow: !Find [authentik_flows.flow, [slug, default-authentication-flow]]
+Blueprint application is not instant. Check logs and UI to verify completion after file changes.
 
-# Find by multiple fields (key-value pairs)
-user: !Find [authentik_core.user, [username, admin]]
+Multiple blueprints can conflict if they modify same objects. Use unique identifiers and coordinate between blueprints.
 
-# Use with context variables
-flow: !Find [authentik_flows.flow, [!Context property_name, !Context property_value]]
-```
+## REFERENCES
 
-**Format:** `!Find [model_name, [field1, value1], [field2, value2], ...]` **Error if:** No matching object found.
+For general Kubernetes patterns, see k8s/AGENTS.md
 
-#### `!FindObject` - Lookup with Full Data (v2025.8+)
+For commit message format, see root AGENTS.md
 
-Like `!Find`, but returns serialized object data instead of just the primary key. Available in authentik v2025.8 and
-later.
+For CNPG database patterns, see k8s/AGENTS.md
 
-```yaml
-flow_designation: !AtIndex [!FindObject [authentik_flows.flow, [slug, default-password-change]], designation]
-```
+For Authentik documentation, see https://goauthentik.io/docs/
 
-#### `!Env` - Environment Variable
+For blueprint schema, see https://goauthentik.io/blueprints/schema.json
 
-Reads from environment variables. Supports default values.
-
-```yaml
-# Simple usage
-password: !Env MY_PASSWORD
-
-# With default value
-password: !Env [MY_PASSWORD, default-value]
-```
-
-**Best Practice:** Use for secrets and configuration that varies per environment. Set via `envFrom` in `values.yaml`.
-
-#### `!File` - Read File Contents
-
-Reads contents from a file path. Supports default values.
-
-```yaml
-# Simple usage
-certificate: !File /path/to/cert.pem
-
-# With default value
-certificate: !File [/path/to/cert.pem, default-content]
-```
-
-#### `!Context` - Access Context Variables
-
-Accesses blueprint context variables (built-in or user-defined).
-
-```yaml
-# Built-in contexts
-enabled: !Context goauthentik.io/enterprise/licensed # Boolean
-models: !Context goauthentik.io/rbac/models # Dictionary
-
-# With default value
-value: !Context [foo, default-value]
-```
-
-### 5.2 String Manipulation Tags
-
-#### `!Format` - String Formatting
-
-Python-style string formatting with `%` operator.
-
-```yaml
-name: !Format [my-policy-%s, !Context instance_name]
-# Result: my-policy-production
-
-model: !Format ['authentik_stages_authenticator_%s.authenticator%sstage', !Value 0, !Value 0]
-# Result: authentik_stages_authenticator_totp.authenticatortotpstage
-```
-
-### 5.3 Conditional Tags
-
-#### `!If` - Conditional Values
-
-Evaluates a condition and returns one of two values.
-
-```yaml
-# Short form: return condition value as boolean
-required: !If [true]
-
-# Full form: condition, true_value, false_value
-required: !If [!Context feature_enabled, true, false]
-
-# Complex example with nested structures
-attributes: !If [
-  !Context enable_feature,
-  {
-    # When true
-    feature: enabled,
-    nested: !Format ["value-%s", !Context name]
-  },
-  [
-    # When false
-    list, of, values
-  ]
-]
-```
-
-#### `!Condition` - Boolean Logic
-
-Combines multiple conditions with boolean operators.
-
-```yaml
-conditions:
-  - !Condition [OR, !Context var1, !Context var2]
-  - !Condition [AND, true, !Env FEATURE_ENABLED]
-  - !Condition [NOT, !Context disabled]
-
-# Valid modes: AND, NAND, OR, NOR, XOR, XNOR
-# Complex nested conditions
-required: !Condition [AND, !Context instance_name, !Find [authentik_flows.flow, [slug, my-flow]], 'string value', 123]
-```
-
-### 5.4 Iteration Tags
-
-#### `!Enumerate`, `!Index`, `!Value` - Loop Over Collections
-
-Iterate over sequences or mappings to generate multiple entries.
-
-```yaml
-# Generate a sequence from a mapping
-configuration_stages: !Enumerate [
-  !Context map_of_stage_names,  # Input: {totp: "TOTP", webauthn: "WebAuthn"}
-  SEQ,  # Output type: SEQ or MAP
-  !Find [
-    !Format ["authentik_stages_authenticator_%s.stage", !Index 0],
-    [name, !Value 0]
-  ]
-]
-# Result:
-# configuration_stages:
-#   - <pk of totp stage>
-#   - <pk of webauthn stage>
-
-# Generate a mapping from a sequence
-example: !Enumerate [
-  !Context list_of_names,  # Input: ["alice", "bob"]
-  MAP,  # Output a mapping
-  [
-    !Index 0,  # Key: index (0, 1, ...)
-    !Value 0   # Value: item from sequence
-  ]
-]
-# Result:
-# example:
-#   0: alice
-#   1: bob
-
-# Nested enumeration
-example: !Enumerate [
-  ["foo", "bar"],
-  MAP,
-  [
-    !Index 0,
-    !Enumerate [
-      !Value 1,  # Depth 1: refers to parent enumerate
-      SEQ,
-      !Format ["%s: (index: %d, letter: %s)", !Value 1, !Index 0, !Value 0]
-    ]
-  ]
-]
-# Result:
-# 0:
-#   - "foo: (index: 0, letter: f)"
-#   - "foo: (index: 1, letter: o)"
-#   - "foo: (index: 2, letter: o)"
-# 1:
-#   - "bar: (index: 0, letter: b)"
-#   - "bar: (index: 1, letter: a)"
-#   - "bar: (index: 2, letter: r)"
-```
-
-**Key Points:**
-
-- `!Index <depth>`: Returns the index (sequence) or key (mapping) at the specified depth
-- `!Value <depth>`: Returns the value at the specified depth
-- Depth 0 = current enumerate, depth 1 = parent enumerate, etc.
-- **Cannot** iterate over `!Index 0` or `!Value 0` (cannot iterate over self)
-
-#### `!AtIndex` - Access Specific Index (v2024.12+)
-
-Access a specific index in a sequence or mapping.
-
-```yaml
-# From sequence
-first_item: !AtIndex [['first', 'second', 'third'], 0] # "first"
-
-# From mapping
-value: !AtIndex [{ 'foo': 'bar', 'other': 'value' }, 'foo'] # "bar"
-
-# With default value
-safe_access: !AtIndex [['first'], 100, 'default'] # "default"
-default_value: !AtIndex [['first'], 100] # Error: index out of range
-```
-
-## 6. Common Blueprint Patterns
-
-### 6.1 Creating an OAuth2 Application
-
-Complete example for adding a new OAuth2-based application:
-
-```yaml
-# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
-version: 1
-metadata:
-  name: Apps - My Application
-entries:
-  # 1. Create user group for the application
-  - id: myapp-users
-    model: authentik_core.group
-    identifiers:
-      name: My App Users
-    attrs:
-      name: My App Users
-
-  # 2. Create OAuth2 provider
-  - id: myapp-provider
-    model: authentik_providers_oauth2.oauth2provider
-    identifiers:
-      name: k8s.peekoff.com/apps/myapp
-    attrs:
-      # Find default flows
-      authorization_flow: !Find [
-        authentik_flows.flow,
-        [slug, "default-provider-authorization-implicit-consent"]
-      ]
-      signing_key: !Find [
-        authentik_crypto.certificatekeypair,
-        [name, "authentik Self-signed Certificate"]
-      ]
-      invalidation_flow: !Find [
-        authentik_flows.flow,
-        [slug, "default-provider-invalidation-flow"]
-      ]
-
-      # OAuth2 configuration
-      client_type: confidential  # or "public"
-      redirect_uris:
-        - url: https://myapp.example.com/oauth/callback
-          matching_mode: strict  # or "regex"
-
-      # Secrets from environment
-      client_id: !Env MYAPP_CLIENT_ID
-      client_secret: !Env MYAPP_CLIENT_SECRET
-
-      # Token validity
-      access_code_validity: minutes=1
-      access_token_validity: minutes=5
-      refresh_token_validity: days=30
-
-      # User identifier mode
-      sub_mode: hashed_user_id  # or "user_id", "user_username", "user_email"
-
-
-Use Openwiki mcp for more details.
-```
+For OpenWiki/Authentik guidance, use MCP docs tools with Context7/DeepWiki

@@ -40,7 +40,6 @@ k8s/.env
 .env
 GEMINI.md
 .aider*
-config
 
 # Python
 __pycache__/
@@ -50,3 +49,4 @@ __pycache__/
 .Python
 vale
 vale_*.tar.gz
+skills/

@@ -38,27 +38,8 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 
 
-## Components ##
-powercalc: !include components/powercalc.yaml
 wake_on_lan:
 swedish_calendar:
-spotcast: !include components/spotcast.yaml
-
-## Conf##
-input_boolean: !include conf/input_boolean.yaml
-input_number: !include conf/input_number.yaml
-light: !include conf/light.yaml
-sensor: !include conf/sensors.yaml
-template: !include conf/templates.yaml
-multiscrape: !include conf/scrape.yaml
-intent_script: !include conf/intent_script.yaml
-input_select: !include conf/input_select.yaml
-group: !include conf/groups.yaml
-binary_sensor: !include conf/binary_sensor.yaml
-input_datetime: !include conf/input_datetime.yaml
-notify: !include conf/notify.yaml
-alert: !include conf/alert.yaml
-switch: !include conf/switch.yaml
 
 
 
@@ -128,6 +109,7 @@ homeassistant:
   language: en
   country: SE
   currency: SEK
+  packages: !include_dir_named packages
 ## Lovelace Config ##
 lovelace:
   mode: storage

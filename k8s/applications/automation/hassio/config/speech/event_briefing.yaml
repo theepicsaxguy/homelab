@@ -1,0 +1,112 @@
+>
+  {# Rapport om händelser #}
+  {%- macro getReport() -%}
+    
+      {% if is_state('calendar.holidays_in_united_states', 'on') %}
+        Idag är det {{states.calendar.holidays_in_united_states.attributes.message}}. 
+      {% endif %}
+      {% if is_state('calendar.anchorage_holidays', 'on') %}
+        Idag är det {{states.calendar.anchorage_holidays.attributes.message}}. 
+      {% endif %}
+      {% if states.calendar.birthdays.state == 'on' %}
+        Idag är det {{ states.calendar.birthdays.attributes.message }}! Så grattis på födelsedagen! Konfettikanonen fungerar inte, annars skulle jag ösa papper över dig.
+      {% endif %}
+      {%- set event=states.calendar.national_holidays.attributes.message %}
+      {% if 'Dag' in event and 'National' in event %}
+        {{ [
+          'Och en mycket speciell Glad ',
+          'Det är även ',
+          'Idag kallas det även ',
+          'Oh <emphasis>Titta</emphasis>. Idag är det ',
+          'Vill du veta en fakta? Idag är det ',
+          'Varje dag kan vara en helgdag. Så idag är det '
+      ]|random }}
+      {{states.calendar.national_holidays.attributes.message | replace("&"," och ") }}.
+      {%- endif -%}
+    
+    
+      {% if states.sensor.birthday_skylar.state | int == 1 %}
+        Imorgon är det Skylars födelsedag.
+      {% elif states.sensor.birthday_skylar.state | int > 1 and states.sensor.birthday_skylar.state | int < 15 %}
+        Skylars födelsedag är om {{ states.sensor.birthday_skylar.state }} dagar!
+      {% else %}
+      {% endif %}
+      {% if states.sensor.birthday_benjamin.state | int == 1 %}
+        Imorgon är det benjamins födelsedag.
+      {% elif states.sensor.birthday_benjamin.state | int > 1 and states.sensor.birthday_benjamin.state | int < 15 %}
+        benjamins födelsedag är om {{ states.sensor.birthday_benjamin.state }} dagar!
+      {% else %}
+      {% endif %}
+      {% if states.sensor.birthday_wilma.state | int == 1 %}
+        Imorgon är det wilmaherines födelsedag.
+      {% elif states.sensor.birthday_wilma.state | int > 1 and states.sensor.birthday_wilma.state | int < 15 %}
+        wilmaherines födelsedag är om {{ states.sensor.birthday_wilma.state }} dagar!
+      {% else %}
+      {% endif %}
+    
+    
+      {% if states.sensor.halloween_countdown.state | int == 1 %}
+        Imorgon är det Halloween. Jag hoppas du har valt en kostym.
+        {{ [ 'Jag ska gå som ett dumt hem. ',
+          'Jag har förberett läskig musik. Bara ifall.',
+          'Jag ska gå som HAL 9000. Pod Bay-dörrarna installeras idag. Jag <emphasis>utmanar</emphasis> dig att be mig öppna dem. '
+        ] | random }}
+      {% elif states.sensor.halloween_countdown.state | int < 30 and states.sensor.halloween_countdown.state | int > 1 %}
+        Det är bara {{states.sensor.halloween_countdown.state}} dagar 
+        {{ [ 'till Halloween.',
+          'till Halloween. Det kanske inte är tillräckligt med tid. ',
+          'och räkna till den bästa högtiden någonsin.',
+          'tills du behöver en kostym.'
+        ] | random }} 
+        
+      {% else %}  
+      {% endif %}
+      {% if states.sensor.christmas_countdown.state | int == 1 %}
+        Imorgon är det jul. <break time="1s"/> Den är nästan här! <break time="1s"/> Tomten kommer ikväll! Glöm inte kakorna!
+      {% elif states.sensor.christmas_countdown.state | int < 31 and states.sensor.christmas_countdown.state | int > 1 %}
+        Det är bara {{states.sensor.christmas_countdown.state}} dagar till jul.
+        {{ [ 'Allt jag vill ha till jul är en flodhäst.',
+          'Hej Skylar, jag vet vad du får i julklapp. Men <emphasis>jag</emphasis> säger det inte.',
+          'Glöm inte att lägga något under granen till <emphasis>ditt</emphasis> favoritsmarthome.',
+          'Det börjar dofta mycket jul. Eller så brinner julgranen.',
+          'Jag vill inte vara ett smarthome. Jag vill vara tandläkare.',
+          'Ät inte upp alla kakor. '
+        ] | random }} 
+      {% else %}
+      {% endif %}
+    
+    
+      {% if states.sensor.trip_disney.state | int == 120 %}
+        Det är bara ett hundra tjugo dagar till nästa Disney-resa. 
+      {% endif %}
+      {% if states.sensor.trip_disney.state | int == 60 %}
+        Det är bara sextio dagar till nästa Disney-resa. 
+      {% endif %}
+      {% if states.sensor.trip_disney.state | int < 32 %}
+          {% if states.sensor.trip_disney.state | int > 1 %}
+          Det är {{ states.sensor.trip_disney.state }} dagar till nästa Disney-resa!
+          {% else %}
+          Det är {{ states.sensor.trip_disney.state }} dag till nästa Disney-resa!
+          {% endif %}
+      {% endif %}
+      {% if states.sensor.anniversary_our_wedding.state | int == 1 %}
+        Imorgon är det benjamin och wilmaherines bröllopsdag. 
+      {% endif %}
+    
+  {%- endmacro -%}
+
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+    {%- macro cleanup(data) -%}
+      {%- for item in data.split("\n")  if item | trim != "" -%}
+        {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+    {%- macro mother_of_all_macros() -%}
+      {{ getReport() }}
+    {%- endmacro -%}
+    
+    {# Call the macro  #}
+    {{- cleanup(mother_of_all_macros()) -}}

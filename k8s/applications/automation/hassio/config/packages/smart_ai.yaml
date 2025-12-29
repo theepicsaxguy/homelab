@@ -1,0 +1,188 @@
+# # Define the input_select for different phrases
+# input_select:
+#   ai_phrases_greeting:
+#     name: "AI Fraser för Hälsning"
+#     options:
+#       - "Hej, hur kan jag hjälpa dig idag?"
+#       - "Hälsningar! Vad vill du göra?"
+#       - "Hej där! Behöver du någon hjälp?"
+#       - "God dag! Hur mår du?"
+#       - "Hejsan! Vad kan jag göra för dig?"
+#       - "Hallå! Något du undrar över?"
+#       - "Tjena! Allt bra med dig?"
+#       - "Hej hej! Vad får det att vara?"
+#       - "Välkommen! Hur kan jag assistera dig?"
+#       - "Salut! Vad är det du söker?"
+#   ai_phrases_weather:
+#     name: "AI Fraser för Väder"
+#     options:
+#       - "Vädret ser bra ut idag."
+#       - "Det ser ut som det kommer att regna."
+#       - "Det är en solig dag."
+#       - "Det är molnigt, ta med en jacka."
+#       - "Det blåser mycket idag."
+#       - "Det är riktigt kallt ute."
+#       - "Det ser ut att bli en varm dag."
+#       - "Det är dimmigt, kör försiktigt."
+#       - "Det snöar, så ta det lugnt på vägarna."
+#       - "Det är en perfekt dag för en picknick."
+#   ai_phrases_music:
+#     name: "AI Fraser för Musik"
+#     options:
+#       - "Vill du lyssna på lite musik?"
+#       - "Jag har en bra spellista för dig."
+#       - "Vad sägs om lite jazz?"
+#       - "Kanske lite klassisk musik?"
+#       - "Hur låter lite rock?"
+#       - "Vill du höra dagens topplista?"
+#       - "Kanske något för att koppla av?"
+#       - "Vad sägs om lite dansmusik?"
+#       - "Behöver du något för att fokusera?"
+#       - "Hur låter lite countrymusik?"
+#   ai_phrases_news:
+#     name: "AI Fraser för Nyheter"
+#     options:
+#       - "Vill du höra dagens nyheter?"
+#       - "Det har hänt mycket i världen idag."
+#       - "Några intressanta rubriker att dela med dig."
+#       - "Vill du veta mer om dagens händelser?"
+#       - "Jag har några uppdateringar för dig."
+#       - "Vill du höra de senaste sportnyheterna?"
+#       - "Några ekonominyheter att rapportera."
+#       - "Vill du höra om dagens väder?"
+#       - "Det finns några kulturella uppdateringar."
+#       - "Vill du höra de senaste tekniknyheterna?"
+#   ai_phrases_jokes:
+#     name: "AI Fraser för Skämt"
+#     options:
+#       - "Vill du höra ett skämt?"
+#       - "Känner du för att skratta lite?"
+#       - "Jag har ett roligt skämt för dig."
+#       - "Vad sägs om lite humor?"
+#       - "Klar för ett snabbt skämt?"
+#       - "Jag har ett skämt som får dig att le."
+#       - "Vill du höra något roligt?"
+#       - "Jag har ett skämt på lager."
+#       - "Vad sägs om en liten vits?"
+#       - "Känner du för ett skratt?"
+      
+#   ai_phrases_reminders:
+#     name: "AI Fraser för Påminnelser"
+#     options:
+#       - "Du har ett möte snart."
+#       - "Glöm inte att vattna blommorna."
+#       - "Det är dags att ta medicinen."
+#       - "Du har en födelsedag att komma ihåg."
+#       - "Tid att betala räkningarna."
+#       - "Du har en inkommande samtal."
+#       - "Din tvätt är klar."
+#       - "Du har en ny e-post."
+#       - "Det är dags för en paus."
+#       - "Din kalender ser upptagen ut idag."
+#   ai_phrases_travel:
+#     name: "AI Fraser för Resor"
+#     options:
+#       - "Trafiken ser bra ut."
+#       - "Det är dags att checka in för ditt flyg."
+#       - "Glöm inte ditt pass."
+#       - "Ta med solkräm, det blir varmt."
+#       - "Det ser ut som regn, ta en paraply."
+#       - "Tåget är försenat."
+#       - "Din Uber är här."
+#       - "Packa lätt, det är en kort resa."
+#       - "Glöm inte att ladda ner kartor."
+#       - "Det är en bra dag för en roadtrip."
+#   ai_phrases_food:
+#     name: "AI Fraser för Mat"
+#     options:
+#       - "Dags för lunch!"
+#       - "Vill du ha några matförslag?"
+#       - "Det är snart middagstid."
+#       - "Vad sägs om att beställa pizza?"
+#       - "Hur låter en sallad?"
+#       - "Vill du ha receptförslag?"
+#       - "Det är dags för en kaffepaus."
+#       - "Vad sägs om lite te?"
+#       - "Vill du ha en smoothie?"
+#       - "Hur låter en efterrätt?"
+#   ai_phrases_health:
+#     name: "AI Fraser för Hälsa"
+#     options:
+#       - "Dags för din dagliga promenad."
+#       - "Hur mår du idag?"
+#       - "Vill du ha några träningsförslag?"
+#       - "Glöm inte att dricka vatten."
+#       - "Dags för lite stretching."
+#       - "Hur har du sovit?"
+#       - "Vill du meditera?"
+#       - "Dags för din medicin."
+#       - "Hur är ditt blodtryck?"
+#       - "Vill du logga dina måltider?"
+#   ai_phrases_entertainment:
+#     name: "AI Fraser för Underhållning"
+#     options:
+#       - "Vill du se en film?"
+#       - "Vad sägs om ett spel?"
+#       - "Vill du läsa en bok?"
+#       - "Jag har några filmtips."
+#       - "Vad sägs om lite musik?"
+#       - "Vill du se några roliga videoklipp?"
+#       - "Hur låter en quiz?"
+#       - "Vill du lyssna på en podcast?"
+#       - "Vad sägs om att rita eller måla?"
+#       - "Vill du lösa ett korsord?"
+      
+# # Define the script for TTS
+# script:
+#   smart_ai_speech:
+#     sequence:
+#       - service: tts.cloud_say
+#         data_template:
+#           entity_id: "media_player.vardagsrum"
+#           message: >
+#             {% set categories = categories | default(['greeting']) %}
+#             {% set messages = [] %}
+#             {% for category in categories %}
+#               {% if category == 'greeting' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_greeting') | random] %}
+#               {% elif category == 'weather' %}
+#                 {% set weather_state = states('weather.smhi_home') %}
+#                 {% if weather_state == 'sunny' %}
+#                   {% set messages = messages + ["Det är en solig dag."] %}
+#                 {% else %}
+#                   {% set messages = messages + [states('input_select.ai_phrases_weather') | random] %}
+#                 {% endif %}
+#               {% elif category == 'music' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_music') | random] %}
+#               {% elif category == 'news' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_news') | random] %}
+#               {% elif category == 'jokes' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_jokes') | random] %}
+#               {% elif category == 'reminders' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_reminders') | random] %}
+#               {% elif category == 'travel' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_travel') | random] %}
+#               {% elif category == 'food' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_food') | random] %}
+#               {% elif category == 'health' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_health') | random] %}
+#               {% elif category == 'entertainment' %}
+#                 {% set messages = messages + [states('input_select.ai_phrases_entertainment') | random] %}
+#               {% endif %}
+#             {% endfor %}
+#             {% if messages|length > 1 %}
+#               {{ messages | join('. Och förresten, ') }}.
+#             {% else %}
+#               {{ messages[0] }}
+#             {% endif %}
+            
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      

@@ -100,5 +100,4 @@ If issues occur during upgrade:
 - **Backup First**: Ensure recent backups exist before major upgrades
 - **Monitor Resources**: Watch for resource usage spikes during upgrades
 - **Staged Rollout**: Consider upgrading nodes in stages for large clusters
-- **Documentation**: Keep upgrade records for troubleshooting future issues</content>
-<parameter name="filePath">/home/develop/homelab/website/docs/disaster/upgrade-strategy.md
+- **Documentation**: Keep upgrade records for troubleshooting future issues
