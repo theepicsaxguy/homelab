@@ -29,6 +29,4 @@ The `velero-minio-credentials` secret must expose three values:
 These values come from Bitwarden. The `ExternalSecret` assembles them into a
 `cloud` file so Velero can read standard AWS credentials.
 
-## Backup Strategy
-
-For detailed information about the backup strategy, including the rationale for using Kopia filesystem backups instead of CSI snapshots, see the [Backup Strategy documentation](../../k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md) in the k8s directory.
+## Backup Configuration

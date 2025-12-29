@@ -211,8 +211,8 @@ Regular disaster recovery testing ensures procedures work when needed:
 - [Velero Backup Documentation](../../infrastructure/controllers/velero-backup.md)
 - [PostgreSQL Backup Strategy](../../infrastructure/database/postgres-backup.md)
 - [Storage Backup Strategy](../../storage/backup-strategy.md)
-- [BACKBLAZE_B2_SETUP.md](/BACKBLAZE_B2_SETUP.md) - B2 account setup guide
-- [CNPG_B2_IMPLEMENTATION_NOTE.md](/CNPG_B2_IMPLEMENTATION_NOTE.md) - PostgreSQL B2 backup implementation
+- [BACKBLAZE_B2_SETUP.md](../../backup/BACKBLAZE_B2_SETUP.md) - B2 account setup guide
+- [CNPG_B2_IMPLEMENTATION_NOTE.md](../../backup/CNPG_B2_IMPLEMENTATION_NOTE.md) - PostgreSQL B2 backup implementation
 
 ## Scenario-Specific Guidance
 

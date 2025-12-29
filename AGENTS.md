@@ -98,6 +98,12 @@ Where to document:
 - AGENTS.md files for developer/AI guidance
 - Inline comments for non-obvious implementation details
 
+Markdown File Placement:
+- User-facing markdown files MUST be placed in `website/docs/` matching the structure of what they document
+- The ONLY markdown files allowed outside `website/docs/` are `AGENTS.md` files (for coding agents, not humans)
+- Never create markdown documentation files in domain directories (k8s/, tofu/, images/)
+- Documentation must live in the website to be discoverable and maintainable
+
 Format:
 - Markdown (.md) for documentation
 - Use imperative voice: "Configure the setting"

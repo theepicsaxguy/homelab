@@ -415,7 +415,7 @@ For a complete test restore procedure with verification steps, see [Test Restore
 
 ## Related Documentation
 
-- [Velero Backup Strategy](../../../k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md)
+- [Velero Backup Setup](velero-backup.md)
 - [Disaster Recovery Scenarios](../../disaster/scenarios/index.md)
 - [Test Restore Procedure](../../disaster/test-restore-procedure.md)
 - [Velero Official Documentation](https://velero.io/docs/main/restore-reference/)

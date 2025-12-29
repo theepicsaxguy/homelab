@@ -368,7 +368,7 @@ All configuration is stored in git:
 
 ### Recovery Process
 
-1. **For complete cluster recovery**: See [Scenario 2: Complete Cluster Failure](02-complete-cluster-failure.md)
+1. **For disk failure recovery**: See [Scenario 2: Disk Failure](02-disk-failure.md)
 2. **For specific applications**: See [Scenario 1: Accidental Deletion](01-accidental-deletion.md)
 3. **For ransomware/security**: See [Scenario 6: Ransomware Attack](06-ransomware.md)
 

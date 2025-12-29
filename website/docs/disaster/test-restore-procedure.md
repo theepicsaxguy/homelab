@@ -444,7 +444,7 @@ spec:
 ## Related Documentation
 
 - [Velero Storage Class Mapping](../infrastructure/controllers/velero-storage-class-mapping.md)
-- [Backup Strategy](../../k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md)
+- [Velero Backup Setup](../infrastructure/controllers/velero-backup.md)
 - [Disaster Recovery Scenarios](scenarios/index.md)
 - [Scenario 01: Accidental Deletion](scenarios/01-accidental-deletion.md)
 
