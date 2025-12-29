@@ -76,14 +76,7 @@ npm run serve
 Write technical documentation in imperative voice with present tense facts. No first-person plural ("we"), no temporal language ("now uses"), no narrative storytelling. State what exists and how it works.
 
 ### Frontmatter Pattern
-All documentation files include frontmatter with metadata:
-```yaml
----
-title: Page Title
-description: Brief description for SEO
-sidebar_position: 10
----
-```
+All documentation files include frontmatter with title, description for SEO, and sidebar_position for navigation ordering. Frontmatter begins and ends with triple hyphens.
 
 ### Navigation Pattern
 Update `sidebars.ts` to add new documentation pages to navigation. Use sidebar_position to control ordering. Group related pages under category sections.

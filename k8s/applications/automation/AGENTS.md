@@ -82,7 +82,7 @@ N8N orchestrates cross-system workflows via MQTT and HTTP APIs. Uses CNPG Postgr
 - PVC for recordings and database
 - Gateway API route for web UI
 - RTSP stream access for camera ingestion
-- Optional GPU or Coral accelerator support
+- Optional GPU support for faster inference
 
 **Configuration**:
 - Helm values file for Frigate settings
@@ -91,7 +91,6 @@ N8N orchestrates cross-system workflows via MQTT and HTTP APIs. Uses CNPG Postgr
 - ExternalSecrets for RTSP credentials
 
 **Hardware Acceleration**:
-- **Coral**: USB device passthrough for AI inference (optional)
 - **NVIDIA GPU**: GPU passthrough for faster inference (optional)
 - **CPU-only**: Default mode, slower inference
 
@@ -133,12 +132,6 @@ For details and workaround, see /k8s/infrastructure/network/AGENTS.md.
 ### Device Passthrough
 
 No USB device passthrough in Kubernetes. Zigbee2MQTT coordinator (USB device) runs in separate VM. Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
-
-**Frigate Coral Accelerator** (if applicable):
-- USB Coral device for AI inference (optional)
-- If used, passed through from host: `/dev/bus/usb`
-- Verify device availability on node
-- Check pod logs for device detection
 
 ### IoT Device Management
 

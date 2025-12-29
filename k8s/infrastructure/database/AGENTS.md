@@ -45,74 +45,17 @@ kubectl get pvc -n <namespace>
 ### Cluster Configuration
 
 **Basic Cluster Structure**:
-```yaml
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: <cluster-name>
-  namespace: <namespace>
-spec:
-  instances: <number>              # Number of database instances
-  imageName: <postgres-image>        # PostgreSQL version
-  storage:
-    size: <size>                    # Main storage size
-    storageClass: <storage-class>     # proxmox-csi or longhorn
-  walStorage:
-    size: <size>                    # WAL storage size
-    storageClass: <storage-class>     # proxmox-csi or longhorn
-  postgresql:
-    parameters:
-      <postgresql-param>: <value>   # PostgreSQL configuration
-  monitoring:
-    enablePodMonitor: true/false
-```
+Cluster manifest defines PostgreSQL configuration including instances, image version, storage allocation, WAL storage, PostgreSQL parameters, and monitoring settings. Specify storage class as proxmox-csi for new clusters or longhorn for legacy clusters.
 
 ### Auto-Generated Credentials (Preferred)
 
 **Pattern**: Let CNPG auto-generate credentials instead of using ExternalSecrets.
 
 **How It Works**:
-- CNPG automatically creates `<cluster-name>-app` secret
-- Secret contains: username, password, dbname, host, port, uri
-- Applications reference this secret directly
-- No circular dependencies with ExternalSecrets
-
-**Secret Contents**:
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: <cluster-name>-app
-  namespace: <namespace>
-type: Opaque
-data:
-  username: <base64-encoded>
-  password: <base64-encoded>
-  dbname: <base64-encoded>
-  host: <base64-encoded>
-  port: <base64-encoded>
-  uri: <base64-encoded> # postgresql://username:password@host:port/dbname
-```
+CNPG automatically creates `<cluster-name>-app` secret containing username, password, dbname, host, port, and URI. Applications reference this secret directly. No circular dependencies with ExternalSecrets.
 
 **Application Usage**:
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: myapp
-  namespace: <namespace>
-spec:
-  template:
-    spec:
-      containers:
-        - name: app
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: <cluster-name>-app
-                  key: uri
-```
+Application deployments reference the secret via environment variable with secretKeyRef pointing to the URI key in the auto-generated secret.
 
 **When to Use ExternalSecrets**:
 - Never for application database credentials
@@ -136,30 +79,7 @@ spec:
 - Bucket: `homelab-cnpg-b2/<namespace>/<cluster>`
 
 **ExternalSecrets for Backup Credentials**:
-```yaml
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: b2-cnpg-credentials
-  namespace: <namespace>
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: bitwarden-backend
-    kind: ClusterSecretStore
-  target:
-    name: b2-cnpg-credentials
-    creationPolicy: Owner
-    template:
-      engineVersion: v2
-      data:
-        - secretKey: AWS_ACCESS_KEY_ID
-          remoteRef:
-            key: backblaze-b2-cnpg-access-key-id
-        - secretKey: AWS_SECRET_ACCESS_KEY
-          remoteRef:
-            key: backblaze-b2-cnpg-secret-access-key
-```
+Create ExternalSecret referencing Bitwarden ClusterSecretStore with target template using engineVersion v2. Map AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to corresponding Bitwarden keys.
 
 **Bitwarden Requirements**:
 - Separate entry for `backblaze-b2-cnpg-access-key-id`
@@ -168,91 +88,19 @@ spec:
 - Use `engineVersion: v2` under `spec.target.template`
 
 **Backup Configuration in Cluster**:
-```yaml
-spec:
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster>
-      endpointURL: https://s3.us-west-000.backblazeb2.com
-      s3Credentials:
-        accessKeyId:
-          name: b2-cnpg-credentials
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: b2-cnpg-credentials
-          key: AWS_SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-        encryption: AES256
-      data:
-        compression: gzip
-        encryption: AES256
-        jobs: 2
-    retentionPolicy: "30d"  # 30-day retention
-```
+Configure cluster backup with barmanObjectStore pointing to Backblaze B2 endpoint. Set S3 credentials to reference ExternalSecret. Enable gzip compression and AES256 encryption for both WAL and data. Set retention policy to 30 days.
 
 **Scheduled Backups**:
-```yaml
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: <cluster>-scheduled-backup
-  namespace: <namespace>
-spec:
-  cluster:
-    name: <cluster-name>
-  schedule: "0 2 * * 0"  # Sundays at 02:00
-  backupOwnerReference:
-    kind: Application
-    name: <application-name>
-```
+Create ScheduledBackup resource referencing cluster name. Set cron schedule (e.g., Sundays at 02:00). Set backupOwnerReference to Application kind with application name.
 
 **WAL Archiving**:
-```yaml
-spec:
-  plugins:
-    - name: barman-cloud.cloudnative-pg.io
-      isWALArchiver: true
-      parameters:
-        barmanObjectName: <b2-store-name>
-```
+Configure barman-cloud.cloudnative-pg.io plugin with isWALArchiver enabled. Set barmanObjectName to target store name.
 
 ### External Clusters (Recovery)
 
 **Purpose**: Enable recovery from either backup location.
 
-```yaml
-spec:
-  externalClusters:
-    - name: <cluster>-b2-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
-        s3Credentials:
-          accessKeyId:
-            name: b2-cnpg-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: b2-cnpg-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-    - name: <cluster>-minio-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-postgres-backups/<namespace>/<cluster>
-        endpointURL: https://truenas.peekoff.com:9000
-        s3Credentials:
-          accessKeyId:
-            name: longhorn-minio-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: longhorn-minio-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-```
+Configure externalClusters in spec with two entries: one for Backblaze B2 and one for MinIO. Each uses barmanObjectStore with destinationPath, endpointURL, and S3 credentials referencing respective ExternalSecrets. Enable gzip compression and AES256 encryption for WAL.
 
 ## CLUSTER OPERATIONS
 
@@ -330,11 +178,7 @@ spec:
 ### Monitoring
 
 **PodMonitor**:
-```yaml
-spec:
-  monitoring:
-    enablePodMonitor: true
-```
+Enable monitoring in cluster spec by setting enablePodMonitor to true.
 
 **Metrics Exposed**:
 - Connection counts
@@ -348,53 +192,13 @@ spec:
 ### Cluster Restoration
 
 **From Backblaze B2**:
-```bash
-# List available backups
-kubectl get backup -n <namespace>
-
-# Restore from backup
-kubectl create -f - <<EOF
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: <cluster-name>-restored
-  namespace: <namespace>
-spec:
-  bootstrap:
-    recovery:
-      source: externalCluster
-      externalClusterName: <cluster>-b2-backup
-      backupID: <backup-id>
-EOF
-```
+List available backups to identify target backup ID. Create new Cluster manifest with bootstrap recovery configuration referencing externalClusterName and backupID. Apply via kubectl.
 
 **From MinIO (Local)**:
-```bash
-# Restore using minio-backup external cluster
-kubectl create -f - <<EOF
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: <cluster-name>-restored
-  namespace: <namespace>
-spec:
-  bootstrap:
-    recovery:
-      source: externalCluster
-      externalClusterName: <cluster>-minio-backup
-      backupID: <backup-id>
-EOF
-```
+List available backups. Create new Cluster manifest with bootstrap recovery configuration referencing minio-backup externalClusterName and backupID. Apply via kubectl.
 
 **Point-in-Time Recovery (PITR)**:
-```yaml
-spec:
-  bootstrap:
-    recovery:
-      source: externalCluster
-      externalClusterName: <cluster>-b2-backup
-      targetTime: "2025-01-15 12:00:00 UTC"
-```
+Configure bootstrap recovery with targetTime parameter specifying precise recovery timestamp. Use externalClusterName to identify backup source.
 
 ## TROUBLESHOOTING
 

@@ -141,23 +141,7 @@ Applications expose services through Gateway API:
 5. **Gateway** routes HTTPS traffic to service
 
 Example HTTPRoute structure:
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: myapp
-  namespace: myapp
-spec:
-  parentRefs:
-    - name: external
-      namespace: gateway
-  hostnames:
-    - myapp.peekoff.com
-  rules:
-    - backendRefs:
-        - name: myapp-service
-          port: 80
-```
+HTTPRoute references external Gateway in gateway namespace via parentRefs. Define hostname (e.g., myapp.peekoff.com). Configure backendRefs to point to application service and port. Cert Manager automatically provisions TLS certificate for the hostname.
 
 ### DNS Resolution Pattern
 

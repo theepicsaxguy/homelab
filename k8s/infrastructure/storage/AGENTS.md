@@ -88,22 +88,7 @@ kubectl get pv -A
 - Backup target: TrueNAS MinIO via S3-compatible API
 
 **Backup Labels** (apply to PVCs):
-```yaml
-# GFS tier - Critical databases and stateful apps
-recurring-job.longhorn.io/source: enabled
-recurring-job-group.longhorn.io/gfs: enabled
-
-# Daily tier - Standard applications
-recurring-job.longhorn.io/source: enabled
-recurring-job-group.longhorn.io/daily: enabled
-
-# Weekly tier - Less critical data
-recurring-job.longhorn.io/source: enabled
-recurring-job-group.longhorn.io/weekly: enabled
-
-# No backup - Ephemeral data
-# (no labels)
-```
+Add annotation `recurring-job.longhorn.io/source: enabled` to enable backups. Configure backup tier with `recurring-job-group.longhorn.io/gfs` (GFS), `daily` (standard), or `weekly` (less critical). Omit labels for no backup (ephemeral data).
 
 **Migration Note**: New workloads should use `proxmox-csi` StorageClass. Migrate legacy Longhorn volumes when convenient.
 
@@ -112,40 +97,10 @@ recurring-job-group.longhorn.io/weekly: enabled
 ### PVC Creation Pattern
 
 **Proxmox CSI (New Workloads)**:
-```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: myapp-data
-  namespace: myapp
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: proxmox-csi  # Primary storage
-  resources:
-    requests:
-      storage: 10Gi
-```
+Create PersistentVolumeClaim with ReadWriteOnce access mode. Set storageClassName to proxmox-csi. Specify requested storage size.
 
 **Longhorn (Legacy)**:
-```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: myapp-data
-  namespace: myapp
-  labels:
-    # Add backup labels for Longhorn
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/daily: enabled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn  # Legacy storage
-  resources:
-    requests:
-      storage: 10Gi
-```
+Create PersistentVolumeClaim with ReadWriteOnce access mode. Set storageClassName to longhorn. Add backup labels to metadata for recurring backups. Specify requested storage size.
 
 ### Storage Class Selection
 
@@ -180,14 +135,7 @@ spec:
 - Backblaze B2: Offsite disaster recovery, weekly backups
 
 **Exclusion Pattern** (optional):
-```yaml
-# Exclude specific volume from backup
-spec:
-  template:
-    metadata:
-      annotations:
-        backup.velero.io/backup-volumes-excludes: "cache-volume"
-```
+Add annotation `backup.velero.io/backup-volumes-excludes: "cache-volume"` to pod or deployment metadata to exclude specific volume from backup.
 
 ### Longhorn Backups (RecurringJob)
 
