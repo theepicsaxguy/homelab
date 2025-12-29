@@ -139,6 +139,26 @@ WhisperASR caches AI models in PVC. No public access. Models can be re-downloade
 
 **Base Patch**: Common configuration applied to all arr services via Kustomize patch
 
+### Jellyseerr
+
+**Purpose**: Media request management system for movies and TV shows.
+
+**Deployment**:
+- Deployment with single replica
+- PVC for application data
+- Gateway API route for external access
+- ExternalSecrets for application credentials
+
+**Resources**:
+- CPU: 1 core
+- Memory: 1Gi
+- Storage: 5Gi PVC for application data (proxmox-csi recommended)
+
+**Configuration**:
+- Environment variables for timezone and settings
+- ExternalSecrets for API keys and authentication
+- API keys for arr-stack integration (set in UI)
+
 ### Audiobookshelf
 
 **Purpose**: Self-hosted audiobook streaming and management platform.
@@ -225,7 +245,7 @@ WhisperASR caches AI models in PVC. No public access. Models can be re-downloade
 
 ### Standard Applications (Daily Tier)
 
-**Jellyfin, arr-stack, Audiobookshelf, Sabnzbd**:
+**Jellyfin, arr-stack, Jellyseerr, Audiobookshelf, Sabnzbd**:
 - Configuration PVCs: Daily backup tier
 - Media libraries: Backed up via TrueNAS/NFS (not via Kubernetes)
 - No backup labels for caches/temporary data
@@ -338,6 +358,6 @@ For network patterns (Gateway API), see k8s/infrastructure/network/AGENTS.md
 
 For authentication patterns (Authentik), see k8s/infrastructure/auth/authentik/AGENTS.md
 
-For CNPG database patterns, see k8s/infrastructure/database/cloudnative-pg/
+For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
 
 For commit message format, see root AGENTS.md

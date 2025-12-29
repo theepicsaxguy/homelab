@@ -130,7 +130,7 @@ Deployment:
 - `media/`: Media management (Jellyfin, Immich, arr-stack, Audiobookshelf)
 - `network/`: Network services (Unifi)
 - `tools/`: Utility applications (IT-Tools, Unrar)
-- `web/`: Web applications (BabyBuddy, HeadlessX, Pinepods)
+- `web/`: Web applications (BabyBuddy, HeadlessX, Pinepods, Kiwix, Pedrobot)
 
 ## ANTI-PATTERNS
 

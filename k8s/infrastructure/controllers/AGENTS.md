@@ -278,6 +278,6 @@ For storage patterns, see k8s/infrastructure/storage/AGENTS.md
 
 For Velero backup strategy, see k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md
 
-For CNPG database patterns, see k8s/infrastructure/database/cloudnative-pg/
+For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
 
 For commit message format, see root AGENTS.md

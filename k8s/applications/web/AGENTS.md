@@ -318,6 +318,6 @@ For network patterns (Gateway API), see k8s/infrastructure/network/AGENTS.md
 
 For authentication patterns (Authentik), see k8s/infrastructure/auth/authentik/AGENTS.md
 
-For CNPG database patterns, see k8s/infrastructure/database/cloudnative-pg/
+For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
 
 For commit message format, see root AGENTS.md

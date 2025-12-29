@@ -410,7 +410,7 @@ For Velero backup strategy, see k8s/infrastructure/controllers/velero/BACKUP_STR
 
 For Proxmox CSI permissions, see tofu/bootstrap/proxmox-csi-plugin/
 
-For CNPG database patterns, see k8s/infrastructure/database/cloudnative-pg/
+For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
 
 For commit message format, see root AGENTS.md
 

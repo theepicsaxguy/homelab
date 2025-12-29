@@ -331,7 +331,7 @@ For Kubernetes domain patterns, see k8s/AGENTS.md
 
 For Cert Manager integration, see k8s/infrastructure/controllers/AGENTS.md
 
-For application HTTPRoutes, see k8s/applications/*/http-route.yaml
+For application HTTPRoutes, see k8s/applications/*/*-route.yaml (http-route.yaml or httproute.yaml)
 
 For Cilium documentation, see https://docs.cilium.io
 

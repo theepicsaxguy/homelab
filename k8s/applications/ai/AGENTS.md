@@ -17,7 +17,7 @@ Purpose:
 Define patterns for AI and ML applications, including GPU access, vector databases, API key management, and model storage.
 
 Boundaries:
-- Handles: AI application deployments (LiteLLM, OpenHands, VLLM, etc.), shared vector database (Qdrant), model storage
+- Handles: AI application deployments (LiteLLM, VLLM, bytebot, gpt-researcher, karakeep, openwebui, perplexica, opencode, vllm-embed), shared vector database (Qdrant), model storage
 - Does NOT handle: General Kubernetes patterns (see k8s/AGENTS.md), infrastructure components
 - Delegates to: k8s/AGENTS.md for general Kubernetes patterns, tofu/AGENTS.md for infrastructure
 
