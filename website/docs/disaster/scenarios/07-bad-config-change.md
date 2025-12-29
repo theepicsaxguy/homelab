@@ -636,7 +636,7 @@ EOF
 ## Related Scenarios
 
 - [Scenario 1: Accidental Deletion](01-accidental-deletion.md) - If config change deleted resources
-- [Scenario 2: Complete Cluster Failure](02-complete-cluster-failure.md) - If bad change broke entire cluster
+- [Scenario 2: Disk Failure](02-disk-failure.md) - If bad change broke storage
 - [Scenario 8: Data Corruption](08-data-corruption.md) - If config change corrupted data
 
 ## Reference

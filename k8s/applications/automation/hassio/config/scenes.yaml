@@ -1,0 +1,407 @@
+- id: '1678449946679'
+  name: Sovrum Smink
+  entities:
+    light.sovrum_tak:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      color:
+        x: 0.358
+        y: 0.3615
+      linkquality: 255
+      power_on_behavior:
+      update:
+        installed_version: 16785162
+        latest_version: 16785162
+        state: idle
+      update_available: false
+      friendly_name: Sovrum Tak
+      supported_features: 44
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 4587
+      color_temp: 218
+      hs_color:
+      - 26.745
+      - 25.163
+      rgb_color:
+      - 255
+      - 219
+      - 190
+      xy_color:
+      - 0.39
+      - 0.356
+      state: 'on'
+  icon: mdi:brush
+  metadata: {}
+- id: '1683043169420'
+  name: Film mys
+  entities:
+    light.vardagsrum:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6666
+      min_mireds: 150
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      color_mode: color_temp
+      brightness: 82
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 136
+      - 13
+      xy_color:
+      - 0.599
+      - 0.382
+      color:
+        h: 25
+        hue: 25
+        s: 95
+        saturation: 95
+        x: 0.5267
+        y: 0.4133
+      friendly_name: 'Vardagsrum '
+      supported_features: 44
+      color_temp_kelvin: 2000
+      color_temp: 500
+      state: 'on'
+  icon: mdi:movie-open-play
+  metadata:
+    switch.vardagsrum_flux:
+      entity_only: true
+- id: '1721285607444'
+  name: Jobba hemma
+  entities:
+    light.kontor_tak:
+      min_color_temp_kelvin: 2202
+      max_color_temp_kelvin: 4000
+      min_mireds: 250
+      max_mireds: 454
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      - colorloop
+      - stop_colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2941
+      color_temp: 340
+      hs_color:
+      - 27.925
+      - 58.522
+      rgb_color:
+      - 255
+      - 175
+      - 105
+      xy_color:
+      - 0.502
+      - 0.384
+      color:
+        x: 0.4413
+        y: 0.4055
+      color_options:
+      linkquality: 255
+      power_on_behavior:
+      update:
+        installed_version: 268572245
+        latest_version: 268572245
+        state: idle
+      update_available: false
+      friendly_name: Kontor Tak
+      supported_features: 44
+      state: 'on'
+  icon: mdi:briefcase
+  metadata: {}
+- id: '1734164173707'
+  name: Sovrum släckt
+  entities:
+    switch.julstjarna_sovrum:
+      friendly_name: Julstjärna Sovrum
+      linkquality: 255
+      power_on_behavior: previous
+      update:
+        installed_version: 33816580
+        latest_version: 33816613
+        state: available
+      update_available: true
+      state: 'on'
+    light.sovrum:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      friendly_name: Sovrum
+      supported_features: 44
+      color:
+        h: 35
+        hue: 35
+        s: 71
+        saturation: 71
+        x: 0.4247
+        y: 0.3995
+      state: 'off'
+    light.garderob:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      friendly_name: Garderob
+      supported_features: 44
+      color:
+        h: 41
+        hue: 41
+        s: 47
+        saturation: 47
+        x: 0.3766
+        y: 0.3743
+      state: 'off'
+  icon: mdi:ceiling-light-multiple-outline
+  metadata: {}
+- id: '1734182406731'
+  name: Allt släckt
+  entities:
+    light.alla_lampor:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6666
+      min_mireds: 150
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - candle
+      - channel_change
+      - colorloop
+      - finish_effect
+      - fireplace
+      - okay
+      - stop_colorloop
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.lampor_badrum
+      - light.garderob
+      - light.hall
+      - light.kontor_tak
+      - light.kok
+      - light.sovrum
+      - light.vardagsrum
+      - light.sanglampor
+      - light.julstjarna
+      icon: mdi:lightbulb-group
+      friendly_name: Alla lampor
+      supported_features: 44
+      state: 'off'
+    switch.julstjarna_sovrum:
+      linkquality: 255
+      power_on_behavior: previous
+      update:
+        installed_version: 33816580
+        latest_version: 33816613
+        progress: 9.94
+        remaining: 831
+        state: updating
+      update_available: false
+      friendly_name: Julstjärna Sovrum
+      state: 'off'
+    switch.julstjarnor_vardagsrum:
+      current: false
+      current_consumption: 0
+      voltage: 0
+      raw_state: false
+      device_class: switch
+      icon: mdi:star
+      friendly_name: Julstjärnor vardagsrum
+      state: 'off'
+  icon: mdi:lightbulb-group-off-outline
+  metadata:
+    light.alla_lampor:
+      entity_only: true
+- id: '1734182485847'
+  name: Vardagsrum tänt
+  entities:
+    light.vardagsrum_lampa:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      friendly_name: Vardagsrum tak
+      supported_features: 0
+      state: 'on'
+    light.slinga_vardagsrum:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6666
+      min_mireds: 150
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      friendly_name: Slinga - Vardagsrum
+      supported_features: 44
+      state: unavailable
+    switch.julstjarnor_vardagsrum:
+      current: true
+      current_consumption: 0.1
+      voltage: 0.1
+      raw_state: true
+      device_class: switch
+      icon: mdi:star
+      friendly_name: Julstjärnor vardagsrum
+      state: 'on'
+  icon: mdi:sofa
+  metadata:
+    light.vardagsrum_lampa:
+      entity_only: true
+    light.slinga_vardagsrum:
+      entity_only: true
+- id: '1734182520534'
+  name: Kök Tänt
+  entities:
+    light.kok:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - candle
+      - fireplace
+      - colorloop
+      - finish_effect
+      - stop_effect
+      - stop_hue_effect
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 5025
+      color_temp: 199
+      hs_color:
+      - 27.028
+      - 18.905
+      rgb_color:
+      - 255
+      - 229
+      - 207
+      xy_color:
+      - 0.37
+      - 0.35
+      color:
+        h: 46
+        hue: 46
+        s: 23
+        saturation: 23
+        x: 0.3445
+        y: 0.3512
+      friendly_name: Kök
+      supported_features: 44
+      state: 'on'
+  icon: mdi:countertop
+  metadata: {}

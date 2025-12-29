@@ -1,0 +1,6 @@
+# Example config/custom_sentences/en/responses.yaml
+language: "sv"
+responses:
+  intents:
+    HassTurnOn:
+      default: "Jag har slagit på {{ slots.name }}"

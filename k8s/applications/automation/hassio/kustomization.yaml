@@ -1,16 +1,47 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: home-assistant
-resources:
-- namespace.yaml
-- http-route.yaml
-- external-secret.yaml
-- serviceaccount.yaml
-- svc.yaml
-- statefulset.yaml
+
 configMapGenerator:
-- name: hass-configuration
-  files:
-  - configuration.yaml
+  - name: ha-core-config
+    files:
+      - config/configuration.yaml
+  - name: ha-seed-config
+    files:
+      - config/automations.yaml
+      - config/scripts.yaml
+      - config/scenes.yaml
+      - config/lovelace.yaml
+  - name: ha-packages-config
+    files:
+      - config/packages/jarvis.yaml
+      - config/packages/laundry_timer.yaml
+      - config/packages/notify.yaml
+      - config/packages/router_unifi.yaml
+      - config/packages/smart_ai.yaml
+      - config/packages/version_updates.yaml
+  - name: ha-speech-config
+    files:
+      - config/speech/already_done.yaml
+      - config/speech/daily_briefing.yaml
+      - config/speech/event_briefing.yaml
+      - config/speech/interjections.yaml
+      - config/speech/morning_briefing.yaml
+      - config/speech/morning_wakeup_report.yaml
+      - config/speech/sundown_briefing.yaml
+      - config/speech/welcome_briefing.yaml
+  - name: ha-custom-sentences
+    files:
+      - config/sv/media.yaml
+      - config/sv/responses.yaml
+
+resources:
+  - namespace.yaml
+  - http-route.yaml
+  - serviceaccount.yaml
+  - svc.yaml
+  - statefulset.yaml
+  - external-secret.yaml
+
 generatorOptions:
-  disableNameSuffixHash: false
+  disableNameSuffixHash: true

@@ -1,0 +1,19 @@
+# Example config/custom_sentences/en/media.yaml
+language: "sv"
+intents:
+  SetVolume:
+    data:
+      - sentences:
+          - "(set|change) {media_player} volym {volume} [percent]"
+          - "(set|change) [the] volymen för {media_player} till {volume} [percent]"
+lists:
+  media_player:
+    values:
+      - in: "Vardagsrum"
+        out: "media_player.vardagsrum"
+      - in: "Sovrum"
+        out: "media_player.sovrum"
+  volume:
+    range:
+      from: 0
+      to: 100
