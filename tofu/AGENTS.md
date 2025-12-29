@@ -1,15 +1,8 @@
 # OpenTofu Infrastructure - Domain Guidelines
 
 SCOPE: Infrastructure provisioning, VM management, and cluster bootstrapping
-INHERITS FROM: ../AGENTS.md
+INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: OpenTofu (Terraform fork), Proxmox API, Talos Linux, Cloud-init
-
-## INHERITANCE EXPLANATION
-
-This file inherits from root AGENTS.md, which means:
-- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
-- This file adds infrastructure-specific patterns
-- References to parent files are for additional details only
 
 ## DOMAIN CONTEXT
 

@@ -1,15 +1,8 @@
 # Kubernetes Infrastructure - Domain Guidelines
 
 SCOPE: Kubernetes manifests, operators, and GitOps patterns
-INHERITS FROM: ../AGENTS.md
+INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Longhorn, Proxmox CSI
-
-## INHERITANCE EXPLANATION
-
-This file inherits from root AGENTS.md, which means:
-- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
-- This file adds Kubernetes-specific patterns
-- References to parent files are for additional details only
 
 ## DOMAIN CONTEXT
 
@@ -18,7 +11,7 @@ Define and manage all Kubernetes resources for the homelab cluster, including ap
 
 Boundaries:
 - Handles: All Kubernetes manifests, Argo CD ApplicationSets, operator CRDs, storage classes, and network policies
-- Does NOT handle: VM provisioning, network infrastructure (see tofu/), container image building (see images/)
+- Does NOT handle: VM provisioning (see tofu/), container image building (see images/)
 - Integrates with: tofu/ (cluster bootstrapping), images/ (container images), website/ (documentation)
 
 Architecture:
@@ -155,28 +148,34 @@ Never use `property` field with Bitwarden Secrets Manager. Create separate Bitwa
 ## STORAGE CLASSES
 
 ### Proxmox CSI (Primary)
-Use `storageClassName: proxmox-csi` for all new workloads. Provides dynamic provisioning from Proxmox Nvme1 ZFS datastore. Supports volume expansion. PVCs are automatically backed up by Velero CSI snapshots (no annotations needed).
+Use `storageClassName: proxmox-csi` for all new workloads. Provides dynamic provisioning from Proxmox Nvme1 ZFS datastore. Supports volume expansion.
 
 ### Longhorn (Legacy)
 Use `storageClassName: longhorn` only for existing workloads requiring replicated storage across nodes. PVCs require backup labels: `recurring-job.longhorn.io/source: enabled` plus tier label (`recurring-job-group.longhorn.io/gfs=enabled` for critical data, `.../daily=enabled` for standard apps).
 
 ## BACKUP STRATEGY
 
+### Velero Backups (Kopia filesystem backups)
+Velero backs up all PVCs using Kopia filesystem backups (not CSI snapshots). Proxmox CSI driver does not support CSI snapshots due to experimental status and permission requirements.
+
+**Velero Schedules**:
+- `velero-daily`: Daily backups at 02:00, 14-day TTL
+- `velero-gfs`: Hourly backups for GFS tier, 14-day TTL
+- `velero-weekly`: Weekly backups on Sundays at 03:00, 28-day TTL
+
+**Excluded Namespaces**: `velero`, `kube-system`, `default`, `kiwix`
+
+**Key Configuration**: `defaultVolumesToFsBackup: true` for filesystem backup via Kopia
+
+**Exclude volumes from backup** with pod annotations:
+- `backup.velero.io/exclude-from-backup: "true"` (exclude entire pod)
+- `backup.velero.io/backup-volumes-excludes: "volume-name"` (exclude specific volumes)
+
 ### Longhorn Backups (legacy storage only)
 Apply backup tier labels to PVCs:
 - GFS (Grandfather-Father-Son): Critical databases and stateful apps with hourly/daily/weekly backups
 - Daily: Standard applications with daily backups retained 14 days
 - None: Caches, temp data, ephemeral storage (no labels)
-
-### Velero Backups (proxmox-csi storage)
-All PVCs using `proxmox-csi` are automatically backed up via Velero CSI snapshots. Velero schedules:
-- `velero-daily`: Daily backups at 02:00, 14-day TTL
-- `velero-gfs`: Hourly backups for GFS tier, 14-day TTL
-- `velero-weekly`: Weekly backups on Sundays at 03:00, 28-day TTL
-
-Exclude volumes from backup with pod annotations:
-- `backup.velero.io/exclude-from-backup: "true"` (exclude entire pod)
-- `backup.velero.io/backup-volumes-excludes: "volume-name"` (exclude specific volumes)
 
 ### CNPG Database Backups
 CloudNativePG databases use dual backup destinations:
@@ -216,11 +215,11 @@ Never create circular dependencies with ExternalSecrets for CNPG databases.
 
 ## REFERENCES
 
-For commit message format, see root AGENTS.md
+For commit message format, see /AGENTS.md
 
-For infrastructure provisioning (VMs, networking), see tofu/AGENTS.md
+For infrastructure provisioning (VMs, networking), see /tofu/AGENTS.md
 
-For container image building, see images/AGENTS.md
+For container image building, see /images/AGENTS.md
 
 ### Application-Specific References
 - AI applications: k8s/applications/ai/AGENTS.md

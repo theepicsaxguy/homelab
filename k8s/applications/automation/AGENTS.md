@@ -1,16 +1,8 @@
 # Automation Applications - Category Guidelines
 
 SCOPE: Home automation, IoT, and workflow automation applications
-INHERITS FROM: ../../AGENTS.md (and ../../../AGENTS.md)
+INHERITS FROM: /k8s/AGENTS.md
 TECHNOLOGIES: Home Assistant, Frigate, MQTT, Zigbee2MQTT, N8N, Hass.io
-
-## INHERITANCE EXPLANATION
-
-This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
-- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
-- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
-- This file adds automation-specific patterns
-- References to parent files are for additional details only
 
 ## CATEGORY CONTEXT
 
@@ -37,7 +29,7 @@ For general Kubernetes patterns, see k8s/AGENTS.md:
 Internal-only message broker for IoT communication. All automation apps communicate via MQTT topics. No external access required. TCP route with Cilium 1.18+ required for full protocol support.
 
 ### Zigbee2MQTT Pattern
-Zigbee coordinator runs in separate VM (not Kubernetes). No USB device passthrough in cluster. Zigbee2MQTT app in Kubernetes connects to coordinator over network, publishes to MQTT broker.
+Zigbee coordinator (USB device) runs in separate VM (not Kubernetes). Kubernetes Zigbee2MQTT app connects to coordinator over network interface only, publishes to MQTT broker.
 
 ### RTSP Stream Pattern
 Frigate ingests camera feeds via RTSP. RTSP credentials managed via ExternalSecrets. No public RTSP exposure.
@@ -136,177 +128,13 @@ N8N orchestrates cross-system workflows via MQTT and HTTP APIs. Uses CNPG Postgr
 - Storage: 1Gi PVC (Longhorn, daily backup tier)
 
 **Cilium TCP Listener Issue**:
-- Cilium <1.18 drops TCP listeners
-- Workaround: Use HTTPRoute until upgrade to 1.18+
-- Cilium 1.18+ resolves this issue
-
-### Zigbee2MQTT
-
-**Purpose**: Zigbee device coordinator and MQTT bridge.
-
-**Deployment**:
-- Deployment with single replica
-- PVC for configuration and state
-- USB device passthrough for Zigbee coordinator
-- Gateway API route for external access (optional)
-- ConfigMap for device configuration
-
-**Configuration**:
-- **ConfigMap**: Device configuration, groups, custom converters
-- **ZB30.js**: Custom JavaScript converter for Zha-30 devices
-- **MQTT Integration**: Publishes to MQTT broker
-
-**Resources**:
-- CPU: 1 core
-- Memory: 512Mi
-- Storage: 1Gi PVC (Longhorn, daily backup tier)
-- USB Device: `/dev/ttyUSB0` passthrough
-
-**External Secrets**: None required
-
-### N8N
-
-**Purpose**: Workflow automation and integration platform.
-
-**Deployment**:
-- StatefulSet with single replica
-- CNPG PostgreSQL database (2 instances)
-- PVC for N8N data
-- Gateway API route for external access
-- ExternalSecrets for database backups and OAuth2
-
-**Database Configuration**:
-- CNPG cluster with 2 instances
-- Storage: 10Gi (Longhorn, daily backup tier)
-- WAL Storage: 2Gi (Longhorn, daily backup tier)
-- Plugins: barman-cloud.cloudnative-pg.io for backups
-- Scheduled backups: Weekly to MinIO and Backblaze B2
-
-**External Secrets**:
-- `n8n-minio-credentials`: MinIO access keys
-- `n8n-b2-cnpg-credentials`: Backblaze B2 access keys (2 separate entries)
-
-**Resources**:
-- CPU: 2 cores
-- Memory: 2Gi
-- Storage: 10Gi PVC for N8N data (proxmox-csi recommended)
-
-**OAuth2**: Optional Authentik SSO integration
-
-### Hass.io
-
-**Purpose**: Home Assistant add-on manager for Hass.io platform.
-
-**Deployment**:
-- StatefulSet with single replica
-- PVC for Hass.io configuration
-- Gateway API route for external access
-- ConfigMap for Hass.io configuration
-
-**Configuration**:
-- ConfigMap for Hass.io settings
-- External access via Gateway API
-- Authentication via Hass.io platform
-
-**Resources**:
-- CPU: 2 cores
-- Memory: 2Gi
-- Storage: 5Gi PVC (Longhorn, daily backup tier)
-
-## INTEGRATION PATTERNS
-
-### Home Automation Ecosystem
-
-**Communication Flow**:
-1. **Zigbee2MQTT**: Discovers Zigbee devices, publishes to MQTT
-2. **MQTT**: Message broker for device communication
-3. **Home Assistant**: Subscribes to MQTT, processes automation logic
-4. **Frigate**: Ingests RTSP streams, publishes object detection to MQTT
-5. **N8N**: Orchestrates cross-system workflows via MQTT
-
-**MQTT Topics** (typical pattern):
-- `zigbee2mqtt/<device_id>` - Device state updates
-- `frigate/<camera>/object_detected` - AI detection events
-- `homeassistant/<entity>` - Entity state changes
-
-### Workflow Automation (N8N)
-
-**Integration Points**:
-- **MQTT**: Subscribe to device state changes
-- **Home Assistant API**: Trigger automations, update entities
-- **Frigate API**: Query detection events, configure cameras
-- **Webhooks**: External integrations via HTTP endpoints
-
-**Example Workflow**:
-- MQTT receives motion event from Frigate
-- N8N processes event, checks time of day
-- N8N triggers Home Assistant automation via API
-- Home Assistant executes automation (lights on, notification)
-
-## BACKUP STRATEGY
-
-### Critical Data (GFS Tier)
-
-**Home Assistant**: GFS backup tier for configuration and database
-
-**N8N**: Daily backup tier for workflow database and data
-
-### Standard Applications (Daily Tier)
-
-**MQTT, Zigbee2MQTT, Hass.io**: Daily backup tier for configuration
-
-**Frigate**: No backup tier for recordings (can be regenerated)
-- Configuration PVC: Daily backup tier
-- Recordings PVC: No backup (optional, large storage)
-
-### Non-Critical (No Backup)
-
-**Caches and temporary data**: No backup labels
-
-## TESTING
-
-### Automation Application Validation
-
-```bash
-# Build automation applications
-kustomize build --enable-helm k8s/applications/automation
-
-# Validate specific application
-kustomize build --enable-helm k8s/applications/automation/<app>
-
-# Check application pods
-kubectl get pods -n <namespace>
-
-# Check application logs
-kubectl logs -n <namespace> -l app=<app> -f
-
-# Verify MQTT connectivity
-kubectl exec -n mqtt -l app=mosquitto -- mosquitto_sub -h mqtt -t '#'
-
-# Verify Zigbee device discovery
-kubectl logs -n zigbee2mqtt -l app=zigbee2mqtt
-
-# Check Home Assistant automations
-kubectl exec -n home-assistant -l app=home-assistant -- ha --version
-```
-
-## OPERATIONAL PATTERNS
-
-### Cilium TCP Listener Issue
-
-**Problem**: Cilium <1.18 drops pure-TCP Gateway listeners
-**Symptom**: MQTT TCP route not working
-**Workaround**:
-- Use HTTPRoute for MQTT until Cilium upgrade
-- Remove workaround after upgrading to Cilium 1.18+
-
-**Fix**: Upgrade Cilium to 1.18 or later
+For details and workaround, see /k8s/infrastructure/network/AGENTS.md.
 
 ### Device Passthrough
 
-No USB device passthrough in Kubernetes. Zigbee2MQTT coordinator runs in separate VM (not in Kubernetes). Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
+No USB device passthrough in Kubernetes. Zigbee2MQTT coordinator (USB device) runs in separate VM. Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
 
-**Frigate Coral Accelerator**:
+**Frigate Coral Accelerator** (if applicable):
 - USB Coral device for AI inference (optional)
 - If used, passed through from host: `/dev/bus/usb`
 - Verify device availability on node

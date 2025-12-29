@@ -1,16 +1,8 @@
 # Infrastructure Controllers - Component Guidelines
 
 SCOPE: Cluster operators and controllers
-INHERITS FROM: ../AGENTS.md
+INHERITS FROM: /k8s/AGENTS.md
 TECHNOLOGIES: Argo CD, Velero, External Secrets, Cert Manager, CNPG, Crossplane, Kubechecks, Node Feature Discovery, GPU Operator
-
-## INHERITANCE EXPLANATION
-
-This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
-- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
-- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
-- This file adds controller-specific patterns
-- References to parent files are for additional details only
 
 ## COMPONENT CONTEXT
 
@@ -59,25 +51,14 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 
 ### Velero (Backup Controller)
 - **Purpose**: Cluster-wide backup and disaster recovery using Kopia filesystem backups
-- **Storage Locations**:
-  - **TrueNAS MinIO** (default): Local fast restores, daily backups, 14-day retention
-  - **Backblaze B2**: Offsite disaster recovery, weekly backups, 28-90 day retention
-- **Backup Strategy**:
-  - Daily backups at 02:00 to TrueNAS
-  - Weekly backups on Sunday 03:00 to Backblaze B2
-  - Hourly GFS backups for critical data
-  - Kopia data mover (not CSI snapshots)
-- **Excluded Namespaces**: `velero`, `kube-system`, `default`, `kiwix`
+- **Storage Locations**: See /k8s/AGENTS.md for complete backup strategy
 - **Key Configuration**: `defaultVolumesToFsBackup: true` for filesystem backup via Kopia
-- **External Secrets**: B2 credentials via separate Bitwarden entries (access-key-id, secret-access-key)
+- **External Secrets**: B2 credentials via separate Bitwarden entries (see /k8s/AGENTS.md for pattern)
 
 ### External Secrets Operator
 - **Purpose**: Synchronize secrets from Bitwarden Secrets Manager to Kubernetes
 - **Secret Store**: Bitwarden Secrets Manager via secure API
-- **Key Requirements**:
-  - Separate Bitwarden entry for each secret value (no `property` field)
-  - `engineVersion: v2` under `spec.target.template`
-  - Template indentation under `spec.target.template:`, not `spec:`
+- **Key Requirements**: See /k8s/AGENTS.md for Bitwarden and ExternalSecrets patterns
 - **Integration**: Applications reference ExternalSecret resources instead of hardcoded secrets
 
 ### Cert Manager
@@ -87,19 +68,19 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
   - **Internal CA Issuer**: For internal services
 - **Network Policy**: Restricts egress for security
 - **Certificate Requests**: Auto-renewal via CRDs
-- **External Secrets**: Cloudflare API token via Bitwarden
+- **External Secrets**: Cloudflare API token via Bitwarden (see /k8s/AGENTS.md for pattern)
 
 ### CloudNativePG Database Operator
 - **Purpose**: PostgreSQL cluster management and backup automation
-- **Location**: See k8s/infrastructure/database/AGENTS.md for complete database patterns
+- **Location**: See /k8s/infrastructure/database/AGENTS.md for complete database patterns
 - **Key Features**: High availability clusters, automatic failover, scheduled backups
-- **Credentials**: Auto-generated `<cluster-name>-app` secret (do not use ExternalSecrets)
+- **Credentials**: Auto-generated `<cluster-name>-app` secret (do not use ExternalSecrets, see /k8s/AGENTS.md for pattern)
 
 ### Crossplane
 - **Purpose**: Infrastructure as Code for cloud provider resources (DNS records)
 - **Provider**: Cloudflare provider for DNS management
 - **Resources**: DNS records managed via CRDs
-- **External Secrets**: Cloudflare API token via Bitwarden
+- **External Secrets**: Cloudflare API token via Bitwarden (see /k8s/AGENTS.md for pattern)
 - **Integration**: Automated DNS record creation for services
 
 ### NVIDIA GPU Operator
@@ -263,21 +244,21 @@ Never use wildcard DNS certificates for production. Issue specific certificates 
 ## KNOWN ISSUES
 
 ### Cilium 1.17.x TCP Listener Issue
-Cilium versions prior to 1.18 drop pure-TCP Gateway listeners. Affects MQTT service in applications/automation/mqtt/service.yaml. Upgrade Cilium to 1.18+ and remove HTTPRoute workaround.
+Cilium versions prior to 1.18 drop pure-TCP Gateway listeners. For details and workaround, see /k8s/infrastructure/network/AGENTS.md.
 
 ### Velero CSI Snapshot Limitations
-Proxmox CSI driver does not support CSI snapshots due to experimental status and permission requirements. Use Kopia filesystem backups instead.
+Proxmox CSI driver does not support CSI snapshots due to experimental status and permission requirements. For complete backup strategy, see /k8s/AGENTS.md.
 
 ## REFERENCES
 
-For Kubernetes domain patterns, see k8s/AGENTS.md
+For Kubernetes domain patterns, see /k8s/AGENTS.md
 
-For certificate management patterns, see k8s/infrastructure/network/AGENTS.md
+For certificate management patterns, see /k8s/infrastructure/network/AGENTS.md
 
-For storage patterns, see k8s/infrastructure/storage/AGENTS.md
+For storage patterns, see /k8s/infrastructure/storage/AGENTS.md
 
-For Velero backup strategy, see k8s/infrastructure/controllers/velero/BACKUP_STRATEGY.md
+For complete backup strategy, see /k8s/AGENTS.md
 
-For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
+For CNPG database patterns, see /k8s/infrastructure/database/AGENTS.md
 
-For commit message format, see root AGENTS.md
+For commit message format, see /AGENTS.md

@@ -1,15 +1,7 @@
 # Media Applications - Category Guidelines
 
 SCOPE: Media management, streaming, and content discovery applications
-INHERITS FROM: ../../AGENTS.md (and ../../../AGENTS.md)
-
-## INHERITANCE EXPLANATION
-
-This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
-- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
-- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
-- This file adds media-specific patterns
-- References to parent files are for additional details only
+INHERITS FROM: /k8s/AGENTS.md
 TECHNOLOGIES: Jellyfin, Immich, arr-stack (Sonarr, Radarr, Prowlarr, Bazarr), Audiobookshelf, Audiobookrequest, Sabnzbd, WhisperASR
 
 ## CATEGORY CONTEXT

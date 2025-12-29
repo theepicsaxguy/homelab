@@ -40,7 +40,6 @@ k8s/.env
 .env
 GEMINI.md
 .aider*
-config
 
 # Python
 __pycache__/
