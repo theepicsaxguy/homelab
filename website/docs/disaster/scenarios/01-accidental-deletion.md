@@ -74,6 +74,21 @@ velero backup get --storage-location backblaze-b2 --selector backup-type=weekly-
 
 Select the appropriate restoration method based on what was deleted.
 
+**Storage Class Considerations**
+
+If restoring to different storage infrastructure than the original backup (e.g., from `longhorn` to `proxmox-csi`), you need to configure storage class mapping. See [Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md) for complete instructions.
+
+Quick setup:
+```bash
+# Create storage class mapping ConfigMap
+kubectl apply -f /path/to/homelab/k8s/infrastructure/controllers/velero/storage-class-mapping.yaml
+
+# Verify mapping exists
+kubectl get configmap -n velero change-storage-class-config
+```
+
+Once configured, all restores automatically apply the storage class transformation.
+
 #### Option A: Restore Entire Namespace
 
 Use this when a complete namespace was deleted or all resources in a namespace need restoration.
@@ -166,8 +181,10 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi  # Use your cluster's default storage class
 ```
+
+**Note**: If restoring to a different storage class than the original backup, see [Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md).
 
 Apply the recovery:
 
