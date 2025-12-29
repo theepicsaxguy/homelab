@@ -370,6 +370,9 @@ pre-commit run --files <file-path>      # Run on specific files
 
 ## Anti-Patterns
 
+### Never Create Summary Documentation
+Never create summary documents, reports, or writeups about work performed. Agents should complete tasks directly without generating additional documentation files explaining what was done.
+
 ### Never Commit Secrets
 Never commit secrets, credentials, or API keys to Git. Use External Secrets Operator or similar mechanisms.
 
