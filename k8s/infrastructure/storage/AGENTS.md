@@ -4,6 +4,14 @@ SCOPE: Cluster storage providers and volume management
 INHERITS FROM: ../AGENTS.md
 TECHNOLOGIES: Proxmox CSI Driver, Longhorn, StorageClasses, PVCs, Volume Snapshots
 
+## INHERITANCE EXPLANATION
+
+This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
+- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds storage-specific patterns
+- References to parent files are for additional details only
+
 ## COMPONENT CONTEXT
 
 Purpose:

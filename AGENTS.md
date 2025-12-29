@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Self-Healing Rule
+
+**If you need to look up information not in the closest AGENTS.md, that file is incomplete.**
+
+Action: Create or update the appropriate AGENTS.md file with missing context.
+
+This prevents context fragmentation and ensures every file is self-contained for its scope.
+
 ## Repository Overview
 
 GitOps-managed homelab built on Kubernetes (Talos Linux) with Argo CD for continuous deployment. Infrastructure is provisioned with OpenTofu, and all Kubernetes manifests use Kustomize.
@@ -49,6 +57,97 @@ No automated test suite exists for this repository. Validate changes by:
 - Running `kustomize build` to ensure manifests compile
 - Running `npm run typecheck` and `npm run lint:all` for website changes
 - Running `tofu fmt` and `tofu validate` for infrastructure changes
+
+## Operational Rules
+
+### Verify, Don't Guess
+Never guess resource names, connection strings, or secret keys. Before writing a reference to a resource (like a Secret, Service, or URL) in a configuration file, query the active environment to confirm the exact name and existence:
+
+```bash
+kubectl get secret <name> -n <namespace>
+kubectl get service <name> -n <namespace>
+```
+
+If a command fails due to a configuration error (e.g., `CreateContainerConfigError`), do not simply retry or change the name to what you think it should be. Inspect the actual failing resource:
+
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+
+Read the specific error message to identify the missing dependency.
+
+### Deprecation & Schema Compliance
+Treat deprecation warnings as critical errors. If a tool (like CNPG, Helm, or kubectl) warns that a feature is deprecated, stop immediately. Do not attempt to use the deprecated field. Search the official documentation for the specific migration path and implement the modern standard.
+
+Never hallucinate YAML fields. If the API server rejects a manifest with "field not declared in schema," do not guess variations of the spelling. Use `kubectl explain <resource>.<field>` or fetch the official CRD documentation to validate the schema before attempting a fix.
+
+### State Verification vs. Assumption
+`kubectl apply` ≠ "success." Applying a manifest only validates syntax, not functionality. After applying a change, actively check the status of the resource to confirm it has reconciled successfully:
+
+```bash
+kubectl get <resource> <name> -n <namespace>
+kubectl describe <resource> <name> -n <namespace>
+```
+
+When migrating between systems (e.g., between database operators, or upgrading operators), explicitly identify which resources belong to which system. Do not look at an existing "Running" pod and assume it is the new deployment. Check labels, age, and controller references to distinguish legacy infrastructure from new infrastructure:
+
+```bash
+kubectl get pod <pod-name> -n <namespace> -o yaml | grep -E 'ownerReferences|labels|creationTimestamp'
+```
+
+### External Libraries Requirement
+When adding, updating, or referencing an external library (package, SDK, or third-party API client), you MUST use MCP Context7 and DeepWiki tools to fetch authoritative, up-to-date documentation and code examples before making changes.
+
+Record provenance: Include which MCP calls and resolved library IDs in the PR description so reviewers can verify sources.
+
+**Context7 (resolver + docs - `code` mode):**
+- **Resolve library:** Use MCP resolver to get a Context7-compatible library ID before fetching API docs.
+- **Fetch API references:** With resolved ID, call MCP docs endpoint in `code` mode to retrieve API references, signatures, and code examples.
+
+**DeepWiki/OpenWiki (docs - `info` mode):**
+- **Fetch conceptual guides:** Use MCP docs endpoint in `info` mode or query DeepWiki for narrative guides, migration notes, and best-practices that explain design intent and upgrade paths.
+
+**Example sequence:**
+1. Call `mcp_io_github_ups_resolve-library-id` with `libraryName` to get Context7-compatible ID
+2. Call `mcp_io_github_ups_get-library-docs` with `context7CompatibleLibraryID` and `mode=code` for API examples
+3. Call `mcp_io_github_ups_get-library-docs` with `context7CompatibleLibraryID` and `mode=info` for conceptual guidance
+4. Paste resolved ID and docs page URLs into PR description as provenance
+
+### Destructive Action Protocol
+Never delete a Job, Pod, or PVC to "fix" a configuration error unless you have proof via logs that the resource is in an unrecoverable state or holding stale configuration.
+
+**Required evidence before deletion:**
+```bash
+# Check Pod logs
+kubectl logs <pod-name> -n <namespace>
+
+# Check Pod events and configuration
+kubectl describe pod <pod-name> -n <namespace>
+
+# Check Job status (if applicable)
+kubectl describe job <job-name> -n <namespace>
+```
+
+Blindly deleting resources masks the root cause. If a resource is failing, identify why it is failing first. Common non-destructive fixes:
+- Update the manifest and re-apply (for Deployments, StatefulSets)
+- Delete and recreate only ConfigMaps or Secrets that have changed
+- Use `kubectl rollout restart` for Deployments/StatefulSets when only env vars or mounts changed
+
+### Resource Identification & Migration
+When migrating infrastructure (e.g., between database operators), use labels and metadata to distinguish resources:
+
+```bash
+# Check resource ownership
+kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.ownerReferences}'
+
+# Check resource age
+kubectl get pod <pod-name> -n <namespace> -o jsonpath='{.metadata.creationTimestamp}'
+
+# Check resource labels
+kubectl get pod <pod-name> -n <namespace> --show-labels
+```
+
+Do not assume a "Running" pod belongs to the new system without verifying its controller reference and creation timestamp.
 
 ## Code Style Guidelines
 

@@ -1,7 +1,15 @@
 # Web Applications - Category Guidelines
 
 SCOPE: Web-based productivity and utility applications
-INHERITS FROM: ../../AGENTS.md
+INHERITS FROM: ../../AGENTS.md (and ../../../AGENTS.md)
+
+## INHERITANCE EXPLANATION
+
+This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
+- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds web application-specific patterns
+- References to parent files are for additional details only
 TECHNOLOGIES: BabyBuddy, Pinepods, HeadlessX, Kiwix, Pedrobot
 
 ## CATEGORY CONTEXT

@@ -4,6 +4,13 @@ SCOPE: Docusaurus documentation site and build system
 INHERITS FROM: ../AGENTS.md
 TECHNOLOGIES: Docusaurus 3.9.2, TypeScript 5.9, React 19, Node.js 20.18+, npm 10.0+
 
+## INHERITANCE EXPLANATION
+
+This file inherits from root AGENTS.md, which means:
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds website-specific patterns
+- References to parent files are for additional details only
+
 ## DOMAIN CONTEXT
 
 Purpose:

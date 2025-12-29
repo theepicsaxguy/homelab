@@ -1,8 +1,16 @@
 # Automation Applications - Category Guidelines
 
 SCOPE: Home automation, IoT, and workflow automation applications
-INHERITS FROM: ../../AGENTS.md
+INHERITS FROM: ../../AGENTS.md (and ../../../AGENTS.md)
 TECHNOLOGIES: Home Assistant, Frigate, MQTT, Zigbee2MQTT, N8N, Hass.io
+
+## INHERITANCE EXPLANATION
+
+This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
+- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds automation-specific patterns
+- References to parent files are for additional details only
 
 ## CATEGORY CONTEXT
 
@@ -146,7 +154,6 @@ N8N orchestrates cross-system workflows via MQTT and HTTP APIs. Uses CNPG Postgr
 **Configuration**:
 - **ConfigMap**: Device configuration, groups, custom converters
 - **ZB30.js**: Custom JavaScript converter for Zha-30 devices
-- **USB Device**: Passed through from host (`/dev/ttyUSB0`)
 - **MQTT Integration**: Publishes to MQTT broker
 
 **Resources**:
@@ -297,7 +304,7 @@ kubectl exec -n home-assistant -l app=home-assistant -- ha --version
 
 ### Device Passthrough
 
-**No USB device passthrough in Kubernetes**. Zigbee2MQTT coordinator runs in separate VM. Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
+No USB device passthrough in Kubernetes. Zigbee2MQTT coordinator runs in separate VM (not in Kubernetes). Kubernetes Zigbee2MQTT application connects to coordinator over network interface only.
 
 **Frigate Coral Accelerator**:
 - USB Coral device for AI inference (optional)

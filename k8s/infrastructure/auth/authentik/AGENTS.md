@@ -3,6 +3,14 @@
 SCOPE: Authentik identity provider (SSO) and authentication flows
 INHERITS FROM: ../AGENTS.md (and ../../AGENTS.md, k8s/AGENTS.md)
 
+## INHERITANCE EXPLANATION
+
+This file inherits from k8s/AGENTS.md and root AGENTS.md, which means:
+- General Kubernetes patterns from k8s/AGENTS.md already apply (storage, ExternalSecrets, GitOps)
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds Authentik-specific patterns (blueprints, SSO flows)
+- References to parent files are for additional details only
+
 ## COMPONENT CONTEXT
 
 Purpose:

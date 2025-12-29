@@ -4,6 +4,13 @@ SCOPE: Kubernetes manifests, operators, and GitOps patterns
 INHERITS FROM: ../AGENTS.md
 TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Longhorn, Proxmox CSI
 
+## INHERITANCE EXPLANATION
+
+This file inherits from root AGENTS.md, which means:
+- Universal conventions from root AGENTS.md already apply (commits, PRs, documentation style)
+- This file adds Kubernetes-specific patterns
+- References to parent files are for additional details only
+
 ## DOMAIN CONTEXT
 
 Purpose:
