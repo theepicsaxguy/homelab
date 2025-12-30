@@ -9,7 +9,7 @@ resources:
 helmCharts:
   - name: descheduler
     repo: https://kubernetes-sigs.github.io/descheduler
-    version: 0.29.0
+    version: 0.34.0
     releaseName: descheduler
     namespace: kube-system
     valuesFile: values.yaml
