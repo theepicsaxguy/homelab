@@ -1,5 +1,23 @@
 # Changelog
 
+## 5.0.0 (2025-12-30)
+
+## What's Changed
+* Chore(k8s)--remove-OpenHands-application-resources-and-documentation by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1940
+* chore(deps): update helm release argo-cd to v9.2.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1941
+* Feat(k8s)--update-Velero-schedules-and-configurations-for-improved-backup-handling by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1943
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1944
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.12.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1945
+* chore(deps): update helm release velero to v11.3.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1946
+* Docs(website)--add-documentation-writing-standards-and-guidelines by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1947
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2025.12.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1948
+* chore(deps): update helm release kube-prometheus-stack to v80.8.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1949
+* feat(storage)!: migrate from Longhorn to Proxmox CSI and remove Crossplanetl  by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1950
+* chore(deps): update helm release descheduler to v0.34.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1951
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v4.1.0...v5.0.0
+
 ## 4.1.0 (2025-12-28)
 
 ## What's Changed
