@@ -56,7 +56,6 @@ module "talos" {
 
   external_api_endpoint = var.external_api_endpoint
 
-  # CHANGE: Replace the hardcoded cluster block with variables
   cluster = {
     name               = var.cluster_name
     endpoint           = coalesce(var.external_api_endpoint, "api.${var.cluster_domain}")
@@ -67,7 +66,6 @@ module "talos" {
     kubernetes_version = var.versions.kubernetes
   }
 
-  # Pass network config to the module
   network = var.network
 
   # Pass OIDC config to the module
@@ -89,4 +87,15 @@ module "lb" {
   network           = var.network
   control_plane_ips = [for name, n in var.nodes_config : n.ip if n.machine_type == "controlplane"]
   lb_nodes          = var.lb_nodes
+}
+
+module "bootstrap_kubernetes" {
+  source = "./bootstrap/kubernetes"
+
+  cert_manager_version     = var.bootstrap_cert_manager_version
+  external_secrets_version = var.bootstrap_external_secrets_version
+  argocd_version           = var.bootstrap_argocd_version
+
+  bitwarden_token    = var.bitwarden_token
+  git_repository_url = var.git_repository_url
 }

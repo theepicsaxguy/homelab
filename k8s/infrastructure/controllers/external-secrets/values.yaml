@@ -1,7 +1,7 @@
 bitwarden-sdk-server:
   enabled: true
 # -- If set, install and upgrade CRDs through helm chart.
-installCRDs: false
+installCRDs: true
 
 # -- If true external secrets will use recommended kubernetes
 # annotations as prometheus metric labels.

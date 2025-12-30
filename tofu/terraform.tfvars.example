@@ -20,3 +20,9 @@ proxmox = {
 auth_pass = "choose-a-strong-secret-here"
 
 lb_store = "rpool2"
+
+# Kubernetes bootstrap secrets
+bitwarden_token = ""  # Bitwarden Secrets Manager API token for External Secrets Operator
+
+# Git repository URL for ArgoCD (customize for forks)
+# git_repository_url = "https://github.com/yourusername/homelab.git"

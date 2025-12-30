@@ -581,10 +581,9 @@ cat > docs/incidents/host-failure-$(date +%Y%m%d).md <<EOF
 
 ## Recovery Steps
 1. Fresh Proxmox installation
-2. OpenTofu apply from B2 state
-3. Talos cluster bootstrap
-4. ArgoCD deployment
-5. Velero restore from B2
+2. OpenTofu apply from B2 state (includes Talos cluster bootstrap and ArgoCD deployment)
+3. Verify ArgoCD ApplicationSets synced
+4. Velero restore from B2
 
 ## Lessons Learned
 <what went well, what could be improved>

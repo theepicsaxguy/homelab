@@ -45,6 +45,5 @@ variable "defaults_controlplane" {
     cpu           = 6
     cpu_units     = 1024
     ram_dedicated = 8192
-    disks         = {}
   }
 }

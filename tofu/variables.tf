@@ -235,3 +235,34 @@ variable "bootstrap_volumes" {
   }))
   default = {}
 }
+
+variable "bootstrap_cert_manager_version" {
+  description = "Cert Manager Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "v1.19.2"
+}
+
+variable "bootstrap_external_secrets_version" {
+  description = "External Secrets Operator Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "1.2.0"
+}
+
+variable "bootstrap_argocd_version" {
+  description = "Argo CD Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "9.2.3"
+}
+
+variable "bitwarden_token" {
+  description = "Bitwarden Secrets Manager API token for External Secrets Operator"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "git_repository_url" {
+  description = "Git repository URL for ArgoCD ApplicationSets (customize for forks)"
+  type        = string
+  default     = "https://github.com/theepicsaxguy/homelab.git"
+}
