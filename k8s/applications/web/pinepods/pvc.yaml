@@ -5,7 +5,7 @@ metadata:
   namespace: pinepods
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 30Gi

@@ -393,6 +393,47 @@ velero backup describe <backup-name> --details | grep -A 5 "Pod Volume"
 - Pod started before data restore completed
 - Volume mount path mismatch
 
+### Manually Provisioned PVs Not Restored
+
+**Symptoms**: Pods stuck in Pending with "pod has unbound immediate PersistentVolumeClaims" error, PVC shows "no storage class is set"
+
+**Diagnosis**:
+```bash
+# Check for PVCs without storageClassName
+kubectl get pvc -n <app>-test -o custom-columns=NAME:.metadata.name,STORAGECLASS:.spec.storageClassName | grep '""'
+
+# Describe the pending PVC
+kubectl describe pvc -n <app>-test <pvc-name>
+# Look for: "no storage class is set"
+```
+
+**Cause**: PVC has `storageClassName: ""` (manually provisioned PV like NFS mounts). Velero restores PVCs but not manually provisioned PVs - those must be reapplied from your git repository.
+
+**Resolution**:
+```bash
+# 1. Check if PV/PVC are defined in your git repository
+find k8s/ -name "*.yaml" -exec grep -l "<pvc-name>" {} \;
+
+# 2. Reapply the PV and PVC definitions
+kubectl apply -f k8s/path/to/pv.yaml
+kubectl apply -f k8s/path/to/pvc.yaml
+
+# 3. If PV is in Released state, clear the claimRef
+kubectl patch pv <pv-name> -p '{"spec":{"claimRef":null}}'
+
+# 4. Verify PVC binds
+kubectl get pvc -n <app>-test <pvc-name>
+```
+
+**Example**: NFS volume `media-share` in media namespace requires manual PV/PVC application:
+```bash
+kubectl apply -f k8s/applications/media/nfs-pv.yaml
+kubectl apply -f k8s/applications/media/media-share-pvc.yaml
+kubectl patch pv media-share -p '{"spec":{"claimRef":null}}'
+```
+
+**Prevention**: Document all manually provisioned PVs and include them in your disaster recovery runbook.
+
 ## Best Practices
 
 1. **Test Regularly**: Monthly for critical apps, quarterly for full cluster

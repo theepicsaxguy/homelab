@@ -2,7 +2,7 @@
 
 SCOPE: Kubernetes manifests, operators, and GitOps patterns
 INHERITS FROM: /AGENTS.md
-TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Longhorn, Proxmox CSI
+TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Proxmox CSI
 
 ## DOMAIN CONTEXT
 
@@ -56,7 +56,7 @@ kustomize build k8s/applications | kubeval --strict --ignore-missing-schemas
 ## PATTERNS
 
 ### Storage Pattern
-New workloads use `proxmox-csi` StorageClass for dynamic provisioning from Proxmox Nvme1 ZFS datastore. Legacy workloads use `longhorn` StorageClass with replicated volumes. Always specify `storageClassName` in PVCs.
+New workloads use `proxmox-csi` StorageClass for dynamic provisioning from Proxmox Nvme1 ZFS datastore. Always specify `storageClassName` in PVCs.
 
 ### Secret Management Pattern
 External Secrets Operator syncs secrets from Bitwarden Secrets Manager into Kubernetes. Create separate Bitwarden entries for each secret value (no `property` field). Use `engineVersion: v2` under `spec.target.template` and indent templates correctly under `spec.target.template:`, not `spec:`.
@@ -65,7 +65,7 @@ External Secrets Operator syncs secrets from Bitwarden Secrets Manager into Kube
 All changes go through Git. Argo CD auto-syncs manifests from `k8s/` to cluster. Never apply changes directly via `kubectl apply`. Validate manifests with `kustomize build` before committing.
 
 ### Operator Pattern
-Operators manage complex stateful workloads (CNPG for databases, Longhorn for storage, Velero for backups). Define operator CRDs in manifests. Let operators reconcile state automatically. Query operator status before making changes.
+Operators manage complex stateful workloads (CNPG for databases, Velero for backups). Define operator CRDs in manifests. Let operators reconcile state automatically. Query operator status before making changes.
 
 ## TESTING
 
@@ -108,13 +108,13 @@ Deployment:
 
 ### Infrastructure Components
 - `auth/`: Authentication services (Authentik SSO)
-- `controllers/`: Cluster operators (Argo CD, Velero, Cert Manager, External Secrets, CNPG, Crossplane, NVIDIA GPU, Node Feature Discovery)
+- `controllers/`: Cluster operators (Argo CD, Velero, Cert Manager, External Secrets, CNPG, NVIDIA GPU, Node Feature Discovery)
 - `crd/`: Custom Resource Definitions for operators
 - `database/`: Database operators (CloudNativePG)
 - `deployment/`: Deployment utilities (Kubechecks)
 - `monitoring/`: Monitoring stack (Hubble)
 - `network/`: Network policies and CNI (Cilium), CoreDNS, Gateway API, Cloudflared
-- `storage/`: Storage providers (Longhorn, Proxmox CSI)
+- `storage/`: Storage providers (Proxmox CSI)
 
 ### Application Categories
 - `ai/`: AI/ML applications (see k8s/applications/ai/AGENTS.md for details)
@@ -135,23 +135,35 @@ Never delete resources (Pods, PVCs, Jobs) without evidence from logs and events.
 
 Never guess resource names or secret keys. Query the cluster to verify: `kubectl get secret <name> -n <namespace>`, `kubectl get service <name> -n <namespace>`.
 
+Always use `kubectl describe` to inspect resource status, events, and conditions—it's safe and non-destructive.
+
+Always use `kubectl explain` to understand resource schemas and field meanings—never guess YAML structure.
+
+Never use dangerous kubectl flags:
+- `--force` bypasses safety checks and can cause data loss
+- `--grace-period=0` terminates pods immediately without graceful shutdown, risking data corruption
+- `--ignore-not-found` masks errors by silently ignoring missing resources
+
+These flags hide problems instead of fixing them. Find and fix the root cause instead.
+
 Never modify CRD definitions without understanding operator compatibility. Fetch official CRD documentation before making changes.
 
 Never use `latest` tags for container images. Pin to specific versions for reproducibility.
 
-Never skip backup configuration. PVCs using `longhorn` require backup labels. PVCs using `proxmox-csi` are automatically backed up by Velero.
+Never skip backup configuration for stateful workloads. Proxmox CSI PVCs are automatically backed up by Velero.
 
 Never create circular dependencies with ExternalSecrets for CNPG databases. Let CNPG auto-generate credentials (`<cluster-name>-app` secret).
 
 Never use `property` field with Bitwarden Secrets Manager. Create separate Bitwarden entries for each secret value.
 
+Never use legacy barman approach for CNPG backups. Always use the barman plugin (`type: barmanObjectStore`) integrated with CNPG.
+
+After making changes, verify relevant documentation doesn't contain outdated information. Update or flag stale docs.
+
 ## STORAGE CLASSES
 
 ### Proxmox CSI (Primary)
-Use `storageClassName: proxmox-csi` for all new workloads. Provides dynamic provisioning from Proxmox Nvme1 ZFS datastore. Supports volume expansion.
-
-### Longhorn (Legacy)
-Use `storageClassName: longhorn` only for existing workloads requiring replicated storage across nodes. PVCs require backup labels: `recurring-job.longhorn.io/source: enabled` plus tier label (`recurring-job-group.longhorn.io/gfs=enabled` for critical data, `.../daily=enabled` for standard apps).
+Use `storageClassName: proxmox-csi` for all workloads. Provides dynamic provisioning from Proxmox Nvme1 ZFS datastore. Supports volume expansion. Automatically backed up by Velero.
 
 ## BACKUP STRATEGY
 
@@ -171,11 +183,9 @@ Velero backs up all PVCs using Kopia filesystem backups (not CSI snapshots). Pro
 - `backup.velero.io/exclude-from-backup: "true"` (exclude entire pod)
 - `backup.velero.io/backup-volumes-excludes: "volume-name"` (exclude specific volumes)
 
-### Longhorn Backups (legacy storage only)
-Apply backup tier labels to PVCs:
-- GFS (Grandfather-Father-Son): Critical databases and stateful apps with hourly/daily/weekly backups
-- Daily: Standard applications with daily backups retained 14 days
-- None: Caches, temp data, ephemeral storage (no labels)
+### Longhorn Backups (Removed)
+
+Longhorn storage has been deprecated and removed. All workloads now use Proxmox CSI with Velero backups. See breaking changes documentation for migration details.
 
 ### CNPG Database Backups
 CloudNativePG databases use dual backup destinations:
@@ -191,11 +201,15 @@ Omit `bootstrap.initdb.secret` from Cluster manifests. CNPG automatically create
 
 ### CNPG Backup Configuration
 All CNPG clusters require:
+- Use the barman plugin for backups (not the legacy barman object storage approach)
 - Two ObjectStore resources: One for local MinIO, one for Backblaze B2
 - ExternalSecret for B2 credentials (separate Bitwarden entries for access-key-id and secret-access-key)
-- Cluster plugin configuration for WAL archiving to B2
+- Cluster plugin configuration for WAL archiving to B2 using the barman plugin
 - ScheduledBackup resource (weekly to B2 via plugin architecture)
 - ExternalClusters definitions for both MinIO and B2 recovery paths
+
+### CNPG Barman Plugin Pattern
+Always use the barman plugin architecture (`type: barmanObjectStore`) for CNPG backups. Never use the legacy barman standalone deployment approach. The plugin is integrated into CNPG and managed entirely through Cluster and Backup CRDs.
 
 ## CRITICAL BOUNDARIES
 

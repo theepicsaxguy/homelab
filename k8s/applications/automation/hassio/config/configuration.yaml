@@ -1,9 +1,6 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
-# Include secrets for use in other configurations
-secrets: !include secrets.yaml
-
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
@@ -20,26 +17,12 @@ http:
     - "172.16.0.0/12"
     - "192.168.0.0/16"
 
-auth_header:
-  username_header: X-ak-hass-user
-  debug: true
-
-openid:
-  client_id: !secret ha_oidc_client_id
-  client_secret: !secret ha_oidc_client_secret
-  configure_url: "https://sso.peekoff.com/application/o/home-assistant/.well-known/openid-configuration"
-  username_field: preferred_username
-  scope: "openid profile email"
-  block_login: false
-  openid_text: "Login with OpenID / OAuth2"
-
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
 
 wake_on_lan:
-swedish_calendar:
 
 
 

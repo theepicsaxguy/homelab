@@ -1,0 +1,32 @@
+descheduler:
+  image:
+    repository: registry.k8s.io/descheduler/descheduler
+    tag: v0.34.0
+  command:
+    - /usr/local/bin/descheduler
+  args:
+    - --policy-config-file=/policy-dir/policy.yaml
+    - --v=3
+  kubernetesClusterDomain: "cluster.local"
+  leaderElection:
+    enabled: true
+    renewDeadline: 2s
+    retryPeriod: 1s
+    leaseDuration: 3s
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10258"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  priorityClassName: system-cluster-critical
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534

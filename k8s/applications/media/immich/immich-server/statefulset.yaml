@@ -17,12 +17,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: library
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/gfs: enabled
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 50Gi

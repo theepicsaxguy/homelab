@@ -12,12 +12,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: openwebui-data
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 10Gi

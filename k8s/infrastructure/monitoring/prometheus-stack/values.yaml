@@ -1,9 +1,6 @@
 grafana:
   # OIDC Configuration for Authentik
-  persistence:
-    labels:
-      recurring-job.longhorn.io/source: enabled
-      recurring-job-group.longhorn.io/daily: enabled
+  persistence: {}
   grafana.ini:
     auth.generic_oauth:
       enabled: true
@@ -57,6 +54,13 @@ prometheusOperator:
 prometheus:
   prometheusSpec:
     replicas: 1
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            prometheus: k8s
     resources:
       requests:
         cpu: 500m
@@ -71,9 +75,16 @@ prometheus:
 alertmanager:
   alertmanagerSpec:
     replicas: 1
-  podDisruptionBudget:
-    enabled: false
-    minAvailable: 1
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: alertmanager
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
 
 prometheus-node-exporter:
   tolerations:

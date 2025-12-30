@@ -62,20 +62,17 @@ kind: Cluster
 metadata:
   name: immich-postgresql
   namespace: immich
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 2
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
 
   storage:
     size: 15Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   walStorage:
     size: 3Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   resources:
     requests:
@@ -106,60 +103,6 @@ spec:
     isWALArchiver: true
     parameters:
       barmanObjectName: immich-b2-store
-
-  # Backup configuration
-  backup:
-    # Base backups stored in B2 (offsite, disaster recovery)
-    barmanObjectStore:
-      destinationPath: s3://homelab-cnpg-b2/immich/immich-postgresql
-      endpointURL: https://s3.us-west-000.backblazeb2.com
-      s3Credentials:
-        accessKeyId:
-          name: b2-cnpg-credentials
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: b2-cnpg-credentials
-          key: AWS_SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-        encryption: AES256
-      data:
-        compression: gzip
-        encryption: AES256
-        jobs: 2
-    # Retention policy
-    retentionPolicy: "30d"
-
-  # External clusters for recovery (can restore from either location)
-  externalClusters:
-    - name: immich-b2-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-cnpg-b2/immich/immich-postgresql
-        endpointURL: https://s3.us-west-000.backblazeb2.com
-        s3Credentials:
-          accessKeyId:
-            name: b2-cnpg-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: b2-cnpg-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-    - name: immich-minio-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-postgres-backups/immich/immich-postgresql
-        endpointURL: https://truenas.peekoff.com:9000
-        s3Credentials:
-          accessKeyId:
-            name: longhorn-minio-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: longhorn-minio-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
 
   bootstrap:
     initdb:

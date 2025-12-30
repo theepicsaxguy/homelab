@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: media-share
   namespace: media
+  annotations:
+    backup.velero.io/backup-volumes: ""
 spec:
   accessModes:
     - ReadWriteMany

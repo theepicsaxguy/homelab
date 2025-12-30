@@ -15,5 +15,5 @@ persistence:
   mongo-data:
     enabled: true
     size: 5Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
     mountPath: /data/db

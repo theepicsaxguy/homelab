@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: audiobookrequest
-  namespace: audiobookshelf
+  namespace: media
   labels:
     app: audiobookrequest
 spec:
