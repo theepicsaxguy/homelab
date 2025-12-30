@@ -2,7 +2,7 @@
 
 SCOPE: Cluster storage providers and volume management
 INHERITS FROM: /k8s/AGENTS.md
-TECHNOLOGIES: Proxmox CSI Driver, Longhorn, StorageClasses, PVCs, Volume Snapshots
+TECHNOLOGIES: Proxmox CSI Driver, StorageClasses, PVCs, Volume Snapshots
 
 ## COMPONENT CONTEXT
 
@@ -16,7 +16,6 @@ Boundaries:
 
 Architecture:
 - `proxmox-csi/` - Proxmox CSI driver for dynamic provisioning from Proxmox ZFS
-- `longhorn/` - Longhorn distributed storage with replication and backups (legacy)
 
 ## QUICK-START COMMANDS
 
@@ -29,9 +28,6 @@ kustomize build --enable-helm k8s/infrastructure/storage/<provider>
 
 # Check StorageClasses
 kubectl get storageclass
-
-# Check Longhorn volumes
-kubectl get volumes -n longhorn-system
 
 # Check Proxmox CSI volumes
 kubectl get pv -A
@@ -66,31 +62,9 @@ kubectl get pv -A
 - Proxmox user: `kubernetes-csi@pve`
 - Minimal permissions: VM.Audit, VM.Config.Disk, Datastore.Allocate, Datastore.Audit
 
-### Legacy Storage: Longhorn
+### Legacy Storage: Longhorn (Removed)
 
-**Purpose**: Distributed storage with replication and scheduled backups.
-
-**StorageClass**: `longhorn`
-- **Replication Factor**: Configurable (default: 3 replicas)
-- **Reclaim Policy**: `Retain`
-- **Backups**: Enabled via RecurringJob resources
-
-**When to Use**:
-- Legacy workloads already using Longhorn
-- Applications requiring multi-node replication
-- Critical stateful applications (migrating to proxmox-csi)
-
-**Backup Strategy**:
-- Requires backup labels on PVCs (manual configuration)
-- GFS (Grandfather-Father-Son): Hourly/daily/weekly backups for critical data
-- Daily: Standard backups for regular apps
-- Weekly: Basic backups for less critical data
-- Backup target: TrueNAS MinIO via S3-compatible API
-
-**Backup Labels** (apply to PVCs):
-Add annotation `recurring-job.longhorn.io/source: enabled` to enable backups. Configure backup tier with `recurring-job-group.longhorn.io/gfs` (GFS), `daily` (standard), or `weekly` (less critical). Omit labels for no backup (ephemeral data).
-
-**Migration Note**: New workloads should use `proxmox-csi` StorageClass. Migrate legacy Longhorn volumes when convenient.
+Longhorn storage provider has been deprecated and removed. All workloads should use Proxmox CSI. See migration guide in website/docs/breaking-changes/longhorn-removal.md.
 
 ## STORAGE PATTERNS
 
@@ -106,8 +80,7 @@ Create PersistentVolumeClaim with ReadWriteOnce access mode. Set storageClassNam
 
 | StorageClass | Use Case | Replication | Backup | Performance |
 |-------------|-----------|-------------|---------|-------------|
-| `proxmox-csi` | New workloads | None (single-node) | Velero auto | High (SSD) |
-| `longhorn` | Legacy, critical | Multi-node (3 replicas) | Manual labels | Medium (network) |
+| `proxmox-csi` | All workloads | None (single-node) | Velero auto | High (SSD) |
 
 ### Volume Expansion
 
@@ -115,11 +88,6 @@ Create PersistentVolumeClaim with ReadWriteOnce access mode. Set storageClassNam
 - Resize PVC: Update `resources.requests.storage` in PVC spec
 - K8s automatically expands volume (online expansion supported)
 - Verify expansion: `kubectl describe pvc <name>`
-
-**Longhorn**:
-- Resize PVC: Update `resources.requests.storage` in PVC spec
-- Longhorn automatically expands underlying volume
-- May require pod restart for resize to take effect
 
 ## BACKUP STRATEGIES
 
@@ -287,31 +255,15 @@ velero backup create test-backup --include-namespaces <namespace> --default-volu
 velero backup describe test-backup --details | grep -A 10 "Pod Volume Backups"
 ```
 
-**Longhorn**:
-```bash
-# Check recurring jobs
-kubectl get recurringjob -n longhorn-system
-
-# Check backup status
-kubectl get backups.backup.volume -n longhorn-system
-
-# Trigger manual backup
-kubectl exec -n longhorn-system <manager-pod> -- /bin/bash -c "longhorn-manager --backup-volume <volume-name>"
-```
-
 ## ANTI-PATTERNS
 
-Never use `longhorn` StorageClass for new workloads. Use `proxmox-csi` for better performance and automatic backups.
+Never use Longhorn. Longhorn has been deprecated and removed. Use `proxmox-csi` StorageClass for all workloads.
 
-Never skip backup labels on Longhorn PVCs for critical data. Apply appropriate tier labels.
+Never skip backup labels or configuration. Proxmox CSI volumes are automatically backed up by Velero.
 
 Never delete PVCs without verifying data is backed up. Check backup status before deletion.
 
 Never assume Proxmox CSI permissions are correct. Verify Terraform state if provisioning fails.
-
-Never resize Longhorn volumes without checking replica health. Ensure all replicas are healthy before expansion.
-
-Never use Longhorn for ephemeral or cache data. Use `proxmox-csi` with no backup labels for temporary data.
 
 Never manually modify Proxmox storage volumes outside of Kubernetes. Let CSI driver manage all operations.
 
@@ -327,20 +279,7 @@ Never use `Delete` reclaim policy for critical data. Use `Retain` to preserve da
 
 ## MIGRATION NOTES
 
-### Longhorn to Proxmox CSI Migration
-
-When migrating legacy Longhorn volumes to Proxmox CSI:
-
-1. **Create snapshot** of Longhorn volume
-2. **Create backup** of Longhorn volume (using GFS tier)
-3. **Stop application** using the volume
-4. **Create new PVC** using `proxmox-csi` StorageClass
-5. **Migrate data**:
-   - If application supports migration: Use built-in tools
-   - If generic: Create temporary pod with both volumes, copy data
-6. **Update application** to use new PVC
-7. **Verify application** works correctly
-8. **Delete old Longhorn volume** (after verification and grace period)
+All workloads have been migrated from Longhorn to Proxmox CSI. See website/docs/breaking-changes/longhorn-removal.md for migration details.
 
 ## REFERENCES
 
@@ -355,5 +294,3 @@ For CNPG database patterns, see k8s/infrastructure/database/AGENTS.md
 For commit message format, see root AGENTS.md
 
 For Proxmox CSI documentation, see https://github.com/sergelogvinov/proxmox-csi-plugin
-
-For Longhorn documentation, see https://longhorn.io/docs/

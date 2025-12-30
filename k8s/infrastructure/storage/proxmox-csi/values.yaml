@@ -3,6 +3,7 @@ storageClass:
     cache: writethrough
     fstype: ext4
     reclaimPolicy: Retain
+    volumeBindingMode: Immediate
     ssd: true
     storage: Nvme1
     mountOptions:

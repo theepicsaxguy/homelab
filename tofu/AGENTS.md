@@ -179,6 +179,10 @@ Never modify state files (`terraform.tfstate`) directly.
 
 Never run `tofu apply` without explicit human authorization and plan review.
 
+Never use `--auto-approve` flag. Always require human confirmation before applying changes. The user must explicitly confirm they want to proceed.
+
+Never use targeted apply (`-target=...`) unless explicitly approved. Targeted applies can cause configuration drift and bypass holistic planning. Get explicit authorization before using targeting flags.
+
 Never delete resources without understanding dependencies and impact.
 
 Never change variables in `config.auto.tfvars` without updating `terraform.tfvars.example`.

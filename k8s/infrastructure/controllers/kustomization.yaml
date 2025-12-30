@@ -5,5 +5,6 @@ resources:
 - project.yaml
 - argocd
 - cert-manager
+- descheduler
 - external-secrets
 - velero

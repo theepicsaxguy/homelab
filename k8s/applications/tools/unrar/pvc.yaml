@@ -5,8 +5,8 @@ metadata:
   namespace: unrar
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: longhorn
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 40Gi

@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: audiobookrequest
-  namespace: audiobookshelf
+  namespace: media
 spec:
   parentRefs:
     - name: internal

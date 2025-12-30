@@ -2,14 +2,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: audiobookrequest-config
-  namespace: audiobookshelf
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/weekly: enabled
+  namespace: media
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: longhorn
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 5Gi

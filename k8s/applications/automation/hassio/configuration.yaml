@@ -1,9 +1,6 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
-# Include secrets for use in other configurations
-secrets: !include secrets.yaml
-
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes

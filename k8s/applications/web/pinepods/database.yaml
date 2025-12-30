@@ -96,60 +96,6 @@ spec:
     parameters:
       barmanObjectName: pinepods-b2-store
 
-  # Backup configuration
-  backup:
-    # Base backups stored in B2 (offsite, disaster recovery)
-    barmanObjectStore:
-      destinationPath: s3://homelab-cnpg-b2/pinepods/pinepods-db
-      endpointURL: https://s3.us-west-000.backblazeb2.com
-      s3Credentials:
-        accessKeyId:
-          name: b2-cnpg-credentials
-          key: AWS_ACCESS_KEY_ID
-        secretAccessKey:
-          name: b2-cnpg-credentials
-          key: AWS_SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-        encryption: AES256
-      data:
-        compression: gzip
-        encryption: AES256
-        jobs: 2
-    # Retention policy
-    retentionPolicy: "30d"
-
-  # External clusters for recovery (can restore from either location)
-  externalClusters:
-    - name: pinepods-b2-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-cnpg-b2/pinepods/pinepods-db
-        endpointURL: https://s3.us-west-000.backblazeb2.com
-        s3Credentials:
-          accessKeyId:
-            name: b2-cnpg-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: b2-cnpg-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-    - name: pinepods-minio-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-postgres-backups/pinepods/pinepods-db
-        endpointURL: https://truenas.peekoff.com:9000
-        s3Credentials:
-          accessKeyId:
-            name: longhorn-minio-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: longhorn-minio-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-
   resources:
     requests:
       cpu: "250m"

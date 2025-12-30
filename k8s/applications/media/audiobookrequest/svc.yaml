@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: audiobookrequest
-  namespace: audiobookshelf
+  namespace: media
 spec:
   type: ClusterIP
   selector:
