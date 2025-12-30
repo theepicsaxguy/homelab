@@ -72,9 +72,6 @@ npm run serve
 
 ## PATTERNS
 
-### Documentation Pattern
-Write technical documentation in imperative voice with present tense facts. No first-person plural ("we"), no temporal language ("now uses"), no narrative storytelling. State what exists and how it works.
-
 ### Frontmatter Pattern
 All documentation files include frontmatter with title, description for SEO, and sidebar_position for navigation ordering. Frontmatter begins and ends with triple hyphens.
 
@@ -83,9 +80,6 @@ Update `sidebars.ts` to add new documentation pages to navigation. Use sidebar_p
 
 ### Linking Pattern
 Use relative links for internal navigation. Use absolute URLs for external resources. Test all links before committing.
-
-### Code Block Pattern
-Include code blocks with language tags for syntax highlighting. Test code examples. Provide context and expected output where appropriate.
 
 ## TESTING
 
@@ -114,9 +108,8 @@ Tools:
 
 Development:
 - Create documentation files in `website/docs/` with `.md` or `.mdx` extension
-- Add frontmatter with metadata
-- Write content following documentation style guide
-- Include code blocks with language tags
+- Add frontmatter with title, description, sidebar_position
+- Write content following guidelines in website/docs/AGENTS.md
 - Test locally: `npm start` to preview changes
 - Lint: `npm run lint:all` to check prose and markdown
 - Type check: `npm run typecheck` to verify TypeScript
@@ -134,15 +127,6 @@ Deployment:
 
 ## COMPONENTS
 
-### Documentation Categories
-- `getting-started/` - Onboarding and setup guides
-- `k8s/` - Kubernetes documentation (applications, infrastructure)
-- `tofu/` - OpenTofu infrastructure documentation
-- `backup/` - Backup and recovery procedures
-- `infrastructure/` - Infrastructure component documentation
-- `troubleshooting/` - Common issues and solutions
-- `contributing/` - Contribution guidelines
-
 ### Site Components
 - `src/components/` - Custom React components
 - `src/css/` - Custom styles
@@ -159,36 +143,11 @@ Deployment:
 
 Never commit generated build artifacts (`website/build/`, `node_modules/`).
 
-Never use first-person plural ("we", "our") in documentation.
-
-Never use temporal language ("now", "recently", "has been updated") in documentation.
-
-Never break existing links without updating all references.
-
-Never commit untested code examples without running them.
-
 Never skip linting and type checking before committing.
 
 Never add large binary assets to repository. Use external storage and link by URL.
 
-## DOCUMENTATION STYLE
-
-### Voice and Tense
-- Use imperative voice for instructions: "Configure the setting", "Run the command"
-- Use present tense for facts: "The system uses X", "Kopia uploads data to S3"
-- State what exists and how it works, not how it was created
-
-### What to Avoid
-- No first-person plural: "We use", "We investigated"
-- No temporal language: "Now uses", "Has been updated"
-- No narrative storytelling: "We explored X and found that..."
-- No status updates: "The system now supports..."
-
-### Comments in Code Files
-- State what the setting does, not why you chose it
-- Bad: `# We use Kopia because snapshots didn't work`
-- Good: `# Kopia filesystem backup to S3`
-- When comparison is relevant: Good: `# instead of CSI snapshots`
+Never break existing navigation or internal links.
 
 ## CRITICAL BOUNDARIES
 
@@ -206,10 +165,10 @@ Never break existing navigation or internal links.
 
 For commit message format, see root AGENTS.md
 
+For documentation writing guidelines, see website/docs/AGENTS.md
+
 For Kubernetes concepts, see k8s/AGENTS.md
 
 For infrastructure concepts, see tofu/AGENTS.md
 
 For Docusaurus documentation, see https://docusaurus.io/docs
-
-For TypeScript, see TypeScript documentation

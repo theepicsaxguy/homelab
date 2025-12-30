@@ -1,9 +1,0 @@
-apiVersion: zone.cloudflare.upbound.io/v1alpha1
-kind: Zone
-metadata:
-  name: peekoff.com
-spec:
-  forProvider:
-    zone: peekoff.com
-  providerConfigRef:
-    name: cloudflare-provider

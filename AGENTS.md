@@ -220,14 +220,50 @@ When adding or updating external libraries/packages/SDKs:
 3. Use MCP resolver to get Context7-compatible library ID
 4. Fetch docs in `code` mode (API refs) or `info` mode (narrative guides)
 
+## Solution Standards
+
+**Enterprise at Home** - Production-grade only, no homelab shortcuts.
+
+**When multiple solutions exist:**
+- Rank from hardest/most-capable to simplest
+- Recommend the hardest (best practices, most capabilities)
+- Explain what each simpler option sacrifices
+- Complexity is a feature, not a problem
+
+**Prohibited:**
+- "Good enough for homelab" framing
+- Workarounds that lose capabilities
+- Assuming simpler is better
+
+**Default:** Aim for perfection. Only compromise when explicitly directed.
+
+If there's one obvious correct solution, just present it.
+
+**Long-term thinking:**
+- Every change must hold up 10+ years without modifications
+- Shortcuts compound into 100x future pain
+- Do it right once, not half-right repeatedly
+- Favor the most maintainable path, even if harder upfront
+- Harder upfront means less total compute time for you and future agents
+- If something is clearly not maintainable, document the tradeoff explicitly
+
 ## AGENTS.md Discovery and Coverage
 
 ### How to Find Context
 
-When working on any file, load AGENTS.md files cumulatively from root to working directory:
-1. Root AGENTS.md (this file) - always load
-2. Domain AGENTS.md (k8s/, tofu/, website/, images/)
-3. Component AGENTS.md (if applicable)
+**ALWAYS read ALL AGENTS.md files from root to the closest directory containing your working file.**
+
+Context is cumulative: each level adds more specific guidance for that domain/component.
+
+Order of reading:
+1. Root AGENTS.md (this file) - ALWAYS read first
+2. Domain AGENTS.md (k8s/, tofu/, website/, images/) - read if working in that domain
+3. Component AGENTS.md - read if working in that component (e.g., k8s/infrastructure/database/)
+
+Example: Working on `k8s/infrastructure/database/` means read:
+- /AGENTS.md
+- /k8s/AGENTS.md
+- /k8s/infrastructure/database/AGENTS.md
 
 ### Self-Healing Rule
 
@@ -269,6 +305,16 @@ Never modify CRD definitions without understanding operator compatibility.
 Never apply changes directly to cluster — use GitOps.
 
 Never run `tofu apply` without explicit human authorization and review.
+
+Never use `--auto-approve` in tofu commands. Always review the plan first.
+
+Never use destructive kubectl flags. This includes:
+- `--force` - bypasses safety checks, causes data loss
+- `--grace-period=0` - terminates pods without graceful shutdown
+- `--ignore-not-found` - masks errors by ignoring missing resources
+- Any other flag that bypasses safety mechanisms
+
+These flags are NEVER acceptable. Find and fix the root cause instead.
 
 Never guess resource names, connection strings, or secret keys — query the cluster to verify.
 
@@ -397,8 +443,14 @@ Never delete resources without evidence from logs and events. Diagnose root caus
 ### Never Ignore Deprecations
 Treat deprecation warnings as critical errors. Implement migration paths immediately.
 
+### Never Leave Documentation Stale
+After completing EVERY task, review and update relevant documentation. Outdated documentation causes more confusion than no documentation. Keep docs in sync with code and configuration changes.
+
 ### Never Hallucinate Fields
 Never guess YAML field names. Use `kubectl explain` or fetch official documentation.
+
+### Never Create Documentation from Scratch
+When documentation is needed for an existing component, extend the current docs — never create new comprehensive documentation files. Find existing documentation and add to it. For genuinely new concepts or complex topics, a new page is justified. Do what's necessary: don't overdo, don't underdeliver.
 
 ## Philosophy
 

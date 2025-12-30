@@ -1,6 +1,0 @@
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: provider-cloudflare
-spec:
-  package: ghcr.io/cdloh/provider-cloudflare:v0.1.0-2.g05868cb

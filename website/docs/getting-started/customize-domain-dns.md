@@ -3,12 +3,11 @@ sidebar_position: 3
 title: Customize Domain and Configure DNS
 description:
   This task guides you through configuring your custom domain and setting up necessary DNS prerequisites for your
-  homelab cluster, which uses Cloudflare for automated DNS record management via Crossplane.
+  homelab cluster, which uses Cloudflare for DNS records.
 ---
 
 This task explains how to customize your homelab cluster to use your own domain name instead of the default
-`peekoff.com` and how to configure your Domain Name System (DNS) provider. This setup requires Cloudflare for automated
-DNS record provisioning.
+`peekoff.com` and how to configure your Domain Name System (DNS) provider. This setup uses Cloudflare for DNS records.
 
 **Audience:** Users deploying a new homelab cluster from this repository.
 
@@ -41,14 +40,12 @@ domain you don't control, preventing them from functioning correctly. :::
 
 ### Configure Cloudflare DNS
 
-This homelab cluster uses Crossplane to automatically provision DNS records in Cloudflare based on Kubernetes manifests.
-For this reason, Cloudflare is a mandatory dependency.
+This homelab cluster requires Cloudflare for DNS records and TLS certificate management via Cert Manager.
 
 :::note This project uses the External Secrets operator to fetch the Cloudflare API token from a Bitwarden instance.
 This approach avoids storing secrets directly in Git repositories. :::
 
-While Crossplane will manage most DNS records automatically, **you must manually create an `A` record** to point your
-domain to the cluster's external IP address.
+**You must manually create DNS records** in Cloudflare to point your domain to the cluster's external IP address.
 
 **Steps to configure the initial DNS record:**
 
@@ -61,8 +58,7 @@ domain to the cluster's external IP address.
     ```
 
 2.  **Create an `A` record in Cloudflare.** In your Cloudflare DNS dashboard, create an `A` record for your root domain
-    (`@`) and/or a wildcard `A` record (`*`) pointing to the external IP address from the previous step. This ensures
-    that all subdomains managed by Crossplane will resolve correctly.
+    (`@`) and/or a wildcard `A` record (`*`) pointing to the external IP address from the previous step.
 
 ### Understand Tool Responsibilities
 

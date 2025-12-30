@@ -151,7 +151,7 @@ HTTPRoute references external Gateway in gateway namespace via parentRefs. Defin
 - Resolved to ClusterIP
 
 **External DNS** (Cloudflare):
-- DNS records managed by Crossplane (see controllers/)
+- DNS records must be managed manually via Cloudflare dashboard
 - Records point to Gateway IP or Cloudflare tunnel
 
 ### LoadBalancer IP Allocation

@@ -2,7 +2,7 @@
 
 SCOPE: Cluster operators and controllers
 INHERITS FROM: /k8s/AGENTS.md
-TECHNOLOGIES: Argo CD, Velero, External Secrets, Cert Manager, CNPG, Crossplane, Kubechecks, Node Feature Discovery, GPU Operator
+TECHNOLOGIES: Argo CD, Velero, External Secrets, Cert Manager, CNPG, Kubechecks, Node Feature Discovery, GPU Operator
 
 ## COMPONENT CONTEXT
 
@@ -19,7 +19,6 @@ Architecture:
 - `velero/` - Backup and disaster recovery
 - `external-secrets/` - Secret synchronization from Bitwarden
 - `cert-manager/` - Certificate management (Cloudflare DNS, internal CA)
-- `crossplane/` - Cloud provider integration (Cloudflare DNS)
 - `nvidia-gpu-operator/` - GPU driver management for AI workloads
 - `node-feature-discovery/` - Hardware feature detection
 - `kubechecks/` - Kubernetes manifest validation
@@ -54,6 +53,12 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 - **Storage Locations**: See /k8s/AGENTS.md for complete backup strategy
 - **Key Configuration**: `defaultVolumesToFsBackup: true` for filesystem backup via Kopia
 - **External Secrets**: B2 credentials via separate Bitwarden entries (see /k8s/AGENTS.md for pattern)
+- **Exclusion Strategy**:
+  - **Declarative Workloads Excluded**: Deployments created from GitOps manifests are excluded from backups because they can be recreated from source (e.g., frigate, sabnzbd, whisperasr)
+  - **Why**: Reduces backup size, speeds up backup/restore operations, and avoids backing up ephemeral data
+  - **What We Backup**: Only StatefulSets (stateful apps with persistent data) and their PVCs
+  - **NFS/External Storage Excluded**: Volumes with `storageClassName: ""` (manually provisioned NFS mounts like media-share) are excluded via `backup.velero.io/backup-volumes: ""` annotation
+  - **Rationale**: External storage (NFS, SMB) is backed up separately outside Kubernetes and doesn't need Velero backup
 
 ### External Secrets Operator
 - **Purpose**: Synchronize secrets from Bitwarden Secrets Manager to Kubernetes
@@ -75,13 +80,6 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 - **Location**: See /k8s/infrastructure/database/AGENTS.md for complete database patterns
 - **Key Features**: High availability clusters, automatic failover, scheduled backups
 - **Credentials**: Auto-generated `<cluster-name>-app` secret (do not use ExternalSecrets, see /k8s/AGENTS.md for pattern)
-
-### Crossplane
-- **Purpose**: Infrastructure as Code for cloud provider resources (DNS records)
-- **Provider**: Cloudflare provider for DNS management
-- **Resources**: DNS records managed via CRDs
-- **External Secrets**: Cloudflare API token via Bitwarden (see /k8s/AGENTS.md for pattern)
-- **Integration**: Automated DNS record creation for services
 
 ### NVIDIA GPU Operator
 - **Purpose**: GPU driver management and device plugin for Kubernetes
@@ -111,12 +109,11 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 2. External Secrets Operator (secrets needed by other controllers)
 3. CNPG (databases needed by applications)
 4. Argo CD (GitOps sync depends on other operators)
-5. Crossplane (DNS records for services)
 
 **Authentication Flow**:
 - Authentik (auth/) → Argo CD SSO login
 - Bitwarden → External Secrets → All controller secrets
-- Cloudflare API → Cert Manager + Crossplane
+- Cloudflare API → Cert Manager
 
 **Backup Flow**:
 - Velero backs up all namespace resources
@@ -159,10 +156,6 @@ kustomize build --enable-helm k8s/infrastructure/controllers | yq eval -P -
 **CNPG**:
 - Verify cluster status: `kubectl get cluster -A`
 - Check backup connectivity
-
-**Crossplane**:
-- Verify provider ready: `kubectl get provider`
-- Test DNS record creation
 
 ## OPERATIONAL PATTERNS
 

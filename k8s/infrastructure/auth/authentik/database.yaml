@@ -62,19 +62,16 @@ kind: Cluster
 metadata:
   name: authentik-postgresql
   namespace: auth
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   walStorage:
     size: 4Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
 
   resources:
     requests:
@@ -106,48 +103,8 @@ spec:
     parameters:
       barmanObjectName: authentik-minio-store
 
-  # Backup configuration using plugin-based approach
   backup:
-    # Retention policy
-    retentionPolicy: "30d"  # Keep 30 days of backups
-    target: prefer-standby
-    volumeSnapshot:
-      className: longhorn
-      online: true
-      onlineConfiguration:
-        waitForArchive: true
-        immediateCheckpoint: true
-
-  # External clusters for recovery (can restore from either location)
-  externalClusters:
-    - name: authentik-b2-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-        endpointURL: https://s3.us-west-000.backblazeb2.com
-        s3Credentials:
-          accessKeyId:
-            name: b2-cnpg-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: b2-cnpg-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
-    - name: authentik-minio-backup
-      barmanObjectStore:
-        destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
-        endpointURL: https://truenas.peekoff.com:9000
-        s3Credentials:
-          accessKeyId:
-            name: longhorn-minio-credentials
-            key: AWS_ACCESS_KEY_ID
-          secretAccessKey:
-            name: longhorn-minio-credentials
-            key: AWS_SECRET_ACCESS_KEY
-        wal:
-          compression: gzip
-          encryption: AES256
+    retentionPolicy: "30d"
 
   # Bootstrap section removed - migration complete, cluster running in normal operational mode
 

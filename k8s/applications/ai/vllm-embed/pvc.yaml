@@ -4,8 +4,8 @@ metadata:
   name: vllm-model-cache
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: longhorn
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 10Gi

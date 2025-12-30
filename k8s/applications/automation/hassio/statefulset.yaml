@@ -131,17 +131,6 @@ spec:
         - name: custom-sentences
           configMap:
             name: ha-custom-sentences
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-        labels:
-          app.kubernetes.io/name: home-assistant
-          app.kubernetes.io/instance: home-assistant
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "proxmox-csi"
-        resources:
-          requests:
-            storage: 10Gi
+        - name: data
+          persistentVolumeClaim:
+            claimName: home-assistant-home-assistant-0
