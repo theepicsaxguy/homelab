@@ -4,33 +4,29 @@ resource "null_resource" "cert_manager_kustomize" {
   }
 
   provisioner "local-exec" {
-    command     = "kubectl apply -k ."
+    command     = "kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/cert-manager"
   }
 
   provisioner "local-exec" {
     when        = destroy
-    command     = "kubectl delete -k . --ignore-not-found=true"
+    command     = "kustomize build --enable-helm . | kubectl delete -f - --ignore-not-found=true"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/cert-manager"
   }
 }
 
-resource "kubernetes_labels" "cert_manager_namespace" {
-  api_version = "v1"
-  kind        = "Namespace"
-  metadata {
-    name = "cert-manager"
-  }
-  labels = {
-    "pod-security.kubernetes.io/enforce" = "privileged"
-    "pod-security.kubernetes.io/audit"   = "privileged"
-    "pod-security.kubernetes.io/warn"    = "privileged"
-  }
+resource "null_resource" "cert_manager_namespace_labels" {
   depends_on = [null_resource.cert_manager_kustomize]
+
+  provisioner "local-exec" {
+    command = "kubectl label namespace cert-manager pod-security.kubernetes.io/enforce=privileged pod-security.kubernetes.io/audit=privileged pod-security.kubernetes.io/warn=privileged --overwrite"
+  }
 }
 
-resource "time_sleep" "wait_for_cert_manager" {
+resource "null_resource" "wait_for_cert_manager" {
   depends_on = [null_resource.cert_manager_kustomize]
 
-  create_duration = "90s"
+  provisioner "local-exec" {
+    command = "kubectl wait --for=condition=available --timeout=300s deployment/cert-manager deployment/cert-manager-webhook deployment/cert-manager-cainjector -n cert-manager"
+  }
 }

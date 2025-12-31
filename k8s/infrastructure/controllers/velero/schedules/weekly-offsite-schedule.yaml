@@ -7,10 +7,10 @@ kind: Schedule
 metadata:
   name: weekly-offsite
   namespace: velero
-spec:
+  spec:
   # Cron schedule: minute hour day month weekday
-  # 0 3 * * 0 = 3:00 AM every Sunday
-  schedule: "0 3 * * 0"
+  # 0 3 * * 6 = 3:00 AM every Saturday (staggered from local weekly)
+  schedule: "0 3 * * 6"
 
   template:
     # Include all namespaces except velero itself

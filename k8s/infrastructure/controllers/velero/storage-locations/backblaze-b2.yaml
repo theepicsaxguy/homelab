@@ -52,4 +52,4 @@ spec:
     key: cloud
   default: false  # Keep MinIO as default for faster local restores
   accessMode: ReadWrite
-  validationFrequency: 1h  # Verify B2 connectivity hourly
+  validationFrequency: 24h  # Verify B2 connectivity daily to reduce Class B transactions

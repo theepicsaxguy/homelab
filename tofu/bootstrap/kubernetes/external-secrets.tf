@@ -4,19 +4,21 @@ resource "null_resource" "external_secrets_kustomize" {
   }
 
   provisioner "local-exec" {
-    command     = "kubectl apply -k ."
+    command     = "kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
   }
 
   provisioner "local-exec" {
     when        = destroy
-    command     = "kubectl delete -k . --ignore-not-found=true"
+    command     = "kustomize build --enable-helm . | kubectl delete -f - --ignore-not-found=true"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
   }
 }
 
-resource "time_sleep" "wait_for_external_secrets" {
+resource "null_resource" "wait_for_external_secrets" {
   depends_on = [null_resource.external_secrets_kustomize]
 
-  create_duration = "60s"
+  provisioner "local-exec" {
+    command = "kubectl wait --for=condition=available --timeout=300s deployment/external-secrets deployment/external-secrets-webhook deployment/external-secrets-cert-controller -n external-secrets"
+  }
 }

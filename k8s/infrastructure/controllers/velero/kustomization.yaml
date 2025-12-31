@@ -8,6 +8,7 @@ resources:
   - storage-class-mapping.yaml
   - storage-locations/
   - schedules/
+  - repository-config.yaml
 
 helmCharts:
   - name: velero
