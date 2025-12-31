@@ -370,40 +370,34 @@ kubectl get nodes -w
 
 ### Phase 6: Deploy Core Infrastructure
 
-#### Step 12: Deploy Infrastructure Components
+#### Step 12: Deploy Infrastructure Components via OpenTofu
+
+All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After Talos bootstrap completes:
 
 ```bash
-cd /path/to/homelab/k8s
+cd /path/to/homelab/tofu
 
-# 1. Apply CRDs
-kubectl apply -k infrastructure/crds/
-
-# 2. Deploy External Secrets Operator
-kustomize build --enable-helm infrastructure/controllers/external-secrets/ | kubectl apply -f -
-
-# Wait for External Secrets
-kubectl -n external-secrets wait --for=condition=available deployment/external-secrets --timeout=300s
-kubectl -n external-secrets wait --for=condition=available deployment/external-secrets-cert-controller --timeout=300s
-kubectl -n external-secrets wait --for=condition=available deployment/external-secrets-webhook --timeout=300s
-
-# 3. Create Bitwarden access token
+# If Bitwarden token is not in terraform.tfvars, create the secret manually
 kubectl create secret generic bitwarden-access-token \
   --namespace external-secrets \
   --from-literal=token="<BITWARDEN_ACCESS_TOKEN>"
 
-# Verify connection
-kubectl -n external-secrets get clustersecretstore bitwarden-backend
+# Wait for OpenTofu bootstrap module to complete
+# This installs Cert Manager, External Secrets Operator, ArgoCD, and ApplicationSets
 
-# 4. Deploy Cert Manager
-kustomize build --enable-helm infrastructure/controllers/cert-manager/ | kubectl apply -f -
-kubectl -n cert-manager wait --for=condition=available deployment/cert-manager --timeout=300s
+# Verify ArgoCD is running
+kubectl -n argocd get pods
 
-# 5. Deploy Longhorn
-kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -f -
-kubectl -n longhorn-system wait --for=condition=available deployment/longhorn-driver-deployer --timeout=600s
+# Verify ApplicationSets are created
+kubectl get applicationsets -n argocd
 
-# 6. Deploy all infrastructure
-kustomize build --enable-helm infrastructure/ | kubectl apply -f -
+# Wait for infrastructure ApplicationSet to sync
+kubectl wait --for=jsonpath='{.status.sync.status}'=Synced application/infrastructure -n argocd --timeout=600s
+
+# Verify core services are ready
+kubectl get pods -n cert-manager
+kubectl get pods -n external-secrets
+kubectl get pods -n argocd
 ```
 
 #### Step 13: Configure Longhorn B2 Backup (Optional)

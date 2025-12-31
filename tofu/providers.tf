@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 3.0.0" # This ensures you get the latest 2.37.x version
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.15.0"
+    }
     proxmox = {
       source  = "bpg/proxmox"
       version = "0.90.0"
@@ -15,6 +19,10 @@ terraform {
     restapi = {
       source  = "Mastercard/restapi"
       version = ">= 2.0.0"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = ">= 0.12.0"
     }
   }
 }
@@ -36,6 +44,15 @@ provider "kubernetes" {
   client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
   client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
   cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
+}
+
+provider "helm" {
+  kubernetes = {
+    host                   = "https://${coalesce(var.external_api_endpoint, "api.${var.cluster_domain}")}:6443"
+    client_certificate     = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_certificate)
+    client_key             = base64decode(module.talos.kube_config.kubernetes_client_configuration.client_key)
+    cluster_ca_certificate = base64decode(module.talos.kube_config.kubernetes_client_configuration.ca_certificate)
+  }
 }
 
 provider "restapi" {

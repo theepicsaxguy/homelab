@@ -1,8 +1,6 @@
 upgradeCRDs: false
 deployNodeAgent: true
-snapshotsEnabled: false  # Kopia filesystem backups enabled; CSI snapshots disabled
-# Velero 1.10+ uses Kopia by default for file-system backups
-# The deprecated Restic is no longer supported
+snapshotsEnabled: false
 initContainers:
   - name: velero-plugin-for-aws
     image: velero/velero-plugin-for-aws:v1.13.1
@@ -23,6 +21,7 @@ configuration:
   uploaderType: kopia
   uploaderConfig:
     parallelFilesUpload: 5
+  backupRepositoryConfigMap: velero-repository-config
   backupStorageLocation:
     - name: default
       provider: aws
