@@ -1,19 +1,14 @@
-resource "kubernetes_namespace_v1" "argocd" {
-  metadata {
-    name = "argocd"
-  }
-}
-
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
-  namespace  = kubernetes_namespace_v1.argocd.metadata[0].name
+  namespace  = "argocd"
   version    = var.argocd_version
 
-  create_namespace = false
+  create_namespace = true
 
   depends_on = [
+    null_resource.annotate_argocd,
     time_sleep.wait_for_cert_manager,
     time_sleep.wait_for_external_secrets,
     kubernetes_secret_v1.bitwarden_access_token

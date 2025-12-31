@@ -22,7 +22,8 @@ auth_pass = "choose-a-strong-secret-here"
 lb_store = "rpool2"
 
 # Kubernetes bootstrap secrets
-bitwarden_token = ""  # Bitwarden Secrets Manager API token for External Secrets Operator
+# Get your Bitwarden Secrets Manager access token from: https://vault.bitwarden.com/#/sm/
+bitwarden_token = "0.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # Git repository URL for ArgoCD (customize for forks)
 # git_repository_url = "https://github.com/yourusername/homelab.git"
