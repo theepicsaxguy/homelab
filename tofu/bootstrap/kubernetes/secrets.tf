@@ -7,5 +7,5 @@ resource "kubernetes_secret_v1" "bitwarden_access_token" {
   data = {
     token = var.bitwarden_token
   }
-  depends_on = [helm_release.external_secrets]
+  depends_on = [null_resource.external_secrets_kustomize]
 }

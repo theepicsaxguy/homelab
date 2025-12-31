@@ -1,26 +1,28 @@
-resource "helm_release" "argocd" {
-  name       = "argocd"
-  repository = "https://argoproj.github.io/argo-helm"
-  chart      = "argo-cd"
-  namespace  = "argocd"
-  version    = var.argocd_version
-
-  create_namespace = true
+resource "null_resource" "argocd_kustomize" {
+  triggers = {
+    manifests = sha256(join("", [for f in fileset("${path.module}/../../../k8s/infrastructure/controllers/argocd", "*.yaml") : filesha256("${path.module}/../../../k8s/infrastructure/controllers/argocd/${f}")]))
+  }
 
   depends_on = [
-    null_resource.annotate_argocd,
     time_sleep.wait_for_cert_manager,
     time_sleep.wait_for_external_secrets,
     kubernetes_secret_v1.bitwarden_access_token
   ]
 
-  values = [
-    file("${path.module}/../../../k8s/infrastructure/controllers/argocd/values.yaml")
-  ]
+  provisioner "local-exec" {
+    command     = "kubectl apply -k ."
+    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/argocd"
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    command     = "kubectl delete -k . --ignore-not-found=true"
+    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/argocd"
+  }
 }
 
 resource "time_sleep" "wait_for_argocd" {
-  depends_on = [helm_release.argocd]
+  depends_on = [null_resource.argocd_kustomize]
 
   create_duration = "90s"
 }

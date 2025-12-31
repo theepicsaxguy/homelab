@@ -1,28 +1,22 @@
-resource "helm_release" "external_secrets" {
-  name       = "external-secrets"
-  repository = "https://charts.external-secrets.io"
-  chart      = "external-secrets"
-  namespace  = "external-secrets"
-  version    = var.external_secrets_version
+resource "null_resource" "external_secrets_kustomize" {
+  triggers = {
+    manifests = sha256(join("", [for f in fileset("${path.module}/../../../k8s/infrastructure/controllers/external-secrets", "*.yaml") : filesha256("${path.module}/../../../k8s/infrastructure/controllers/external-secrets/${f}")]))
+  }
 
-  create_namespace = true
+  provisioner "local-exec" {
+    command     = "kubectl apply -k ."
+    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
+  }
 
-  depends_on = [null_resource.annotate_external_secrets]
-
-  set = [
-    {
-      name  = "installCRDs"
-      value = "true"
-    }
-  ]
-
-  values = [
-    file("${path.module}/../../../k8s/infrastructure/controllers/external-secrets/values.yaml")
-  ]
+  provisioner "local-exec" {
+    when        = destroy
+    command     = "kubectl delete -k . --ignore-not-found=true"
+    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
+  }
 }
 
 resource "time_sleep" "wait_for_external_secrets" {
-  depends_on = [helm_release.external_secrets]
+  depends_on = [null_resource.external_secrets_kustomize]
 
   create_duration = "60s"
 }
