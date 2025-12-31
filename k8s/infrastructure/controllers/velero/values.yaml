@@ -22,15 +22,15 @@ configuration:
   uploaderConfig:
     parallelFilesUpload: 5
   backupRepositoryConfigMap: velero-repository-config
-backupStorageLocation:
-  - name: default
-    provider: aws
-    bucket: velero
-    default: true
-    config:
-      region: us-west-1
-      s3ForcePathStyle: "true"
-      s3Url: https://truenas.peekoff.com:9000
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero
+      default: true
+      config:
+        region: us-west-1
+        s3ForcePathStyle: "true"
+        s3Url: https://truenas.peekoff.com:9000
 resources:
   requests:
     cpu: 200m
