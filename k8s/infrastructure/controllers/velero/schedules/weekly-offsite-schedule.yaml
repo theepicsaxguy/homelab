@@ -1,6 +1,6 @@
 ---
 # Weekly Offsite Backup to Backblaze B2
-# Runs every Sunday at 3:00 AM UTC
+# Runs every Saturday at 3:00 AM UTC (staggered from local weekly)
 # Retention: 90 days (12-13 weekly backups)
 apiVersion: velero.io/v1
 kind: Schedule
@@ -9,8 +9,8 @@ metadata:
   namespace: velero
 spec:
   # Cron schedule: minute hour day month weekday
-  # 0 3 * * 0 = 3:00 AM every Sunday
-  schedule: "0 3 * * 0"
+  # 0 3 * * 6 = 3:00 AM every Saturday
+  schedule: "0 3 * * 6"
 
   template:
     # Include all namespaces except velero itself
@@ -38,43 +38,21 @@ spec:
       - podvolumerestores.velero.io
 
     # Backup persistent volumes using node agent (Kopia)
-    # Uploads PVC data directly to S3 using Kopia
     defaultVolumesToFsBackup: true
 
     # Storage location: Backblaze B2
     storageLocation: backblaze-b2
 
     # Retention: 90 days (approximately 12-13 weekly backups)
-    ttl: 2160h  # 90 days * 24 hours
+    ttl: 2160h
 
     # Include cluster-scoped resources
     includeClusterResources: true
 
-    # Hooks for backup preparation (if needed)
-    # hooks:
-    #   resources:
-    #     - name: postgres-backup-hook
-    #       includedNamespaces:
-    #         - "*"
-    #       labelSelector:
-    #         matchLabels:
-    #           app.kubernetes.io/name: postgresql
-    #       pre:
-    #         - exec:
-    #             container: postgres
-    #             command:
-    #               - /bin/bash
-    #               - -c
-    #               - pg_dump -U postgres > /tmp/backup.sql
-
-    # Ordered backup (backup in specific order if needed)
     orderedResources:
-      # Backup PVCs before pods
       persistentvolumeclaims: ""
-      # Then backup pods
       pods: ""
 
-    # Metadata
     metadata:
       labels:
         backup-type: weekly-offsite

@@ -22,9 +22,10 @@ variable "versions" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name     = string
-    endpoint = string
-    # gateway and vip are now in var.network
+    name               = string
+    endpoint           = string
+    gateway            = string
+    vip                = string
     talos_version      = string
     proxmox_cluster    = string
     kubernetes_version = optional(string, "1.32.0")

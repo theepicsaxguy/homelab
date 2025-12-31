@@ -428,29 +428,34 @@ kubectl config use-context talos
 kubectl get nodes -w
 ```
 
-#### Step 14: Deploy Core Infrastructure
+#### Step 14: Deploy Core Infrastructure via OpenTofu
+
+All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After Talos bootstrap completes:
 
 ```bash
-cd homelab/k8s
+cd homelab/tofu
 
-# Deploy in order:
-kubectl apply -k infrastructure/crds/
-
-kustomize build --enable-helm infrastructure/controllers/external-secrets/ | kubectl apply -f -
-kubectl -n external-secrets wait --for=condition=available deployment/external-secrets --timeout=300s
-
-# Create Bitwarden token (from Bitwarden)
+# If Bitwarden token is not in terraform.tfvars, create the secret manually
 kubectl create secret generic bitwarden-access-token \
   --namespace external-secrets \
   --from-literal=token="<BITWARDEN_ACCESS_TOKEN>"
 
-kustomize build --enable-helm infrastructure/controllers/cert-manager/ | kubectl apply -f -
-kubectl -n cert-manager wait --for=condition=available deployment/cert-manager --timeout=300s
+# Wait for OpenTofu bootstrap module to complete
+# This installs Cert Manager, External Secrets Operator, ArgoCD, and ApplicationSets
 
-kustomize build --enable-helm infrastructure/storage/longhorn/ | kubectl apply -f -
-kubectl -n longhorn-system wait --for=condition=available deployment/longhorn-driver-deployer --timeout=600s
+# Verify ArgoCD is running
+kubectl -n argocd get pods
 
-kustomize build --enable-helm infrastructure/ | kubectl apply -f -
+# Verify ApplicationSets are created
+kubectl get applicationsets -n argocd
+
+# Wait for infrastructure ApplicationSet to sync
+kubectl wait --for=jsonpath='{.status.sync.status}'=Synced application/infrastructure -n argocd --timeout=600s
+
+# Verify core services are ready
+kubectl get pods -n cert-manager
+kubectl get pods -n external-secrets
+kubectl get pods -n argocd
 ```
 
 ### Phase 7: Restore Data from B2

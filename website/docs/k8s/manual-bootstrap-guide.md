@@ -1,12 +1,12 @@
 ---
 sidebar_position: 3
 title: Manual Bootstrap Guide
-description: Step-by-step instructions for manually bootstrapping the cluster
+description: Disaster recovery instructions for manually bootstrapping the cluster
 ---
 
 # Manual Cluster Bootstrap Guide
 
-This guide provides the steps necessary to bootstrap a new cluster manually. This is typically only needed for initial cluster setup or disaster recovery.
+This guide provides manual bootstrap steps for disaster recovery when automatic bootstrap via OpenTofu fails. Normal cluster setup uses automated bootstrap during `tofu apply`.
 
 ## Prerequisites
 
@@ -15,15 +15,7 @@ This guide provides the steps necessary to bootstrap a new cluster manually. Thi
 - `kustomize` CLI installed
 - `argocd` CLI installed (optional)
 
-## 1. CRD Installation
-
-First, apply all Custom Resource Definitions (CRDs) to avoid dependency issues:
-
-```shell
-kubectl apply -k k8s/infrastructure/crds
-```
-
-## 2. Core Infrastructure Components
+## 1. Core Infrastructure Components
 
 ### 2.1 Cilium CNI
 
@@ -77,9 +69,9 @@ kustomize build --enable-helm k8s/infrastructure/network/coredns | kubectl apply
 kustomize build --enable-helm k8s/infrastructure/controllers/external-secrets | kubectl apply -f -
 ```
 
-## 3. Secrets Configuration
+## 2. Secrets Configuration
 
-### 3.1 External Secrets Setup
+### 2.1 External Secrets Setup
 
 Create the Bitwarden secrets operator token:
 
@@ -90,21 +82,9 @@ kubectl create secret generic bitwarden-access-token \
   --from-literal="token=<your-token>"
 ```
 
+Cert Manager handles TLS certificates automatically. No manual Let's Encrypt CA configuration is required.
 
-Trust Let's Encrypt certificates for External Secrets:
-
-```shell
-# Download Let's Encrypt Root certificate
-curl -Lo "isrgrootx1.pem" "https://letsencrypt.org/certs/isrgrootx1.pem"
-
-# Create the certificate trust secret
-kubectl create secret generic letsencrypt-ca \
-  --namespace external-secrets \
-  --from-file=ca.crt=isrgrootx1.pem
-```
-
-
-## 4. GitOps Configuration
+## 3. GitOps Configuration
 
 Apply the ApplicationSet configurations in order:
 
@@ -150,5 +130,4 @@ kubectl get pods -n argocd
 
 - If External Secrets fail:
   1. Verify Bitwarden token secret
-  2. Check certificate trust configuration
-  3. Validate ClusterSecretStore configuration
+  2. Validate ClusterSecretStore configuration
