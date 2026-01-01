@@ -49,6 +49,8 @@ global:
     - name: db-creds
       mountPath: /secrets/authentik
       readOnly: true
+    - name: shm
+      mountPath: /dev/shm
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
@@ -56,6 +58,9 @@ global:
     - name: db-creds
       secret:
         secretName: authentik-postgresql-app
+    - name: shm
+      emptyDir:
+        medium: Memory
 
 
 ## Authentik configuration
@@ -133,6 +138,22 @@ server:
   # -- whether to enable server resources
   enabled: true
 
+  # -- authentik server pod-level security context
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+
+  # -- authentik server container-level security context
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+
   ## authentik server service configuration
   service:
     # -- authentik server service annotations
@@ -145,6 +166,19 @@ server:
 
 worker:
   enabled: true
+  securityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+    containerSecurityContext:
+      runAsNonRoot: true
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+
   resources:
     requests:
       cpu: 100m

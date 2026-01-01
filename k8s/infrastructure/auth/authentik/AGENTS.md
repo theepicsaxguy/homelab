@@ -145,6 +145,37 @@ Optional:
 - Email provider for notifications
 - Outposts for proxied applications
 
+## BREAKING CHANGES
+
+### Authentik 2024.8 Property Mapping Model Changes
+
+**Issue**: Authentik 2024.8 removed `authentik_core.propertymapping` as a valid model for OAuth2 property mappings. Using this model in blueprints causes `!Find` to return `None`, resulting in "Invalid pk 'None' - object does not exist" errors.
+
+**Impact**: OAuth2 provider blueprints that reference default scope mappings (openid, profile, email, offline_access) using `!Find` tags will fail blueprint validation.
+
+**Fix**: Update OAuth2 property mapping references to use the correct model and field:
+- **Old model**: `authentik_core.propertymapping` with `[name, "..."]`
+- **New model**: `authentik_providers_oauth2.scopemapping` with `[scope_name, "..."]`
+
+**Example fix**:
+```yaml
+# OLD (fails in 2024.8+)
+property_mappings:
+  - !Find [
+      authentik_core.propertymapping,  # ❌ Incorrect model
+      [name, "authentik default OAuth Mapping: OpenID 'openid'"],
+    ]
+
+# NEW (works in 2024.8+)
+property_mappings:
+  - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+  - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+  - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+  - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
+```
+
+**Reference**: [Authentik 2024.8 Release Notes](https://docs.goauthentik.io/releases/2024.8/) - See "Removed enum values" section under API Changes
+
 Environment Variables:
 - Database credentials (from CNPG auto-generated secret)
 - SMTP settings (from ExternalSecrets)
