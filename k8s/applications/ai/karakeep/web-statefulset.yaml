@@ -31,7 +31,7 @@ spec:
           emptyDir: {}
       containers:
         - name: web
-          image: ghcr.io/karakeep-app/karakeep:0.29.3
+          image: ghcr.io/karakeep-app/karakeep:0.30.0
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
