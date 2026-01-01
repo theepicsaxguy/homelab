@@ -324,7 +324,7 @@ Typical homelab state file: ~500KB - 1MB
 ## Support
 
 For issues or questions:
-1. Check this documentation and [tofu/state-b2/README.md](https://github.com/theepicsaxguy/homelab/tree/main/tofu/state-b2/README.md)
-2. Review OpenTofu logs: `TF_LOG=DEBUG tofu plan`
-3. Check B2 console for bucket status and access logs
-4. Verify credentials and configuration
+1. Review OpenTofu logs: `TF_LOG=DEBUG tofu plan`
+2. Check B2 console for bucket status and access logs
+3. Verify credentials and configuration
+4. Review the [bootstrap module configuration](https://github.com/theepicsaxguy/homelab/tree/main/tofu/state-b2)
