@@ -141,18 +141,19 @@ server:
   # -- authentik server pod-level security context
   securityContext:
     runAsNonRoot: true
-    allowPrivilegeEscalation: false
     seccompProfile:
       type: RuntimeDefault
-    capabilities:
-      drop:
-        - ALL
 
   # -- authentik server container-level security context
   containerSecurityContext:
     runAsNonRoot: true
     readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
 
   ## authentik server service configuration
   service:
@@ -168,16 +169,15 @@ worker:
   enabled: true
   securityContext:
     runAsNonRoot: true
-    allowPrivilegeEscalation: false
     seccompProfile:
       type: RuntimeDefault
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
     capabilities:
       drop:
         - ALL
-    containerSecurityContext:
-      runAsNonRoot: true
-      readOnlyRootFilesystem: true
-      allowPrivilegeEscalation: false
 
   resources:
     requests:
