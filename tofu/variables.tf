@@ -267,45 +267,6 @@ variable "git_repository_url" {
   default     = "https://github.com/theepicsaxguy/homelab.git"
 }
 
-# Remote State Configuration (Backblaze B2)
-variable "backend_bucket_name" {
-  description = "S3-compatible bucket name for remote state (Backblaze B2)"
-  type        = string
-  default     = "homelab-terraform-state"
-}
-
-variable "backend_state_key" {
-  description = "State file path in remote bucket"
-  type        = string
-  default     = "proxmox/terraform.tfstate"
-}
-
-variable "backend_region" {
-  description = "S3-compatible region for Backblaze B2"
-  type        = string
-  default     = "us-west-000"
-}
-
-variable "backend_endpoint" {
-  description = "S3-compatible endpoint for Backblaze B2"
-  type        = string
-  default     = "https://s3.us-west-000.backblazeb2.com"
-}
-
-variable "backend_access_key_id" {
-  description = "Backblaze B2 access key ID for remote state"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
-variable "backend_secret_access_key" {
-  description = "Backblaze B2 secret access key for remote state"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
-
 variable "encryption_passphrase" {
   description = "Encryption passphrase for OpenTofu state and plan encryption"
   type        = string

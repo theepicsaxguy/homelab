@@ -51,7 +51,7 @@ model_list:
 # Azure/OpenAI models (cleaned, deduplicated, using openai_api_key_1 and openai_base_url_1)
   - model_name: azure/codex-mini
     litellm_params:
-      model: codex-mini
+      model: openai/codex-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -61,7 +61,7 @@ model_list:
 
   - model_name: azure/computer-use-preview
     litellm_params:
-      model: computer-use-preview
+      model: openai/computer-use-preview
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -74,7 +74,7 @@ model_list:
 
   - model_name: azure/embedding3large
     litellm_params:
-      model: embedding3large
+      model: openai/embedding3large
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -85,7 +85,7 @@ model_list:
 
   - model_name: azure/embeddingada
     litellm_params:
-      model: embeddingada
+      model: openai/embeddingada
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -106,7 +106,7 @@ model_list:
 
   - model_name: azure/gpt-5.1
     litellm_params:
-      model: gpt41
+      model: openai/gpt41
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -119,7 +119,7 @@ model_list:
       input_cost_per_token_cached: 0.00000013
   - model_name: azure/gpt-5
     litellm_params:
-      model: gpt-5
+      model: openai/gpt-5
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -133,7 +133,7 @@ model_list:
 
   - model_name: azure/gpt-5-chat
     litellm_params:
-      model: gpt-5-chat
+      model: openai/gpt-5-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -146,7 +146,7 @@ model_list:
 
   - model_name: azure/gpt-5-codex
     litellm_params:
-      model: gpt-5-codex
+      model: openai/gpt-5-codex
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -159,7 +159,7 @@ model_list:
 
   - model_name: azure/gpt-5-mini
     litellm_params:
-      model: gpt-5-mini
+      model: openai/gpt-5-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -172,7 +172,7 @@ model_list:
 
   - model_name: azure/gpt-5-nano
     litellm_params:
-      model: gpt-5-nano
+      model: openai/gpt-5-nano
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -187,7 +187,7 @@ model_list:
 
   - model_name: azure/gpt-5-pro
     litellm_params:
-      model: gpt-5-pro
+      model: openai/gpt-5-pro
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -201,7 +201,7 @@ model_list:
 
   - model_name: azure/gpt-5.1
     litellm_params:
-      model: gpt-5.1
+      model: openai/gpt-5.1
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -216,7 +216,7 @@ model_list:
 
   - model_name: azure/gpt-5.1-chat
     litellm_params:
-      model: gpt-5.1-chat
+      model: openai/gpt-5.1-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -231,7 +231,7 @@ model_list:
 
   - model_name: azure/gpt-5.1-codex
     litellm_params:
-      model: gpt-5.1-codex
+      model: openai/gpt-5.1-codex
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -246,7 +246,7 @@ model_list:
 
   - model_name: azure/gpt-5.1-codex-max
     litellm_params:
-      model: gpt-5.1-codex-max
+      model: openai/gpt-5.1-codex-max
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -261,7 +261,7 @@ model_list:
 
   - model_name: azure/gpt-5.1-codex-mini
     litellm_params:
-      model: gpt-5.1-codex-mini
+      model: openai/gpt-5.1-codex-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -276,7 +276,7 @@ model_list:
 
   - model_name: azure/gpt-5.2
     litellm_params:
-      model: gpt-5.2
+      model: openai/gpt-5.2
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -291,7 +291,7 @@ model_list:
 
   - model_name: azure/gpt-5.2-chat
     litellm_params:
-      model: gpt-5.2-chat
+      model: openai/gpt-5.2-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -306,7 +306,7 @@ model_list:
 
   - model_name: azure/gpt-audio
     litellm_params:
-      model: gpt-audio
+      model: openai/gpt-audio
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -318,7 +318,7 @@ model_list:
 
   - model_name: azure/gpt-image-1
     litellm_params:
-      model: gpt-image-1
+      model: openai/gpt-image-1
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -328,7 +328,7 @@ model_list:
 
   - model_name: azure/gpt-image-1-mini
     litellm_params:
-      model: gpt-image-1-mini
+      model: openai/gpt-image-1-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -340,7 +340,7 @@ model_list:
 
   - model_name: azure/model-router
     litellm_params:
-      model: model-router
+      model: openai/model-router
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -353,7 +353,7 @@ model_list:
 
   - model_name: azure/o1
     litellm_params:
-      model: o1
+      model: openai/o1
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -367,7 +367,7 @@ model_list:
 
   - model_name: azure/o3
     litellm_params:
-      model: o3
+      model: openai/o3
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -379,7 +379,7 @@ model_list:
       input_cost_per_token_cached: 0.0000005
   - model_name: azure/o3-mini
     litellm_params:
-      model: o3-mini
+      model: openai/o3-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -392,7 +392,7 @@ model_list:
 
   - model_name: azure/o3-pro
     litellm_params:
-      model: o3-pro
+      model: openai/o3-pro
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -402,7 +402,7 @@ model_list:
 
   - model_name: azure/o4-mini
     litellm_params:
-      model: o4-mini
+      model: openai/o4-mini
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -414,7 +414,7 @@ model_list:
 
   - model_name: azure/sora
     litellm_params:
-      model: sora
+      model: openai/sora
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     model_info:
@@ -424,7 +424,7 @@ model_list:
 # OpenAI models (cleaned, deduplicated, using openai_api_key_2 and openai_base_url_2)
   - model_name: openai/codex-mini
     litellm_params:
-      model: codex-mini
+      model: openai/codex-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -434,7 +434,7 @@ model_list:
 
   - model_name: openai/computer-use-preview
     litellm_params:
-      model: computer-use-preview
+      model: openai/computer-use-preview
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -454,7 +454,7 @@ model_list:
 
   - model_name: openai/embedding3large
     litellm_params:
-      model: embedding3large
+      model: openai/embedding3large
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -465,7 +465,7 @@ model_list:
 
   - model_name: openai/embeddingada
     litellm_params:
-      model: embeddingada
+      model: openai/embeddingada
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -496,7 +496,7 @@ model_list:
 
   - model_name: openai/gpt-5.1
     litellm_params:
-      model: gpt41
+      model: openai/gpt41
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -509,7 +509,7 @@ model_list:
       input_cost_per_token_cached: 0.00000013
   - model_name: openai/gpt-5
     litellm_params:
-      model: gpt-5
+      model: openai/gpt-5
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -523,7 +523,7 @@ model_list:
 
   - model_name: openai/gpt-5-codex
     litellm_params:
-      model: gpt-5-codex
+      model: openai/gpt-5-codex
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -536,7 +536,7 @@ model_list:
 
   - model_name: openai/gpt-5-mini
     litellm_params:
-      model: gpt-5-mini
+      model: openai/gpt-5-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -549,7 +549,7 @@ model_list:
 
   - model_name: openai/gpt-5-nano
     litellm_params:
-      model: gpt-5-nano
+      model: openai/gpt-5-nano
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -564,7 +564,7 @@ model_list:
 
   - model_name: openai/gpt-5-pro
     litellm_params:
-      model: gpt-5-pro
+      model: openai/gpt-5-pro
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -578,7 +578,7 @@ model_list:
 
   - model_name: openai/gpt-5.1
     litellm_params:
-      model: gpt-5.1
+      model: openai/gpt-5.1
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -593,7 +593,7 @@ model_list:
 
   - model_name: openai/gpt-5.1-chat
     litellm_params:
-      model: gpt-5.1-chat
+      model: openai/gpt-5.1-chat
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -608,7 +608,7 @@ model_list:
 
   - model_name: openai/gpt-5.1-codex
     litellm_params:
-      model: gpt-5.1-codex
+      model: openai/gpt-5.1-codex
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -623,7 +623,7 @@ model_list:
 
   - model_name: openai/gpt-5.1-codex-max
     litellm_params:
-      model: gpt-5.1-codex-max
+      model: openai/gpt-5.1-codex-max
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -638,7 +638,7 @@ model_list:
 
   - model_name: openai/gpt-5.1-codex-mini
     litellm_params:
-      model: gpt-5.1-codex-mini
+      model: openai/gpt-5.1-codex-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -653,7 +653,7 @@ model_list:
 
   - model_name: openai/gpt-5.2
     litellm_params:
-      model: gpt-5.2
+      model: openai/gpt-5.2
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -668,7 +668,7 @@ model_list:
 
   - model_name: openai/gpt-5.2-chat
     litellm_params:
-      model: gpt-5.2-chat
+      model: openai/gpt-5.2-chat
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     default_litellm_params:
@@ -683,7 +683,7 @@ model_list:
 
   - model_name: openai/gpt-audio
     litellm_params:
-      model: gpt-audio
+      model: openai/gpt-audio
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -695,7 +695,7 @@ model_list:
 
   - model_name: openai/gpt-image-1
     litellm_params:
-      model: gpt-image-1
+      model: openai/gpt-image-1
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -705,7 +705,7 @@ model_list:
 
   - model_name: openai/gpt-image-1-mini
     litellm_params:
-      model: gpt-image-1-mini
+      model: openai/gpt-image-1-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -716,7 +716,7 @@ model_list:
 
   - model_name: openai/gpt-realtime
     litellm_params:
-      model: gpt-realtime
+      model: openai/gpt-realtime
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -729,7 +729,7 @@ model_list:
 
   - model_name: openai/model-router
     litellm_params:
-      model: model-router
+      model: openai/model-router
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -742,7 +742,7 @@ model_list:
 
   - model_name: openai/o1
     litellm_params:
-      model: o1
+      model: openai/o1
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -755,7 +755,7 @@ model_list:
 
   - model_name: openai/o3
     litellm_params:
-      model: o3
+      model: openai/o3
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -767,7 +767,7 @@ model_list:
       input_cost_per_token_cached: 0.0000005
   - model_name: openai/o3-mini
     litellm_params:
-      model: o3-mini
+      model: openai/o3-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -780,7 +780,7 @@ model_list:
 
   - model_name: openai/o3-pro
     litellm_params:
-      model: o3-pro
+      model: openai/o3-pro
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -790,7 +790,7 @@ model_list:
 
   - model_name: openai/o4-mini
     litellm_params:
-      model: o4-mini
+      model: openai/o4-mini
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:
@@ -802,7 +802,7 @@ model_list:
 
   - model_name: openai/sora
     litellm_params:
-      model: sora
+      model: openai/sora
       api_key: "os.environ/openai_api_key_2"
       api_base: "os.environ/openai_base_url_2"
     model_info:

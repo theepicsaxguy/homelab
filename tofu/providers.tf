@@ -27,7 +27,7 @@ terraform {
   }
 
   # State and plan encryption using pbkdf2 + AES-GCM
-  # Enabled when encryption_passphrase is set
+  # Encryption passphrase must be set in terraform.tfvars
   encryption {
     key_provider "pbkdf2" "encryption_passphrase" {
       passphrase = var.encryption_passphrase
@@ -37,11 +37,11 @@ terraform {
     }
     state {
       method   = method.aes_gcm.encryption_method
-      enforced = var.encryption_passphrase != "" ? true : false
+      enforced = true
     }
     plan {
       method   = method.aes_gcm.encryption_method
-      enforced = var.encryption_passphrase != "" ? true : false
+      enforced = true
     }
   }
 }

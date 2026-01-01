@@ -10,9 +10,6 @@ resources:
 - minio-externalsecret.yaml
 - referencegrant.yaml
 - extra
-generatorOptions:
-  disableNameSuffixHash: true
-
 helmCharts:
 - name: authentik
   namespace: auth

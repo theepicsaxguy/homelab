@@ -1,6 +1,6 @@
-# Remote State Configuration with Backblaze B2
+# Remote State Configuration with TrueNAS MinIO
 
-This guide explains how to configure and use Backblaze B2 for remote state storage with OpenTofu.
+This guide explains how to configure and use TrueNAS MinIO for remote state storage with OpenTofu.
 
 ## Table of Contents
 
@@ -15,125 +15,102 @@ This guide explains how to configure and use Backblaze B2 for remote state stora
 
 ## Overview
 
-Remote state storage provides disaster recovery and collaboration capabilities by storing your OpenTofu state file in Backblaze B2 (S3-compatible object storage) instead of locally.
+Remote state storage provides disaster recovery and collaboration capabilities by storing your OpenTofu state file in TrueNAS MinIO (S3-compatible object storage) instead of locally.
 
-This implementation uses a **two-phase bootstrap pattern**:
-1. **Phase 1**: Use `tofu/state-b2/` to create the B2 bucket infrastructure
-2. **Phase 2**: Configure main tofu to use the created bucket
+This implementation uses **partial backend configuration**:
+1. Static backend settings are defined in `backend.tf`
+2. Sensitive credentials are stored in `backend-config.tfvars` (gitignored)
+3. Backend is initialized using: `tofu init -backend-config=backend-config.tfvars`
 
 ## Benefits
 
 - **Disaster Recovery**: State survives local infrastructure loss
-- **State History**: B2 versioning enabled (can rollback to previous states)
+- **State History**: MinIO versioning enabled (can rollback to previous states)
 - **Encryption**:
-  - At rest: B2 server-side encryption + OpenTofu encryption
   - In transit: HTTPS/TLS
-- **Cost-Effective**: Backblaze B2 pricing is competitive
+- **Self-Hosted**: TrueNAS MinIO (no external S3 dependency)
+- **State Locking**: S3 native locking prevents concurrent modifications
+- **Cost-Effective**: No external cloud storage costs
 - **S3 Compatibility**: Works with standard S3 tools and workflows
+- **Security**: Credentials stored in gitignored `backend-config.tfvars`
 
 ## Prerequisites
 
-### 1. Backblaze B2 Account
+### 1. TrueNAS MinIO Deployment
 
-Sign up at https://www.backblaze.com/b2/sign-up.html
+MinIO must be deployed and accessible. Verify with:
+```bash
+kubectl get secret longhorn-minio-credentials -n litellm -o yaml
+```
 
-### 2. Application Key
+Expected output includes:
+- `AWS_ACCESS_KEY_ID`: MinIO access key
+- `AWS_SECRET_ACCESS_KEY`: MinIO secret key
+- `AWS_ENDPOINTS`: MinIO endpoint URL
 
-Create an application key with bucket read/write access:
-1. Log into Backblaze B2 console
-2. Navigate to: **App Keys** → **Add a New Application Key**
-3. Configure:
-   - **Name**: `opentofu-state-management`
-   - **Access**: Read and Write
-   - **Bucket**: All or specific bucket
-4. **Save the credentials**:
-   - `keyID` (used as `access_key_id`)
-   - `applicationKey` (used as `secret_access_key`)
-   - **IMPORTANT**: You can only view the applicationKey once!
+### 2. Generate Encryption Passphrase
 
-### 3. Choose a Globally Unique Bucket Name
+Generate a secure passphrase for state encryption (minimum 16 characters, recommended 32+):
+```bash
+openssl rand -base64 32
+```
 
-B2 bucket names must be globally unique. Example: `homelab-terraform-state-<your-identifier>`
+Store this passphrase securely in your password manager. This will go in `terraform.tfvars`.
+
+### 3. Choose Bucket Name
+
+Bucket names must be unique within your MinIO instance. Example: `homelab-terraform-state`
 
 ## Setup Process
 
-### Phase 1: Bootstrap B2 Bucket
-
-1. **Navigate to the state-b2 directory**:
-   ```bash
-   cd tofu/state-b2/
-   ```
-
-2. **Copy and configure tfvars**:
-   ```bash
-   cp terraform.tfvars.example terraform.tfvars
-   ```
-
-3. **Edit `terraform.tfvars`** with your credentials:
-   ```hcl
-   b2 = {
-     region            = "us-west-000"  # Or your preferred B2 region
-     endpoint          = "https://s3.us-west-000.backblazeb2.com"
-     access_key_id     = "your-b2-keyID"
-     secret_access_key = "your-b2-applicationKey"
-   }
-   bucket_name           = "your-unique-bucket-name"
-   encryption_passphrase = "your-secure-encryption-passphrase"
-   ```
-
-4. **Initialize and create the bucket**:
-   ```bash
-   tofu init
-   tofu plan
-   tofu apply
-   ```
-
-5. **Verify bucket creation**:
-   ```bash
-   tofu output
-   ```
-
-6. **Migrate state-b2 to remote storage** (optional but recommended):
-   - Uncomment the backend block in `providers.tofu` (lines 27-41)
-   - Run: `tofu init -migrate-state`
-   - Confirm migration
-   - Remove local state: `rm -f terraform.tfstate*` (optional)
-
-### Phase 2: Configure Main Tofu for Remote State
+### Configure Main Tofu for MinIO Remote State
 
 1. **Navigate to main tofu directory**:
    ```bash
    cd /path/to/homelab/tofu/
    ```
 
-2. **Edit `terraform.tfvars`** and add:
+2. **Create `backend-config.tfvars`** from the example:
+   ```bash
+   cp backend-config.tfvars.example backend-config.tfvars
+   ```
+
+3. **Edit `backend-config.tfvars`** with your MinIO credentials:
    ```hcl
-   # Remote State Configuration
-   backend_bucket_name       = "your-unique-bucket-name"
-   backend_state_key         = "proxmox/terraform.tfstate"
-   backend_region            = "us-west-000"
-   backend_endpoint          = "https://s3.us-west-000.backblazeb2.com"
-   backend_access_key_id     = "your-b2-keyID"
-   backend_secret_access_key = "your-b2-applicationKey"
-   encryption_passphrase     = "your-secure-encryption-passphrase"
+   # S3-compatible bucket configuration
+   bucket = "homelab-terraform-state"
+   key    = "proxmox/terraform.tfstate"
+   region = "us-east-1"  # Arbitrary for MinIO, validation is skipped
+
+   # MinIO endpoint (your TrueNAS MinIO URL)
+   endpoint = "https://truenas.yourdomain.com:9000"
+
+   # MinIO credentials (obtain from TrueNAS MinIO console)
+   access_key = "YOUR_MINIO_ACCESS_KEY"
+   secret_key = "YOUR_MINIO_SECRET_KEY"
    ```
 
-3. **Backup local state** (if exists):
+   **Note**: `backend-config.tfvars` is gitignored to protect your credentials.
+
+4. **Backup local state** (if exists):
    ```bash
-   cp terraform.tfstate terraform.tfstate.backup-$(date +%Y%m%d-%H%M%S)
+   cp terraform.tfstate terraform.tfstate.backup.before-minio-migration
    ```
 
-4. **Migrate to remote state**:
+5. **Migrate to MinIO remote state**:
    ```bash
-   tofu init -migrate-state
+   tofu init -backend-config=backend-config.tfvars -migrate-state
    ```
 
-5. **Verify migration**:
+   When prompted, confirm migration by typing: `yes`
+
+6. **Verify migration**:
    ```bash
    tofu state list
+   tofu show
    ```
 
-6. **Optional cleanup**:
+7. **Optional cleanup** (after successful verification):
    ```bash
    # Keep backups, remove active local state
    rm -f terraform.tfstate
@@ -141,18 +118,18 @@ B2 bucket names must be globally unique. Example: `homelab-terraform-state-<your
 
 ## Migration
 
-### From Local to Remote State
+### From Local to MinIO Remote State
 
-See [Phase 2: Configure Main Tofu for Remote State](#phase-2-configure-main-tofu-for-remote-state) above.
+See [Configure Main Tofu for MinIO Remote State](#configure-main-tofu-for-minio-remote-state) above.
 
-### From Remote to Local State
+### From MinIO Remote to Local State
 
 1. **Backup current state**:
    ```bash
    tofu state pull > terraform.tfstate.backup-$(date +%Y%m%d-%H%M%S)
    ```
 
-2. **Comment out the backend block** in `backend.tf`:
+2. **Comment out backend block** in `backend.tf`:
    ```hcl
    # terraform {
    #   backend "s3" {
@@ -174,12 +151,12 @@ See [Phase 2: Configure Main Tofu for Remote State](#phase-2-configure-main-tofu
 
 ## Switching Between Local and Remote State
 
-### Enable Remote State
-1. Ensure backend variables are configured in `terraform.tfvars`
-2. Uncomment backend block in `backend.tf`
-3. Run: `tofu init -migrate-state`
+### Enable MinIO Remote State
+1. Ensure `backend-config.tfvars` is configured with your credentials
+2. Uncomment backend block in `backend.tf` (if commented)
+3. Run: `tofu init -backend-config=backend-config.tfvars -migrate-state`
 
-### Disable Remote State
+### Disable MinIO Remote State
 1. Comment out backend block in `backend.tf`
 2. Run: `tofu init -migrate-state`
 
@@ -189,34 +166,34 @@ See [Phase 2: Configure Main Tofu for Remote State](#phase-2-configure-main-tofu
 
 ### 1. Secure Credentials
 
-- **Never commit** `terraform.tfvars` to git (it's in `.gitignore`)
-- **Use strong passphrases** for `encryption_passphrase`
-- **Rotate B2 keys** periodically
-- **Limit B2 key permissions** to specific bucket only
+- **Never commit** `terraform.tfvars` or `backend-config.tfvars` to git (they're in `.gitignore`)
+- **Use strong passphrases** for `encryption_passphrase` in `terraform.tfvars` (minimum 16 chars)
+- **Rotate MinIO keys** periodically via TrueNAS console and update `backend-config.tfvars`
+- **Limit MinIO key permissions** to specific bucket only
 
 ### 2. Encryption
 
 OpenTofu encrypts state using:
-- **Algorithm**: pbkdf2 (key derivation) + AES-GCM (encryption)
-- **Local encryption**: Before state is sent to B2
-- **B2 encryption**: Server-side encryption at rest (enabled by default)
+- **Algorithm**: pbkdf2 (key derivation, 600k iterations) + AES-GCM (encryption)
+- **Configuration**: Set `encryption_passphrase` in `terraform.tfvars`
+- **Key requirement**: Same passphrase must be used for all future operations
 
 ### 3. State File Security
 
 - State files contain **sensitive information** (passwords, keys, IPs)
-- **Encryption passphrase** is required to decrypt state
+- **Encryption passphrase** (in `terraform.tfvars`) is required to decrypt state
 - **Store passphrase securely** (password manager, vault)
 - **Different passphrase** for prod vs dev environments
 
 ### 4. Access Control
 
-- **Limit B2 key access** to state bucket only
+- **Limit MinIO key access** to state bucket only
 - **Use separate keys** for different environments
-- **Audit B2 access logs** regularly
+- **Audit MinIO access logs** via TrueNAS console
 
 ### 5. Backup Strategy
 
-- **B2 versioning**: Keeps 100 previous versions for 90 days
+- **MinIO versioning**: Configure bucket versioning for state rollback
 - **Local backups**: Before major changes
 - **Test restores**: Verify backups work
 
@@ -224,75 +201,85 @@ OpenTofu encrypts state using:
 
 ### Error: "bucket already exists"
 
-**Cause**: Bucket name is not globally unique across all B2 users.
+**Cause**: Bucket name conflict in MinIO.
 
-**Solution**: Choose a different bucket name in `terraform.tfvars`.
+**Solution**: MinIO will use existing bucket automatically. No action required.
 
 ### Error: "Access Denied"
 
-**Cause**: Invalid or insufficient B2 credentials.
+**Cause**: Invalid or insufficient MinIO credentials.
 
 **Solutions**:
-- Verify `access_key_id` and `secret_access_key` are correct
+- Verify `access_key` and `secret_key` in `backend-config.tfvars` are correct
 - Ensure key has read/write permissions to buckets
-- Check key hasn't been deleted or revoked in B2 console
+- Check key hasn't been deleted or revoked in MinIO console
+- Re-run `tofu init -backend-config=backend-config.tfvars` after fixing credentials
 
 ### Error: "Invalid encryption passphrase"
 
 **Cause**: Incorrect or missing encryption passphrase.
 
 **Solutions**:
-- Verify `encryption_passphrase` matches the one used to create/encrypt state
+- Verify `encryption_passphrase` in `terraform.tfvars` matches one used to create/encrypt state
 - Check for typos in passphrase
 - Ensure passphrase is set in `terraform.tfvars`
+
+### Error: "Backend config contains sensitive values"
+
+**Cause**: Attempting to use variables in backend block or sensitive values in backend.tf.
+
+**Solutions**:
+- Ensure you're using `backend-config.tfvars` for credentials, not `backend.tf`
+- Run `tofu init -backend-config=backend-config.tfvars` to properly configure backend
+- Verify `backend.tf` doesn't contain hardcoded credentials
 
 ### State migration fails
 
 **Symptoms**: `tofu init -migrate-state` errors
 
 **Solutions**:
-1. Verify backend configuration variables match:
-   - `backend_bucket_name` matches created bucket
-   - `backend_endpoint` and `backend_region` are correct
-   - Credentials are valid
-2. Check B2 bucket exists: log into B2 console
+1. Verify backend configuration in `backend-config.tfvars`:
+   - `bucket` matches desired bucket name
+   - `endpoint` URL is correct and accessible
+   - `access_key` and `secret_key` are valid
+2. Check MinIO connectivity: `curl -k https://truenas.yourdomain.com:9000/minio/health/live`
 3. Verify local state exists before migration
-4. Check OpenTofu/Terraform version compatibility
+4. Ensure you're using: `tofu init -backend-config=backend-config.tfvars -migrate-state`
 
 ### Cannot access remote state
 
 **Symptoms**: `tofu plan` fails to read state
 
 **Solutions**:
-- Verify B2 credentials are correct
-- Check `encryption_passphrase` matches
-- Ensure B2 bucket exists and is accessible
-- Verify network connectivity to B2
+- Verify MinIO credentials in `backend-config.tfvars` are correct
+- Check `encryption_passphrase` in `terraform.tfvars` matches
+- Ensure MinIO bucket exists and is accessible
+- Verify network connectivity to MinIO
+- Re-initialize if needed: `tofu init -backend-config=backend-config.tfvars -reconfigure`
 
 ### State lock errors
 
-**Note**: B2 S3-compatible API **does not support state locking**.
+**Note**: MinIO S3-compatible API supports state locking via native S3 locking.
 
-For single-operator homelab, this is acceptable. For multi-user scenarios:
-- Coordinate manually (communicate before running `tofu apply`)
-- Consider Terraform Cloud (supports state locking)
-- Use DynamoDB with AWS S3 (supports state locking)
+If lock errors occur:
+1. Check for other `tofu apply` processes running
+2. Verify no concurrent operators
+3. Force unlock (rare): `tofu force-unlock <LOCK_ID>` (use with caution)
 
 ## State Versioning
 
-B2 bucket is configured with versioning:
-- **Retention**: 90 days for noncurrent versions
-- **Limit**: Keep 100 newer versions
-- **Rollback**: Possible via B2 console or API
+MinIO bucket versioning enables state rollback:
+
+### Enable Bucket Versioning
+
+1. Access MinIO console: `https://truenas.peekoff.com:9001`
+2. Navigate to: **Buckets** → Select bucket → **Versioning**
+3. Enable versioning
 
 ### Rollback to Previous State Version
 
-1. **List versions** in B2 console or CLI
-2. **Download desired version**:
-   ```bash
-   # Using B2 CLI
-   b2 download-file-by-id <fileId> terraform.tfstate.restored
-   ```
+1. **List versions** in MinIO console
+2. **Download desired version**
 3. **Restore locally**:
    ```bash
    cp terraform.tfstate.restored terraform.tfstate
@@ -304,27 +291,23 @@ B2 bucket is configured with versioning:
 
 ## Cost Considerations
 
-Backblaze B2 pricing (as of 2025):
-- **Storage**: $0.006/GB/month
-- **Downloads**: $0.01/GB
-- **API calls**: Included (Class C)
-
-Typical homelab state file: ~500KB - 1MB
-- **Monthly cost**: {'<$0.01'}/month for storage
-- **Downloads**: Minimal (only on `tofu` operations)
+TrueNAS MinIO (self-hosted):
+- **Storage**: No direct cost (uses TrueNAS storage)
+- **Network**: Local network traffic only
+- **Maintenance**: TrueNAS maintenance overhead
+- **Backup**: External backup strategy required for MinIO bucket
 
 ## References
 
-- [Backblaze B2 Documentation](https://www.backblaze.com/docs/cloud-storage)
-- [B2 S3 Compatible API](https://www.backblaze.com/docs/cloud-storage-s3-compatible-api)
+- [TrueNAS MinIO Documentation](https://www.truenas.com/docs/scale/24.04/scaletutorials/apps/communityapps/minioapp/)
 - [OpenTofu S3 Backend](https://opentofu.org/docs/language/settings/backends/s3/)
 - [OpenTofu State Encryption](https://opentofu.org/docs/language/state/encryption/)
-- [Bootstrap Module: tofu/state-b2/](https://github.com/theepicsaxguy/homelab/tree/main/tofu/state-b2)
+- [OpenTofu Dynamic Backends](https://opentofu.org/docs/language/settings/backends/configuration/)
 
 ## Support
 
 For issues or questions:
 1. Review OpenTofu logs: `TF_LOG=DEBUG tofu plan`
-2. Check B2 console for bucket status and access logs
+2. Check MinIO console for bucket status and access logs
 3. Verify credentials and configuration
-4. Review the [bootstrap module configuration](https://github.com/theepicsaxguy/homelab/tree/main/tofu/state-b2)
+4. Test MinIO connectivity: `curl https://truenas.peekoff.com:9000/minio/health/live`

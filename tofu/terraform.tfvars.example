@@ -21,22 +21,16 @@ bitwarden_token = "0.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxx
 # git_repository_url = "https://github.com/yourusername/homelab.git"
 
 # ============================================================================
-# Remote State Configuration (Backblaze B2)
+# State Encryption Configuration
 # ============================================================================
-# Uncomment and configure these variables to enable remote state storage
-# See website/docs/tofu/remote-state.md for setup instructions
-
-# Backend bucket configuration
-# backend_bucket_name   = "homelab-terraform-state"
-# backend_state_key     = "proxmox/terraform.tfstate"
-# backend_region        = "us-west-000"
-# backend_endpoint      = "https://s3.us-west-000.backblazeb2.com"
-
-# B2 Credentials (obtain from Backblaze B2 console)
-# IMPORTANT: Keep these credentials secure!
-# backend_access_key_id     = "YOUR_B2_KEY_ID"
-# backend_secret_access_key = "YOUR_B2_APPLICATION_KEY"
-
 # Encryption passphrase for state and plan encryption
 # IMPORTANT: Store this securely! You'll need it for all future operations.
-# encryption_passphrase = "your-secure-encryption-passphrase"
+# Minimum 16 characters, recommended 32+ characters.
+# Generate with: openssl rand -base64 32
+encryption_passphrase = "your-secure-encryption-passphrase"
+
+# ============================================================================
+# Remote State Configuration (TrueNAS MinIO)
+# ============================================================================
+# Backend configuration has been moved to backend-config.tfvars
+# See backend-config.tfvars.example and website/docs/tofu/remote-state.md
