@@ -288,25 +288,20 @@ resources:
 
 # -- Set Frigate Container Security Context
 securityContext:
-  allowPrivilegeEscalation: true
+  allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
   capabilities:
     drop:
       - ALL
-    add:
-      - CHOWN
-      - FOWNER
-      - SETGID
-      - SETUID
 
 # -- Set Pod level Security Context
 # -- the container level securiy context defined above
 # -- will override it for frigate container
 podSecurityContext:
-  runAsNonRoot: false
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
   fsGroupChangePolicy: OnRootMismatch
   seccompProfile:
     type: RuntimeDefault

@@ -38,15 +38,24 @@ This implementation uses **partial backend configuration**:
 
 ### 1. TrueNAS MinIO Deployment
 
-MinIO must be deployed and accessible. Verify with:
+MinIO must be deployed and accessible.
+
+**Get MinIO credentials from Kubernetes secret:**
 ```bash
-kubectl get secret longhorn-minio-credentials -n litellm -o yaml
+# Access Key
+kubectl get secret longhorn-minio-credentials -n litellm \
+  -o jsonpath='{.data.AWS_ACCESS_KEY_ID}' | base64 -d
+
+# Secret Key
+kubectl get secret longhorn-minio-credentials -n litellm \
+  -o jsonpath='{.data.AWS_SECRET_ACCESS_KEY}' | base64 -d
+
+# Endpoint
+kubectl get secret longhorn-minio-credentials -n litellm \
+  -o jsonpath='{.data.AWS_ENDPOINTS}' | base64 -d
 ```
 
-Expected output includes:
-- `AWS_ACCESS_KEY_ID`: MinIO access key
-- `AWS_SECRET_ACCESS_KEY`: MinIO secret key
-- `AWS_ENDPOINTS`: MinIO endpoint URL
+Use these credentials in your `backend-config.tfvars` file.
 
 ### 2. Generate Encryption Passphrase
 
@@ -92,25 +101,47 @@ Bucket names must be unique within your MinIO instance. Example: `homelab-terraf
 
    **Note**: `backend-config.tfvars` is gitignored to protect your credentials.
 
-4. **Backup local state** (if exists):
+4. **Create the MinIO bucket** (if it doesn't exist):
+   ```bash
+   # Using AWS CLI
+   AWS_ACCESS_KEY_ID="your-access-key" \
+   AWS_SECRET_ACCESS_KEY="your-secret-key" \
+   aws s3 mb s3://homelab-terraform-state \
+     --endpoint-url https://truenas.yourdomain.com:9000 \
+     --no-verify-ssl
+
+   # Or use MinIO Client (mc)
+   mc mb minio/homelab-terraform-state
+   ```
+
+   **Note**: The bucket must exist before running `tofu init -migrate-state`.
+
+5. **Backup local state** (if exists):
    ```bash
    cp terraform.tfstate terraform.tfstate.backup.before-minio-migration
    ```
 
-5. **Migrate to MinIO remote state**:
+6. **Migrate to MinIO remote state**:
    ```bash
    tofu init -backend-config=backend-config.tfvars -migrate-state
    ```
 
    When prompted, confirm migration by typing: `yes`
 
-6. **Verify migration**:
+7. **Verify migration**:
    ```bash
    tofu state list
    tofu show
+
+   # Verify state exists in MinIO
+   AWS_ACCESS_KEY_ID="your-access-key" \
+   AWS_SECRET_ACCESS_KEY="your-secret-key" \
+   aws s3 ls s3://homelab-terraform-state/proxmox/ \
+     --endpoint-url https://truenas.yourdomain.com:9000 \
+     --no-verify-ssl
    ```
 
-7. **Optional cleanup** (after successful verification):
+8. **Optional cleanup** (after successful verification):
    ```bash
    # Keep backups, remove active local state
    rm -f terraform.tfstate
@@ -121,6 +152,69 @@ Bucket names must be unique within your MinIO instance. Example: `homelab-terraf
 ### From Local to MinIO Remote State
 
 See [Configure Main Tofu for MinIO Remote State](#configure-main-tofu-for-minio-remote-state) above.
+
+#### Special Case: Migrating Unencrypted Local State
+
+If your local state was created without encryption, you'll need to temporarily configure an unencrypted fallback method during migration:
+
+1. **Add unencrypted fallback to `providers.tf`** (temporarily):
+   ```hcl
+   encryption {
+     key_provider "pbkdf2" "encryption_passphrase" {
+       passphrase = var.encryption_passphrase
+     }
+     method "aes_gcm" "encryption_method" {
+       keys = key_provider.pbkdf2.encryption_passphrase
+     }
+     method "unencrypted" "migration" {}
+     state {
+       method   = method.aes_gcm.encryption_method
+       fallback {
+         method = method.unencrypted.migration
+       }
+       enforced = false
+     }
+     plan {
+       method   = method.aes_gcm.encryption_method
+       fallback {
+         method = method.unencrypted.migration
+       }
+       enforced = false
+     }
+   }
+   ```
+
+2. **Run migration**:
+   ```bash
+   echo "yes" | tofu init -backend-config=backend-config.tfvars -migrate-state
+   ```
+
+3. **Remove fallback and enforce encryption** in `providers.tf`:
+   ```hcl
+   encryption {
+     key_provider "pbkdf2" "encryption_passphrase" {
+       passphrase = var.encryption_passphrase
+     }
+     method "aes_gcm" "encryption_method" {
+       keys = key_provider.pbkdf2.encryption_passphrase
+     }
+     state {
+       method   = method.aes_gcm.encryption_method
+       enforced = true
+     }
+     plan {
+       method   = method.aes_gcm.encryption_method
+       enforced = true
+     }
+   }
+   ```
+
+4. **Verify encryption is working**:
+   ```bash
+   tofu apply -refresh-only
+   ```
+
+After this process, your remote state will be encrypted even though the source local state was not.
 
 ### From MinIO Remote to Local State
 
@@ -232,6 +326,37 @@ OpenTofu encrypts state using:
 - Ensure you're using `backend-config.tfvars` for credentials, not `backend.tf`
 - Run `tofu init -backend-config=backend-config.tfvars` to properly configure backend
 - Verify `backend.tf` doesn't contain hardcoded credentials
+
+### Error: "S3 bucket does not exist"
+
+**Cause**: The MinIO bucket hasn't been created yet.
+
+**Solutions**:
+1. Create the bucket using AWS CLI:
+   ```bash
+   AWS_ACCESS_KEY_ID="your-access-key" \
+   AWS_SECRET_ACCESS_KEY="your-secret-key" \
+   aws s3 mb s3://homelab-terraform-state \
+     --endpoint-url https://truenas.yourdomain.com:9000 \
+     --no-verify-ssl
+   ```
+2. Or create via MinIO Console at `https://truenas.yourdomain.com:9001`
+3. Verify bucket exists:
+   ```bash
+   AWS_ACCESS_KEY_ID="your-access-key" \
+   AWS_SECRET_ACCESS_KEY="your-secret-key" \
+   aws s3 ls --endpoint-url https://truenas.yourdomain.com:9000 --no-verify-ssl
+   ```
+4. Retry migration: `tofu init -backend-config=backend-config.tfvars -migrate-state`
+
+### Error: "encountered unencrypted payload without unencrypted method configured"
+
+**Cause**: Trying to migrate unencrypted local state with encryption enforced.
+
+**Solutions**:
+- See the [Special Case: Migrating Unencrypted Local State](#special-case-migrating-unencrypted-local-state) section above
+- Temporarily add an unencrypted fallback method to `providers.tf`
+- After migration, remove the fallback and enforce encryption
 
 ### State migration fails
 
