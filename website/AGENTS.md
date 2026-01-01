@@ -86,6 +86,8 @@ Use relative links for internal navigation. Use absolute URLs for external resou
 - Never reference AGENTS.md files in documentation - these are for coding agents only
 - Only link to files in `website/docs/` directory
 - Use relative paths like `[text](../other-page.md)` for internal docs
+- Verify relative paths are correct: count directory levels from source to target
+  - Example: From `docs/infrastructure/storage/file.md` to `docs/storage/other.md`: `../../storage/other.md`
 - Verify links resolve to existing files before committing
 
 ## TESTING

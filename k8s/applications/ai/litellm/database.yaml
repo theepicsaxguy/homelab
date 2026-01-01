@@ -132,8 +132,6 @@ spec:
       inherit: true
       replication: false
       connectionLimit: -1
-      inRoles:
-      - litellm
 
   monitoring:
     enablePodMonitor: false

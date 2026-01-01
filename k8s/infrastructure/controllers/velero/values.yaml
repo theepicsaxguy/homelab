@@ -20,7 +20,7 @@ credentials:
 configuration:
   uploaderType: kopia
   uploaderConfig:
-    parallelFilesUpload: 5
+    parallelFilesUpload: 3
   backupRepositoryConfigMap: velero-repository-config
   backupStorageLocation:
     - name: default

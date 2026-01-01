@@ -346,4 +346,4 @@ After migrating to Proxmox CSI:
 
 - [Longhorn Uninstall Documentation](https://longhorn.io/docs/1.10.1/deploy/uninstall/)
 - [Proxmox CSI Driver](https://github.com/sergelogvinov/proxmox-csi-plugin)
-- [Velero Backup Strategy](../infrastructure/controllers/velero-backup.md)
+- [Velero Backup Strategy](../storage/backup-strategy.md)

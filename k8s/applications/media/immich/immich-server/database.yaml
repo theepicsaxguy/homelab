@@ -64,7 +64,7 @@ metadata:
   namespace: immich
 spec:
   instances: 2
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
 
   storage:
     size: 15Gi

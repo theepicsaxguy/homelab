@@ -42,7 +42,7 @@ Before starting this migration, ensure you have:
 ### Required Infrastructure
 
 - ✅ **Velero installed and configured** - See [Velero Setup](../controllers/velero-backup.md)
-- ✅ **Proxmox CSI installed and healthy**
+- ✅ **Proxmox CSI installed and healthy** - See [Proxmox CSI Setup](../../storage/proxmox-csi.md)
 - ✅ **Storage class mapping ConfigMap deployed** - See [Velero Storage Class Mapping](../controllers/velero-storage-class-mapping.md)
 - ✅ **Sufficient storage capacity** - Verify Proxmox has enough space for all your data
 
@@ -713,6 +713,7 @@ Our migration results (December 2025):
 
 - [Velero Setup](../controllers/velero-backup.md)
 - [Velero Storage Class Mapping](../controllers/velero-storage-class-mapping.md)
+- [Proxmox CSI Setup](../../storage/proxmox-csi.md)
 - [Test Restore Procedure](../../disaster/test-restore-procedure.md)
 - [Longhorn Uninstall Guide](https://longhorn.io/docs/1.10.1/deploy/uninstall/)
 - [Velero Official Documentation](https://velero.io/docs/)
