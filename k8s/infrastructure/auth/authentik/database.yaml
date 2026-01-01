@@ -28,6 +28,7 @@ metadata:
   name: authentik-minio-store
   namespace: auth
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
     endpointURL: https://truenas.peekoff.com:9000
@@ -46,9 +47,10 @@ metadata:
   name: authentik-b2-store
   namespace: auth
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials
@@ -99,18 +101,12 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
       barmanObjectName: authentik-minio-store
 
-  backup:
-    retentionPolicy: "30d"
-
-  # Explicitly set to empty object to remove bootstrap section from live cluster (migration to plugin-based backups complete)
-  bootstrap: {}
-
-  # Explicitly set to empty array to remove externalClusters (using CNPG-i plugin with ObjectStore instead)
-  externalClusters: []
+  # Bootstrap section removed - migration complete, cluster running in normal operational mode
 
   monitoring:
     enablePodMonitor: false
