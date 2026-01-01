@@ -1,7 +1,7 @@
 # Backblaze B2 S3-compatible configuration
 b2 = {
   region            = "us-west-000"
-  endpoint          = "https://s3.us-west-000.backblazeb2.com"
+  endpoint          = "https://s3.us-west-002.backblazeb2.com"
   access_key_id     = "YOUR_B2_KEY_ID"
   secret_access_key = "YOUR_B2_APPLICATION_KEY"
 }

@@ -1,15 +1,15 @@
 # Database Infrastructure - Component Guidelines
 
-SCOPE: PostgreSQL database management with CloudNativePG operator
-INHERITS FROM: /k8s/AGENTS.md
-TECHNOLOGIES: CloudNativePG (CNPG), PostgreSQL, MinIO, Backblaze B2, S3-compatible storage
+SCOPE: PostgreSQL database management with CloudNativePG operator INHERITS FROM: /k8s/AGENTS.md TECHNOLOGIES:
+CloudNativePG (CNPG), PostgreSQL, MinIO, Backblaze B2, S3-compatible storage
 
 ## COMPONENT CONTEXT
 
-Purpose:
-Deploy and manage PostgreSQL database clusters using CloudNativePG operator, including high availability, backup, and disaster recovery.
+Purpose: Deploy and manage PostgreSQL database clusters using CloudNativePG operator, including high availability,
+backup, and disaster recovery.
 
 Boundaries:
+
 - Handles: PostgreSQL clusters via CNPG, database backups, WAL archiving
 - Does NOT handle: Application databases (see applications/), storage providers (see storage/)
 - Integrates with: storage/ (for PVCs), controllers/ (for Velero backup integration)
@@ -44,20 +44,22 @@ kubectl get pvc -n <namespace>
 
 ### Cluster Configuration
 
-**Basic Cluster Structure**:
-Cluster manifest defines PostgreSQL configuration including instances, image version, storage allocation, WAL storage, PostgreSQL parameters, and monitoring settings. Specify storage class as proxmox-csi for new clusters or longhorn for legacy clusters.
+**Basic Cluster Structure**: Cluster manifest defines PostgreSQL configuration including instances, image version,
+storage allocation, WAL storage, PostgreSQL parameters, and monitoring settings. Specify storage class as proxmox-csi
+for new clusters or longhorn for legacy clusters.
 
 ### Auto-Generated Credentials (Preferred)
 
 **Pattern**: Let CNPG auto-generate credentials instead of using ExternalSecrets.
 
-**How It Works**:
-CNPG automatically creates `<cluster-name>-app` secret containing username, password, dbname, host, port, and URI. Applications reference this secret directly. No circular dependencies with ExternalSecrets.
+**How It Works**: CNPG automatically creates `<cluster-name>-app` secret containing username, password, dbname, host,
+port, and URI. Applications reference this secret directly. No circular dependencies with ExternalSecrets.
 
-**Application Usage**:
-Application deployments reference the secret via environment variable with secretKeyRef pointing to the URI key in the auto-generated secret.
+**Application Usage**: Application deployments reference the secret via environment variable with secretKeyRef pointing
+to the URI key in the auto-generated secret.
 
 **When to Use ExternalSecrets**:
+
 - Never for application database credentials
 - Only for backup credentials (Backblaze B2, MinIO)
 - Create separate Bitwarden entries for each secret value
@@ -67,46 +69,61 @@ Application deployments reference the secret via environment variable with secre
 **Dual Backup Strategy**:
 
 **1. Local MinIO (Fast Recovery)**:
+
 - ObjectStore: S3-compatible endpoint (TrueNAS MinIO)
 - Use case: Fast restores from local NAS
 - Connection: `https://truenas.peekoff.com:9000`
 - Bucket: `homelab-postgres-backups/<namespace>/<cluster>`
 
 **2. Backblaze B2 (Disaster Recovery)**:
+
 - ObjectStore: S3-compatible endpoint (Backblaze B2)
 - Use case: Offsite disaster recovery
-- Connection: `https://s3.us-west-000.backblazeb2.com`
+- Connection: `https://s3.us-west-002.backblazeb2.com`
 - Bucket: `homelab-cnpg-b2/<namespace>/<cluster>`
 
-**ExternalSecrets for Backup Credentials**:
-Create ExternalSecret referencing Bitwarden ClusterSecretStore with target template using engineVersion v2. Map AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to corresponding Bitwarden keys.
+**Retention Policy**: Set `retentionPolicy: "30d"` in both ObjectStore specs. See k8s/AGENTS.md CNPG Backup
+Configuration section for the complete ObjectStore retention pattern.
+
+**ExternalSecrets for Backup Credentials**: Create ExternalSecret referencing Bitwarden ClusterSecretStore with target
+template using engineVersion v2. Map AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to corresponding Bitwarden keys.
 
 **Bitwarden Requirements**:
+
 - Separate entry for `backblaze-b2-cnpg-access-key-id`
 - Separate entry for `backblaze-b2-cnpg-secret-access-key`
 - No `property` field (not supported)
 - Use `engineVersion: v2` under `spec.target.template`
 
-**Backup Configuration in Cluster**:
-Configure cluster backup with barmanObjectStore pointing to Backblaze B2 endpoint. Set S3 credentials to reference ExternalSecret. Enable gzip compression and AES256 encryption for both WAL and data. Set retention policy to 30 days.
+**ObjectStore Configuration**: Create two ObjectStore resources (one for MinIO, one for Backblaze B2). See k8s/AGENTS.md
+CNPG Backup Configuration section for the complete pattern including retention policy settings.
 
-**Scheduled Backups**:
-Create ScheduledBackup resource referencing cluster name. Set cron schedule (e.g., Sundays at 02:00). Set backupOwnerReference to Application kind with application name.
+**Backup Configuration in Cluster**: Configure cluster backup with barmanObjectStore pointing to Backblaze B2 endpoint.
+Set S3 credentials to reference ExternalSecret. Enable gzip compression and AES256 encryption for both WAL and data.
 
-**WAL Archiving**:
-Configure barman-cloud.cloudnative-pg.io plugin with isWALArchiver enabled. Set barmanObjectName to target store name.
+**Scheduled Backups**: Create ScheduledBackup resource referencing cluster name. Set cron schedule (e.g., Sundays at
+02:00). Set backupOwnerReference to Application kind with application name.
+
+**WAL Archiving**: Configure barman-cloud.cloudnative-pg.io plugin with isWALArchiver enabled. Set barmanObjectName to
+target store name.
+
+**Note**: Only the plugin architecture (ObjectStore CRD + barman-cloud plugin) is supported. Never use legacy barman
+object storage deployment approach.
 
 ### External Clusters (Recovery)
 
 **Purpose**: Enable recovery from either backup location.
 
-Configure externalClusters in spec with two entries: one for Backblaze B2 and one for MinIO. Each uses barmanObjectStore with destinationPath, endpointURL, and S3 credentials referencing respective ExternalSecrets. Enable gzip compression and AES256 encryption for WAL.
+Configure externalClusters in spec with two entries: one for Backblaze B2 and one for MinIO. Each uses barmanObjectStore
+with destinationPath, endpointURL, and S3 credentials referencing respective ExternalSecrets. Enable gzip compression
+and AES256 encryption for WAL.
 
 ## CLUSTER OPERATIONS
 
 ### Creating a New Cluster
 
 **Minimum Requirements**:
+
 - 2 instances for high availability
 - Separate storage for data and WAL
 - StorageClass: `proxmox-csi` (new) or `longhorn` (legacy)
@@ -114,8 +131,9 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 - External clusters for recovery
 
 **Steps**:
+
 1. Create ExternalSecrets for backup credentials (2 separate Bitwarden entries)
-2. Create ObjectStore resources for MinIO and Backblaze B2
+2. Create ObjectStore resources for MinIO and Backblaze B2 with `retentionPolicy: "30d"`
 3. Create Cluster manifest with backup configuration
 4. Create ScheduledBackup resource
 5. Apply via GitOps
@@ -123,12 +141,14 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 ### Cluster Scaling
 
 **Increase Instances**:
+
 1. Update `spec.instances` in Cluster manifest
 2. Apply via GitOps
 3. Monitor pod rollout
 4. Verify all instances are healthy
 
 **Increase Storage**:
+
 1. Update `spec.storage.size` in Cluster manifest
 2. Apply via GitOps
 3. CNPG automatically expands PVCs
@@ -137,6 +157,7 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 ### Cluster Upgrades
 
 **PostgreSQL Version Upgrade**:
+
 1. Update `spec.imageName` in Cluster manifest
 2. Review breaking changes for PostgreSQL version
 3. Apply via GitOps
@@ -144,6 +165,7 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 5. Verify applications are compatible with new version
 
 **CNPG Operator Upgrade**:
+
 1. Update Helm chart version in `cloudnative-pg/kustomization.yaml`
 2. Review release notes for breaking changes
 3. Apply via GitOps
@@ -155,21 +177,25 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 ### PostgreSQL Parameters
 
 **Memory Configuration**:
+
 - `shared_buffers`: 25% of RAM (shared memory for queries)
 - `effective_cache_size`: 50% of RAM (operating system cache)
 - `work_mem`: Memory per operation (default 4MB)
 - `maintenance_work_mem`: Memory for maintenance operations (default 64MB)
 
 **Connection Configuration**:
+
 - `max_connections`: Maximum simultaneous connections (default 100)
 - Adjust based on application requirements
 
 **WAL Configuration**:
+
 - `min_wal_size`: Minimum WAL size (default 1GB)
 - `max_wal_size`: Maximum WAL size (default 2GB)
 - Larger values for write-heavy workloads
 
 **Performance Tuning**:
+
 - `random_page_cost`: Cost for random page access (default 4.0, set 1.1 for SSD)
 - `effective_io_concurrency`: Concurrent I/O operations (default 200)
 - `default_statistics_target`: Statistics accuracy (default 100)
@@ -177,10 +203,10 @@ Configure externalClusters in spec with two entries: one for Backblaze B2 and on
 
 ### Monitoring
 
-**PodMonitor**:
-Enable monitoring in cluster spec by setting enablePodMonitor to true.
+**PodMonitor**: Enable monitoring in cluster spec by setting enablePodMonitor to true.
 
 **Metrics Exposed**:
+
 - Connection counts
 - Query performance
 - Replication lag
@@ -191,20 +217,21 @@ Enable monitoring in cluster spec by setting enablePodMonitor to true.
 
 ### Cluster Restoration
 
-**From Backblaze B2**:
-List available backups to identify target backup ID. Create new Cluster manifest with bootstrap recovery configuration referencing externalClusterName and backupID. Apply via kubectl.
+**From Backblaze B2**: List available backups to identify target backup ID. Create new Cluster manifest with bootstrap
+recovery configuration referencing externalClusterName and backupID. Apply via kubectl.
 
-**From MinIO (Local)**:
-List available backups. Create new Cluster manifest with bootstrap recovery configuration referencing minio-backup externalClusterName and backupID. Apply via kubectl.
+**From MinIO (Local)**: List available backups. Create new Cluster manifest with bootstrap recovery configuration
+referencing minio-backup externalClusterName and backupID. Apply via kubectl.
 
-**Point-in-Time Recovery (PITR)**:
-Configure bootstrap recovery with targetTime parameter specifying precise recovery timestamp. Use externalClusterName to identify backup source.
+**Point-in-Time Recovery (PITR)**: Configure bootstrap recovery with targetTime parameter specifying precise recovery
+timestamp. Use externalClusterName to identify backup source.
 
 ## TROUBLESHOOTING
 
 ### Cluster Not Starting
 
 **Check Pods**:
+
 ```bash
 kubectl get pods -n <namespace> -l cnpg.io/podRole=instance
 
@@ -213,6 +240,7 @@ kubectl logs -n <namespace> <instance-pod>
 ```
 
 **Common Issues**:
+
 - **Storage Not Bound**: Check PVC status
 - **Resource Limits**: Verify CPU/memory requests
 - **Configuration Error**: Check PostgreSQL parameters syntax
@@ -220,6 +248,7 @@ kubectl logs -n <namespace> <instance-pod>
 ### Backup Failures
 
 **Check Backup Status**:
+
 ```bash
 kubectl get backup -n <namespace>
 kubectl describe backup <backup-name> -n <namespace>
@@ -229,6 +258,7 @@ kubectl logs -n <namespace> -l cnpg.io/podRole=instance
 ```
 
 **Common Issues**:
+
 - **S3 Credentials Invalid**: Verify ExternalSecrets exist and have correct keys
 - **Network Issue**: Check connectivity to MinIO/Backblaze B2
 - **Insufficient Storage**: Check available storage in bucket
@@ -236,6 +266,7 @@ kubectl logs -n <namespace> -l cnpg.io/podRole=instance
 ### Replication Issues
 
 **Check Replication Status**:
+
 ```bash
 # Check cluster status
 kubectl get cluster <name> -n <namespace> -o yaml
@@ -245,6 +276,7 @@ kubectl describe cluster <name> -n <namespace>
 ```
 
 **Common Issues**:
+
 - **Network Latency**: Check CNI configuration
 - **Storage Performance**: Verify storage I/O is sufficient
 - **Resource Exhaustion**: Check CPU/memory limits on instances
@@ -267,7 +299,8 @@ Never delete old backups without archiving. Maintain retention policy for disast
 
 ## SECURITY BOUNDARIES
 
-Never commit database credentials to manifests. Use CNPG auto-generated secrets or ExternalSecrets for backup credentials only.
+Never commit database credentials to manifests. Use CNPG auto-generated secrets or ExternalSecrets for backup
+credentials only.
 
 Never share Bitwarden entries across applications. Create separate entries for each secret value.
 
