@@ -1,6 +1,6 @@
 ---
 sidebar_position: 8
-title: "Scenario 8: Data Corruption"
+title: 'Scenario 8: Data Corruption'
 ---
 
 # Scenario 8: Data Corruption
@@ -234,7 +234,7 @@ kubectl -n <namespace> get cluster <cluster-name> -o yaml
 # View backup list from CNPG
 kubectl -n <namespace> exec -it <cluster-name>-1 -- bash
 barman-cloud-backup-list \
-  --endpoint-url https://s3.us-west-000.backblazeb2.com \
+  --endpoint-url https://s3.us-west-002.backblazeb2.com \
   s3://homelab-cnpg-b2/<namespace>/<cluster-name>
 
 # Exit pod and create recovery cluster spec
@@ -269,7 +269,7 @@ spec:
     - name: original-cluster
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -452,45 +452,45 @@ metadata:
   name: db-integrity-check
   namespace: <namespace>
 spec:
-  schedule: "0 2 * * *"  # Daily at 2 AM
+  schedule: '0 2 * * *' # Daily at 2 AM
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: integrity-check
-            image: postgres:16
-            env:
-            - name: PGHOST
-              value: <cluster-name>-rw
-            - name: PGDATABASE
-              value: <database>
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  name: <cluster-name>-app
-                  key: username
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: <cluster-name>-app
-                  key: password
-            command:
-            - /bin/sh
-            - -c
-            - |
-              # Run integrity checks
-              psql -c "SELECT * FROM pg_stat_database WHERE datname = '$PGDATABASE';"
-              psql -c "VACUUM ANALYZE;"
+            - name: integrity-check
+              image: postgres:16
+              env:
+                - name: PGHOST
+                  value: <cluster-name>-rw
+                - name: PGDATABASE
+                  value: <database>
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: <cluster-name>-app
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: <cluster-name>-app
+                      key: password
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  # Run integrity checks
+                  psql -c "SELECT * FROM pg_stat_database WHERE datname = '$PGDATABASE';"
+                  psql -c "VACUUM ANALYZE;"
 
-              # Application-specific validation
-              psql -c "SELECT COUNT(*) FROM <critical_table>;"
+                  # Application-specific validation
+                  psql -c "SELECT COUNT(*) FROM <critical_table>;"
 
-              # Check for orphaned records
-              psql -c "SELECT COUNT(*) FROM <table> t LEFT JOIN <parent> p ON t.parent_id = p.id WHERE p.id IS NULL;"
+                  # Check for orphaned records
+                  psql -c "SELECT COUNT(*) FROM <table> t LEFT JOIN <parent> p ON t.parent_id = p.id WHERE p.id IS NULL;"
 
-              # Log results
-              echo "Integrity check completed at $(date)"
+                  # Log results
+                  echo "Integrity check completed at $(date)"
           restartPolicy: OnFailure
 ---
 ```
@@ -590,7 +590,7 @@ spec:
     - name: original
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/$NAMESPACE/$CLUSTER
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials

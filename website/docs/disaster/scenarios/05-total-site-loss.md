@@ -1,6 +1,6 @@
 ---
 sidebar_position: 5
-title: "Scenario 5: Total Site Loss"
+title: 'Scenario 5: Total Site Loss'
 ---
 
 # Scenario 5: Total Site Loss
@@ -32,17 +32,20 @@ title: "Scenario 5: Total Site Loss"
 This scenario assumes you have:
 
 1. **Personal Safety**:
+
    - You and your family are safe
    - You have access to temporary housing/workspace
    - You have a computer/laptop to work from
 
 2. **Account Access** (stored separately from your homelab):
+
    - **Bitwarden master password** (memorized or stored separately)
    - **GitHub account access** (2FA codes, recovery codes)
    - **Backblaze B2 account access** (2FA codes if enabled)
    - **Email access** (for password resets if needed)
 
 3. **Documentation Access**:
+
    - This disaster recovery documentation (ideally saved offline or printed)
    - Network diagrams (if stored separately)
    - Hardware configurations (if documented elsewhere)
@@ -76,6 +79,7 @@ brew install opentofu kubectl talosctl velero argocd git
 **Option A: Rebuild at Original Location**
 
 If your home is being rebuilt:
+
 - Same network configuration possible
 - Insurance may cover hardware replacement
 - Can use same IP addressing scheme
@@ -84,6 +88,7 @@ If your home is being rebuilt:
 **Option B: Temporary/New Location**
 
 If rebuilding elsewhere:
+
 - May need different network configuration
 - Faster deployment possible
 - Consider cloud hosting as interim solution
@@ -92,6 +97,7 @@ If rebuilding elsewhere:
 **Option C: Cloud Migration**
 
 Consider cloud-based recovery:
+
 - AWS EKS, Azure AKS, or Google GKE
 - Faster initial recovery
 - Higher ongoing costs
@@ -322,7 +328,7 @@ export AWS_SECRET_ACCESS_KEY="<B2_APPLICATION_KEY>"
 
 # Test B2 access
 aws s3 ls s3://homelab-terraform-state \
-  --endpoint-url=https://s3.us-west-000.backblazeb2.com
+  --endpoint-url=https://s3.us-west-002.backblazeb2.com
 
 # Should show: proxmox/terraform.tfstate
 ```
@@ -337,7 +343,7 @@ terraform {
     bucket = "homelab-terraform-state"
     key    = "proxmox/terraform.tfstate"
     region = "us-west-000"
-    endpoint = "https://s3.us-west-000.backblazeb2.com"
+    endpoint = "https://s3.us-west-002.backblazeb2.com"
     skip_credentials_validation = true
     skip_metadata_api_check     = true
     skip_region_validation      = true
@@ -399,6 +405,7 @@ tofu apply
 ```
 
 **This recreates:**
+
 - All Talos Linux VMs
 - Control plane nodes (10.25.150.11-13)
 - Worker nodes (10.25.150.21-23)
@@ -430,7 +437,8 @@ kubectl get nodes -w
 
 #### Step 14: Deploy Core Infrastructure via OpenTofu
 
-All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After Talos bootstrap completes:
+All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After
+Talos bootstrap completes:
 
 ```bash
 cd homelab/tofu
@@ -525,7 +533,7 @@ spec:
     - name: b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -749,6 +757,7 @@ spec:
 **Options to prevent future total loss:**
 
 1. **Cloud-based standby environment:**
+
    ```bash
    # Maintain dormant cluster in cloud
    # Use cheap instances (can upscale when needed)
@@ -756,6 +765,7 @@ spec:
    ```
 
 2. **Co-location or friend's house:**
+
    ```bash
    # Store spare server at alternate location
    # Can be brought online quickly
