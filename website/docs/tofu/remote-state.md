@@ -310,7 +310,7 @@ Backblaze B2 pricing (as of 2025):
 - **API calls**: Included (Class C)
 
 Typical homelab state file: ~500KB - 1MB
-- **Monthly cost**: <$0.01/month for storage
+- **Monthly cost**: {'<$0.01'}/month for storage
 - **Downloads**: Minimal (only on `tofu` operations)
 
 ## References
