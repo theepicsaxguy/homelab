@@ -31,7 +31,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: jellyseerr
-        image: ghcr.io/fallenbagel/jellyseerr:2.7.3
+        image: ghcr.io/fallenbagel/jellyseerr:preview-OIDC
         imagePullPolicy: IfNotPresent
         envFrom:
         - secretRef:

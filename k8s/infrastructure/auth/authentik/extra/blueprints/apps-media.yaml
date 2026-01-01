@@ -583,7 +583,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://jellyseerr.peekoff.com/login/oidc/callback
+        - url: https://ansok.peekoff.com/login/oidc/callback
           matching_mode: strict
       client_id: !Env JELLYSEERR_CLIENT_ID
       client_secret: !Env JELLYSEERR_CLIENT_SECRET

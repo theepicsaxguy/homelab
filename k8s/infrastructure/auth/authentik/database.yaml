@@ -106,7 +106,11 @@ spec:
   backup:
     retentionPolicy: "30d"
 
-  # Bootstrap section removed - migration complete, cluster running in normal operational mode
+  # Explicitly set to empty object to remove bootstrap section from live cluster (migration to plugin-based backups complete)
+  bootstrap: {}
+
+  # Explicitly set to empty array to remove externalClusters (using CNPG-i plugin with ObjectStore instead)
+  externalClusters: []
 
   monitoring:
     enablePodMonitor: false
