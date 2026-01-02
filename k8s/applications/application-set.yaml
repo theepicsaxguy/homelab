@@ -41,7 +41,6 @@ spec:
         path: '{{ path }}'
         kustomize: {}
       destination:
-        namespace: applications-system
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:
