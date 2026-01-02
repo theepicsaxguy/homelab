@@ -16,12 +16,12 @@ entries:
     attrs:
       name: WebAuthn Device Setup
       title: Register your passkey or biometric
-      designation: stage_configuration
+      designation: enrollment
       policy_engine_mode: all
 
   # WebAuthn Setup Stage
   - id: stage-webauthn-setup
-    model: authentik_stages_authenticator_webauthn.authenticatewebauthnstage
+    model: authentik_stages_authenticator_webauthn.authenticatorwebauthnstage
     identifiers:
       name: webauthn-setup-stage
     attrs:
