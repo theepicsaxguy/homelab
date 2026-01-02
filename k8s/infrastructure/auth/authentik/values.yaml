@@ -40,8 +40,8 @@ global:
         name: authentik-core-secrets
     - secretRef:
         name: authentik-blueprint-secrets
-    #- secretRef:
-     #   name: authentik-smtp-credentials
+    - secretRef:
+        name: authentik-smtp-credentials
 
   # -- Additional volumeMounts to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
@@ -84,21 +84,21 @@ authentik:
     path: /
   email:
     # -- SMTP Server emails are sent from, fully optional
-    host: ""
+    host: "mail.peekoff.com"
     # -- SMTP server port
-    port: 587
+    port: 465
     # -- SMTP credentials, when left empty, no authentication will be done
-    username: ""
+    username: "env://AUTHENTIK_EMAIL__USERNAME"
     # -- SMTP credentials, when left empty, no authentication will be done
-    password: ""
+    password: "env://AUTHENTIK_EMAIL__PASSWORD"
     # -- Use StartTLS. Enable either use_tls or use_ssl, they can't be enabled at the same time.
     use_tls: false
     # -- Use SSL. Enable either use_tls or use_ssl, they can't be enabled at the same time.
-    use_ssl: false
+    use_ssl: true
     # -- Connection timeout
     timeout: 30
     # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
-    from: ""
+    from: "env://AUTHENTIK_EMAIL__FROM"
   outposts:
     # -- Template used for managed outposts. The following placeholders can be used
     # %(type)s - the type of the outpost
