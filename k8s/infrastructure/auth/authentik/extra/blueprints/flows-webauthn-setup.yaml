@@ -1,0 +1,42 @@
+# Schema validation disabled - Authentik blueprints use custom YAML tags incompatible with JSON schema
+# yamllint disable
+# prettier-ignore
+# eslint-disable
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+---
+version: 1
+metadata:
+  name: Flows - WebAuthn Device Setup
+entries:
+  # WebAuthn Setup Flow
+  - id: flow-webauthn-setup
+    model: authentik_flows.flow
+    identifiers:
+      slug: webauthn-device-setup
+    attrs:
+      name: WebAuthn Device Setup
+      title: Register your passkey or biometric
+      designation: stage_configuration
+      policy_engine_mode: all
+
+  # WebAuthn Setup Stage
+  - id: stage-webauthn-setup
+    model: authentik_stages_authenticator_webauthn.authenticatewebauthnstage
+    identifiers:
+      name: webauthn-setup-stage
+    attrs:
+      configure_flow: null
+      friendly_name: null
+      user_verification: preferred
+      authenticator_attachment: null
+      resident_key_requirement: discouraged
+
+  # Bind stage to flow
+  - model: authentik_flows.flowstagebinding
+    identifiers:
+      target: !KeyOf flow-webauthn-setup
+      stage: !KeyOf stage-webauthn-setup
+      order: 10
+    attrs:
+      evaluate_on_plan: true
+      re_evaluate_policies: true
