@@ -367,7 +367,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://ansok.peekoff.com/login/oidc/callback
+        - url: http://ansok.peekoff.com/login?provider=authentik&callback=true
           matching_mode: strict
       client_id: !Env JELLYSEERR_CLIENT_ID
       client_secret: !Env JELLYSEERR_CLIENT_SECRET
