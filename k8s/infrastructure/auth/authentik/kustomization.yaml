@@ -10,6 +10,7 @@ resources:
 - minio-externalsecret.yaml
 - referencegrant.yaml
 - media-pvc.yaml
+- server-media-pvc.yaml
 - extra
 helmCharts:
 - name: authentik

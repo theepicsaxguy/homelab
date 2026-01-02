@@ -164,6 +164,17 @@ server:
     accessMode: ReadWriteOnce
     size: 10Gi
 
+  # Additional volumeMounts for server (media volume)
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  # Additional volumes for server (media PVC)
+  volumes:
+    - name: media
+      persistentVolumeClaim:
+        claimName: authentik-server-media
+
   ## authentik server service configuration
   service:
     # -- authentik server service annotations

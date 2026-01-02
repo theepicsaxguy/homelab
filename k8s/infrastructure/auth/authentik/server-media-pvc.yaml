@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: authentik-server-media
+  namespace: auth
+  annotations:
+    backup.velero.io/backup-volumes: ""
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 10Gi
+
