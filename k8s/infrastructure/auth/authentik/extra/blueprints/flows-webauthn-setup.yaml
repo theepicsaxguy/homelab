@@ -16,7 +16,7 @@ entries:
     attrs:
       name: WebAuthn Device Setup
       title: Register your passkey or biometric
-      designation: enrollment
+      designation: stage_configuration
       policy_engine_mode: all
 
   # WebAuthn Setup Stage
