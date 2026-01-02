@@ -51,9 +51,10 @@
   "packageRules": [
     {
       "groupName": "Media containers",
+      "matchDatasources": ["docker"],
       "matchPackageNames": [
-        "/ghcr.io/onedr0p/.*/",
-        "/ghcr.io/jellyfin/.*/"
+        "/^ghcr\\.io\\/onedr0p\\/.+$/",
+        "/^ghcr\\.io\\/jellyfin\\/.+$/"
       ]
     },
     {

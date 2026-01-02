@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: sonarr
-          image: ghcr.io/onedr0p/sonarr:4.0.13
+          image: ghcr.io/onedr0p/sonarr:4.0.16.2944
           ports:
             - name: http
               containerPort: 8989
