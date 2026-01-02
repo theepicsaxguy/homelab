@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: sabnzbd
   namespace: media
+  annotations:
+    kubectl.kubernetes.io/restartedAt: "2026-01-02T14:48:00Z"
 spec:
   serviceName: sabnzbd
   replicas: 1
@@ -28,12 +30,14 @@ spec:
             storage: 1Gi
     - metadata:
         name: incomplete-downloads
+        annotations:
+          velero.io/exclude-from-backup: "true"
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: proxmox-csi
         resources:
           requests:
-            storage: 50Gi
+            storage: 100Gi
   template:
     metadata:
       labels:
