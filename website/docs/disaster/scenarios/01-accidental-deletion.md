@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-title: "Scenario 1: Accidental Deletion"
+title: 'Scenario 1: Accidental Deletion'
 ---
 
 # Scenario 1: Accidental Deletion
@@ -76,9 +76,13 @@ Select the appropriate restoration method based on what was deleted.
 
 **Storage Class Considerations**
 
-If restoring to different storage infrastructure than the original backup (e.g., from `longhorn` to `proxmox-csi`), you need to configure storage class mapping. See [Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md) for complete instructions.
+If restoring to different storage infrastructure than the original backup (e.g., from `longhorn` to `proxmox-csi`), you
+need to configure storage class mapping. See
+[Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md) for complete
+instructions.
 
 Quick setup:
+
 ```bash
 # Create storage class mapping ConfigMap
 kubectl apply -f /path/to/homelab/k8s/infrastructure/controllers/velero/storage-class-mapping.yaml
@@ -167,7 +171,7 @@ spec:
     - name: b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -181,10 +185,11 @@ spec:
 
   storage:
     size: 20Gi
-    storageClass: proxmox-csi  # Use your cluster's default storage class
+    storageClass: proxmox-csi # Use your cluster's default storage class
 ```
 
-**Note**: If restoring to a different storage class than the original backup, see [Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md).
+**Note**: If restoring to a different storage class than the original backup, see
+[Velero Storage Class Mapping](../../infrastructure/controllers/velero-storage-class-mapping.md).
 
 Apply the recovery:
 

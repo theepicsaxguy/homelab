@@ -316,6 +316,13 @@ Never use destructive kubectl flags. This includes:
 
 These flags are NEVER acceptable. Find and fix the root cause instead.
 
+**NON-NEGOTIABLE RULE:**
+- The `--force` and `--grace-period` flags are FORBIDDEN under ANY circumstances
+- NEVER use `kubectl delete --force` or `kubectl delete --grace-period=0`
+- ALWAYS use `kubectl describe <resource> <name> -n <namespace>` to diagnose why a resource isn't being deleted
+- Identify and remove the dependent resource that's blocking deletion. Finalizers are safeguards, never remove them to work around the issue
+- There is no exception to this rule
+
 Never guess resource names, connection strings, or secret keys — query the cluster to verify.
 
 Never skip backup configuration for stateful workloads.

@@ -28,6 +28,7 @@ metadata:
   name: n8n-minio-store
   namespace: n8n
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/n8n/n8n-db
     endpointURL: https://truenas.peekoff.com:9000
@@ -46,9 +47,10 @@ metadata:
   name: n8n-b2-store
   namespace: n8n
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-cnpg-b2/n8n/n8n-db
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials

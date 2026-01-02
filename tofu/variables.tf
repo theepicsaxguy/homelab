@@ -266,3 +266,10 @@ variable "git_repository_url" {
   type        = string
   default     = "https://github.com/theepicsaxguy/homelab.git"
 }
+
+variable "encryption_passphrase" {
+  description = "Encryption passphrase for OpenTofu state and plan encryption"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

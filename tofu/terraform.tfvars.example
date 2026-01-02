@@ -6,14 +6,6 @@ proxmox = {
   username     = "root"
   api_token    = "root@pam!secret"
 }
-proxmox = {
-  name         = "node" # Name of the Proxmox node
-  cluster_name = "node" # Must match the Proxmox cluster name
-  endpoint     = "https://node.example.com:8006"
-  insecure     = false
-  username     = "root"
-  api_token    = "root@pam!secret"
-}
 # The Proxmox API token format is: <username>@<realm>!<name>=<token>
 
 # for loadbalancers
@@ -27,3 +19,18 @@ bitwarden_token = "0.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxx
 
 # Git repository URL for ArgoCD (customize for forks)
 # git_repository_url = "https://github.com/yourusername/homelab.git"
+
+# ============================================================================
+# State Encryption Configuration
+# ============================================================================
+# Encryption passphrase for state and plan encryption
+# IMPORTANT: Store this securely! You'll need it for all future operations.
+# Minimum 16 characters, recommended 32+ characters.
+# Generate with: openssl rand -base64 32
+encryption_passphrase = "your-secure-encryption-passphrase"
+
+# ============================================================================
+# Remote State Configuration (TrueNAS MinIO)
+# ============================================================================
+# Backend configuration has been moved to backend-config.tfvars
+# See backend-config.tfvars.example and website/docs/tofu/remote-state.md

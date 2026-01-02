@@ -1,0 +1,20 @@
+# Backend Configuration for OpenTofu Remote State (TrueNAS MinIO)
+#
+# Copy this file to backend-config.tfvars and fill in your actual values.
+# The backend-config.tfvars file is gitignored to protect sensitive credentials.
+#
+# Usage:
+#   tofu init -backend-config=backend-config.tfvars
+
+# S3-compatible bucket configuration
+bucket = "homelab-terraform-state"
+key    = "proxmox/terraform.tfstate"
+region = "us-east-1"  # Arbitrary for MinIO, validation is skipped
+
+# MinIO endpoint (your TrueNAS MinIO URL)
+endpoint = "https://minio.yourdomain.com:9000"
+
+# MinIO credentials (obtain from TrueNAS MinIO console)
+# IMPORTANT: Keep these credentials secure!
+access_key = "YOUR_MINIO_ACCESS_KEY"
+secret_key = "YOUR_MINIO_SECRET_KEY"

@@ -6,13 +6,15 @@ description: Dual backup strategy using CloudNativePG, Barman Cloud, MinIO, and 
 
 # CloudNativePG Backup Strategy
 
-CloudNativePG provides native backup support through the official Barman Cloud Plugin. Our homelab uses a **dual backup architecture** with both local MinIO storage for fast recovery and offsite Backblaze B2 for disaster recovery.
+CloudNativePG provides native backup support through the official Barman Cloud Plugin. Our homelab uses a **dual backup
+architecture** with both local MinIO storage for fast recovery and offsite Backblaze B2 for disaster recovery.
 
 ## Backup Architecture
 
 Each PostgreSQL cluster managed by CloudNativePG uses **two backup destinations**:
 
 1. **Local MinIO (Fast Recovery)**
+
    - Destination: `s3://homelab-postgres-backups/<namespace>/<cluster-name>`
    - Endpoint: `https://truenas.peekoff.com:9000`
    - Purpose: Quick restores from local NAS
@@ -21,7 +23,7 @@ Each PostgreSQL cluster managed by CloudNativePG uses **two backup destinations*
 
 2. **Backblaze B2 (Disaster Recovery)**
    - Destination: `s3://homelab-cnpg-b2/<namespace>/<cluster-name>`
-   - Endpoint: `https://s3.us-west-000.backblazeb2.com`
+   - Endpoint: `https://s3.us-west-002.backblazeb2.com`
    - Purpose: Offsite disaster recovery
    - Retention: 30 days (configurable per cluster)
    - Use Case: Catastrophic data loss scenarios
@@ -90,7 +92,8 @@ spec:
         property: AWS_SECRET_ACCESS_KEY
 ```
 
-**Purpose**: Syncs B2 credentials from Bitwarden (`backblaze-b2-cnpg-offsite` item) to Kubernetes secret. Each namespace creates its own B2 credentials secret.
+**Purpose**: Syncs B2 credentials from Bitwarden (`backblaze-b2-cnpg-offsite` item) to Kubernetes secret. Each namespace
+creates its own B2 credentials secret.
 
 ### 2. ObjectStore Resources (2 per Cluster)
 
@@ -126,7 +129,7 @@ metadata:
 spec:
   configuration:
     destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials
@@ -136,7 +139,8 @@ spec:
         key: AWS_SECRET_ACCESS_KEY
 ```
 
-**Purpose**: Defines S3-compatible backup destinations. ObjectStore resources are referenced by Cluster configuration for backup operations.
+**Purpose**: Defines S3-compatible backup destinations. ObjectStore resources are referenced by Cluster configuration
+for backup operations.
 
 ### 3. Cluster Configuration with Plugin
 
@@ -156,16 +160,16 @@ spec:
 
   # Plugin configuration for WAL archiving
   plugins:
-  - name: barman-cloud.cloudnative-pg.io
-    isWALArchiver: true
-    parameters:
-      barmanObjectName: <cluster-name>-b2-store
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: <cluster-name>-b2-store
 
   # Backup configuration (base backups to B2)
   backup:
     barmanObjectStore:
       destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-      endpointURL: https://s3.us-west-000.backblazeb2.com
+      endpointURL: https://s3.us-west-002.backblazeb2.com
       s3Credentials:
         accessKeyId:
           name: b2-cnpg-credentials
@@ -180,14 +184,14 @@ spec:
         compression: gzip
         encryption: AES256
         jobs: 2
-    retentionPolicy: "30d"
+    retentionPolicy: '30d'
 
   # External clusters for recovery
   externalClusters:
     - name: <cluster-name>-b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -215,13 +219,14 @@ spec:
 
   postgresql:
     parameters:
-      max_connections: "100"
-      shared_buffers: "256MB"
+      max_connections: '100'
+      shared_buffers: '256MB'
 ```
 
 **Key Configuration Points:**
 
-- **`plugins` section**: Enables `barman-cloud.cloudnative-pg.io` plugin with `isWALArchiver: true`, referencing the B2 ObjectStore for continuous WAL archiving
+- **`plugins` section**: Enables `barman-cloud.cloudnative-pg.io` plugin with `isWALArchiver: true`, referencing the B2
+  ObjectStore for continuous WAL archiving
 - **`backup.barmanObjectStore` section**: Configures base backup destination to B2 with compression and encryption
 - **`retentionPolicy`**: Defines how long backups are retained (default: 30 days)
 - **`externalClusters`**: Defines both B2 and MinIO as recovery sources for PITR scenarios
@@ -235,7 +240,7 @@ metadata:
   name: <cluster-name>-backup
   namespace: <namespace>
 spec:
-  schedule: "0 0 2 * * 0"  # Weekly on Sundays at 02:00
+  schedule: '0 0 2 * * 0' # Weekly on Sundays at 02:00
   backupOwnerReference: self
   cluster:
     name: <cluster-name>
@@ -245,6 +250,7 @@ spec:
 ```
 
 **Purpose**: Triggers weekly base backups to B2 using the plugin architecture. The schedule uses cron syntax:
+
 - `0 0 2 * * 0` = Sunday at 02:00 UTC (weekly)
 - `0 3 * * *` = Daily at 03:00 UTC (daily backup example)
 
@@ -253,11 +259,13 @@ spec:
 ### Backup Flow
 
 1. **Continuous WAL Archiving**
+
    - Barman Cloud Plugin ships WAL files to B2 continuously
    - Enables point-in-time recovery to any point within retention window
    - WAL files are compressed (gzip) and encrypted (AES256)
 
 2. **Weekly Base Backups**
+
    - ScheduledBackup triggers full base backup to B2 on Sundays at 02:00
    - Base backup provides complete database snapshot
    - Combined with WAL files, enables PITR to any point
@@ -270,10 +278,12 @@ spec:
 ### Recovery Flow
 
 1. **Choose Recovery Source** (B2 or MinIO)
+
    - B2: Use for disaster recovery scenarios (primary)
    - MinIO: Use for fast local recovery (secondary)
 
 2. **Select Recovery Point**
+
    - Choose specific base backup from available backups
    - Specify target time for PITR (if using WAL archiving)
 
@@ -339,7 +349,7 @@ metadata:
 spec:
   configuration:
     destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials
@@ -363,15 +373,15 @@ spec:
     storageClass: longhorn
 
   plugins:
-  - name: barman-cloud.cloudnative-pg.io
-    isWALArchiver: true
-    parameters:
-      barmanObjectName: authentik-b2-store
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: authentik-b2-store
 
   backup:
     barmanObjectStore:
       destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-      endpointURL: https://s3.us-west-000.backblazeb2.com
+      endpointURL: https://s3.us-west-002.backblazeb2.com
       s3Credentials:
         accessKeyId:
           name: b2-cnpg-credentials
@@ -386,13 +396,13 @@ spec:
         compression: gzip
         encryption: AES256
         jobs: 2
-    retentionPolicy: "30d"
+    retentionPolicy: '30d'
 
   externalClusters:
     - name: authentik-b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgresql
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -426,7 +436,7 @@ metadata:
   name: authentik-postgresql-backup
   namespace: auth
 spec:
-  schedule: "0 0 2 * * 0"
+  schedule: '0 0 2 * * 0'
   backupOwnerReference: self
   cluster:
     name: authentik-postgresql
@@ -489,12 +499,14 @@ cp k8s/infrastructure/auth/authentik/database.yaml \
 ## Cost Considerations
 
 **Backblaze B2 Storage:**
+
 - **Storage cost**: $0.005/GB/month
 - **Download cost**: Free (no egress fees)
 - **Upload cost**: Free
 - **Example**: 20GB PostgreSQL cluster = ~$0.10/month
 
 **MinIO Storage:**
+
 - **Storage cost**: Local NAS (no monthly fee)
 - **Network cost**: Local LAN only (no internet egress)
 - **Use case**: Fast recovery without internet dependency
@@ -506,11 +518,13 @@ cp k8s/infrastructure/auth/authentik/database.yaml \
 ### Backup Not Running
 
 1. **Check ScheduledBackup status**:
+
    ```bash
    kubectl get scheduledbackup -n <namespace>
    ```
 
 2. **Check cluster backup configuration**:
+
    ```bash
    kubectl describe cluster <cluster-name> -n <namespace> | grep -A 30 "Backup:"
    ```
@@ -523,11 +537,13 @@ cp k8s/infrastructure/auth/authentik/database.yaml \
 ### WAL Archiving Failed
 
 1. **Check plugin status**:
+
    ```bash
    kubectl describe cluster <cluster-name> -n <namespace> | grep -A 10 "plugins"
    ```
 
 2. **Verify B2 credentials**:
+
    ```bash
    kubectl get secret b2-cnpg-credentials -n <namespace> -o yaml
    ```
@@ -540,11 +556,13 @@ cp k8s/infrastructure/auth/authentik/database.yaml \
 ### Cannot Restore from Backup
 
 1. **Verify externalCluster configuration**:
+
    ```bash
    kubectl get cluster <cluster-name> -n <namespace> -o yaml | grep -A 20 "externalClusters"
    ```
 
 2. **Check backup list**:
+
    ```bash
    kubectl get backup -n <namespace>
    ```
@@ -561,7 +579,7 @@ cp k8s/infrastructure/auth/authentik/database.yaml \
        recovery:
          source: <external-cluster-name>
          recoveryTarget:
-           targetTime: "2025-01-15 12:00:00+00"
+           targetTime: '2025-01-15 12:00:00+00'
    ```
 
 ## Related Documentation

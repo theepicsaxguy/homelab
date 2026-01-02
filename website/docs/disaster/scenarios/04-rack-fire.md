@@ -1,6 +1,6 @@
 ---
 sidebar_position: 4
-title: "Scenario 4: Rack Fire"
+title: 'Scenario 4: Rack Fire'
 ---
 
 # Scenario 4: Rack Fire
@@ -31,10 +31,12 @@ title: "Scenario 4: Rack Fire"
 **You MUST have access to:**
 
 1. **Bitwarden Account**:
+
    - Master password
    - Contains all credentials needed for recovery
 
 2. **GitHub Repository**:
+
    - Account: `theepicsaxguy`
    - Repository: `homelab`
    - SSH key or Personal Access Token (stored in Bitwarden)
@@ -52,6 +54,7 @@ title: "Scenario 4: Rack Fire"
 **Minimum Hardware Requirements:**
 
 - **Server**: 1x physical server or new Proxmox-capable host
+
   - CPU: 8+ cores
   - RAM: 64GB minimum (128GB recommended)
   - Storage: 2x NVMe drives (500GB+ each)
@@ -125,6 +128,7 @@ You'll need to update OpenTofu configurations before applying.
 
 1. Boot from Proxmox installation media
 2. Follow installation wizard:
+
    ```
    Hostname: host3.peekoff.com (or new hostname)
    IP Address: 10.25.150.3
@@ -216,7 +220,7 @@ export AWS_SECRET_ACCESS_KEY="<B2_APPLICATION_KEY>"
 
 # Verify credentials work
 aws s3 ls s3://homelab-terraform-state \
-  --endpoint-url=https://s3.us-west-000.backblazeb2.com
+  --endpoint-url=https://s3.us-west-002.backblazeb2.com
 ```
 
 #### Step 6: Enable OpenTofu Remote State Backend
@@ -234,7 +238,7 @@ terraform {
     region = "us-west-000"
 
     # Backblaze B2 S3-compatible endpoint
-    endpoint = "https://s3.us-west-000.backblazeb2.com"
+    endpoint = "https://s3.us-west-002.backblazeb2.com"
 
     # Required for B2 compatibility
     skip_credentials_validation = true
@@ -317,6 +321,7 @@ tofu apply
 ```
 
 **This creates:**
+
 - 3 control plane VMs: 10.25.150.11-13
 - 3 worker VMs: 10.25.150.21-23
 - 2 load balancer VMs: 10.25.150.5-6 (if enabled)
@@ -372,7 +377,8 @@ kubectl get nodes -w
 
 #### Step 12: Deploy Infrastructure Components via OpenTofu
 
-All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After Talos bootstrap completes:
+All Kubernetes infrastructure is now deployed automatically by OpenTofu during the cluster bootstrap process. After
+Talos bootstrap completes:
 
 ```bash
 cd /path/to/homelab/tofu
@@ -414,7 +420,7 @@ kubectl -n longhorn-system patch settings.longhorn.io backup-target \
 kubectl -n longhorn-system create secret generic longhorn-b2-credentials \
   --from-literal=AWS_ACCESS_KEY_ID="<B2_KEY_ID>" \
   --from-literal=AWS_SECRET_ACCESS_KEY="<B2_APPLICATION_KEY>" \
-  --from-literal=AWS_ENDPOINTS="https://s3.us-west-000.backblazeb2.com"
+  --from-literal=AWS_ENDPOINTS="https://s3.us-west-002.backblazeb2.com"
 
 # Update backup target credential
 kubectl -n longhorn-system patch settings.longhorn.io backup-target-credential-secret \
@@ -526,7 +532,7 @@ spec:
     - name: b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/auth/authentik-postgres
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials
@@ -754,7 +760,7 @@ Schedule regular restore tests:
 ```bash
 # Verify credentials
 aws s3 ls s3://homelab-velero-b2 \
-  --endpoint-url=https://s3.us-west-000.backblazeb2.com
+  --endpoint-url=https://s3.us-west-002.backblazeb2.com
 
 # If credentials don't work:
 # 1. Login to B2 web console

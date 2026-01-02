@@ -4,7 +4,7 @@ metadata:
   name: external
   namespace: argocd
   labels:
-    dev.pctips: external
+    dev.peekoff: external
 spec:
   generators:
     - git:
@@ -16,7 +16,7 @@ spec:
     metadata:
       name: '{{ path.basename }}'
       labels:
-        dev.pctips: application
+        dev.peekoff: application
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:

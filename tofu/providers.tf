@@ -25,6 +25,25 @@ terraform {
       version = ">= 0.12.0"
     }
   }
+
+  # State and plan encryption using pbkdf2 + AES-GCM
+  # Encryption passphrase must be set in terraform.tfvars
+  encryption {
+    key_provider "pbkdf2" "encryption_passphrase" {
+      passphrase = var.encryption_passphrase
+    }
+    method "aes_gcm" "encryption_method" {
+      keys = key_provider.pbkdf2.encryption_passphrase
+    }
+    state {
+      method   = method.aes_gcm.encryption_method
+      enforced = true
+    }
+    plan {
+      method   = method.aes_gcm.encryption_method
+      enforced = true
+    }
+  }
 }
 
 provider "proxmox" {
