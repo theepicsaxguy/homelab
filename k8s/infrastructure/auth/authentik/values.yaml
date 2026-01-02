@@ -157,23 +157,15 @@ server:
     seccompProfile:
       type: RuntimeDefault
 
-  # Persistent volume for media files (required for tenant files)
-  persistence:
-    enabled: true
-    storageClass: proxmox-csi
-    accessMode: ReadWriteOnce
-    size: 10Gi
-
-  # Additional volumeMounts for server (media volume)
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
   volumeMounts:
     - name: media
       mountPath: /media
 
-  # Additional volumes for server (media PVC)
   volumes:
     - name: media
-      persistentVolumeClaim:
-        claimName: authentik-server-media
+      emptyDir: {}
 
   ## authentik server service configuration
   service:
@@ -201,23 +193,15 @@ worker:
       drop:
         - ALL
 
-  # Persistent volume for media files (required for tenant files)
-  persistence:
-    enabled: true
-    storageClass: proxmox-csi
-    accessMode: ReadWriteOnce
-    size: 10Gi
-
-  # Additional volumeMounts for worker (media volume)
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
   volumeMounts:
     - name: media
       mountPath: /media
 
-  # Additional volumes for worker (media PVC)
   volumes:
     - name: media
-      persistentVolumeClaim:
-        claimName: authentik-media
+      emptyDir: {}
 
   resources:
     requests:
