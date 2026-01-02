@@ -5,7 +5,7 @@
 # Stage 0: build unrar from source (matches LSIO pattern)
 ###############################################################################
 FROM alpine:3.23 AS unrar-build
-ARG UNRAR_VER=6.2.12 # renovate: github-releases=rarlab/unrar
+ARG UNRAR_VER=6.2.12
 
 RUN apk add --no-cache build-base ca-certificates curl tar \
      && update-ca-certificates \
