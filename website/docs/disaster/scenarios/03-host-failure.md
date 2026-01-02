@@ -1,6 +1,6 @@
 ---
 sidebar_position: 3
-title: "Scenario 3: Host Failure"
+title: 'Scenario 3: Host Failure'
 ---
 
 # Scenario 3: Host Failure
@@ -71,6 +71,7 @@ Install Proxmox VE on the host:
 
 1. Boot from Proxmox VE installation media
 2. Follow installation wizard:
+
    - Hostname: `host3.peekoff.com`
    - IP Address: `10.25.150.3` (or whatever your Proxmox host IP was)
    - Gateway: `10.25.150.1`
@@ -78,6 +79,7 @@ Install Proxmox VE on the host:
    - Set root password (store in Bitwarden)
 
 3. After installation, access Proxmox web UI:
+
    ```
    https://10.25.150.3:8006
    ```
@@ -162,7 +164,7 @@ terraform {
     key    = "proxmox/terraform.tfstate"
     region = "us-west-000"
 
-    endpoint = "https://s3.us-west-000.backblazeb2.com"
+    endpoint = "https://s3.us-west-002.backblazeb2.com"
 
     skip_credentials_validation = true
     skip_metadata_api_check     = true
@@ -237,11 +239,13 @@ tofu apply
 **Expected VM Configuration:**
 
 - **Control Planes:**
+
   - ctrl-00: 10.25.150.11
   - ctrl-01: 10.25.150.12
   - ctrl-02: 10.25.150.13
 
 - **Workers:**
+
   - work-00: 10.25.150.21
   - work-01: 10.25.150.22
   - work-02: 10.25.150.23
@@ -614,6 +618,7 @@ kubectl get scheduledbackups -A
 ### 3. Update Documentation
 
 Update infrastructure documentation with:
+
 - New hardware details (if replaced)
 - Recovery timeline and actual RTO
 - Any configuration changes made
@@ -622,6 +627,7 @@ Update infrastructure documentation with:
 ### 4. Review and Test
 
 Schedule follow-up tasks:
+
 - Test restore procedure again in 90 days
 - Review backup retention policies
 - Consider increasing backup frequency

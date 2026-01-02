@@ -11,6 +11,6 @@ entries:
     identifiers:
       domain: peekoff.com
     attrs:
-      branding_title: PC Tips.
+      branding_title: Peekoff.
       branding_logo: https://homelab.orkestack.com/img/logo.png
       branding_favicon: https://homelab.orkestack.com/img/favicon.ico

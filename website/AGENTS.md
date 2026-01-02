@@ -52,6 +52,7 @@ npm run serve
 - Preset: `@docusaurus/preset-classic`
 - Plugins: Local search, sitemap, MDX support
 - Static generation: All pages pre-rendered at build time
+- **Broken link handling**: Use `markdown.hooks.onBrokenMarkdownLinks` instead of deprecated `onBrokenMarkdownLinks` (Docusaurus v4 compatibility)
 
 ### Content Structure
 - Documentation files in `website/docs/` with `.md` or `.mdx` extension
@@ -80,6 +81,14 @@ Update `sidebars.ts` to add new documentation pages to navigation. Use sidebar_p
 
 ### Linking Pattern
 Use relative links for internal navigation. Use absolute URLs for external resources. Test all links before committing.
+
+**Linking rules**:
+- Never reference AGENTS.md files in documentation - these are for coding agents only
+- Only link to files in `website/docs/` directory
+- Use relative paths like `[text](../other-page.md)` for internal docs
+- Verify relative paths are correct: count directory levels from source to target
+  - Example: From `docs/infrastructure/storage/file.md` to `docs/storage/other.md`: `../../storage/other.md`
+- Verify links resolve to existing files before committing
 
 ## TESTING
 
@@ -148,6 +157,12 @@ Never skip linting and type checking before committing.
 Never add large binary assets to repository. Use external storage and link by URL.
 
 Never break existing navigation or internal links.
+
+Never use deprecated Docusaurus config options. Follow current Docusaurus v4 API.
+
+Never reference AGENTS.md files from documentation - AGENTS.md are for AI coding guidance only.
+
+Never use unescaped special characters in MDX content (e.g., `<`, `>`, `&`). Use JSX expressions or HTML entities when needed.
 
 ## CRITICAL BOUNDARIES
 

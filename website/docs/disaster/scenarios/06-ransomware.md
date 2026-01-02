@@ -1,6 +1,6 @@
 ---
 sidebar_position: 6
-title: "Scenario 6: Ransomware Attack"
+title: 'Scenario 6: Ransomware Attack'
 ---
 
 # Scenario 6: Ransomware Attack
@@ -184,7 +184,7 @@ spec:
   config:
     region: us-west-000
     s3ForcePathStyle: "true"
-    s3Url: https://s3.us-west-000.backblazeb2.com
+    s3Url: https://s3.us-west-002.backblazeb2.com
 EOF
 
 # List backups from B2
@@ -219,13 +219,13 @@ spec:
       source: clean-b2-backup
       recoveryTarget:
         # Restore to specific time BEFORE infection
-        targetTime: "2024-12-20 23:59:59"  # Adjust to pre-infection time
+        targetTime: '2024-12-20 23:59:59' # Adjust to pre-infection time
 
   externalClusters:
     - name: clean-b2-backup
       barmanObjectStore:
         destinationPath: s3://homelab-cnpg-b2/<namespace>/<cluster-name>
-        endpointURL: https://s3.us-west-000.backblazeb2.com
+        endpointURL: https://s3.us-west-002.backblazeb2.com
         s3Credentials:
           accessKeyId:
             name: b2-cnpg-credentials

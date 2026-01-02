@@ -156,7 +156,7 @@ Never create circular dependencies with ExternalSecrets for CNPG databases. Let 
 
 Never use `property` field with Bitwarden Secrets Manager. Create separate Bitwarden entries for each secret value.
 
-Never use legacy barman approach for CNPG backups. Always use the barman plugin (`type: barmanObjectStore`) integrated with CNPG.
+Never use legacy barman object storage deployment approach for CNPG backups. Always use the barman plugin architecture (ObjectStore CRD with `barman-cloud.cloudnative-pg.io` in Cluster plugins).
 
 After making changes, verify relevant documentation doesn't contain outdated information. Update or flag stale docs.
 
@@ -203,10 +203,27 @@ Omit `bootstrap.initdb.secret` from Cluster manifests. CNPG automatically create
 All CNPG clusters require:
 - Use the barman plugin for backups (not the legacy barman object storage approach)
 - Two ObjectStore resources: One for local MinIO, one for Backblaze B2
+- ObjectStore retention policy: Set `retentionPolicy: "30d"` in both ObjectStore resources to control backup retention
 - ExternalSecret for B2 credentials (separate Bitwarden entries for access-key-id and secret-access-key)
 - Cluster plugin configuration for WAL archiving to B2 using the barman plugin
 - ScheduledBackup resource (weekly to B2 via plugin architecture)
 - ExternalClusters definitions for both MinIO and B2 recovery paths
+
+**ObjectStore Retention Pattern**:
+```yaml
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: <app>-minio-store
+  namespace: <namespace>
+spec:
+  retentionPolicy: "30d"  # Set retention here, not in Cluster backup config
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/<namespace>/<cluster>
+    endpointURL: https://truenas.peekoff.com:9000
+```
+
+Do NOT set retentionPolicy in the Cluster backup configuration section. Set it only in the ObjectStore resources.
 
 ### CNPG Barman Plugin Pattern
 Always use the barman plugin architecture (`type: barmanObjectStore`) for CNPG backups. Never use the legacy barman standalone deployment approach. The plugin is integrated into CNPG and managed entirely through Cluster and Backup CRDs.

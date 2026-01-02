@@ -21,13 +21,7 @@ variable "defaults_worker" {
     cpu_units     = 1024
     ram_dedicated = 21504
     igpu          = false
-    disks = {
-      longhorn = {
-        device     = "/dev/sdc" # scsi1 in Proxmox - disk already exists, just mount it
-        mountpoint = "/var/lib/longhorn"
-        # size, type, unit_number omitted - disk already exists in Proxmox
-      }
-    }
+    disks         = {}
   }
 }
 

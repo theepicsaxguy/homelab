@@ -9,6 +9,29 @@ metadata:
 entries:
   - model: authentik_providers_oauth2.scopemapping
     identifiers:
+      name: "authentik default OAuth Mapping: OpenID 'openid'"
+    attrs:
+      scope_name: openid
+      description: OpenID Connect identifier
+      expression: |
+        return {
+          "sub": request.user.uid,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "authentik default OAuth Mapping: OpenID 'profile'"
+    attrs:
+      scope_name: profile
+      description: User profile information
+      expression: |
+        return {
+          "name": request.user.name,
+          "preferred_username": request.user.username,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
       name: "authentik default OAuth Mapping: OpenID 'email'"
     attrs:
       scope_name: email

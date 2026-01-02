@@ -1,0 +1,14 @@
+# Backblaze B2 S3-compatible configuration
+b2 = {
+  region            = "us-west-000"
+  endpoint          = "https://s3.us-west-002.backblazeb2.com"
+  access_key_id     = "YOUR_B2_KEY_ID"
+  secret_access_key = "YOUR_B2_APPLICATION_KEY"
+}
+
+# Globally unique bucket name for storing Terraform state
+bucket_name = "homelab-terraform-state"
+
+# Encryption passphrase for state/plan encryption
+# IMPORTANT: Store this securely! You'll need it for all future operations.
+encryption_passphrase = "your-secure-encryption-passphrase-here"

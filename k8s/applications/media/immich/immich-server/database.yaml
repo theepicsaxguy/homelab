@@ -28,6 +28,7 @@ metadata:
   name: immich-minio-store
   namespace: immich
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/immich/immich-postgresql
     endpointURL: https://truenas.peekoff.com:9000
@@ -46,9 +47,10 @@ metadata:
   name: immich-b2-store
   namespace: immich
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-cnpg-b2/immich/immich-postgresql
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials
@@ -64,7 +66,7 @@ metadata:
   namespace: immich
 spec:
   instances: 2
-  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.7
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
 
   storage:
     size: 15Gi

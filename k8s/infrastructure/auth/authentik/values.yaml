@@ -49,6 +49,8 @@ global:
     - name: db-creds
       mountPath: /secrets/authentik
       readOnly: true
+    - name: shm
+      mountPath: /dev/shm
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
@@ -56,6 +58,9 @@ global:
     - name: db-creds
       secret:
         secretName: authentik-postgresql-app
+    - name: shm
+      emptyDir:
+        medium: Memory
 
 
 ## Authentik configuration
@@ -133,6 +138,35 @@ server:
   # -- whether to enable server resources
   enabled: true
 
+  # -- authentik server pod-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+  # -- authentik server container-level security context
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  volumes:
+    - name: media
+      emptyDir: {}
+
   ## authentik server service configuration
   service:
     # -- authentik server service annotations
@@ -145,6 +179,30 @@ server:
 
 worker:
   enabled: true
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  volumes:
+    - name: media
+      emptyDir: {}
+
   resources:
     requests:
       cpu: 100m

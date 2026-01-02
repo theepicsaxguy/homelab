@@ -28,6 +28,7 @@ metadata:
   name: litellm-minio-store
   namespace: litellm
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/litellm/litellm-postgresql
     endpointURL: https://truenas.peekoff.com:9000
@@ -46,9 +47,10 @@ metadata:
   name: litellm-b2-store
   namespace: litellm
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-cnpg-b2/litellm/litellm-postgresql
-    endpointURL: https://s3.us-west-000.backblazeb2.com
+    endpointURL: https://s3.us-west-002.backblazeb2.com
     s3Credentials:
       accessKeyId:
         name: b2-cnpg-credentials
@@ -132,8 +134,6 @@ spec:
       inherit: true
       replication: false
       connectionLimit: -1
-      inRoles:
-      - litellm
 
   monitoring:
     enablePodMonitor: false

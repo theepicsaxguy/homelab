@@ -1,0 +1,48 @@
+# k8s/infrastructure/auth/authentik/extra/blueprints/apps-cloudflare.yaml
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Apps - Cloudflare
+entries:
+  - id: cloudflare_provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: cloudflare-provider
+    attrs:
+      authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.flow, [slug, default-invalidation-flow]]
+      client_type: confidential
+      client_id: !Env CLOUDFLARE_CLIENT_ID
+      client_secret: !Env CLOUDFLARE_CLIENT_SECRET
+      redirect_uris:
+        - url: https://peekoff.cloudflareaccess.com/cdn-cgi/access/callback
+          matching_mode: strict
+      signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
+      access_code_validity: minutes=1
+      access_token_validity: minutes=5
+      refresh_token_validity: days=30
+      include_claims_in_id_token: true
+      issuer_mode: per_provider
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
+
+  - id: cloudflare_application
+    model: authentik_core.application
+    identifiers:
+      slug: cloudflare
+    attrs:
+      name: Cloudflare Zero Trust
+      provider: !KeyOf cloudflare_provider
+      policy_engine_mode: all
+      open_in_new_tab: true
+      meta_launch_url: https://one.dash.cloudflare.com/
+      meta_icon: https://www.cloudflare.com/favicon.ico
+      meta_description: Cloudflare Zero Trust SSO Integration
+      meta_publisher: Cloudflare

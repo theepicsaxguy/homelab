@@ -21,6 +21,7 @@ configMapGenerator:
       - ./blueprints/apps-litellm.yaml
       - ./blueprints/apps-karakeep.yaml
       - ./blueprints/apps-kubernetes.yaml
+      - ./blueprints/apps-cloudflare.yaml
       - ./blueprints/groups.yaml
       - ./blueprints/users.yaml
       - ./blueprints/brands.yaml
