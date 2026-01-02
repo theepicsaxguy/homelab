@@ -28,12 +28,14 @@ spec:
             storage: 1Gi
     - metadata:
         name: incomplete-downloads
+        annotations:
+          velero.io/exclude-from-backup: "true"
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: proxmox-csi
         resources:
           requests:
-            storage: 50Gi
+            storage: 100Gi
   template:
     metadata:
       labels:
