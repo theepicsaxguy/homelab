@@ -3,8 +3,6 @@ kind: StatefulSet
 metadata:
   name: sabnzbd
   namespace: media
-  annotations:
-    kubectl.kubernetes.io/restartedAt: "2026-01-02T14:48:00Z"
 spec:
   serviceName: sabnzbd
   replicas: 1
