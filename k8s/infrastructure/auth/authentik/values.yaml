@@ -51,6 +51,8 @@ global:
       readOnly: true
     - name: shm
       mountPath: /dev/shm
+    - name: media
+      mountPath: /media
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
@@ -61,6 +63,9 @@ global:
     - name: shm
       emptyDir:
         medium: Memory
+    - name: media
+      persistentVolumeClaim:
+        claimName: authentik-media
 
 
 ## Authentik configuration
@@ -141,6 +146,8 @@ server:
   # -- authentik server pod-level security context
   securityContext:
     runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
     seccompProfile:
       type: RuntimeDefault
 
@@ -154,6 +161,13 @@ server:
         - ALL
     seccompProfile:
       type: RuntimeDefault
+
+  # Persistent volume for media files (required for tenant files)
+  persistence:
+    enabled: true
+    storageClass: proxmox-csi
+    accessMode: ReadWriteOnce
+    size: 10Gi
 
   ## authentik server service configuration
   service:
@@ -169,6 +183,8 @@ worker:
   enabled: true
   securityContext:
     runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
     seccompProfile:
       type: RuntimeDefault
   containerSecurityContext:
@@ -178,6 +194,13 @@ worker:
     capabilities:
       drop:
         - ALL
+
+  # Persistent volume for media files (required for tenant files)
+  persistence:
+    enabled: true
+    storageClass: proxmox-csi
+    accessMode: ReadWriteOnce
+    size: 10Gi
 
   resources:
     requests:

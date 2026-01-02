@@ -9,6 +9,7 @@ resources:
 - outpost-externalsecret.yaml
 - minio-externalsecret.yaml
 - referencegrant.yaml
+- media-pvc.yaml
 - extra
 helmCharts:
 - name: authentik
