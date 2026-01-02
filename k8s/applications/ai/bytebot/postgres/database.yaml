@@ -104,9 +104,60 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
-      barmanObjectName: bytebot-b2-store
+      barmanObjectName: bytebot-minio-store
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://homelab-cnpg-b2/bytebot/database-cnpg
+      endpointURL: https://s3.us-west-002.backblazeb2.com
+      s3Credentials:
+        accessKeyId:
+          name: b2-cnpg-credentials
+          key: AWS_ACCESS_KEY_ID
+        secretAccessKey:
+          name: b2-cnpg-credentials
+          key: AWS_SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+        encryption: AES256
+      data:
+        compression: gzip
+        encryption: AES256
+        jobs: 2
+    retentionPolicy: '30d'
+
+  externalClusters:
+    - name: database-cnpg-b2-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-cnpg-b2/bytebot/database-cnpg
+        endpointURL: https://s3.us-west-002.backblazeb2.com
+        s3Credentials:
+          accessKeyId:
+            name: b2-cnpg-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: b2-cnpg-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
+    - name: database-cnpg-minio-backup
+      barmanObjectStore:
+        destinationPath: s3://homelab-postgres-backups/bytebot/database-cnpg
+        endpointURL: https://truenas.peekoff.com:9000
+        s3Credentials:
+          accessKeyId:
+            name: longhorn-minio-credentials
+            key: AWS_ACCESS_KEY_ID
+          secretAccessKey:
+            name: longhorn-minio-credentials
+            key: AWS_SECRET_ACCESS_KEY
+        wal:
+          compression: gzip
+          encryption: AES256
 
   resources:
     requests:
