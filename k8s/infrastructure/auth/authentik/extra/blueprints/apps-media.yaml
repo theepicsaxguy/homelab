@@ -41,22 +41,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-bazarr
     model: authentik_core.application
     identifiers:
@@ -110,22 +98,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-lidarr
     model: authentik_core.application
     identifiers:
@@ -179,22 +155,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-prowlarr
     model: authentik_core.application
     identifiers:
@@ -248,22 +212,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-radarr
     model: authentik_core.application
     identifiers:
@@ -317,22 +269,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-readarr
     model: authentik_core.application
     identifiers:
@@ -386,22 +326,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-sonarr
     model: authentik_core.application
     identifiers:
@@ -455,22 +383,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-qbittorrent
     model: authentik_core.application
     identifiers:
@@ -524,22 +440,10 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
   - id: application-sabnzbd
     model: authentik_core.application
     identifiers:

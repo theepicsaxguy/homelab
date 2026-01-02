@@ -100,21 +100,19 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_providers_oauth2.scopemapping,
-      property_mappings:
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "offline_access"]]
+
+  - id: zigbee2mqtt_application
+    model: authentik_core.application
+    identifiers:
+      slug: zigbee2mqtt
+    attrs:
+      name: Zigbee2MQTT
+      group: Home Automation
+      description: Zigbee to MQTT bridge
       icon: https://www.zigbee2mqtt.io/logo.png
       provider: !KeyOf provider-zigbee2mqtt
       policy_engine_mode: any
@@ -122,7 +120,7 @@ entries:
   - id: zigbee2mqtt_policy_binding
     model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application-zigbee2mqtt
+      target: !KeyOf zigbee2mqtt_application
       group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
     attrs:
       order: 1
