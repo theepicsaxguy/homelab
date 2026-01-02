@@ -7,8 +7,7 @@ spec:
   sourceRepos:
     - 'https://github.com/theepicsaxguy/homelab'
   destinations:
-    - namespace: '*'
-      server: '*'
+    - server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
