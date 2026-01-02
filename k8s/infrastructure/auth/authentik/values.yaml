@@ -51,8 +51,6 @@ global:
       readOnly: true
     - name: shm
       mountPath: /dev/shm
-    - name: media
-      mountPath: /media
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
@@ -63,9 +61,6 @@ global:
     - name: shm
       emptyDir:
         medium: Memory
-    - name: media
-      persistentVolumeClaim:
-        claimName: authentik-media
 
 
 ## Authentik configuration
@@ -201,6 +196,17 @@ worker:
     storageClass: proxmox-csi
     accessMode: ReadWriteOnce
     size: 10Gi
+
+  # Additional volumeMounts for worker (media volume)
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  # Additional volumes for worker (media PVC)
+  volumes:
+    - name: media
+      persistentVolumeClaim:
+        claimName: authentik-media
 
   resources:
     requests:
