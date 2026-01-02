@@ -9,5 +9,7 @@ data:
   kopia: |
     {
       "cacheLimitMB": 8192,
-      "fullMaintenanceInterval": "168h"
+      "fullMaintenanceInterval": "336h",
+      "maintenanceMode": "periodic",
+      "maintenanceInterval": "336h"
     }

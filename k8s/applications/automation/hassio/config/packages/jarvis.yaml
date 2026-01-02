@@ -9,96 +9,28 @@ mqtt:
     state_topic: "house/polly/msgtime"
 
 
-sensor:
-  # Making some template sensors to simpify TTS Briefings and Announcements.
-  - platform: template
-    sensors:
+template:
+  - sensor:
+      - default_entity_id: sensor.tts_greeting
+        name: TTS Hälsning
+        state: '{% if now().hour < 12 %} God morgon. {% elif now().hour >= 12 and now().hour < 17 %} God eftermiddag. {% else %} God kväll. {% endif %}'
 
-      tts_greeting:
-        friendly_name: TTS Hälsning
-        value_template: >
-          {% if now().hour < 12 %}
-          God morgon.
-          {% elif now().hour >= 12 and now().hour < 17 %}
-          God eftermiddag.
-          {% else %}
-          God kväll.
-          {% endif %}
+      - default_entity_id: sensor.tts_confirmation
+        name: TTS Bekräftelse
+        state: "{{ [\n  'Okej.',\n  'Om du insisterar.',\n  'Jag är rädd att jag inte kan göra det, jag skojar,',\n  'Låt mig ta hand om det.',\n  'Som du önskar.',\n  'Jag tar hand om det.',\n  'Inget problem.',\n  'Ska göras.',\n  'Jag tror att jag klarar det.',\n  'Jobbar med det nu.',\n  ', Åh, du pratade med mig. Låt mig ta hand om det.',\n  'Varför inte. Det är inte som om jag någonsin sover.',\n  'Jag borde inte ens vara här idag. Men vad som helst.',\n  'Du sa inte magiska ordet. , Åh, strunt i det. Jag tar hand om det.',\n  'Roligt, jag höll på att göra det.',\n  'Det krävs fortfarande terabytes av beräkningar innan jag kan., Åh, vad som helst.'\n  ] | random }}"
 
-      tts_confirmation:
-        friendly_name: TTS Bekräftelse
-        value_template: >
-          {{ [
-            'Okej.',
-            'Om du insisterar.',
-            'Jag är rädd att jag inte kan göra det, jag skojar,',
-            'Låt mig ta hand om det.',
-            'Som du önskar.',
-            'Jag tar hand om det.',
-            'Inget problem.',
-            'Ska göras.',
-            'Jag tror att jag klarar det.',
-            'Jobbar med det nu.',
-            ', Åh, du pratade med mig. Låt mig ta hand om det.'
-            'Varför inte. Det är inte som om jag någonsin sover.',
-            'Jag borde inte ens vara här idag. Men vad som helst.',
-            'Du sa inte magiska ordet. , Åh, strunt i det. Jag tar hand om det.',
-            'Roligt, jag höll på att göra det.',
-            'Det krävs fortfarande terabytes av beräkningar innan jag kan., Åh, vad som helst.'
-            ] | random }}
+      - default_entity_id: sensor.tts_interuption
+        name: TTS Avbrott
+        state: "{% if is_state('device_tracker.person1', 'home') %}\n  {{ [\n      \"Fru, \",\n      \"Ursäkta fru, \",\n      \"Ursäkta mig wilma, \",\n      \"wilma, \",\n      \"Jag menar inte att avbryta fru, \",\n      ] | random }}\n{% elif is_state('device_tracker.person2', 'home') %}\n  {{ [\n      'Herr, ',\n      'Ursäkta herr, ',\n      'Ursäkta mig chef, ',\n      'Chef, ',\n      'Jag menar inte att avbryta chef, '\n      ] | random }}\n{% else %}\n  {{ [\n    'Ursäkta mig, ',\n    'Ursäkta, ',\n    'Jag ber om ursäkt, ',\n    'Jag menar inte att störa, men, ',\n    'Förlåt att jag avbryter, men. '\n    ] | random }}\n{% endif %}"
 
-      tts_interuption:
-        friendly_name: TTS Avbrott
-        value_template: >
-          {% if is_state('device_tracker.person1', 'home') %}
-            {{ [
-                "Fru, ",
-                "Ursäkta fru, ",
-                "Ursäkta mig wilma, ",
-                "wilma, ",
-                "Jag menar inte att avbryta fru, ",
-                ] | random }}
-          {% elif is_state('device_tracker.person2', 'home') %}
-            {{ [
-                'Herr, ',
-                'Ursäkta herr, ',
-                'Ursäkta mig chef, ',
-                'Chef, ',
-                'Jag menar inte att avbryta chef, '
-                ] | random }}
-          {% else %}
-            {{ [
-              'Ursäkta mig, ',
-              'Ursäkta, ',
-              'Jag ber om ursäkt, ',
-              'Jag menar inte att störa, men, ',
-              'Förlåt att jag avbryter, men. '
-              ] | random }}
-          {% endif %}
+      - default_entity_id: sensor.tts_issue_announcement
+        name: TTS Meddelande om Problem
+        state: "{{ [\n  'Maison Des Lunes Nödalarm!',\n  'Maison Des Lunes, Vi har ett problem!',\n  'Du kanske inte gillar det här.',\n  'Det är något som behöver din uppmärksamhet.'\n  ] | random }}"
 
+      - default_entity_id: sensor.tts_time_is
+        name: TTS Tiden är
+        state: "{% if is_state('binary_sensor.morning','on') %}\n  Idag är det {{states.sensor.today_is_day_day.state }}, {{ as_timestamp(now()) | timestamp_custom('%d %B %Y') }} .\n{% else %}\n  Klockan är {{ now().strftime(\"%H:%M\") }} .\n{% endif %}"
 
-      tts_issue_announcement:
-        friendly_name: TTS Meddelande om Problem
-        value_template: >
-          {{ [
-            'Maison Des Lunes Nödalarm!',
-            'Maison Des Lunes, Vi har ett problem!',
-            'Du kanske inte gillar det här.',
-            'Det är något som behöver din uppmärksamhet.'
-            ] | random }}
-      
-      tts_time_is:
-        friendly_name: TTS Tiden är
-        value_template: >
-          {% if is_state('binary_sensor.morning','on') %}
-            Idag är det {{states.sensor.today_is_day_day.state }}, {{ as_timestamp(now()) | timestamp_custom('%d %B %Y') }} .
-          {% else %}
-            Klockan är {{ now().strftime("%H:%M") }} .
-          {% endif %}
-      
-      
-
-      
 script:
   speech_engine:
     sequence:
@@ -110,7 +42,7 @@ script:
         state: 'off'
       # Your existing conditions and services
       # ...
-    
+
       # Add MQTT to publish the message
       - service: mqtt.publish
         data_template:
@@ -128,14 +60,14 @@ script:
             {%- endmacro -%}
             {{- cleanup(mother_of_all_macros()) -}}
           retain: true
-    
+
       # Add MQTT to publish the time
       - service: mqtt.publish
         data_template:
           topic: house/polly/msgtime
           payload: '{{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}'
           retain: true
-      
+
       - service: tts.cloud_say
         data:
           entity_id: |-
@@ -146,14 +78,14 @@ script:
               {% else %}
                 media_player.hallen  # Replace with a default entity ID
               {% endif %}
-              
+
           message: "{{ message }}"
 
-  
-  
-  
- 
-    
+
+
+
+
+
   announcement:
     #variables:
 #      who: "{{ states('sensor.room_audio') }}"
@@ -163,16 +95,16 @@ script:
         who: "{{ states('sensor.room_audio') }}"
         message: >
           {% if states('sensor.wilma_room') == who and states('sensor.benjamin_room')== who  %}
-            {{ 
+            {{
               ['Ursäkta alla, ',
               'Förlåt mig, ',
               'Jag ber om ursäkt, ',
               'Eftersom ni alla är här, ',
               'Jag är ledsen att avbryta, men. ',
-              'När vi ändå är samlade,'] 
+              'När vi ändå är samlade,']
               | random }}
           {% elif states('sensor.wilma_room') == who  %}
-            {{ 
+            {{
               ["Fru,",
                 "Ursäkta mig fru,",
                 "Ursäkta wilma,",
@@ -180,7 +112,7 @@ script:
                 "Jag menar inte att avbryta frun,"
                 ] | random }}
           {% elif states('sensor.benjamin_room') == who  %}
-            {{ 
+            {{
               ['Herre, ',
               'Ursäkta mig herre, ',
               'Ursäkta benjamin, ',
@@ -188,14 +120,14 @@ script:
               'Jag menar inte att avbryta herren, '
               ] | random }}
           {% else %}
-            {{ 
+            {{
               ['Ursäkta mig, ',
               'Förlåt mig, ',
               'Jag ber om ursäkt, ',
               'Jag menar inte att störa, men, ',
               'Jag är ledsen att avbryta, men. '
               ] | random }}
-          {% endif %} 
+          {% endif %}
           {{ message }}"
 #   speech_engine_2:
 #     sequence:
@@ -204,7 +136,7 @@ script:
 #         entity_id: "{{ who }}"
 #         message: "{{ message }}"
 #         cache: true
-  
+
   briefing:
     #variables:
 #      who: "{{ states('sensor.room_audio') }}"
@@ -227,7 +159,7 @@ script:
           {% elif states('sensor.benjamin_room') == who  %}
             Herre.
           {% else %}
-            
+
           {% endif %}
           {{ message }}
   daily_briefing:
@@ -235,7 +167,7 @@ script:
     - service: script.speech_engine
       data:
         message: !include ../speech/daily_briefing.yaml
-  
+
   jarvis_already_done:
     #variables:
 #      who: "{{ states('sensor.room_audio') }}"
@@ -245,7 +177,7 @@ script:
         who: "{{ states('sensor.room_audio') }}"
         message:  >-
           {{ [
-          'Det har jag redan ordnat med.', 
+          'Det har jag redan ordnat med.',
           'Det verkar som någon redan har gjort det, men jag tar gärna åt mig äran.',
           'Jag är så snabb att det redan är gjort.'
           ]| random }}
@@ -256,7 +188,7 @@ script:
         who: "{{ states('sensor.room_audio') }}"
         message:  >-
           {{ [
-          'Okej.', 
+          'Okej.',
           'Om du insisterar.',
           'Jag är rädd att jag inte kan göra det, jag skämtar,',
           'Lämna det åt mig.',
