@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - secrets.yml
+  - smtp-externalsecret.yaml
 
 generatorOptions:
   disableNameSuffixHash: false
@@ -26,6 +27,9 @@ configMapGenerator:
       - ./blueprints/users.yaml
       - ./blueprints/brands.yaml
       - ./blueprints/flows-default-provider-authorization-one-time-consent.yaml
+      - ./blueprints/flows-passwordless-authentication.yaml
+      - ./blueprints/flows-default-authentication-passwordless.yaml
+      - ./blueprints/flows-webauthn-setup.yaml
       - ./blueprints/notifications.yaml
       - ./blueprints/oauth-scopes.yaml
       - ./blueprints/outposts.yaml
