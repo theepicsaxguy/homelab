@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - secrets.yml
+  - smtp-externalsecret.yaml
 
 generatorOptions:
   disableNameSuffixHash: false
