@@ -66,10 +66,19 @@ entries:
       policy_engine_mode: any
 
   # Allow access to users group
-  - id: jellyfin_policy_binding
+  - id: jellyfin_users_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf jellyfin_application
       group: !Find [authentik_core.group, [name, "Jellyfin Users"]]
     attrs:
       order: 1
+
+  # Allow access to admins group
+  - id: jellyfin_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf jellyfin_application
+      group: !Find [authentik_core.group, [name, "Jellyfin Admins"]]
+    attrs:
+      order: 2
