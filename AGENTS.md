@@ -131,6 +131,7 @@ Context is cumulative. Read in order:
 - Never leave documentation stale after completing tasks
 - Never hallucinate YAML fields - use `kubectl explain` or official docs
 - Never create summary documentation about work performed
+- Never use git commands unless user asks for it
 
 ### Documentation Integrity
 - Never create documentation from scratch for existing components - extend existing docs
