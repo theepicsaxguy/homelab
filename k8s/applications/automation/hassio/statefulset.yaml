@@ -19,6 +19,8 @@ spec:
         app.kubernetes.io/name: home-assistant
         app.kubernetes.io/instance: home-assistant
     spec:
+      securityContext:
+        fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: home-assistant
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
@@ -48,12 +50,21 @@ spec:
             [ ! -f /config/lovelace.yaml ] && cp /config-seed/lovelace.yaml /config/lovelace.yaml
           fi
 
+          echo "Setting permissions for Home Assistant..."
+          chmod -R 755 /config
+          chown -R root:root /config
           echo "Init complete"
         volumeMounts:
         - name: data
           mountPath: /config
         - name: seed-config
           mountPath: /config-seed
+      - name: volume-permissions
+        image: busybox:1.37
+        command: ["sh", "-c", "chmod -R 755 /config && chown -R root:root /config"]
+        volumeMounts:
+        - name: data
+          mountPath: /config
       containers:
         - name: home-assistant
           image: ghcr.io/home-assistant/home-assistant:2025.12.5
