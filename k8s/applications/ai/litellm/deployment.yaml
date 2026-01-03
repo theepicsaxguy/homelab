@@ -71,6 +71,8 @@ spec:
           value: "openid profile email groups"
         - name: PROXY_LOGOUT_URL
           value: "https://sso.peekoff.com/application/o/litellm/end-session/"
+        - name: JWT_PUBLIC_KEY_URL
+          value: "https://sso.peekoff.com/.well-known/openid-configuration/jwks"
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml
