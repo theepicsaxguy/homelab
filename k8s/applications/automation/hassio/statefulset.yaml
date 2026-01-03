@@ -25,17 +25,28 @@ spec:
       initContainers:
       - name: config-init
         image: busybox:latest
+        env:
+        - name: HA_SEED_ON_STARTUP
+          value: "false"
         command:
         - sh
         - -c
         - |
           mkdir -p /config/.storage
 
-          echo "Updating HA-managed config files from ConfigMaps"
-          cp -f /config-seed/automations.yaml /config/automations.yaml
-          cp -f /config-seed/scripts.yaml /config/scripts.yaml
-          cp -f /config-seed/scenes.yaml /config/scenes.yaml
-          cp -f /config-seed/lovelace.yaml /config/lovelace.yaml
+          if [ "$HA_SEED_ON_STARTUP" = "true" ]; then
+            echo "HA_SEED_ON_STARTUP=true: Overwriting HA-managed config files from ConfigMaps"
+            cp -f /config-seed/automations.yaml /config/automations.yaml
+            cp -f /config-seed/scripts.yaml /config/scripts.yaml
+            cp -f /config-seed/scenes.yaml /config/scenes.yaml
+            cp -f /config-seed/lovelace.yaml /config/lovelace.yaml
+          else
+            echo "HA_SEED_ON_STARTUP=false: Copying HA-managed config files only if they don't exist"
+            [ ! -f /config/automations.yaml ] && cp /config-seed/automations.yaml /config/automations.yaml
+            [ ! -f /config/scripts.yaml ] && cp /config-seed/scripts.yaml /config/scripts.yaml
+            [ ! -f /config/scenes.yaml ] && cp /config-seed/scenes.yaml /config/scenes.yaml
+            [ ! -f /config/lovelace.yaml ] && cp /config-seed/lovelace.yaml /config/lovelace.yaml
+          fi
 
           echo "Init complete"
         volumeMounts:
