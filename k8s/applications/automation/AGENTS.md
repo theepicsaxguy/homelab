@@ -56,6 +56,12 @@ For general Kubernetes patterns, see k8s/AGENTS.md:
 - ConfigMount: ConfigMap for customization
 - Database: SQLite embedded in PVC
 - Authentication: Authentik OpenID Connect
+- Seed Configuration: InitContainer conditionally copies automations, scripts, scenes, lovelace from ConfigMap
+
+**Seed Configuration**:
+The initContainer manages HA-managed configuration files via the `HA_SEED_ON_STARTUP` environment variable:
+- `"true"`: Always overwrite files from ConfigMap (useful for force-reset)
+- `"false"` or unset: Only copy if files don't exist, allowing Home Assistant to manage its own files
 
 **Resources**: CPU: 2 cores, Memory: 2Gi, Storage: 10Gi PVC
 

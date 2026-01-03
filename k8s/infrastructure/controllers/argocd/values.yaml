@@ -19,6 +19,7 @@ configs:
             - openid
             - profile
             - email
+            - groups
         name: authentik
         type: oidc
         id: authentik
@@ -38,8 +39,6 @@ configs:
     policy.csv: |
       g, ArgoCD Admins, role:admin
       g, ArgoCD Viewers, role:readonly
-      g, ArgoCDAdmins, role:admin
-      g, ArgoCDViewers, role:readonly
       g, argocd:admin, role:admin
       g, argocd:read_all, role:readonly
       p, role:kubechecks, applications, get,   */*, allow
