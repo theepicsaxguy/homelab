@@ -1,5 +1,39 @@
 # Changelog
 
+## 5.1.0 (2026-01-03)
+
+## What's Changed
+* chore(deps): update helm release kube-prometheus-stack to v80.8.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1952
+* chore(deps): update helm release kube-prometheus-stack to v80.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1954
+* chore(deps): update helm release kube-prometheus-stack to v80.9.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1955
+* Feat(tofu)--implement-Kubernetes-bootstrap-with-OpenTofu by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1956
+* chore(deps): update helm release kube-prometheus-stack to v80.9.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1957
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1958
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.30.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1959
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1960
+* Feat(tofu)--enhance-Backblaze-B2-remote-state-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1961
+* fix(k8s): remove wildcard namespace from AppProject destinations by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1963
+* chore(deps): update terraform aws to v6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1962
+* fix(renovate): correct URL regex patterns to capture org/repo format by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1964
+* fix(k8s): remove fixed destination namespace from ApplicationSets by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1965
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1966
+* Chore(k8s)--update-container-images-and-configuration-settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1967
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1968
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1969
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1970
+* feat(auth): enable SMTP email and passwordless WebAuthn login in Authentik by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1971
+* feat(k8s): expand sabnzbd incomplete-downloads to 100GB with Velero exclusion by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1972
+* chore(deps): update helm release kube-prometheus-stack to v80.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1973
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1974
+* Fix(k8s)--update-sabnzbd-readiness-and-liveness-probe-settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1975
+* chore(deps): update terraform proxmox to v0.91.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1976
+* Fix/argocd-sso-groups by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1977
+* Feat(k8s)--enhance-Home-Assistant-statefulset-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1978
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1979
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.0.0...v5.1.0
+
 ## 5.0.0 (2025-12-30)
 
 ## What's Changed
