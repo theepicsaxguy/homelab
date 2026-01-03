@@ -1,82 +1,105 @@
 # LiteLLM - Agent Guidelines
 
-## SSO Role Mapping Issue Resolution
+## Purpose
+AI model proxy with enterprise SSO integration, role-based access control, and team management.
 
-### Problem
-Users in Authentik `Litellm Admins` group receiving `internal_user_viewer` role instead of `proxy_admin`, causing access denied to admin UI with error: "User not allowed to access proxy. User role=internal_user_viewer, proxy mode=admin_only"
+## Configuration Architecture
 
-### Root Cause Analysis
-The issue stemmed from **authentication method misconfiguration**:
+### Authentication Methods
+1. **JWT Authentication** (Primary) - Uses JWT role mapping from Authentik groups
+2. **OAuth SSO** (Fallback) - Direct authentication via environment variables  
+3. **Header-based** (Fallback) - Custom SSO proxy integration
 
-1. **JWT role mapping configured** but **JWT authentication NOT enabled**
-2. **OAuth SSO active** but expecting direct LiteLLM role values, not Authentik group names  
-3. **Missing `enable_jwt_auth: true`** caused JWT role mapping to be ignored
-4. **OAuth fallback** assigned deprecated `internal_user_viewer` role instead of applying configured mapping
+### Required Files
+- `proxy_server_config.yaml` - Main LiteLLM configuration
+- `deployment.yaml` - Environment variables and container settings
+- `AGENTS.md` - This file (agent guidelines)
 
-### Key Configuration Points
+## Configuration Rules
 
-#### JWT Authentication Requirements
+### JWT Authentication Setup
+When `enable_jwt_auth: true`, must have:
 ```yaml
 general_settings:
-  enable_jwt_auth: true  # ⚠️ REQUIRED for JWT role mapping to work
+  enable_jwt_auth: true
   
-  litellm_jwtauth:
-    user_roles_jwt_field: "groups"  # Field containing Authentik groups
-    user_allowed_roles:
-      - proxy_admin           # Required for admin_only UI access
-      - internal_user
-      - internal_user_viewer
-      - customer
-    jwt_litellm_role_map:
-      - jwt_role: "Litellm Admins"     # Authentik group name
-        litellm_role: "proxy_admin"         # Mapped LiteLLM role
-      - jwt_role: "Litellm Users"       # Authentik group name  
-        litellm_role: "internal_user"         # Mapped LiteLLM role
+litellm_jwtauth:
+  user_roles_jwt_field: "groups"  # Authentik groups claim
+  user_allowed_roles:
+    - proxy_admin      # Required for admin_only UI access
+    - internal_user
+    - internal_user_viewer  # Fallback role
+    - customer
+  jwt_litellm_role_map:
+    - jwt_role: "Litellm Admins"      # Authentik group
+      litellm_role: "proxy_admin"        # Mapped role
+    - jwt_role: "Litellm Users"
+      litellm_role: "internal_user"
 ```
 
-#### OAuth SSO Configuration
+**Required environment variables:**
 ```yaml
 env:
-- name: GENERIC_SCOPE
-  value: "openid profile email groups"  # Include groups for JWT claims
-- name: JWT_PUBLIC_KEY_URL  # Required for JWT token validation
+- name: JWT_PUBLIC_KEY_URL
   value: "https://sso.peekoff.com/.well-known/openid-configuration/jwks"
-
-generic_oauth:
-  scope: "openid profile email groups"  # Must include groups
-  user_role_field: "groups"          # Field containing role info
+- name: GENERIC_SCOPE
+  value: "openid profile email groups"  # Must include groups
 ```
 
-### Authentication Method Precedence
-1. **JWT Authentication** (if `enable_jwt_auth: true`) - Uses JWT role mapping
-2. **OAuth SSO** (if JWT disabled) - Uses direct role values, expects `proxy_admin` not group names
-3. **Header-based** - Fallback for custom SSO proxies
+### OAuth Fallback Setup
+When JWT authentication is disabled:
+```yaml
+generic_oauth:
+  scope: "openid profile email groups"
+  user_role_field: "groups"  # Must contain direct LiteLLM role values
+```
 
-### Common Issues & Solutions
+## Agent Guidelines
 
-| Issue | Cause | Fix |
-|--------|--------|------|
-| `internal_user_viewer` role despite admin group | JWT auth not enabled, role mapping ignored | Add `enable_jwt_auth: true` |
-| Missing groups in JWT token | `groups` scope missing from OAuth | Include `groups` in all scope configurations |
-| Role mapping not applied | Wrong auth method active | Verify which auth method is being used |
+### When Working with SSO Issues
+1. **ALWAYS verify authentication method precedence** - JWT vs OAuth vs headers
+2. **Check `enable_jwt_auth` status** - Required for JWT role mapping
+3. **Validate scopes include `groups`** - Required for role information
+4. **Ensure `user_allowed_roles` includes all fallback roles**
+5. **Test JWT token payload** to verify group claims are present
 
-### Troubleshooting Checklist
+### Common Failure Patterns
+- `internal_user_viewer` despite admin group → Missing `enable_jwt_auth: true`
+- Role mapping ignored → JWT auth not enabled, OAuth active
+- Access denied with `admin_only` → User lacks `proxy_admin` role
 
-- [ ] `enable_jwt_auth: true` in `general_settings`
-- [ ] `JWT_PUBLIC_KEY_URL` environment variable set
-- [ ] `groups` scope included in all OAuth configurations
-- [ ] Authentik user is in correct group (`Litellm Admins`)
-- [ ] `proxy_admin` role in `user_allowed_roles` list
-- [ ] `ui_access_mode: admin_only` requires `proxy_admin` role
+### Testing Requirements
+Before marking SSO issues as resolved:
+- [ ] JWT authentication is enabled
+- [ ] Groups scope is included in OAuth request
+- [ ] Authentik user is in correct group
+- [ ] JWT token contains groups claim
+- [ ] Role mapping is applied correctly
+- [ ] User receives expected `proxy_admin` role
+- [ ] Admin UI access works
 
-### Configuration Files
-- **Main config**: `proxy_server_config.yaml`
-- **Deployment env**: `deployment.yaml` 
-- **Authentik blueprint**: `apps-litellm.yaml`
+### Implementation Checklist
+- [ ] All authentication methods configured (JWT + OAuth fallback)
+- [ ] Role mappings include all expected groups
+- [ ] Environment variables set for JWT validation
+- [ ] Fallback roles allowed in configuration
+- [ ] UI access mode matches allowed roles
 
-### Expected Behavior After Fix
-1. User authenticates via Authentik SSO
-2. JWT token includes `groups: ["Litellm Admins"]` claim
-3. JWT authentication enabled and processes role mapping
-4. `"Litellm Admins" → "proxy_admin"` mapping applied
-5. User gains admin UI access with `proxy_admin` role
+## DO NOT
+- Commit historical fixes to AGENTS.md
+- Remove working configurations for "simplification"
+- Assume role mapping works without testing
+- Change authentication methods without understanding precedence
+
+## REQUIRED VERIFICATION
+Any changes to authentication or role mapping MUST:
+1. Verify JWT token contents with debug endpoint
+2. Test with actual Authentik admin user
+3. Confirm admin UI access with `proxy_admin` role
+4. Validate fallback behavior for non-admin users
+
+## Security Requirements
+- All SSO configurations must use HTTPS endpoints
+- Groups claim must be validated before role assignment
+- Default roles should be most restrictive possible
+- Admin access should require explicit role assignment
