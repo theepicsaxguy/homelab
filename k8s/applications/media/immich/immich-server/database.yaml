@@ -102,9 +102,22 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
-      barmanObjectName: immich-b2-store
+      barmanObjectName: immich-minio-store
+
+  externalClusters:
+    - name: immich-postgresql-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: immich-b2-store
+    - name: immich-postgresql-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: immich-minio-store
 
   bootstrap:
     initdb:

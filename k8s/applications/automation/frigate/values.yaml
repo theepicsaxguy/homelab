@@ -37,13 +37,9 @@ gpu:
     runtimeClassName:
 
 # -- declare extra volumes to use for Frigate
-extraVolumes:
-  - name: run-tmpfs
-    emptyDir: {}
+extraVolumes: []
 # -- declare additional volume mounts
-extraVolumeMounts:
-  - name: run-tmpfs
-    mountPath: /run
+extraVolumeMounts: []
 
 # -- amount of shared memory to use for caching
 shmSize: 1Gi
@@ -288,21 +284,26 @@ resources:
 
 # -- Set Frigate Container Security Context
 securityContext:
+  runAsUser: 0
+  runAsGroup: 0
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
   capabilities:
     drop:
       - ALL
+    add:
+      - CHOWN
+      - FOWNER
+      - SETGID
+      - SETUID
 
 # -- Set Pod level Security Context
 # -- the container level securiy context defined above
 # -- will override it for frigate container
 podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 1000
+  runAsNonRoot: false
   fsGroup: 1000
-  fsGroupChangePolicy: OnRootMismatch
+  fsGroupChangePolicy: Always
   seccompProfile:
     type: RuntimeDefault
 

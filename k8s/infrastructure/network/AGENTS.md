@@ -1,316 +1,208 @@
-# Infrastructure Network - Component Guidelines
+# Network Infrastructure - External Access Hub
 
-SCOPE: Cluster networking, CNI, DNS, and ingress
+SCOPE: Service exposure, DNS, and external access workflows
 INHERITS FROM: /k8s/AGENTS.md
-TECHNOLOGIES: Cilium (CNI), CoreDNS, Gateway API, Cloudflared, Cert Manager integration
+TECHNOLOGIES: Gateway API, Cilium, CoreDNS, Cloudflared
 
-## COMPONENT CONTEXT
+## SERVICE EXPOSURE WORKFLOWS
 
-Purpose:
-Manage cluster networking including CNI configuration, DNS resolution, ingress/gateway routing, and external access tunnels.
+### HTTPS Service Setup (Most Common)
 
-Boundaries:
-- Handles: CNI installation, network policies, DNS configuration, Gateway API routing, external tunnels
-- Does NOT handle: Application HTTPRoutes (see applications/), controller certificates (see controllers/)
-- Integrates with: controllers/ (for Cert Manager), applications/ (for HTTPRoute references)
-
-Architecture:
-- `cilium/` - Cilium CNI (Container Network Interface)
-- `coredns/` - Cluster DNS service
-- `gateway/` - Gateway API routing configuration
-- `cloudflared/` - Cloudflare tunnel for external access
-
-## QUICK-START COMMANDS
-
-```bash
-# Build all network components
-kustomize build --enable-helm k8s/infrastructure/network
-
-# Build specific component
-kustomize build --enable-helm k8s/infrastructure/network/<component>
-
-# Validate network manifests
-kustomize build --enable-helm k8s/infrastructure/network | yq eval -P -
-
-# Check Cilium status
-cilium status
-
-# Check Gateway API resources
-kubectl get gateway -n gateway
-kubectl get httproute -A
+#### Step 1: Create Service
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: <app-name>
+  namespace: <app-namespace>
+spec:
+  selector:
+    app.kubernetes.io/name: <app-name>
+  ports:
+  - port: 80
+    targetPort: <app-port>
+    protocol: TCP
 ```
 
-## COMPONENT-SPECIFIC PATTERNS
+#### Step 2: Create HTTPRoute
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: <app-name>
+  namespace: <app-namespace>
+spec:
+  parentRefs:
+  - name: external  # IP: 10.25.150.222
+    namespace: gateway
+    sectionName: https
+  - name: internal  # Internal traffic only
+    namespace: gateway
+  hostnames:
+  - "<app-name>.peekoff.com"
+  - "<app-name>.goingdark.social"  # optional
+  rules:
+  - matches:
+    - path:
+        type: Prefix
+        value: /
+    backendRefs:
+    - name: <app-name>
+      port: 80
+```
+
+#### Step 3: DNS Configuration
+1. Add A record in Cloudflare:
+   - Name: `<app-name>.peekoff.com`
+   - IP: `10.25.150.222`
+   - TTL: Auto
+   - Proxy: DNS only (not cloudflare proxy)
+
+2. Certificate auto-provisioned by Cert Manager
+3. Gateway routes HTTPS traffic to your service
+
+#### Step 4: Validation
+```bash
+# Check HTTPRoute status
+kubectl get httproute -n <app-namespace> <app-name>
+
+# Test from external
+curl -H "Host: <app-name>.peekoff.com" https://10.25.150.222
+
+# Check certificate
+kubectl get certificate -n <app-namespace>
+```
+
+### Internal Service Access
+
+#### Step 1: Create Service (ClusterIP)
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: <app-name>
+  namespace: <app-namespace>
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: <app-name>
+  ports:
+  - port: <service-port>
+    targetPort: <app-port>
+```
+
+#### Step 2: Access Pattern
+Internal DNS: `<app-name>.<app-namespace>.svc.cluster.local`
+
+### Cloudflare Tunnel Integration
+
+#### Step 1: Install Cloudflared
+Cloudflared runs as DaemonSet in `cloudflared` namespace.
+
+#### Step 2: Configure Tunnel
+Add to cloudflared ConfigMap:
+```yaml
+ingress:
+  - hostname: <app-name>.peekoff.com
+    service: http://<app-name>.<app-namespace>.svc.cluster.local:80
+```
+
+#### Step 3: DNS Configuration
+1. Create CNAME record in Cloudflare:
+   - Name: `<app-name>.peekoff.com`
+   - Target: `<tunnel-id>.cfargotunnel.com`
+   - Proxy: Cloudflare proxy (orange cloud)
+
+## NETWORK COMPONENTS
 
 ### Cilium (CNI)
-
-**Purpose**: Container Network Interface providing eBPF-based networking, observability, and security.
-
-**Installation**:
-- Helm chart version 1.18.5
-- `kubeProxyReplacement: true` - Replaces kube-proxy with eBPF implementation
-- Deployed in `kube-system` namespace
-
-**Key Configuration**:
-- **Talos Compatibility**:
-  - `k8sServiceHost: localhost`, `k8sServicePort: 7445` (Talos API server)
-  - Host legacy routing enabled for host DNS forwarding
-  - `bpf.hostLegacyRouting: true` - Required for Talos host DNS forwarding
-- **IPAM**: Kubernetes IPAM mode
-- **Security Context**: Specific capabilities for cilium agent
-- **Auto-Rollout**: Enabled for ConfigMap changes
-
-**Network Configuration**:
-- **IP Pool**: `10.25.150.220-10.25.150.255` for LoadBalancer IPs
-- **BGP Announcements**: Enabled for external service exposure
-- **Multicast**: Disabled (not needed)
-
-**Cilium 1.18 Known Issue Fixed**:
-- Version 1.17.x dropped pure-TCP Gateway listeners
-- Affects MQTT service in `applications/automation/mqtt/`
-- Upgrade to 1.18+ resolves this issue
-- Remove HTTPRoute workaround after upgrading
-
-### CoreDNS
-
-**Purpose**: Cluster DNS resolution for Kubernetes services and external domains.
-
-**Configuration**:
-- Deployment with PodDisruptionBudget for high availability
-- ServiceAccount with ClusterRole/ClusterRoleBinding for RBAC
-- Custom ConfigMap for DNS forwarding rules
-- ClusterRole: View all pods and services for DNS resolution
-
-**Integration**:
-- Resolves Kubernetes service names to cluster IPs
-- Forwards external queries to upstream DNS servers
-- Used by all applications for service discovery
+- Version: 1.18.5+ (1.17.x has TCP listener bug)
+- Replaces kube-proxy with eBPF
+- IP Pool for LoadBalancers: `10.25.150.220-10.25.150.255`
 
 ### Gateway API
+- **External Gateway**: `gateway/external` (IP: 10.25.150.222)
+- **Internal Gateway**: `gateway/internal`
+- **TLS Passthrough**: `gateway/tls-passthrough`
 
-**Purpose**: Manage HTTP/HTTPS ingress routing using Gateway API standard.
+### CoreDNS
+- Cluster DNS resolution
+- Resolves: `<service>.<namespace>.svc.cluster.local`
 
-**Gateways**:
-- **External Gateway** (`gw-external.yaml`):
-  - IP: `10.25.150.222`
-  - Hostnames: `*.peekoff.com`, `peekoff.com`, `*.goingdark.social`, `goingdark.social`
-  - Port: 443 (HTTPS)
-  - TLS certificates: `cert-peekoff`, `cert-goingdark` (from Cert Manager)
-  - Routes: Accepts from All namespaces
-- **Internal Gateway** (`gw-internal.yaml`):
-  - Internal-only traffic
-  - No external exposure
-- **TLS Passthrough Gateway** (`gw-tls-passthrough.yaml`):
-  - For services requiring TLS passthrough
+## TROUBLESHOOTING COMMANDS
 
-**Certificate Management**:
-- Certificates managed by Cert Manager (see controllers/)
-- Stored as Secrets in `gateway` namespace
-- Referenced by Gateway listeners
+### Service Issues
+```bash
+# Check service endpoints
+kubectl get endpoints -n <namespace> <service-name>
 
-**Application HTTPRoutes**:
-- Applications create HTTPRoute resources referencing Gateway
-- Gateway filters routes based on hostname and namespace
-- Example: `applications/automation/frigate/http-route.yaml`
+# Test service connectivity
+kubectl run -it --rm debug --image=curlimages/curl --restart=Never -- \
+  curl http://<service-name>.<namespace>.svc.cluster.local
 
-### Cloudflared
+# Check service logs
+kubectl logs -n <namespace> -l app.kubernetes.io/name=<app-name>
+```
 
-**Purpose**: Cloudflare tunnel for secure external access without port forwarding.
+### Gateway Issues
+```bash
+# Check gateway status
+kubectl get gateway -n gateway
+kubectl describe gateway -n gateway external
 
-**Configuration**:
-- DaemonSet running Cloudflared agent
-- Tunnel credentials managed via Secret
-- ConfigMap for tunnel configuration
-- Namespace: `cloudflared`
+# Check HTTPRoute status
+kubectl get httproute -A
+kubectl describe httproute -n <namespace> <route-name>
 
-**Use Case**:
-- Provides secure external access to cluster services
-- Avoids opening ports on firewall
-- Uses Cloudflare's global network
+# Test routing
+curl -H "Host: <hostname>" https://10.25.150.222
+```
 
-## NETWORKING PATTERNS
-
-### Service Exposure Pattern
-
-Applications expose services through Gateway API:
-
-1. **Create Service** in application namespace (ClusterIP or NodePort)
-2. **Create HTTPRoute** in application namespace
-3. **Reference Gateway** from `gateway` namespace
-4. **Cert Manager** provisions TLS certificate for hostname
-5. **Gateway** routes HTTPS traffic to service
-
-Example HTTPRoute structure:
-HTTPRoute references external Gateway in gateway namespace via parentRefs. Define hostname (e.g., myapp.peekoff.com). Configure backendRefs to point to application service and port. Cert Manager automatically provisions TLS certificate for the hostname.
-
-### DNS Resolution Pattern
-
-**Internal DNS** (CoreDNS):
-- Service names: `<service-name>.<namespace>.svc.cluster.local`
-- Short form: `<service-name>.<namespace>` (within cluster)
-- Resolved to ClusterIP
-
-**External DNS** (Cloudflare):
-- DNS records must be managed manually via Cloudflare dashboard
-- Records point to Gateway IP or Cloudflare tunnel
-
-### LoadBalancer IP Allocation
-
-**Cilium LoadBalancerIPPool**:
-- Pool: `10.25.150.220-10.25.150.255`
-- Allocate IPs by annotating Services with `io.cilium/lb-ipam-ips: 10.25.150.XXX`
-- Gateway uses `10.25.150.222` for external access
-- Other services use IPs from this pool as needed
-
-### Network Policy Pattern
-
-Cilium enforces network policies by default:
-- Default deny all ingress/egress (if policy is strict)
-- Explicitly allow required traffic
-- Use CiliumNetworkPolicy resources for fine-grained control
-- See application manifests for examples
-
-## OPERATIONAL PATTERNS
-
-### Cilium Upgrades
-
-**Upgrade Process**:
-1. Check Cilium release notes for breaking changes
-2. Update Helm chart version in `cilium/kustomization.yaml`
-3. Review `cilium/values.yaml` for deprecated options
-4. Apply via GitOps
-5. Monitor `cilium status` during upgrade
-6. Verify all pods can communicate
-
-**Rollback**:
-- Use Helm rollback if upgrade fails
-- Check Cilium agent logs for errors
-
-### Network Troubleshooting
-
-**DNS Issues**:
+### DNS Issues
 ```bash
 # Check CoreDNS pods
 kubectl get pods -n kube-system -l k8s-app=kube-dns
 
-# Check CoreDNS logs
-kubectl logs -n kube-system -l k8s-app=kube-dns
-
 # Test DNS resolution
-kubectl run -it --rm debug --image=busybox --restart=Never -- nslookup kubernetes.default
+kubectl run -it --rm dns-test --image=busybox --restart=Never -- \
+  nslookup kubernetes.default.svc.cluster.local
+
+# Test external DNS
+kubectl run -it --rm dns-test --image=busybox --restart=Never -- \
+  nslookup google.com
 ```
 
-**Connectivity Issues**:
+### Certificate Issues
 ```bash
-# Check Cilium status
-cilium status
-
-# Check Cilium agent logs
-kubectl logs -n kube-system -l k8s-app=cilium -c cilium-agent
-
-# Check network policies
-kubectl get cnp -A
-
-# Test pod-to-pod connectivity
-kubectl exec -it <pod> -- ping <other-pod-ip>
-```
-
-**Gateway Issues**:
-```bash
-# Check Gateway status
-kubectl get gateway -n gateway
-
-# Describe Gateway
-kubectl describe gateway -n gateway <name>
-
-# Check HTTPRoute status
-kubectl get httproute -A
-
-# Describe HTTPRoute
-kubectl describe httproute -n <namespace> <name>
-```
-
-**Cilium 1.17 TCP Listener Bug**:
-- Symptom: MQTT TCP listener dropped
-- Workaround: Use HTTPRoute until upgrade to 1.18+
-- Fix: Upgrade Cilium to 1.18 or later
-
-## SECURITY BOUNDARIES
-
-Never expose services to public internet without authentication. Use Authentik SSO where applicable.
-
-Never use HTTP for external traffic. Always use HTTPS with TLS certificates.
-
-Never expose database services directly. Keep databases internal-only.
-
-Never disable Cilium network policies without authorization. Policies enforce security boundaries.
-
-Never use wildcard DNS certificates for production. Issue specific certificates per service.
-
-Never open ports on firewall without justification. Use Gateway API and Cloudflared for secure access.
-
-## TESTING
-
-### Network Connectivity Tests
-
-```bash
-# Test DNS resolution
-kubectl run -it --rm dns-test --image=busybox --restart=Never -- nslookup kubernetes.default
-
-# Test pod-to-pod connectivity
-kubectl run -it --rm ping-test --image=busybox --restart=Never -- ping <service-name>.<namespace>
-
-# Test external connectivity
-kubectl run -it --rm curl-test --image=curlimages/curl --restart=Never -- curl https://google.com
-
-# Test Gateway routing
-curl -H "Host: myapp.peekoff.com" https://<gateway-ip>
-```
-
-### Cilium Connectivity Tests
-
-```bash
-# Cilium connectivity test (requires connectivity-check pod)
-kubectl -n kube-system exec ds/cilium -- cilium connectivity test
-```
-
-### Certificate Validation
-
-```bash
-# Check Certificate status
+# Check certificate status
 kubectl get certificate -A
+kubectl describe certificate -n <namespace> <cert-name>
 
-# Check CertificateRequest status
+# Check certificate requests
 kubectl get certificaterequest -A
-
-# Describe Certificate for details
-kubectl describe certificate -n <namespace> <name>
 ```
 
-## ANTI-PATTERNS
+## NETWORK ANTI-PATTERNS
 
-Never skip TLS certificates for external services. Always use HTTPS with valid certificates.
+### Security
+- Never expose databases directly - keep internal-only
+- Never skip TLS certificates - always use HTTPS
+- Never use NodePort for external access - use Gateway API
+- Never open firewall ports - use Gateway API and Cloudflared
 
-Never bypass Gateway API for external access. Use HTTPRoutes for consistent routing.
+### Configuration
+- Never bypass Gateway API - use HTTPRoutes
+- Never disable Cilium kubeProxyReplacement
+- Never manually configure CoreDNS
+- Never use wildcard DNS certificates
 
-Never disable Cilium kubeProxyReplacement. eBPF provides better performance and observability.
+## KNOWN ISSUES
 
-Never manually configure CoreDNS. Let Helm chart manage CoreDNS configuration.
-
-Never use NodePort for external access. Use Gateway API instead.
-
-Never allow unrestricted network policies. Explicitly define required traffic flows.
+### Cilium 1.17.x TCP Listener Bug
+Version 1.17.x broke TCP Gateway listeners. Use 1.18+ for MQTT services.
 
 ## REFERENCES
 
-For Kubernetes domain patterns, see k8s/AGENTS.md
-
-For Cert Manager integration, see k8s/infrastructure/controllers/AGENTS.md
-
-For application HTTPRoutes, see k8s/applications/*/http-route.yaml
-
-For Cilium documentation, see https://docs.cilium.io
-
-For Gateway API specification, see https://gateway-api.sigs.k8s.io
-
-For commit message format, see /AGENTS.md
+For application patterns: `k8s/AGENTS.md`
+For certificate management: `k8s/infrastructure/controllers/AGENTS.md`
+For Cilium documentation: https://docs.cilium.io

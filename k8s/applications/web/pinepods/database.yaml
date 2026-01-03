@@ -94,9 +94,22 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
-      barmanObjectName: pinepods-b2-store
+      barmanObjectName: pinepods-minio-store
+
+  externalClusters:
+    - name: pinepods-db-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: pinepods-b2-store
+    - name: pinepods-db-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: pinepods-minio-store
 
   resources:
     requests:

@@ -106,6 +106,18 @@ spec:
     parameters:
       barmanObjectName: authentik-minio-store
 
+  externalClusters:
+    - name: authentik-postgresql-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: authentik-b2-store
+    - name: authentik-postgresql-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: authentik-minio-store
+
   # Bootstrap section removed - migration complete, cluster running in normal operational mode
 
   monitoring:

@@ -104,9 +104,22 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
-      barmanObjectName: bytebot-b2-store
+      barmanObjectName: bytebot-minio-store
+
+  externalClusters:
+    - name: database-cnpg-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: bytebot-b2-store
+    - name: database-cnpg-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: bytebot-minio-store
 
   resources:
     requests:
