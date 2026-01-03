@@ -6,13 +6,7 @@ TECHNOLOGIES: BabyBuddy, Pinepods, HeadlessX, Kiwix, Pedrobot
 
 ## CATEGORY CONTEXT
 
-Purpose:
-Deploy and manage web-based applications for personal productivity, podcast management, offline content access, and bot services.
-
-Boundaries:
-- Handles: Web applications for personal use
-- Does NOT handle: Media services (see media/), automation (see automation/)
-- Integrates with: network/ (Gateway API), storage/ (PVCs), auth/ (Authentik SSO)
+Purpose: Deploy and manage web-based applications for personal productivity, podcast management, offline content access, and bot services.
 
 ## INHERITED PATTERNS
 
@@ -27,16 +21,24 @@ For general Kubernetes patterns, see k8s/AGENTS.md:
 ## WEB-SPECIFIC PATTERNS
 
 ### Browser Automation Pattern
-HeadlessX runs headless browser tasks with network policy restrictions for security. Requires OAuth2 via Authentik. Isolated namespace for security.
+- HeadlessX runs headless browser tasks with network policy restrictions for security
+- Requires OAuth2 via Authentik
+- Isolated namespace for security
 
 ### Podcast Management Pattern
-Pinepods uses CNPG PostgreSQL with Valkey (Redis-compatible) for caching. Supports OAuth2 via Authentik. Large PVC for podcast data with dual backup to MinIO and Backblaze B2.
+- Pinepods uses CNPG PostgreSQL with Valkey (Redis-compatible) for caching
+- Supports OAuth2 via Authentik
+- Large PVC for podcast data with dual backup to MinIO and Backblaze B2
 
 ### Offline Content Pattern
-Kiwix stores large offline content (Wikipedia ZIM files, 200GB+). Exclude from Velero backups via pod annotation. Content can be re-downloaded.
+- Kiwix stores large offline content (Wikipedia ZIM files, 200GB+)
+- Exclude from Velero backups via pod annotation
+- Content can be re-downloaded
 
 ### Bot Service Pattern
-Pedrobot uses MongoDB StatefulSet (not CNPG). External secrets for bot API credentials. No OAuth2 support.
+- Pedrobot uses MongoDB StatefulSet (not CNPG)
+- External secrets for bot API credentials
+- No OAuth2 support
 
 ## COMPONENTS
 
@@ -55,24 +57,20 @@ Offline Wikipedia and content reader. Uses Deployment with large PVC for offline
 ### Pedrobot
 Bot service for Discord. Uses MongoDB StatefulSet for backend. External secrets for bot API credentials. No OAuth2 support.
 
-## ANTI-PATTERNS
+## WEB-DOMAIN ANTI-PATTERNS
 
-Never backup Kiwix content via Velero. Exclude via annotation as content can be re-downloaded.
+### Storage & Data Management
+- Never backup Kiwix content via Velero - exclude via annotation as content can be re-downloaded
+- Never use Longhorn for new web applications - use proxmox-csi for automatic backups
 
-Never skip network policy for HeadlessX. Restrict egress to required domains only.
-
-Never use Longhorn for new web applications. Use proxmox-csi for automatic backups.
-
-Never expose Pedrobot to public internet without rate limiting.
+### Security & Access
+- Never skip network policy for HeadlessX - restrict egress to required domains only
+- Never expose Pedrobot to public internet without rate limiting
 
 ## REFERENCES
 
-For Kubernetes domain patterns, see k8s/AGENTS.md
-
-For network patterns (Gateway API), see k8s/infrastructure/network/AGENTS.md
-
-For storage patterns, see k8s/infrastructure/storage/AGENTS.md
-
-For CNPG database patterns (Pinepods), see k8s/infrastructure/database/AGENTS.md
-
-For commit message format, see root AGENTS.md
+For Kubernetes domain patterns: k8s/AGENTS.md
+For network patterns (Gateway API): k8s/infrastructure/network/AGENTS.md
+For storage patterns: k8s/infrastructure/storage/AGENTS.md
+For CNPG database patterns (Pinepods): k8s/infrastructure/database/AGENTS.md
+For commit format: /AGENTS.md

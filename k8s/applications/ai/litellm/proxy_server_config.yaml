@@ -1594,6 +1594,7 @@ general_settings:
   health_check_interval: 300
   health_check_details: true
   ui_access_mode: admin_only
+  enable_jwt_auth: true
   max_request_size_mb: 20
   max_response_size_mb: 25
   database_connection_pool_limit: 50
@@ -1605,6 +1606,7 @@ general_settings:
     user_allowed_roles:
       - proxy_admin
       - internal_user
+      - internal_user_viewer
       - customer
     jwt_litellm_role_map:
       - jwt_role: "Litellm Admins"
@@ -1627,4 +1629,4 @@ general_settings:
     user_email_field: "email"
     user_name_field: "name"
     user_role_field: "groups"
-    scope: "openid profile email"
+    scope: "openid profile email groups"

@@ -1,266 +1,337 @@
-# Kubernetes Infrastructure - Domain Guidelines
+# Kubernetes Domain - Application Management Hub
 
-SCOPE: Kubernetes manifests, operators, and GitOps patterns
+SCOPE: Kubernetes manifests, operators, and application workflows
 INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Proxmox CSI
 
-## DOMAIN CONTEXT
+## DOMAIN PATTERNS
 
-Purpose:
-Define and manage all Kubernetes resources for the homelab cluster, including applications, infrastructure components, storage, networking, and authentication.
+### Storage Pattern
+All PVCs use `storageClassName: proxmox-csi`. Always specify storage class. Volume expansion supported.
 
-Boundaries:
-- Handles: All Kubernetes manifests, Argo CD ApplicationSets, operator CRDs, storage classes, and network policies
-- Does NOT handle: VM provisioning (see tofu/), container image building (see images/)
-- Integrates with: tofu/ (cluster bootstrapping), images/ (container images), website/ (documentation)
+### Secret Management Pattern
 
-Architecture:
-- `k8s/applications/` - User-facing applications organized by category (ai, media, web, automation, etc.)
-- `k8s/infrastructure/` - Core infrastructure components (controllers, network, storage, auth, database)
-- `k8s/application-set.yaml` - Argo CD ApplicationSet for automatic resource discovery
-- GitOps workflow: Argo CD syncs manifests from this directory to the cluster
+#### Complete Secret Setup Workflow
+
+**Step 1: Create Bitwarden Entry**
+1. Login to Bitwarden
+2. Create new Login item with meaningful name (e.g., "OpenAI API", "Database Credentials")
+3. Add fields: username, password, API key, etc.
+4. **Critical**: Do NOT use `property` field - create separate entries for each service
+
+**Step 2: Create ExternalSecret**
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: <app>-secrets
+  namespace: <namespace>
+spec:
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    creationPolicy: Owner
+    refreshInterval: 1h
+  data:
+  - secretKey: <k8s-secret-key>
+    remoteRef:
+      key: <bitwarden-item-name>
+  - secretKey: api-key
+    remoteRef:
+      key: <bitwarden-item-name>
+      property: password  # Only for password field
+```
+
+**Step 3: Use in Application**
+```yaml
+# Environment variable from secret
+env:
+- name: DATABASE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: <app>-secrets
+      key: <k8s-secret-key>
+```
+
+**Step 4: Validation**
+```bash
+# Check ExternalSecret status
+kubectl get externalsecret -n <namespace>
+
+# Describe for errors
+kubectl describe externalsecret -n <namespace> <name>
+
+# Check generated secret
+kubectl get secret -n <namespace> <app>-secrets -o yaml
+```
+
+#### Bitwarden Integration Rules
+
+**Required Configuration:**
+- `ClusterSecretStore: bitwarden-backend`
+- `engineVersion: v2` in templates
+- `refreshInterval: 1h` for secrets
+- No `property` field in Bitwarden (create separate items)
+
+**Naming Conventions:**
+- Bitwarden items: Descriptive names (e.g., "App Database Credentials")
+- ExternalSecrets: `<app>-secrets` pattern
+- Secret keys: `<service>-<key>` pattern (e.g., `database-password`, `api-key`)
+
+#### Special Cases
+
+**CNPG Databases:**
+- Let CNPG auto-generate credentials (`<cluster-name>-app` secret)
+- Do NOT create ExternalSecret for database passwords
+- Use CNPG connection strings with auto-generated secrets
+
+**Service to Service:**
+- Use Kubernetes secrets (not ExternalSecrets)
+- Create manually via `kubectl create secret`
+- For internal service communication only
+
+### GitOps Pattern
+All changes via Git. Argo CD auto-syncs. Never `kubectl apply`. Validate with `kustomize build` before commit.
+
+## COMPLETE WORKFLOWS
+
+### Add New Application
+
+#### Step 1: Choose Category
+```
+Primary Function → Directory
+AI/ML → k8s/applications/ai/
+Home Automation → k8s/applications/automation/
+Media Management → k8s/applications/media/
+Web Service → k8s/applications/web/
+```
+
+#### Step 2: Create Directory Structure
+```bash
+mkdir k8s/applications/<category>/<app-name>
+cd k8s/applications/<category>/<app-name>
+```
+
+Create these files:
+- `kustomization.yaml` - Required
+- `deployment.yaml` - Application deployment
+- `service.yaml` - Internal service discovery
+- `http-route.yaml` - External access (if needed)
+- `pvc.yaml` - Storage (if needed)
+- `externalsecret.yaml` - Secrets (if needed)
+- `podmonitor.yaml` - Monitoring (if needed)
+
+#### Step 3: Configure Application
+
+**Deployment Template:**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <app-name>
+  labels:
+    app.kubernetes.io/name: <app-name>
+    app.kubernetes.io/part-of: <category>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: <app-name>
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: <app-name>
+    spec:
+      containers:
+      - name: <app-name>
+        image: <image>:<tag>  # Pin specific version
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+```
+
+**Service Template:**
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: <app-name>
+spec:
+  selector:
+    app.kubernetes.io/name: <app-name>
+  ports:
+  - port: 80
+    targetPort: <app-port>
+```
+
+**HTTPRoute Template:**
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: <app-name>
+spec:
+  parentRefs:
+  - name: external
+    namespace: gateway
+  - name: internal
+    namespace: gateway
+  hostnames:
+  - "<app-name>.peekoff.com"
+  rules:
+  - matches:
+    - path:
+        type: Prefix
+          value: /
+    backendRefs:
+    - name: <app-name>
+      port: 80
+```
+
+**ExternalSecret Template:**
+```yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: <app-name>-secrets
+spec:
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: <key-name>
+    remoteRef:
+      key: <bitwarden-item-name>
+```
+
+#### Step 4: Update Parent Kustomization
+Add to `k8s/applications/<category>/kustomization.yaml`:
+```yaml
+resources:
+- <app-name>
+```
+
+#### Step 5: Pre-Commit Validation Checklist
+
+**Security:**
+- [ ] No hardcoded secrets in manifests
+- [ ] ExternalSecrets reference correct Bitwarden entries
+- [ ] Container image pinned to specific version (no `latest`)
+- [ ] Container runs as non-root user (if possible)
+
+**Reliability:**
+- [ ] Resource requests and limits set
+- [ ] PVC backup label assigned (GFS/Daily/Weekly)
+- [ ] Health checks configured (liveness/readiness)
+- [ ] Appropriate replica count
+
+**GitOps:**
+- [ ] Kustomization builds: `kustomize build --enable-helm <path>`
+- [ ] Parent kustomization includes new application
+- [ ] All manifests follow naming conventions
+- [ ] Commit message follows conventional format
+
+### Update Existing Application
+
+1. Make changes in application directory
+2. Build and test: `kustomize build --enable-helm k8s/applications/<category>/<app>`
+3. Run pre-commit validation checklist
+4. Commit with conventional format: `feat(k8s): update <app-name>`
+5. Monitor Argo CD deployment
+
+### Remove Application
+
+1. Remove from parent kustomization
+2. Verify no other applications depend on it
+3. Commit changes (Argo CD will handle deletion)
+4. Verify PVC cleanup if storage was used
 
 ## QUICK-START COMMANDS
 
 ```bash
-# Build and validate any kustomization
+# Build specific application
 kustomize build --enable-helm k8s/applications/<category>/<app>
-kustomize build --enable-helm k8s/infrastructure/<component>
 
-# Build top-level applications or infrastructure
+# Build entire category
+kustomize build --enable-helm k8s/applications/<category>
+
+# Build all applications
 kustomize build --enable-helm k8s/applications
+
+# Build infrastructure
 kustomize build --enable-helm k8s/infrastructure
 
-# Validate generated YAML
-kustomize build k8s/applications | yq eval -P -
-kustomize build k8s/applications | kubeval --strict --ignore-missing-schemas
+# Validate YAML output
+kustomize build <path> | yq eval -P -
+
+# Check Argo CD status
+kubectl get application -n argocd
+kubectl describe application -n argocd <app-name>
 ```
-
-## TECHNOLOGY CONVENTIONS
-
-### Kustomize
-- Use `--enable-helm` flag when kustomizations pull in Helm charts
-- Set `generatorOptions.disableNameSuffixHash: true` for stable resource names
-- Organize overlays by environment or configuration variant
-
-### Argo CD ApplicationSets
-- Auto-discover directories via git generator pattern
-- Infrastructure applications sync before applications (use sync waves if needed)
-- Reference: `k8s/application-set.yaml`
-
-### Resource Naming
-- Follow Kubernetes conventions: lowercase DNS-compliant names
-- Use descriptive prefixes for related resources: `<app>-<component>` (e.g., `immich-postgresql`)
-- Namespace names match application directories where possible
-
-## PATTERNS
-
-### Storage Pattern
-New workloads use `proxmox-csi` StorageClass for dynamic provisioning from Proxmox Nvme1 ZFS datastore. Always specify `storageClassName` in PVCs.
-
-### Secret Management Pattern
-External Secrets Operator syncs secrets from Bitwarden Secrets Manager into Kubernetes. Create separate Bitwarden entries for each secret value (no `property` field). Use `engineVersion: v2` under `spec.target.template` and indent templates correctly under `spec.target.template:`, not `spec:`.
-
-### GitOps Pattern
-All changes go through Git. Argo CD auto-syncs manifests from `k8s/` to cluster. Never apply changes directly via `kubectl apply`. Validate manifests with `kustomize build` before committing.
-
-### Operator Pattern
-Operators manage complex stateful workloads (CNPG for databases, Velero for backups). Define operator CRDs in manifests. Let operators reconcile state automatically. Query operator status before making changes.
-
-## TESTING
-
-Strategy:
-- Local validation: `kustomize build --enable-helm` to compile manifests
-- Schema validation: `kubeval --strict` if available, or manual inspection
-- Operator validation: Check CRD schemas with `kubectl explain <resource>.<field>`
-
-Requirements:
-- All kustomizations must build without errors
-- No hardcoded secrets in manifests
-- PVCs must specify storage classes and have appropriate backup labels
-
-Tools:
-- kustomize: Build and validate manifests
-- yq: Inspect and manipulate YAML
-- kubeval: Validate against Kubernetes schemas (optional)
-- kubectl: Query cluster state and CRD schemas
-
-## WORKFLOWS
-
-Development:
-- Create or modify manifests in `k8s/applications/<category>/<app>/` or `k8s/infrastructure/<component>/`
-- Test locally: `kustomize build --enable-helm k8s/applications/<category>/<app>`
-- Add new apps: Create directory, add `kustomization.yaml`, update parent kustomization
-- Commit changes: Use conventional commits with `k8s` or `infra` scope
-
-Build:
-- `kustomize build --enable-helm` for kustomizations with Helm charts
-- `kustomize build` for pure Kustomize configurations
-- Inspect output: Pipe to `yq` or save to file for review
-
-Deployment:
-- All deployments happen via GitOps through Argo CD
-- Create PR with changes
-- Argo CD auto-syncs when changes merge to main branch
-- Monitor sync status in Argo CD UI or via `kubectl get application`
-
-## COMPONENTS
-
-### Infrastructure Components
-- `auth/`: Authentication services (Authentik SSO)
-- `controllers/`: Cluster operators (Argo CD, Velero, Cert Manager, External Secrets, CNPG, NVIDIA GPU, Node Feature Discovery)
-- `crd/`: Custom Resource Definitions for operators
-- `database/`: Database operators (CloudNativePG)
-- `deployment/`: Deployment utilities (Kubechecks)
-- `monitoring/`: Monitoring stack (Hubble)
-- `network/`: Network policies and CNI (Cilium), CoreDNS, Gateway API, Cloudflared
-- `storage/`: Storage providers (Proxmox CSI)
-
-### Application Categories
-- `ai/`: AI/ML applications (see k8s/applications/ai/AGENTS.md for details)
-- `automation/`: Home automation (Home Assistant, Frigate, MQTT, Zigbee2MQTT)
-- `external/`: External service proxies (Proxmox, TrueNAS)
-- `media/`: Media management (Jellyfin, Immich, arr-stack, Audiobookshelf)
-- `network/`: Network services (Unifi)
-- `tools/`: Utility applications (IT-Tools, Unrar)
-- `web/`: Web applications (BabyBuddy, HeadlessX, Pinepods, Kiwix, Pedrobot)
 
 ## ANTI-PATTERNS
 
-Never hardcode secrets or credentials in manifests. Use ExternalSecrets Operator to sync from Bitwarden.
+### Security
+- Never hardcode secrets - use ExternalSecrets
+- Never use `latest` tags - pin versions
+- Never expose databases directly - keep internal
+- Never skip TLS for external services
 
-Never apply changes directly to cluster with `kubectl apply` for permanent changes. All changes must go through GitOps.
+### Operations
+- Never `kubectl apply` - use GitOps
+- Never modify CRDs without understanding operators
+- Never skip backup configuration for stateful workloads
+- Never use Longhorn - deprecated
 
-Never delete resources (Pods, PVCs, Jobs) without evidence from logs and events. Diagnose root cause before taking destructive action.
+### Kustomize
+- NEVER use `generatorOptions.disableNameSuffixHash: true` - hash suffixes prevent resource name conflicts and enable proper resource tracking
+- NEVER modify generated resource names manually - use proper Kustomize naming patterns
 
-Never guess resource names or secret keys. Query the cluster to verify: `kubectl get secret <name> -n <namespace>`, `kubectl get service <name> -n <namespace>`.
+### CNPG Databases
+- Never use `property` field with Bitwarden
+- Never use legacy barman object storage - use plugin architecture
+- Always let CNPG auto-generate credentials (`<cluster-name>-app`)
 
-Always use `kubectl describe` to inspect resource status, events, and conditions—it's safe and non-destructive.
+#### Barman Cloud Plugin Rules
+- **CRITICAL**: Remove ALL `spec.backup.barmanObjectStore` sections before enabling plugin
+- **CRITICAL**: Remove ALL `spec.externalClusters[].barmanObjectStore` sections, replace with `spec.externalClusters[].plugin`
+- **CRITICAL**: `spec.backup.retentionPolicy` moves to `ObjectStore.retentionPolicy`, not in Cluster spec
+- Plugin requires: `plugins[0].isWALArchiver: true` + `parameters.barmanObjectName` pointing to ObjectStore
+- ScheduledBackup must use: `method: plugin` + `pluginConfiguration.name: barman-cloud.cloudnative-pg.io`
 
-Always use `kubectl explain` to understand resource schemas and field meanings—never guess YAML structure.
+## DOMAIN COMPONENTS
 
-Never use dangerous kubectl flags:
-- `--force` bypasses safety checks and can cause data loss
-- `--grace-period=0` terminates pods immediately without graceful shutdown, risking data corruption
-- `--ignore-not-found` masks errors by silently ignoring missing resources
+### Infrastructure
+- `auth/`: Authentication (Authentik)
+- `controllers/`: Operators (Argo CD, Velero, Cert Manager)
+- `database/`: CloudNativePG clusters
+- `network/`: Cilium, Gateway API, DNS
+- `storage/`: Proxmox CSI
 
-These flags hide problems instead of fixing them. Find and fix the root cause instead.
+### Applications
+- `ai/`: AI/ML workloads with GPU access
+- `automation/`: Home automation systems
+- `media/`: Content management and streaming
+- `web/`: Web applications and services
 
-Never modify CRD definitions without understanding operator compatibility. Fetch official CRD documentation before making changes.
+## SPECIALIZED PATTERNS
 
-Never use `latest` tags for container images. Pin to specific versions for reproducibility.
-
-Never skip backup configuration for stateful workloads. Proxmox CSI PVCs are automatically backed up by Velero.
-
-Never create circular dependencies with ExternalSecrets for CNPG databases. Let CNPG auto-generate credentials (`<cluster-name>-app` secret).
-
-Never use `property` field with Bitwarden Secrets Manager. Create separate Bitwarden entries for each secret value.
-
-Never use legacy barman object storage deployment approach for CNPG backups. Always use the barman plugin architecture (ObjectStore CRD with `barman-cloud.cloudnative-pg.io` in Cluster plugins).
-
-After making changes, verify relevant documentation doesn't contain outdated information. Update or flag stale docs.
-
-## STORAGE CLASSES
-
-### Proxmox CSI (Primary)
-Use `storageClassName: proxmox-csi` for all workloads. Provides dynamic provisioning from Proxmox Nvme1 ZFS datastore. Supports volume expansion. Automatically backed up by Velero.
-
-## BACKUP STRATEGY
-
-### Velero Backups (Kopia filesystem backups)
-Velero backs up all PVCs using Kopia filesystem backups (not CSI snapshots). Proxmox CSI driver does not support CSI snapshots due to experimental status and permission requirements.
-
-**Velero Schedules**:
-- `velero-daily`: Daily backups at 02:00, 14-day TTL
-- `velero-gfs`: Hourly backups for GFS tier, 14-day TTL
-- `velero-weekly`: Weekly backups on Sundays at 03:00, 28-day TTL
-
-**Excluded Namespaces**: `velero`, `kube-system`, `default`, `kiwix`
-
-**Key Configuration**: `defaultVolumesToFsBackup: true` for filesystem backup via Kopia
-
-**Exclude volumes from backup** with pod annotations:
-- `backup.velero.io/exclude-from-backup: "true"` (exclude entire pod)
-- `backup.velero.io/backup-volumes-excludes: "volume-name"` (exclude specific volumes)
-
-### Longhorn Backups (Removed)
-
-Longhorn storage has been deprecated and removed. All workloads now use Proxmox CSI with Velero backups. See breaking changes documentation for migration details.
-
-### CNPG Database Backups
-CloudNativePG databases use dual backup destinations:
-- Local MinIO (fast recovery from NAS)
-- Backblaze B2 (offsite disaster recovery, 30-day retention)
-- Scheduled backups weekly on Sundays at 02:00
-- Continuous WAL archiving to B2 for point-in-time recovery
-
-## DATABASE PATTERNS
-
-### CNPG Auto-Generated Credentials (Preferred)
-Omit `bootstrap.initdb.secret` from Cluster manifests. CNPG automatically creates `<cluster-name>-app` secret containing username, password, dbname, host, port, uri. Applications reference this secret directly.
-
-### CNPG Backup Configuration
-All CNPG clusters require:
-- Use the barman plugin for backups (not the legacy barman object storage approach)
-- Two ObjectStore resources: One for local MinIO, one for Backblaze B2
-- ObjectStore retention policy: Set `retentionPolicy: "30d"` in both ObjectStore resources to control backup retention
-- ExternalSecret for B2 credentials (separate Bitwarden entries for access-key-id and secret-access-key)
-- Cluster plugin configuration for WAL archiving to B2 using the barman plugin
-- ScheduledBackup resource (weekly to B2 via plugin architecture)
-- ExternalClusters definitions for both MinIO and B2 recovery paths
-
-**ObjectStore Retention Pattern**:
-```yaml
-apiVersion: barmancloud.cnpg.io/v1
-kind: ObjectStore
-metadata:
-  name: <app>-minio-store
-  namespace: <namespace>
-spec:
-  retentionPolicy: "30d"  # Set retention here, not in Cluster backup config
-  configuration:
-    destinationPath: s3://homelab-postgres-backups/<namespace>/<cluster>
-    endpointURL: https://truenas.peekoff.com:9000
-```
-
-Do NOT set retentionPolicy in the Cluster backup configuration section. Set it only in the ObjectStore resources.
-
-### CNPG Barman Plugin Pattern
-Always use the barman plugin architecture (`type: barmanObjectStore`) for CNPG backups. Never use the legacy barman standalone deployment approach. The plugin is integrated into CNPG and managed entirely through Cluster and Backup CRDs.
-
-## CRITICAL BOUNDARIES
-
-Never commit secrets or credential material to Git.
-
-Never modify CRD definitions without consulting official documentation.
-
-Never apply changes directly to cluster—use GitOps.
-
-Never delete resources without evidence from logs and events.
-
-Never guess resource names or secret keys—query cluster first.
-
-Never skip backup configuration for stateful workloads.
-
-Never create circular dependencies with ExternalSecrets for CNPG databases.
+For domain-specific patterns, see:
+- AI GPU patterns: `k8s/applications/ai/AGENTS.md`
+- Media NFS patterns: `k8s/applications/media/AGENTS.md`
+- External access setup: `k8s/infrastructure/network/AGENTS.md`
+- Database configuration: `k8s/infrastructure/database/AGENTS.md`
+- Storage configuration: `k8s/infrastructure/storage/AGENTS.md`
 
 ## REFERENCES
 
-For commit message format, see /AGENTS.md
-
-For infrastructure provisioning (VMs, networking), see /tofu/AGENTS.md
-
-For container image building, see /images/AGENTS.md
-
-### Application-Specific References
-- AI applications: k8s/applications/ai/AGENTS.md
-- Automation applications: k8s/applications/automation/AGENTS.md
-- Media applications: k8s/applications/media/AGENTS.md
-- Web applications: k8s/applications/web/AGENTS.md
-
-### Infrastructure-Specific References
-- Authentik identity provider: k8s/infrastructure/auth/authentik/AGENTS.md
-- Cluster controllers: k8s/infrastructure/controllers/AGENTS.md
-- Database management: k8s/infrastructure/database/AGENTS.md
-- Network configuration: k8s/infrastructure/network/AGENTS.md
-- Storage providers: k8s/infrastructure/storage/AGENTS.md
+For commit format: `/AGENTS.md`
+For infrastructure: `/tofu/AGENTS.md`
+For containers: `/images/AGENTS.md`

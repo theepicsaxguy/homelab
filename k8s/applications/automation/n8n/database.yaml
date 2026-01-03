@@ -80,9 +80,22 @@ spec:
 
   plugins:
   - name: barman-cloud.cloudnative-pg.io
+    enabled: true
     isWALArchiver: true
     parameters:
-      barmanObjectName: n8n-b2-store
+      barmanObjectName: n8n-minio-store
+
+  externalClusters:
+    - name: n8n-db-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: n8n-b2-store
+    - name: n8n-db-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: n8n-minio-store
 
   resources:
     requests:
