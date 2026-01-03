@@ -1627,4 +1627,4 @@ general_settings:
     user_email_field: "email"
     user_name_field: "name"
     user_role_field: "groups"
-    scope: "openid profile email"
+    scope: "openid profile email groups"
