@@ -299,6 +299,13 @@ kubectl describe application -n argocd <app-name>
 - Never use legacy barman object storage - use plugin architecture
 - Always let CNPG auto-generate credentials (`<cluster-name>-app`)
 
+#### Barman Cloud Plugin Rules
+- **CRITICAL**: Remove ALL `spec.backup.barmanObjectStore` sections before enabling plugin
+- **CRITICAL**: Remove ALL `spec.externalClusters[].barmanObjectStore` sections, replace with `spec.externalClusters[].plugin`
+- **CRITICAL**: `spec.backup.retentionPolicy` moves to `ObjectStore.retentionPolicy`, not in Cluster spec
+- Plugin requires: `plugins[0].isWALArchiver: true` + `parameters.barmanObjectName` pointing to ObjectStore
+- ScheduledBackup must use: `method: plugin` + `pluginConfiguration.name: barman-cloud.cloudnative-pg.io`
+
 ## DOMAIN COMPONENTS
 
 ### Infrastructure
