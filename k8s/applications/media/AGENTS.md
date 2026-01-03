@@ -1,87 +1,251 @@
-# Media Applications - Category Guidelines
+# Media Applications - Specialized Patterns
 
-SCOPE: Media management, streaming, and content discovery applications
+SCOPE: Media management, streaming, and content automation
 INHERITS FROM: /k8s/AGENTS.md
-TECHNOLOGIES: Jellyfin, Immich, arr-stack (Sonarr, Radarr, Prowlarr, Bazarr), Audiobookshelf, Audiobookrequest, Sabnzbd, WhisperASR
-
-## CATEGORY CONTEXT
-
-Purpose:
-Deploy and manage media-related applications including media streaming, photo management, content automation, and download management.
-
-Boundaries:
-- Handles: Media streaming, content automation, photo management, download managers
-- Does NOT handle: Home automation (see automation/), AI applications (see ai/), web utilities (see web/)
-- Integrates with: network/ (Gateway API routes), storage/ (PVCs), auth/ (Authentik SSO)
-
-## INHERITED PATTERNS
-
-For general Kubernetes patterns, see k8s/AGENTS.md:
-- Storage: proxmox-csi (new), longhorn (legacy)
-- Network: Gateway API for external access
-- Authentication: Authentik SSO where supported
-- Database: CNPG for PostgreSQL with auto-generated credentials
-- Backup: Velero for proxmox-csi, Longhorn labels for legacy
-- Shared Storage: NFS PV for media libraries
 
 ## MEDIA-SPECIFIC PATTERNS
 
-### Content Automation Pattern
-arr-stack (Prowlarr, Sonarr, Radarr, Bazarr) automate content discovery, download, and organization. All arr services use shared NFS mount for media libraries. SQLite databases embedded in application PVCs.
+### NFS Media Library Pattern
+```yaml
+# Shared media mount for arr-stack
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-nfs
+spec:
+  capacity:
+    storage: 10Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: truenas.peekoff.com
+    path: /mnt/media
+---
+# PVC for application access
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Ti
+  volumeName: media-nfs
+```
 
-### Photo Management Pattern
-Immich uses multi-service architecture with CNPG PostgreSQL, Redis, and ML pod. Supports OAuth2 via Authentik. Dual backup: MinIO (local) + Backblaze B2 (offsite).
+**Mount Pattern:**
+```yaml
+volumeMounts:
+- name: media
+  mountPath: /media
+  subPath: <app-specific-path>  # e.g., movies, tv, music
+```
 
-### Download Manager Pattern
-Sabnzbd manages Usenet downloads with PVC for download storage. Uses proxmox-csi for better performance. ExternalSecrets for Usenet server credentials.
+**SubPath Structure:**
+- `/media/movies/` - Radarr
+- `/media/tv/` - Sonarr  
+- `/media/music/` - Lidarr (if added)
+- `/media/downloads/` - Sabnzbd
+- `/media/audiobooks/` - Audiobookshelf
 
-### Offline Content Pattern
-WhisperASR caches AI models in PVC. Models can be re-downloaded if needed. No public access required.
+### arr-stack Service Pattern
+```yaml
+# Common service configuration for arr-stack
+apiVersion: v1
+kind: Service
+metadata:
+  name: <arr-app>
+  namespace: media
+spec:
+  selector:
+    app.kubernetes.io/name: <arr-app>
+  ports:
+  - port: 80
+    targetPort: 8983  # Adjust per app
+---
+# HTTPRoute for external access
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: <arr-app>
+  namespace: media
+spec:
+  parentRefs:
+  - name: external
+    namespace: gateway
+  hostnames:
+  - "<arr-app>.peekoff.com"
+  rules:
+  - matches:
+    - path:
+        type: Prefix
+        value: /
+    backendRefs:
+    - name: <arr-app>
+      port: 80
+```
 
-## COMPONENTS
+**arr-stack Services:**
+- **Sonarr**: Port 8983, manages TV series
+- **Radarr**: Port 7878, manages movies  
+- **Prowlarr**: Port 9696, manages indexers
+- **Bazarr**: Port 6767, manages subtitles
 
-### Jellyfin
-Media streaming server for movies, TV shows, and music. Uses StatefulSet with PVC for configuration and cache. Mounts NFS for media library. Gateway API route for external access.
+### Immich Multi-Service Pattern
+```yaml
+# Immich services connection pattern
+# Database: immich-postgresql.media.svc.cluster.local
+# Redis: immich-redis.media.svc.cluster.local
+# ML Service: immich-machine-learning.media.svc.cluster.local
 
-### Immich
-Self-hosted photo and video management with multi-service architecture. Uses CNPG PostgreSQL cluster with 2 instances, Redis for caching, and ML pod for AI features. Dual backup to MinIO and Backblaze B2 via CNPG.
+# Environment variables pattern
+env:
+- name: DB_HOSTNAME
+  value: immich-postgresql.media.svc.cluster.local
+- name: DB_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: immich-postgresql-app
+      key: username
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: immich-postgresql-app
+      key: password
+- name: REDIS_HOSTNAME
+  value: immich-redis.media.svc.cluster.local
+```
 
-### arr-stack
-Automated content discovery and management. Prowlarr manages indexers. Sonarr handles TV series automation. Radarr manages movie automation. Bazarr automates subtitles. All services use shared NFS mount.
+**Storage Configuration:**
+- Photos/videos: Large PVC with GFS backup tier
+- Library: Use proxmox-csi StorageClass
+- ML models: Separate PVC for ML service
 
-### Jellyseerr
-Media request management system for movies and TV shows. Integration with arr-stack for automated fulfillment. Gateway API route for external access.
+### Download Manager Pattern (Sabnzbd)
+```yaml
+# Sabnzbd ExternalSecret
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: sabnzbd-credentials
+  namespace: media
+spec:
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: nzb-server-host
+    remoteRef:
+      key: Usenet Server
+  - secretKey: nzb-server-username
+    remoteRef:
+      key: Usenet Server
+  - secretKey: nzb-server-password
+    remoteRef:
+      key: Usenet Server
+  - secretKey: nzb-server-api-key
+    remoteRef:
+      key: Usenet Server
+```
 
-### Audiobookshelf
-Self-hosted audiobook streaming and management. Uses PVC for audiobook library. Gateway API route for external access. Optional OAuth2 via Authentik.
+**Storage Pattern:**
+```yaml
+# Download storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-downloads
+  namespace: media
+  labels:
+    backup.velero.io/backup-tier: Daily
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 500Gi
+```
 
-### Audiobookrequest
-Audiobook request management system with web interface. Uses MongoDB StatefulSet for backend. Gateway API route for external access.
+### Audiobookshelf Pattern
+```yaml
+# Audiobookshelf storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: audiobookshelf-library
+  namespace: media
+  labels:
+    backup.velero.io/backup-tier: GFS  # Critical audiobook data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 200Gi
+```
 
-### Sabnzbd
-Usenet newsreader and download manager. Uses StatefulSet with PVC for download storage. Gateway API route for external access. ExternalSecrets for Usenet credentials.
+**Configuration:**
+- Mount audiobooks from NFS or dedicated PVC
+- Optional Authentik SSO integration
+- Gateway API external access
 
-### WhisperASR
-Speech-to-text transcription using Whisper AI model. Caches models in PVC. CPU-only or GPU-based inference. Internal service, no external access.
+## MEDIA-DOMAIN ANTI-PATTERNS
 
-## ANTI-PATTERNS
+### Storage Management
+- Never backup media libraries via Kubernetes - backed up separately via TrueNAS
+- Never use Longhorn for new media applications - use proxmox-csi
+- Never skip NFS mounts for arr-stack - required for shared media access
+- Never use Daily backup tier for irreplaceable content - use GFS
 
-Never backup media libraries via Kubernetes. Media libraries backed up via TrueNAS/NFS separately.
+### Service Configuration
+- Never expose WhisperASR externally - internal service only
+- Never use SQLite for production databases - use CNPG (Immich pattern)
+- Never skip ExternalSecrets for credential management
 
-Never use Longhorn for new media applications. Use proxmox-csi for better performance and automatic backups.
+## VALIDATION COMMANDS
 
-Never skip NFS mount for arr services. Shared NFS mount required for media access.
+```bash
+# Check NFS mount status
+kubectl exec -it -n media <arr-pod> -- df -h /media
 
-Never expose WhisperASR to public internet. Internal service only.
+# Test media file access
+kubectl exec -it -n media <arr-pod> -- ls -la /media/movies
+
+# Check arr-stack connectivity
+kubectl exec -it -n media <arr-pod> -- curl http://localhost:8983
+
+# Validate ExternalSecrets
+kubectl get externalsecret -n media
+kubectl describe secret -n media <secret-name>
+
+# Check Immich services
+kubectl get pods -n media -l app.kubernetes.io/part-of=immich
+kubectl exec -it -n media immich-server-0 -- curl http://immich-postgresql.media.svc.cluster.local:5432
+```
+
+## PERFORMANCE TIPS
+
+### Storage Optimization
+- Use proxmox-csi for better performance than Longhorn
+- Separate PVCs for different workloads (downloads vs library vs config)
+- Monitor disk space on media NFS share
+
+### Network Optimization
+- arr-stack services communicate with each other via internal DNS
+- Use HTTPRoute for external access with proper TLS termination
+- Consider bandwidth management for large file transfers
 
 ## REFERENCES
 
-For Kubernetes domain patterns, see k8s/AGENTS.md
-
-For network patterns (Gateway API), see k8s/infrastructure/network/AGENTS.md
-
-For storage patterns, see k8s/infrastructure/storage/AGENTS.md
-
-For CNPG database patterns (Immich), see k8s/infrastructure/database/AGENTS.md
-
-For commit message format, see root AGENTS.md
+For general patterns: `k8s/AGENTS.md`
+For external access: `k8s/infrastructure/network/AGENTS.md`
+For storage: `k8s/infrastructure/storage/AGENTS.md`
+For databases (Immich): `k8s/infrastructure/database/AGENTS.md`

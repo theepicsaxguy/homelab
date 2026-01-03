@@ -6,18 +6,12 @@ TECHNOLOGIES: Docusaurus 3.9.2, TypeScript 5.9, React 19, Node.js 20.18+, npm 10
 
 ## DOMAIN CONTEXT
 
-Purpose:
-Build and maintain the documentation website for the homelab, including architecture documentation, operational guides, and troubleshooting procedures.
-
-Boundaries:
-- Handles: Documentation source files (Markdown/MDX), Docusaurus configuration, site assets, build system
-- Does NOT handle: Kubernetes manifests (see k8s/), infrastructure provisioning (see tofu/)
-- Integrates with: Root repository for documentation updates
+Purpose: Build and maintain documentation website for homelab, including architecture documentation, operational guides, and troubleshooting procedures.
 
 Architecture:
 - `website/docs/` - Documentation content organized by category
 - `website/src/` - Custom React components and CSS
-- `website/static/` - Static assets (images, robots.txt, favicon)
+- `website/static/` - Static assets
 - `website/docusaurus.config.ts` - Site configuration
 - `website/sidebars.ts` - Documentation navigation structure
 
@@ -29,13 +23,11 @@ cd website
 # Install dependencies
 npm install
 
-# Start development server (hot reload)
+# Development server (hot reload)
 npm start
 
-# Type check TypeScript
+# Type check and linting
 npm run typecheck
-
-# Lint markdown and prose
 npm run lint:all
 
 # Build for production
@@ -45,14 +37,7 @@ npm run build
 npm run serve
 ```
 
-## TECHNOLOGY CONVENTIONS
-
-### Docusaurus Configuration
-- Configuration in `docusaurus.config.ts` (TypeScript)
-- Preset: `@docusaurus/preset-classic`
-- Plugins: Local search, sitemap, MDX support
-- Static generation: All pages pre-rendered at build time
-- **Broken link handling**: Use `markdown.hooks.onBrokenMarkdownLinks` instead of deprecated `onBrokenMarkdownLinks` (Docusaurus v4 compatibility)
+## PATTERNS
 
 ### Content Structure
 - Documentation files in `website/docs/` with `.md` or `.mdx` extension
@@ -60,87 +45,48 @@ npm run serve
 - Include frontmatter with title, description, sidebar_position
 - Use relative links for internal navigation: `[text](../other-page.md)`
 
-### React Components
-- TypeScript for type safety
-- React 19 with hooks for interactive components
-- Component files in `website/src/components/`
-- Use clsx for conditional class names
-
-### Styling
-- CSS files in `website/src/css/`
-- Custom theme overrides in Docusaurus config
-- Use Tailwind or custom CSS as needed
-
-## PATTERNS
-
 ### Frontmatter Pattern
-All documentation files include frontmatter with title, description for SEO, and sidebar_position for navigation ordering. Frontmatter begins and ends with triple hyphens.
+All documentation files include frontmatter with title, description for SEO, and sidebar_position for navigation ordering.
 
 ### Navigation Pattern
-Update `sidebars.ts` to add new documentation pages to navigation. Use sidebar_position to control ordering. Group related pages under category sections.
+Update `sidebars.ts` to add new documentation pages. Use sidebar_position to control ordering. Group related pages under category sections.
 
 ### Linking Pattern
-Use relative links for internal navigation. Use absolute URLs for external resources. Test all links before committing.
-
-**Linking rules**:
-- Never reference AGENTS.md files in documentation - these are for coding agents only
+- Use relative links for internal navigation
+- Use absolute URLs for external resources
+- Never reference AGENTS.md files in documentation
 - Only link to files in `website/docs/` directory
-- Use relative paths like `[text](../other-page.md)` for internal docs
-- Verify relative paths are correct: count directory levels from source to target
-  - Example: From `docs/infrastructure/storage/file.md` to `docs/storage/other.md`: `../../storage/other.md`
-- Verify links resolve to existing files before committing
+- Verify relative paths are correct before committing
 
 ## TESTING
 
-Strategy:
 - Local preview: `npm start` to visually inspect changes
 - Type checking: `npm run typecheck` to ensure TypeScript correctness
 - Linting: `npm run lint:all` for markdown and prose validation
-- Link checking: CI checks for dead links during build
-
-Requirements:
-- Site must build successfully: `npm run build`
-- TypeScript must type check without errors
-- Markdown must pass linting (remark, markdownlint, Vale)
-- All internal links must work
-- Images must load correctly
-
-Tools:
-- npm scripts: Build, test, and lint commands
-- Docusaurus dev server: Hot reload preview
-- TypeScript compiler: Type checking
-- remark: Markdown linting
-- Vale: Prose linting
-- markdownlint: Markdown style checking
+- Requirements: Site builds successfully, TypeScript type checks, markdown lints, internal links work
 
 ## WORKFLOWS
 
-Development:
-- Create documentation files in `website/docs/` with `.md` or `.mdx` extension
+**Development:**
+- Create documentation files in `website/docs/`
 - Add frontmatter with title, description, sidebar_position
-- Write content following guidelines in website/docs/AGENTS.md
-- Test locally: `npm start` to preview changes
-- Lint: `npm run lint:all` to check prose and markdown
-- Type check: `npm run typecheck` to verify TypeScript
+- Test locally with `npm start`
+- Lint with `npm run lint:all`
+- Type check with `npm run typecheck`
 - Update `sidebars.ts` if adding new pages
 
-Build:
+**Build & Deploy:**
 - `npm run build` generates static site in `website/build/`
-- Build process includes asset optimization and bundling
-- Generated files are not committed to Git
-
-Deployment:
 - CI builds site via `website-build.yaml` workflow
-- Deploy to production (Netlify/Vercel) on merge to main
-- Domain configuration in deployment platform
+- Deploy to production on merge to main
 
 ## COMPONENTS
 
-### Site Components
+### Site Structure
 - `src/components/` - Custom React components
 - `src/css/` - Custom styles
-- `src/data/` - Data files (used by components)
-- `src/pages/` - Custom pages (index, etc.)
+- `src/data/` - Data files
+- `src/pages/` - Custom pages
 
 ### Configuration
 - `docusaurus.config.ts` - Site configuration
@@ -148,42 +94,48 @@ Deployment:
 - `tsconfig.json` - TypeScript configuration
 - `package.json` - Dependencies and scripts
 
-## ANTI-PATTERNS
+## WEBSITE-DOMAIN ANTI-PATTERNS
 
-Never commit generated build artifacts (`website/build/`, `node_modules/`).
+### Build & Asset Management
+- Never commit build artifacts (`website/build/`, `node_modules/`)
+- Never add large binary assets - use external storage and link by URL
+- Never use deprecated Docusaurus config options - follow current Docusaurus v4 API
 
-Never skip linting and type checking before committing.
-
-Never add large binary assets to repository. Use external storage and link by URL.
-
-Never break existing navigation or internal links.
-
-Never use deprecated Docusaurus config options. Follow current Docusaurus v4 API.
-
-Never reference AGENTS.md files from documentation - AGENTS.md are for AI coding guidance only.
-
-Never use unescaped special characters in MDX content (e.g., `<`, `>`, `&`). Use JSX expressions or HTML entities when needed.
-
-## CRITICAL BOUNDARIES
-
-Never commit `website/build/` or `node_modules/` directories.
-
-Never add secrets or credentials to documentation files.
-
-Never commit large binary assets. Use external storage and reference by URL.
-
-Never skip `npm run lint:all` and `npm run typecheck` before committing.
-
-Never break existing navigation or internal links.
+### Content & Navigation
+- Never break existing navigation or internal links
+- Never reference AGENTS.md files from documentation
+- Never use unescaped special characters in MDX content
+- Never skip linting and type checking before committing
 
 ## REFERENCES
 
-For commit message format, see root AGENTS.md
+For commit format: /AGENTS.md
+## Documentation Philosophy
 
-For documentation writing guidelines, see website/docs/AGENTS.md
+### Learning Through Documentation
+Documentation isn't just reference - it's where learning happens. Clear explanations of enterprise patterns transform implementation into education.
 
-For Kubernetes concepts, see k8s/AGENTS.md
+### Production Documentation Standards
+Enterprise environments require:
+- Comprehensive change documentation
+- Architecture decision records (ADRs)
+- Operational runbooks
+- Recovery procedures
 
-For infrastructure concepts, see tofu/AGENTS.md
+### Cross-Domain Sync Triggers
+Documentation updates required when:
+- **tofu changes**: Infrastructure documentation must reflect new patterns
+- **k8s changes**: Application documentation must capture new workflows
+- **images changes**: Container security documentation must update
 
-For Docusaurus documentation, see https://docusaurus.io/docs
+### Enterprise Content Standards
+- Every complex pattern needs explanation of "why"
+- Every anti-pattern needs production consequence explanation
+- Every workflow needs learning objective context
+
+## REFERENCES
+
+For documentation writing: website/docs/AGENTS.md
+For Kubernetes concepts: k8s/AGENTS.md
+For infrastructure: tofu/AGENTS.md
+For Docusaurus: https://docusaurus.io/docs
