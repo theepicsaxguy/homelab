@@ -1604,17 +1604,14 @@ general_settings:
     roles_jwt_field: "groups"
     enforce_rbac: true
     sync_user_role_and_teams: true
-    role_mappings:
-      - role: "Litellm Admins"
-        internal_role: "proxy_admin"
-      - role: "Litellm Users"
-        internal_role: "internal_user"
     user_allowed_roles:
       - proxy_admin
       - internal_user
       - internal_user_viewer
       - customer
     jwt_litellm_role_map:
+      - jwt_role: "authentik Admins"
+        litellm_role: "proxy_admin"
       - jwt_role: "Litellm Admins"
         litellm_role: "proxy_admin"
       - jwt_role: "Litellm Users"
