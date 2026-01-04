@@ -55,6 +55,25 @@ entries:
 
   - model: authentik_providers_oauth2.scopemapping
     identifiers:
+      name: "OAuth mapping: OpenID 'roles' for LiteLLM"
+    attrs:
+      scope_name: roles
+      description: LiteLLM role mapping from Authentik groups
+      expression: |
+        group_names = [group.name for group in request.user.ak_groups.all()]
+
+        # Map Authentik groups to LiteLLM roles
+        # Apply mapping - return first matching role (priority: admin > user)
+        roles = []
+        if "Litellm Admins" in group_names:
+            roles.append("proxy_admin")
+        elif "Litellm Users" in group_names:
+            roles.append("internal_user")
+
+        return {"roles": roles}
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
       name: "OAuth mapping: OpenID 'username'"
     attrs:
       scope_name: username
