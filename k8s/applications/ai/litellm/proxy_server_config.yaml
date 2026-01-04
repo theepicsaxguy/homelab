@@ -1601,6 +1601,7 @@ general_settings:
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
   litellm_jwtauth:
+    user_roles_jwt_field: "groups"
     roles_jwt_field: "groups"
     enforce_rbac: true
     sync_user_role_and_teams: true
