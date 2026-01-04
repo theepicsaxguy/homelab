@@ -1632,5 +1632,5 @@ general_settings:
     user_id_field: "sub"
     user_email_field: "email"
     user_name_field: "name"
-    user_role_field: "groups"
-    scope: "openid profile email groups"
+    user_role_field: "roles"
+    scope: "openid profile email groups roles"
