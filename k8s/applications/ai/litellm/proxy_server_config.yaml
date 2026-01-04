@@ -1601,20 +1601,18 @@ general_settings:
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
   litellm_jwtauth:
+    user_roles_jwt_field: "groups"
     roles_jwt_field: "groups"
     enforce_rbac: true
     sync_user_role_and_teams: true
-    role_mappings:
-      - role: "Litellm Admins"
-        internal_role: "proxy_admin"
-      - role: "Litellm Users"
-        internal_role: "internal_user"
     user_allowed_roles:
       - proxy_admin
       - internal_user
       - internal_user_viewer
       - customer
     jwt_litellm_role_map:
+      - jwt_role: "authentik Admins"
+        litellm_role: "proxy_admin"
       - jwt_role: "Litellm Admins"
         litellm_role: "proxy_admin"
       - jwt_role: "Litellm Users"
@@ -1634,5 +1632,5 @@ general_settings:
     user_id_field: "sub"
     user_email_field: "email"
     user_name_field: "name"
-    user_role_field: "groups"
-    scope: "openid profile email groups"
+    user_role_field: "roles"
+    scope: "openid profile email groups roles"
