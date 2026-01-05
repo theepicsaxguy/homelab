@@ -68,7 +68,7 @@ spec:
         - name: PROXY_BASE_URL
           value: "https://litellm.peekoff.com"
         - name: GENERIC_SCOPE
-          value: "openid profile email groups"
+          value: "openid profile email roles"
         - name: PROXY_LOGOUT_URL
           value: "https://sso.peekoff.com/application/o/litellm/end-session/"
         - name: JWT_PUBLIC_KEY_URL
