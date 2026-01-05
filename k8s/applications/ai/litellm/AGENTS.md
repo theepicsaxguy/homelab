@@ -29,7 +29,7 @@ general_settings:
   enable_jwt_auth: true
 
 litellm_jwtauth:
-  roles_jwt_field: 'groups' # ✅ Required for jwt_litellm_role_map (IDP role synchronization)
+  roles_jwt_field: 'roles' # ✅ Required for jwt_litellm_role_map (IDP role synchronization)
   sync_user_role_and_teams: true
   user_allowed_roles:
     - proxy_admin # Required for admin_only UI access
@@ -57,7 +57,7 @@ env:
   - name: JWT_PUBLIC_KEY_URL
     value: 'https://sso.peekoff.com/.well-known/openid-configuration/jwks'
   - name: GENERIC_SCOPE
-    value: 'openid profile email groups' # Must include groups
+    value: 'openid profile email roles' # Must include roles
 ```
 
 ### OAuth Fallback Setup
@@ -66,8 +66,8 @@ When JWT authentication is disabled:
 
 ```yaml
 generic_oauth:
-  scope: 'openid profile email groups'
-  user_role_field: 'groups' # Must contain direct LiteLLM role values
+  scope: 'openid profile email roles'
+  user_role_field: 'roles' # Must contain direct LiteLLM role values
 ```
 
 ## Agent Guidelines
@@ -77,9 +77,9 @@ generic_oauth:
 1. **ALWAYS verify authentication method precedence** - JWT vs OAuth vs headers
 2. **Check `enable_jwt_auth` status** - Required for JWT role mapping
 3. **Verify correct JWT field usage** - Use `roles_jwt_field` with `jwt_litellm_role_map`, NOT `user_roles_jwt_field`
-4. **Validate scopes include `groups`** - Required for role information
+4. **Validate scopes include `roles`** - Required for role information
 5. **Ensure `user_allowed_roles` includes all fallback roles**
-6. **Test JWT token payload** to verify group claims are present
+6. **Test JWT token payload** to verify roles claims are present
 
 ### Common Failure Patterns
 
@@ -95,9 +95,9 @@ Before marking SSO issues as resolved:
 
 - [ ] JWT authentication is enabled
 - [ ] `roles_jwt_field` is set (NOT `user_roles_jwt_field`) when using `jwt_litellm_role_map`
-- [ ] Groups scope is included in OAuth request
+- [ ] Roles scope is included in OAuth request
 - [ ] Authentik user is in correct group
-- [ ] JWT token contains groups claim
+- [ ] JWT token contains roles claim
 - [ ] Role mapping is applied correctly (verify `get_jwt_role()` reads from `roles_jwt_field`)
 - [ ] User receives expected `proxy_admin` role
 - [ ] Admin UI access works
@@ -129,6 +129,6 @@ Any changes to authentication or role mapping MUST:
 ## Security Requirements
 
 - All SSO configurations must use HTTPS endpoints
-- Groups claim must be validated before role assignment
+- Roles claim must be validated before role assignment
 - Default roles should be most restrictive possible
 - Admin access should require explicit role assignment
