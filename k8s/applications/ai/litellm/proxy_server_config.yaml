@@ -1601,8 +1601,8 @@ general_settings:
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
   litellm_jwtauth:
-    user_roles_jwt_field: "groups"
-    roles_jwt_field: "groups"
+    user_roles_jwt_field: "roles"
+    roles_jwt_field: "roles"
     enforce_rbac: true
     sync_user_role_and_teams: true
     user_allowed_roles:
@@ -1633,4 +1633,4 @@ general_settings:
     user_email_field: "email"
     user_name_field: "name"
     user_role_field: "roles"
-    scope: "openid profile email groups roles"
+    scope: "openid profile email roles"
