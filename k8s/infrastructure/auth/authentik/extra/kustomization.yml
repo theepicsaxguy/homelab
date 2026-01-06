@@ -23,6 +23,7 @@ configMapGenerator:
       - ./blueprints/apps-karakeep.yaml
       - ./blueprints/apps-kubernetes.yaml
       - ./blueprints/apps-cloudflare.yaml
+      - ./blueprints/apps-pinepods.yaml
       - ./blueprints/groups.yaml
       - ./blueprints/users.yaml
       - ./blueprints/brands.yaml
