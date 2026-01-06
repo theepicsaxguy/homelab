@@ -1594,29 +1594,11 @@ general_settings:
   health_check_interval: 300
   health_check_details: true
   ui_access_mode: admin_only
-  enable_jwt_auth: true
   max_request_size_mb: 20
   max_response_size_mb: 25
   database_connection_pool_limit: 50
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: false
-  litellm_jwtauth:
-    user_roles_jwt_field: "roles"
-    roles_jwt_field: "roles"
-    enforce_rbac: true
-    sync_user_role_and_teams: true
-    user_allowed_roles:
-      - proxy_admin
-      - internal_user
-      - internal_user_viewer
-      - customer
-    jwt_litellm_role_map:
-      - jwt_role: "authentik Admins"
-        litellm_role: "proxy_admin"
-      - jwt_role: "Litellm Admins"
-        litellm_role: "proxy_admin"
-      - jwt_role: "Litellm Users"
-        litellm_role: "internal_user"
   user_header_mappings:
     - header_name: X-OpenWebUI-User-Id
       litellm_user_role: internal_user
