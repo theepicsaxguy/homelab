@@ -10,13 +10,10 @@ resources:
 - minio-externalsecret.yaml
 - referencegrant.yaml
 - extra
-generatorOptions:
-  disableNameSuffixHash: true
-
 helmCharts:
 - name: authentik
   namespace: auth
   releaseName: authentik
   repo: https://charts.goauthentik.io
   valuesFile: values.yaml
-  version: 2025.10.2
+  version: 2025.10.3

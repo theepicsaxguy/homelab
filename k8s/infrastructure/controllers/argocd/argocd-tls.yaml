@@ -15,7 +15,7 @@ spec:
     - argocd-server
     - argocd-server.argocd
     - argocd-server.argocd.svc
-    - argocd-server.argocd.svc.kube.pc-tips.se
+    - argocd-server.argocd.svc.cluster.local
   usages:
     - server auth
     - client auth
@@ -41,7 +41,7 @@ spec:
     - argocd-repo-server
     - argocd-repo-server.argocd
     - argocd-repo-server.argocd.svc
-    - argocd-repo-server.argocd.svc.kube.pc-tips.se
+    - argocd-repo-server.argocd.svc.cluster.local
   usages:
     - server auth
     - client auth
@@ -67,7 +67,7 @@ spec:
     - argocd-application-controller
     - argocd-application-controller.argocd
     - argocd-application-controller.argocd.svc
-    - argocd-application-controller.argocd.svc.kube.pc-tips.se
+    - argocd-application-controller.argocd.svc.cluster.local
   usages:
     - server auth
     - client auth

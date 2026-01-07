@@ -5,8 +5,6 @@ resources:
 - project.yaml
 - argocd
 - cert-manager
+- descheduler
 - external-secrets
-#- crossplane
-#- node-feature-discovery
-#- nvidia-device-plugin
-#- velero
+- velero

@@ -22,7 +22,7 @@ spec:
             claimName: media-share
       containers:
         - name: bazarr
-          image: lscr.io/linuxserver/bazarr:1.5.3
+          image: lscr.io/linuxserver/bazarr:1.5.4
           ports:
             - name: http
               containerPort: 6767
@@ -71,7 +71,7 @@ spec:
         name: config
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 1Gi

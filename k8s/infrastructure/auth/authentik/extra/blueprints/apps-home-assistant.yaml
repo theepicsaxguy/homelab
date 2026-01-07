@@ -10,7 +10,7 @@ entries:
   - id: provider-homeassistant
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/automation/home-assistant
+      name: k8s.peekoff.com/automation/home-assistant
     attrs:
       authorization_flow:
         !Find [
@@ -32,7 +32,7 @@ entries:
       client_id: !Env HOMEASSISTANT_CLIENT_ID
       client_secret: !Env HOMEASSISTANT_CLIENT_SECRET
       redirect_uris:
-        - url: https://hassio.pc-tips.se/auth/openid/callback
+        - url: https://hassio.peekoff.com/auth/openid/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -41,18 +41,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: homeassistant_application
     model: authentik_core.application
@@ -62,7 +53,7 @@ entries:
       name: Home assistant
       group: Maison
       description: Home automation
-      meta_launch_url: https://pc-tips.se
+      meta_launch_url: https://peekoff.com
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png
       policy_engine_mode: any
       provider: !KeyOf provider-homeassistant
@@ -78,7 +69,7 @@ entries:
   - id: provider-zigbee2mqtt
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-external/zigbee2mqtt
+      name: k8s.peekoff.com/services-external/zigbee2mqtt
     attrs:
       authorization_flow:
         !Find [
@@ -100,7 +91,7 @@ entries:
       client_id: !Env ZIGBEE2MQTT_CLIENT_ID
       client_secret: !Env ZIGBEE2MQTT_CLIENT_SECRET
       redirect_uris:
-        - url: https://z2m.pc-tips.se/oauth2/callback
+        - url: https://z2m.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -109,31 +100,18 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
-  - id: application-zigbee2mqtt
+  - id: zigbee2mqtt_application
     model: authentik_core.application
     identifiers:
       slug: zigbee2mqtt
     attrs:
       name: Zigbee2MQTT
-      group: Maison
-      description: Gestion des appareils Zigbee
+      group: Home Automation
+      description: Zigbee to MQTT bridge
       icon: https://www.zigbee2mqtt.io/logo.png
       provider: !KeyOf provider-zigbee2mqtt
       policy_engine_mode: any
@@ -141,7 +119,7 @@ entries:
   - id: zigbee2mqtt_policy_binding
     model: authentik_policies.policybinding
     identifiers:
-      target: !KeyOf application-zigbee2mqtt
+      target: !KeyOf zigbee2mqtt_application
       group: !Find [authentik_core.group, [name, "Home Assistant Users"]]
     attrs:
       order: 1

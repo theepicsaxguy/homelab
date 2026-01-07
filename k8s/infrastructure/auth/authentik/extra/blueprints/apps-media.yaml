@@ -10,7 +10,7 @@ entries:
   - id: provider-bazarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/bazarr
+      name: k8s.peekoff.com/services-media/bazarr
     attrs:
       authorization_flow:
         !Find [
@@ -32,7 +32,7 @@ entries:
       client_id: !Env BAZARR_CLIENT_ID
       client_secret: !Env BAZARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://bazarr.pc-tips.se/oauth2/callback
+        - url: https://bazarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -41,22 +41,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-bazarr
     model: authentik_core.application
     identifiers:
@@ -79,7 +66,7 @@ entries:
   - id: provider-lidarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/lidarr
+      name: k8s.peekoff.com/services-media/lidarr
     attrs:
       authorization_flow:
         !Find [
@@ -101,7 +88,7 @@ entries:
       client_id: !Env LIDARR_CLIENT_ID
       client_secret: !Env LIDARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://lidarr.pc-tips.se/oauth2/callback
+        - url: https://lidarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -110,22 +97,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-lidarr
     model: authentik_core.application
     identifiers:
@@ -148,7 +122,7 @@ entries:
   - id: provider-prowlarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/prowlarr
+      name: k8s.peekoff.com/services-media/prowlarr
     attrs:
       authorization_flow:
         !Find [
@@ -170,7 +144,7 @@ entries:
       client_id: !Env PROWLARR_CLIENT_ID
       client_secret: !Env PROWLARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://prowlarr.pc-tips.se/oauth2/callback
+        - url: https://prowlarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -179,22 +153,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-prowlarr
     model: authentik_core.application
     identifiers:
@@ -217,7 +178,7 @@ entries:
   - id: provider-radarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/radarr
+      name: k8s.peekoff.com/services-media/radarr
     attrs:
       authorization_flow:
         !Find [
@@ -239,7 +200,7 @@ entries:
       client_id: !Env RADARR_CLIENT_ID
       client_secret: !Env RADARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://radarr.pc-tips.se/oauth2/callback
+        - url: https://radarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -248,22 +209,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-radarr
     model: authentik_core.application
     identifiers:
@@ -283,79 +231,10 @@ entries:
     attrs:
       order: 1
 
-  - id: provider-readarr
-    model: authentik_providers_oauth2.oauth2provider
-    identifiers:
-      name: k8s.pc-tips.se/services-media/readarr
-    attrs:
-      authorization_flow:
-        !Find [
-          authentik_flows.flow,
-          [slug, "default-provider-authorization-implicit-consent"],
-        ]
-      signing_key:
-        !Find [
-          authentik_crypto.certificatekeypair,
-          [name, "authentik Self-signed Certificate"],
-        ]
-      invalidation_flow:
-        !Find [
-          authentik_flows.flow,
-          [slug, "default-provider-invalidation-flow"],
-        ]
-
-      client_type: confidential
-      client_id: !Env READARR_CLIENT_ID
-      client_secret: !Env READARR_CLIENT_SECRET
-      redirect_uris:
-        - url: https://readarr.pc-tips.se/oauth2/callback
-          matching_mode: strict
-
-      access_code_validity: minutes=1
-      access_token_validity: minutes=5
-      refresh_token_validity: days=30
-
-      sub_mode: hashed_user_id
-      property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
-  - id: application-readarr
-    model: authentik_core.application
-    identifiers:
-      slug: readarr
-    attrs:
-      name: Readarr
-      group: Media
-      description: Books
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/readarr.png
-      provider: !KeyOf provider-readarr
-      policy_engine_mode: any
-  - id: readarr_policy_binding
-    model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf application-readarr
-      group: !Find [authentik_core.group, [name, "Media Users"]]
-    attrs:
-      order: 1
-
   - id: provider-sonarr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/sonarr
+      name: k8s.peekoff.com/services-media/sonarr
     attrs:
       authorization_flow:
         !Find [
@@ -377,7 +256,7 @@ entries:
       client_id: !Env SONARR_CLIENT_ID
       client_secret: !Env SONARR_CLIENT_SECRET
       redirect_uris:
-        - url: https://sonarr.pc-tips.se/oauth2/callback
+        - url: https://sonarr.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -386,22 +265,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-sonarr
     model: authentik_core.application
     identifiers:
@@ -421,79 +287,10 @@ entries:
     attrs:
       order: 1
 
-  - id: provider-qbittorrent
-    model: authentik_providers_oauth2.oauth2provider
-    identifiers:
-      name: k8s.pc-tips.se/services-media/qbittorrent
-    attrs:
-      authorization_flow:
-        !Find [
-          authentik_flows.flow,
-          [slug, "default-provider-authorization-implicit-consent"],
-        ]
-      signing_key:
-        !Find [
-          authentik_crypto.certificatekeypair,
-          [name, "authentik Self-signed Certificate"],
-        ]
-      invalidation_flow:
-        !Find [
-          authentik_flows.flow,
-          [slug, "default-provider-invalidation-flow"],
-        ]
-
-      client_type: confidential
-      client_id: !Env QBITTORRENT_CLIENT_ID
-      client_secret: !Env QBITTORRENT_CLIENT_SECRET
-      redirect_uris:
-        - url: https://qbittorrent.pc-tips.se/oauth2/callback
-          matching_mode: strict
-
-      access_code_validity: minutes=1
-      access_token_validity: minutes=5
-      refresh_token_validity: days=30
-
-      sub_mode: hashed_user_id
-      property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
-  - id: application-qbittorrent
-    model: authentik_core.application
-    identifiers:
-      slug: qbittorrent
-    attrs:
-      name: qBittorrent
-      group: Media
-      description: Torrent management
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/qbittorrent.png
-      provider: !KeyOf provider-qbittorrent
-      policy_engine_mode: any
-  - id: qbittorrent_policy_binding
-    model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf application-qbittorrent
-      group: !Find [authentik_core.group, [name, "Media Users"]]
-    attrs:
-      order: 1
-
   - id: provider-sabnzbd
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/sabnzbd
+      name: k8s.peekoff.com/services-media/sabnzbd
     attrs:
       authorization_flow:
         !Find [
@@ -515,7 +312,7 @@ entries:
       client_id: !Env SABNZBD_CLIENT_ID
       client_secret: !Env SABNZBD_CLIENT_SECRET
       redirect_uris:
-        - url: https://sabnzbd.pc-tips.se/oauth2/callback
+        - url: https://sabnzbd.peekoff.com/oauth2/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -524,22 +321,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'offline_access'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
   - id: application-sabnzbd
     model: authentik_core.application
     identifiers:
@@ -563,7 +347,7 @@ entries:
   - id: provider-jellyseerr
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-media/jellyseerr
+      name: k8s.peekoff.com/services-media/jellyseerr
     attrs:
       authorization_flow:
         !Find [
@@ -583,7 +367,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://jellyseerr.pc-tips.se/login/oidc/callback
+        - url: http://ansok.peekoff.com/login?provider=authentik&callback=true
           matching_mode: strict
       client_id: !Env JELLYSEERR_CLIENT_ID
       client_secret: !Env JELLYSEERR_CLIENT_SECRET
@@ -594,18 +378,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: application-jellyseerr
     model: authentik_core.application
@@ -630,7 +405,7 @@ entries:
   - id: provider-audiobookshelf
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/media/audiobookshelf
+      name: k8s.peekoff.com/media/audiobookshelf
     attrs:
       authorization_flow:
         !Find [
@@ -652,9 +427,9 @@ entries:
       client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
       client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
       redirect_uris:
-        - url: https://audiobookshelf.pc-tips.se/auth/openid/callback
+        - url: https://audiobookshelf.peekoff.com/auth/openid/callback
           matching_mode: strict
-        - url: https://audiobookshelf.pc-tips.se/auth/openid/mobile-redirect
+        - url: https://audiobookshelf.peekoff.com/auth/openid/mobile-redirect
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -663,18 +438,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: application-audiobookshelf
     model: authentik_core.application

@@ -1,0 +1,73 @@
+# k8s/infrastructure/auth/authentik/extra/blueprints/apps-pinepods.yaml
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Apps - Pinepods
+entries:
+  - id: pinepods-user-group
+    model: authentik_core.group
+    identifiers:
+      name: Pinepods Users
+    attrs:
+      name: Pinepods Users
+  - id: pinepods_provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s.peekoff.com/web/pinepods
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      client_id: !Env PINEPODS_CLIENT_ID
+      client_secret: !Env PINEPODS_CLIENT_SECRET
+      redirect_uris:
+        - url: https://pinepods.peekoff.com/api/auth/callback
+          matching_mode: strict
+
+      access_code_validity: minutes=1
+      access_token_validity: hours=1
+      refresh_token_validity: days=30
+
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+
+  - id: pinepods_application
+    model: authentik_core.application
+    identifiers:
+      slug: pinepods
+    attrs:
+      name: Pinepods
+      group: Web
+      meta_description: Podcast Management
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/pinepods.png
+      provider: !KeyOf pinepods_provider
+      policy_engine_mode: any
+
+  - id: pinepods_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf pinepods_application
+      group: !Find [authentik_core.group, [name, "Pinepods Users"]]
+    attrs:
+      order: 1

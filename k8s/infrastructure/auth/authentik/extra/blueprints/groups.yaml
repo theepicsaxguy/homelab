@@ -55,6 +55,12 @@ entries:
       name: Jellyfin Users
     attrs:
       name: Jellyfin Users
+  - id: jellyfin-admins
+    model: authentik_core.group
+    identifiers:
+      name: Jellyfin Admins
+    attrs:
+      name: Jellyfin Admins
   - id: jellyseerr-users
     model: authentik_core.group
     identifiers:
@@ -97,6 +103,12 @@ entries:
       name: Litellm Users
     attrs:
       name: Litellm Users
+  - id: litellm-admins
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Admins
+    attrs:
+      name: Litellm Admins
   - id: opencode-users
     model: authentik_core.group
     identifiers:

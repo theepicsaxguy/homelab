@@ -1,0 +1,23 @@
+>
+  {# Interjections #}
+  {%- macro getReport() -%}
+    {{ [
+      'Okej. Tja, jag har redan hanterat det.', 
+      'Verkar som någon redan gjorde det, men jag tar gärna äran.',
+      'Jag är så snabb att det är redan klart.'
+      ]| random }}
+  {%- endmacro -%}
+
+  {# en macro som tar bort alla radbrytningar, tomma utrymmen, och formaterar texten  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# en macro för att anropa alla makron :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Anropa makrot  #}
+  {{- cleanup(mother_of_all_macros()) -}}

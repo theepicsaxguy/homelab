@@ -1,13 +1,37 @@
 ---
+# ExternalSecret for Backblaze B2 credentials (PostgreSQL backups)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: b2-cnpg-credentials
+  namespace: n8n
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: b2-cnpg-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-cnpg-access-key-id
+    - secretKey: AWS_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-cnpg-secret-access-key
+---
+# Local MinIO backup (fast recovery)
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
   name: n8n-minio-store
   namespace: n8n
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/n8n/n8n-db
-    endpointURL: https://truenas.pc-tips.se:9000
+    endpointURL: https://truenas.peekoff.com:9000
     s3Credentials:
       accessKeyId:
         name: longhorn-minio-credentials
@@ -16,32 +40,63 @@ spec:
         name: longhorn-minio-credentials
         key: AWS_SECRET_ACCESS_KEY
 ---
+# Offsite Backblaze B2 backup (disaster recovery)
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: n8n-b2-store
+  namespace: n8n
+spec:
+  retentionPolicy: "30d"
+  configuration:
+    destinationPath: s3://homelab-cnpg-b2/n8n/n8n-db
+    endpointURL: https://s3.us-west-002.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: b2-cnpg-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: b2-cnpg-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: n8n-db
   namespace: n8n
-  labels:
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 1
   imageName: ghcr.io/cloudnative-pg/postgresql:18
   enablePDB: false
   storage:
     size: 20Gi
-    storageClass: longhorn
+    storageClass: proxmox-csi
   monitoring:
     enablePodMonitor: false
   postgresql:
     parameters:
       max_connections: "200"
       shared_buffers: "256MB"
+
   plugins:
-    - name: barman-cloud.cloudnative-pg.io
-      isWALArchiver: true
-      parameters:
-        barmanObjectName: n8n-minio-store
+  - name: barman-cloud.cloudnative-pg.io
+    enabled: true
+    isWALArchiver: true
+    parameters:
+      barmanObjectName: n8n-minio-store
+
+  externalClusters:
+    - name: n8n-db-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: n8n-b2-store
+    - name: n8n-db-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: n8n-minio-store
+
   resources:
     requests:
       cpu: "250m"

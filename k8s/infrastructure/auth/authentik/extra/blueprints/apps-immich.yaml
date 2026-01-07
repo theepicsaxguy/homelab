@@ -11,7 +11,7 @@ entries:
   - id: immich_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/services-immich
+      name: k8s.peekoff.com/services-immich
     attrs:
       authorization_flow:
         !Find [
@@ -33,9 +33,9 @@ entries:
       client_id: !Env IMMICH_CLIENT_ID
       client_secret: !Env IMMICH_CLIENT_SECRET
       redirect_uris:
-        - url: https://photo.pc-tips.se/auth/login
+        - url: https://photo.peekoff.com/auth/login
           matching_mode: strict
-        - url: https://photo.pc-tips.se/user-settings
+        - url: https://photo.peekoff.com/user-settings
           matching_mode: strict
         - url: app.immich:///oauth-callback
           matching_mode: strict
@@ -46,18 +46,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: immich_application
     model: authentik_core.application

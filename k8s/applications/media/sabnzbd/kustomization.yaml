@@ -30,7 +30,7 @@ configMapGenerator:
       - SAB__misc__nzb_backup_dir=/downloads/nzb-backup
 
       # SAB misc
-      - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.pc-tips.se
+      - SAB__misc__host_whitelist=sabnzbd,sabnzbd.media,sabnzbd.media.svc,sabnzbd.media.svc.cluster.local,sabnzbd.peekoff.com
       - SAB__misc__port=8080
       - SAB__misc__pause_on_post_processing=1
       - SAB__misc__wait_for_dfolder=30

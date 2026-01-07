@@ -1,0 +1,112 @@
+notify:
+  - name: all_phones
+    platform: group
+    services:
+      - service: mobile_app_person2
+      - service: mobile_app_person1
+  - name: benjamin_phone
+    platform: group
+    services:
+      - service: mobile_app_person2
+  - name: wilma_phone
+    platform: group
+    services:
+      - service: mobile_app_person1
+
+script:
+
+
+###############################################################################
+# Txt Notify
+###############################################################################
+  # text_debug:
+  #   sequence:
+  #     - condition: state
+  #       entity_id: input_boolean.debug_texts
+  #       state: 'on'
+  #     - service: notify.benjamin_phone
+  #       data_template:
+  #         message: >
+  #           {{ message }}
+
+  # text_notify:
+  #   sequence:
+  #     - condition: state
+  #       entity_id: input_boolean.text_notifications
+  #       state: 'on'
+  #     - choose:
+  #       - conditions:
+  #         - condition: template
+  #           value_template: '{{ who == "benjamin"}}'
+  #         - condition: state
+  #           entity_id: input_boolean.text_notify_benjamin
+  #           state: 'on'
+  #         sequence:
+  #         - service: notify.benjamin_phone
+  #           data:
+  #             title: '{{ title }}'
+  #             message: '{{ message }}'
+  #       - conditions:
+  #         - condition: template
+  #           value_template: '{{ who == "wilma"}}'
+  #         - condition: state
+  #           entity_id: input_boolean.text_notify_wilma
+  #           state: 'on'
+  #         sequence:
+  #         - service: notify.wilma_phone
+  #           data:
+  #             title: '{{ title }}'
+  #             message: '{{ message }}'
+  #       default:
+  #       - service: notify.all_phones
+  #         data:
+  #           title: '{{ title }}'
+  #           message: '{{ message }}'
+
+  # text_alert:
+  #   sequence:
+  #     - service: >
+  #           {% if who == 'benjamin' %}
+  #             notify.benjamin_phone
+  #           {% elif who == 'wilma' %}
+  #             notify.wilma_phone
+  #           {% else %}
+  #             notify.all_phones
+  #           {% endif %}
+  #       data:
+  #         title: '{{ title }}'
+  #         message: '{{ message }}'
+  #         #data:
+  #         #   attachment:
+  #         #     url: '{{ url }}'
+  #         #     content-type: '{{ content_type }}'
+  #         #     hide-thumbnail: false
+  #         #  push:
+  #         #     sound: '{{ ios_sound }}'
+  #         #    badge: 0
+  #         #     category: '{{ ios_category }}'
+  #         #   entity_id: '{{ camera_entity }}'
+
+  # text_alert_image:
+  #   sequence:
+  #     - service: >
+  #           {% if who == 'benjamin' %}
+  #             notify.benjamin_phone
+  #           {% elif who == 'wilma' %}
+  #             notify.wilma_phone
+  #           {% else %}
+  #             notify.all_phones
+  #           {% endif %}
+  #       data:
+  #         title: '{{ title }}'
+  #         message: '{{ message }}'
+  #         data:
+  #           attachment:
+  #             url: '{{ url }}'
+  #             content-type: '{{ content_type }}'
+  #             hide-thumbnail: false
+  #         #  push:
+  #         #     sound: '{{ ios_sound }}'
+  #         #    badge: 0
+  #         #     category: '{{ ios_category }}'
+  #         #   entity_id: '{{ camera_entity }}'

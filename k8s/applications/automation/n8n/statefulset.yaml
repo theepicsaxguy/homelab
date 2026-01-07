@@ -30,7 +30,7 @@ spec:
               mountPath: /data
       containers:
         - name: n8n
-          image: n8nio/n8n:2.1.0
+          image: n8nio/n8n:2.3.0
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -49,9 +49,9 @@ spec:
             - name: N8N_PORT
               value: "5678"
             - name: N8N_HOST
-              value: n8n.pc-tips.se
+              value: n8n.peekoff.com
             - name: WEBHOOK_URL
-              value: https://n8n.pc-tips.se/
+              value: https://n8n.peekoff.com/
             - name: GENERIC_TIMEZONE
               value: Europe/Stockholm
             - name: DB_TYPE
@@ -96,7 +96,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 2Gi
           readinessProbe:
             httpGet:
               path: /healthz
@@ -121,13 +121,10 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: n8n-data
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 10Gi

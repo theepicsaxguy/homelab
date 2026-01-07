@@ -1,9 +1,0 @@
-apiVersion: account.cloudflare.upbound.io/v1alpha1
-kind: Account
-metadata:
-  name: cloudflare-account
-spec:
-  forProvider:
-    name: pc-tips
-  providerConfigRef:
-    name: cloudflare-provider

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: perplexica-data
+  namespace: perplexica
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 10Gi

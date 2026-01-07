@@ -14,23 +14,17 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: workspace
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/daily: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 10Gi
     - metadata:
         name: data
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/gfs: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 5Gi
@@ -52,9 +46,11 @@ spec:
           emptyDir: {}
         - name: home-local
           emptyDir: {}
+        - name: home-cache
+          emptyDir: {}
       containers:
         - name: opencode-web
-          image: ghcr.io/chriswritescode-dev/opencode-manager:0.4.3
+          image: ghcr.io/chriswritescode-dev/opencode-manager:0.5.7
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

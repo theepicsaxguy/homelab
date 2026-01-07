@@ -11,7 +11,7 @@ entries:
   - id: karakeep-provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/ai-karakeep
+      name: k8s.peekoff.com/ai-karakeep
     attrs:
       authorization_flow:
         !Find [
@@ -30,7 +30,7 @@ entries:
         ]
       client_type: confidential
       redirect_uris:
-        - url: https://karakeep.pc-tips.se/api/auth/callback/custom
+        - url: https://karakeep.peekoff.com/api/auth/callback/custom
           matching_mode: strict
       client_id: !Env KARAKEEP_CLIENT_ID
       client_secret: !Env KARAKEEP_CLIENT_SECRET
@@ -38,9 +38,9 @@ entries:
       refresh_token_validity: days=30
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'openid'"]]
-        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'profile'"]]
-        - !Find [authentik_core.propertymapping, [name, "authentik default OAuth Mapping: OpenID 'email'"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: karakeep-application
     model: authentik_core.application
@@ -50,7 +50,7 @@ entries:
       name: Karakeep
       group: AI
       meta_description: "A self-hostable bookmark-everything app with AI-based automatic tagging."
-      icon: https://raw.githubusercontent.com/karakeep/karakeep/main/public/logo_512.png
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/karakeep.png
       provider: !KeyOf karakeep-provider
       policy_engine_mode: any
 

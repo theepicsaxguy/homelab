@@ -1,0 +1,104 @@
+>
+  {# Nightky Report #}
+  {%- macro getReport() -%}
+    
+      God kväll.
+    
+
+    
+      Klockan är {{ now().strftime("%H:%M") }}
+    
+
+    
+      {% if is_state('sun.sun', 'below_horizon') %}
+        Du har
+        {% set seconds = as_timestamp(states.sun.sun.attributes.next_rising)-now().timestamp() %}
+        {% set hours = seconds / 60 %}
+        {% if seconds / ( 60 * 60 ) > 1 %}
+          {{ (seconds //  ( 60 * 60 )) | int }} timmar
+        {% else %}
+          {{ (seconds // 60) | int }} minuter
+        {% endif %}
+        {{ [
+          'tills solen går upp.',
+          'tills solen är uppe.',
+          'innan solen officiellt går upp.'
+        ]|random }}
+      {% else %}
+        Du har
+        {% set seconds = as_timestamp(states.sun.sun.attributes.next_setting)-now().timestamp() %}
+        {% set hours = seconds / 60 %}
+        {% if seconds / ( 60 * 60 ) > 1 %}
+          {{ (seconds //  ( 60 * 60 )) | int }} timmar
+        {% else %}
+          {{ (seconds // 60) | int }} minuter
+        {% endif %}
+        {{ [
+          'tills solen går ner för dagen.',
+          'tills solen sjunker under horisonten.',
+          'innan solen officiellt går ner.'
+        ]|random }}
+      {% endif %}
+    
+
+    
+      {{ [
+        'Utomhuskameror är nu rörelseaktiverade och ytterporten är tänd.',
+        'Jag har tänt ytterbelysningen och aktiverat kamerorna runt om.',
+        'Dagsljuset börjar ta slut. Dags att avsluta utomhusarbeten. Utomhusbelysningen är tänd.',
+        'Omställning till nattläge för Anchorage House! Ytterbelysningen är på och kamerorna spelar in när rörelse upptäcks.',
+        'Anchorage House har konfigurerats för nattläge.',
+        'Tänder på Anchorage Houses utomhusbelysning och aktiverar kamerorna.',
+        'Det blir mörkt ute, så jag tänder utomhusbelysningen.',
+        'Solen håller på att gå ner, så det är dags att tända framljuset.',
+        'Om du inte har tittat ut på ett tag, så är ljuset nästan borta. Jag tänder utomhusbelysningen.'
+      ]|random }}
+    
+
+    {% if is_state('input_boolean.freeze_warning','on') %}
+      
+      {{ [ 'Temperaturen förväntas vara nära eller under fryspunkten. Någon borde ta in citronträdet. ',
+          'Det verkar som om det kommer att bli kallt inatt. Typ, vatten-omvandlas-till-is-kallt. Tänk på de stackars växterna.',
+          'Jag föreslår att du tar in växterna annars kan temperaturen döda dem. Och det är ditt fel.',
+          'Jag skulle säga att vintern är på väg. Men baserat på väderprognosen verkar den redan vara här.',
+          'Det blir iskallt inatt. Jag skulle ta in växterna, men jag saknar ben. Och armar. Så jag måste förlita mig på dig. Låt mig inte ned.'
+        ] | random }}
+      
+    {% endif %}
+
+    {% if is_state('sensor.today_is_day_day', 'Monday') %}
+      {% if now().strftime('%H')|int > 17 %}
+        {{ [ 'Glöm inte att imorgon är sophämtning. ',
+            'Jag rekommenderar att du flyttar sopkärlen till trottoaren för veckans tömning. ',
+            'Soporna och återvinningen ska ut.'
+        ] | random }}
+      {% endif %}
+    {% endif %}
+
+    {% if is_state('sensor.today_is_day_day', 'Tuesday') %}
+      {% if now().strftime('%H')|int > 17 %}
+        
+          {{ [ 'Glöm inte att ta in sopkärlen. ',
+              'Sopkärlen kommer känna sig ensamma om du låter dem stå ute hela natten. ',
+              '<say-as interpret-as="characters">HOA</say-as> kommer bli arg om du låter sopkärlen stå på gatan.'
+          ] | random }}
+        
+      {% endif %}
+    {% endif %}
+  {%- endmacro -%}
+
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+    {%- macro cleanup(data) -%}
+      {%- for item in data.split("\n")  if item | trim != "" -%}
+        {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+    {%- macro mother_of_all_macros() -%}
+      {{ getReport() }}
+    {%- endmacro -%}
+    
+    {# Call the macro  #}
+    {{- cleanup(mother_of_all_macros()) -}}

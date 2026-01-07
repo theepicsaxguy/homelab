@@ -1,27 +1,27 @@
 # sabnzbd (custom image)
 
-This is a custom Kubernetes-ready container image for [SABnzbd](https://sabnzbd.org/), built from source and designed for GitOps-style deployments.  
-It replaces the typical LinuxServer.io / hotio style wrappers with a deterministic Python entrypoint that generates `sabnzbd.ini` from environment variables at startup.
+This is a custom Kubernetes-ready container image for [SABnzbd](https://sabnzbd.org/), built from source and designed
+for GitOps-style deployments. It replaces the typical LinuxServer.io / hotio style wrappers with a deterministic Python
+entrypoint that generates `sabnzbd.ini` from environment variables at startup.
 
 ---
 
 ## Key differences from upstream images
 
-- **Config generation in Python**  
-  The included `entrypoint.py` always builds `sabnzbd.ini` deterministically from env vars. No shell glue, no partial merges, no surprises.
+- **Config generation in Python** The included `entrypoint.py` always builds `sabnzbd.ini` deterministically from env
+  vars. No shell glue, no partial merges, no surprises.
 
-- **Environment variable convention**  
-  This image does **not** use the LSIO `SABNZBD__...` format.  
-  Instead it expects variables in the form:
+- **Environment variable convention** This image does **not** use the LSIO `SABNZBD__...` format. Instead it expects
+  variables in the form:
 
-SAB__<section>__<option>=<value>
+SAB**<section>**<option>=<value>
 
 Both `<section>` and `<option>` must be lowercase to match SAB’s INI schema.
 
 Example:
 
 ```yaml
-- SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.pc-tips.se"
+- SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.peekoff.com"
 - SAB__misc__port="8080"
 - SAB__servers__newsnewshostingcom__host="news.newshosting.com"
 
@@ -52,7 +52,7 @@ configMapGenerator:
       - SAB_DOWNLOAD_DIR="/downloads"
       - SAB_INCOMPLETE_DIR="/downloads/incomplete"
       - SAB_COMPLETE_DIR="/downloads/complete"
-      - SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.pc-tips.se"
+      - SAB__misc__host_whitelist="sabnzbd,sabnzbd.media,sabnzbd.peekoff.com"
       - SAB__misc__port="8080"
       - SAB__servers__newsnewshostingcom__host="news.newshosting.com"
       - SAB__servers__newsnewshostingcom__port="563"
@@ -87,3 +87,4 @@ No reliance on hidden translation layers from upstream wrapper scripts.
 
 
 This ensures reproducible behavior in Kubernetes, especially when combined with ArgoCD or Flux.
+```

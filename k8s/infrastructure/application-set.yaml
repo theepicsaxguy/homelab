@@ -17,7 +17,6 @@ spec:
           - path: k8s/infrastructure/controllers
           - path: k8s/infrastructure/network
           - path: k8s/infrastructure/storage
-          - path: k8s/infrastructure/crds
           - path: k8s/infrastructure/monitoring
           - path: k8s/infrastructure/deployment
           - path: k8s/infrastructure/auth
@@ -37,7 +36,6 @@ spec:
         path: '{{ path }}'
         kustomize: {} # Let Kustomize handle naming
       destination:
-        namespace: infrastructure-system
         server: https://kubernetes.default.svc
       syncPolicy:
         automated:

@@ -10,7 +10,7 @@ entries:
   - id: opencode_proxy_provider
     model: authentik_providers_proxy.proxyprovider
     identifiers:
-      name: k8s.pc-tips.se/services-opencode
+      name: k8s.peekoff.com/services-opencode
     attrs:
       # Standard flows
       authorization_flow:
@@ -25,7 +25,7 @@ entries:
         ]
 
       # External URL that users will access
-      external_host: https://opencode.pc-tips.se
+      external_host: https://opencode.peekoff.com
 
       # Internal service URL - OpenCode service in opencode namespace
       internal_host: http://opencode-web.opencode.svc.cluster.local:5003

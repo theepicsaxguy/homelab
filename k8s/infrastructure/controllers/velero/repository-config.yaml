@@ -1,0 +1,15 @@
+# Kopia Repository Configuration for Velero
+# Optimized for B2 to reduce Class B and Class C transaction usage
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velero-repository-config
+  namespace: velero
+data:
+  kopia: |
+    {
+      "cacheLimitMB": 8192,
+      "fullMaintenanceInterval": "336h",
+      "maintenanceMode": "periodic",
+      "maintenanceInterval": "336h"
+    }

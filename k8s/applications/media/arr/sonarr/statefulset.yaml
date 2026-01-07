@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: sonarr
-          image: ghcr.io/onedr0p/sonarr:4.0.13
+          image: ghcr.io/home-operations/sonarr:4.0.16.2946
           ports:
             - name: http
               containerPort: 8989
@@ -51,12 +51,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 4Gi

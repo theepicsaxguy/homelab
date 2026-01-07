@@ -2,7 +2,9 @@ machine:
   certSANs:
     - ${vip}
     - ${node_ip}
-    - ${cluster.endpoint}
+%{ if external_api_endpoint != null ~}
+    - ${external_api_endpoint}
+%{ endif ~}
 
   kubelet:
     clusterDNS:

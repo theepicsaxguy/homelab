@@ -30,7 +30,7 @@ entries:
 
       client_type: confidential
       redirect_uris:
-        - url: https://film.pc-tips.se/sso/OID/redirect/authentik
+        - url: https://film.peekoff.com/sso/OID/redirect/authentik
           matching_mode: strict
       client_id: !Env JELLYFIN_CLIENT_ID
       client_secret: !Env JELLYFIN_CLIENT_SECRET
@@ -48,18 +48,9 @@ entries:
 
       # Property mappings for OpenID Connect claims
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: jellyfin_application
     model: authentik_core.application
@@ -69,16 +60,25 @@ entries:
       name: Jellyfin
       group: Media
       meta_description: Media server for movies, TV shows, and music
-      meta_launch_url: https://film.pc-tips.se/sso/OID/start/authentik
+      meta_launch_url: https://film.peekoff.com/sso/OID/start/authentik
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/jellyfin.png
       provider: !KeyOf jellyfin_oauth2_provider
       policy_engine_mode: any
 
   # Allow access to users group
-  - id: jellyfin_policy_binding
+  - id: jellyfin_users_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf jellyfin_application
       group: !Find [authentik_core.group, [name, "Jellyfin Users"]]
     attrs:
       order: 1
+
+  # Allow access to admins group
+  - id: jellyfin_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf jellyfin_application
+      group: !Find [authentik_core.group, [name, "Jellyfin Admins"]]
+    attrs:
+      order: 2

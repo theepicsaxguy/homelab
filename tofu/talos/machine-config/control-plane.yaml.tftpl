@@ -1,8 +1,13 @@
 machine:
   certSANs:
     - ${vip}
-    - ${node_ip}      # The node's own IP
-    - ${cluster.endpoint}
+%{ if network.api_lb_vip != null && network.api_lb_vip != "" ~}
+    - ${network.api_lb_vip}
+%{ endif ~}
+    - ${node_ip}
+%{ if external_api_endpoint != null ~}
+    - ${external_api_endpoint}
+%{ endif ~}
 
   kubelet:
     clusterDNS:
@@ -58,8 +63,10 @@ cluster:
   proxy:
     disabled: true
   extraManifests:
-    - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
-    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
+    - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml # renovate: github-releases=kubernetes-sigs/gateway-api
+    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.4.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml # renovate: github-releases=kubernetes-sigs/gateway-api
+    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.4.1/config/crd/experimental/gateway.networking.k8s.io_udproutes.yaml # renovate: github-releases=kubernetes-sigs/gateway-api
+    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.4.1/config/crd/experimental/gateway.networking.k8s.io_tcproutes.yaml # renovate: github-releases=kubernetes-sigs/gateway-api
     - https://raw.githubusercontent.com/alex1989hu/kubelet-serving-cert-approver/main/deploy/standalone-install.yaml
     - https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
   inlineManifests:

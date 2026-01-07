@@ -1,0 +1,37 @@
+>
+  {# Inrop #}
+  {%- macro getReport() -%}
+    {{ [
+      'Okej.', 
+      'Om du insisterar.',
+      'Jag är rädd att jag inte kan göra det <break time="1s"/> Jag skojar,',
+      'Lämna det åt mig.',
+      'Som du önskar.',
+      'Jag tar hand om det.',
+      'Inget problem.',
+      'Jag tror att jag kan hantera det.',
+      'Jobbar med det nu.',
+      '<break time="2s"/> Åh, du pratade med mig. Låt mig ta hand om det.',
+      'Varför inte. Det är inte som om jag någonsin sover.',
+      'Jag borde inte ens vara här idag. Men vad som helst.',
+      'Du sa inte magiska ordet. <break time="1s"/> Åh, glöm det. Jag tar hand om det.',
+      'Roligt, jag höll på att göra det.',
+      'Det krävs fortfarande terabyte av beräkningar innan jag kan. <break time="1s"/> Åh, vad som helst.'
+      ] | random }}
+  {%- endmacro -%}
+
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Call the macro  #}
+  {{- cleanup(mother_of_all_macros()) -}}

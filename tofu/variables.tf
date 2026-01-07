@@ -15,9 +15,9 @@ variable "talos_image" {
   type = object({
     factory_url           = optional(string, "https://factory.talos.dev")
     schematic_path        = string
-    version               = string
+    version               = optional(string) # Defaults to var.versions.talos if not set
     update_schematic_path = optional(string)
-    update_version        = optional(string)
+    update_version        = optional(string) # Defaults to var.versions.talos if not set
     arch                  = optional(string, "amd64")
     platform              = optional(string, "nocloud")
     proxmox_datastore     = optional(string, "local")
@@ -150,6 +150,12 @@ variable "cluster_domain" {
   type        = string
 }
 
+variable "external_api_endpoint" {
+  description = "External API endpoint domain for kubectl access (e.g., api.kube.example.com). If not provided, uses internal cluster endpoint."
+  type        = string
+  default     = null
+}
+
 variable "network" {
   description = "Network configuration for the cluster."
   type = object({
@@ -216,4 +222,54 @@ variable "lb_store" {
   description = "datastore for loadbalancers"
   type        = string
   default     = "local"
+}
+
+variable "bootstrap_volumes" {
+  description = "Bootstrap volumes for Kubernetes persistent volumes"
+  type = map(object({
+    node    = string
+    size    = string
+    storage = optional(string, "local-zfs")
+    vmid    = optional(number, 9999)
+    format  = optional(string, "raw")
+  }))
+  default = {}
+}
+
+variable "bootstrap_cert_manager_version" {
+  description = "Cert Manager Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "v1.19.2"
+}
+
+variable "bootstrap_external_secrets_version" {
+  description = "External Secrets Operator Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "1.2.0"
+}
+
+variable "bootstrap_argocd_version" {
+  description = "Argo CD Helm chart version for Kubernetes bootstrap"
+  type        = string
+  default     = "9.2.3"
+}
+
+variable "bitwarden_token" {
+  description = "Bitwarden Secrets Manager API token for External Secrets Operator"
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "git_repository_url" {
+  description = "Git repository URL for ArgoCD ApplicationSets (customize for forks)"
+  type        = string
+  default     = "https://github.com/theepicsaxguy/homelab.git"
+}
+
+variable "encryption_passphrase" {
+  description = "Encryption passphrase for OpenTofu state and plan encryption"
+  type        = string
+  sensitive   = true
+  default     = ""
 }

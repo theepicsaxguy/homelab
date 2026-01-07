@@ -1,248 +1,1542 @@
 model_list:
-      - model_name: qwen3-embedding-0.6b
-        litellm_params:
-          model: "openai/@cf/qwen/qwen3-embedding-0.6b"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: embedding
-      - model_name: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
-        litellm_params:
-          model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 3072
-          max_output_tokens: 3072
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 3072
-      - model_name: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
-        litellm_params:
-          model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 2048
-          max_output_tokens: 2048
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 2048
-      - model_name: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
-        litellm_params:
-          model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 8192
-          max_output_tokens: 8192
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 8192
-      - model_name: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
-        litellm_params:
-          model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
-          api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
-          api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
-        model_info:
-          mode: chat
-          max_input_tokens: 4096
-          max_output_tokens: 4096
-          input_cost_per_token: 0.000001923
-          output_cost_per_token: 0.000001923
-          max_tokens: 4096
-      - model_name: gpt-5.2-chat-latest
-        litellm_params:
-          model: gpt-5.2-chat-latest
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: chat
-          max_input_tokens: 128000
-          max_output_tokens: 16384
-          input_cost_per_token: 0.00000175
-          output_cost_per_token: 0.000014
-          cache_read_input_token_cost: 0.000000175
-          cache_read_input_token_cost_priority: 0.00000035
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 16384
-          output_cost_per_token_priority: 0.000028
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-5.2
-        litellm_params:
-          model: gpt-5.2
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: chat
-          max_input_tokens: 400000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000175
-          output_cost_per_token: 0.000014
-          cache_read_input_token_cost: 0.000000175
-          cache_read_input_token_cost_priority: 0.00000035
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.000028
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-            - "image"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_service_tier: true
-          supports_vision: true
-      - model_name: gpt-5.1
-        litellm_params:
-          model: gpt-5.1
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: chat
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000125
-          output_cost_per_token: 0.00001
-          cache_read_input_token_cost: 0.000000125
-          cache_read_input_token_cost_priority: 0.00000025
-          input_cost_per_token_priority: 0.0000025
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.00002
-          supported_endpoints:
-            - "/v1/chat/completions"
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-            - "image"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: true
-          supports_tool_choice: true
-          supports_service_tier: true
-          supports_vision: true
-      - model_name: gpt-5.1-codex
-        litellm_params:
-          model: gpt-5.1-codex
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000125
-          output_cost_per_token: 0.00001
-          cache_read_input_token_cost: 0.000000125
-          cache_read_input_token_cost_priority: 0.00000025
-          input_cost_per_token_priority: 0.0000025
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.00002
-          supported_endpoints:
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: false
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-5.1-codex-mini
-        litellm_params:
-          model: gpt-5.1-codex-mini
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: responses
-          max_input_tokens: 272000
-          max_output_tokens: 128000
-          input_cost_per_token: 0.00000025
-          output_cost_per_token: 0.000002
-          cache_read_input_token_cost: 0.000000025
-          cache_read_input_token_cost_priority: 0.000000045
-          input_cost_per_token_priority: 0.00000045
-          max_tokens: 128000
-          output_cost_per_token_priority: 0.0000036
-          supported_endpoints:
-            - "/v1/responses"
-          supported_modalities:
-            - "text"
-            - "image"
-          supported_output_modalities:
-            - "text"
-          supports_function_calling: true
-          supports_native_streaming: true
-          supports_parallel_function_calling: true
-          supports_pdf_input: true
-          supports_prompt_caching: true
-          supports_reasoning: true
-          supports_response_schema: true
-          supports_system_messages: false
-          supports_tool_choice: true
-          supports_vision: true
-      - model_name: gpt-4.1
-        litellm_params:
-          model: gpt-4.1
-          api_key: "os.environ/openai_api_key_1"
-          api_base: "os.environ/openai_base_url_1"
-        model_info:
-          mode: chat
-          max_input_tokens: 1047576
-          max_output_tokens: 32768
-          input_cost_per_token: 0.000002
-          output_cost_per_token: 0.000008
-          cache_read_input_token_cost: 0.0000005
-          cache_read_input_token_cost_priority: 0.000000875
-          input_cost_per_token_batches: 0.000001
-          input_cost_per_token_priority: 0.0000035
-          max_tokens: 32768
-          supports_vision: true
+
+  - model_name: qwen3-embedding-0.6b
+    litellm_params:
+      model: "openai/@cf/qwen/qwen3-embedding-0.6b"
+      api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+      api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+    model_info:
+      mode: embedding
+
+  # - model_name: cloudflare/@cf/meta/llama-2-7b-chat-fp16
+  #   litellm_params:
+  #     model: "cloudflare/@cf/meta/llama-2-7b-chat-fp16"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 3072
+  #     max_output_tokens: 3072
+
+  # - model_name: cloudflare/@cf/meta/llama-2-7b-chat-int8
+  #   litellm_params:
+  #     model: "cloudflare/@cf/meta/llama-2-7b-chat-int8"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 2048
+  #     max_output_tokens: 2048
+
+  # - model_name: cloudflare/@cf/mistral/mistral-7b-instruct-v0.1
+  #   litellm_params:
+  #     model: "cloudflare/@cf/mistral/mistral-7b-instruct-v0.1"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 8192
+  #     max_output_tokens: 8192
+
+  # - model_name: cloudflare/@hf/thebloke/codellama-7b-instruct-awq
+  #   litellm_params:
+  #     model: "cloudflare/@hf/thebloke/codellama-7b-instruct-awq"
+  #     api_base: "os.environ/CLOUDFLARE_WORKERS_API_BASE"
+  #     api_key: "os.environ/CLOUDFLARE_WORKERS_API_KEY"
+  #   model_info:
+  #     mode: chat
+  #     max_input_tokens: 4096
+  #     max_output_tokens: 2048
+
+# Azure/OpenAI models (cleaned, deduplicated, using openai_api_key_1 and openai_base_url_1)
+  - model_name: azure/codex-mini
+    litellm_params:
+      model: openai/codex-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+
+  - model_name: azure/computer-use-preview
+    litellm_params:
+      model: openai/computer-use-preview
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000012
+
+
+  - model_name: azure/embedding3large
+    litellm_params:
+      model: openai/embedding3large
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 705000
+      input_cost_per_token: 0.00000013
+      output_cost_per_token: 0.00000026
+
+  - model_name: azure/embeddingada
+    litellm_params:
+      model: openai/embeddingada
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 350000
+
+  - model_name: azure/text-embedding-3-small
+    litellm_params:
+      model: text-embedding-3-small
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: embedding
+      max_input_tokens: 10000000
+      input_cost_per_token: 0.00000002
+      output_cost_per_token: 0.00000002
+
+
+  - model_name: azure/gpt-5.1
+    litellm_params:
+      model: openai/gpt41
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      # Set a practical large context window for modern multipurpose GPT-4.x models
+      max_input_tokens: 5000000
+      max_output_tokens: 16384
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+  - model_name: azure/gpt-5
+    litellm_params:
+      model: openai/gpt-5
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      # GPT-5 family (hosted) - expose a very large context window while keeping outputs bounded
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5-chat
+    litellm_params:
+      model: openai/gpt-5-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5-codex
+    litellm_params:
+      model: openai/gpt-5-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5-mini
+    litellm_params:
+      model: openai/gpt-5-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: azure/gpt-5-nano
+    litellm_params:
+      model: openai/gpt-5-nano
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 150000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000005
+      output_cost_per_token: 0.0000004
+      input_cost_per_token_cached: 0.00000001
+
+  - model_name: azure/gpt-5-pro
+    litellm_params:
+      model: openai/gpt-5-pro
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 1000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00012
+
+  - model_name: azure/gpt-5.1
+    litellm_params:
+      model: openai/gpt-5.1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 9107000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5.1-chat
+    litellm_params:
+      model: openai/gpt-5.1-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5.1-codex
+    litellm_params:
+      model: openai/gpt-5.1-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 9006000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5.1-codex-max
+    litellm_params:
+      model: openai/gpt-5.1-codex-max
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5.1-codex-mini
+    litellm_params:
+      model: openai/gpt-5.1-codex-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: azure/gpt-5.2
+    litellm_params:
+      model: openai/gpt-5.2
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-5.2-chat
+    litellm_params:
+      model: openai/gpt-5.2-chat
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/gpt-audio
+    litellm_params:
+      model: openai/gpt-audio
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
+
+  - model_name: azure/gpt-image-1
+    litellm_params:
+      model: openai/gpt-image-1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000005
+      output_cost_per_token: 0.00004
+
+  - model_name: azure/gpt-image-1-mini
+    litellm_params:
+      model: openai/gpt-image-1-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000002
+
+
+  - model_name: azure/model-router
+    litellm_params:
+      model: openai/model-router
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: chat
+      max_input_tokens: 100000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: azure/o1
+    litellm_params:
+      model: openai/o1
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00006
+      input_cost_per_token_cached: 0.0000075
+
+
+  - model_name: azure/o3
+    litellm_params:
+      model: openai/o3
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000005
+  - model_name: azure/o3-mini
+    litellm_params:
+      model: openai/o3-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 50000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+      input_cost_per_token_cached: 0.00000055
+
+  - model_name: azure/o3-pro
+    litellm_params:
+      model: openai/o3-pro
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 16000000
+      max_output_tokens: 4096
+
+  - model_name: azure/o4-mini
+    litellm_params:
+      model: openai/o4-mini
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+
+  - model_name: azure/sora
+    litellm_params:
+      model: openai/sora
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: image_generation
+
+
+# OpenAI models (cleaned, deduplicated, using openai_api_key_2 and openai_base_url_2)
+  - model_name: openai/codex-mini
+    litellm_params:
+      model: openai/codex-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+
+  - model_name: openai/computer-use-preview
+    litellm_params:
+      model: openai/computer-use-preview
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: chat
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000012
+
+  - model_name: openai/dall-e-3
+    litellm_params:
+      model: dall-e-3
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: image_generation
+
+  - model_name: openai/embedding3large
+    litellm_params:
+      model: openai/embedding3large
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: embedding
+      max_input_tokens: 705000
+      input_cost_per_token: 0.00000013
+      output_cost_per_token: 0.00000026
+
+  - model_name: openai/embeddingada
+    litellm_params:
+      model: openai/embeddingada
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: embedding
+      max_input_tokens: 350000
+
+  - model_name: openai/text-embedding-3-small
+    litellm_params:
+      model: text-embedding-3-small
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: embedding
+      max_input_tokens: 10000000
+      input_cost_per_token: 0.00000002
+      output_cost_per_token: 0.00000002
+
+  - model_name: openai/gpt-4o-transcribe-diarize
+    litellm_params:
+      model: gpt-4o-transcribe-diarize
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 400000
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
+
+  - model_name: openai/gpt-5.1
+    litellm_params:
+      model: openai/gpt41
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: chat
+      # Set a practical large context window for modern multipurpose GPT-4.x models
+      max_input_tokens: 5000000
+      max_output_tokens: 16384
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+  - model_name: openai/gpt-5
+    litellm_params:
+      model: openai/gpt-5
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      # GPT-5 family (hosted) - expose a very large context window while keeping outputs bounded
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5-codex
+    litellm_params:
+      model: openai/gpt-5-codex
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5-mini
+    litellm_params:
+      model: openai/gpt-5-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: openai/gpt-5-nano
+    litellm_params:
+      model: openai/gpt-5-nano
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 150000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000005
+      output_cost_per_token: 0.0000004
+      input_cost_per_token_cached: 0.00000001
+
+  - model_name: openai/gpt-5-pro
+    litellm_params:
+      model: openai/gpt-5-pro
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 1000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00012
+
+  - model_name: openai/gpt-5.1
+    litellm_params:
+      model: openai/gpt-5.1
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 9107000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5.1-chat
+    litellm_params:
+      model: openai/gpt-5.1-chat
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5.1-codex
+    litellm_params:
+      model: openai/gpt-5.1-codex
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 9006000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5.1-codex-max
+    litellm_params:
+      model: openai/gpt-5.1-codex-max
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5.1-codex-mini
+    litellm_params:
+      model: openai/gpt-5.1-codex-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 8192
+      input_cost_per_token: 0.00000025
+      output_cost_per_token: 0.000002
+      input_cost_per_token_cached: 0.00000003
+
+  - model_name: openai/gpt-5.2
+    litellm_params:
+      model: openai/gpt-5.2
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-5.2-chat
+    litellm_params:
+      model: openai/gpt-5.2-chat
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    default_litellm_params:
+      reasoning_effort: "low"
+    model_info:
+      mode: responses
+      max_input_tokens: 5000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/gpt-audio
+    litellm_params:
+      model: openai/gpt-audio
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000025
+      output_cost_per_token: 0.00001
+
+  - model_name: openai/gpt-image-1
+    litellm_params:
+      model: openai/gpt-image-1
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000005
+      output_cost_per_token: 0.00004
+
+  - model_name: openai/gpt-image-1-mini
+    litellm_params:
+      model: openai/gpt-image-1-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: image_generation
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000002
+
+  - model_name: openai/gpt-realtime
+    litellm_params:
+      model: openai/gpt-realtime
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: realtime
+      max_input_tokens: 100000
+      input_cost_per_token: 0.000004
+      output_cost_per_token: 0.000016
+      input_cost_per_token_cached: 0.0000004
+      max_output_tokens: 4096
+
+  - model_name: openai/model-router
+    litellm_params:
+      model: openai/model-router
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: chat
+      max_input_tokens: 100000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
+  - model_name: openai/o1
+    litellm_params:
+      model: openai/o1
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 30000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.000015
+      output_cost_per_token: 0.00006
+      input_cost_per_token_cached: 0.0000075
+
+  - model_name: openai/o3
+    litellm_params:
+      model: openai/o3
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.000002
+      output_cost_per_token: 0.000008
+      input_cost_per_token_cached: 0.0000005
+  - model_name: openai/o3-mini
+    litellm_params:
+      model: openai/o3-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 50000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+      input_cost_per_token_cached: 0.00000055
+
+  - model_name: openai/o3-pro
+    litellm_params:
+      model: openai/o3-pro
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 16000000
+      max_output_tokens: 4096
+
+  - model_name: openai/o4-mini
+    litellm_params:
+      model: openai/o4-mini
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 4096
+      input_cost_per_token: 0.0000011
+      output_cost_per_token: 0.0000044
+
+  - model_name: openai/sora
+    litellm_params:
+      model: openai/sora
+      api_key: "os.environ/openai_api_key_2"
+      api_base: "os.environ/openai_base_url_2"
+    model_info:
+      mode: image_generation
+
+
+# Cerebras models
+  - model_name: cerebras/zai-glm-4.6
+    litellm_params:
+      model: "cerebras/zai-glm-4.6"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+      default_litellm_params:
+        temperature: 0.6
+        top_p: 0.95
+        max_tokens: 40960
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 40960
+      supports_native_streaming: false
+
+  - model_name: cerebras/llama-3.3-70b
+    litellm_params:
+      model: "cerebras/llama-3.3-70b"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 2048
+      supports_native_streaming: false
+
+  - model_name: cerebras/qwen-3-235b-a22b-instruct-2507
+    litellm_params:
+      model: "cerebras/qwen-3-235b-a22b-instruct-2507"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+      default_litellm_params:
+        temperature: 0.7
+        top_p: 0.8
+        max_tokens: 20000
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 20000
+      supports_native_streaming: false
+
+  - model_name: cerebras/qwen-3-32b
+    litellm_params:
+      model: "cerebras/qwen-3-32b"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+      default_litellm_params:
+        temperature: 0.6
+        top_p: 0.95
+        max_tokens: 16382
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 16382
+      supports_native_streaming: false
+
+  - model_name: cerebras/gpt-oss-120b
+    litellm_params:
+      model: "cerebras/gpt-oss-120b"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+      default_litellm_params:
+        temperature: 1
+        top_p: 1
+        max_tokens: 32768
+        reasoning_effort: "low"
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 32768
+      supports_native_streaming: false
+
+  - model_name: cerebras/llama3.1-8b
+    litellm_params:
+      model: "cerebras/llama3.1-8b"
+      api_key: "os.environ/CEREBRAS_API_KEY"
+      api_base: "https://api.cerebras.ai/v1"
+      custom_llm_provider: "cerebras"
+
+    model_info:
+      mode: chat
+      max_input_tokens: 100000
+      max_output_tokens: 2048
+      supports_native_streaming: false
+
+# Mistral models
+  # Frontier Models - Generalist
+  - model_name: mistral/mistral-medium-2505
+    litellm_params:
+      model: "mistral/mistral-medium-2505"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-medium-2508
+    litellm_params:
+      model: "mistral/mistral-medium-2508"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-medium-latest
+    litellm_params:
+      model: "mistral/mistral-medium-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-medium
+    litellm_params:
+      model: "mistral/mistral-medium"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/open-mistral-nemo
+    litellm_params:
+      model: "mistral/open-mistral-nemo"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/open-mistral-nemo-2407
+    litellm_params:
+      model: "mistral/open-mistral-nemo-2407"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-tiny-2407
+    litellm_params:
+      model: "mistral/mistral-tiny-2407"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-tiny-latest
+    litellm_params:
+      model: "mistral/mistral-tiny-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-large-2411
+    litellm_params:
+      model: "mistral/mistral-large-2411"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-large-2411
+    litellm_params:
+      model: "mistral/pixtral-large-2411"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-large-latest
+    litellm_params:
+      model: "mistral/pixtral-large-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-large-pixtral-2411
+    litellm_params:
+      model: "mistral/mistral-large-pixtral-2411"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-large-2512
+    litellm_params:
+      model: "mistral/mistral-large-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/mistral-large-latest
+    litellm_params:
+      model: "mistral/mistral-large-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/mistral-small-2506
+    litellm_params:
+      model: "mistral/mistral-small-2506"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/mistral-small-latest
+    litellm_params:
+      model: "mistral/mistral-small-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-3b-2512
+    litellm_params:
+      model: "mistral/ministral-3b-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-3b-latest
+    litellm_params:
+      model: "mistral/ministral-3b-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-8b-2512
+    litellm_params:
+      model: "mistral/ministral-8b-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/ministral-8b-latest
+    litellm_params:
+      model: "mistral/ministral-8b-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/ministral-14b-2512
+    litellm_params:
+      model: "mistral/ministral-14b-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/ministral-14b-latest
+    litellm_params:
+      model: "mistral/ministral-14b-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/magistral-medium-2509
+    litellm_params:
+      model: "mistral/magistral-medium-2509"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/magistral-medium-latest
+    litellm_params:
+      model: "mistral/magistral-medium-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/magistral-small-2509
+    litellm_params:
+      model: "mistral/magistral-small-2509"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/magistral-small-latest
+    litellm_params:
+      model: "mistral/magistral-small-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  # Specialist Models - Coding
+  - model_name: mistral/codestral-2508
+    litellm_params:
+      model: "mistral/codestral-2508"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/codestral-latest
+    litellm_params:
+      model: "mistral/codestral-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/devstral-small-2507
+    litellm_params:
+      model: "mistral/devstral-small-2507"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/devstral-medium-2507
+    litellm_params:
+      model: "mistral/devstral-medium-2507"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/devstral-2512
+    litellm_params:
+      model: "mistral/devstral-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/mistral-vibe-cli-latest
+    litellm_params:
+      model: "mistral/mistral-vibe-cli-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/devstral-medium-latest
+    litellm_params:
+      model: "mistral/devstral-medium-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/devstral-latest
+    litellm_params:
+      model: "mistral/devstral-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/labs-devstral-small-2512
+    litellm_params:
+      model: "mistral/labs-devstral-small-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  - model_name: mistral/devstral-small-latest
+    litellm_params:
+      model: "mistral/devstral-small-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: chat
+      max_input_tokens: 262144
+
+  # Specialist Models - Audio
+  - model_name: mistral/voxtral-mini-2507
+    litellm_params:
+      model: "mistral/voxtral-mini-2507"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 32768
+
+  - model_name: mistral/voxtral-mini-latest
+    litellm_params:
+      model: "mistral/voxtral-mini-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 32768
+
+  - model_name: mistral/voxtral-small-2507
+    litellm_params:
+      model: "mistral/voxtral-small-2507"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 32768
+
+  - model_name: mistral/voxtral-small-latest
+    litellm_params:
+      model: "mistral/voxtral-small-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.2
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 32768
+
+  - model_name: mistral/voxtral-mini-transcribe-2507
+    litellm_params:
+      model: "mistral/voxtral-mini-transcribe-2507"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: audio_transcription
+      max_input_tokens: 16384
+
+  # Specialist Models - Vision & OCR
+  - model_name: mistral/mistral-ocr-2512
+    litellm_params:
+      model: "mistral/mistral-ocr-2512"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: ocr
+      max_input_tokens: 16384
+
+  - model_name: mistral/mistral-ocr-latest
+    litellm_params:
+      model: "mistral/mistral-ocr-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: ocr
+      max_input_tokens: 16384
+
+  - model_name: mistral/mistral-ocr-2505
+    litellm_params:
+      model: "mistral/mistral-ocr-2505"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: ocr
+      max_input_tokens: 16384
+
+  - model_name: mistral/mistral-ocr-2503
+    litellm_params:
+      model: "mistral/mistral-ocr-2503"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.0
+    model_info:
+      mode: ocr
+      max_input_tokens: 16384
+
+  # Specialist Models - Embeddings
+  - model_name: mistral/mistral-embed-2312
+    litellm_params:
+      model: "mistral/mistral-embed-2312"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
+      max_input_tokens: 8192
+
+  - model_name: mistral/mistral-embed
+    litellm_params:
+      model: "mistral/mistral-embed"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
+      max_input_tokens: 8192
+
+  - model_name: mistral/codestral-embed-2505
+    litellm_params:
+      model: "mistral/codestral-embed-2505"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
+      max_input_tokens: 8192
+
+  - model_name: mistral/codestral-embed
+    litellm_params:
+      model: "mistral/codestral-embed"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: embedding
+      max_input_tokens: 8192
+
+  # Specialist Models - Moderation
+  - model_name: mistral/mistral-moderation-2411
+    litellm_params:
+      model: "mistral/mistral-moderation-2411"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 8192
+
+  - model_name: mistral/mistral-moderation-latest
+    litellm_params:
+      model: "mistral/mistral-moderation-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    model_info:
+      mode: chat
+      max_input_tokens: 8192
+
+  # Other Models
+  - model_name: mistral/labs-mistral-small-creative
+    litellm_params:
+      model: "mistral/labs-mistral-small-creative"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  # Deprecated Models
+  - model_name: mistral/open-mistral-7b
+    litellm_params:
+      model: "mistral/open-mistral-7b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/mistral-tiny
+    litellm_params:
+      model: "mistral/mistral-tiny"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/mistral-tiny-2312
+    litellm_params:
+      model: "mistral/mistral-tiny-2312"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.7
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
+
+  - model_name: mistral/pixtral-12b-2409
+    litellm_params:
+      model: "mistral/pixtral-12b-2409"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-12b
+    litellm_params:
+      model: "mistral/pixtral-12b"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/pixtral-12b-latest
+    litellm_params:
+      model: "mistral/pixtral-12b-latest"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-3b-2410
+    litellm_params:
+      model: "mistral/ministral-3b-2410"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/ministral-8b-2410
+    litellm_params:
+      model: "mistral/ministral-8b-2410"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 131072
+
+  - model_name: mistral/codestral-2501
+    litellm_params:
+      model: "mistral/codestral-2501"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/codestral-2412
+    litellm_params:
+      model: "mistral/codestral-2412"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/codestral-2411-rc5
+    litellm_params:
+      model: "mistral/codestral-2411-rc5"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 256000
+
+  - model_name: mistral/mistral-small-2501
+    litellm_params:
+      model: "mistral/mistral-small-2501"
+      api_key: "os.environ/MISTRAL_API_KEY"
+    default_litellm_params:
+      temperature: 0.3
+    model_info:
+      mode: chat
+      max_input_tokens: 32768
 
 litellm_settings:
   callbacks: ["prometheus"]
@@ -289,7 +1583,7 @@ router_settings:
   max_fallbacks: 3
   enable_tag_filtering: true
   cache_responses: true
-  redis_host: redis.litellm.svc.kube.pc-tips.se
+  redis_host: redis.litellm.svc.cluster.local
   redis_port: "6379"
 
 general_settings:
@@ -313,12 +1607,12 @@ general_settings:
   generic_oauth:
     client_id: "os.environ/GENERIC_CLIENT_ID"
     client_secret: "os.environ/GENERIC_CLIENT_SECRET"
-    redirect_url: "https://litellm.pc-tips.se/sso/callback"
-    authorization_url: "https://sso.pc-tips.se/application/o/authorize/"
-    token_url: "https://sso.pc-tips.se/application/o/token/"
-    user_info_url: "https://sso.pc-tips.se/application/o/userinfo/"
+    redirect_url: "https://litellm.peekoff.com/sso/callback"
+    authorization_url: "https://sso.peekoff.com/application/o/authorize/"
+    token_url: "https://sso.peekoff.com/application/o/token/"
+    user_info_url: "https://sso.peekoff.com/application/o/userinfo/"
     user_id_field: "sub"
     user_email_field: "email"
     user_name_field: "name"
-    user_role_field: "groups"
-    scope: "openid profile email"
+    user_role_field: "roles"
+    scope: "openid profile email roles"

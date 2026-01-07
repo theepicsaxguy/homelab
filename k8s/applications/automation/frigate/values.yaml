@@ -37,13 +37,9 @@ gpu:
     runtimeClassName:
 
 # -- declare extra volumes to use for Frigate
-extraVolumes:
-  - name: run-tmpfs
-    emptyDir: {}
+extraVolumes: []
 # -- declare additional volume mounts
-extraVolumeMounts:
-  - name: run-tmpfs
-    mountPath: /run
+extraVolumeMounts: []
 
 # -- amount of shared memory to use for caching
 shmSize: 1Gi
@@ -67,7 +63,7 @@ config: |
     # logs:
 
   mqtt:
-      host: mosquitto.mqtt.svc.kube.pc-tips.se
+      host: mosquitto.mqtt.svc.cluster.local
       port: 1883
       topic_prefix: frigate
       client_id: frigate
@@ -229,7 +225,7 @@ persistence:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "proxmox-csi"
     ##
     ## If you want to reuse an existing claim, you can pass the name of the PVC using
     ## the existingClaim variable
@@ -261,7 +257,7 @@ persistence:
     ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
     ##   GKE, AWS & OpenStack)
     ##
-    # storageClass: "-"
+    storageClass: "proxmox-csi"
     ##
     ## If you want to reuse an existing claim, you can pass the name of the PVC using
     ## the existingClaim variable
@@ -288,7 +284,9 @@ resources:
 
 # -- Set Frigate Container Security Context
 securityContext:
-  allowPrivilegeEscalation: true
+  runAsUser: 0
+  runAsGroup: 0
+  allowPrivilegeEscalation: false
   readOnlyRootFilesystem: false
   capabilities:
     drop:
@@ -304,10 +302,8 @@ securityContext:
 # -- will override it for frigate container
 podSecurityContext:
   runAsNonRoot: false
-  runAsUser: 0
-  runAsGroup: 0
-  fsGroup: 0
-  fsGroupChangePolicy: OnRootMismatch
+  fsGroup: 1000
+  fsGroupChangePolicy: Always
   seccompProfile:
     type: RuntimeDefault
 

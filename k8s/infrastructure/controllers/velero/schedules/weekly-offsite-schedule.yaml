@@ -1,0 +1,66 @@
+---
+# Weekly Offsite Backup to Backblaze B2
+# Runs every Saturday at 3:00 AM UTC (staggered from local weekly)
+# Retention: 90 days (12-13 weekly backups)
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: weekly-offsite
+  namespace: velero
+spec:
+  # Cron schedule: minute hour day month weekday
+  # 0 3 * * 6 = 3:00 AM every Saturday
+  schedule: "0 3 * * 6"
+
+  template:
+    # Include all namespaces except velero itself
+    includedNamespaces:
+      - "*"
+
+    excludedNamespaces:
+      - velero
+      - kube-system
+      - default
+      - kiwix
+
+    # Include all resources
+    includedResources:
+      - "*"
+
+    # Exclude resources that shouldn't be backed up
+    excludedResources:
+      - events
+      - events.events.k8s.io
+      - backups.velero.io
+      - restores.velero.io
+      - backuprepositories.velero.io
+      - podvolumebackups.velero.io
+      - podvolumerestores.velero.io
+
+    # Backup persistent volumes using node agent (Kopia)
+    defaultVolumesToFsBackup: true
+
+    # Storage location: Backblaze B2
+    storageLocation: backblaze-b2
+
+    # Retention: 90 days (approximately 12-13 weekly backups)
+    ttl: 2160h
+
+    # Include cluster-scoped resources
+    includeClusterResources: true
+
+    orderedResources:
+      persistentvolumeclaims: ""
+      pods: ""
+
+    metadata:
+      labels:
+        backup-type: weekly-offsite
+        storage-location: backblaze-b2
+        disaster-recovery: "true"
+
+  # Don't use the last backup time as the start time for the next backup
+  useOwnerReferencesInBackup: false
+
+  # Pause the schedule (set to true to temporarily disable)
+  paused: false

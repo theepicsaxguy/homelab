@@ -1,68 +1,195 @@
-# AI Applications - Agent Guidelines
+# AI Applications - Specialized Patterns
 
-> **Note:** This category-level AGENTS.md covers AI and ML applications under `k8s/applications/ai/`. It inherits from `k8s/AGENTS.md` for general Kubernetes patterns and adds AI-specific conventions.
+SCOPE: AI/ML applications with GPU access and vector databases
+INHERITS FROM: /k8s/AGENTS.md
 
-## Purpose & Scope
+## AI-SPECIFIC PATTERNS
 
-- **Scope:** `k8s/applications/ai/` (AI/ML applications: LiteLLM, OpenHands, Qdrant, VLLM, etc.)
-- **Parent:** Inherits from `k8s/AGENTS.md` for general Kubernetes patterns
-- **Goal:** Document AI-specific patterns like GPU access, API key management, vector databases, and model storage
+### GPU Access Pattern
+```yaml
+# Add to deployment spec.template.spec.containers
+resources:
+  requests:
+    nvidia.com/gpu: 1
+  limits:
+    nvidia.com/gpu: 1
 
-## Category-Specific Quick-Start
-
-```bash
-# Build all AI applications
-kustomize build --enable-helm k8s/applications/ai
-
-# Build a specific AI application
-kustomize build --enable-helm k8s/applications/ai/<app>
-
-# Validate AI category kustomization
-kustomize build k8s/applications/ai | kubeval --strict
+# Add to deployment spec.template.spec
+nodeSelector:
+  gpu-node: "true"
+tolerations:
+- key: "nvidia.com/gpu"
+  operator: "Exists"
+  effect: "NoSchedule"
 ```
 
-## Category Structure & Conventions
+**Requirements:**
+- Use `nvidia.com/gpu` resource name (not standard `gpu`)
+- Schedule on GPU nodes with node affinity
+- Check GPU capacity: `kubectl describe nodes | grep gpu`
+- Monitor GPU memory usage
 
-### Common Patterns
+### Qdrant Integration Pattern
+```yaml
+# Service connection
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant
+  namespace: ai
+spec:
+  selector:
+    app.kubernetes.io/name: qdrant
+  ports:
+  - port: 6333
+    targetPort: 6333
+```
 
-AI applications in this category share these patterns:
-- **API Keys:** External secrets for LLM provider keysthrough litellm
-- **Vector Databases:** Qdrant as shared vector database for embeddings
-- **Model Storage:** Persistent volumes for downloaded models and caches
-- **Resource Requests:** High CPU/memory requests
-- **Backup Tiers:** GFS for vector DBs and critical state, daily for standard apps
-- **Network Policies:** Allow access to shared Qdrant and external LLM APIs
+**Application Config:**
+- Connect to: `qdrant.ai.svc.cluster.local:6333`
+- Use shared Qdrant cluster for all AI applications
+- Qdrant PVCs use GFS backup tier (critical data)
+- Monitor collection sizes for performance
 
-### Shared Resources
+### LiteLLM API Gateway Pattern
+```yaml
+# ExternalSecret for API keys
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: litellm-keys
+spec:
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    creationPolicy: Owner
+  data:
+  - secretKey: openai-api-key
+    remoteRef:
+      key: OpenAI API
+  - secretKey: anthropic-api-key
+    remoteRef:
+      key: Anthropic Claude API
+```
 
-- **Qdrant:** Shared vector database cluster for embeddings and semantic search
-- **Model Storage:** Shared PVCs or S3 buckets for model artifacts
-- **API Keys:** Centralized external secrets for LLM providers
+**Application Usage:**
+- Connect to LiteLLM: `http://litellm.ai.svc.cluster.local:4000`
+- Applications use LiteLLM, not direct provider APIs
+- LiteLLM manages API keys and rate limiting
+- Restart LiteLLM after configuration changes
 
-## Adding a New AI Application
+### Model Storage Pattern
+```yaml
+# Model storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: <app>-models
+  labels:
+    backup.velero.io/backup-tier: GFS  # For critical models
+    # backup.velero.io/backup-tier: Daily  # For caches
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 100Gi  # Adjust based on model size
+```
 
-1. Create directory: `k8s/applications/ai/<app>/`
-2. Add manifests following AI conventions (GPU requests, external secrets)
-3. Include `kustomization.yaml` that references all manifests
-4. Add backup labels to PVCs: GFS for vector DBs, daily for others
-5. Update `k8s/applications/ai/kustomization.yaml` to include new app
-6. Test locally: `kustomize build --enable-helm k8s/applications/ai/<app>`
-7. Create PR (do not apply directly to cluster)
+**Requirements:**
+- Use `proxmox-csi` StorageClass
+- GFS backup tier for critical models, Daily for caches
+- Monitor PVC usage for storage quotas
+- Large models may need dedicated PVCs
 
-## Operational Patterns
+### Network Policy Pattern
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: <app>-network-policy
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: <app>
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: qdrant
+    ports:
+    - port: "6333"
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: litellm
+    ports:
+    - port: "4000"
+  - toFQDNs:
+    - matchName: "api.openai.com"
+    - matchName: "api.anthropic.com"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+```
 
-### Deployment Order
+## AI-DOMAIN ANTI-PATTERNS
 
-AI applications have these dependencies:
-1. **Qdrant** (shared vector database)
-2. **Model storage** infrastructure
-3. **Core AI services** (LiteLLM, VLLM)
-4. **Dependent applications** (OpenHands, OpenWebUI)
+### Resource Management
+- Never request `gpu` - use `nvidia.com/gpu`
+- Never skip GPU node affinity for GPU workloads
+- Never use Daily backup tier for critical model data - use GFS
+- Never underestimate GPU memory requirements for LLM inference
 
-### Backup Strategy
+### Configuration
+- Never connect applications directly to LLM providers - use LiteLLM
+- Never create separate Qdrant instances - use shared cluster
+- Store models in PVCs - never use emptyDir or ephemeral storage
 
-- **GFS:** Qdrant PVCs (critical vector data), model storage
-- **Daily:** Application configs, caches
-- **None:** Ephemeral model caches, temp files
+## VALIDATION COMMANDS
 
-**Maintenance Note:** Keep this file updated when AI patterns change. Update in the same PR as architectural changes.
+```bash
+# Check GPU availability
+kubectl describe nodes | grep -A 10 "Allocated resources"
+kubectl get nodes -l gpu-node=true
+
+# Validate GPU allocation
+kubectl describe pod -n ai <gpu-pod>
+
+# Check Qdrant connectivity
+kubectl exec -it -n ai <app-pod> -- \
+  curl http://qdrant.ai.svc.cluster.local:6333/health
+
+# Test LiteLLM connection
+kubectl exec -it -n ai <app-pod> -- \
+  curl http://litellm.ai.svc.cluster.local:4000/v1/models
+
+# Monitor model storage
+kubectl get pvc -n ai -l backup.velero.io/backup-tier=GFS
+kubectl exec -it -n ai <app-pod> -- df -h /models
+```
+
+## PERFORMANCE TIPS
+
+### GPU Optimization
+- Monitor GPU memory usage: `nvidia-smi` on GPU nodes
+- Batch model inference requests to reduce GPU context switching
+- Consider model quantization for memory efficiency
+
+### Model Storage
+- Pre-download models to PVCs to avoid runtime download timeouts
+- Use separate PVCs for different model types if access patterns differ
+- Monitor storage usage and cleanup unused model caches
+
+### Vector Database
+- Monitor Qdrant collection sizes - consider sharding for large datasets
+- Use appropriate vector dimensions for your use case
+- Backup Qdrant PVCs regularly with GFS tier
+
+## REFERENCES
+
+For general Kubernetes patterns: `k8s/AGENTS.md`
+For external access: `k8s/infrastructure/network/AGENTS.md`
+For LiteLLM: https://docs.litellm.ai
+For Qdrant: https://qdrant.tech/documentation

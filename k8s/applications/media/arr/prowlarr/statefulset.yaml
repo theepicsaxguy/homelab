@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: prowlarr
-          image: ghcr.io/onedr0p/prowlarr:1.32.2
+          image: ghcr.io/home-operations/prowlarr:2.3.1.5238
           ports:
             - name: http
               containerPort: 9696
@@ -53,7 +53,7 @@ spec:
         name: config
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 5Gi

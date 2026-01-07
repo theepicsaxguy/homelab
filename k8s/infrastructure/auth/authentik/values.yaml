@@ -40,8 +40,8 @@ global:
         name: authentik-core-secrets
     - secretRef:
         name: authentik-blueprint-secrets
-    #- secretRef:
-     #   name: authentik-smtp-credentials
+    - secretRef:
+        name: authentik-smtp-credentials
 
   # -- Additional volumeMounts to all deployed Deployments. Does not apply to GeoIP
   # @default -- `[]` (See [values.yaml])
@@ -49,6 +49,8 @@ global:
     - name: db-creds
       mountPath: /secrets/authentik
       readOnly: true
+    - name: shm
+      mountPath: /dev/shm
 
   # -- Additional volumes to all deployed Deployments.
   # @default -- `[]` (See [values.yaml])
@@ -56,6 +58,9 @@ global:
     - name: db-creds
       secret:
         secretName: authentik-postgresql-app
+    - name: shm
+      emptyDir:
+        medium: Memory
 
 
 ## Authentik configuration
@@ -79,21 +84,21 @@ authentik:
     path: /
   email:
     # -- SMTP Server emails are sent from, fully optional
-    host: ""
+    host: "mail.peekoff.com"
     # -- SMTP server port
-    port: 587
+    port: 465
     # -- SMTP credentials, when left empty, no authentication will be done
-    username: ""
+    username: "env://AUTHENTIK_EMAIL__USERNAME"
     # -- SMTP credentials, when left empty, no authentication will be done
-    password: ""
+    password: "env://AUTHENTIK_EMAIL__PASSWORD"
     # -- Use StartTLS. Enable either use_tls or use_ssl, they can't be enabled at the same time.
     use_tls: false
     # -- Use SSL. Enable either use_tls or use_ssl, they can't be enabled at the same time.
-    use_ssl: false
+    use_ssl: true
     # -- Connection timeout
     timeout: 30
     # -- Email from address, can either be in the format "foo@bar.baz" or "authentik <foo@bar.baz>"
-    from: ""
+    from: "env://AUTHENTIK_EMAIL__FROM"
   outposts:
     # -- Template used for managed outposts. The following placeholders can be used
     # %(type)s - the type of the outpost
@@ -133,6 +138,35 @@ server:
   # -- whether to enable server resources
   enabled: true
 
+  # -- authentik server pod-level security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+  # -- authentik server container-level security context
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  volumes:
+    - name: media
+      emptyDir: {}
+
   ## authentik server service configuration
   service:
     # -- authentik server service annotations
@@ -145,6 +179,30 @@ server:
 
 worker:
   enabled: true
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  # Media volume using emptyDir (tenant files don't need persistence)
+  # Tenant files are configuration/metadata that can be regenerated
+  volumeMounts:
+    - name: media
+      mountPath: /media
+
+  volumes:
+    - name: media
+      emptyDir: {}
+
   resources:
     requests:
       cpu: 100m

@@ -3,12 +3,11 @@ kind: PersistentVolumeClaim
 metadata:
   labels:
     app: zigbee2mqtt
-    recurring-job.longhorn.io/source: enabled
-    recurring-job-group.longhorn.io/weekly: enabled
   name: zigbee2mqtt-data
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 400Mi

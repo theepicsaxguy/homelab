@@ -12,22 +12,22 @@ spec:
     - protocol: HTTPS
       port: 443
       name: https-gateway
-      hostname: "*.pc-tips.se"
+      hostname: "*.peekoff.com"
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-pc-tips
+            name: cert-peekoff
       allowedRoutes:
         namespaces:
           from: All
     - protocol: HTTPS
       port: 443
       name: https-domain-gateway
-      hostname: pc-tips.se
+      hostname: peekoff.com
       tls:
         certificateRefs:
           - kind: Secret
-            name: cert-pc-tips
+            name: cert-peekoff
     - protocol: HTTPS
       port: 443
       name: https-goingdark-gateway

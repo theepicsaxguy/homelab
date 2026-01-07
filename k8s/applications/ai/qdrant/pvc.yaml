@@ -5,6 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: proxmox-csi
   resources:
     requests:
       storage: 50Gi

@@ -1,0 +1,61 @@
+---
+name: Security Scan
+
+on:
+   pull_request:
+     paths:
+       - '**/package.json'
+       - '**/package-lock.json'
+       - '**/requirements.txt'
+       - '**/Pipfile'
+       - '**/Pipfile.lock'
+       - '**/go.mod'
+       - '**/go.sum'
+       - '**/Cargo.toml'
+       - '**/Cargo.lock'
+   push:
+     branches:
+       - main
+     paths:
+       - '**/package.json'
+       - '**/package-lock.json'
+       - '**/requirements.txt'
+       - '**/Pipfile'
+       - '**/Pipfile.lock'
+       - '**/go.mod'
+       - '**/go.sum'
+       - '**/Cargo.toml'
+       - '**/Cargo.lock'
+   schedule:
+     # Run weekly security scans on Mondays at 9:00 UTC
+     - cron: '0 9 * * 1'
+   workflow_dispatch:
+
+permissions:
+   contents: read
+   issues: write
+   pull-requests: write
+
+jobs:
+   security-scan:
+     name: Shai-Hulud Security Scan
+     runs-on: ubuntu-latest
+
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@v6
+         with:
+           fetch-depth: 0
+
+       - name: Run Shai-Hulud Detector
+         uses: gensecaihq/Shai-Hulud-2.0-Detector@v2
+         with:
+           fail-on-critical: true
+           fail-on-high: true
+           fail-on-any: true
+           scan-lockfiles: true
+           scan-node-modules: true
+           output-format: text
+           working-directory: '.'
+           ignore-allowlist: false
+           warn-on-allowlist: true

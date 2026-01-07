@@ -14,10 +14,16 @@ entries:
       name: Litellm Users
     attrs:
       name: Litellm Users
+  - id: litellm-admin-group
+    model: authentik_core.group
+    identifiers:
+      name: Litellm Admins
+    attrs:
+      name: Litellm Admins
   - id: litellm_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/ai/litellm
+      name: k8s.peekoff.com/ai/litellm
     attrs:
       authorization_flow:
         !Find [
@@ -39,7 +45,7 @@ entries:
       client_id: !Env LITELLM_CLIENT_ID
       client_secret: !Env LITELLM_CLIENT_SECRET
       redirect_uris:
-        - url: https://litellm.pc-tips.se/sso/callback
+        - url: https://litellm.peekoff.com/sso/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -48,22 +54,11 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'groups'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "groups"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "roles"]]
 
   - id: litellm_application
     model: authentik_core.application
@@ -73,14 +68,21 @@ entries:
       name: Litellm
       group: AI
       meta_description: AI Model Proxy
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/litellm.png
+      icon: https://cdn.prod.website-files.com/66f2feef6cd182361acd52e8/67fe1c2809428a7beab6cd9b_litellm.jpg
       provider: !KeyOf litellm_provider
       policy_engine_mode: any
 
-  - id: litellm_policy_binding
+  - id: litellm_users_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf litellm_application
       group: !Find [authentik_core.group, [name, "Litellm Users"]]
     attrs:
       order: 1
+  - id: litellm_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf litellm_application
+      group: !Find [authentik_core.group, [name, "Litellm Admins"]]
+    attrs:
+      order: 2

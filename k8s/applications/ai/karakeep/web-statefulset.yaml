@@ -11,12 +11,9 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: data
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "longhorn"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 5Gi
@@ -34,7 +31,7 @@ spec:
           emptyDir: {}
       containers:
         - name: web
-          image: ghcr.io/karakeep-app/karakeep:0.29.3
+          image: ghcr.io/karakeep-app/karakeep:0.30.0
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -61,7 +58,7 @@ spec:
             - containerPort: 3000
           env:
             - name: OAUTH_WELLKNOWN_URL
-              value: https://sso.pc-tips.se/application/o/karakeep/.well-known/openid-configuration
+              value: https://sso.peekoff.com/application/o/karakeep/.well-known/openid-configuration
             - name: OAUTH_PROVIDER_NAME
               value: authentik
             - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING

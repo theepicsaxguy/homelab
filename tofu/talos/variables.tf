@@ -3,20 +3,29 @@ variable "talos_image" {
   type = object({
     factory_url       = optional(string, "https://factory.talos.dev")
     schematic_path    = string
-    version           = string
-    update_version    = optional(string) # Target version for upgrades (set by Renovate)
+    version           = optional(string) # Defaults to var.versions.talos if not set
+    update_version    = optional(string) # Defaults to var.versions.talos if not set
     arch              = optional(string, "amd64")
     platform          = optional(string, "nocloud")
     proxmox_datastore = optional(string, "local")
   })
 }
 
+variable "versions" {
+  description = "Software versions for the cluster components"
+  type = object({
+    talos      = string
+    kubernetes = string
+  })
+}
+
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name     = string
-    endpoint = string
-    # gateway and vip are now in var.network
+    name               = string
+    endpoint           = string
+    gateway            = string
+    vip                = string
     talos_version      = string
     proxmox_cluster    = string
     kubernetes_version = optional(string, "1.32.0")
@@ -28,11 +37,18 @@ variable "cluster_domain" {
   type        = string
 }
 
+variable "external_api_endpoint" {
+  description = "External API endpoint domain for kubectl access (e.g., api.kube.example.com). If not provided, uses internal cluster endpoint."
+  type        = string
+  default     = null
+}
+
 variable "network" {
   description = "Network configuration for the cluster."
   type = object({
     gateway     = string
     vip         = string
+    api_lb_vip  = optional(string)
     cidr_prefix = number
     dns_servers = list(string)
     bridge      = string

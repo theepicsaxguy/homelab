@@ -1,0 +1,12 @@
+storageClass:
+  - name: proxmox-csi
+    cache: writethrough
+    fstype: ext4
+    reclaimPolicy: Retain
+    volumeBindingMode: Immediate
+    ssd: true
+    storage: Nvme1
+    mountOptions:
+      - noatime
+    # Make this the default StorageClass for new PVCs
+    default: true

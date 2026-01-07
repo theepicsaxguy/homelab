@@ -8,7 +8,7 @@ helmCharts:
   releaseName: immich-redis
   repo: https://charts.bitnami.com/bitnami
   valuesFile: values.yaml
-  version: 24.0.8
+  version: 24.1.0
 
 generatorOptions:
   disableNameSuffixHash: true

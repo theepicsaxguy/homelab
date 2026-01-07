@@ -8,7 +8,7 @@ spec:
     - name: external
       namespace: gateway
   hostnames:
-    - "frigate.pc-tips.se"
+    - "frigate.peekoff.com"
   rules:
     - matches:
         - path:
@@ -31,7 +31,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "frigate.pc-tips.se"
+    - "frigate.peekoff.com"
   rules:
     - matches:
         - path:

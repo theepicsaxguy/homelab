@@ -38,10 +38,10 @@ spec:
             - name: LOGGING_LEVEL
               value: "INFO"
             - name: NEXT_PUBLIC_GPTR_API_URL
-              value: "https://research.pc-tips.se/api"
+              value: "https://research.peekoff.com/api"
             - name: NEXT_PUBLIC_WS_HOST
               # Host only, no protocol. This ensures frontend constructs wss:// when served over HTTPS.
-              value: "research.pc-tips.se"
+              value: "research.peekoff.com"
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
           volumeMounts:

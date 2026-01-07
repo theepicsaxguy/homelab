@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - cert-pc-tips.yaml
+  - cert-peekoff.yaml
   - cert-goingdark.yaml
   - gw-external.yaml
   - gw-internal.yaml

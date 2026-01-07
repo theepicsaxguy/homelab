@@ -8,7 +8,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - "sabnzbd.pc-tips.se"
+    - "sabnzbd.peekoff.com"
   rules:
     - matches:
         - path:

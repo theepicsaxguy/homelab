@@ -1,0 +1,98 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+    - /hacsfiles/Bubble-Card/bubble-pop-up-fix.js
+
+# HTTP settings for when behind a reverse proxy
+http:
+  ip_ban_enabled: true
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+wake_on_lan:
+
+
+
+bluetooth:
+## Recorder ##
+recorder:
+  purge_keep_days: 10
+  commit_interval: 5
+  include:
+    domains:
+      - sensor
+      - switch
+      - media_player
+      - light
+      - binary_sensor
+      - cover
+      - remote
+    entity_globs:
+      - device_tracker.person1_*
+      - device_tracker.person2_*
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date_time
+    event_types:
+      - browser_mod
+    entity_globs:
+      - input_number.flux_dum_*
+      - sensor.watchman_*
+
+## Logger ##
+logger:
+  default: critical
+  logs:
+    # log level for HA core
+    homeassistant.core: warning
+    # log level for MQTT integration
+    homeassistant.components.mqtt: warning
+## history ##
+history:
+  include:
+    domains:
+      - sensor
+      - switch
+      - media_player
+      - light
+      - binary_sensor
+      - cover
+
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date_time
+
+# Specifies media source directory
+homeassistant:
+  media_dirs:
+    local: /media
+  latitude: !secret zone_home_latitude
+  longitude: !secret zone_home_longitude
+  elevation: !secret zone_home_elevation
+  unit_system: metric
+  temperature_unit: C
+  time_zone: Europe/Stockholm
+  language: en
+  country: SE
+  currency: SEK
+  packages: !include_dir_named packages
+## Lovelace Config ##
+lovelace:
+  mode: storage

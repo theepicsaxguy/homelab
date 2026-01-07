@@ -11,10 +11,14 @@
   ],
   "dependencyDashboard": true,
   "kustomize": {
-    "managerFilePatterns": ["/(^|/)kustomization\\.ya?ml(\\.j2)?$/"]
+    "managerFilePatterns": [
+      "/(^|/)kustomization\\.ya?ml(\\.j2)?$/"
+    ]
   },
   "helm-values": {
-    "managerFilePatterns": ["/k8s/.+/values\\.yaml$/"]
+    "managerFilePatterns": [
+      "/k8s/.+/values\\.yaml$/"
+    ]
   },
   "customManagers": [
     {
@@ -27,8 +31,11 @@
         "/\\.sh$/"
       ],
       "matchStrings": [
-        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?"
-      ]
+        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+?)(?:=(?<depName>\\S+))?(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
+        "https://github.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/",
+        "https://raw.githubusercontent.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
+      ],
+      "datasourceTemplate": "github-releases"
     },
     {
       "customType": "regex",
@@ -44,50 +51,88 @@
   "packageRules": [
     {
       "groupName": "Media containers",
-      "matchPackageNames": ["/ghcr.io/onedr0p/.*/", "/ghcr.io/jellyfin/.*/"]
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "/^ghcr\\.io\\/onedr0p\\/.+$/",
+        "/^ghcr\\.io\\/jellyfin\\/.+$/"
+      ]
     },
     {
       "groupName": "Netbird",
-      "matchPackageNames": ["/docker.io/netbirdio/.*/"]
+      "matchPackageNames": [
+        "/docker.io/netbirdio/.*/"
+      ]
     },
     {
       "groupName": "Intel Device Plugins",
-      "matchPackageNames": ["/intel-device-plugins/.*/"]
+      "matchPackageNames": [
+        "/intel-device-plugins/.*/"
+      ]
     },
     {
       "groupName": "Cilium",
       "automerge": true,
-      "matchPackageNames": ["/cilium/.*/"]
+      "matchPackageNames": [
+        "/cilium/.*/"
+      ]
     },
     {
-      "matchManagers": ["terraform"],
-      "matchDepTypes": ["provider", "required_provider"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchDepTypes": [
+        "provider",
+        "required_provider"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
-      "matchManagers": ["helm-values", "helm-requirements"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "helm-values",
+        "helm-requirements"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
       "groupName": "external-secrets",
-      "matchPackageNames": ["/^ghcr.io/external-secrets//"]
+      "matchPackageNames": [
+        "/^ghcr.io/external-secrets//"
+      ]
     },
     {
       "groupName": "all dependencies",
-      "matchPackageNames": ["*"]
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
       "description": "Prevent automatic upgrades for Talos and Kubernetes versions in tofu/ - require manual review",
-      "matchFileNames": ["/tofu/.*\\.(tf|tfvars|tftpl)$/"],
-      "matchPackageNames": ["siderolabs/talos", "kubernetes/kubernetes"],
+      "matchFileNames": [
+        "/tofu/.*\\.(tf|tfvars|tftpl)$/"
+      ],
+      "matchPackageNames": [
+        "siderolabs/talos",
+        "kubernetes/kubernetes"
+      ],
       "automerge": false,
       "automergeType": "pr",
-      "schedule": ["before 10am on monday"]
+      "schedule": [
+        "before 10am on monday"
+      ]
     }
   ],
   "kubernetes": {
-    "managerFilePatterns": ["/k8s/.+\\.yaml$/", "/k8s/.+\\.yml$/"]
+    "managerFilePatterns": [
+      "/k8s/.+\\.yaml$/",
+      "/k8s/.+\\.yml$/"
+    ]
   }
 }

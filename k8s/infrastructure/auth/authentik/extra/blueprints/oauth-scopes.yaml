@@ -9,6 +9,29 @@ metadata:
 entries:
   - model: authentik_providers_oauth2.scopemapping
     identifiers:
+      name: "authentik default OAuth Mapping: OpenID 'openid'"
+    attrs:
+      scope_name: openid
+      description: OpenID Connect identifier
+      expression: |
+        return {
+          "sub": request.user.uid,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "authentik default OAuth Mapping: OpenID 'profile'"
+    attrs:
+      scope_name: profile
+      description: User profile information
+      expression: |
+        return {
+          "name": request.user.name,
+          "preferred_username": request.user.username,
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
       name: "authentik default OAuth Mapping: OpenID 'email'"
     attrs:
       scope_name: email
@@ -29,6 +52,25 @@ entries:
         return {
           "roles": ["superuser", "staff"] if ak_is_group_member(request.user, name="authentik Admins") else []
         }
+
+  - model: authentik_providers_oauth2.scopemapping
+    identifiers:
+      name: "OAuth mapping: OpenID 'roles' for LiteLLM"
+    attrs:
+      scope_name: roles
+      description: LiteLLM role mapping from Authentik groups
+      expression: |
+        group_names = [group.name for group in request.user.ak_groups.all()]
+
+        # Map Authentik groups to LiteLLM roles
+        # Apply mapping - return first matching role (priority: admin > user)
+        roles = []
+        if "Litellm Admins" in group_names:
+            roles.append("proxy_admin")
+        elif "Litellm Users" in group_names:
+            roles.append("internal_user")
+
+        return {"roles": roles}
 
   - model: authentik_providers_oauth2.scopemapping
     identifiers:

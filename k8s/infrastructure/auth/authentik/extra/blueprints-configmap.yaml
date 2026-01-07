@@ -21,10 +21,16 @@ data:
           name: Litellm Users
         attrs:
           name: Litellm Users
+      - id: litellm-admin-group
+        model: authentik_core.group
+        identifiers:
+          name: Litellm Admins
+        attrs:
+          name: Litellm Admins
       - id: litellm_provider
         model: authentik_providers_oauth2.oauth2provider
         identifiers:
-          name: k8s.pc-tips.se/ai/litellm
+          name: k8s.peekoff.com/ai/litellm
         attrs:
           authorization_flow:
             !Find [
@@ -46,7 +52,7 @@ data:
           client_id: !Env LITELLM_CLIENT_ID
           client_secret: !Env LITELLM_CLIENT_SECRET
           redirect_uris:
-            - url: https://litellm.pc-tips.se/sso/callback
+            - url: https://litellm.peekoff.com/sso/callback
               matching_mode: strict
 
           access_code_validity: minutes=1

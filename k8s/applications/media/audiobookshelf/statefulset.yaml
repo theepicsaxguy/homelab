@@ -12,45 +12,33 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 5Gi
     - metadata:
         name: metadata
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 20Gi
     - metadata:
         name: audiobooks
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
-        accessModes: ["ReadWriteMany"]
-        storageClassName: longhorn
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 100Gi
     - metadata:
         name: podcasts
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 50Gi
@@ -69,7 +57,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: audiobookshelf
-          image: ghcr.io/advplyr/audiobookshelf:2.31.0
+          image: ghcr.io/advplyr/audiobookshelf:2.32.1
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -83,7 +71,7 @@ spec:
             - name: OIDC_ENABLED
               value: "true"
             - name: OIDC_ISSUER_URL
-              value: "https://auth.pc-tips.se/application/o/audiobookshelf/"
+              value: "https://auth.peekoff.com/application/o/audiobookshelf/"
             - name: OIDC_CLIENT_ID
               valueFrom:
                 secretKeyRef:

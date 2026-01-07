@@ -10,7 +10,7 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'chat.pc-tips.se'
+    - 'chat.peekoff.com'
   rules:
     - matches:
         - path:

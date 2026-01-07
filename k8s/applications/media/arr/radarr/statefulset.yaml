@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: radarr
-          image: ghcr.io/onedr0p/radarr:5.19.3
+          image: ghcr.io/home-operations/radarr:6.1.0.10316
           ports:
             - name: http
               containerPort: 7878
@@ -51,12 +51,9 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "longhorn"
+        storageClassName: "proxmox-csi"
         resources:
           requests:
             storage: 4Gi

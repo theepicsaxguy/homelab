@@ -1,5 +1,6 @@
-cluster_name   = "talos"
-cluster_domain = "kube.pc-tips.se"
+cluster_name          = "talos"
+cluster_domain        = "cluster.local"
+external_api_endpoint = "api.kube.peekoff.com"
 
 network = {
   gateway     = "10.25.150.1"
@@ -21,7 +22,7 @@ versions = {
 }
 
 oidc = {
-  issuer_url = "https://sso.pc-tips.se/application/o/kubectl/"
+  issuer_url = "https://sso.peekoff.com/application/o/kubectl/"
   client_id  = "kubectl"
 }
 

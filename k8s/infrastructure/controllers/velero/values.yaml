@@ -1,6 +1,6 @@
-upgradeCRDs: true
+upgradeCRDs: false
 deployNodeAgent: true
-snapshotsEnabled: true
+snapshotsEnabled: false
 initContainers:
   - name: velero-plugin-for-aws
     image: velero/velero-plugin-for-aws:v1.13.1
@@ -18,6 +18,10 @@ credentials:
   useSecret: true
   existingSecret: velero-minio-credentials
 configuration:
+  uploaderType: kopia
+  uploaderConfig:
+    parallelFilesUpload: 3
+  backupRepositoryConfigMap: velero-repository-config
   backupStorageLocation:
     - name: default
       provider: aws
@@ -26,12 +30,7 @@ configuration:
       config:
         region: us-west-1
         s3ForcePathStyle: "true"
-        s3Url: http://longhorn-minio-service.longhorn-system.svc:9000
-  volumeSnapshotLocation:
-    - name: default
-      provider: csi
-      config: {}
-features: "EnableCSI"
+        s3Url: https://truenas.peekoff.com:9000
 resources:
   requests:
     cpu: 200m

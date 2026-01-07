@@ -12,37 +12,30 @@ spec:
   volumeClaimTemplates:
     - metadata:
         name: config
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 6Gi
     - metadata:
         name: nzb-backup
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
             storage: 1Gi
     - metadata:
         name: incomplete-downloads
-        labels:
-          recurring-job.longhorn.io/source: enabled
-          recurring-job-group.longhorn.io/weekly: enabled
+        annotations:
+          velero.io/exclude-from-backup: "true"
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: longhorn
+        storageClassName: proxmox-csi
         resources:
           requests:
-            storage: 50Gi
+            storage: 100Gi
   template:
     metadata:
       labels:
@@ -54,7 +47,7 @@ spec:
         fsGroup: 2501
       containers:
         - name: sabnzbd
-          image: ghcr.io/theepicsaxguy/sabnzbd:4.5.3
+          image: ghcr.io/theepicsaxguy/sabnzbd:4.5.5
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -98,20 +91,26 @@ spec:
             httpGet:
               path: /api?mode=version
               port: 8080
-            initialDelaySeconds: 15
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 15
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /api?mode=version
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 15
+            failureThreshold: 10
           securityContext:
             readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
       volumes:
         - name: media-share
           persistentVolumeClaim:

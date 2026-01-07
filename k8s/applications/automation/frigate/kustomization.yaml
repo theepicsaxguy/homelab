@@ -19,7 +19,3 @@ helmCharts:
   repo: https://blakeblackshear.github.io/blakeshome-charts/
   valuesFile: values.yaml
   version: 7.8.0
-
-
-generatorOptions:
-  disableNameSuffixHash: true

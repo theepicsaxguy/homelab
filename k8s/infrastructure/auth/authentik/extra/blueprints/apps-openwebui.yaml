@@ -17,7 +17,7 @@ entries:
   - id: openwebui_provider
     model: authentik_providers_oauth2.oauth2provider
     identifiers:
-      name: k8s.pc-tips.se/ai/openwebui
+      name: k8s.peekoff.com/ai/openwebui
     attrs:
       authorization_flow:
         !Find [
@@ -39,7 +39,7 @@ entries:
       client_id: !Env OPENWEBUI_CLIENT_ID
       client_secret: !Env OPENWEBUI_CLIENT_SECRET
       redirect_uris:
-        - url: https://chat.pc-tips.se/oauth/oidc/callback
+        - url: https://chat.peekoff.com/oauth/oidc/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -48,18 +48,9 @@ entries:
 
       sub_mode: hashed_user_id
       property_mappings:
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'openid'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'profile'"],
-          ]
-        - !Find [
-            authentik_core.propertymapping,
-            [name, "authentik default OAuth Mapping: OpenID 'email'"],
-          ]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
   - id: openwebui_application
     model: authentik_core.application
@@ -69,7 +60,7 @@ entries:
       name: Open WebUI
       group: AI
       meta_description: Self-hosted AI platform
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/openwebui.png
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/open-webui.png
       provider: !KeyOf openwebui_provider
       policy_engine_mode: any
 

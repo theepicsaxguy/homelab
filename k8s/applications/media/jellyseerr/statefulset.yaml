@@ -31,7 +31,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: jellyseerr
-        image: ghcr.io/fallenbagel/jellyseerr:2.7.3
+        image: fallenbagel/jellyseerr:preview-OIDC
         imagePullPolicy: IfNotPresent
         envFrom:
         - secretRef:
@@ -84,14 +84,10 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: config # This name is referenced in the volumeMounts above
-      labels:
-        recurring-job.longhorn.io/source: enabled
-        recurring-job-group.longhorn.io/weekly: enabled
     spec:
       accessModes:
       - ReadWriteOnce
-      # IMPORTANT: Set this to your desired StorageClass, e.g., "longhorn"
-      storageClassName: longhorn
+      storageClassName: proxmox-csi
       resources:
         requests:
           storage: 5Gi

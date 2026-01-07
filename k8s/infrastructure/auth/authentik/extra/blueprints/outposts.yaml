@@ -21,7 +21,7 @@ entries:
       providers: []
       config:
         log_level: info
-        authentik_host: https://sso.pc-tips.se
+        authentik_host: https://sso.peekoff.com
         object_naming_template: ak-outpost-%(name)s
         kubernetes_disabled_components:
           - ingress  # Use HTTPRoute instead
@@ -45,7 +45,7 @@ entries:
   #     providers: [] # This list needs to contain at least one LDAP provider if the outpost is enabled
   #     config:
   #       log_level: info
-  #       authentik_host: https://sso.pc-tips.se
+  #       authentik_host: https://sso.peekoff.com
   #       kubernetes_namespace: auth
 
   - model: authentik_outposts.outpost
@@ -61,15 +61,15 @@ entries:
       providers:
         - !Find [
             authentik_core.provider,
-            [name, "k8s.pc-tips.se/services-frigate"],
+            [name, "k8s.peekoff.com/services-frigate"],
           ]
         - !Find [
             authentik_core.provider,
-            [name, "k8s.pc-tips.se/services-opencode"],
+            [name, "k8s.peekoff.com/services-opencode"],
           ]
       config:
         log_level: info
-        authentik_host: https://sso.pc-tips.se
+        authentik_host: https://sso.peekoff.com
         object_naming_template: ak-outpost-%(name)s
         kubernetes_namespace: auth
         kubernetes_replicas: 1

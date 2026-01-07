@@ -1,79 +1,135 @@
-# OpenTofu (tofu/) - Agent Guidelines
+# OpenTofu Infrastructure - Domain Guidelines
 
-This `AGENTS.md` covers the `tofu/` directory which contains OpenTofu/Terraform configuration used to provision VMs, networking, and cluster bootstrapping.
+SCOPE: Infrastructure provisioning, VM management, and cluster bootstrapping
+INHERITS FROM: /AGENTS.md
+TECHNOLOGIES: OpenTofu (Terraform fork), Proxmox API, Talos Linux, Cloud-init
 
-## Purpose & Scope
+## DOMAIN CONTEXT
 
-- Scope: `tofu/` (all TF files, modules, and generated outputs).
-- Goal: enable an agent to validate, format, and review Terraform changes as text, and prepare a safe plan for human review.
+Purpose: Provision and manage all infrastructure resources including VMs, networking, load balancers, and Talos Linux cluster bootstrapping.
 
-## Quick-start Commands
+Architecture:
+- `tofu/` - Main OpenTofu configuration with variables, providers, modules
+- `tofu/talos/` - Talos Linux machine configuration and cluster bootstrap
+- `tofu/lb/` - Load balancer configuration
+- `tofu/bootstrap/` - Bootstrap modules for cluster infrastructure
 
-Run these commands from the `tofu/` directory.
+## QUICK-START COMMANDS
 
 ```bash
-# Format terraform files
-tofu fmt
+cd tofu
 
-# Validate configuration
+# Format and validate
+tofu fmt
 tofu validate
 
-# Create an execution plan (read-only)
+# Plan and review
 tofu plan -out=tfplan
-
-# Show plan human-readable
 tofu show -no-color tfplan
+
+# Apply (only with explicit authorization)
+tofu apply
 ```
 
-Notes:
-- Do not run `tofu apply` unless you are authorized and changes are approved by humans.
-- The repository contains `terraform.tfstate*` backups — treat these as read-only and never commit state changes.
+## PATTERNS
 
-## Structure & Examples
+### VM Provisioning Pattern
+Define VMs in `tofu/virtual-machines.tf` with node types (control-plane, worker). Use Cloud-init for initial configuration.
 
-- `tofu/` holds variables, provider blocks, and modules for Talos, load balancer, and node definitions.
-- Example files: `main.tf`, `providers.tf`, `output.tf`, `config.auto.tfvars`.
+### Talos Configuration Pattern
+Generate Talos machine configs using `talos_config` data sources. Use `config-machine.tf` for node-specific configs. Inline manifests bootstrap cluster components.
 
-## Safety & Boundaries
+### Network Pattern
+Define network resources in tofu modules. Use static IPs for critical infrastructure (load balancer, control-plane nodes).
 
-- Never commit secrets to `tofu/` or change `config.auto.tfvars` with real credentials.
-- State files (`terraform.tfstate`, backups) are present in the repo for historical reasons; do not edit them.
-- Major infra changes must include a migration/runbook and be performed by an operator with access to the target platform.
+### Bootstrap Pattern
+Use `tofu/bootstrap/` modules to create prerequisite infrastructure:
+- Proxmox CSI plugin user, role, and API token
+- Static persistent volumes for legacy workloads
 
-## How to Propose Changes
+## TESTING
 
-1. Create a branch and edit Terraform files only as text.
-2. Run `tofu fmt` and `tofu validate` locally and attach plan output to the PR as evidence.
-3. Request human review from the infra team and include a rollback plan.
+- Static validation: `tofu fmt` and `tofu validate`
+- Plan review: `tofu plan` output reviewed by humans
+- Requirements: All files formatted, configuration validates, plans reviewed before applying
 
-## Tests & Validation
+## WORKFLOWS
 
-- Static: `tofu validate` and `tofu fmt`.
-- Human review: `tofu plan` outputs must be reviewed before applying.
+**Development:**
+- Edit Terraform files in `tofu/` directory
+- Run `tofu fmt` and `tofu validate`
+- Generate plan with `tofu plan -out=tfplan`
+- Review plan and create PR with plan output
 
-## Code Style & Patterns
+**Deployment:**
+- Infra changes require human authorization and review
+- Apply with `tofu apply` only after plan approval
+- Include rollback plan in PR description
 
-- Use consistent naming: `snake_case` for resource names and variables
-- Group related resources in separate files (e.g., `network.tf`, `compute.tf`)
-- Use variables for values that differ between environments
-- Include descriptions for all variables and outputs
-- Use `locals` for computed values used multiple times
-- Reference existing resources: see `main.tf`, `providers.tf` for patterns
+## COMPONENTS
 
-## Pre-Merge Checklist
+### Main Configuration
+- `main.tf` - Root module and resource references
+- `providers.tf` - Provider configurations
+- `variables.tf` - Variable definitions
+- `output.tf` - Output values
 
-Before merging OpenTofu/Terraform changes, verify:
+### Infrastructure Modules
+- `talos/` - Talos Linux cluster configuration
+  - `config-machine.tf` - Machine-specific configurations
+  - `config-cluster.tf` - Cluster-wide configuration
+  - `virtual-machines.tf` - VM definitions
+- `lb/` - Load balancer configuration
+- `bootstrap/` - Bootstrap modules
 
-- [ ] All `.tf` files are formatted: `tofu fmt` reports no changes
-- [ ] Configuration validates: `tofu validate` passes
-- [ ] Plan has been generated and reviewed: `tofu plan` output attached to PR
-- [ ] No secrets or credentials in code (use variables and `.tfvars` files)
-- [ ] State files (`.tfstate`) are not modified or committed
-- [ ] Changes include rollback plan and migration steps
-- [ ] Variables have descriptions and appropriate defaults
-- [ ] Outputs are defined for values needed by other systems
-- [ ] Changes reviewed by infra team with platform access
-- [ ] Breaking changes documented with upgrade path
+### Configuration Files
+- `config.auto.tfvars` - Variable values (do not commit with secrets)
+- `nodes.auto.tfvars` - Node definitions
+- `defaults.tf` - Default variable values
+- `backend.tf` - State backend configuration
 
----
+## TOFU-DOMAIN ANTI-PATTERNS
 
+### Security & Safety
+- Never commit secrets to Terraform files - use variables and `.tfvars`
+- Never modify state files manually - use Terraform commands
+- Never run `tofu apply` without reviewing plan output
+- Never apply infra changes without human authorization and review
+
+### Configuration Management
+- Never use `--auto-approve` flag - always require human confirmation
+- Never use targeted apply (`-target=...`) unless explicitly approved
+- Never delete resources without understanding dependencies
+- Never hardcode values that should be variables
+- Never skip `tofu fmt` or `tofu validate` before committing
+
+## REFERENCES
+
+## Enterprise Learning Philosophy
+
+### Infrastructure as Learning
+Proxmox + Talos + OpenTofu represents enterprise infrastructure patterns. VM lifecycle management, API-driven configuration, and immutable infrastructure are production skills.
+
+### Production-Grade Decisions
+- **Talos vs standard Linux**: Immutable OS teaches enterprise security patterns
+- **OpenTofu vs manual**: IaC teaches enterprise scalability and audit requirements
+- **API-driven vs GUI**: Automation teaches enterprise operational patterns
+
+### Cross-Domain Integration
+Infrastructure changes enable application deployment through:
+1. VM provisioning → Kubernetes nodes
+2. Network configuration → Application connectivity  
+3. Storage setup → Application persistence
+4. Cluster bootstrapping → Argo CD GitOps pipeline activation
+
+### Enterprise Recovery Patterns
+- State backup/recovery teaches enterprise disaster recovery
+- Configuration drift detection teaches enterprise compliance
+- Version-controlled infrastructure teaches enterprise change management
+
+## REFERENCES
+
+For commit format: /AGENTS.md
+For Kubernetes manifests: k8s/AGENTS.md
+For Talos Linux: Talos documentation
+For Proxmox API: Terraform Proxmox provider documentation

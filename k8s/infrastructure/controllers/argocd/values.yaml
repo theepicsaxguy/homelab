@@ -4,14 +4,14 @@ configs:
     create: true
     application.resourceTrackingMethod: label
     admin.enabled: false
-    url: https://argocd.pc-tips.se
+    url: https://argocd.peekoff.com
     kustomize.buildOptions: '--enable-helm'
     accounts.kubechecks: apiKey
     # OIDC Configuration
     dex.config: |
       connectors:
       - config:
-          issuer: https://sso.pc-tips.se/application/o/argocd/
+          issuer: https://sso.peekoff.com/application/o/argocd/
           clientID: $dex.authentik.clientId
           clientSecret: $dex.authentik.clientSecret
           insecureEnableGroups: true
@@ -19,6 +19,7 @@ configs:
             - openid
             - profile
             - email
+            - groups
         name: authentik
         type: oidc
         id: authentik
@@ -38,8 +39,6 @@ configs:
     policy.csv: |
       g, ArgoCD Admins, role:admin
       g, ArgoCD Viewers, role:readonly
-      g, ArgoCDAdmins, role:admin
-      g, ArgoCDViewers, role:readonly
       g, argocd:admin, role:admin
       g, argocd:read_all, role:readonly
       p, role:kubechecks, applications, get,   */*, allow
@@ -74,7 +73,7 @@ dex:
       cpu: 10m
       memory: 32Mi
     limits:
-      memory: 128Mi
+      memory: 256Mi
 
 redis-ha:
   enabled: false
