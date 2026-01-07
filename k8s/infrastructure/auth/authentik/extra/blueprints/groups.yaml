@@ -109,3 +109,9 @@ entries:
       name: Litellm Admins
     attrs:
       name: Litellm Admins
+  - id: opencode-users
+    model: authentik_core.group
+    identifiers:
+      name: OpenCode Users
+    attrs:
+      name: OpenCode Users
