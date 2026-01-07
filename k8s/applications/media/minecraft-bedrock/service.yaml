@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-bedrock
+  labels:
+    app.kubernetes.io/name: minecraft-bedrock
+    app.kubernetes.io/part-of: media
+  annotations:
+    io.cilium/lb-ipam-ips: 10.25.150.254
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: minecraft-bedrock
+  ports:
+    - port: 19132
+      targetPort: minecraft
+      protocol: UDP
+      name: minecraft

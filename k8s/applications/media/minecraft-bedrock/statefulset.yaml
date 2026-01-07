@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/name: minecraft-bedrock
+    app.kubernetes.io/part-of: media
+  name: minecraft-bedrock
+spec:
+  replicas: 1
+  serviceName: minecraft-bedrock
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minecraft-bedrock
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minecraft-bedrock
+    spec:
+      containers:
+        - name: main
+          image: itzg/minecraft-bedrock-server:2024.12.0
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: minecraft-bedrock
+          volumeMounts:
+            - mountPath: /data
+              name: data
+          ports:
+            - containerPort: 19132
+              protocol: UDP
+              name: minecraft
+          readinessProbe: &probe
+            exec:
+              command:
+                - mc-monitor
+                - status-bedrock
+                - --host
+                - 127.0.0.1
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe: *probe
+          tty: true
+          stdin: true
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: minecraft-bedrock
+          app.kubernetes.io/part-of: media
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: proxmox-csi
+        resources:
+          requests:
+            storage: 1Gi
