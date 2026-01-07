@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: itzg/minecraft-bedrock-server:2024.12.0
+          image: itzg/minecraft-bedrock-server:2025.12.2
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
