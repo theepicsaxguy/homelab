@@ -11,6 +11,7 @@ generatorOptions:
 configMapGenerator:
   - name: authentik-blueprints
     files:
+      - ./blueprints/apps-opencode.yaml
       - ./blueprints/apps-argocd.yaml
       - ./blueprints/apps-frigate.yaml
       - ./blueprints/apps-grafana.yaml
