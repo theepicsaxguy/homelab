@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Apps - OpenCode
+entries:
+  - id: opencode_proxy_provider
+    model: authentik_providers_proxy.proxyprovider
+    identifiers:
+      name: k8s.peekoff.com/services-opencode
+    attrs:
+      # Standard flows
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      # External URL that users will access
+      external_host: https://opencode.peekoff.com
+
+      # Internal service URL - OpenCode service in opencode namespace
+      internal_host: http://opencode-web.opencode.svc.cluster.local:5003
+      internal_host_ssl_validation: false
+
+      # Pass user info headers to OpenCode - no exclusions
+      basic_auth_enabled: false
+      mode: forward_single
+
+      # Session validity
+      access_token_validity: hours=4
+      refresh_token_validity: days=30
+
+  - id: opencode_application
+    model: authentik_core.application
+    identifiers:
+      slug: opencode
+    attrs:
+      name: OpenCode
+      group: AI
+      meta_description: AI-powered coding assistant
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/code.png
+      provider: !KeyOf opencode_proxy_provider
+      policy_engine_mode: any
+
+  - id: opencode_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf opencode_application
+      group: !Find [authentik_core.group, [name, "OpenCode Users"]]
+    attrs:
+      order: 1
