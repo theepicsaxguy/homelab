@@ -16,13 +16,28 @@ spec:
       labels:
         app.kubernetes.io/name: minecraft-bedrock
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: main
           image: itzg/minecraft-bedrock-server:2025.12.2
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           envFrom:
             - configMapRef:
                 name: minecraft-bedrock
+            - secretRef:
+                name: minecraft-bedrock-admins
+
           volumeMounts:
             - mountPath: /data
               name: data
@@ -30,6 +45,12 @@ spec:
             - containerPort: 19132
               protocol: UDP
               name: minecraft
+            - containerPort: 19133
+              protocol: UDP
+              name: minecraft-v6
+            - containerPort: 2222
+              protocol: TCP
+              name: ssh
           readinessProbe: &probe
             exec:
               command:

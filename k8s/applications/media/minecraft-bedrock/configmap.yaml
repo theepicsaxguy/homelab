@@ -7,27 +7,64 @@ metadata:
     app.kubernetes.io/part-of: media
     role: service-config
 data:
-  # Find more options at https://github.com/itzg/docker-minecraft-bedrock-server#server-properties
-  # Remove # from in front of line if changing from default values.
-  EULA: "TRUE" # Must accept EULA to use this minecraft server
-  #GAMEMODE: "survival" # Options: survival, creative, adventure
-  #DIFFICULTY: "easy" # Options: peaceful, easy, normal, hard
-  #DEFAULT_PLAYER_PERMISSION_LEVEL: "member" # Options: visitor, member, operator
-  #LEVEL_NAME: "my_minecraft_world"
-  #LEVEL_SEED: "33480944"
-  #SERVER_NAME: "my_minecraft_server"
-  #SERVER_PORT: "19132"
-  #LEVEL_TYPE: "DEFAULT" # Options: FLAT, LEGACY, DEFAULT
-  #ALLOW_CHEATS: "false" # Options: true, false
-  #MAX_PLAYERS: "10"
-  #PLAYER_IDLE_TIMEOUT: "30"
-  #TEXTUREPACK_REQUIRED: "false" # Options: true, false
-  #
-  ## Changing these will have a security impact
-  #ONLINE_MODE: "true" # Options: true, false (removes Xbox Live account requirements)
-  #WHITE_LIST: "false" # If enabled, need to provide a whitelist.json by your own means. 
-  #
-  ## Changing these will have a performance impact
-  #VIEW_DISTANCE: "10"
-  #TICK_DISTANCE: "4"
-  #MAX_THREADS: "8"
+  EULA: "TRUE"
+  VERSION: "LATEST"
+  TZ: "Europe/Stockholm"
+  PACKAGE_BACKUP_KEEP: "10"
+  ENABLE_SSH: "false"
+
+  SERVER_NAME: "Homelab Bedrock Server"
+  GAMEMODE: "survival"
+  FORCE_GAMEMODE: "false"
+  DIFFICULTY: "normal"
+  ALLOW_CHEATS: "false"
+  MAX_PLAYERS: "20"
+  ONLINE_MODE: "true"
+  ALLOW_LIST: "false"
+  SERVER_PORT: "19132"
+  SERVER_PORT_V6: "19133"
+  ENABLE_LAN_VISIBILITY: "true"
+  VIEW_DISTANCE: "12"
+  TICK_DISTANCE: "6"
+  PLAYER_IDLE_TIMEOUT: "30"
+  MAX_THREADS: "8"
+  LEVEL_NAME: "Bedrock level"
+  LEVEL_TYPE: "DEFAULT"
+  DEFAULT_PLAYER_PERMISSION_LEVEL: "member"
+  TEXTUREPACK_REQUIRED: "false"
+  CONTENT_LOG_FILE_ENABLED: "true"
+  CONTENT_LOG_LEVEL: "info"
+  CONTENT_LOG_CONSOLE_OUTPUT_ENABLED: "true"
+  COMPRESSION_THRESHOLD: "1"
+  COMPRESSION_ALGORITHM: "zlib"
+  SERVER_AUTHORITATIVE_MOVEMENT: "server-auth"
+  PLAYER_POSITION_ACCEPTANCE_THRESHOLD: "0.5"
+  PLAYER_MOVEMENT_SCORE_THRESHOLD: "20"
+  PLAYER_MOVEMENT_ACTION_DIRECTION_THRESHOLD: "0.1"
+  PLAYER_MOVEMENT_DISTANCE_THRESHOLD: "0.3"
+  PLAYER_MOVEMENT_DURATION_THRESHOLD_IN_MS: "500"
+  CORRECT_PLAYER_MOVEMENT: "true"
+  SERVER_AUTHORITATIVE_BLOCK_BREAKING: "true"
+  SERVER_AUTHORITATIVE_BLOCK_BREAKING_PICK_RANGE_SCALAR: "1.0"
+  CHAT_RESTRICTION: "None"
+  DISABLE_PLAYER_INTERACTION: "false"
+  CLIENT_SIDE_CHUNK_GENERATION_ENABLED: "false"
+  BLOCK_NETWORK_IDS_ARE_HASHES: "true"
+  DISABLE_PERSONA: "false"
+  DISABLE_CUSTOM_SKINS: "false"
+  SERVER_BUILD_RADIUS_RATIO: "1.0"
+  ALLOW_OUTBOUND_SCRIPT_DEBUGGING: "false"
+  ALLOW_INBOUND_SCRIPT_DEBUGGING: "false"
+  SCRIPT_WATCHDOG_ENABLE: "true"
+  SCRIPT_WATCHDOG_ENABLE_EXCEPTION_HANDLING: "true"
+  SCRIPT_WATCHDOG_ENABLE_SHUTDOWN: "true"
+  SCRIPT_WATCHDOG_HANG_EXCEPTION: "true"
+  SCRIPT_WATCHDOG_HANG_THRESHOLD: "300"
+  SCRIPT_WATCHDOG_SPIKE_THRESHOLD: "5"
+  SCRIPT_WATCHDOG_SLOW_THRESHOLD: "30"
+  SCRIPT_WATCHDOG_MEMORY_WARNING: "80"
+  SCRIPT_WATCHDOG_MEMORY_LIMIT: "90"
+  OP_PERMISSION_LEVEL: "4"
+  EMIT_SERVER_TELEMETRY: "false"
+  MSA_GAMERTAGS_ONLY: "false"
+  ITEM_TRANSACTION_LOGGING_ENABLED: "true"

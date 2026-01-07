@@ -16,3 +16,11 @@ spec:
       targetPort: minecraft
       protocol: UDP
       name: minecraft
+    - port: 19133
+      targetPort: minecraft-v6
+      protocol: UDP
+      name: minecraft-v6
+    - port: 2222
+      targetPort: ssh
+      protocol: TCP
+      name: ssh
