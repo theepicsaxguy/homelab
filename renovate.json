@@ -10,6 +10,9 @@
     "mergeConfidence:all-badges"
   ],
   "dependencyDashboard": true,
+  "docker": {
+    "registryUrls": ["registry.k8s.io"]
+  },
   "kustomize": {
     "managerFilePatterns": [
       "/(^|/)kustomization\\.ya?ml(\\.j2)?$/"
@@ -127,6 +130,13 @@
       "schedule": [
         "before 10am on monday"
       ]
+    },
+    {
+      "description": "Handle descheduler image from registry.k8s.io",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "registry.k8s.io/descheduler/descheduler"
+      ]
     }
   ],
   "kubernetes": {
@@ -134,5 +144,11 @@
       "/k8s/.+\\.yaml$/",
       "/k8s/.+\\.yml$/"
     ]
-  }
+  },
+  "hostRules": [
+    {
+      "hostType": "docker",
+      "matchHost": "registry.k8s.io"
+    }
+  ]
 }
