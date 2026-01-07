@@ -46,7 +46,7 @@ spec:
           emptyDir: {}
         - name: home-local
           emptyDir: {}
-        - name: home-cache
+        - name: home-cache  # New volume for .cache
           emptyDir: {}
         - name: home-config
           emptyDir: {}
@@ -113,6 +113,8 @@ spec:
               mountPath: /home/node/.local
             - name: home-config
               mountPath: /home/node/.config
+            - name: home-cache  # Mount the new volume
+              mountPath: /home/node/.cache
             - name: github-credentials
               mountPath: /home/node/.git-credentials
               subPath: GITHUB_TOKEN
