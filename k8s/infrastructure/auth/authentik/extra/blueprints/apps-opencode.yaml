@@ -30,8 +30,9 @@ entries:
       # Internal service URL - OpenCode service in opencode namespace
       internal_host: http://opencode-web.opencode.svc.cluster.local:5003
       internal_host_ssl_validation: false
+      skip_path_regex: ^/api/.*
 
-      # Pass user info headers to OpenCode - no exclusions
+      # Pass user info headers to OpenCode
       basic_auth_enabled: false
       mode: forward_single
 
