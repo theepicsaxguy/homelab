@@ -12,3 +12,19 @@ spec:
   - group: ""
     kind: Service
     name: ak-outpost-authentik-embedded-outpost
+---
+
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-opencode-to-auth-services
+  namespace: auth  # This must be in the target namespace (auth)
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: opencode
+  to:
+  - group: ""
+    kind: Service
+    name: ak-outpost-authentik-embedded-outpost

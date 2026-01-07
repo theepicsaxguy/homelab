@@ -63,6 +63,10 @@ entries:
             authentik_core.provider,
             [name, "k8s.pc-tips.se/services-frigate"],
           ]
+        - !Find [
+            authentik_core.provider,
+            [name, "k8s.pc-tips.se/services-opencode"],
+          ]
       config:
         log_level: info
         authentik_host: https://sso.pc-tips.se

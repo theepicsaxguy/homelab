@@ -1,13 +1,34 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: opencode-web
+  name: opencode-external
+  namespace: opencode
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+  hostnames:
+    - "opencode.pc-tips.se"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: ak-outpost-authentik-embedded-outpost
+          namespace: auth
+          port: 9000
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: opencode-internal
   namespace: opencode
 spec:
   parentRefs:
     - name: internal
-      namespace: gateway
-    - name: external
       namespace: gateway
   hostnames:
     - "opencode.pc-tips.se"
