@@ -17,7 +17,7 @@ data:
   GAMEMODE: "survival"
   FORCE_GAMEMODE: "false"
   DIFFICULTY: "normal"
-  ALLOW_CHEATS: "false"
+  ALLOW_CHEATS: "true"
   MAX_PLAYERS: "20"
   ONLINE_MODE: "true"
   ALLOW_LIST: "false"
