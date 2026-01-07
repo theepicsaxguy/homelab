@@ -35,6 +35,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: minecraft-bedrock
+            - secretRef:
+                name: minecraft-bedrock-admins
+
           volumeMounts:
             - mountPath: /data
               name: data
@@ -42,6 +45,12 @@ spec:
             - containerPort: 19132
               protocol: UDP
               name: minecraft
+            - containerPort: 19133
+              protocol: UDP
+              name: minecraft-v6
+            - containerPort: 2222
+              protocol: TCP
+              name: ssh
           readinessProbe: &probe
             exec:
               command:

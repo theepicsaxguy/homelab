@@ -4,5 +4,6 @@ namespace: minecraft
 resources:
   - namespace.yaml
   - configmap.yaml
+  - admin-external-secret.yaml
   - statefulset.yaml
   - service.yaml
