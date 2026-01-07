@@ -50,6 +50,10 @@ spec:
           emptyDir: {}
         - name: home-config
           emptyDir: {}
+        - name: github-credentials
+          secret:
+            secretName: app-opencode-github-token
+            optional: false
       containers:
         - name: opencode-web
           image: ghcr.io/chriswritescode-dev/opencode-manager:0.5.7
@@ -109,6 +113,10 @@ spec:
               mountPath: /home/node/.local
             - name: home-config
               mountPath: /home/node/.config
+            - name: github-credentials
+              mountPath: /home/node/.git-credentials
+              subPath: GITHUB_TOKEN
+              readOnly: true
           resources:
             requests:
               cpu: "250m"
