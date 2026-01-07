@@ -48,6 +48,12 @@ spec:
           emptyDir: {}
         - name: home-cache
           emptyDir: {}
+        - name: home-config
+          emptyDir: {}
+        - name: github-credentials
+          secret:
+            secretName: app-opencode-github-token
+            optional: false
       containers:
         - name: opencode-web
           image: ghcr.io/chriswritescode-dev/opencode-manager:0.5.7
@@ -91,6 +97,11 @@ spec:
               value: "60"
             - name: DEBUG
               value: "false"
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-opencode-github-token
+                  key: GITHUB_TOKEN
           volumeMounts:
             - name: workspace
               mountPath: /workspace
@@ -100,6 +111,12 @@ spec:
               mountPath: /tmp
             - name: home-local
               mountPath: /home/node/.local
+            - name: home-config
+              mountPath: /home/node/.config
+            - name: github-credentials
+              mountPath: /home/node/.git-credentials
+              subPath: GITHUB_TOKEN
+              readOnly: true
           resources:
             requests:
               cpu: "250m"
