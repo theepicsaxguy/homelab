@@ -1,5 +1,70 @@
 # Changelog
 
+## 5.1.0 (2026-01-08)
+
+## What's Changed
+* chore(deps): update helm release kube-prometheus-stack to v80.8.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1952
+* chore(deps): update helm release kube-prometheus-stack to v80.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1954
+* chore(deps): update helm release kube-prometheus-stack to v80.9.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1955
+* Feat(tofu)--implement-Kubernetes-bootstrap-with-OpenTofu by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1956
+* chore(deps): update helm release kube-prometheus-stack to v80.9.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1957
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1958
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.30.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1959
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1960
+* Feat(tofu)--enhance-Backblaze-B2-remote-state-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1961
+* fix(k8s): remove wildcard namespace from AppProject destinations by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1963
+* chore(deps): update terraform aws to v6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1962
+* fix(renovate): correct URL regex patterns to capture org/repo format by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1964
+* fix(k8s): remove fixed destination namespace from ApplicationSets by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1965
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1966
+* Chore(k8s)--update-container-images-and-configuration-settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1967
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1968
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1969
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1970
+* feat(auth): enable SMTP email and passwordless WebAuthn login in Authentik by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1971
+* feat(k8s): expand sabnzbd incomplete-downloads to 100GB with Velero exclusion by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1972
+* chore(deps): update helm release kube-prometheus-stack to v80.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1973
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1974
+* Fix(k8s)--update-sabnzbd-readiness-and-liveness-probe-settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1975
+* chore(deps): update terraform proxmox to v0.91.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1976
+* Fix/argocd-sso-groups by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1977
+* Feat(k8s)--enhance-Home-Assistant-statefulset-configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1978
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1979
+* chore(deps): update ghcr.io/home-operations/radarr docker tag to v6.1.0.10316 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1980
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.5.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1981
+* Enhance-AGENTS.md-and-proxy_server_config.yaml-for-improved-role-management by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1982
+* chore(deps): update lscr.io/linuxserver/bazarr docker tag to v1.5.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1983
+* chore(deps): update helm release kube-prometheus-stack to v80.11.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1984
+* chore(deps): update n8nio/n8n docker tag to v2.2.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1985
+* chore(deps): update n8nio/n8n docker tag to v2.3.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1986
+* fix(k8s): align LiteLLM JWT field to match Authentik "roles" claim by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1987
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1988
+* chore(deps): update helm release kube-prometheus-stack to v80.12.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1989
+* feat(k8s): add authentik blueprint for pinepods oauth integration by @Copilot in https://github.com/theepicsaxguy/homelab/pull/1990
+* chore(deps): update helm release kube-prometheus-stack to v80.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1991
+* Fix(k8s)--update-LiteLLM-deployment-and-proxy-server-configuration-for-role-management by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1992
+* feat(auth): add Authentik SSO for OpenCode external gateway by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1994
+* feat(k8s): add GitHub token external secret for OpenCode by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1995
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1996
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/1997
+* Update kustomization.yml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/1999
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2000
+* feat(k8s): add minecraft-bedrock dedicated server by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2002
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2001
+* chore(deps): update itzg/minecraft-bedrock-server docker tag to v2025 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2003
+* fix(renovate): configure registry.k8s.io for descheduler image lookup by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2004
+* Fix/minecraft bedrock security by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2005
+* Update configmap.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2006
+* chore(deps): update helm release kube-prometheus-stack to v80.13.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2007
+* feat(k8s): add audiobookshelf group and redirect URIs to authentik by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2008
+* feat(k8s): add audiobookshelf admins group and fix group claim casing by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2009
+* fix(k8s): add category to Cloudflare and fix French category in Home Assistant by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2010
+* fix(k8s): add issuer_mode per_provider to audiobookshelf oauth2 provider by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2011
+* chore(config): migrate Renovate config by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2012
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.0.0...v5.1.0
+
 ## 5.0.0 (2025-12-30)
 
 ## What's Changed
