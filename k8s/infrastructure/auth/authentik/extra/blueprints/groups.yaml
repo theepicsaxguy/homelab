@@ -118,6 +118,12 @@ entries:
   - id: audiobookshelf-users
     model: authentik_core.group
     identifiers:
-      name: Audiobookshelf Users
+      name: audiobookshelf users
     attrs:
-      name: Audiobookshelf Users
+      name: audiobookshelf users
+  - id: audiobookshelf-admins
+    model: authentik_core.group
+    identifiers:
+      name: audiobookshelf admins
+    attrs:
+      name: audiobookshelf admins
