@@ -427,9 +427,13 @@ entries:
       client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
       client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
       redirect_uris:
-        - url: https://audiobookshelf.peekoff.com/auth/openid/callback
+        - url: https://audiobookshelf.peekoff.com/audiobookshelf/auth/openid/callback
+          matching_mode: strict
+        - url: audiobookshelf://oauth
           matching_mode: strict
         - url: https://audiobookshelf.peekoff.com/auth/openid/mobile-redirect
+          matching_mode: strict
+        - url: https://audiobookshelf.peekoff.com/auth/openid/callback
           matching_mode: strict
 
       access_code_validity: minutes=1
@@ -454,10 +458,10 @@ entries:
       provider: !KeyOf provider-audiobookshelf
       policy_engine_mode: any
 
-  - id: audiobookshelf_policy_binding
+   - id: audiobookshelf_policy_binding
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-audiobookshelf
-      group: !Find [authentik_core.group, [name, "Media Users"]]
+      group: !Find [authentik_core.group, [name, "Audiobookshelf Users"]]
     attrs:
       order: 1
