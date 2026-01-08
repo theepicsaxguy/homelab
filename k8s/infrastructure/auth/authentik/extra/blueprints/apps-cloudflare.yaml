@@ -39,6 +39,7 @@ entries:
       slug: cloudflare
     attrs:
       name: Cloudflare Zero Trust
+      group: Infrastructure
       provider: !KeyOf cloudflare_provider
       policy_engine_mode: all
       open_in_new_tab: true
