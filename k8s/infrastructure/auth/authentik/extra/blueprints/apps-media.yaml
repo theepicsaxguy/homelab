@@ -423,53 +423,54 @@ entries:
           [slug, "default-provider-invalidation-flow"],
         ]
 
-      client_type: confidential
-      client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
-      client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
-      redirect_uris:
-        - url: https://audiobookshelf.peekoff.com/audiobookshelf/auth/openid/callback
-          matching_mode: strict
-        - url: audiobookshelf://oauth
-          matching_mode: strict
-        - url: https://audiobookshelf.peekoff.com/auth/openid/mobile-redirect
-          matching_mode: strict
-        - url: https://audiobookshelf.peekoff.com/auth/openid/callback
-          matching_mode: strict
+       client_type: confidential
+       client_id: !Env AUDIOBOOKSHELF_CLIENT_ID
+       client_secret: !Env AUDIOBOOKSHELF_CLIENT_SECRET
+       redirect_uris:
+         - url: https://audiobookshelf.peekoff.com/audiobookshelf/auth/openid/callback
+           matching_mode: strict
+         - url: audiobookshelf://oauth
+           matching_mode: strict
+         - url: https://audiobookshelf.peekoff.com/auth/openid/mobile-redirect
+           matching_mode: strict
+         - url: https://audiobookshelf.peekoff.com/auth/openid/callback
+           matching_mode: strict
 
-      access_code_validity: minutes=1
-      access_token_validity: hours=1
-      refresh_token_validity: days=30
+       access_code_validity: minutes=1
+       access_token_validity: hours=1
+       refresh_token_validity: days=30
 
-      sub_mode: hashed_user_id
-      property_mappings:
-        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
-        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
-        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+       issuer_mode: per_provider
+       sub_mode: hashed_user_id
+       property_mappings:
+         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+         - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
 
-  - id: application-audiobookshelf
-    model: authentik_core.application
-    identifiers:
-      slug: audiobookshelf
-    attrs:
-      name: Audiobookshelf
-      group: Media
-      meta_description: Audiobook and podcast management
-      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/audiobookshelf.png
-      provider: !KeyOf provider-audiobookshelf
-      policy_engine_mode: any
+   - id: application-audiobookshelf
+     model: authentik_core.application
+     identifiers:
+       slug: audiobookshelf
+     attrs:
+       name: Audiobookshelf
+       group: Media
+       meta_description: Audiobook and podcast management
+       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/audiobookshelf.png
+       provider: !KeyOf provider-audiobookshelf
+       policy_engine_mode: any
 
    - id: audiobookshelf_policy_binding
-    model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf application-audiobookshelf
-      group: !Find [authentik_core.group, [name, "audiobookshelf users"]]
-    attrs:
-      order: 1
+     model: authentik_policies.policybinding
+     identifiers:
+       target: !KeyOf application-audiobookshelf
+       group: !Find [authentik_core.group, [name, "audiobookshelf users"]]
+     attrs:
+       order: 1
 
-  - id: audiobookshelf_admins_policy_binding
-    model: authentik_policies.policybinding
-    identifiers:
-      target: !KeyOf application-audiobookshelf
-      group: !Find [authentik_core.group, [name, "audiobookshelf admins"]]
-    attrs:
-      order: 2
+   - id: audiobookshelf_admins_policy_binding
+     model: authentik_policies.policybinding
+     identifiers:
+       target: !KeyOf application-audiobookshelf
+       group: !Find [authentik_core.group, [name, "audiobookshelf admins"]]
+     attrs:
+       order: 2
