@@ -10,18 +10,11 @@
     "mergeConfidence:all-badges"
   ],
   "dependencyDashboard": true,
-  "docker": {
-    "registryUrls": ["registry.k8s.io"]
-  },
   "kustomize": {
-    "managerFilePatterns": [
-      "/(^|/)kustomization\\.ya?ml(\\.j2)?$/"
-    ]
+    "managerFilePatterns": ["/(^|/)kustomization\\.ya?ml(\\.j2)?$/"]
   },
   "helm-values": {
-    "managerFilePatterns": [
-      "/k8s/.+/values\\.yaml$/"
-    ]
+    "managerFilePatterns": ["/k8s/.+/values\\.yaml$/"]
   },
   "customManagers": [
     {
@@ -42,16 +35,17 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": [
-        "/Dockerfile$/",
-        "/Dockerfile\\..*$/"
-      ],
+      "managerFilePatterns": ["/Dockerfile$/", "/Dockerfile\\..*$/"],
       "matchStrings": [
         "ARG\\s+\\w+=(?<currentValue>[\\w+\\.\\-]*)['\"]?\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(versioning=(?<versioning>\\S+))?"
       ]
     }
   ],
   "packageRules": [
+    {
+      "matchCategories": ["docker"],
+      "registryUrls": ["registry.k8s.io"]
+    },
     {
       "groupName": "Media containers",
       "matchDatasources": ["docker"],
@@ -62,88 +56,52 @@
     },
     {
       "groupName": "Netbird",
-      "matchPackageNames": [
-        "/docker.io/netbirdio/.*/"
-      ]
+      "matchPackageNames": ["/docker.io/netbirdio/.*/"]
     },
     {
       "groupName": "Intel Device Plugins",
-      "matchPackageNames": [
-        "/intel-device-plugins/.*/"
-      ]
+      "matchPackageNames": ["/intel-device-plugins/.*/"]
     },
     {
       "groupName": "Cilium",
       "automerge": true,
-      "matchPackageNames": [
-        "/cilium/.*/"
-      ]
+      "matchPackageNames": ["/cilium/.*/"]
     },
     {
-      "matchManagers": [
-        "terraform"
-      ],
-      "matchDepTypes": [
-        "provider",
-        "required_provider"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchManagers": ["terraform"],
+      "matchDepTypes": ["provider", "required_provider"],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
     {
-      "matchManagers": [
-        "helm-values",
-        "helm-requirements"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchManagers": ["helm-values", "helm-requirements"],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
     {
       "groupName": "external-secrets",
-      "matchPackageNames": [
-        "/^ghcr.io/external-secrets//"
-      ]
+      "matchPackageNames": ["/^ghcr.io/external-secrets//"]
     },
     {
       "groupName": "all dependencies",
-      "matchPackageNames": [
-        "*"
-      ]
+      "matchPackageNames": ["*"]
     },
     {
       "description": "Prevent automatic upgrades for Talos and Kubernetes versions in tofu/ - require manual review",
-      "matchFileNames": [
-        "/tofu/.*\\.(tf|tfvars|tftpl)$/"
-      ],
-      "matchPackageNames": [
-        "siderolabs/talos",
-        "kubernetes/kubernetes"
-      ],
+      "matchFileNames": ["/tofu/.*\\.(tf|tfvars|tftpl)$/"],
+      "matchPackageNames": ["siderolabs/talos", "kubernetes/kubernetes"],
       "automerge": false,
       "automergeType": "pr",
-      "schedule": [
-        "before 10am on monday"
-      ]
+      "schedule": ["before 10am on monday"]
     },
     {
       "description": "Handle descheduler image from registry.k8s.io",
       "matchDatasources": ["docker"],
-      "matchPackageNames": [
-        "registry.k8s.io/descheduler/descheduler"
-      ]
+      "matchPackageNames": ["registry.k8s.io/descheduler/descheduler"]
     }
   ],
   "kubernetes": {
-    "managerFilePatterns": [
-      "/k8s/.+\\.yaml$/",
-      "/k8s/.+\\.yml$/"
-    ]
+    "managerFilePatterns": ["/k8s/.+\\.yaml$/", "/k8s/.+\\.yml$/"]
   },
   "hostRules": [
     {
