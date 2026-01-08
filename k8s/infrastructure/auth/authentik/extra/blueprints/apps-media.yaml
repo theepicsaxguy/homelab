@@ -462,6 +462,14 @@ entries:
     model: authentik_policies.policybinding
     identifiers:
       target: !KeyOf application-audiobookshelf
-      group: !Find [authentik_core.group, [name, "Audiobookshelf Users"]]
+      group: !Find [authentik_core.group, [name, "audiobookshelf users"]]
     attrs:
       order: 1
+
+  - id: audiobookshelf_admins_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf application-audiobookshelf
+      group: !Find [authentik_core.group, [name, "audiobookshelf admins"]]
+    attrs:
+      order: 2
