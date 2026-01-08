@@ -66,10 +66,10 @@ spec:
           resources:
             requests:
               memory: "1Gi"
-              cpu: "500m"
+              cpu: "100m"
             limits:
               memory: "2Gi"
-              cpu: "1000m"
+              cpu: "2000m"
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -82,4 +82,4 @@ spec:
         storageClassName: proxmox-csi
         resources:
           requests:
-            storage: 1Gi
+            storage: 5Gi
