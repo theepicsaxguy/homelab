@@ -402,10 +402,10 @@ entries:
     attrs:
       order: 1
 
-  - id: provider-audiobookshelf
-    model: authentik_providers_oauth2.oauth2provider
-    identifiers:
-      name: k8s.peekoff.com/media/audiobookshelf
+   - id: provider-audiobookshelf
+     model: authentik_providers_oauth2.oauth2provider
+     identifiers:
+       name: k8s.peekoff.com/services-media/audiobookshelf
     attrs:
       authorization_flow:
         !Find [
