@@ -115,3 +115,9 @@ entries:
       name: OpenCode Users
     attrs:
       name: OpenCode Users
+  - id: audiobookshelf-users
+    model: authentik_core.group
+    identifiers:
+      name: Audiobookshelf Users
+    attrs:
+      name: Audiobookshelf Users
