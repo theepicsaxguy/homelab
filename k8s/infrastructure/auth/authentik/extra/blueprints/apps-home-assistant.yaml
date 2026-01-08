@@ -51,7 +51,7 @@ entries:
       slug: home-assistant
     attrs:
       name: Home assistant
-      group: Maison
+      group: Home Automation
       description: Home automation
       meta_launch_url: https://peekoff.com
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/home-assistant.png
