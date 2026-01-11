@@ -38,7 +38,7 @@ spec:
           emptyDir: {}
       containers:
         - name: open-webui
-          image: ghcr.io/open-webui/open-webui:v0.7.1-slim
+          image: ghcr.io/open-webui/open-webui:v0.7.2-slim
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
