@@ -33,7 +33,7 @@ entries:
 
       # Pass user info headers to OpenCode - no exclusions
       basic_auth_enabled: false
-      mode: forward_single
+      mode: proxy
 
       # Session validity
       access_token_validity: hours=4
@@ -48,6 +48,7 @@ entries:
       group: AI
       meta_description: AI-powered coding assistant
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/code.png
+      meta_launch_url: https://opencode.peekoff.com
       provider: !KeyOf opencode_proxy_provider
       policy_engine_mode: any
 

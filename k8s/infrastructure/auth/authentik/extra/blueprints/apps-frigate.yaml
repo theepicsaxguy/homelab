@@ -34,7 +34,7 @@ entries:
 
       # Pass user info headers to Frigate
       basic_auth_enabled: false
-      mode: forward_single
+      mode: proxy
 
       # Session validity
       access_token_validity: hours=4
@@ -49,6 +49,7 @@ entries:
       group: Home Automation
       meta_description: AI-powered NVR with real-time object detection
       icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/frigate.png
+      meta_launch_url: https://frigate.peekoff.com
       provider: !KeyOf frigate_proxy_provider
       policy_engine_mode: any
 
