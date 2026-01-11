@@ -15,7 +15,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: ak-outpost-authentik-embedded-outpost
+        - name: ak-outpost-proxy-outpost
           namespace: auth
           port: 9000
 
