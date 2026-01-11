@@ -1,5 +1,20 @@
 # Changelog
 
+## 5.1.1 (2026-01-11)
+
+## What's Changed
+* fix(k8s): add issuer_mode per_provider to audiobookshelf oauth2 provider by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2013
+* chore(deps): update coredns/coredns docker tag to v1.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2015
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2016
+* chore(deps): update helm release kube-prometheus-stack to v80.13.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2017
+* chore(deps): update n8nio/n8n docker tag to v2.3.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2018
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.7.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2019
+* chore(deps): update terraform proxmox to v0.92.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2020
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2021
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.1.0...v5.1.1
+
 ## 5.1.0 (2026-01-08)
 
 ## What's Changed
