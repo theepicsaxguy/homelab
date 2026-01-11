@@ -56,7 +56,7 @@ spec:
             optional: false
       containers:
         - name: opencode-web
-          image: ghcr.io/chriswritescode-dev/opencode-manager:0.5.7
+          image: ghcr.io/chriswritescode-dev/opencode-manager:0.5.9
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
