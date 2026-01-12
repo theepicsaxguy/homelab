@@ -1,0 +1,73 @@
+# k8s/infrastructure/auth/authentik/extra/blueprints/apps-tmail.yaml
+# yaml-language-server: $schema=https://goauthentik.io/blueprints/schema.json
+# yamllint disable-file
+# prettier-ignore-start
+# eslint-disable
+---
+version: 1
+metadata:
+  name: Apps - Tmail
+entries:
+  - id: tmail-user-group
+    model: authentik_core.group
+    identifiers:
+      name: Tmail Users
+    attrs:
+      name: Tmail Users
+  - id: tmail_provider
+    model: authentik_providers_oauth2.oauth2provider
+    identifiers:
+      name: k8s.peekoff.com/web/tmail
+    attrs:
+      authorization_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-authorization-implicit-consent"],
+        ]
+      signing_key:
+        !Find [
+          authentik_crypto.certificatekeypair,
+          [name, "authentik Self-signed Certificate"],
+        ]
+      invalidation_flow:
+        !Find [
+          authentik_flows.flow,
+          [slug, "default-provider-invalidation-flow"],
+        ]
+
+      client_type: confidential
+      client_id: !Env TMAIL_CLIENT_ID
+      client_secret: !Env TMAIL_CLIENT_SECRET
+      redirect_uris:
+        - url: https://mail.peekoff.com/auth/callback
+          matching_mode: strict
+
+      access_code_validity: minutes=1
+      access_token_validity: hours=1
+      refresh_token_validity: days=30
+
+      sub_mode: hashed_user_id
+      property_mappings:
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "openid"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "profile"]]
+        - !Find [authentik_providers_oauth2.scopemapping, [scope_name, "email"]]
+
+  - id: tmail_application
+    model: authentik_core.application
+    identifiers:
+      slug: tmail
+    attrs:
+      name: Tmail
+      group: Web
+      meta_description: Webmail Client
+      icon: https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/thunderbird.png
+      provider: !KeyOf tmail_provider
+      policy_engine_mode: any
+
+  - id: tmail_policy_binding
+    model: authentik_policies.policybinding
+    identifiers:
+      target: !KeyOf tmail_application
+      group: !Find [authentik_core.group, [name, "Tmail Users"]]
+    attrs:
+      order: 1

@@ -17,6 +17,8 @@ spec:
       server: '*'
     - namespace: 'pinepods'
       server: '*'
+    - namespace: 'tmail'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
