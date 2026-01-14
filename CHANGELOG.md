@@ -1,5 +1,42 @@
 # Changelog
 
+## 5.2.0 (2026-01-14)
+
+## What's Changed
+* fix(k8s): add issuer_mode per_provider to audiobookshelf oauth2 provider by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2013
+* chore(deps): update coredns/coredns docker tag to v1.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2015
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2016
+* chore(deps): update helm release kube-prometheus-stack to v80.13.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2017
+* chore(deps): update n8nio/n8n docker tag to v2.3.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2018
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.7.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2019
+* chore(deps): update terraform proxmox to v0.92.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2020
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2021
+* fix(auth): change authentik proxy mode from forward_single to proxy for frigate and opencode by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2022
+* fix(auth): route Frigate and OpenCode through proxy outpost by @Copilot in https://github.com/theepicsaxguy/homelab/pull/2023
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.1.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2024
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2025
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2026
+* feat(k8s): add tmail webmail client with authentik OIDC integration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2027
+* chore(deps): update dependency externalsecret to external-secrets.io/v1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2028
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2029
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2030
+* chore(deps): update node.js to v24.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2031
+* chore(deps): update helm release kube-prometheus-stack to v80.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2032
+* Update http-route.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2033
+* chore(deps): update n8nio/n8n docker tag to v2.4.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2034
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2035
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2036
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2037
+* chore(deps): update helm release kube-prometheus-stack to v80.14.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2038
+* chore(deps): update getmeili/meilisearch docker tag to v1.32.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2039
+* chore(deps): update helm release kube-prometheus-stack to v80.14.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2040
+* Update configmap.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2041
+* chore(deps): update n8nio/n8n docker tag to v2.4.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2042
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2043
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.1.0...v5.2.0
+
 ## 5.1.0 (2026-01-08)
 
 ## What's Changed
