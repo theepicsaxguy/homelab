@@ -30,7 +30,7 @@ spec:
               mountPath: /data
       containers:
         - name: n8n
-          image: n8nio/n8n:2.4.2
+          image: n8nio/n8n:2.4.3
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
