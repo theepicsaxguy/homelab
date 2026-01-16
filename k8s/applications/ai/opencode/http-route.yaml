@@ -1,30 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: opencode-external
-  namespace: opencode
-spec:
-  parentRefs:
-    - name: external
-      namespace: gateway
-  hostnames:
-    - "opencode.peekoff.com"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: ak-outpost-proxy-outpost
-          namespace: auth
-          port: 9000
-
----
-
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: opencode-internal
+  name: opencode-web
   namespace: opencode
 spec:
   parentRefs:
@@ -33,6 +10,13 @@ spec:
   hostnames:
     - "opencode.peekoff.com"
   rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/sse/stream
+      backendRefs:
+        - name: opencode-web
+          port: 5551
     - matches:
         - path:
             type: PathPrefix

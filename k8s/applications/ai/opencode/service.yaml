@@ -14,3 +14,7 @@ spec:
       port: 5003
       targetPort: http
       protocol: TCP
+    - name: opencode-server
+      port: 5551
+      targetPort: 5551
+      protocol: TCP

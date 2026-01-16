@@ -75,6 +75,8 @@ spec:
               value: "5003"
             - name: OPENCODE_SERVER_PORT
               value: "5551"
+            - name: OPENCODE_SERVER_HOST
+              value: "0.0.0.0"
             - name: DATABASE_PATH
               value: "/app/data/opencode.db"
             - name: WORKSPACE_PATH
