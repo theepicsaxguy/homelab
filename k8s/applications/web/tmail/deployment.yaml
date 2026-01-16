@@ -16,10 +16,21 @@ spec:
       labels:
         app.kubernetes.io/name: tmail
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: tmail
           image: ghcr.io/linagora/tmail-web:v0.23.1
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
           resources:
             requests:
               cpu: '100m'
@@ -64,19 +75,33 @@ spec:
               value: 'unsupported'
             - name: FCM_AVAILABLE
               value: 'unsupported'
+          volumeMounts:
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-log
+              mountPath: /var/log/nginx
+            - name: nginx-run
+              mountPath: /var/run/nginx
           livenessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
+            timeoutSeconds: 30
+            failureThreshold: 6
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 5
+            initialDelaySeconds: 60
+            periodSeconds: 20
+            timeoutSeconds: 20
+            failureThreshold: 8
+      volumes:
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-log
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}

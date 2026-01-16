@@ -10,6 +10,15 @@ spec:
   hostnames:
     - "opencode.peekoff.com"
   rules:
+    # Streaming endpoints bypass Authentik proxy (direct to backend)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api/sse/stream
+      backendRefs:
+        - name: opencode-web
+          port: 5003
+    # All other traffic through Authentik proxy for authentication
     - matches:
         - path:
             type: PathPrefix
