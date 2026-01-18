@@ -1,5 +1,27 @@
 # Changelog
 
+## 5.2.1 (2026-01-18)
+
+## What's Changed
+* chore(deps): update helm release argo-cd to v9.3.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2044
+* fix: update service name in reference grants to use ak-outpost-proxy-outpost by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2046
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2047
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2048
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2049
+* chore(deps): update helm release authentik to v2025.12.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2050
+* chore(deps): update helm release authentik to v2025.12.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2051
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2052
+* chore(deps): update n8nio/n8n docker tag to v2.4.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2053
+* chore(deps): update helm release kube-prometheus-stack to v81 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2054
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2055
+* Fix k8s opencode sse streaming by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2056
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2057
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2058
+* chore(deps): update helm release redis to v24.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2059
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.2.0...v5.2.1
+
 ## 5.2.0 (2026-01-14)
 
 ## What's Changed
