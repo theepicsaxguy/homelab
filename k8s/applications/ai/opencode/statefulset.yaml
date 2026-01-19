@@ -63,6 +63,14 @@ spec:
           ports:
             - name: http
               containerPort: 5003
+            - name: sse-5100
+              containerPort: 5100
+            - name: sse-5101
+              containerPort: 5101
+            - name: sse-5102
+              containerPort: 5102
+            - name: sse-5103
+              containerPort: 5103
           env:
             - name: NODE_ENV
               value: "production"

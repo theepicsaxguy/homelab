@@ -14,3 +14,19 @@ spec:
       port: 5003
       targetPort: http
       protocol: TCP
+    - name: sse-5100
+      port: 5100
+      targetPort: sse-5100
+      protocol: TCP
+    - name: sse-5101
+      port: 5101
+      targetPort: sse-5101
+      protocol: TCP
+    - name: sse-5102
+      port: 5102
+      targetPort: sse-5102
+      protocol: TCP
+    - name: sse-5103
+      port: 5103
+      targetPort: sse-5103
+      protocol: TCP
