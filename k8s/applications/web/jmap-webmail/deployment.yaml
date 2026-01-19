@@ -25,7 +25,7 @@ spec:
         runAsNonRoot: true
       containers:
         - name: jmap-webmail
-          image: ghcr.io/theepicsaxguy/jmap-webmail:sha-d16d19b
+          image: ghcr.io/theepicsaxguy/jmap-webmail:sha-1b7a978
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -45,7 +45,7 @@ spec:
               name: http
           env:
             - name: JMAP_SERVER_URL
-              value: "https://mail.peekoff.com"
+              value: "https://mailadmin.peekoff.com"
             - name: APP_NAME
               value: "JMAP Webmail"
             - name: TZ

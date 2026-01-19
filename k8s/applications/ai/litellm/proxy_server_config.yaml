@@ -157,6 +157,19 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
+  - model_name: azure/gpt-5.2-codex
+    litellm_params:
+      model: openai/gpt-5.2-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
   - model_name: azure/gpt-5-mini
     litellm_params:
       model: openai/gpt-5-mini
