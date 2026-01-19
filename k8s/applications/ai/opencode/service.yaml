@@ -12,7 +12,7 @@ spec:
   ports:
     - name: http
       port: 5003
-      targetPort: http
+      targetPort: 5003
       protocol: TCP
     - name: sse-5100
       port: 5100
