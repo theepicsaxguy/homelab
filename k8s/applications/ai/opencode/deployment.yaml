@@ -1,0 +1,96 @@
+apiVersion: apps/v1  
+kind: Deployment  
+metadata:  
+  name: opencode-web  
+  namespace: opencode  
+  labels:  
+    app: opencode-web  
+spec:  
+  replicas: 1  
+  selector:  
+    matchLabels:  
+      app: opencode-web  
+  template:  
+    metadata:  
+      labels:  
+        app: opencode-web  
+    spec:  
+      securityContext:  
+        fsGroup: 1000  
+        seccompProfile:  
+          type: RuntimeDefault  
+      containers:  
+      - name: opencode-web  
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.7.0  
+        securityContext:  
+          runAsUser: 1000  
+          runAsGroup: 1000  
+          runAsNonRoot: true  
+          allowPrivilegeEscalation: false  
+          capabilities:  
+            drop: ["ALL"]  
+        ports:  
+        - containerPort: 5003  
+        - containerPort: 5100  
+        - containerPort: 5101  
+        - containerPort: 5102  
+        - containerPort: 5103  
+        env:  
+        - name: NODE_ENV  
+          value: "production"  
+        - name: HOST  
+          value: "0.0.0.0"  
+        - name: PORT  
+          value: "5003"  
+        - name: OPENCODE_SERVER_PORT  
+          value: "5551"  
+        - name: DATABASE_PATH  
+          value: "/app/data/opencode.db"  
+        - name: WORKSPACE_PATH  
+          value: "/workspace"  
+        - name: PROCESS_START_WAIT_MS  
+          value: "2000"  
+        - name: PROCESS_VERIFY_WAIT_MS  
+          value: "1000"  
+        - name: HEALTH_CHECK_INTERVAL_MS  
+          value: "5000"  
+        - name: HEALTH_CHECK_TIMEOUT_MS  
+          value: "30000"  
+        - name: MAX_FILE_SIZE_MB  
+          value: "50"  
+        - name: MAX_UPLOAD_SIZE_MB  
+          value: "50"  
+        - name: SANDBOX_TTL_HOURS  
+          value: "24"  
+        - name: CLEANUP_INTERVAL_MINUTES  
+          value: "60"  
+        - name: DEBUG  
+          value: "false"  
+        volumeMounts:  
+        - name: workspace  
+          mountPath: /workspace  
+        - name: data  
+          mountPath: /app/data  
+        livenessProbe:  
+          httpGet:  
+            path: /api/health  
+            port: 5003  
+          initialDelaySeconds: 40  
+          periodSeconds: 30  
+          timeoutSeconds: 3  
+          failureThreshold: 3  
+        readinessProbe:  
+          httpGet:  
+            path: /api/health  
+            port: 5003  
+          initialDelaySeconds: 15  
+          periodSeconds: 30  
+          timeoutSeconds: 3  
+          failureThreshold: 5  
+      volumes:  
+      - name: workspace  
+        persistentVolumeClaim:  
+          claimName: opencode-workspace-pvc  
+      - name: data  
+        persistentVolumeClaim:  
+          claimName: opencode-data-pvc  
