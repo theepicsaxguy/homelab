@@ -29,43 +29,11 @@ spec:
           allowPrivilegeEscalation: false  
           capabilities:  
             drop: ["ALL"]  
-        ports:  
-        - containerPort: 5003  
-        - containerPort: 5100  
-        - containerPort: 5101  
-        - containerPort: 5102  
-        - containerPort: 5103  
-        env:  
-        - name: NODE_ENV  
-          value: "production"  
-        - name: HOST  
-          value: "0.0.0.0"  
-        - name: PORT  
-          value: "5003"  
-        - name: OPENCODE_SERVER_PORT  
-          value: "5551"  
-        - name: DATABASE_PATH  
-          value: "/app/data/opencode.db"  
-        - name: WORKSPACE_PATH  
-          value: "/workspace"  
-        - name: PROCESS_START_WAIT_MS  
-          value: "2000"  
-        - name: PROCESS_VERIFY_WAIT_MS  
-          value: "1000"  
-        - name: HEALTH_CHECK_INTERVAL_MS  
-          value: "5000"  
-        - name: HEALTH_CHECK_TIMEOUT_MS  
-          value: "30000"  
-        - name: MAX_FILE_SIZE_MB  
-          value: "50"  
-        - name: MAX_UPLOAD_SIZE_MB  
-          value: "50"  
-        - name: SANDBOX_TTL_HOURS  
-          value: "24"  
-        - name: CLEANUP_INTERVAL_MINUTES  
-          value: "60"  
-        - name: DEBUG  
-          value: "false"  
+        ports:
+        - containerPort: 5003
+        env:
+        - name: OPENCODE_HOST
+          value: "127.0.0.1"
         volumeMounts:  
         - name: workspace  
           mountPath: /workspace  

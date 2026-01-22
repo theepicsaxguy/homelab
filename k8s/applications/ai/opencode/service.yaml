@@ -9,52 +9,7 @@ spec:
   selector:  
     app: opencode-web  
   ports:  
-  - name: main  
+  - name: http  
     port: 5003  
     targetPort: 5003  
-    protocol: TCP  
-  - name: dev-server-1  
-    port: 5100  
-    targetPort: 5100  
-    protocol: TCP  
-  - name: dev-server-2  
-    port: 5101  
-    targetPort: 5101  
-    protocol: TCP  
-  - name: dev-server-3  
-    port: 5102  
-    targetPort: 5102  
-    protocol: TCP  
-  - name: dev-server-4  
-    port: 5103  
-    targetPort: 5103  
-    protocol: TCP  
-  type: ClusterIP  
-  
----
-apiVersion: v1  
-kind: PersistentVolumeClaim  
-metadata:  
-  name: opencode-workspace-pvc  
-  namespace: opencode  
-spec:  
-  accessModes:  
-    - ReadWriteOnce  
-  resources:  
-    requests:  
-      storage: 10Gi  
-  storageClassName: proxmox-csi
----
 
-apiVersion: v1  
-kind: PersistentVolumeClaim  
-metadata:  
-  name: opencode-data-pvc  
-  namespace: opencode  
-spec:  
-  accessModes:  
-    - ReadWriteOnce  
-  resources:
-    requests:
-      storage: 5Gi
-  storageClassName: proxmox-csi

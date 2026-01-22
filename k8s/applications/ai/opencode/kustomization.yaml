@@ -8,4 +8,5 @@ resources:
   - externalsecret.yaml
   - deployment.yaml
   - service.yaml
+  - pvc.yaml
   - http-route.yaml
