@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jmap-webmail
+  namespace: jmap-webmail
+  labels:
+    app.kubernetes.io/name: jmap-webmail
+    app.kubernetes.io/part-of: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jmap-webmail
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jmap-webmail
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        runAsNonRoot: true
+      containers:
+        - name: jmap-webmail
+          image: ghcr.io/theepicsaxguy/jmap-webmail:sha-1b7a978
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: JMAP_SERVER_URL
+              value: "https://mailadmin.peekoff.com"
+            - name: APP_NAME
+              value: "JMAP Webmail"
+            - name: TZ
+              value: "UTC"
+            - name: HEALTH_MEMORY_WARNING_THRESHOLD
+              value: "0.85"
+            - name: HEALTH_MEMORY_CRITICAL_THRESHOLD
+              value: "0.95"
+            - name: NODE_ENV
+              value: "production"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=512"
+            - name: PORT
+              value: "3000"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOG_FORMAT
+              value: "text"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

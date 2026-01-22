@@ -1,0 +1,64 @@
+apiVersion: apps/v1  
+kind: Deployment  
+metadata:  
+  name: opencode-web  
+  namespace: opencode  
+  labels:  
+    app: opencode-web  
+spec:  
+  replicas: 1  
+  selector:  
+    matchLabels:  
+      app: opencode-web  
+  template:  
+    metadata:  
+      labels:  
+        app: opencode-web  
+    spec:  
+      securityContext:  
+        fsGroup: 1000  
+        seccompProfile:  
+          type: RuntimeDefault  
+      containers:  
+      - name: opencode-web  
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.7.0  
+        securityContext:  
+          runAsUser: 1000  
+          runAsGroup: 1000  
+          runAsNonRoot: true  
+          allowPrivilegeEscalation: false  
+          capabilities:  
+            drop: ["ALL"]  
+        ports:
+        - containerPort: 5003
+        env:
+        - name: OPENCODE_HOST
+          value: "127.0.0.1"
+        volumeMounts:  
+        - name: workspace  
+          mountPath: /workspace  
+        - name: data  
+          mountPath: /app/data  
+        livenessProbe:  
+          httpGet:  
+            path: /api/health  
+            port: 5003  
+          initialDelaySeconds: 40  
+          periodSeconds: 30  
+          timeoutSeconds: 3  
+          failureThreshold: 3  
+        readinessProbe:  
+          httpGet:  
+            path: /api/health  
+            port: 5003  
+          initialDelaySeconds: 15  
+          periodSeconds: 30  
+          timeoutSeconds: 3  
+          failureThreshold: 5  
+      volumes:  
+      - name: workspace  
+        persistentVolumeClaim:  
+          claimName: opencode-workspace-pvc  
+      - name: data  
+        persistentVolumeClaim:  
+          claimName: opencode-data-pvc  

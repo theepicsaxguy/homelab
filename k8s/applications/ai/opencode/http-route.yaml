@@ -1,42 +1,38 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: opencode-external
-  namespace: opencode
-spec:
-  parentRefs:
-    - name: external
-      namespace: gateway
-  hostnames:
-    - "opencode.peekoff.com"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: ak-outpost-proxy-outpost
-          namespace: auth
-          port: 9000
-
----
-
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: opencode-internal
-  namespace: opencode
-spec:
-  parentRefs:
-    - name: internal
-      namespace: gateway
-  hostnames:
-    - "opencode.peekoff.com"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: opencode-web
+apiVersion: gateway.networking.k8s.io/v1  
+kind: HTTPRoute  
+metadata:  
+  name: opencode-web  
+  namespace: opencode  
+spec:  
+  parentRefs:  
+    - name: internal  
+      namespace: gateway  
+    - name: external  
+      namespace: gateway  
+  hostnames:  
+    - "opencode.peekoff.com"  
+  rules:  
+    - matches:  
+        - path:  
+            type: PathPrefix  
+            value: /api/sse  
+      backendRefs:  
+        - name: opencode-web-service  
+          port: 5003  
+      timeouts:  
+        request: "0s"  # Disable request timeout for SSE  
+      filters:  
+        - type: ResponseHeaderModifier  
+          responseHeaderModifier:  
+            add:  
+              - name: Cache-Control  
+                value: "no-cache"  
+              - name: Connection  
+                value: "keep-alive"  
+    - matches:  
+        - path:  
+            type: PathPrefix  
+            value: /  
+      backendRefs:  
+        - name: opencode-web-service  
           port: 5003
