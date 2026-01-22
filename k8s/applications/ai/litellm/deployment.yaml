@@ -5,6 +5,7 @@ metadata:
   labels:
     app: litellm
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: litellm
@@ -19,7 +20,7 @@ spec:
     spec:
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm:litellm_rc_branch-v1.81.0.rc.5
+        image: ghcr.io/berriai/litellm-non_root:litellm_rc_branch-v1.81.0.rc.5 # renovate: datasource=github-releases depName=BerriAI/litellm
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
