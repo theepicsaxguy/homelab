@@ -22,7 +22,7 @@ spec:
       storageClassName: "proxmox-csi"
       resources:
         requests:
-          storage: 50Gi
+          storage: 100Gi
   template:
     metadata:
       labels:
