@@ -4,6 +4,9 @@ namespace: minecraft
 resources:
   - namespace.yaml
   - configmap.yaml
+  - bedrockconnect-configmap.yaml
   - admin-external-secret.yaml
   - statefulset.yaml
   - service.yaml
+  - bedrockconnect-deployment.yaml
+  - bedrockconnect-service.yaml
