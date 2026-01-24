@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bedrockconnect
+  labels:
+    app.kubernetes.io/name: bedrockconnect
+    app.kubernetes.io/part-of: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bedrockconnect
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bedrockconnect
+        app.kubernetes.io/part-of: media
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: bedrockconnect
+          image: pugmatt/bedrock-connect:1.63
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: bedrock-udp
+              containerPort: 19132
+              protocol: UDP
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /data/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /data/custom_servers.json
+              subPath: custom_servers.json
+              readOnly: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: bedrockconnect-config
+            items:
+              - key: custom_servers.json
+                path: custom_servers.json
+              - key: config.yml
+                path: config.yml

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bedrockconnect-config
+  labels:
+    app.kubernetes.io/name: bedrockconnect
+    app.kubernetes.io/part-of: media
+    role: service-config
+data:
+  custom_servers.json: |
+    [
+      {
+        "name": "Homelab Java+Bedrock",
+        "iconUrl": "https://i.imgur.com/nhumQVP.png",
+        "address": "10.25.150.254",
+        "port": 19132
+      }
+    ]
+  config.yml: |
+    bindip: "0.0.0.0"
+    port: 19132
+    db_type: "none"
+    custom_servers: "/data/custom_servers.json"
+    user_servers: true
+    featured_servers: true
+    fetch_featured_ips: true
+    fetch_ips: false
+    debug: false
