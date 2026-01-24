@@ -63,6 +63,12 @@ spec:
               value: "production"
             - name: PIPELINES_REQUIREMENTS_PATH
               value: "/app/pipelines/requirements.txt"
+            - name: PIP_TARGET
+              value: "/app/pipelines/.venv"
+            - name: PYTHONPATH
+              value: "/app/pipelines/.venv:${PYTHONPATH}"
+            - name: PIP_CACHE_DIR
+              value: "/tmp/pipcache"
           volumeMounts:
             - name: tmp
               mountPath: /tmp
