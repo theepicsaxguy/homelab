@@ -8,10 +8,10 @@ metadata:
     role: service-config
 data:
   TYPE: 'PAPER'
-  VERSION: '1.21.8'
-  PAPER_BUILD: '60'
-  SPIGET_RESOURCES: '9089,9089'  # EssentialsX (duplicate to ensure download)
+  VERSION: '1.21.11'
+  PAPER_BUILD: '99'
   MODRINTH_PROJECTS: 'wKkoqHrH:beta'  # Geyser
+  # EssentialsX will be downloaded manually via init container
   SERVER_PORT: '25565'
   TZ: 'Europe/Stockholm'
   MOTD: 'Homelab Bedrock Server'
