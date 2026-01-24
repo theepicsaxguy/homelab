@@ -12,15 +12,11 @@ spec:
   selector:
     app.kubernetes.io/name: minecraft-bedrock
   ports:
-    - port: 19132
-      targetPort: minecraft
-      protocol: UDP
-      name: minecraft
-    - port: 19133
-      targetPort: minecraft-v6
-      protocol: UDP
-      name: minecraft-v6
-    - port: 2222
-      targetPort: ssh
+    - port: 25565
+      targetPort: minecraft-java
       protocol: TCP
-      name: ssh
+      name: minecraft-java
+    - port: 19132
+      targetPort: minecraft-bedrock
+      protocol: UDP
+      name: minecraft-bedrock
