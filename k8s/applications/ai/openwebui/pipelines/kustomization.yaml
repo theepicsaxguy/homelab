@@ -3,9 +3,6 @@ kind: Kustomization
 
 namespace: open-webui
 
-generatorOptions:
-  disableNameSuffixHash: true
-
 configMapGenerator:
   - name: pipelines-bootstrap
     files:
