@@ -7,17 +7,17 @@ metadata:
     app.kubernetes.io/part-of: media
     role: service-config
 data:
-  TYPE: "PAPER"
-  VERSION: "1.21.4"
-  PAPER_BUILD: "LATEST"
-  EULA: "TRUE"
-  ONLINE_MODE: "false"
-  SPIGET_RESOURCES: "138404, 1043903"
-  TZ: "Europe/Stockholm"
-  MOTD: "Homelab Bedrock Server"
-  MAX_PLAYERS: "20"
-  ALLOW_LIST: "false"
-  VIEW_DISTANCE: "15"
-  PLAYER_IDLE_TIMEOUT: "30"
-  LEVEL_NAME: "Bedrock level"
-  LEVEL_TYPE: "DEFAULT"
+  TYPE: 'PAPER'
+  VERSION: '1.21.8'
+  PAPER_BUILD: '60'
+  SPIGET_RESOURCES: '9089,9089'  # EssentialsX (duplicate to ensure download)
+  MODRINTH_PROJECTS: 'wKkoqHrH:beta'  # Geyser
+  SERVER_PORT: '25565'
+  TZ: 'Europe/Stockholm'
+  MOTD: 'Homelab Bedrock Server'
+  MAX_PLAYERS: '20'
+  ALLOW_LIST: 'false'
+  VIEW_DISTANCE: '15'
+  PLAYER_IDLE_TIMEOUT: '30'
+  LEVEL_NAME: 'Bedrock level'
+  LEVEL_TYPE: 'DEFAULT'
