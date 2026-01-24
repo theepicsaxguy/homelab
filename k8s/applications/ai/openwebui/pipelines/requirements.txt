@@ -5,3 +5,4 @@ llama-index-llms-ollama
 llama-index-vector-stores-qdrant
 aiohttp
 qdrant-client
+mem0ai==1.0.2
