@@ -10,3 +10,4 @@ resources:
   - service.yaml
   - bedrockconnect-deployment.yaml
   - bedrockconnect-service.yaml
+configMapGenerator: []

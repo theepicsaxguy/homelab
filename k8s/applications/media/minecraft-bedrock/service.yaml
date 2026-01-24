@@ -17,6 +17,6 @@ spec:
       protocol: TCP
       name: minecraft-java
     - port: 19132
-      targetPort: minecraft-bedrock
+      targetPort: mc-bedrock
       protocol: UDP
-      name: minecraft-bedrock
+      name: mc-bedrock
