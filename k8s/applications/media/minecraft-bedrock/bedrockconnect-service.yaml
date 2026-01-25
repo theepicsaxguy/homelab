@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bedrockconnect
+  labels:
+    app.kubernetes.io/name: bedrockconnect
+    app.kubernetes.io/part-of: media
+  annotations:
+    io.cilium/lb-ipam-ips: 10.25.150.253
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: bedrockconnect
+  ports:
+    - name: bedrock-udp
+      port: 19132
+      targetPort: bedrock-udp
+      protocol: UDP
