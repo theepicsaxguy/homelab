@@ -75,11 +75,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: '2Gi'
-              cpu: '1000m'
+              memory: '1Gi'
+              cpu: '2000m'
             limits:
               memory: '6Gi'
-              cpu: '5000m'
+              cpu: '6000m'
       volumes:
         - name: luckperms-config
           configMap:

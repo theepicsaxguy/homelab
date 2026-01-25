@@ -354,7 +354,7 @@ use-bukkit-permissions: true
 skip-used-one-time-kits-from-kit-list: false
 
 # When enabled, armor from kits will automatically be equipped as long as the player's armor slots are empty.
-kit-auto-equip: false
+kit-auto-equip: true
 
 # Determines the functionality of the /createkit command.
 # If this is true, /createkit will give the user a link with the kit code.
@@ -439,15 +439,15 @@ per-warp-permission: false
 # You can hide and merge the groups displayed in /list by defining the desired behavior here.
 # Detailed instructions and examples can be found on the wiki: https://wiki.ess3.net/wiki/List
 list:
-    # To merge groups under one name in /list, list each group on one line, separated by spaces.
-    #Staff: owner admin moderator
-    Admins: owner admin
-    # To truncate group lists, set a max player limit.
-    #builder: 20
-    # To hide groups, set the group as hidden.
-    #default: hidden
-    # Uncomment the line below to simply list all players with no grouping.
-    #Players: '*'
+  # To merge groups under one name in /list, list each group on one line, separated by spaces.
+  #Staff: owner admin moderator
+  Admins: owner admin
+  # To truncate group lists, set a max player limit.
+  #builder: 20
+  # To hide groups, set the group as hidden.
+  #default: hidden
+  # Uncomment the line below to simply list all players with no grouping.
+  #Players: '*'
 
 # Displays real names in /list next to players who are using a nickname.
 real-names-on-list: false
@@ -491,7 +491,7 @@ auto-afk: 300
 auto-afk-timeout: -1
 
 # A list of commands to be executed instead of kicking the player once the
-# threshold defined above in 'afk-auto-timeout' is reached. If this list is empty 
+# threshold defined above in 'afk-auto-timeout' is reached. If this list is empty
 # and 'afk-auto-timeout' is not set to -1, Essentials will default to
 # kicking the player once they reach the timeout threshold.
 #
@@ -540,7 +540,7 @@ sleep-ignores-vanished-player: true
 # Change the player's /list name when they are AFK. This is none by default, which specifies that Essentials
 # should not interfere with the AFK player's /list name.
 # You may use color codes, {USERNAME} for the player's name, or {PLAYER} for the player's display name.
-afk-list-name: "none"
+afk-list-name: 'none'
 
 # When a player enters or exits AFK mode, should the AFK notification be broadcast
 # to the entire server, or just to the player?
@@ -579,8 +579,8 @@ allow-silent-join-quit: false
 # {ONLINE} - The number of players online.
 # {UNIQUE} - The number of unique players to join the server.
 # {UPTIME} - The amount of time the server has been online.
-custom-join-message: "none"
-custom-quit-message: "none"
+custom-join-message: 'none'
+custom-quit-message: 'none'
 
 # You can set a custom join message for players who join with an updated username here.
 # This message will only be used if a player has joined before and has since changed their username.
@@ -596,7 +596,7 @@ custom-quit-message: "none"
 # {ONLINE} - The number of players online.
 # {UNIQUE} - The number of unique players to join the server.
 # {UPTIME} - The amount of time the server has been online.
-custom-new-username-message: "none"
+custom-new-username-message: 'none'
 
 # Should Essentials override the vanilla "Server Full" message with its own from the language file?
 # Set to false to keep the vanilla message.
@@ -897,8 +897,8 @@ baltop-requirements:
   minimum-balance: 0
   minimum-playtime: 0
 
-# Limit the number of cached balance top entries. 
-# Recommended for servers with a large number of players, as it reduces memory usage. 
+# Limit the number of cached balance top entries.
+# Recommended for servers with a large number of players, as it reduces memory usage.
 # Set to -1 to disable the limit.
 baltop-entry-limit: -1
 
@@ -954,7 +954,6 @@ hide-permissionless-help: true
 # See https://essentialsx.net/wiki/Module-Breakdown.html for more information.
 
 chat:
-
   # If Essentials Chat is installed, this sets how many blocks a player's chat will travel. Set to 0 for global chat.
   # Players with 'essentials.chat.spy' will see everything, regardless of this setting.
   # Players with 'essentials.chat.shout' can override this by prefixing their message with an exclamation mark (!).
@@ -1044,7 +1043,6 @@ chat:
 # See https://essentialsx.net/wiki/Module-Breakdown.html for more information.
 
 protect:
-
   # General physics/behavior modifications. Set these to true to disable behaviors.
   prevent:
     lava-flow: false
@@ -1186,14 +1184,14 @@ protect:
       thunder: false
       lightning: false
 
-############################################################
-# +------------------------------------------------------+ #
-# |                 EssentialsX AntiBuild                | #
-# +------------------------------------------------------+ #
-############################################################
+    ############################################################
+    # +------------------------------------------------------+ #
+    # |                 EssentialsX AntiBuild                | #
+    # +------------------------------------------------------+ #
+    ############################################################
 
-  # You need to install the EssentialsX AntiBuild module for this section to work.
-  # See https://essentialsx.net/wiki/Module-Breakdown.html and https://wiki.ess3.net/wiki/AntiBuild for more information.
+    # You need to install the EssentialsX AntiBuild module for this section to work.
+    # See https://essentialsx.net/wiki/Module-Breakdown.html and https://wiki.ess3.net/wiki/AntiBuild for more information.
 
     # Should building be disabled for those without the 'essentials.build' permission?
     # Setting this to false means Essentials AntiBuild will never prevent players from building.
@@ -1214,7 +1212,6 @@ protect:
     on-break:
 
   blacklist:
-
     # Which blocks should people be prevented from placing?
     placement: LAVA,TNT,LAVA_BUCKET
 
@@ -1286,11 +1283,11 @@ respawn-at-anchor: false
 #
 # The location must first be set using the /settpr command or in 'tpr.yml'.
 # After a tpr location is created, set the world name (or the name defined in 'tpr.yml') below.
-random-spawn-location: "none"
+random-spawn-location: 'none'
 
 # If configured, players will respawn at the random respawn location when they die.
 # See 'random-spawn-location' above for additional location information.
-random-respawn-location: "none"
+random-respawn-location: 'none'
 
 # Teleport all joining players to their spawnpoint.
 spawn-on-join: false

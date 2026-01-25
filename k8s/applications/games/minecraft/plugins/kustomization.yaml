@@ -6,7 +6,6 @@ configMapGenerator:
     literals:
       - TYPE=PAPER
       - VERSION=1.21.11
-      - PAPER_BUILD=99
       - EULA=true
       - SERVER_PORT=25565
       - ONLINE_MODE=true
