@@ -37,3 +37,6 @@ configMapGenerator:
   - name: geyser-config
     files:
       - config.yml
+  - name: essentialsx-config
+    files:
+      - config.yml=essentialsx-config.yml
