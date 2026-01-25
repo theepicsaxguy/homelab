@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bedrockconnect-data
+  labels:
+    app.kubernetes.io/name: bedrockconnect
+    app.kubernetes.io/part-of: media
+    backup.velero.io/backup-tier: Daily
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 1Gi
