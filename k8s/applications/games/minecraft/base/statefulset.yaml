@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/name: minecraft-bedrock
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
   name: minecraft-bedrock
 spec:
   replicas: 1
@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: minecraft-bedrock
+        app.kubernetes.io/part-of: games
     spec:
       securityContext:
         runAsNonRoot: true
@@ -40,6 +41,18 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            - mountPath: /plugins/LuckPerms/config.yml
+              name: luckperms-config
+              subPath: config.yml
+              readOnly: true
+            - mountPath: /plugins/WildLoaders/config.yml
+              name: wildloaders-config
+              subPath: config.yml
+              readOnly: true
+            - mountPath: /plugins/BedrockGUI/config.yml
+              name: bedrockgui-config
+              subPath: config.yml
+              readOnly: true
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -62,11 +75,21 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: '2Gi'
+              memory: '1Gi'
               cpu: '2000m'
             limits:
               memory: '6Gi'
-              cpu: '8000m'
+              cpu: '6000m'
+      volumes:
+        - name: luckperms-config
+          configMap:
+            name: luckperms-config
+        - name: wildloaders-config
+          configMap:
+            name: wildloaders-config
+        - name: bedrockgui-config
+          configMap:
+            name: bedrockgui-config
   volumeClaimTemplates:
     - metadata:
         name: data

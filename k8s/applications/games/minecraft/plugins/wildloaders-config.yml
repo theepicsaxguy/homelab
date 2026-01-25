@@ -1,0 +1,65 @@
+#######################################################
+##                                                   ##
+##             WildLoaders Configuration             ##
+##                Developed by Ome_R                 ##
+##                                                   ##
+#######################################################
+
+# All settings related to the database of the plugin.
+database:
+  # For local database, use "SQLite".
+  # For remote database, use "MySQL" or "MariaDB" (Depends on your setup).
+  type: SQLite
+  # Remote database information
+  address: 'localhost'
+  port: 3306
+  db-name: 'WildLoaders'
+  user-name: 'root'
+  password: 'root'
+  prefix: ''
+  useSSL: false
+  allowPublicKeyRetrieval: true
+  waitTimeout: 600000
+  maxLifetime: 1800000
+
+# Hologram lines for regular chunk loaders.
+hologram-lines:
+- '&b{0}''s Loader'
+- '&bTime Left: &f{1} days, {2} hours, {3} minutes, {4} seconds'
+
+# Hologram lines for chunk loaders with no time limits.
+infinite-hologram-lines:
+- '&b{0}''s Loader'
+
+# You can use the following settings when setting up chunk loaders:
+#
+# time (Integer) - The default amount of time the chunk loader will be alive.
+#                  This field is in seconds. You can remove this field to have no time limit for the loader.
+# chunks-radius (Integer) - The radius of chunks that will be loaded by the chunk loader for each direction.
+#                           By default, the radius is 0 (1 chunk will be loaded).
+# chunks-spread (Boolean) - Whether or not the chunk loader should load all the connected chunks inside a claim.
+#                           This will give the ability to load all the claims in a faction, for example.
+#
+# type (String) - The material-type of the item (and the block) of the chunk-loader.
+# name (String) - The name of the item of the chunk loader.
+# lore: (List) - The lore of the item of the chunk loader.
+#
+#
+# List of all the chunk-loaders
+# Do not name 2 chunk-loaders the same
+chunkloaders:
+  normal_loader:
+    time: 86400
+    type: BEACON
+    name: '&6Chunk Loader &7(Place to load)'
+    lore:
+      - '&7Place this chunk loader to keep'
+      - '&7the chunk loaded in the next {}!'
+  large_loader:
+    time: 86400
+    type: BEACON
+    chunks-radius: 2 # This will load all chunks in a radius of 2, aka 5x5 chunks
+    name: '&6Large Chunk Loader &7(Place to load)'
+    lore:
+      - '&7Place this chunk loader to keep all chunks'
+      - '&7in a radius of 2 loaded in the next {}!'
