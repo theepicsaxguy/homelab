@@ -7,6 +7,7 @@ resources:
   - admin-external-secret.yaml
   - statefulset.yaml
   - service.yaml
+  - bedrockconnect-pvc.yaml
   - bedrockconnect-deployment.yaml
   - bedrockconnect-service.yaml
 
