@@ -4,14 +4,14 @@ metadata:
   name: bedrockconnect-config
   labels:
     app.kubernetes.io/name: bedrockconnect
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
     role: service-config
 data:
   custom_servers.json: |
     [
       {
-        "name": "Homelab Java+Bedrock",
-        "iconUrl": "https://i.imgur.com/nhumQVP.png",
+        "name": "Homelab Minecraft Server",
+        "iconUrl": "https://i.imgur.com/3BmFZRE.png",
         "address": "10.25.150.254",
         "port": 19132
       }
@@ -20,9 +20,14 @@ data:
     bindip: "0.0.0.0"
     port: 19132
     db_type: "none"
-    custom_servers: "/data/custom_servers.json"
     user_servers: true
-    featured_servers: true
-    fetch_featured_ips: true
+    # Disable featured servers (only shows your custom server)
+    featured_servers: false
+    fetch_featured_ips: false
     fetch_ips: false
     debug: false
+    # Auto-redirect for true zero-click experience
+    auto_redirect:
+      enabled: true
+      address: "10.25.150.254"
+      port: 19132

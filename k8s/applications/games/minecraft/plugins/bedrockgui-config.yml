@@ -1,0 +1,74 @@
+forms:
+  dual_demo:
+    type: "SIMPLE"
+    title: "&x&f&f&7&f&0&0&lDual Platform Demo"
+    content: "&7Bedrock players see this form. Java players see the inventory menu."
+    buttons:
+      info:
+        text: "&aBedrock: Info"
+        onClick:
+          - |
+            message {
+              - "&aYou are viewing the Bedrock form!"
+              - "&7Use /bgui open dual_demo anytime."
+            }
+      reward:
+        text: "&bGive Small Reward"
+        onClick:
+          - |
+            economy {
+              - "add:50"
+            }
+          - |
+            actionbar {
+              - "&aYou received &2$50"
+            }
+
+    java:
+      type: "CHEST"
+      title: "&x&f&f&7&f&0&0&lJava Demo Shop"
+      size: "27"
+      items:
+        11:
+          material: "DIAMOND_SWORD"
+          amount: "1"
+          name: "&aBuy Sword"
+          lore:
+            - "&7Cost: &b$100"
+            - "&7Click to purchase"
+          glow: "true"
+          onClick:
+            - |
+              conditional {
+                check: "placeholder:{vault_eco_balance} >= 100"
+                true:
+                  - |
+                    economy {
+                      - "remove:100"
+                    }
+                  - |
+                    message {
+                      - "&aPurchased a sword for $100"
+                    }
+                false:
+                  - |
+                    actionbar {
+                      - "&cInsufficient funds"
+                    }
+              }
+        15:
+          material: "GOLDEN_APPLE"
+          amount: "1"
+          name: "&6Buy Golden Apple"
+          lore:
+            - "&7Cost: &b$25"
+          glow: false
+          onClick:
+            - |
+              economy {
+                - "remove:25"
+              }
+            - |
+              message {
+                - "&ePurchased a golden apple for $25"
+              }

@@ -4,7 +4,7 @@ metadata:
   name: bedrockconnect
   labels:
     app.kubernetes.io/name: bedrockconnect
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: bedrockconnect
-        app.kubernetes.io/part-of: media
+        app.kubernetes.io/part-of: games
     spec:
       securityContext:
         runAsNonRoot: true
@@ -23,22 +23,11 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: init-data
-          image: busybox:1.36
-          imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', 'mkdir -p /data/players && chown -R 1000:1000 /data']
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-          volumeMounts:
-            - name: data
-              mountPath: /data
+
       containers:
         - name: bedrockconnect
           image: pugmatt/bedrock-connect:1.63
-          workingDir: /data
+
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -49,24 +38,28 @@ spec:
             - name: bedrock-udp
               containerPort: 19132
               protocol: UDP
+          env:
+            - name: BC_FEATURED_SERVERS
+              value: 'false'
+            - name: BC_DB_TYPE
+              value: 'none'
+            - name: BC_USER_SERVERS
+              value: 'true'
+            - name: BC_CUSTOM_SERVERS
+              value: '/data/custom_servers.json'
           volumeMounts:
-            - name: data
-              mountPath: /data
             - name: config
-              mountPath: /data/config.yml
-              subPath: config.yml
-              readOnly: true
-            - name: config
-              mountPath: /data/custom_servers.json
+              mountPath: /data/custom_servers.json # ← MATCHES CODE: /data/custom_servers.json
               subPath: custom_servers.json
-              readOnly: true
+            - name: data
+              mountPath: /docker/brc/players # ← EXACTLY where JAR looks
           resources:
             requests:
-              cpu: "50m"
-              memory: "128Mi"
+              cpu: '50m'
+              memory: '128Mi'
             limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: '100m'
+              memory: '256Mi'
       volumes:
         - name: data
           persistentVolumeClaim:

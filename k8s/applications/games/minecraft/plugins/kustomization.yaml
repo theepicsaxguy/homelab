@@ -1,22 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: minecraft
-resources:
-  - namespace.yaml
-  - bedrockconnect-configmap.yaml
-  - admin-external-secret.yaml
-  - statefulset.yaml
-  - service.yaml
-  - bedrockconnect-pvc.yaml
-  - bedrockconnect-deployment.yaml
-  - bedrockconnect-service.yaml
 
 configMapGenerator:
   - name: minecraft-bedrock
     literals:
       - TYPE=PAPER
       - VERSION=1.21.11
-      - PAPER_BUILD=99
       - EULA=true
       - SERVER_PORT=25565
       - ONLINE_MODE=true
@@ -36,4 +25,16 @@ configMapGenerator:
       - PLUGINS=plugins.txt
   - name: geyser-config
     files:
-      - config.yml
+      - config.yml=geyser-config.yml
+  - name: essentialsx-config
+    files:
+      - config.yml=essentialsx-config.yml
+  - name: luckperms-config
+    files:
+      - config.yml=luckperms-config.yml
+  - name: wildloaders-config
+    files:
+      - config.yml=wildloaders-config.yml
+  - name: bedrockgui-config
+    files:
+      - config.yml=bedrockgui-config.yml
