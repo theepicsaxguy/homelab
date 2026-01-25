@@ -49,6 +49,10 @@ spec:
               name: wildloaders-config
               subPath: config.yml
               readOnly: true
+            - mountPath: /plugins/BedrockGUI/config.yml
+              name: bedrockgui-config
+              subPath: config.yml
+              readOnly: true
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -83,6 +87,9 @@ spec:
         - name: wildloaders-config
           configMap:
             name: wildloaders-config
+        - name: bedrockgui-config
+          configMap:
+            name: bedrockgui-config
   volumeClaimTemplates:
     - metadata:
         name: data

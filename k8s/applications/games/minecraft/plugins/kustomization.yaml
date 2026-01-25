@@ -36,3 +36,6 @@ configMapGenerator:
   - name: wildloaders-config
     files:
       - config.yml=wildloaders-config.yml
+  - name: bedrockgui-config
+    files:
+      - config.yml=bedrockgui-config.yml
