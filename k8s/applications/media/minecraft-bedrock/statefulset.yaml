@@ -23,36 +23,6 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        - name: download-plugins
-          image: curlimages/curl:latest
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          command:
-            - /bin/sh
-            - -c
-          args:
-            - |
-              echo "Downloading EssentialsX 2.21.2..."
-              curl -L -o /data/plugins/EssentialsX-2.21.2.jar "https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsX-2.21.2.jar"
-              
-              echo "Downloading EssentialsX Chat 2.21.2..."
-              curl -L -o /data/plugins/EssentialsXChat-2.21.2.jar "https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXChat-2.21.2.jar"
-              
-              echo "Downloading EssentialsX Spawn 2.21.2..."
-              curl -L -o /data/plugins/EssentialsXSpawn-2.21.2.jar "https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXSpawn-2.21.2.jar"
-              
-              echo "Downloading EssentialsX GUI 1.3.0..."
-              curl -L -o /data/plugins/EssentialsX-GUI-1.3.0.jar "https://github.com/SniperTVmc/EssentialsX-GUI/releases/download/1.3.0/EssentialsX-GUI-1.3.0.jar"
-              
-              echo "Plugin downloads complete!"
-              ls -la /data/plugins/
-          volumeMounts:
-            - mountPath: /data
-              name: data
       containers:
         - name: main
           image: itzg/minecraft-server:java25-jdk
@@ -67,7 +37,6 @@ spec:
                 name: minecraft-bedrock
             - secretRef:
                 name: minecraft-server-ops
-
           volumeMounts:
             - mountPath: /data
               name: data
@@ -81,23 +50,23 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 25565
-            initialDelaySeconds: 120
-            periodSeconds: 30
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 20
           livenessProbe:
             tcpSocket:
               port: 25565
             initialDelaySeconds: 300
             periodSeconds: 30
-          tty: true
-          stdin: true
+            timeoutSeconds: 1
+            failureThreshold: 3
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "100m"
+              memory: '1Gi'
+              cpu: '100m'
             limits:
-              memory: "3Gi"
-              cpu: "4000m"
-
+              memory: '3Gi'
+              cpu: '4000m'
   volumeClaimTemplates:
     - metadata:
         name: data

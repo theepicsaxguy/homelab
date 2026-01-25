@@ -1,0 +1,5 @@
+java:
+  auth-type: floodgate
+# Enable Global Linking for Bedrock-Java account linking
+remote:
+  auth-type: floodgate
