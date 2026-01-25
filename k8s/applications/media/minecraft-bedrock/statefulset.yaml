@@ -62,11 +62,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: '1Gi'
-              cpu: '100m'
+              memory: '2Gi'
+              cpu: '2000m'
             limits:
-              memory: '3Gi'
-              cpu: '4000m'
+              memory: '6Gi'
+              cpu: '8000m'
   volumeClaimTemplates:
     - metadata:
         name: data
