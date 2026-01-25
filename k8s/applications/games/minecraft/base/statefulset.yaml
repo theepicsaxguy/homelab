@@ -41,6 +41,14 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            - mountPath: /plugins/LuckPerms/config.yml
+              name: luckperms-config
+              subPath: config.yml
+              readOnly: true
+            - mountPath: /plugins/WildLoaders/config.yml
+              name: wildloaders-config
+              subPath: config.yml
+              readOnly: true
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -68,6 +76,13 @@ spec:
             limits:
               memory: '6Gi'
               cpu: '5000m'
+      volumes:
+        - name: luckperms-config
+          configMap:
+            name: luckperms-config
+        - name: wildloaders-config
+          configMap:
+            name: wildloaders-config
   volumeClaimTemplates:
     - metadata:
         name: data

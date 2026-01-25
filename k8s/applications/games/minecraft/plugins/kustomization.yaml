@@ -30,3 +30,9 @@ configMapGenerator:
   - name: essentialsx-config
     files:
       - config.yml=essentialsx-config.yml
+  - name: luckperms-config
+    files:
+      - config.yml=luckperms-config.yml
+  - name: wildloaders-config
+    files:
+      - config.yml=wildloaders-config.yml
