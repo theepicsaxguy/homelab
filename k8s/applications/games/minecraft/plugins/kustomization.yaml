@@ -22,7 +22,7 @@ configMapGenerator:
       - LEVEL_NAME=default
       - SEED=3256082097912188239
       - LEVEL_TYPE=DEFAULT
-      - MODRINTH_PROJECTS=T4qAiwvL:2.0.4-RELEASE
+      - MODRINTH_PROJECTS=bedrockgui:2.0.4-RELEASE
     files:
       - PLUGINS=plugins.txt
   - name: geyser-config
