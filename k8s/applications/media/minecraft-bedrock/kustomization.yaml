@@ -29,6 +29,7 @@ configMapGenerator:
       - VIEW_DISTANCE=15
       - PLAYER_IDLE_TIMEOUT=30
       - LEVEL_NAME=default
+      - SEED=3256082097912188239
       - LEVEL_TYPE=DEFAULT
     files:
       - PLUGINS=plugins.txt
