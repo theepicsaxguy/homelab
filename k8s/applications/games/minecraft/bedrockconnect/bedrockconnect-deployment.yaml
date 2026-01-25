@@ -4,7 +4,7 @@ metadata:
   name: bedrockconnect
   labels:
     app.kubernetes.io/name: bedrockconnect
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
 spec:
   replicas: 1
   selector:
@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: bedrockconnect
-        app.kubernetes.io/part-of: media
+        app.kubernetes.io/part-of: games
     spec:
       securityContext:
         runAsNonRoot: true
@@ -58,7 +58,7 @@ spec:
               cpu: '50m'
               memory: '128Mi'
             limits:
-              cpu: '500m'
+              cpu: '100m'
               memory: '256Mi'
       volumes:
         - name: data

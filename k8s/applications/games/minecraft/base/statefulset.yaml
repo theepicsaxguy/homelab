@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/name: minecraft-bedrock
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
   name: minecraft-bedrock
 spec:
   replicas: 1
@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: minecraft-bedrock
+        app.kubernetes.io/part-of: games
     spec:
       securityContext:
         runAsNonRoot: true
@@ -63,10 +64,10 @@ spec:
           resources:
             requests:
               memory: '2Gi'
-              cpu: '2000m'
+              cpu: '1000m'
             limits:
               memory: '6Gi'
-              cpu: '8000m'
+              cpu: '5000m'
   volumeClaimTemplates:
     - metadata:
         name: data

@@ -4,7 +4,7 @@ metadata:
   name: bedrockconnect-data
   labels:
     app.kubernetes.io/name: bedrockconnect
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
     backup.velero.io/backup-tier: Daily
 spec:
   accessModes:

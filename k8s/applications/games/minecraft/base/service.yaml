@@ -4,7 +4,7 @@ metadata:
   name: minecraft-bedrock
   labels:
     app.kubernetes.io/name: minecraft-bedrock
-    app.kubernetes.io/part-of: media
+    app.kubernetes.io/part-of: games
   annotations:
     io.cilium/lb-ipam-ips: 10.25.150.254
 spec:
