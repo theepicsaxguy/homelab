@@ -39,6 +39,10 @@ spec:
             secretKeyRef:
               name: app-opencode-secrets
               key: AUTH_SECRET
+        - name: AUTH_TRUSTED_ORIGINS
+          value: "https://opencode.peekoff.com,http://localhost:5003,http://192.168.1.*:5003"
+        - name: AUTH_SECURE_COOKIES
+          value: "true"
         volumeMounts:  
         - name: workspace  
           mountPath: /workspace  
