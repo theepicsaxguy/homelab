@@ -34,6 +34,11 @@ spec:
         env:
         - name: OPENCODE_HOST
           value: "127.0.0.1"
+        - name: AUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-opencode-secrets
+              key: AUTH_SECRET
         volumeMounts:  
         - name: workspace  
           mountPath: /workspace  
