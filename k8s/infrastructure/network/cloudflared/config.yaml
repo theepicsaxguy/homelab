@@ -12,12 +12,4 @@ ingress:
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
   - hostname: argocd.peekoff.com
     service: https://cilium-gateway-external.gateway.svc.cluster.local:443
-  - hostname: "*.peekoff.com"
-    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
-    originRequest:
-      originServerName: "*.peekoff.com"
-  - hostname: peekoff.com
-    service: https://cilium-gateway-external.gateway.svc.cluster.local:443
-    originRequest:
-      originServerName: peekoff.com
   - service: http_status:404

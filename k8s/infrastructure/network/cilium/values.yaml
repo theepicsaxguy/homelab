@@ -91,6 +91,10 @@ envoy:
     capabilities:
       keepCapNetBindService: true
       envoy: [NET_ADMIN, PERFMON, BPF]
+  streamIdleTimeoutDurationSeconds: 600
+  idleTimeoutDurationSeconds: 60
+  connectTimeoutSeconds: 2
+  maxConnectionDurationSeconds: 0
 
 hubble:
   peerService:
