@@ -19,3 +19,6 @@ spec:
       backendRefs:
         - name: open-webui-service
           port: 8080
+      timeouts:
+        request: 0s
+        backendRequest: 0s

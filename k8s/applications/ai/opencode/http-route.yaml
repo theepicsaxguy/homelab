@@ -15,20 +15,22 @@ spec:
     - matches:  
         - path:  
             type: PathPrefix  
-            value: /api/sse  
+            value: /api/sse/  
       backendRefs:  
         - name: opencode-web-service  
-          port: 5003  
+          port: 5003
       timeouts:  
-        request: "0s"  # Disable request timeout for SSE  
+        request: "0s"
       filters:  
-        - type: ResponseHeaderModifier  
-          responseHeaderModifier:  
-            add:  
-              - name: Cache-Control  
-                value: "no-cache"  
-              - name: Connection  
-                value: "keep-alive"  
+      - type: ResponseHeaderModifier  
+        responseHeaderModifier:  
+          add:  
+            - name: Cache-Control  
+              value: "no-cache"  
+            - name: Connection  
+              value: "keep-alive"  
+            - name: Content-Type  
+              value: "text/event-stream"
     - matches:  
         - path:  
             type: PathPrefix  

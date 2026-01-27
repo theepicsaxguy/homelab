@@ -34,6 +34,15 @@ spec:
         env:
         - name: OPENCODE_HOST
           value: "127.0.0.1"
+        - name: AUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-opencode-secrets
+              key: AUTH_SECRET
+        - name: AUTH_TRUSTED_ORIGINS
+          value: "https://opencode.peekoff.com,http://localhost:5003,http://10.0.10.*:5003"
+        - name: AUTH_SECURE_COOKIES
+          value: "true"
         volumeMounts:  
         - name: workspace  
           mountPath: /workspace  
