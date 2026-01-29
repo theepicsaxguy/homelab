@@ -5,7 +5,7 @@
 #   VLLM_CPU_AVX512VNNI=false (default)|true
 #   VLLM_CPU_AMXBF16=false (default)|true
 #
-ARG IMAGE_VERSION=v0.14.1 # renovate: github-releases=vllm-project/vllm
+ARG IMAGE_VERSION=v0.15.0 # renovate: github-releases=vllm-project/vllm
 
 # This vLLM Dockerfile is used to build images that can run vLLM on both x86_64 and arm64 CPU platforms.
 #
