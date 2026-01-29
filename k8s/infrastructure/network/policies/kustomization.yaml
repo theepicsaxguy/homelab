@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- clusterwide
+- database
+- monitoring
+- auth
+- argocd
+- cert-manager
+- applications
+commonLabels:
+  policy-type: cilium-audit-policies
+  network-policy: audit-mode
+namespace: kube-system

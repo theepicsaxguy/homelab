@@ -1,0 +1,36 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: unifi-controller-access
+  labels:
+    policy-type: network-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: unifi
+  description: "Allow UniFi controller management access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "8443"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+  - fromEntities: ["world"]  # Direct management access
+    toPorts:
+    - ports:
+      - port: "8443"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+      - port: "8880"
+        protocol: TCP
+      - port: "6789"
+        protocol: TCP
+      - port: "3478"
+        protocol: UDP
+      - port: "10001"
+        protocol: UDP

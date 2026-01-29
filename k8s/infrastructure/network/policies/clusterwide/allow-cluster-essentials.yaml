@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: clusterwide-dns-kubeapi
+  labels:
+    policy-type: audit-baseline
+spec:
+  endpointSelector: {}
+  description: "Allow DNS and Kubernetes API access cluster-wide"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      rules:
+        dns:
+          - matchPattern: "*"
+  - toCIDR: ["10.0.0.0/8"]

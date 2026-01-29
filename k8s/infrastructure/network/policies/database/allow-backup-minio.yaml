@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: database-backup-minio-access
+  labels:
+    policy-type: database-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  description: "Allow PostgreSQL backup to MinIO"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: monitoring
+        app.kubernetes.io/name: minio
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP

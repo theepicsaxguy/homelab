@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mqtt-mosquitto-access
+  labels:
+    policy-type: automation-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: mosquitto
+  description: "Allow MQTT broker access"
+  ingress:
+  - fromEndpoints: {}  # Allow from any namespace for IoT devices
+    toPorts:
+    - ports:
+      - port: "1883"
+        protocol: TCP
+  - fromEntities: ["world"]  # External MQTT clients
+    toPorts:
+    - ports:
+      - port: "1883"
+        protocol: TCP

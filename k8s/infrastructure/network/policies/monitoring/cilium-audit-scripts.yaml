@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-audit-monitoring
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: cilium-audit
+data:
+  hubble-observe.sh: |
+    #!/bin/bash
+    # Monitor Cilium audit violations
+    
+    echo "=== Cilium Audit Violations (Last 24h) ==="
+    hubble observe --verdict AUDITED --since 24h --all-namespaces
+    
+    echo "=== Top Violated Sources ==="
+    hubble observe --verdict AUDITED --since 24h --all-namespaces | \
+      grep "AUDITED" | awk '{print $1}' | sort | uniq -c | sort -nr | head -10
+    
+    echo "=== Top Violated Destinations ==="
+    hubble observe --verdict AUDITED --since 24h --all-namespaces | \
+      grep "AUDITED" | awk '{print $3}' | sort | uniq -c | sort -nr | head -10
+    
+    echo "=== Violations by Namespace ==="
+    hubble observe --verdict AUDITED --since 24h --all-namespaces | \
+      grep "AUDITED" | awk -F'/' '{print $1}' | sort | uniq -c | sort -nr
