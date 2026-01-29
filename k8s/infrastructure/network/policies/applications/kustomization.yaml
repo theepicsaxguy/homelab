@@ -8,6 +8,6 @@ resources:
 - games
 - tools
 - network
-commonLabels:
+labels:
   policy-type: applications-audit
   network-policy: cilium-audit

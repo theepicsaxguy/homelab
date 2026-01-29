@@ -7,7 +7,10 @@ resources:
 - auth
 - argocd
 - cert-manager
-- applications
+- applications/ai
+- applications/automation
+- applications/games
+- applications/network
 commonLabels:
   policy-type: cilium-audit-policies
   network-policy: audit-mode
