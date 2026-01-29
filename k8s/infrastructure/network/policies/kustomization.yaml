@@ -11,4 +11,3 @@ resources:
 commonLabels:
   policy-type: cilium-audit-policies
   network-policy: audit-mode
-namespace: kube-system
