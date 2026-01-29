@@ -1,5 +1,69 @@
 # Changelog
 
+## 5.3.0 (2026-01-29)
+
+## What's Changed
+* chore(deps): update helm release argo-cd to v9.3.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2044
+* fix: update service name in reference grants to use ak-outpost-proxy-outpost by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2046
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2047
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2048
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2049
+* chore(deps): update helm release authentik to v2025.12.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2050
+* chore(deps): update helm release authentik to v2025.12.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2051
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2052
+* chore(deps): update n8nio/n8n docker tag to v2.4.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2053
+* chore(deps): update helm release kube-prometheus-stack to v81 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2054
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2055
+* Fix k8s opencode sse streaming by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2056
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2057
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.6.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2058
+* chore(deps): update helm release redis to v24.1.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2059
+* chore(deps): update ghcr.io/jellyfin/jellyfin docker tag to v10.11.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2060
+* chore(deps): update getmeili/meilisearch docker tag to v1.33.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2061
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.7.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2063
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2064
+* Update statefulset.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2066
+* chore(deps): update n8nio/n8n docker tag to v2.5.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2067
+* chore(deps): update cloudflare/cloudflared docker tag to v2026 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2065
+* chore(deps): update helm release kube-prometheus-stack to v81.2.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2068
+* Feat--enhance-HTTPRoute-and-StatefulSet-configurations-for-improved-security-and-routing by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2069
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2070
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2072
+* Pip installation path by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2074
+* fix(deps): update dependency typed.js to v3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2071
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2062
+* chore(deps): update dependency vllm-project/vllm to v0.14.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2075
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.7.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2076
+* Paper crossplay server by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2073
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.7.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2078
+* Update kustomization.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2079
+* BedrockConnect persistent data by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2077
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.7.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2080
+* Update bedrockconnect-deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2082
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.7.8 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2084
+* feat(minecraft): Add auto-connect configuration for BedrockConnect by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2083
+* chore(deps): update getmeili/meilisearch docker tag to v1.34.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2081
+* chore(deps): update helm release argo-cd to v9.3.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2085
+* chore(deps): update n8nio/n8n docker tag to v2.6.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2086
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.8.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2087
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.8.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2088
+* chore(deps): update helm release argo-cd to v9.3.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2089
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2090
+* Feat(k8s)--update-HTTP-routes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2091
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.8.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2092
+* chore(k8s): remove unused GitHub token from opencode by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2093
+* chore(deps): update n8nio/n8n docker tag to v2.6.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2094
+* chore(deps): update all dependencies to v2.5.0 (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2095
+* chore(k8s): add deployment strategy type to opencode-web by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2096
+* chore(deps): update getmeili/meilisearch docker tag to v1.34.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2097
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2098
+* chore(deps): update n8nio/n8n docker tag to v2.6.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2099
+* chore(deps): update helm release kube-prometheus-stack to v81.3.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2100
+* chore(deps): update ghcr.io/blakeblackshear/frigate docker tag to v0.16.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2101
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.2.0...v5.3.0
+
 ## 5.2.0 (2026-01-14)
 
 ## What's Changed
