@@ -10,3 +10,5 @@ spec:
   enableDefaultDeny:
     ingress: false
     egress: false
+  ingress: []
+  egress: []
