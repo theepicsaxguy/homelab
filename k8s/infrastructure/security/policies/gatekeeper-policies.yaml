@@ -1,73 +1,60 @@
-apiVersion: templates.gatekeeper.sh/v1
+apiVersion: templates.gatekeeper.sh/v1beta1
 kind: ConstraintTemplate
 metadata:
   name: k8spspprohibited
   annotations:
-    description: "NSA/CISA - Prohibit privileged PSPs"
+    description: "NSA/CISA - Prohibit privileged container execution"
 spec:
   crd:
     spec:
-      names: ["podsecuritypolicies"]
+      names:
+        kind: K8sPSPProhibited
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                excludedNamespaces:
+                  type: array
+                  items:
+                    type: string
   targets:
-    - apiGroups: ["policy"]
-      kinds: ["PodSecurityPolicy"]
-      versions: ["v1beta1"]
-    - apiGroups: [""]
-      kinds: ["Pod"]
-      versions: ["v1"]
-  rego: |
-    package k8spspprohibited
-    
-    violation[{"msg": msg, "details": {"restrictedFields": restricted}} {
-      input := review.object
-      restricted := {vfields: [_]}
-
-      # Check for privileged pods
-      privileged := input.spec.containers[_].securityContext.privileged == true
-      field_error := {vfields: ["spec.containers[_].securityContext.privileged"]}
-      
-      # Check for host network access
-      hostNetwork := input.spec.containers[_].hostNetwork == true
-      host_network_error := {vfields: ["spec.containers[_].securityContext.hostNetwork"]}
-      
-      # Check for host PID
-      hostPID := input.spec.containers[_].securityContext.hostPID == true
-      host_pid_error := {vfields: ["spec.containers[_].securityContext.hostPID"]}
-      
-      # Check for host IPC
-      hostIPC := input.spec.containers[_].securityContext.hostIPC == true
-      host_ipc_error := {vfields: ["spec.containers[_].securityContext.hostIPC"]}
-      
-      # Check for adding capabilities
-      add_caps := input.spec.containers[_].securityContext.capabilities.add[_]
-      add_caps_error := {vfields: ["spec.containers[_].securityContext.capabilities.add"]}
-
-      msg := sprintf("Pod Security Policy violation: %v", restricted)
-    }
-    
-    enforcementAction: deny
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspprohibited
+        
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          container.securityContext.privileged == true
+          msg := "Pod security violation: privileged containers are not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostNetwork == true
+          msg := "Pod security violation: host network access is not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostPID == true
+          msg := "Pod security violation: host PID namespace access is not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostIPC == true
+          msg := "Pod security violation: host IPC namespace access is not allowed"
+        }
 ---
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sPSPRestrictions
+kind: K8sPSPProhibited
 metadata:
   name: nsa-restricted-psp
   annotations:
-    description: "NSA/CISA - Restricted Pod Security Policy"
+    description: "NSA/CISA - Restrict privileged pod security policies"
 spec:
   match:
     kinds:
     - apiGroups: [""]
       kinds: ["Pod"]
-    namespaces: ["*"]
-  parameters:
-    allowPrivileged: false
-    allowHostNetwork: false
-    allowHostPID: false
-    allowHostIPC: false
-    allowHostPorts: []
-    allowedCapabilities: []
-    readOnlyRootFilesystem: false
-    runAsUser:
-      rule: "MustRunAsNonRoot"
-  exclusions:
-    namespaces: ["security-system", "gatekeeper-system", "kyverno", "kubearmor", "kube-system"]
+    excludedNamespaces: ["security-system", "gatekeeper-system", "kyverno", "kubearmor", "kube-system"]
