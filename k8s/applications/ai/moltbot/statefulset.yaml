@@ -37,6 +37,12 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+        hostIPC: false
+        hostPID: false
+        hostNetwork: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: ["ALL"]
       volumes:
         - name: moltbot-workspace
           persistentVolumeClaim:
@@ -47,9 +53,7 @@ spec:
         - name: moltbot-logs
           persistentVolumeClaim:
             claimName: moltbot-logs-pvc
-        - name: moltbot-data
-          persistentVolumeClaim:
-            claimName: moltbot-data
+
         - name: tmp
           emptyDir: {}
         - name: config
