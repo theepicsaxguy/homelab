@@ -1,0 +1,64 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: nsa-hardening-all-namespaces
+  annotations:
+    description: "NSA/CISA hardening policies for all namespaces"
+spec:
+  validationFailureAction: audit
+  rules:
+  - name: require-non-root-containers
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces: ["*"]
+    validate:
+      message: "Containers must not run as root user (NSA/CISA 3.4.4)"
+      pattern:
+        spec:
+          securityContext:
+            runAsNonRoot: true
+  - name: require-dropped-capabilities
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces: ["*"]
+    validate:
+      message: "Containers must drop all Linux capabilities (NSA/CISA 5.1.5)"
+      pattern:
+        spec:
+          securityContext:
+            capabilities:
+              drop: ["ALL"]
+  - name: require-read-only-root-filesystem
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces: ["*"]
+    validate:
+      message: "Containers must have read-only root filesystem (NSA/CISA 4.2.1)"
+      pattern:
+        spec:
+          securityContext:
+            readOnlyRootFilesystem: true
+  - name: disallow-host-namespace-sharing
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          namespaces: ["*"]
+    validate:
+      message: "Containers must not share host namespace (NSA/CISA 5.2.2)"
+      pattern:
+        spec:
+          securityContext:
+            hostPID: false
+            hostIPC: false
+            hostNetwork: false

@@ -1,0 +1,47 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8spspprohibited
+  annotations:
+    description: "NSA/CISA - Prohibit privileged container execution"
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sPSPProhibited
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                excludedNamespaces:
+                  type: array
+                  items:
+                    type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8spspprohibited
+        
+        violation[{"msg": msg}] {
+          container := input.review.object.spec.containers[_]
+          container.securityContext.privileged == true
+          msg := "Pod security violation: privileged containers are not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostNetwork == true
+          msg := "Pod security violation: host network access is not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostPID == true
+          msg := "Pod security violation: host PID namespace access is not allowed"
+        }
+        
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostIPC == true
+          msg := "Pod security violation: host IPC namespace access is not allowed"
+        }

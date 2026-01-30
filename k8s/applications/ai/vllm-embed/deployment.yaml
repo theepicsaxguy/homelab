@@ -14,13 +14,26 @@ spec:
       labels:
         app: vllm-embed
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: vllm-openai
           image: ghcr.io/theepicsaxguy/vllm-cpu:v0.11.0-cfc13f2
           imagePullPolicy: IfNotPresent
           securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
             capabilities:
-              drop: ["ALL"]
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           command: ["/bin/sh", "-c"]
           args:
             - >

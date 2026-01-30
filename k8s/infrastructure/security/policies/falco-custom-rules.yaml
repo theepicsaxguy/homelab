@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: falco-custom-rules
+  namespace: security-system
+data:
+  minecraft_rules.yaml: |
+    - rule: Minecraft Shell Access
+      desc: Detect shell access in Minecraft containers
+      condition: >
+        spawned_process and
+        proc.name in (bash, sh, zsh, fish, ksh) and
+        container.name contains "minecraft"
+      output: >
+        Shell access detected in Minecraft container (user=%user.name command=%proc.cmdline container=%container.name)
+      priority: WARNING
+      tags: [minecraft, shell, container]
+    
+    - rule: Minecraft File System Anomaly
+      desc: Detect suspicious file access in Minecraft containers
+      condition: >
+        container.name contains "minecraft" and
+        ((fd.typechar = 1 or fd.typechar = 1) and (fd.name in ("/etc/passwd", "/etc/shadow", "/root/.ssh"))
+      output: >
+        Sensitive file access in Minecraft container (user=%user.name file=%fd.name container=%container.name)
+      priority: CRITICAL
+      tags: [minecraft, filesystem, sensitive]
+    
+    - rule: Minecraft Network Anomaly
+      desc: Detect unusual network activity in Minecraft containers
+      condition: >
+        container.name contains "minecraft" and
+        (fd.typechar = 4 or fd.typechar = 4) and
+        (fd.sip.name != "Minecraft" and
+         (fd.sport != 25565 and fd.sport != 19132))
+      output: >
+        Unusual network activity in Minecraft container (user=%user.name sip=%fd.sip.name sport=%fd.sport container=%container.name)
+      priority: WARNING
+      tags: [minecraft, network, anomaly]
+  
+  ai_rules.yaml: |
+    - rule: AI Model File Access
+      desc: Detect unauthorized access to AI model files
+      condition: >
+        container.name matches "vllm|perplexica|open-webui|gpt-researcher" and
+        ((fd.typechar = 1 or fd.typechar = 1) and 
+         (fd.name contains ".bin" or fd.name contains ".model" or fd.name contains ".ckpt"))
+      output: >
+        AI model file access detected (user=%user.name file=%fd.name container=%container.name)
+      priority: HIGH
+      tags: [ai, model, security]
+    
+    - rule: AI Data Exfiltration
+      desc: Detect potential data exfiltration from AI workloads
+      condition: >
+        container.name matches "vllm|perplexica|open-webui" and
+        (fd.typechar = 4 or fd.typechar = 4) and
+        (fd.sport not in [80, 443, 8000, 8080, 3000] and
+         (fd.bytes > 1000000))
+      output: >
+        Potential AI data exfiltration (user=%user.name bytes=%fd.bytes sip=%fd.sip.name sport=%fd.sport container=%container.name)
+      priority: CRITICAL
+      tags: [ai, exfiltration, network]
+  
+  media_rules.yaml: |
+    - rule: Media Service Privilege Escalation
+      desc: Detect privilege escalation in media services
+      condition: >
+        container.name matches "jellyfin|immich" and
+        (spawned_process and proc.name in (sudo, su, doas) and
+         proc.pname exists and proc.pname != container.name)
+      output: >
+        Privilege escalation in media service (user=%user.name command=%proc.cmdline parent=%proc.pname container=%container.name)
+      priority: HIGH
+      tags: [media, privilege, escalation]
+    
+    - rule: Media File System Protection
+      desc: Detect suspicious file modifications in media directories
+      condition: >
+        container.name matches "jellyfin|immich" and
+        ((fd.typechar = 2 or fd.typechar = 2) and
+         (fd.name contains "/media/" or fd.name contains "/config/") and
+         not fd.name contains "/tmp/")
+      output: >
+        Suspicious media file modification (user=%user.name file=%fd.name operation=%fd.type.name container=%container.name)
+      priority: WARNING
+      tags: [media, filesystem, security]

@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: cert-manager-webhook-access
+  labels:
+    policy-type: cert-manager-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+  description: "Allow cert-manager webhook access"
+  ingress:
+  - fromEndpoints: {}  # Allow webhook from any namespace
+    toPorts:
+    - ports:
+      - port: "9402"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["0.0.0.0/0"]  # Allow external ACME servers
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP

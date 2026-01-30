@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Gatekeeper Operator deployment
+resources:
+  # Install the operator CRD and deployment
+  - https://raw.githubusercontent.com/gatekeeper/gatekeeper-operator/main/deploy/gatekeeper-operator.yaml
+
+  # Other security tools (unchanged)
+  - https://github.com/kyverno/kyverno/releases/download/v1.16.2/install.yaml
+  - monitoring.yaml
+  - externalsecret.yaml
+
+  # Gatekeeper configuration via operator CR
+  - gatekeeper-cr.yaml
+
+  # Security policies (now applied after Gatekeeper is ready)
+  - policies/kyverno-policies.yaml
+  # Gatekeeper templates MUST be applied before constraints
+  - policies/templates/k8spspprohibited.yaml
+  - policies/gatekeeper-constraints.yaml
+  - policies/falco-custom-rules.yaml
+
+# Helm Charts - Falco and KubeArmor
+helmCharts:
+  - name: falco
+    namespace: security-system
+    releaseName: falco
+    repo: https://falcosecurity.github.io/charts
+    valuesFile: falco-values.yaml
+    version: 7.2.1
+
+  - name: kubearmor
+    namespace: security-system
+    releaseName: kubearmor
+    repo: https://kubearmor.github.io/charts
+    valuesFile: kubearmor-values.yaml
+    version: 1.6.6
+
+# Remove deprecated AppArmor annotations and ensure security contexts
+patches:
+  - target:
+      kind: DaemonSet
+      name: falco
+      namespace: security-system
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1falco
+  - target:
+      kind: Deployment
+      name: kubearmor
+      namespace: security-system
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor

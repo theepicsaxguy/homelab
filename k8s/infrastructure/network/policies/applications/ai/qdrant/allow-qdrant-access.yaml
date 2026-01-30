@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: qdrant-vector-db-access
+  labels:
+    policy-type: ai-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: qdrant
+  description: "Allow Qdrant vector database access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: opencode
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: open-webui
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: perplexica
+    toPorts:
+    - ports:
+      - port: "6333"
+        protocol: TCP
+      - port: "6334"
+        protocol: TCP
