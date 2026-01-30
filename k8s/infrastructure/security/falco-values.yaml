@@ -1,0 +1,33 @@
+driver:
+  enabled: true
+  kind: ebpf
+  ebpf:
+    leastPrivileged: true
+
+falcosidekick:
+  enabled: true
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+metrics:
+  enabled: true
+  service:
+    create: true
+    type: ClusterIP
+    ports:
+      metrics:
+        port: 8765
+        targetPort: 8765
+        protocol: TCP
+
+serviceMonitor:
+  enabled: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falco

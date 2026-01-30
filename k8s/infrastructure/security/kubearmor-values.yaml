@@ -1,0 +1,18 @@
+kubearmor:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  configMap:
+    defaultFilePosture: audit
+    defaultNetworkPosture: audit
+    defaultCapabilitiesPosture: audit
+
+kubearmorRelay:
+  enable: true
+
+kubearmorController:
+  replicas: 1
