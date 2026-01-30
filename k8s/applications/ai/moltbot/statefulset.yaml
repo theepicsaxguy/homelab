@@ -55,9 +55,9 @@ spec:
         - name: config
           configMap:
             name: moltbot-config
-        - name: secrets
+            - name: secrets
           secret:
-            secretName: moltbot-secrets
+            secretName: app-moltbot-secrets
             optional: true
       containers:
         - name: moltbot
@@ -98,18 +98,13 @@ spec:
             - name: SLACK_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: moltbot-secrets
-                  key: slack-bot-token
+                  name: app-moltbot-secrets
+                  key: SLACK_BOT_TOKEN
             - name: SLACK_APP_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: moltbot-secrets
-                  key: slack-app-token
-            - name: LITELLM_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: app-litellm-keys
-                  key: litellm-api-key
+                  name: app-moltbot-secrets
+                  key: SLACK_APP_TOKEN
             - name: NODE_ENV
               value: production
             - name: CLAWDBOT_STATE_DIR
