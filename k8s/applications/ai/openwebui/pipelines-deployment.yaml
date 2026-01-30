@@ -7,6 +7,8 @@ metadata:
     app: openwebui-pipelines
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: openwebui-pipelines
@@ -24,17 +26,21 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: sync-pipelines
-          image: busybox:1.37
-          command:
-            - sh
-            - -c
-            - "cp -ra /bootstrap/. /app/pipelines"
-          volumeMounts:
-            - name: pipelines-bootstrap
-              mountPath: /bootstrap
-            - name: pipelines-data
-              mountPath: /app/pipelines
+          - name: sync-pipelines
+            image: busybox:1.37
+            command:
+              - sh
+              - -c
+              - "cp -ra /bootstrap/. /app/pipelines"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            volumeMounts:
+              - name: pipelines-bootstrap
+                mountPath: /bootstrap
+              - name: pipelines-data
+                mountPath: /app/pipelines
       containers:
         - name: pipelines
           image: ghcr.io/open-webui/pipelines:git-039f9c5
@@ -69,34 +75,38 @@ spec:
               value: "/app/pipelines/.venv:${PYTHONPATH}"
             - name: PIP_CACHE_DIR
               value: "/tmp/pipcache"
+            - name: MEM0_HOME
+              value: "/.mem0"
           volumeMounts:
             - name: tmp
               mountPath: /tmp
             - name: pipelines-data
               mountPath: /app/pipelines
+            - name: mem0-home
+              mountPath: /.mem0
           resources:
             requests:
-              cpu: "500m"
-              memory: "512Mi"
-            limits:
               cpu: "1000m"
               memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
           livenessProbe:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 10
+            initialDelaySeconds: 340
             periodSeconds: 30
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 5
+            initialDelaySeconds: 340
             periodSeconds: 15
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 30
       volumes:
         - name: tmp
           emptyDir: {}
@@ -106,3 +116,5 @@ spec:
         - name: pipelines-data
           persistentVolumeClaim:
             claimName: pipelines-pvc
+        - name: mem0-home
+          emptyDir: {}
