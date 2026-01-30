@@ -33,3 +33,20 @@ helmCharts:
   repo: https://kubearmor.github.io/charts
   valuesFile: kubearmor-values.yaml
   version: 1.6.6
+
+# Remove deprecated AppArmor annotations and ensure security contexts
+patches:
+- target:
+    kind: DaemonSet
+    name: falco
+    namespace: security-system
+  patch: |-
+    - op: remove
+      path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1falco
+- target:
+    kind: Deployment
+    name: kubearmor
+    namespace: security-system
+  patch: |-
+    - op: remove
+      path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor
