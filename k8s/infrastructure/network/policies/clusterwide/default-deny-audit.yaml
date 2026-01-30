@@ -1,5 +1,5 @@
 apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
+kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: clusterwide-default-deny-audit
   labels:
@@ -7,7 +7,6 @@ metadata:
 spec:
   endpointSelector: {}
   description: "Audit-only default deny for all traffic cluster-wide"
-  ingress:
-  - enableDefaultDeny: false
-  egress:
-  - enableDefaultDeny: false
+  enableDefaultDeny:
+    ingress: false
+    egress: false
