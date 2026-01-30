@@ -1,22 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources:
-# CRD installers (Gatekeeper/Kyverno must be first before constraint templates)
-# Gatekeeper v3.21.0 - NSA/CISA admission control (deploys to gatekeeper-system)
-- https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.21.0/deploy/gatekeeper.yaml
-
-# Kyverno v1.16.2 - Policy validation + mutation (deploys to kyverno)
-- https://github.com/kyverno/kyverno/releases/download/v1.16.2/install.yaml
-
-# Monitoring and secrets integration (requires external-secrets CRDs from above)
-- monitoring.yaml
-- externalsecret.yaml
-
-# Security policies - applied after CRDs are installed
-- policies/gatekeeper-policies.yaml
-- policies/kyverno-policies.yaml
+resources:  
+# CRD installers (Gatekeeper/Kyverno must be first before constraint templates)  
+# Gatekeeper v3.21 - NSA/CISA admission control (deploys to gatekeeper-system)  
+- https://raw.githubusercontent.com/open-policy-agent/gatekeeper/release-3.21/deploy/gatekeeper.yaml  
+  
+# Kyverno v1.16.2 - Policy validation + mutation (deploys to kyverno)  
+- https://github.com/kyverno/kyverno/releases/download/v1.16.2/install.yaml  
+  
+# Monitoring and secrets integration  
+- monitoring.yaml  
+- externalsecret.yaml  
+  
+# Gatekeeper templates (must be present before constraints that reference them)  
+- policies/templates/k8spspprohibited.yaml  
+  
+# Security constraints - applied after templates  
+- policies/gatekeeper-constraints.yaml  
+- policies/kyverno-policies.yaml  
 - policies/falco-custom-rules.yaml
+
 
 # Helm Charts - Falco and KubeArmor
 helmCharts:

@@ -45,16 +45,3 @@ spec:
           input.review.object.spec.hostIPC == true
           msg := "Pod security violation: host IPC namespace access is not allowed"
         }
----
-apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sPSPProhibited
-metadata:
-  name: nsa-restricted-psp
-  annotations:
-    description: "NSA/CISA - Restrict privileged pod security policies"
-spec:
-  match:
-    kinds:
-    - apiGroups: [""]
-      kinds: ["Pod"]
-    excludedNamespaces: ["security-system", "gatekeeper-system", "kyverno", "kubearmor", "kube-system"]
