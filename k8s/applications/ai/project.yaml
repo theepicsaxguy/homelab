@@ -19,6 +19,8 @@ spec:
       server: '*'
     - namespace: 'vllm-embed'
       server: '*'
+    - namespace: 'moltbot'
+      server: '*'
     - namespace: 'opencode'
       server: '*'
   clusterResourceWhitelist:

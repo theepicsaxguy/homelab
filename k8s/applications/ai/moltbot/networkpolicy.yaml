@@ -1,0 +1,42 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: moltbot-network-policy
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: moltbot
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: litellm
+    ports:
+    - port: "4000"
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: qdrant
+    ports:
+    - port: "6333"
+  - toFQDNs:
+    - matchName: "api.openai.com"
+    - matchName: "api.anthropic.com"
+    - matchName: "discord.com"
+    - matchName: "api.telegram.org"
+    - matchName: "web.whatsapp.com"
+    - matchName: "gate.whatsapp.com"
+    - matchName: "discord.gg"
+    - matchName: "t.me"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+        app.kubernetes.io/name: envoy
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: auth
+        app.kubernetes.io/name: authentik
+    ports:
+    - port: "18789"
