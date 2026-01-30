@@ -21,6 +21,7 @@ spec:
           - path: k8s/infrastructure/deployment
           - path: k8s/infrastructure/auth
           - path: k8s/infrastructure/database
+          - path: k8s/infrastructure/security
   template:
     metadata:
       name: 'infra-{{ path.basename }}'
