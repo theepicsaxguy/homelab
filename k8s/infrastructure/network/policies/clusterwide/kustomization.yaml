@@ -4,6 +4,7 @@ resources:
 - default-deny-audit.yaml
 - allow-cluster-essentials.yaml
 - allow-gateway-http.yaml
-commonLabels:
-  policy-type: audit-baseline
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: audit-baseline
+    network-policy: cilium-audit

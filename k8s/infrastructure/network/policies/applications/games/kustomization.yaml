@@ -4,6 +4,7 @@ resources:
 - ../../clusterwide
 - allow-minecraft-access.yaml
 namespace: minecraft
-commonLabels:
-  policy-type: games-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: games-audit
+    network-policy: cilium-audit

@@ -9,5 +9,6 @@ resources:
 - tools
 - network
 labels:
-  policy-type: applications-audit
-  network-policy: cilium-audit
+- pairs:
+    policy-type: applications-audit
+    network-policy: cilium-audit

@@ -4,6 +4,7 @@ resources:
 - ../../clusterwide
 - qdrant
 namespace: qdrant
-commonLabels:
-  policy-type: ai-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: ai-audit
+    network-policy: cilium-audit

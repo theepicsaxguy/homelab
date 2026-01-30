@@ -5,6 +5,7 @@ resources:
 - cilium-audit-servicemonitor.yaml
 - cilium-audit-scripts.yaml
 namespace: monitoring
-commonLabels:
-  policy-type: monitoring-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: monitoring-audit
+    network-policy: cilium-audit

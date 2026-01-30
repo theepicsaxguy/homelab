@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../clusterwide
 namespace: database
-commonLabels:
-  policy-type: database-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: database-audit
+    network-policy: cilium-audit

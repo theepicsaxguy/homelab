@@ -4,5 +4,6 @@ resources:
 - ../../clusterwide
 namespace: headlessx
 labels:
-  policy-type: web-audit
-  network-policy: cilium-audit
+- pairs:
+    policy-type: web-audit
+    network-policy: cilium-audit

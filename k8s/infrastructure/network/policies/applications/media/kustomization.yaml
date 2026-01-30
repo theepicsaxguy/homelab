@@ -4,5 +4,6 @@ resources:
 - ../../clusterwide
 namespace: immich
 labels:
-  policy-type: media-audit
-  network-policy: cilium-audit
+- pairs:
+    policy-type: media-audit
+    network-policy: cilium-audit

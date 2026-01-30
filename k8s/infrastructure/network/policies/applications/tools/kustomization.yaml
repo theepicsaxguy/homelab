@@ -4,5 +4,6 @@ resources:
 - ../../clusterwide
 namespace: it-tools
 labels:
-  policy-type: tools-audit
-  network-policy: cilium-audit
+- pairs:
+    policy-type: tools-audit
+    network-policy: cilium-audit

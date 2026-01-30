@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../clusterwide
 namespace: cert-manager
-commonLabels:
-  policy-type: cert-manager-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: cert-manager-audit
+    network-policy: cilium-audit

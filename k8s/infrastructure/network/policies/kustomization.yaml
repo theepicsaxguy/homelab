@@ -11,6 +11,7 @@ resources:
 - applications/automation
 - applications/games
 - applications/network
-commonLabels:
-  policy-type: cilium-audit-policies
-  network-policy: audit-mode
+labels:
+- pairs:
+    policy-type: cilium-audit-policies
+    network-policy: audit-mode

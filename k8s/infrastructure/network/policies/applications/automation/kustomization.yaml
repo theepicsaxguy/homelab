@@ -4,6 +4,7 @@ resources:
 - ../../clusterwide
 - mqtt
 namespace: mqtt
-commonLabels:
-  policy-type: automation-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: automation-audit
+    network-policy: cilium-audit

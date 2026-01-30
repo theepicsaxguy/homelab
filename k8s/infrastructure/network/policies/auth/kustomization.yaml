@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../clusterwide
 namespace: auth
-commonLabels:
-  policy-type: auth-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: auth-audit
+    network-policy: cilium-audit

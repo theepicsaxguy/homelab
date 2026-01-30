@@ -4,6 +4,7 @@ resources:
 - ../../clusterwide
 - allow-unifi-access.yaml
 namespace: unifi
-commonLabels:
-  policy-type: network-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: network-audit
+    network-policy: cilium-audit

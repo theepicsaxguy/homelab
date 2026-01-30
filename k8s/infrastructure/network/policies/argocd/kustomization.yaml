@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - ../clusterwide
 namespace: argocd
-commonLabels:
-  policy-type: argocd-audit
-  network-policy: cilium-audit
+labels:
+- pairs:
+    policy-type: argocd-audit
+    network-policy: cilium-audit
