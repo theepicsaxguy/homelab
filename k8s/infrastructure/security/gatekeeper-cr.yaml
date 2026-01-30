@@ -1,0 +1,43 @@
+apiVersion: operator.gatekeeper.sh/v1alpha1
+kind: Gatekeeper
+metadata:
+  name: gatekeeper
+  namespace: gatekeeper-system
+spec:
+  # Use the operator's tested version (v3.11.1)
+  image:
+    image: docker.io/openpolicyagent/gatekeeper:v3.11.1
+    imagePullPolicy: IfNotPresent
+  
+  # Audit configuration
+  audit:
+    replicas: 1
+    logLevel: INFO
+    auditInterval: 60s
+    constraintViolationLimit: 20
+    auditFromCache: Enabled
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  
+  # Webhook configuration
+  webhook:
+    replicas: 2
+    logLevel: INFO
+    emitAdmissionEvents: Enabled
+    failurePolicy: Ignore
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  
+  # Enable admission control
+  validatingWebhook: Enabled
+  mutatingWebhook: Enabled
