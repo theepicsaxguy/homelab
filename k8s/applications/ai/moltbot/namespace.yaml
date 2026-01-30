@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/part-of: ai

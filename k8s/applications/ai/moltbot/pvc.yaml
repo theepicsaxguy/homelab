@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: moltbot-workspace-pvc
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+    backup.velero.io/backup-tier: GFS
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: moltbot-config-pvc
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+    backup.velero.io/backup-tier: GFS
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: moltbot-logs-pvc
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+    backup.velero.io/backup-tier: Daily
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: proxmox-csi
+  resources:
+    requests:
+      storage: 10Gi

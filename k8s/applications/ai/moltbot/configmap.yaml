@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: moltbot-config
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+data:
+  moltbot.json: |
+    {
+      agents: {
+        defaults: {
+          workspace: "/workspace",
+          model: "litellm/claude-opus-4-5",
+          sandbox: {
+            mode: "all",
+            scope: "session",
+            workspaceAccess: "rw",
+            docker: {
+              image: "moltbot-sandbox:bookworm-slim",
+              workdir: "/workspace",
+              readOnlyRoot: true,
+              tmpfs: ["/tmp", "/var/tmp", "/run"],
+              network: "none",
+              user: "1000:1000",
+              capDrop: ["ALL"],
+              env: { LANG: "C.UTF-8" },
+              setupCommand: "apt-get update && apt-get install -y git curl jq python3",
+              pidsLimit: 256,
+              memory: "2g",
+              memorySwap: "4g",
+              cpus: 1
+            },
+            prune: {
+              idleHours: 24,
+              maxAgeDays: 7
+            }
+          },
+          tools: {
+            sandbox: {
+              tools: {
+                allow: ["exec", "process", "read", "write", "edit", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "session_status", "browser"],
+                deny: ["canvas", "nodes", "cron", "discord", "gateway"]
+              }
+            }
+          }
+        },
+        list: [
+          {
+            id: "main",
+            default: true,
+            identity: {
+              name: "Moltbot",
+              theme: "helpful assistant",
+              emoji: "🤖"
+            }
+          }
+        ]
+      },
+      channels: {
+        slack: {
+          enabled: true,
+          botToken: "${SLACK_BOT_TOKEN}",
+          appToken: "${SLACK_APP_TOKEN}",
+          dmPolicy: "pairing",
+          dms: {
+            enabled: true,
+            policy: "pairing"
+          },
+          channels: {
+            "#moltbot": { allow: true, requireMention: true }
+          },
+          historyLimit: 50,
+          allowBots: false,
+          reactionNotifications: "own",
+          replyToMode: "off",
+          thread: {
+            historyScope: "thread",
+            inheritParent: false
+          },
+          actions: {
+            reactions: true,
+            messages: true,
+            pins: true,
+            memberInfo: true,
+            emojiList: true
+          },
+          slashCommand: {
+            enabled: true,
+            name: "moltbot",
+            sessionPrefix: "slack:slash",
+            ephemeral: true
+          },
+          textChunkLimit: 4000,
+          chunkMode: "length",
+          mediaMaxMb: 20
+        }
+      },
+      models: {
+        providers: {
+          "litellm": {
+            baseUrl: "http://litellm.litellm.svc.cluster.local:4000",
+            apiKey: "${LITELLM_API_KEY}"
+          }
+        }
+      },
+      gateway: {
+        port: 18789,
+        auth: {
+          token: "${CLAWDBOT_GATEWAY_TOKEN}"
+        }
+      },
+      web: {
+        enabled: true,
+        heartbeatSeconds: 60
+      },
+      logging: {
+        level: "info",
+        consoleLevel: "info",
+        consoleStyle: "pretty",
+        redactSensitive: "tools"
+      },
+      messages: {
+        responsePrefix: "🤖",
+        ackReaction: "👀",
+        ackReactionScope: "group-mentions",
+        queue: {
+          mode: "collect",
+          debounceMs: 1000,
+          cap: 20,
+          drop: "summarize"
+        },
+        inbound: {
+          debounceMs: 2000
+        }
+      }
+    }

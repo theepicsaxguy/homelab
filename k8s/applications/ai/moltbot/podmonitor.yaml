@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: moltbot
+  namespace: moltbot
+  labels:
+    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/part-of: ai
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: moltbot
+  podMetricsEndpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
