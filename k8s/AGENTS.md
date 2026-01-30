@@ -321,6 +321,85 @@ kubectl describe application -n argocd <app-name>
 - `media/`: Content management and streaming
 - `web/`: Web applications and services
 
+## NETWORK POLICIES
+
+### CiliumNetworkPolicy v2 Syntax (Cilium 1.14+)
+
+CiliumNetworkPolicy v2 features stricter schema validation and restructured selectors compared to v1. Direct `ports` arrays under `ingress`/`egress` rules are no longer valid.
+
+#### V1 vs V2 Ports Structure
+**V1 (Deprecated - direct ports):**
+```yaml
+apiVersion: cilium.io/v1
+kind: CiliumNetworkPolicy
+metadata:
+  name: v1-example
+spec:
+  endpointSelector:
+    matchLabels:
+      app: moltbot
+  ingress:
+  - fromEndpoints: [...]
+    ports:                    # INVALID in v2
+    - port: "8080"
+      protocol: TCP
+```
+
+**V2 (Current - nested selectors):**
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: v2-example
+spec:
+  endpointSelector:
+    matchLabels:
+      app: moltbot
+  ingress:
+  - fromEndpoints: [...]
+    toPorts:                  # REQUIRED in v2
+    - ports:
+      - port: "8080"
+        protocol: TCP
+```
+
+#### Complete V2 Example
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: moltbot
+spec:
+  endpointSelector:
+    matchLabels:
+      app: moltbot
+  ingress:
+  - fromEntities:
+    - world  # or specific namespaces/endpoints
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: litellm
+    toPorts:
+    - ports:
+      - port: "4000"
+        protocol: TCP
+```
+
+#### Core V2 Changes
+| Aspect | V1 | V2 |
+|--------|----|----|
+| **Ports Location** | Direct under `ingress[0].ports[]` | Nested `ingress[0].toPorts[0].ports[]` |
+| **Rule Selectors** | `fromCIDR`, `toPorts` directly | Always via `toPorts`, `fromPorts`, `toEndpoints` |
+| **Validation** | Loose (warnings) | Strict (rejects invalid fields) |
+| **L7 Rules** | `toPorts.rules.http[]` | Same, but stricter nesting |
+
+**Fix Command:** Replace `spec.egress[0].ports` → `spec.egress[0].toPorts[0].ports`
+
 ## SPECIALIZED PATTERNS
 
 For domain-specific patterns, see:

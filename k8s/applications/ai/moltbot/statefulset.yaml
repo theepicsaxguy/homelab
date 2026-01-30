@@ -40,9 +40,6 @@ spec:
         hostIPC: false
         hostPID: false
         hostNetwork: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop: ["ALL"]
       volumes:
         - name: moltbot-workspace
           persistentVolumeClaim:
