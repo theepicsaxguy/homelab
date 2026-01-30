@@ -4,14 +4,16 @@ author: Anton Nilsson
 date: 2024-08-23
 version: 1.0
 license: MIT
-description: A filter that processes user messages and stores them as long term memory by utilizing the mem0 framework together with qdrant and ollama
-requirements: pydantic, ollama, mem0ai
+description: A filter that processes user messages and stores them as long term memory by utilizing qdrant and fastembed with ollama
+requirements: pydantic, qdrant-client[fastembed], fastembed, protobuf
 """
 
 from typing import List, Optional
 from pydantic import BaseModel
 import json
-from mem0 import Memory
+from qdrant_client import QdrantClient
+from qdrant_client.http import models
+import fastembed
 import threading
 
 class Pipeline:
@@ -26,7 +28,7 @@ class Pipeline:
         vector_store_qdrant_name: str = "memories"
         vector_store_qdrant_url: str = "qdrant.qdrant.svc.cluster.local"
         vector_store_qdrant_port: int = 6333
-        vector_store_qdrant_dims: int = 768 # Need to match the vector dimensions of the embedder model
+        vector_store_qdrant_dims: int = 384 # Need to match the vector dimensions of the embedder model
 
         # Default values for the mem0 language model (OpenAI API or LiteLLM)
         openai_api_key: str = "" # Set via environment variable or secret
@@ -35,9 +37,8 @@ class Pipeline:
         openai_llm_tokens: int = 8000
         llm_url: str = "http://litellm.litellm.svc.cluster.local:4000"
 
-        # Default values for the mem0 embedding model (LiteLLM)
-        openai_embedder_model: str = "qwen3-embedding-0.6b"
-        embedder_url: str = "http://litellm.litellm.svc.cluster.local:4000"
+        # Default values for the mem0 embedding model (FastEmbed)
+        embedder_model: str = "BAAI/bge-small-en-v1.5"
 
     def __init__(self):
         self.type = "filter"
@@ -49,11 +50,22 @@ class Pipeline:
                 "pipelines": ["*"],  # Connect to all pipelines
             }
         )
-        self.m = self.init_mem_zero()
+        # Direct Qdrant client
+        self.qdrant = QdrantClient(
+            host=self.valves.vector_store_qdrant_url,
+            port=self.valves.vector_store_qdrant_port
+        )
+        # FastEmbed model
+        self.embedder = fastembed.SentenceTransformerEmbedding(model_name=self.valves.embedder_model)
+        self.collection_name = self.valves.vector_store_qdrant_name
 
     async def on_startup(self):
         print(f"on_startup:{__name__}")
-        pass
+        # Ensure collection exists
+        self.qdrant.recreate_collection(
+            collection_name=self.collection_name,
+            vectors_config=models.VectorParams(size=self.valves.vector_store_qdrant_dims, distance=models.Distance.COSINE)
+        )
 
     async def on_shutdown(self):
         print(f"on_shutdown:{__name__}")
@@ -83,7 +95,7 @@ class Pipeline:
                 print("Waiting for previous memory to be done")
                 self.thread.join()
 
-            self.thread = threading.Thread(target=self.m.add, kwargs={"data":message_text,"user_id":user})
+            self.thread = threading.Thread(target=self.add_memory, args=(message_text, user))
 
             print("Text to be processed in to a memory:")
             print(message_text)
@@ -91,10 +103,10 @@ class Pipeline:
             self.thread.start()
             self.user_messages.clear()
 
-        memories = self.m.search(last_message, user_id=user)
+        results = self.search_memory(last_message, user)
 
-        if(memories):
-            fetched_memory = memories[0]["memory"]
+        if(results):
+            fetched_memory = results[0].payload["memory"]
         else:
             fetched_memory = ""
 
@@ -109,35 +121,24 @@ class Pipeline:
 
         return body
 
-    def init_mem_zero(self):
-        config = {
-            "vector_store": {
-                "provider": "qdrant",
-                "config": {
-                    "collection_name": self.valves.vector_store_qdrant_name,
-                    "host": self.valves.vector_store_qdrant_url,
-                    "port": self.valves.vector_store_qdrant_port,
-                    "embedding_model_dims": self.valves.vector_store_qdrant_dims,
-                },
-            },
-            "llm": {
-                "provider": "openai",
-                "config": {
-                    "api_key": self.valves.openai_api_key,
-                    "model": self.valves.openai_llm_model,
-                    "temperature": self.valves.openai_llm_temperature,
-                    "max_tokens": self.valves.openai_llm_tokens,
-                    "base_url": self.valves.llm_url,
-                },
-            },
-            "embedder": {
-                "provider": "openai",
-                "config": {
-                    "api_key": self.valves.openai_api_key,
-                    "model": self.valves.openai_embedder_model,
-                    "base_url": self.valves.embedder_url,
-                },
-            },
-        }
+    def add_memory(self, text: str, user_id: str):
+        embedding = self.embedder.embed([text])[0]
+        self.qdrant.upsert(
+            collection_name=self.collection_name,
+            points=[models.PointStruct(
+                id=hash(text),  # Simple ID generation
+                vector=embedding,
+                payload={"user_id": user_id, "memory": text}
+            )]
+        )
 
-        return Memory.from_config(config)
+    def search_memory(self, query: str, user_id: str, limit=1):
+        query_embedding = self.embedder.embed([query])[0]
+        return self.qdrant.search(
+            collection_name=self.collection_name,
+            query_vector=query_embedding,
+            query_filter=models.Filter(
+                must=[models.FieldCondition(key="user_id", match=models.MatchValue(value=user_id))]
+            ),
+            limit=limit
+        )
