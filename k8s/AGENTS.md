@@ -76,8 +76,8 @@ kubectl get secret -n <namespace> <app>-secrets -o yaml
 
 **Naming Conventions:**
 - Bitwarden items: Descriptive names (e.g., "App Database Credentials")
-- ExternalSecrets: `<app>-secrets` pattern
-- Secret keys: `<service>-<key>` pattern (e.g., `database-password`, `api-key`)
+- ExternalSecrets: `app-<namespace>-purpose-type` pattern (e.g., `app-qdrant-api-key`, `app-vllm-embed-hf-token`)
+- Secret keys: Environment variable style (`UPPER_CASE_WITH_UNDERSCORES`) or nested service format (`SERVICE__SECTION__KEY`)
 
 #### Special Cases
 
@@ -198,7 +198,7 @@ spec:
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: <app-name>-secrets
+  name: app-<namespace>-purpose-type
 spec:
   secretStoreRef:
     name: bitwarden-backend
