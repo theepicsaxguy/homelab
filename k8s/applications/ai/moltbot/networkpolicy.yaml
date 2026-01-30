@@ -13,13 +13,15 @@ spec:
   - toEndpoints:
     - matchLabels:
         app.kubernetes.io/name: litellm
-    ports:
-    - port: "4000"
+    toPorts:
+    - ports:
+      - port: "4000"
   - toEndpoints:
     - matchLabels:
         app.kubernetes.io/name: qdrant
-    ports:
-    - port: "6333"
+    toPorts:
+    - ports:
+      - port: "6333"
   - toFQDNs:
     - matchName: "api.slack.com"
     - matchName: "slack.com"
@@ -32,5 +34,6 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: auth
         app.kubernetes.io/name: authentik
-    ports:
-    - port: "18789"
+    toPorts:
+    - ports:
+      - port: "18789"

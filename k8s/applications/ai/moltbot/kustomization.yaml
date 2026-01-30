@@ -12,8 +12,9 @@ resources:
 - networkpolicy.yaml
 - podmonitor.yaml
 
-commonLabels:
-  app.kubernetes.io/name: moltbot
-  app.kubernetes.io/part-of: ai
+labels:
+  - pairs:
+      app.kubernetes.io/name: moltbot
+      app.kubernetes.io/part-of: ai
 
 namespace: moltbot
