@@ -21,14 +21,8 @@ spec:
     ports:
     - port: "6333"
   - toFQDNs:
-    - matchName: "api.openai.com"
-    - matchName: "api.anthropic.com"
-    - matchName: "discord.com"
-    - matchName: "api.telegram.org"
-    - matchName: "web.whatsapp.com"
-    - matchName: "gate.whatsapp.com"
-    - matchName: "discord.gg"
-    - matchName: "t.me"
+    - matchName: "api.slack.com"
+    - matchName: "slack.com"
   ingress:
   - fromEndpoints:
     - matchLabels:

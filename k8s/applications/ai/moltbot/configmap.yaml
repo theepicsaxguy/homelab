@@ -58,29 +58,49 @@ data:
         ]
       },
       channels: {
-        whatsapp: {
+        slack: {
           enabled: true,
+          botToken: "${SLACK_BOT_TOKEN}",
+          appToken: "${SLACK_APP_TOKEN}",
           dmPolicy: "pairing",
-          allowFrom: ["+15555550123"],
-          groups: { "*": { requireMention: true } }
-        },
-        telegram: {
-          enabled: true,
-          dmPolicy: "pairing",
-          groups: { "*": { requireMention: true } }
-        },
-        discord: {
-          enabled: true,
-          guilds: {
-            "*": { requireMention: true }
-          }
+          dms: {
+            enabled: true,
+            policy: "pairing"
+          },
+          channels: {
+            "#moltbot": { allow: true, requireMention: true }
+          },
+          historyLimit: 50,
+          allowBots: false,
+          reactionNotifications: "own",
+          replyToMode: "off",
+          thread: {
+            historyScope: "thread",
+            inheritParent: false
+          },
+          actions: {
+            reactions: true,
+            messages: true,
+            pins: true,
+            memberInfo: true,
+            emojiList: true
+          },
+          slashCommand: {
+            enabled: true,
+            name: "moltbot",
+            sessionPrefix: "slack:slash",
+            ephemeral: true
+          },
+          textChunkLimit: 4000,
+          chunkMode: "length",
+          mediaMaxMb: 20
         }
       },
       models: {
         providers: {
           "litellm": {
             baseUrl: "http://litellm.litellm.svc.cluster.local:4000",
-            apiKey: "${OPENAI_API_KEY}"
+            apiKey: "${LITELLM_API_KEY}"
           }
         }
       },

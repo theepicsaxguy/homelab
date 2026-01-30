@@ -95,26 +95,21 @@ spec:
                 secretKeyRef:
                   name: moltbot-secrets
                   key: gateway-token
-            - name: DISCORD_BOT_TOKEN
+            - name: SLACK_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: moltbot-secrets
-                  key: discord-bot-token
-            - name: TELEGRAM_BOT_TOKEN
+                  key: slack-bot-token
+            - name: SLACK_APP_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: moltbot-secrets
-                  key: telegram-bot-token
-            - name: OPENAI_API_KEY
+                  key: slack-app-token
+            - name: LITELLM_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-litellm-keys
-                  key: openai-api-key
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: app-litellm-keys
-                  key: anthropic-api-key
+                  key: litellm-api-key
             - name: NODE_ENV
               value: production
             - name: CLAWDBOT_STATE_DIR
