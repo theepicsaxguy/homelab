@@ -15,7 +15,7 @@ helmCharts:
 - name: falcosecurity/falco
   repo: https://falcosecurity.github.io/charts
   version: 4.4.0
-  release: falco
+  releaseName: falco
   namespace: security-system
   valuesInline:
     driver:
@@ -44,16 +44,16 @@ helmCharts:
             protocol: TCP
     serviceMonitor:
       enabled: true
-        selector:
-          matchLabels:
-            app.kubernetes.io/name: falco
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: falco
 
 # KubeArmor v1.6.6 - Kernel-level security enforcement
 helmCharts:
 - name: kubearmor/kubearmor
   repo: https://kubearmor.github.io/charts
   version: 1.6.6
-  release: kubearmor
+  releaseName: kubearmor
   namespace: security-system
   valuesInline:
     kubearmor:
