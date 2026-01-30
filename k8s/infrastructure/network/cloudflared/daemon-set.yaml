@@ -27,6 +27,15 @@ spec:
             - --config
             - /etc/cloudflared/config/config.yaml
             - run
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
           startupProbe:
             httpGet:
               path: /ready
