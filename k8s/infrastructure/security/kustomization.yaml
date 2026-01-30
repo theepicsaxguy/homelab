@@ -28,7 +28,7 @@ helmCharts:
     releaseName: falco
     repo: https://falcosecurity.github.io/charts
     valuesFile: falco-values.yaml
-    version: 7.2.1
+    version: 8.0.0
 
   - name: kubearmor
     namespace: security-system
