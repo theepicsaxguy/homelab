@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: minecraft-server-access
+  labels:
+    policy-type: games-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: minecraft
+  description: "Allow Minecraft server access"
+  ingress:
+  - fromEntities: ["world"]  # External game clients
+    toPorts:
+    - ports:
+      - port: "25565"
+        protocol: TCP
+      - port: "19132"
+        protocol: UDP

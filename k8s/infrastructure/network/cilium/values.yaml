@@ -129,6 +129,9 @@ ingressController:
     annotations:
       io.cilium/lb-ipam-ips: 10.25.150.223
 
+# Network Policy Audit Mode - Log violations without blocking
+policyAuditMode: true
+
 # mTLS
 authentication:
   enabled: false

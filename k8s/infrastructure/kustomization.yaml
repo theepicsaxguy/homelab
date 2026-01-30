@@ -10,6 +10,7 @@ resources:
 - deployment
 - auth
 - database
+- security
 
 generatorOptions:
   disableNameSuffixHash: true

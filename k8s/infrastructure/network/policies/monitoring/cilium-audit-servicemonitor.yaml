@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cilium-audit-metrics
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: cilium
+    app.kubernetes.io/component: network-policies
+spec:
+  selector:
+    matchLabels:
+      k8s-app: cilium
+  namespaceSelector:
+    matchNames:
+    - kube-system
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
+    honorLabels: true

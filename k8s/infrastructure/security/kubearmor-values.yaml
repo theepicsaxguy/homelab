@@ -1,0 +1,50 @@
+kubearmor:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  configMap:
+    defaultFilePosture: audit
+    defaultNetworkPosture: audit
+    defaultCapabilitiesPosture: audit
+  # KubeArmor requires privileged access for LSM enforcement
+  podSecurityContext:
+    runAsUser: 0
+    fsGroup: 0
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    privileged: true
+    runAsNonRoot: false
+    capabilities:
+      add:
+        - SYS_ADMIN
+        - SYS_PTRACE
+        - SYS_RESOURCE
+        - DAC_OVERRIDE
+        - SETUID
+        - SETGID
+        - IPC_LOCK
+      drop:
+        - NET_RAW
+
+kubearmorRelay:
+  enable: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+kubearmorController:
+  replicas: 1

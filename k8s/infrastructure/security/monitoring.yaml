@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubearmor-metrics
+  namespace: kubearmor
+  labels:
+    app.kubernetes.io/name: kubearmor
+    app.kubernetes.io/component: metrics
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+    prometheus.io/path: "/metrics"
+spec:
+  selector:
+    app.kubernetes.io/name: kubearmor-controller-metrics-service
+  ports:
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubearmor
+  namespace: kubearmor
+  labels:
+    app.kubernetes.io/name: kubearmor
+    app.kubernetes.io/part-of: security
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubearmor-controller-metrics-service
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s

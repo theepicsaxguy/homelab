@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: database-postgresql-access
+  labels:
+    policy-type: database-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  description: "Allow PostgreSQL access within database namespace only"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: database
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP

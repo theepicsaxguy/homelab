@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: clusterwide-gateway-http
+  labels:
+    policy-type: audit-baseline
+spec:
+  endpointSelector: {}
+  description: "Allow HTTP/HTTPS traffic to/from gateway namespace cluster-wide"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP

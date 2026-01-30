@@ -18,12 +18,28 @@ spec:
       labels:
         app: litellm
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: litellm
         image: ghcr.io/berriai/litellm-non_root:litellm_rc_branch-v1.81.0.rc.5 # renovate: datasource=github-releases depName=BerriAI/litellm
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         ports:
         - containerPort: 4000
         - containerPort: 4001

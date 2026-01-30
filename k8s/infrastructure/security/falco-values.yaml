@@ -1,0 +1,45 @@
+driver:
+  enabled: true
+  kind: ebpf
+  ebpf:
+    leastPrivileged: true
+
+falcosidekick:
+  enabled: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+metrics:
+  enabled: true
+  service:
+    create: true
+    type: ClusterIP
+    ports:
+      metrics:
+        port: 8765
+        targetPort: 8765
+        protocol: TCP
+
+serviceMonitor:
+  enabled: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falco
