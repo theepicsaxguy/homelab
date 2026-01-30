@@ -9,5 +9,3 @@ configMapGenerator:
       - pipelines/wikipedia_pipeline.py
       - pipelines/document_search_pipeline.py
       - pipelines/tools_pipeline.py
-      - filters/mem0_memory_filter_pipeline.py
-      - requirements.txt

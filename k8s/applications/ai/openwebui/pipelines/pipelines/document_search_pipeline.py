@@ -1,3 +1,4 @@
+
 """
 title: Document Search
 author: daradib
@@ -8,9 +9,7 @@ requirements: fastembed, llama-index-embeddings-deepinfra, llama-index-embedding
 version: 0.2.4
 license: AGPL-3.0-or-later
 """
-
-# Add this at the very top, before any other imports
-from __future__ import annotations
+# At the end of the file, after the Pipeline class is fully defined:
 
 # Notes:
 #
