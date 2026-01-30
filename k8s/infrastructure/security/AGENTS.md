@@ -61,7 +61,7 @@ TECHNOLOGIES: Gatekeeper, Kyverno, Falco, KubeArmor, OPA, NSA/CISA, eBPF, LSM
 ## WORKFLOW INTEGRATION
 
 ### GitOps Integration
-- Follow existing kustomize hierarchy: `k8s/applications/security/`
+- Follow existing kustomize hierarchy: `k8s/infrastucture/security/`
 - Use same naming patterns as other applications
 - Integrate with existing monitoring and alerting
 - Compatible with current Argo CD ApplicationSets
