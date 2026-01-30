@@ -10,11 +10,11 @@ resources:
 
 # Monitoring and secrets integration
 - monitoring.yaml
-- externalsecret.yaml
+- externalsecret.yaml  # Requires external-secrets CRDs
 
-# Security policies
-- policies/gatekeeper-policies.yaml
-- policies/kyverno-policies.yaml
+# Security policies (Gatekeeper/Kyverno applied separately after CRDs ready)
+- policies/gatekeeper-policies.yaml  # Requires Gatekeeper CRDs
+- policies/kyverno-policies.yaml  # Requires Kyverno CRDs
 - policies/falco-custom-rules.yaml
 - policies/kubearmor-policies.yaml
 
