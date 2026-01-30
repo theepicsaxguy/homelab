@@ -28,15 +28,16 @@ class Pipeline:
         vector_store_qdrant_port: int = 6333
         vector_store_qdrant_dims: int = 768 # Need to match the vector dimensions of the embedder model
 
-        # Default values for the mem0 language model
-        ollama_llm_model: str = "llama3.1:latest" # This model need to exist in ollama
-        ollama_llm_temperature: float = 0
-        ollama_llm_tokens: int = 8000
-        ollama_llm_url: str = "http://litellm.litellm.svc.cluster.local:4000"
+        # Default values for the mem0 language model (OpenAI API or LiteLLM)
+        openai_api_key: str = "" # Set via environment variable or secret
+        openai_llm_model: str = "mistral/mistral-small-latest"
+        openai_llm_temperature: float = 0
+        openai_llm_tokens: int = 8000
+        llm_url: str = "http://litellm.litellm.svc.cluster.local:4000"
 
-        # Default values for the mem0 embedding model
-        ollama_embedder_model: str = "nomic-embed-text:latest" # This model need to exist in ollama
-        ollama_embedder_url: str = "http://litellm.litellm.svc.cluster.local:4000"
+        # Default values for the mem0 embedding model (LiteLLM)
+        openai_embedder_model: str = "qwen3-embedding-0.6b"
+        embedder_url: str = "http://litellm.litellm.svc.cluster.local:4000"
 
     def __init__(self):
         self.type = "filter"
@@ -110,7 +111,7 @@ class Pipeline:
 
     def init_mem_zero(self):
         config = {
-                "vector_store": {
+            "vector_store": {
                 "provider": "qdrant",
                 "config": {
                     "collection_name": self.valves.vector_store_qdrant_name,
@@ -120,19 +121,21 @@ class Pipeline:
                 },
             },
             "llm": {
-                "provider": "ollama",
+                "provider": "openai",
                 "config": {
-                    "model": self.valves.ollama_llm_model,
-                    "temperature": self.valves.ollama_llm_temperature,
-                    "max_tokens": self.valves.ollama_llm_tokens,
-                    "ollama_base_url": self.valves.ollama_llm_url,
+                    "api_key": self.valves.openai_api_key,
+                    "model": self.valves.openai_llm_model,
+                    "temperature": self.valves.openai_llm_temperature,
+                    "max_tokens": self.valves.openai_llm_tokens,
+                    "base_url": self.valves.llm_url,
                 },
             },
             "embedder": {
-                "provider": "ollama",
+                "provider": "openai",
                 "config": {
-                    "model": self.valves.ollama_embedder_model,
-                    "ollama_base_url": self.valves.ollama_embedder_url,
+                    "api_key": self.valves.openai_api_key,
+                    "model": self.valves.openai_embedder_model,
+                    "base_url": self.valves.embedder_url,
                 },
             },
         }
