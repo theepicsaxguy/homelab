@@ -7,7 +7,7 @@ resources:
   - https://raw.githubusercontent.com/gatekeeper/gatekeeper-operator/main/deploy/gatekeeper-operator.yaml
 
   # Other security tools (unchanged)
-  - https://github.com/kyverno/kyverno/releases/download/v1.16.2/install.yaml
+  - https://github.com/kyverno/kyverno/releases/download/v1.16.3/install.yaml
   - monitoring.yaml
   - externalsecret.yaml
 
