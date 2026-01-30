@@ -6,7 +6,7 @@ metadata:
 spec:
   # Use the operator's tested version (v3.11.1)
   image:
-    image: docker.io/openpolicyagent/gatekeeper:v3.11.1
+    image: docker.io/openpolicyagent/gatekeeper:v3.21.0
     imagePullPolicy: IfNotPresent
   
   # Audit configuration
