@@ -20,7 +20,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi"
+      storageClassName: "proxmox-csi-2"
       resources:
         requests:
           storage: 5Gi
@@ -31,7 +31,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi"
+      storageClassName: "proxmox-csi-2"
       resources:
         requests:
           storage: 20Gi
@@ -42,7 +42,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi"
+      storageClassName: "proxmox-csi-2"
       resources:
         requests:
           storage: 5Gi
@@ -53,7 +53,7 @@ spec:
         backup.velero.io/backup-tier: Daily
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi"
+      storageClassName: "proxmox-csi-2"
       resources:
         requests:
           storage: 10Gi

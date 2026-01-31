@@ -14,7 +14,7 @@ spec:
         name: config
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: proxmox-csi
+        storageClassName: proxmox-csi-2
         resources:
           requests:
             storage: 6Gi
@@ -22,7 +22,7 @@ spec:
         name: nzb-backup
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: proxmox-csi
+        storageClassName: proxmox-csi-2
         resources:
           requests:
             storage: 1Gi
@@ -32,7 +32,7 @@ spec:
           velero.io/exclude-from-backup: "true"
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: proxmox-csi
+        storageClassName: proxmox-csi-2
         resources:
           requests:
             storage: 100Gi
