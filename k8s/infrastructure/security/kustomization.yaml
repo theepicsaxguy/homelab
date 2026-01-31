@@ -39,6 +39,8 @@ helmCharts:
 
 # Remove deprecated AppArmor annotations and ensure security contexts
 patches:
+  # Add tolerations to Kyverno controllers to prevent descheduler eviction
+  - path: kyverno-tolerations-patch.yaml
   - target:
       kind: DaemonSet
       name: falco

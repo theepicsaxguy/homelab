@@ -47,9 +47,9 @@
     - name: media
       persistentVolumeClaim:
         claimName: media-share
-     - name: tmp
-       emptyDir:
-         sizeLimit: 1Gi
-     - name: run
-       emptyDir:
-         sizeLimit: 100Mi
+    - name: tmp
+      emptyDir:
+        sizeLimit: 1Gi
+    - name: run
+      emptyDir:
+        sizeLimit: 100Mi

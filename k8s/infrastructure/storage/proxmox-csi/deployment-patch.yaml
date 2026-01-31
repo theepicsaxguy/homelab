@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxmox-csi-plugin-controller
+  namespace: csi-proxmox
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/instance: proxmox-csi-plugin
+      app.kubernetes.io/managed-by: argocd
+      app.kubernetes.io/name: proxmox-csi-plugin
+      dev.peekoff: storage
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: proxmox-csi-plugin-node
+  namespace: csi-proxmox
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: node
+      app.kubernetes.io/instance: proxmox-csi-plugin
+      app.kubernetes.io/managed-by: argocd
+      app.kubernetes.io/name: proxmox-csi-plugin
+      dev.peekoff: storage
