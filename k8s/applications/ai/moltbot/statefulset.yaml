@@ -29,6 +29,11 @@ spec:
       labels:
         app.kubernetes.io/name: moltbot
     spec:
+      # These belong here at pod spec level
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
+      
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -37,9 +42,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
-        hostIPC: false
-        hostPID: false
-        hostNetwork: false
+      
       volumes:
         - name: moltbot-workspace
           persistentVolumeClaim:
@@ -50,12 +53,12 @@ spec:
         - name: moltbot-logs
           persistentVolumeClaim:
             claimName: moltbot-logs-pvc
-
         - name: tmp
           emptyDir: {}
         - name: config
           configMap:
             name: moltbot-config
+      
       containers:
         - name: moltbot
           image: ghcr.io/moltbot/clawdbot:2026.1.24-1
@@ -79,7 +82,6 @@ spec:
               mountPath: /app/config
               subPath: moltbot.json
               readOnly: true
-
           ports:
             - containerPort: 18789
               name: gateway
