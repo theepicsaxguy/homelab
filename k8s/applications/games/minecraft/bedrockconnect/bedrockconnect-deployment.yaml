@@ -15,6 +15,8 @@ spec:
       labels:
         app.kubernetes.io/name: bedrockconnect
         app.kubernetes.io/part-of: games
+      annotations:
+        backup.velero.io/backup-volumes: data
     spec:
       securityContext:
         runAsNonRoot: true
