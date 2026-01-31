@@ -79,7 +79,7 @@ spec:
             - name: tmp
               mountPath: /tmp
             - name: config
-              mountPath: /app/config/moltbot.json
+              mountPath: /app/config
               subPath: moltbot.json
               readOnly: true
           ports:
