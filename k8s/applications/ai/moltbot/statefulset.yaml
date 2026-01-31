@@ -62,7 +62,7 @@ spec:
       labels:
         app.kubernetes.io/name: moltbot
     spec:
-      # These belong here at pod spec level
+      # Host namespace controls - must be at pod spec level
       hostIPC: false
       hostPID: false
       hostNetwork: false
@@ -75,11 +75,6 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
-        hostIPC: false
-        hostPID: false
-        hostNetwork: false
-
-
       
       volumes:
         - name: moltbot-workspace
