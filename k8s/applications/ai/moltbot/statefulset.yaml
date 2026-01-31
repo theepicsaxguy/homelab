@@ -87,7 +87,8 @@ spec:
           persistentVolumeClaim:
             claimName: moltbot-logs-pvc
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: config
           configMap:
             name: moltbot-config

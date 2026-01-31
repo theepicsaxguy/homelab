@@ -85,4 +85,5 @@ spec:
           persistentVolumeClaim:
             claimName: headlessx-logs
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi

@@ -24,11 +24,14 @@ spec:
     spec:
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: run
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 100Mi
         - name: next-cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi
       containers:
         - name: web
           image: ghcr.io/karakeep-app/karakeep:0.30.0

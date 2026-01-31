@@ -10,6 +10,7 @@ resources:
   - schedules/
   - repository-config.yaml
   - backuprepository-policy.yaml
+  - auto-cleanup-jobs-policy.yaml
 
 helmCharts:
   - name: velero

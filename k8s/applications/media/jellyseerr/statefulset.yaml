@@ -78,7 +78,8 @@ spec:
           mountPath: /tmp
       volumes:
       - name: tmp # The /tmp volume can still be an emptyDir
-        emptyDir: {}
+        emptyDir:
+          sizeLimit: 1Gi
 
   # The PVC is now defined here. The StatefulSet controller will create it automatically.
   volumeClaimTemplates:

@@ -109,7 +109,8 @@ spec:
             failureThreshold: 30
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: pipelines-bootstrap
           configMap:
             name: pipelines-bootstrap
@@ -117,4 +118,5 @@ spec:
           persistentVolumeClaim:
             claimName: pipelines-pvc
         - name: mem0-home
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi

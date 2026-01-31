@@ -122,4 +122,5 @@ spec:
             failureThreshold: 3
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi

@@ -111,7 +111,8 @@ spec:
           type: RuntimeDefault
       volumes:
         - name: cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 3Gi
         - name: config
           projected:
             sources:

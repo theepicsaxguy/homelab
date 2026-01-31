@@ -109,8 +109,12 @@ spec:
           persistentVolumeClaim:
             claimName: vllm-model-cache
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: var-tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi
         - name: dev-shm
-          emptyDir: {}
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
