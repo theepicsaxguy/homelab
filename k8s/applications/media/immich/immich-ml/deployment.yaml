@@ -80,7 +80,9 @@ spec:
             periodSeconds: 15
             timeoutSeconds: 10
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
           startupProbe:

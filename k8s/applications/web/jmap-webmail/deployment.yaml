@@ -28,8 +28,9 @@ spec:
           image: ghcr.io/theepicsaxguy/jmap-webmail:sha-1b7a978
           imagePullPolicy: IfNotPresent
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL

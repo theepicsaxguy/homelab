@@ -53,7 +53,7 @@ patches:
     patch: |-
       - op: remove
         path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor
-  # Fix KubeArmor AppArmor mount issue on Talos Linux
+  # Fix KubeArmor AppArmor annotations on Talos Linux
   - target:
       kind: DaemonSet
       name: kubearmor
@@ -61,7 +61,3 @@ patches:
     patch: |-
       - op: remove
         path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor
-      - op: remove
-        path: /spec/template/spec/volumes/6
-      - op: remove
-        path: /spec/template/spec/containers/0/volumeMounts/0

@@ -21,6 +21,9 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       containers:
         - name: vllm-openai
           image: ghcr.io/theepicsaxguy/vllm-cpu:v0.11.0-cfc13f2
@@ -29,6 +32,7 @@ spec:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 1000
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -87,6 +91,12 @@ spec:
           volumeMounts:
             - name: hf-cache
               mountPath: /root/.cache/huggingface
+            - name: tmp
+              mountPath: /tmp
+            - name: var-tmp
+              mountPath: /var/tmp
+            - name: dev-shm
+              mountPath: /dev/shm
           resources:
             requests:
               cpu: "2000m"
@@ -98,3 +108,9 @@ spec:
         - name: hf-cache
           persistentVolumeClaim:
             claimName: vllm-model-cache
+        - name: tmp
+          emptyDir: {}
+        - name: var-tmp
+          emptyDir: {}
+        - name: dev-shm
+          emptyDir: {}

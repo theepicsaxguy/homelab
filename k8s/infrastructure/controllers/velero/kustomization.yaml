@@ -9,6 +9,7 @@ resources:
   - storage-locations/
   - schedules/
   - repository-config.yaml
+  - backuprepository-policy.yaml
 
 helmCharts:
   - name: velero

@@ -15,9 +15,28 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+        hostIPC: false
+        hostPID: false
+        hostNetwork: false
       initContainers:
       - name: seed-z2m-config
         image: busybox:1.37
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ['ALL']
         command:
           - sh
           - -c
@@ -35,6 +54,12 @@ spec:
         - name: zigbee2mqtt
           image: koenkk/zigbee2mqtt:2.7.2
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
           env:
             - name: TZ
               value: Europe/Stockholm

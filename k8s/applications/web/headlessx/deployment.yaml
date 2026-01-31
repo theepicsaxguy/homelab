@@ -69,7 +69,9 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
