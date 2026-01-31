@@ -46,10 +46,9 @@ spec:
             - name: PERPLEXICA_BACKEND_URL
               value: "http://litellm.litellm.svc.cluster.local/api/search"
           securityContext:
-            allowPrivilegeEscalation: true
-            readOnlyRootFilesystem: false
             runAsNonRoot: true
-            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL

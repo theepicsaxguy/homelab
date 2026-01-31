@@ -116,4 +116,5 @@ spec:
           persistentVolumeClaim:
             claimName: media-share
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi

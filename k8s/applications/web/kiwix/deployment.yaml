@@ -84,11 +84,12 @@ spec:
             timeoutSeconds: 2
             failureThreshold: 3
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: data
               mountPath: /data

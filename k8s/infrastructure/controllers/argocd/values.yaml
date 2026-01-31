@@ -126,7 +126,8 @@ repoServer:
       configMap:
         name: argocd-cmp-cm
     - name: cmp-tmp
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 1Gi
   resources:
     requests:
       cpu: 200m

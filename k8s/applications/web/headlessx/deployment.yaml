@@ -69,7 +69,9 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 3
           securityContext:
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -83,4 +85,5 @@ spec:
           persistentVolumeClaim:
             claimName: headlessx-logs
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi

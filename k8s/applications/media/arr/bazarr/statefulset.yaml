@@ -16,6 +16,13 @@ spec:
       labels:
         app: bazarr
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: media
           persistentVolumeClaim:
@@ -23,6 +30,11 @@ spec:
       containers:
         - name: bazarr
           image: lscr.io/linuxserver/bazarr:1.5.4
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
           ports:
             - name: http
               containerPort: 6767

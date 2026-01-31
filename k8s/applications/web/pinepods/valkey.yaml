@@ -67,6 +67,8 @@ spec:
               mountPath: /data
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 3Gi

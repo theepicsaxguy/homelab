@@ -39,6 +39,8 @@ helmCharts:
 
 # Remove deprecated AppArmor annotations and ensure security contexts
 patches:
+  # Add tolerations to Kyverno controllers to prevent descheduler eviction
+  - path: kyverno-tolerations-patch.yaml
   - target:
       kind: DaemonSet
       name: falco
@@ -48,6 +50,14 @@ patches:
         path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1falco
   - target:
       kind: Deployment
+      name: kubearmor
+      namespace: security-system
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor
+  # Fix KubeArmor AppArmor annotations on Talos Linux
+  - target:
+      kind: DaemonSet
       name: kubearmor
       namespace: security-system
     patch: |-

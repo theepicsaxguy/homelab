@@ -30,6 +30,11 @@ kubearmor:
         - IPC_LOCK
       drop:
         - NET_RAW
+  # Disable AppArmor for Talos Linux (immutable root filesystem)
+  hostRootFsMounts:
+    enabled: false
+  apparmor:
+    enabled: false
 
 kubearmorRelay:
   enable: true

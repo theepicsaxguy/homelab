@@ -18,10 +18,20 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: babybuddy
           image: ghcr.io/linuxserver/babybuddy:2.7.1
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
           resources:
             requests:
               cpu: '80m'

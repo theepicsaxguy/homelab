@@ -117,4 +117,5 @@ spec:
           persistentVolumeClaim:
             claimName: pinepods-backups
         - name: cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 3Gi
