@@ -8,6 +8,8 @@ resources:
 - configmap.yaml
 - service.yaml
 - deployment.yaml
+- pvc-config.yaml
+- pvc-media.yaml
 
 configMapGenerator:
 - literals:

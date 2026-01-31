@@ -78,6 +78,10 @@ spec:
           name: letsencrypt
         - mountPath: /tmp/home
           name: home
+        - mountPath: /media/frigate
+          name: frigate-media
+        - mountPath: /config
+          name: frigate-config
         resources:
           requests:
             cpu: "2"
@@ -134,3 +138,9 @@ spec:
             path: s6-applyuidgid
           name: frigate-cm
         name: frigate-cm-executable
+      - name: frigate-media
+        persistentVolumeClaim:
+          claimName: frigate-media
+      - name: frigate-config
+        persistentVolumeClaim:
+          claimName: frigate-config
