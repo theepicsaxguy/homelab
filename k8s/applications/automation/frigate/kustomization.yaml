@@ -5,17 +5,11 @@ resources:
 - namespace.yaml
 - externalsecret.yaml
 - http-route.yaml
+- configmap.yaml
+- service.yaml
+- deployment.yaml
 
 configMapGenerator:
 - literals:
   - TZ=Europe/Stockholm
   name: frigate-env
-
-helmCharts:
-- name: frigate
-  namespace: frigate
-  releaseName: frigate
-  repo: https://blakeblackshear.github.io/blakeshome-charts/
-  valuesFile: values.yaml
-  version: 7.8.0
-  includeCRDs: false

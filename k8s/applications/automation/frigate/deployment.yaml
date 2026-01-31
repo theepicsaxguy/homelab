@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frigate
+  labels:
+    app.kubernetes.io/name: frigate
+    app.kubernetes.io/part-of: automation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: frigate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: frigate
+    spec:
+      securityContext:
+        fsGroup: 500
+        runAsGroup: 500
+        runAsNonRoot: true
+        runAsUser: 500
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: frigate
+        image: ghcr.io/blakeblackshear/frigate:stable-tensorrt
+        env:
+        - name: HOME
+          value: /tmp/home
+        - name: S6_CATCHALL_USER
+          value: "500"
+        - name: S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES
+          value: "1"
+        - name: TZ
+          value: Europe/Stockholm
+        - name: USER
+          value: "500"
+        envFrom:
+        - secretRef:
+            name: frigate-rstp-credentials
+        ports:
+        - containerPort: 5000
+          name: http
+        - containerPort: 1935
+          name: rtmp
+        - containerPort: 8554
+          name: rtsp
+        - containerPort: 8555
+          name: webrtc
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - mountPath: /config/config.yaml
+          name: frigate-cm
+          readOnly: true
+          subPath: config.yaml
+        - mountPath: /etc/s6-overlay/s6-rc.d/log-prepare/run
+          name: frigate-cm-executable
+          readOnly: true
+          subPath: run
+        - mountPath: /package/admin/s6/command/s6-applyuidgid
+          name: frigate-cm-executable
+          readOnly: true
+          subPath: s6-applyuidgid
+        - mountPath: /usr/local/nginx
+          name: nginx
+        - mountPath: /dev/shm
+          name: shm
+        - mountPath: /tmp/cache
+          name: cache
+        - mountPath: /run
+          name: run
+        - mountPath: /etc/letsencrypt
+          name: letsencrypt
+        - mountPath: /tmp/home
+          name: home
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+      initContainers:
+      - command:
+        - /bin/sh
+        - -c
+        - cp -r /usr/local/nginx/* /nginx/
+        image: ghcr.io/blakeblackshear/frigate:stable-tensorrt
+        imagePullPolicy: IfNotPresent
+        name: frigate-init-nginx
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 500
+          runAsGroup: 500
+        volumeMounts:
+        - mountPath: /nginx
+          name: nginx
+      volumes:
+      - emptyDir:
+          medium: Memory
+        name: shm
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: cache
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+        name: run
+      - emptyDir: {}
+        name: letsencrypt
+      - emptyDir: {}
+        name: home
+      - emptyDir: {}
+        name: nginx
+      - configMap:
+          name: frigate-cm
+        name: frigate-cm
+      - configMap:
+          defaultMode: 365
+          items:
+          - key: run
+            path: run
+          - key: s6-applyuidgid
+            path: s6-applyuidgid
+          name: frigate-cm
+        name: frigate-cm-executable
