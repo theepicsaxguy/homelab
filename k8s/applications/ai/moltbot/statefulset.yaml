@@ -24,12 +24,45 @@ spec:
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: moltbot-workspace
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: GFS
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 20Gi
+  - metadata:
+      name: moltbot-config
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: GFS
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 5Gi
+  - metadata:
+      name: moltbot-logs
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: Daily
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 10Gi
   template:
     metadata:
       labels:
         app.kubernetes.io/name: moltbot
     spec:
-      # These belong here at pod spec level
+      # Host namespace controls - must be at pod spec level
       hostIPC: false
       hostPID: false
       hostNetwork: false
