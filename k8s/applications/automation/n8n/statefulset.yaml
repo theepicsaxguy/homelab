@@ -124,7 +124,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: proxmox-csi
+        storageClassName: proxmox-csi-2
         resources:
           requests:
             storage: 10Gi

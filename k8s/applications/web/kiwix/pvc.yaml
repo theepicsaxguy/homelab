@@ -9,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 200Gi
-  storageClassName: proxmox-csi
+  storageClassName: proxmox-csi-2
