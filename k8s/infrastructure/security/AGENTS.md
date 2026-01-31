@@ -88,6 +88,46 @@ match:
 - **File System**: Critical path protection
 - **Runtime Security**: Process execution controls
 
+### Pod Security Context Structure
+The `hostNetwork`, `hostPID`, and `hostIPC` fields are pod-level settings that belong directly under `spec.template.spec`, not inside `securityContext`.
+
+**Correct Structure:**
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      hostNetwork: false          # Pod-level field
+      hostPID: false              # Pod-level field  
+      hostIPC: false              # Pod-level field
+      securityContext:            # Container security context
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: app
+        securityContext:          # Container-level security context
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+```
+
+**Common Anti-Pattern:**
+```yaml
+# INCORRECT - these fields don't belong in securityContext
+spec:
+  template:
+    spec:
+      securityContext:
+        hostNetwork: false        # WRONG - pod-level field
+        hostPID: false            # WRONG - pod-level field
+        hostIPC: false            # WRONG - pod-level field
+```
+
+**References:**
+- [Kubernetes Security Best Practices - Security Context](https://www.dynatrace.com/news/blog/kubernetes-security-best-practices-security-context/)
+- [Medium - Securing Kubernetes Host OS](https://medium.com/marionete/securing-the-kubernetes-host-operating-system-bdeb95a5d0df)
+- [Kubernetes API Schema - PodSpec](https://github.com/zevarito/Kubernetes/blob/master/docs/proposals/pod-security-context.md)
+
 ### Enterprise Features
 - **Policy as Code**: All security controls in Git
 - **Audit Trail**: Complete security event logging
