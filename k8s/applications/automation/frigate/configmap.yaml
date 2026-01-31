@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frigate-cm
+  labels:
+    app.kubernetes.io/name: frigate
+    app.kubernetes.io/part-of: automation
+data:
+  config.yaml: |
+    version: 0.15-1
+
+    mqtt:
+        host: mosquitto.mqtt.svc.cluster.local
+        port: 1883
+        topic_prefix: frigate
+        client_id: frigate
+        user: mqtt_user
+        password: '{FRIGATE_MQTT_PASSWORD}'
+        stats_interval: 60
+
+    ffmpeg:
+      input_args: preset-rtsp-restream
+      output_args:
+        record: preset-record-generic-audio-copy
+
+    record:
+      enabled: true
+      retain:
+        days: 15
+        mode: motion
+      alerts:
+        retain:
+          days: 30
+        pre_capture: 30
+        post_capture: 30
+      detections:
+        retain:
+          days: 30
+        pre_capture: 30
+        post_capture: 30
+
+    audio:
+      enabled: false
+      listen:
+        - alarm
+        - scream
+        - yell
+
+    detect:
+      enabled: false
+      fps: 7
+
+    objects:
+      track:
+        - cat
+        - dog
+        - person
+
+    snapshots:
+      enabled: true
+      clean_copy: false
+      timestamp: true
+      bounding_box: true
+
+    review:
+      alerts:
+        labels:
+          - cat
+          - person
+
+    go2rtc:
+      streams:
+        vagga:
+          - '{FRIGATE_RTSP_MAIN}'
+        vagga_sub:
+          - '{FRIGATE_RTSP_SUB}'
+
+    cameras:
+      vagga:
+        enabled: true
+        ui:
+          order: 01
+        ffmpeg:
+          output_args:
+            record: preset-record-generic-audio-aac
+          inputs:
+            - path: rtsp://127.0.0.1:8554/vagga
+              roles:
+                - record
+            - path: rtsp://127.0.0.1:8554/vagga_sub
+              roles:
+                - detect
+                - audio
+        review:
+          alerts:
+            labels:
+              - cat
+              - person
+
+        onvif:
+          host: 192.168.16.186
+          port: 8000
+          user: '{FRIGATE_RTSP_USERNAME}'
+          password: '{FRIGATE_RTSP_PASSWORD}'
+
+  run: |
+    #!/command/with-contenv bash
+    # shellcheck shell=bash
+    # Prepare the logs folder for s6-log
+
+    set -o errexit -o nounset -o pipefail
+
+    dirs=(/dev/shm/logs/frigate /dev/shm/logs/go2rtc /dev/shm/logs/nginx /dev/shm/logs/certsync)
+
+    mkdir -p "${dirs[@]}"
+  s6-applyuidgid: |
+    #!/bin/bash
+
+    ARGS=( "$@" );
+    # s6-applyuidgid called with args $@, execing manually instead
+    exec ${ARGS[@]:2}

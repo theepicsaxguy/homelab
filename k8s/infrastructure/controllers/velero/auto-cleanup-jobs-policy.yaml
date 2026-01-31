@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-ttl-to-velero-maintenance-jobs
+  annotations:
+    policies.kyverno.io/title: Auto-cleanup Velero Maintenance Jobs
+    policies.kyverno.io/category: Other
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Job
+    policies.kyverno.io/description: >-
+      Automatically adds TTL to Velero repository maintenance jobs so they
+      self-delete after completion. Velero's built-in cleanup is unreliable,
+      so use Kubernetes native TTL instead.
+spec:
+  rules:
+    - name: add-ttl-to-maintenance-jobs
+      match:
+        any:
+          - resources:
+              kinds:
+                - Job
+              namespaces:
+                - velero
+              names:
+                - "*-kopia-maintain-job-*"
+      mutate:
+        patchStrategicMerge:
+          spec:
+            # Delete job 1 hour after completion (3600 seconds)
+            # Adjust to your preference: 600 = 10min, 3600 = 1h, 86400 = 24h
+            ttlSecondsAfterFinished: 3600

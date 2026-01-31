@@ -61,6 +61,7 @@ global:
     - name: shm
       emptyDir:
         medium: Memory
+        sizeLimit: 1Gi
 
 
 ## Authentik configuration
@@ -165,7 +166,8 @@ server:
 
   volumes:
     - name: media
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 2Gi
 
   ## authentik server service configuration
   service:
@@ -201,7 +203,8 @@ worker:
 
   volumes:
     - name: media
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 2Gi
 
   resources:
     requests:

@@ -48,6 +48,8 @@
       persistentVolumeClaim:
         claimName: media-share
     - name: tmp
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 1Gi
     - name: run
-      emptyDir: {}
+      emptyDir:
+        sizeLimit: 100Mi

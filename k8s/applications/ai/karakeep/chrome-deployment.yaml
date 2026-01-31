@@ -22,7 +22,8 @@ spec:
           type: RuntimeDefault
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
       containers:
         - name: chrome
           image: gcr.io/zenika-hub/alpine-chrome:124

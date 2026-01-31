@@ -22,13 +22,23 @@ spec:
       labels:
         app: karakeep-web
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: run
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 100Mi
         - name: next-cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi
       containers:
         - name: web
           image: ghcr.io/karakeep-app/karakeep:0.30.0

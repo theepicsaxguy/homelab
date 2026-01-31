@@ -31,6 +31,29 @@ configuration:
         region: us-west-1
         s3ForcePathStyle: "true"
         s3Url: https://truenas.peekoff.com:9000
+  repositoryMaintenanceJob:
+    repositoryConfigData:
+      name: "velero-repo-maintenance"
+      global:
+        keepLatestMaintenanceJobs: 3
+        podResources:
+          cpuRequest: "100m"
+          cpuLimit: "200m"
+          memoryRequest: "128Mi"
+          memoryLimit: "256Mi"
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          runAsGroup: 65534
+          fsGroup: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        containerSecurityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          readOnlyRootFilesystem: true
 resources:
   requests:
     cpu: 200m

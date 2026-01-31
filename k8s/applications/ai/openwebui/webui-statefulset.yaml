@@ -33,9 +33,11 @@ spec:
           type: RuntimeDefault
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
         - name: static-files
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi
       containers:
         - name: open-webui
           image: ghcr.io/open-webui/open-webui:v0.7.2-slim

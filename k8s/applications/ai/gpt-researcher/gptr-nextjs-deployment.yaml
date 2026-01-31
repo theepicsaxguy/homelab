@@ -75,4 +75,5 @@ spec:
               memory: "1Gi"
       volumes:
         - name: nextjs-cache
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 2Gi

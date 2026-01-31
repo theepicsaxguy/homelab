@@ -68,4 +68,5 @@ spec:
           persistentVolumeClaim:
             claimName: audiobookrequest-config
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Gi
