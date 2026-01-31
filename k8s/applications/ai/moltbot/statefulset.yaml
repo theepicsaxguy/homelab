@@ -24,6 +24,39 @@ spec:
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: moltbot-workspace
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: GFS
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 20Gi
+  - metadata:
+      name: moltbot-config
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: GFS
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 5Gi
+  - metadata:
+      name: moltbot-logs
+      labels:
+        app.kubernetes.io/name: moltbot
+        backup.velero.io/backup-tier: Daily
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "proxmox-csi"
+      resources:
+        requests:
+          storage: 10Gi
   template:
     metadata:
       labels:
@@ -40,16 +73,7 @@ spec:
         hostIPC: false
         hostPID: false
         hostNetwork: false
-      volumes:
-        - name: moltbot-workspace
-          persistentVolumeClaim:
-            claimName: moltbot-workspace-pvc
-        - name: moltbot-config
-          persistentVolumeClaim:
-            claimName: moltbot-config-pvc
-        - name: moltbot-logs
-          persistentVolumeClaim:
-            claimName: moltbot-logs-pvc
+
 
         - name: tmp
           emptyDir: {}
