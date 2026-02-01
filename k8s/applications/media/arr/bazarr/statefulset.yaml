@@ -16,6 +16,9 @@ spec:
       labels:
         app: bazarr
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

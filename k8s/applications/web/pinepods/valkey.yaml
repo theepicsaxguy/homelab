@@ -35,7 +35,14 @@ spec:
         app.kubernetes.io/name: pinepods-valkey
         app.kubernetes.io/part-of: pinepods
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
       containers:

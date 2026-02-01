@@ -16,6 +16,9 @@ spec:
       labels:
         app: babybuddy
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
         fsGroup: 1000
         runAsNonRoot: true

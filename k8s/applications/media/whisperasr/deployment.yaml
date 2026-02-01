@@ -13,6 +13,9 @@ spec:
       labels:
         app: whisperasr
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -28,6 +31,7 @@ spec:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 1000
+            readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
