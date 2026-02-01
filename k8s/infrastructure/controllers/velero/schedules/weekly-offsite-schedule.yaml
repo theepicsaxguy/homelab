@@ -13,15 +13,23 @@ spec:
   schedule: "0 3 * * 6"
 
   template:
-    # Include all namespaces except velero itself
+    # Backup only critical namespaces to minimize B2 transaction usage
+    # All other namespaces can be recreated from Git
     includedNamespaces:
-      - "*"
+      - argocd
+      - auth
+      - babybuddy
+      - cert-manager
+      - cnpg-system
+      - external-secrets
+      - gateway
+      - home-assistant
+      - kubechecks
+      - monitoring
+      - n8n
+      - openclaw
 
-    excludedNamespaces:
-      - velero
-      - kube-system
-      - default
-      - kiwix
+    excludedNamespaces: []
 
     # Include all resources
     includedResources:
@@ -36,6 +44,11 @@ spec:
       - backuprepositories.velero.io
       - podvolumebackups.velero.io
       - podvolumerestores.velero.io
+      - endpoints
+      - endpointslices.discovery.k8s.io
+      - leases.coordination.k8s.io
+      - configmaps
+      - secrets
 
     # Backup persistent volumes using node agent (Kopia)
     defaultVolumesToFsBackup: true
@@ -43,7 +56,8 @@ spec:
     # Storage location: Backblaze B2
     storageLocation: backblaze-b2
 
-    # Retention: 90 days (approximately 12-13 weekly backups)
+    # Retention: 90 days (12-13 weekly backups)
+    # Aligned with CNPG retention for consistent DR strategy
     ttl: 2160h
 
     # Include cluster-scoped resources

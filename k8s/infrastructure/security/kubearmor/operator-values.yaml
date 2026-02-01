@@ -1,0 +1,33 @@
+kubernetesClusterDomain: ""
+image:
+  repository: kubearmor
+  tag: stable
+  pullPolicy: Always
+  pullSecrets: []
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+nodeSelector: {}
+affinity: {}
+tolerations: []
+priorityClassName: ""
+topologySpreadConstraints: []
+env: []
+annotations: {}
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+rbac:
+  create: true
+pdb:
+  create: false
+  minAvailable: 1
+  maxUnavailable: ""
+crds:
+  create: true
+  annotations: {}

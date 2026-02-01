@@ -23,10 +23,8 @@ spec:
       hostPID: false
       hostNetwork: false
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 3000
         fsGroup: 1000
+        runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -111,6 +109,8 @@ spec:
               mountPath: /opt/pinepods/downloads
             - name: backups
               mountPath: /opt/pinepods/backups
+            - name: certs
+              mountPath: /opt/pinepods/certs
             - name: cache
               mountPath: /pinepods/cache
       volumes:
@@ -120,6 +120,9 @@ spec:
         - name: backups
           persistentVolumeClaim:
             claimName: pinepods-backups
+        - name: certs
+          emptyDir:
+            sizeLimit: 100Mi
         - name: cache
           emptyDir:
             sizeLimit: 3Gi

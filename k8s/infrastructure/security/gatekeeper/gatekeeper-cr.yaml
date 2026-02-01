@@ -4,12 +4,9 @@ metadata:
   name: gatekeeper
   namespace: gatekeeper-system
 spec:
-  # Use the operator's tested version (v3.11.1)
   image:
     image: docker.io/openpolicyagent/gatekeeper:v3.21.0
     imagePullPolicy: IfNotPresent
-  
-  # Audit configuration
   audit:
     replicas: 1
     logLevel: INFO
@@ -23,8 +20,6 @@ spec:
       requests:
         cpu: 100m
         memory: 128Mi
-  
-  # Webhook configuration
   webhook:
     replicas: 2
     logLevel: INFO
@@ -37,7 +32,5 @@ spec:
       requests:
         cpu: 100m
         memory: 128Mi
-  
-  # Enable admission control
   validatingWebhook: Enabled
   mutatingWebhook: Enabled

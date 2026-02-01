@@ -4,21 +4,14 @@ metadata:
   name: config
   namespace: gatekeeper-system
 spec:
-  # Audit configuration
   audit:
     logLevel: INFO
     auditInterval: 60s
     constraintViolationLimit: 20
     auditFromCache: Enabled
-  
-  # Constraints that match these rules will be exempted
   match:
-    # List of kinds for audit exemption
     kinds:
       - apiGroups: [""]
         kinds: ["Event"]
-  
-  # Validation configuration
   validation:
-    # Requests per second limit
     traces: null
