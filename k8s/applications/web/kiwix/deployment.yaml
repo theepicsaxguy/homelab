@@ -21,6 +21,9 @@ spec:
         app.kubernetes.io/name: kiwix
         app.kubernetes.io/version: "3.8.1"
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001

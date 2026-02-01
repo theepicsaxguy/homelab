@@ -21,6 +21,9 @@ spec:
         app.kubernetes.io/instance: immich
         app.kubernetes.io/name: machine-learning
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       automountServiceAccountToken: true
       containers:
         - env:
