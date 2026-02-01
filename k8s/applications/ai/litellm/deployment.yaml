@@ -91,10 +91,8 @@ spec:
           value: "openid profile email groups roles"
         - name: PROXY_LOGOUT_URL
           value: "https://sso.peekoff.com/application/o/litellm/end-session/"
-        volumeMounts:
-        - name: litellm-config
-          mountPath: /app/proxy_server_config.yaml
-          subPath: proxy_server_config.yaml
+        - name: HOME
+          value: /tmp
         livenessProbe:
           httpGet:
             path: /health/liveliness
@@ -117,8 +115,27 @@ spec:
             port: 4001
           failureThreshold: 30
           periodSeconds: 2
+        volumeMounts:
+        - name: litellm-config
+          mountPath: /app/proxy_server_config.yaml
+          subPath: proxy_server_config.yaml
+        - name: app-tmp
+          mountPath: /app/tmp
+        - name: app-cache
+          mountPath: /app/cache
+        - name: app-logs
+          mountPath: /app/logs
 
       volumes:
         - name: litellm-config
           configMap:
             name: litellm-config
+        - name: app-tmp
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: app-cache
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: app-logs
+          emptyDir:
+            sizeLimit: 1Gi

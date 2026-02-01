@@ -93,35 +93,53 @@ spec:
           configMap:
             name: openclaw-config
       
+      initContainers:
+        - name: init-config
+          image: ghcr.io/openclaw/openclaw:2026.1.30
+          command: ["sh", "-c"]
+          args:
+            - |
+              mkdir -p /home/node/.openclaw
+              if [ ! -f /home/node/.openclaw/openclaw.json ]; then
+                cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+              fi
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+            - name: config
+              mountPath: /config
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ['ALL']
+
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:2026.1.30
+          command: ["node", "dist/index.js", "gateway", "--port", "18789"]
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ['ALL']
           volumeMounts:
-            - name: openclaw-workspace
-              mountPath: /workspace
-            - name: openclaw-config
-              mountPath: /config
-            - name: openclaw-logs
-              mountPath: /logs
             - name: openclaw-data
-              mountPath: /data
+              mountPath: /home/node/.openclaw
             - name: tmp
               mountPath: /tmp
-            - name: config
-              mountPath: /app/config
-              subPath: openclaw.json
-              readOnly: true
           ports:
             - containerPort: 18789
               name: gateway
               protocol: TCP
           env:
-            - name: CLAWDBOT_GATEWAY_TOKEN
+            - name: HOME
+              value: /home/node
+            - name: NODE_ENV
+              value: production
+            - name: TERM
+              value: xterm-256color
+            - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: app-openclaw-gateway-token
@@ -141,10 +159,6 @@ spec:
                 secretKeyRef:
                   name: app-openclaw-litellm-api-key
                   key: LITELLM_API_KEY
-            - name: NODE_ENV
-              value: production
-            - name: CLAWDBOT_STATE_DIR
-              value: /data
           resources:
             requests:
               cpu: '1000m'
