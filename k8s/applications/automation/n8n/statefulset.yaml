@@ -116,8 +116,16 @@ spec:
           volumeMounts:
             - name: n8n-data
               mountPath: /home/node/.n8n
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
   volumeClaimTemplates:
     - metadata:
         name: n8n-data
