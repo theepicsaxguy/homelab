@@ -46,7 +46,7 @@ spec:
               mountPath: /run
       containers:
         - name: bazarr
-          image: lscr.io/linuxserver/bazarr:1.5.4
+          image: lscr.io/linuxserver/bazarr:1.5.5
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
