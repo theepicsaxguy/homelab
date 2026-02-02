@@ -989,7 +989,7 @@ chat:
   # Note: The {DISPLAYNAME} placeholder includes {PREFIX} and {SUFFIX} by default.
   # Using these together may result in double prefixes/suffixes in chat.
 
-  format: '<{DISPLAYNAME}> {MESSAGE}'
+  #format: '<{DISPLAYNAME}> {MESSAGE}'
   #format: '&7[{GROUP}]&r {DISPLAYNAME}&7:&r {MESSAGE}'
   #format: '&7{PREFIX}&r {NICKNAME}&r &7{SUFFIX}&r: {MESSAGE}'
 
@@ -1004,8 +1004,8 @@ chat:
   # Note: Group names are case-sensitive, so you must match them up with your permissions plugin.
   # Note: If a LuckPerms group display name (alias) is set, you must use it instead of the original group name.
   group-formats:
-    #default: '{WORLDNAME} {DISPLAYNAME}&7:&r {MESSAGE}'
-    #admins: '{WORLDNAME} &c[{GROUP}]&r {DISPLAYNAME}&7:&c {MESSAGE}'
+    default: '&8「&b✦&8」&r {DISPLAYNAME}&7: &f{MESSAGE}'
+    admin: '&4&l⚡&c&l✪&4&l⚡ &c&l[ADMIN] &4&l⚡&c&l✪&4&l⚡ &e&l★ {DISPLAYNAME} ★ &6&l➔ &r&a&l{MESSAGE}'
 
     # You can also specify a format for each type of chat for each group.
     #admins:

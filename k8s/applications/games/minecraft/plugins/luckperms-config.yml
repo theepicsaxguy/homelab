@@ -43,9 +43,6 @@ server: global
 #   including checking the servers local cache, or making a request to the Mojang API.
 use-server-uuid-cache: false
 
-
-
-
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
 # |                                       STORAGE SETTINGS                                       | #
@@ -90,7 +87,6 @@ storage-method: h2
 # - You don't need to touch any of the settings here if you're using a local storage method!
 # - The connection detail options are shared between all remote storage types.
 data:
-
   # Define the address and port for the database.
   # - The standard DB engine port is used by default
   #   (MySQL: 3306, PostgreSQL: 5432, MongoDB: 27017)
@@ -109,7 +105,6 @@ data:
   # - The default values will be suitable for the majority of users.
   # - Do not change these settings unless you know what you're doing!
   pool-settings:
-
     # Sets the maximum size of the MySQL connection pool.
     # - Basically this value will determine the maximum number of actual
     #   connections to the database backend.
@@ -189,9 +184,6 @@ split-storage:
     track: h2
     uuid: h2
     log: h2
-
-
-
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
@@ -285,9 +277,6 @@ rabbitmq:
   vhost: '/'
   username: 'guest'
   password: 'guest'
-
-
-
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
@@ -404,21 +393,18 @@ auto-install-translations: true
 meta-formatting:
   prefix:
     format:
-      - "highest"
+      - 'highest'
     duplicates: first-only
-    start-spacer: ""
-    middle-spacer: " "
-    end-spacer: ""
+    start-spacer: ''
+    middle-spacer: ' '
+    end-spacer: ''
   suffix:
     format:
-      - "highest"
+      - 'highest'
     duplicates: first-only
-    start-spacer: ""
-    middle-spacer: " "
-    end-spacer: ""
-
-
-
+    start-spacer: ''
+    middle-spacer: ' '
+    end-spacer: ''
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
@@ -585,9 +571,6 @@ world-rewrite:
 group-weight:
 #  admin: 10
 
-
-
-
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
 # |                                      FINE TUNING OPTIONS                                     | #
@@ -618,12 +601,12 @@ enable-ops: true
 #   will be de-opped unless they have the permission node, and the op/deop commands will be
 #   disabled.
 # - It is recommended that you use this option instead of assigning a single '*' permission.
-auto-op: false
+auto-op: true
 
 # Defines if "opped" players should be able to use all LuckPerms commands by default.
 #
 # - Set to false to only allow users who have the permissions access to the commands
-commands-allow-op: true
+commands-allow-op: false
 
 # +----------------------------------------------------------------------------------------------+ #
 # | Vault integration settings                                                                   | #
