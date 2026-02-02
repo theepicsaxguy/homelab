@@ -35,3 +35,54 @@ spec:
   - port: metrics
     path: /metrics
     interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: falco
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falco
+    app.kubernetes.io/part-of: security
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falco
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gatekeeper
+  namespace: gatekeeper-system
+  labels:
+    app.kubernetes.io/name: gatekeeper
+    app.kubernetes.io/part-of: security
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gatekeeper
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kyverno
+  namespace: kyverno
+  labels:
+    app.kubernetes.io/name: kyverno
+    app.kubernetes.io/part-of: security
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kyverno
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s

@@ -286,6 +286,7 @@ kubectl describe application -n argocd <app-name>
 
 ### Operations
 - Never `kubectl apply` - use GitOps
+- Never use `kubectl apply -f` - always use `kubectl apply -k` or `kustomize build` directly ( `-f` might miss some content )
 - Never modify CRDs without understanding operators
 - Never skip backup configuration for stateful workloads
 - Never use Longhorn - deprecated

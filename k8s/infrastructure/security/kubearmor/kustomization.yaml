@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubearmor
+resources:
+  - kubearmorconfig.yaml
+helmCharts:
+  - name: kubearmor-operator
+    namespace: kubearmor
+    releaseName: kubearmor-operator
+    repo: https://kubearmor.github.io/charts
+    valuesFile: operator-values.yaml
+    version: v1.6.6
+patches:
+  - target:
+      kind: DaemonSet
+      name: kubearmor
+      namespace: kubearmor
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1kubearmor

@@ -9,7 +9,10 @@ data:
   kopia: |
     {
       "cacheLimitMB": 8192,
+      "compression": "lz4",
       "fullMaintenanceInterval": "336h",
       "maintenanceMode": "periodic",
-      "maintenanceInterval": "336h"
+      "maintenanceInterval": "336h",
+      "maxFileSizeBytes": 67108864,
+      "chunkSizeBytes": 16777216
     }

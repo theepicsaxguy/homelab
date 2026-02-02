@@ -1,0 +1,36 @@
+apiVersion: operator.kubearmor.com/v1
+kind: KubeArmorConfig
+metadata:
+  labels:
+    app.kubernetes.io/name: kubearmorconfig
+    app.kubernetes.io/instance: kubearmorconfig-default
+    app.kubernetes.io/part-of: kubearmoroperator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: kubearmoroperator
+  name: kubearmorconfig-default
+  namespace: kubearmor
+spec:
+  defaultCapabilitiesPosture: audit
+  defaultFilePosture: audit
+  defaultNetworkPosture: audit
+  defaultVisibility: process,network
+  enableStdOutLogs: false
+  enableStdOutAlerts: false
+  enableStdOutMsgs: false
+  seccompEnabled: false
+  alertThrottling: true
+  maxAlertPerSec: 10
+  throttleSec: 30
+  matchArgs: true
+  kubearmorImage:
+    image: kubearmor/kubearmor:stable
+    imagePullPolicy: Always
+  kubearmorInitImage:
+    image: kubearmor/kubearmor-init:stable
+    imagePullPolicy: Always
+  kubearmorRelayImage:
+    image: kubearmor/kubearmor-relay-server
+    imagePullPolicy: Always
+  kubearmorControllerImage:
+    image: kubearmor/kubearmor-controller
+    imagePullPolicy: Always

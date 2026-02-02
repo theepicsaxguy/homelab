@@ -102,6 +102,8 @@ spec:
             - mountPath: /config
               name: config
               readOnly: true
+            - mountPath: /tmp
+              name: tmp
       dnsPolicy: ClusterFirst
       enableServiceLinks: true
       serviceAccountName: default
@@ -124,3 +126,6 @@ spec:
                   items:
                     - key: immich-config.yaml
                       path: immich-config.yaml
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Gi

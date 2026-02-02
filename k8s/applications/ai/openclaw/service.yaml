@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: moltbot
-  namespace: moltbot
+  name: openclaw
+  namespace: openclaw
   labels:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
     app.kubernetes.io/part-of: ai
 spec:
   selector:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
   ports:
     - port: 18789
       targetPort: 18789

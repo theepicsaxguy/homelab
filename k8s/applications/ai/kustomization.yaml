@@ -11,4 +11,4 @@ resources:
 - qdrant
 - vllm-embed
 - gpt-researcher
-- moltbot
+- openclaw

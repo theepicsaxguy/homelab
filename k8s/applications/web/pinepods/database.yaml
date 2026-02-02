@@ -105,7 +105,7 @@ spec:
   #     database: pinepods
   #     owner: app
   storage:
-    size: 20Gi
+    size: 40Gi
     storageClass: proxmox-csi
   monitoring:
     enablePodMonitor: false

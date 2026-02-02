@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: moltbot-config
-  namespace: moltbot
+  name: openclaw-config
+  namespace: openclaw
   labels:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
 data:
-  moltbot.json: |
+  openclaw.json: |
     {
       agents: {
         defaults: {

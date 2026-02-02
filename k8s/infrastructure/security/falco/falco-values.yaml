@@ -3,7 +3,6 @@ driver:
   kind: ebpf
   ebpf:
     leastPrivileged: true
-
 falcosidekick:
   enabled: true
   podSecurityContext:
@@ -18,7 +17,6 @@ falcosidekick:
     capabilities:
       drop:
         - ALL
-
 resources:
   requests:
     cpu: 200m
@@ -26,7 +24,6 @@ resources:
   limits:
     cpu: 1000m
     memory: 1024Mi
-
 metrics:
   enabled: true
   service:
@@ -37,7 +34,6 @@ metrics:
         port: 8765
         targetPort: 8765
         protocol: TCP
-
 serviceMonitor:
   enabled: true
   selector:
