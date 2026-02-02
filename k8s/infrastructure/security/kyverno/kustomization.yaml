@@ -5,7 +5,7 @@ resources: []
 helmCharts:
   - name: kyverno
     repo: https://kyverno.github.io/kyverno
-    version: 3.6.2
+    version: 3.7.0
     releaseName: kyverno
     namespace: kyverno
     valuesFile: values.yaml
