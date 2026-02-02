@@ -46,10 +46,12 @@ spec:
         - name: web
           image: ghcr.io/karakeep-app/karakeep:0.30.0
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             readOnlyRootFilesystem: true
             capabilities:
-              drop: ['ALL']
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
           volumeMounts:
             - name: data
               mountPath: /data

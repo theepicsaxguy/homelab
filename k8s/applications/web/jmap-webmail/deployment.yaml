@@ -58,7 +58,7 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: NODE_OPTIONS
-              value: "--max-old-space-size=512"
+              value: "--max-old-space-size=800"
             - name: PORT
               value: "3000"
             - name: HOSTNAME

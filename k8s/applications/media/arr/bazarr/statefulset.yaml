@@ -20,20 +20,36 @@ spec:
       hostPID: false
       hostNetwork: false
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       volumes:
         - name: media
           persistentVolumeClaim:
             claimName: media-share
+        - name: tmp
+          emptyDir:
+            sizeLimit: 100Mi
+      initContainers:
+        - name: setup-run
+          image: busybox:1.37
+          command: ["sh", "-c", "mkdir -p /run/s6 && chmod 755 /run /run/s6"]
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /run
       containers:
         - name: bazarr
           image: lscr.io/linuxserver/bazarr:1.5.5
           securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
@@ -58,6 +74,8 @@ spec:
               mountPath: /app/data
             - name: config
               mountPath: /config
+            - name: tmp
+              mountPath: /run
           resources:
             requests:
               cpu: 50m

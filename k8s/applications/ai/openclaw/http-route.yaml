@@ -1,10 +1,10 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: moltbot
-  namespace: moltbot
+  name: openclaw
+  namespace: openclaw
   labels:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
     app.kubernetes.io/part-of: ai
 spec:
   parentRefs:
@@ -13,14 +13,14 @@ spec:
     - name: internal
       namespace: gateway
   hostnames:
-    - 'moltbot.peekoff.com'
+    - 'openclaw.peekoff.com'
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: moltbot
+        - name: openclaw
           port: 18789
       timeouts:
         request: 0s

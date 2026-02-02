@@ -17,10 +17,10 @@ serviceAccount:
 credentials:
   useSecret: true
   existingSecret: velero-minio-credentials
-configuration:
+  configuration:
   uploaderType: kopia
   uploaderConfig:
-    parallelFilesUpload: 3
+    parallelFilesUpload: 2
   backupRepositoryConfigMap: velero-repository-config
   backupStorageLocation:
     - name: default

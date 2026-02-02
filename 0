@@ -1,0 +1,1 @@
+Error from server (BadRequest): Unable to find "batch/v1, Resource=jobs" that match label selector "", field selector "status.failed": invalid selector: 'status.failed'; can't understand 'status.failed'

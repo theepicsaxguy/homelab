@@ -19,7 +19,7 @@ spec:
       server: '*'
     - namespace: 'vllm-embed'
       server: '*'
-    - namespace: 'moltbot'
+    - namespace: 'openclaw'
       server: '*'
     - namespace: 'opencode'
       server: '*'

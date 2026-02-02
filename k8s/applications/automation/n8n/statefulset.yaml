@@ -21,13 +21,6 @@ spec:
         app.kubernetes.io/instance: n8n
         app.kubernetes.io/component: automation
     spec:
-      initContainers:
-        - name: volume-permissions
-          image: busybox:1.37
-          command: ["sh", "-c", "chown 1000:1000 /data"]
-          volumeMounts:
-            - name: n8n-data
-              mountPath: /data
       containers:
         - name: n8n
           image: n8nio/n8n:2.6.2

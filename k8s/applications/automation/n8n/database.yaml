@@ -91,7 +91,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:18
   enablePDB: false
   storage:
-    size: 20Gi
+    size: 40Gi
     storageClass: proxmox-csi
   monitoring:
     enablePodMonitor: false

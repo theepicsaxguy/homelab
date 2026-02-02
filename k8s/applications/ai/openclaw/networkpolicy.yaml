@@ -1,14 +1,14 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: moltbot-network-policy
-  namespace: moltbot
+  name: openclaw-network-policy
+  namespace: openclaw
   labels:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: moltbot
+      app.kubernetes.io/name: openclaw
   egress:
   - toEndpoints:
     - matchLabels:

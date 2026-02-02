@@ -13,7 +13,10 @@ TECHNOLOGIES: Gatekeeper, Kyverno, Falco, KubeArmor, OPA, NSA/CISA, eBPF, LSM
 **KubeArmor v1.6.6** - Kernel-level enforcement with LSM/BPF
 
 ### Namespace Strategy
-- **security-system**: Primary security tools namespace
+- **gatekeeper-system**: Gatekeeper operator and admission control
+- **kyverno**: Kyverno policy engine
+- **falco**: Falco runtime detection
+- **kubearmor**: KubeArmor kernel enforcement (via operator)
 - **Wildcard Protection**: Policies apply to all namespaces except security namespaces
 - **Future-Proof**: Automatically protects new namespaces without policy updates
 
@@ -60,8 +63,37 @@ TECHNOLOGIES: Gatekeeper, Kyverno, Falco, KubeArmor, OPA, NSA/CISA, eBPF, LSM
 
 ## WORKFLOW INTEGRATION
 
+### Directory Structure
+```
+k8s/infrastructure/security/
+├── kustomization.yaml          # Root - references all subdirectories
+├── gatekeeper/                 # Gatekeeper operator + CR
+│   ├── kustomization.yaml
+│   ├── gatekeeper-cr.yaml
+│   └── gatekeeper-config.yaml
+├── kyverno/                    # Kyverno policy engine
+│   ├── kustomization.yaml
+│   └── tolerations-patch.yaml
+├── falco/                      # Falco runtime detection
+│   ├── kustomization.yaml
+│   └── falco-values.yaml
+├── kubearmor/                  # KubeArmor via operator
+│   ├── kustomization.yaml
+│   ├── kubearmorconfig.yaml
+│   └── operator-values.yaml
+├── policies/                   # Shared security policies
+│   ├── kustomization.yaml
+│   ├── kyverno-policies.yaml
+│   ├── templates/k8spspprohibited.yaml
+│   ├── gatekeeper-constraints.yaml
+│   └── falco-custom-rules.yaml
+├── monitoring.yaml             # ServiceMonitors for all tools
+└── externalsecret.yaml         # Security secrets
+```
+
 ### GitOps Integration
-- Follow existing kustomize hierarchy: `k8s/infrastucture/security/`
+- Follow existing kustomize hierarchy: `k8s/infrastructure/security/`
+- Each tool has dedicated kustomization for isolated management
 - Use same naming patterns as other applications
 - Integrate with existing monitoring and alerting
 - Compatible with current Argo CD ApplicationSets
@@ -71,10 +103,10 @@ TECHNOLOGIES: Gatekeeper, Kyverno, Falco, KubeArmor, OPA, NSA/CISA, eBPF, LSM
 # Wildcard protection for current + future namespaces
 match:
   namespaces: ["*"]
-  excludedNamespaces: 
-    - "security-system"
-    - "gatekeeper-system" 
+  excludedNamespaces:
+    - "gatekeeper-system"
     - "kyverno"
+    - "falco"
     - "kubearmor"
     - "kube-system"
 ```

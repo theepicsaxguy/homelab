@@ -21,20 +21,43 @@ spec:
       hostNetwork: false
       securityContext:
         fsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 100Mi
+      initContainers:
+        - name: setup-run
+          image: busybox:1.37
+          command: ["sh", "-c", "mkdir -p /run/s6 && chown -R 1000:1000 /run && chmod 755 /run /run/s6"]
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+              drop: []
+          volumeMounts:
+            - name: tmp
+              mountPath: /run
       containers:
         - name: babybuddy
           image: ghcr.io/linuxserver/babybuddy:2.7.1
           imagePullPolicy: IfNotPresent
           securityContext:
-            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: true
             readOnlyRootFilesystem: false
             capabilities:
-              drop: ["ALL"]
+              add:
+                - SETUID
+                - SETGID
+              drop: []
           resources:
             requests:
               cpu: '80m'
@@ -60,6 +83,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: tmp
+              mountPath: /run
           livenessProbe:
             httpGet:
               path: /

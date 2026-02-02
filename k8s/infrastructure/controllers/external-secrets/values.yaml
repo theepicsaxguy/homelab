@@ -1,5 +1,19 @@
 bitwarden-sdk-server:
   enabled: true
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+    fsGroup: 65534
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 65534
+    seccompProfile:
+      type: RuntimeDefault
 # -- If set, install and upgrade CRDs through helm chart.
 installCRDs: true
 

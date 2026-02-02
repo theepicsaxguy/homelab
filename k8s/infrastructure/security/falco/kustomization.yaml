@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: falco
+resources: []
+helmCharts:
+  - name: falco
+    namespace: falco
+    releaseName: falco
+    repo: https://falcosecurity.github.io/charts
+    valuesFile: falco-values.yaml
+    version: 8.0.0
+patches:
+  - target:
+      kind: DaemonSet
+      name: falco
+      namespace: falco
+    patch: |-
+      - op: remove
+        path: /spec/template/metadata/annotations/container.apparmor.security.beta.kubernetes.io~1falco

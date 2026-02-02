@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: moltbot
-  namespace: moltbot
+  name: openclaw
+  namespace: openclaw
   labels:
-    app.kubernetes.io/name: moltbot
+    app.kubernetes.io/name: openclaw
     app.kubernetes.io/part-of: ai
 spec:
-  serviceName: moltbot
+  serviceName: openclaw
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: moltbot
+      app.kubernetes.io/name: openclaw
   volumeClaimTemplates:
   - metadata:
-      name: moltbot-data
+      name: openclaw-data
       labels:
-        app.kubernetes.io/name: moltbot
+        app.kubernetes.io/name: openclaw
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
@@ -25,9 +25,9 @@ spec:
         requests:
           storage: 5Gi
   - metadata:
-      name: moltbot-workspace
+      name: openclaw-workspace
       labels:
-        app.kubernetes.io/name: moltbot
+        app.kubernetes.io/name: openclaw
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
@@ -36,9 +36,9 @@ spec:
         requests:
           storage: 20Gi
   - metadata:
-      name: moltbot-config
+      name: openclaw-config
       labels:
-        app.kubernetes.io/name: moltbot
+        app.kubernetes.io/name: openclaw
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
@@ -47,9 +47,9 @@ spec:
         requests:
           storage: 5Gi
   - metadata:
-      name: moltbot-logs
+      name: openclaw-logs
       labels:
-        app.kubernetes.io/name: moltbot
+        app.kubernetes.io/name: openclaw
         backup.velero.io/backup-tier: Daily
     spec:
       accessModes: [ "ReadWriteOnce" ]
@@ -60,7 +60,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: moltbot
+        app.kubernetes.io/name: openclaw
     spec:
       # Host namespace controls - must be at pod spec level
       hostIPC: false
@@ -77,74 +77,88 @@ spec:
           type: RuntimeDefault
       
       volumes:
-        - name: moltbot-workspace
+        - name: openclaw-workspace
           persistentVolumeClaim:
-            claimName: moltbot-workspace-pvc
-        - name: moltbot-config
+            claimName: openclaw-workspace-pvc
+        - name: openclaw-config
           persistentVolumeClaim:
-            claimName: moltbot-config-pvc
-        - name: moltbot-logs
+            claimName: openclaw-config-pvc
+        - name: openclaw-logs
           persistentVolumeClaim:
-            claimName: moltbot-logs-pvc
+            claimName: openclaw-logs-pvc
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi
         - name: config
           configMap:
-            name: moltbot-config
+            name: openclaw-config
       
-      containers:
-        - name: moltbot
-          image: ghcr.io/moltbot/clawdbot:2026.1.24-1
+      initContainers:
+        - name: init-config
+          image: ghcr.io/openclaw/openclaw:2026.1.30
+          command: ["sh", "-c"]
+          args:
+            - |
+              mkdir -p /home/node/.openclaw
+              if [ ! -f /home/node/.openclaw/openclaw.json ]; then
+                cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+              fi
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+            - name: config
+              mountPath: /config
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ['ALL']
+
+      containers:
+        - name: openclaw
+          image: ghcr.io/openclaw/openclaw:2026.1.30
+          command: ["node", "dist/index.js", "gateway", "--port", "18789"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
             capabilities:
               drop: ['ALL']
           volumeMounts:
-            - name: moltbot-workspace
-              mountPath: /workspace
-            - name: moltbot-config
-              mountPath: /config
-            - name: moltbot-logs
-              mountPath: /logs
-            - name: moltbot-data
-              mountPath: /data
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
             - name: tmp
               mountPath: /tmp
-            - name: config
-              mountPath: /app/config
-              subPath: moltbot.json
-              readOnly: true
           ports:
             - containerPort: 18789
               name: gateway
               protocol: TCP
           env:
-            - name: CLAWDBOT_GATEWAY_TOKEN
+            - name: HOME
+              value: /home/node
+            - name: NODE_ENV
+              value: production
+            - name: TERM
+              value: xterm-256color
+            - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: app-moltbot-gateway-token
+                  name: app-openclaw-gateway-token
                   key: GATEWAY_TOKEN
             - name: SLACK_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: app-moltbot-slack-bot-token
+                  name: app-openclaw-slack-bot-token
                   key: SLACK_BOT_TOKEN
             - name: SLACK_APP_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: app-moltbot-slack-app-token
+                  name: app-openclaw-slack-app-token
                   key: SLACK_APP_TOKEN
             - name: LITELLM_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: app-moltbot-litellm-api-key
+                  name: app-openclaw-litellm-api-key
                   key: LITELLM_API_KEY
-            - name: NODE_ENV
-              value: production
-            - name: CLAWDBOT_STATE_DIR
-              value: /data
           resources:
             requests:
               cpu: '1000m'
