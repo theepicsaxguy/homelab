@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm-non_root:litellm_rc_branch-v1.81.0.rc.5 # renovate: datasource=github-releases depName=BerriAI/litellm
+        image: ghcr.io/berriai/litellm-non_root:main-v1.81.6-nightly # renovate: datasource=github-releases depName=BerriAI/litellm
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
@@ -70,9 +70,7 @@ spec:
         - name: QDRANT_API_BASE
           value: "http://qdrant.qdrant.svc.cluster.local:6333"
         - name: SEPARATE_HEALTH_APP
-          value: "1"
-        - name: SEPARATE_HEALTH_PORT
-          value: "4001"
+          value: "0"
         - name: DISABLE_RESPONSES_ID_SECURITY
           value: "false"
         - name: STORE_PROMPTS_IN_COLD_STORAGE
@@ -96,7 +94,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /health/liveliness
-            port: 4001
+            port: 4000
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -112,7 +110,7 @@ spec:
         startupProbe:
           httpGet:
             path: /health/liveliness
-            port: 4001
+            port: 4000
           failureThreshold: 30
           periodSeconds: 2
         volumeMounts:

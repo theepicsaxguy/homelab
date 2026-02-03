@@ -45,6 +45,8 @@ spec:
             - name: grpc
               containerPort: 6334
           env:
+            - name: QDRANT__STORAGE__TEMP_PATH  
+              value: /tmp/qdrant-temp
             - name: QDRANT__SERVICE__API_KEY
               valueFrom:
                 secretKeyRef:
