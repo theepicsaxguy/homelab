@@ -41,8 +41,8 @@ spec:
           # https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim
           # https://download.kiwix.org/zim/wikibooks/wikibooks_sv_all_maxi_2025-10.zim
           # https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim
-            # - name: DOWNLOAD
-            #   value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
+          # - name: DOWNLOAD
+          #   value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
             - name: PORT
               value: "8080"
             - name: LANG

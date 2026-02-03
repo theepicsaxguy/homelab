@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -6,7 +7,7 @@ metadata:
   labels:
     app: bazarr
 spec:
-  serviceName: "bazarr"
+  serviceName: bazarr
   replicas: 1
   selector:
     matchLabels:
@@ -16,95 +17,71 @@ spec:
       labels:
         app: bazarr
     spec:
-      hostIPC: false
-      hostPID: false
-      hostNetwork: false
       securityContext:
-        fsGroup: 1000
         runAsNonRoot: true
-        seccompProfile:
-          type: RuntimeDefault
+        fsGroup: 1000
       volumes:
-        - name: media
-          persistentVolumeClaim:
-            claimName: media-share
-        - name: tmp
-          emptyDir:
-            sizeLimit: 100Mi
-      initContainers:
-        - name: setup-run
-          image: busybox:1.37
-          command: ["sh", "-c", "mkdir -p /run/s6 && chmod 755 /run /run/s6"]
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-          volumeMounts:
-            - name: tmp
-              mountPath: /run
+      - name: media
+        persistentVolumeClaim:
+          claimName: media-share
       containers:
-        - name: bazarr
-          image: lscr.io/linuxserver/bazarr:1.5.5
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
-            capabilities:
-              drop: ["ALL"]
-          ports:
-            - name: http
-              containerPort: 6767
-              protocol: TCP
-          envFrom:
-            - configMapRef:
-                name: common-env
-                optional: true
-          env:
-            - name: VPN_ENABLED
-              value: 'false'
-            - name: UMASK
-              value: '002'
-            - name: WEBUI_PORTS
-              value: '6767/tcp,6767/udp'
-          volumeMounts:
-            - name: media
-              mountPath: /app/data
-            - name: config
-              mountPath: /config
-            - name: tmp
-              mountPath: /run
-          resources:
-            requests:
-              cpu: 50m
-              memory: 192Mi
-            limits:
-              cpu: 1000m
-              memory: 256Mi
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 6767
-            initialDelaySeconds: 20
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 6767
-            initialDelaySeconds: 15
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 3
-  volumeClaimTemplates:
-    - metadata:
-        name: config
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: "proxmox-csi"
+      - name: bazarr
+        image: ghcr.io/hotio/bazarr:release-v1.5.5
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsUser: 1000
+          runAsGroup: 1000
+        # Using image defaults (Entrypoint) - no custom command/args
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: USER
+          value: "bazarr"
+        - name: GROUP
+          value: "bazarr"
+        - name: TZ
+          value: "Europe/Stockholm"
+        - name: UMASK
+          value: "002"
+        volumeMounts:
+        - name: media
+          mountPath: /data
+        - name: config
+          mountPath: /config
         resources:
           requests:
-            storage: 1Gi
+            cpu: 50m
+            memory: 192Mi
+          limits:
+            cpu: 1000m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 6767
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /
+            port: 6767
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+  volumeClaimTemplates:
+  - metadata:
+      name: config
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: "proxmox-csi-2"
+      resources:
+        requests:
+          storage: 1Gi
