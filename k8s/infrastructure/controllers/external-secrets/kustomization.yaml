@@ -11,7 +11,7 @@ resources:
 helmCharts:
   - name: external-secrets
     repo: https://charts.external-secrets.io
-    version: 1.3.1
+    version: 1.3.2
     releaseName: external-secrets
     namespace: external-secrets
     valuesFile: values.yaml
