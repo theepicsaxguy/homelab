@@ -10,7 +10,7 @@ data:
   custom_servers.json: |
     [
       {
-        "name": "Homelab Minecraft Server",
+        "name": "PixelStack",
         "iconUrl": "https://i.imgur.com/3BmFZRE.png",
         "address": "10.25.150.254",
         "port": 19132
