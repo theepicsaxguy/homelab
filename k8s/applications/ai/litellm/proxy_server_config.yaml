@@ -1400,7 +1400,6 @@ general_settings:
   health_check_interval: 300
   health_check_details: true
   ui_access_mode: admin_only
-  max_request_size_mb: 20
   max_response_size_mb: 25
   database_connection_pool_limit: 50
   database_connection_timeout: 60
