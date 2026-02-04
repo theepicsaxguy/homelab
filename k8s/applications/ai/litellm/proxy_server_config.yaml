@@ -872,6 +872,12 @@ model_list:
     model_info:
       mode: chat
       max_input_tokens: 131072
+# LiteLLM Search API tools
+search_tools:
+  - search_tool_name: tavily-search
+    litellm_params:
+      search_provider: tavily
+      api_key: os.environ/TAVILY_API_KEY
 
   - model_name: mistral/ministral-3b-latest
     litellm_params:
