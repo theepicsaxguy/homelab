@@ -4,7 +4,7 @@ qdrant-client[fastembed]==1.16.2
 protobuf>=5.29.0,<7.0.0
 llama-index-core==0.14.13
 openai==2.16.0
-huggingface-hub==1.3.7
+huggingface-hub==1.4.0
 tokenizers==0.22.2
 packaging>=26,<26.1
 numpy==2.4.2
