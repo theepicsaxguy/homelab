@@ -6,6 +6,6 @@ namespace: open-webui
 configMapGenerator:
   - name: pipelines-bootstrap
     files:
-      - pipelines/wikipedia_pipeline.py
+      #- pipelines/wikipedia_pipeline.py
       - pipelines/document_search_pipeline.py
-      - pipelines/tools_pipeline.py
+     # - pipelines/tools_pipeline.py

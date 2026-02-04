@@ -37,8 +37,8 @@ spec:
               capabilities:
                 drop: ["ALL"]
             volumeMounts:
-              # - name: pipelines-bootstrap
-              #   mountPath: /bootstrap
+              - name: pipelines-bootstrap
+                mountPath: /bootstrap
               - name: pipelines-data
                 mountPath: /app/pipelines
       containers:
@@ -111,9 +111,9 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi
-        # - name: pipelines-bootstrap
-        #   configMap:
-        #     name: pipelines-bootstrap
+        - name: pipelines-bootstrap
+          configMap:
+            name: pipelines-bootstrap
         - name: pipelines-data
           persistentVolumeClaim:
             claimName: pipelines-pvc
