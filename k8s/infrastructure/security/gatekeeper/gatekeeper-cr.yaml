@@ -5,7 +5,7 @@ metadata:
   namespace: gatekeeper-system
 spec:
   image:
-    image: docker.io/openpolicyagent/gatekeeper:v3.21.0
+    image: docker.io/openpolicyagent/gatekeeper:v3.21.1
     imagePullPolicy: IfNotPresent
   audit:
     replicas: 1

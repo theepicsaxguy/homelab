@@ -95,7 +95,7 @@ spec:
       
       initContainers:
         - name: init-config
-          image: ghcr.io/openclaw/openclaw:2026.2.2
+          image: ghcr.io/openclaw/openclaw:2026.2.3
           command: ["sh", "-c"]
           args:
             - |
@@ -116,7 +116,7 @@ spec:
 
       containers:
         - name: openclaw
-          image: ghcr.io/openclaw/openclaw:2026.2.2
+          image: ghcr.io/openclaw/openclaw:2026.2.3
           command: ["node", "dist/index.js", "gateway", "--port", "18789"]
           securityContext:
             allowPrivilegeEscalation: false
