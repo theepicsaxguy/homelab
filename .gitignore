@@ -51,3 +51,4 @@ vale
 vale_*.tar.gz
 skills/
 **venv/
+kubeconfig
