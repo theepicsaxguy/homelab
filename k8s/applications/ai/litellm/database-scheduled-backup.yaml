@@ -5,7 +5,7 @@ metadata:
   name: litellm-postgresql-backup
   namespace: litellm
 spec:
-  schedule: "0 0 2 * * 0"
+  schedule: "0 0 2 * * 3"
   backupOwnerReference: self
   cluster:
     name: litellm-postgresql

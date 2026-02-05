@@ -23,28 +23,40 @@ spec:
       hostPID: false
       hostNetwork: false
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: init-horust
+          image: madeofpendletonwool/pinepods:0.8.2
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /etc/horust/services
+              chmod -R 755 /etc/horust
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            privileged: true
+          volumeMounts: []
       containers:
         - name: pinepods
           image: madeofpendletonwool/pinepods:0.8.2
           imagePullPolicy: IfNotPresent
           securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
+            allowPrivilegeEscalation: true
             readOnlyRootFilesystem: false
             capabilities:
-              drop:
-                - ALL
-            seccompProfile:
-              type: RuntimeDefault
+              add:
+                - SETUID
+                - SETGID
+                - SYS_ADMIN
+              drop: []
           ports:
             - containerPort: 8040
               name: http
