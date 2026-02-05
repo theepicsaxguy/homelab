@@ -5,7 +5,7 @@ metadata:
   name: n8n-db-backup
   namespace: n8n
 spec:
-  schedule: "0 0 2 * * 0"
+  schedule: "0 0 2 * * 2"
   backupOwnerReference: self
   cluster:
     name: n8n-db

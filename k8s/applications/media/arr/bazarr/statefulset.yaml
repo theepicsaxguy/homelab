@@ -8,7 +8,7 @@ metadata:
     app: bazarr
 spec:
   serviceName: bazarr
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: bazarr
@@ -18,8 +18,9 @@ spec:
         app: bazarr
     spec:
       securityContext:
-        runAsNonRoot: true
-        fsGroup: 1000
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
       volumes:
       - name: media
         persistentVolumeClaim:
@@ -28,12 +29,14 @@ spec:
       - name: bazarr
         image: ghcr.io/hotio/bazarr:release-v1.5.5
         securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
+          allowPrivilegeEscalation: true
+          readOnlyRootFilesystem: false
           capabilities:
-            drop: ["ALL"]
-          runAsUser: 1000
-          runAsGroup: 1000
+            add:
+              - SETUID
+              - SETGID
+              - SYS_ADMIN
+            drop: []
         # Using image defaults (Entrypoint) - no custom command/args
         env:
         - name: PUID

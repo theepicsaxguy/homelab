@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: kiwix
     app.kubernetes.io/part-of: kiwix
     app.kubernetes.io/component: service
-    app.kubernetes.io/version: "3.8.1"
+    app.kubernetes.io/version: '3.8.1'
 spec:
   replicas: 1
   strategy:
@@ -19,16 +19,16 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kiwix
-        app.kubernetes.io/version: "3.8.1"
+        app.kubernetes.io/version: '3.8.1'
     spec:
       hostIPC: false
       hostPID: false
       hostNetwork: false
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 1001
-        fsGroup: 1001
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -36,38 +36,37 @@ spec:
           image: ghcr.io/kiwix/kiwix-serve:3.8.1
           imagePullPolicy: IfNotPresent
           env:
-          # only allows 1 download at a time. uncomment download until downloaded. then comment it out again to avoid re-downloading on pod restarts.
-          # https://download.kiwix.org/zim/wikipedia_en_all_maxi.zim
-          # https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim
-          # https://download.kiwix.org/zim/wikibooks/wikibooks_sv_all_maxi_2025-10.zim
-          # https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim
-          # - name: DOWNLOAD
-          #   value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
+            # only allows 1 download at a time. uncomment download until downloaded. then comment it out again to avoid re-downloading on pod restarts.
+            # https://download.kiwix.org/zim/wikipedia_en_all_maxi.zim
+            # https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim
+            # https://download.kiwix.org/zim/wikibooks/wikibooks_sv_all_maxi_2025-10.zim
+            - name: DOWNLOAD
+              value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
             - name: PORT
-              value: "8080"
+              value: '8080'
             - name: LANG
               value: swe
           # rely on image's default entrypoint so it can expand globs
           args:
-            - "*.zim"
+            - '*.zim'
           ports:
             - containerPort: 8080
               name: http
           resources:
             requests:
-              cpu: "500m"
+              cpu: '500m'
               memory: 2Gi
             limits:
-              cpu: "2000m"
+              cpu: '2000m'
               memory: 8Gi
           startupProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 2
-            failureThreshold: 2160  # 2160*5s = 10800s = 3 hours
+            initialDelaySeconds: 300
+            periodSeconds: 120
+            timeoutSeconds: 60
+            failureThreshold: 270  # 270 * 120s = 540 minutes = 9 hours for large downloads
 
           readinessProbe:
             httpGet:
@@ -87,12 +86,9 @@ spec:
             timeoutSeconds: 2
             failureThreshold: 3
           securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            readOnlyRootFilesystem: true
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            readOnlyRootFilesystem: false
           volumeMounts:
             - name: data
               mountPath: /data
