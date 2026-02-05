@@ -11,6 +11,6 @@ helmCharts:
     valuesFile: helm-values.yaml
     releaseName: cloudnative-pg
     namespace: cnpg-system
-    version: 0.27.0
+    version: 0.27.1
     includeCRDs: true
     repo: https://cloudnative-pg.github.io/charts
