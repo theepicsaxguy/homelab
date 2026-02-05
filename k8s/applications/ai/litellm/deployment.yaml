@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm-non_root:main-v1.81.6-nightly # renovate: datasource=github-releases depName=BerriAI/litellm
+        image: ghcr.io/berriai/litellm-non_root:main-v1.81.8-nightly
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
