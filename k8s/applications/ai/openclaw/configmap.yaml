@@ -11,7 +11,9 @@ data:
       agents: {
         defaults: {
           workspace: "/workspace",
-          model: "litellm/claude-opus-4-5",
+          model: {
+            primary: "litellm/claude-opus-4-5"
+          },
           sandbox: {
             mode: "all",
             scope: "session",
@@ -36,14 +38,6 @@ data:
               maxAgeDays: 7
             }
           },
-          tools: {
-            sandbox: {
-              tools: {
-                allow: ["exec", "process", "read", "write", "edit", "sessions_list", "sessions_history", "sessions_send", "sessions_spawn", "session_status", "browser"],
-                deny: ["canvas", "nodes", "cron", "discord", "gateway"]
-              }
-            }
-          }
         },
         list: [
           {
@@ -62,11 +56,7 @@ data:
           enabled: true,
           botToken: "${SLACK_BOT_TOKEN}",
           appToken: "${SLACK_APP_TOKEN}",
-          dmPolicy: "pairing",
-          dms: {
-            enabled: true,
-            policy: "pairing"
-          },
+
           channels: {
             "#moltbot": { allow: true, requireMention: true }
           },
@@ -100,14 +90,24 @@ data:
         providers: {
           "litellm": {
             baseUrl: "http://litellm.litellm.svc.cluster.local:4000",
-            apiKey: "${LITELLM_API_KEY}"
+            apiKey: "${LITELLM_API_KEY}",
+            models: [
+              {
+                id: "litellm/claude-opus-4-5",
+                name: "Claude Opus 4.5",
+                contextWindow: 200000,
+                maxTokens: 4096
+              }
+            ]
           }
         }
       },
       gateway: {
         port: 18789,
+        mode: "local",
+        bind: "lan",
         auth: {
-          token: "${CLAWDBOT_GATEWAY_TOKEN}"
+          token: "${OPENCLAW_GATEWAY_TOKEN}"
         }
       },
       web: {

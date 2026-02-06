@@ -79,13 +79,13 @@ spec:
       volumes:
         - name: openclaw-workspace
           persistentVolumeClaim:
-            claimName: openclaw-workspace-pvc
+            claimName: openclaw-workspace
         - name: openclaw-config
           persistentVolumeClaim:
-            claimName: openclaw-config-pvc
+            claimName: openclaw-config
         - name: openclaw-logs
           persistentVolumeClaim:
-            claimName: openclaw-logs-pvc
+            claimName: openclaw-logs
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi
@@ -100,9 +100,7 @@ spec:
           args:
             - |
               mkdir -p /home/node/.openclaw
-              if [ ! -f /home/node/.openclaw/openclaw.json ]; then
-                cp /config/openclaw.json /home/node/.openclaw/openclaw.json
-              fi
+              cp /config/openclaw.json /home/node/.openclaw/openclaw.json
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
@@ -117,7 +115,7 @@ spec:
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:2026.2.3
-          command: ["node", "dist/index.js", "gateway", "--port", "18789"]
+          command: ["node", "dist/index.js", "gateway", "--port", "18789", "--bind", "lan"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
@@ -170,6 +168,7 @@ spec:
             httpGet:
               path: /health
               port: 18789
+              host: localhost
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
@@ -178,6 +177,7 @@ spec:
             httpGet:
               path: /health
               port: 18789
+              host: localhost
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 3
@@ -186,7 +186,8 @@ spec:
             httpGet:
               path: /health
               port: 18789
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 3
-            failureThreshold: 30
+              host: 127.0.0.1
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 60

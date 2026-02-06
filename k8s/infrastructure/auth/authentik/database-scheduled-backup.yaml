@@ -5,7 +5,7 @@ metadata:
   name: authentik-postgresql-backup
   namespace: auth
 spec:
-  schedule: "0 0 2 * * *"
+  schedule: "0 0 2 * * 4"
   backupOwnerReference: self
   cluster:
     name: authentik-postgresql
