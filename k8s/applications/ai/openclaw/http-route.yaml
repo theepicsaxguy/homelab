@@ -10,6 +10,7 @@ spec:
   parentRefs:
     - name: external
       namespace: gateway
+      sectionName: https-gateway
     - name: internal
       namespace: gateway
   hostnames:
