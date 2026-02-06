@@ -56,15 +56,15 @@ spec:
             port: 5003  
           initialDelaySeconds: 40  
           periodSeconds: 30  
-          timeoutSeconds: 3  
-          failureThreshold: 3  
-        readinessProbe:  
-          httpGet:  
-            path: /api/health  
-            port: 5003  
-          initialDelaySeconds: 15  
-          periodSeconds: 30  
-          timeoutSeconds: 3  
+          timeoutSeconds: 30
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5003
+          initialDelaySeconds: 15
+          periodSeconds: 30
+          timeoutSeconds: 30  
           failureThreshold: 5  
       volumes:  
       - name: workspace  
