@@ -101,14 +101,19 @@ spec:
             - |
               mkdir -p /home/node/.openclaw
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+              mkdir -p /workspace
+              chown 1000:1000 /workspace
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: openclaw-workspace
+              mountPath: /workspace
             - name: config
               mountPath: /config
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
+            runAsUser: 0
             capabilities:
               drop: ['ALL']
 
@@ -124,6 +129,8 @@ spec:
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: openclaw-workspace
+              mountPath: /workspace
             - name: tmp
               mountPath: /tmp
           ports:
@@ -168,7 +175,6 @@ spec:
             httpGet:
               path: /health
               port: 18789
-              host: localhost
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
@@ -177,7 +183,6 @@ spec:
             httpGet:
               path: /health
               port: 18789
-              host: localhost
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 3
@@ -186,7 +191,6 @@ spec:
             httpGet:
               path: /health
               port: 18789
-              host: 127.0.0.1
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 5
