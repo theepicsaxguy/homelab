@@ -2,16 +2,5 @@
   "$schema": "https://opencode.ai/config.json",
   "instructions": [
     "AGENTS.md"
-  ],
-  "mcp": {
-    "litellm": {
-      "type": "remote",
-      "url": "https://litellm.peekoff.com/mcp",
-      "enabled": true,
-      "oauth": false,
-      "headers": {
-        "Authorization": "Bearer sk-f9xE3WyEjCX05JzKveVyPQ"
-      }
-    }
-  }
+  ]
 }
