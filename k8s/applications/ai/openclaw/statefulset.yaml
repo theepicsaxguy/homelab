@@ -101,6 +101,7 @@ spec:
             - |
               mkdir -p /home/node/.openclaw
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+<<<<<<< HEAD
               mkdir -p /workspace
               chown 1000:1000 /workspace
           volumeMounts:
@@ -175,6 +176,7 @@ spec:
             httpGet:
               path: /health
               port: 18789
+              host: localhost
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
@@ -183,6 +185,7 @@ spec:
             httpGet:
               path: /health
               port: 18789
+              host: localhost
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 3
@@ -191,6 +194,7 @@ spec:
             httpGet:
               path: /health
               port: 18789
+              host: 127.0.0.1
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 5
