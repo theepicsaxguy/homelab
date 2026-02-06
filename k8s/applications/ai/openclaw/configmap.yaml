@@ -8,130 +8,134 @@ metadata:
 data:
   openclaw.json: |
     {
-      agents: {
-        defaults: {
-          workspace: "/workspace",
-          model: {
-            primary: "litellm/claude-opus-4-5"
+      "identity": {
+        "name": "Samantha",
+        "theme": "helpful sloth",
+        "emoji": "🦥"
+      },
+      "logging": {
+        "level": "info",
+        "file": "/var/log/openclaw/openclaw.log",
+        "consoleLevel": "info",
+        "consoleStyle": "pretty",
+        "redactSensitive": "tools"
+      },
+      "messages": {
+        "messagePrefix": "[openclaw]",
+        "responsePrefix": ">",
+        "ackReaction": "👀",
+        "ackReactionScope": "group-mentions"
+      },
+      "routing": {
+        "groupChat": {
+          "mentionPatterns": ["@openclaw", "openclaw"],
+          "historyLimit": 50
+        },
+        "queue": {
+          "mode": "collect",
+          "debounceMs": 1000,
+          "cap": 20,
+          "drop": "summarize"
+        }
+      },
+      "session": {
+        "scope": "per-sender",
+        "reset": {
+          "mode": "daily",
+          "atHour": 4,
+          "idleMinutes": 60
+        },
+        "resetTriggers": ["/new", "/reset"],
+        "store": "~/.openclaw/agents/default/sessions/sessions.json",
+        "typingIntervalSeconds": 5
+      },
+      "channels": {
+        "slack": {
+          "enabled": true,
+          "botToken": "${SLACK_BOT_TOKEN}",
+          "appToken": "${SLACK_APP_TOKEN}",
+          "channels": {
+            "#general": { "allow": true, "requireMention": true }
           },
-          sandbox: {
-            mode: "all",
-            scope: "session",
-            workspaceAccess: "rw",
-            docker: {
-              image: "moltbot-sandbox:bookworm-slim",
-              workdir: "/workspace",
-              readOnlyRoot: true,
-              tmpfs: ["/tmp", "/var/tmp", "/run"],
-              network: "none",
-              user: "1000:1000",
-              capDrop: ["ALL"],
-              env: { LANG: "C.UTF-8" },
-              setupCommand: "apt-get update && apt-get install -y git curl jq python3",
-              pidsLimit: 256,
-              memory: "2g",
-              memorySwap: "4g",
-              cpus: 1
+          "dm": { "enabled": true, "allowFrom": ["U123"] },
+          "slashCommand": {
+            "enabled": true,
+            "name": "openclaw",
+            "sessionPrefix": "slack:slash",
+            "ephemeral": true
+          }
+        }
+      },
+      "agents": {
+        "defaults": {
+          "workspace": "/workspace",
+          "userTimezone": "America/Chicago",
+          "model": {
+            "provider": "litellm",
+            "model": "claude-sonnet-4-20250514"
+          },
+          "thinkingDefault": "low",
+          "verboseDefault": "off",
+          "elevatedDefault": "on",
+          "timeoutSeconds": 600,
+          "typingIntervalSeconds": 5,
+          "maxConcurrent": 3,
+          "sandbox": {
+            "mode": "non-main",
+            "perSession": true,
+            "workspaceRoot": "~/.openclaw/sandboxes",
+            "docker": {
+              "image": "openclaw-sandbox:bookworm-slim",
+              "workdir": "/workspace",
+              "readOnlyRoot": true,
+              "tmpfs": ["/tmp", "/var/tmp", "/run"],
+              "network": "none",
+              "user": "1000:1000"
             },
-            prune: {
-              idleHours: 24,
-              maxAgeDays: 7
-            }
-          },
-        },
-        list: [
-          {
-            id: "main",
-            default: true,
-            identity: {
-              name: "Moltbot",
-              theme: "helpful assistant",
-              emoji: "🤖"
-            }
+            "browser": { "enabled": false }
           }
-        ]
-      },
-      channels: {
-        slack: {
-          enabled: true,
-          botToken: "${SLACK_BOT_TOKEN}",
-          appToken: "${SLACK_APP_TOKEN}",
-
-          channels: {
-            "#moltbot": { allow: true, requireMention: true }
-          },
-          historyLimit: 50,
-          allowBots: false,
-          reactionNotifications: "own",
-          replyToMode: "off",
-          thread: {
-            historyScope: "thread",
-            inheritParent: false
-          },
-          actions: {
-            reactions: true,
-            messages: true,
-            pins: true,
-            memberInfo: true,
-            emojiList: true
-          },
-          slashCommand: {
-            enabled: true,
-            name: "moltbot",
-            sessionPrefix: "slack:slash",
-            ephemeral: true
-          },
-          textChunkLimit: 4000,
-          chunkMode: "length",
-          mediaMaxMb: 20
         }
       },
-      models: {
-        providers: {
+      "tools": {
+        "allow": ["exec", "process", "read", "write", "edit", "apply_patch"],
+        "deny": ["browser", "canvas"],
+        "exec": {
+          "backgroundMs": 10000,
+          "timeoutSec": 1800,
+          "cleanupMs": 1800000
+        },
+        "elevated": {
+          "enabled": true,
+          "allowFrom": {
+            "whatsapp": ["+15555550123"],
+            "telegram": ["123456789"],
+            "discord": ["steipete"],
+            "slack": ["U123"],
+            "signal": ["+15555550123"],
+            "imessage": ["user@example.com"],
+            "webchat": ["session:demo"]
+          }
+        }
+      },
+      "models": {
+        "mode": "merge",
+        "providers": {
           "litellm": {
-            baseUrl: "http://litellm.litellm.svc.cluster.local:4000",
-            apiKey: "${LITELLM_API_KEY}",
-            models: [
-              {
-                id: "litellm/claude-opus-4-5",
-                name: "Claude Opus 4.5",
-                contextWindow: 200000,
-                maxTokens: 4096
-              }
-            ]
+            "api": "openai",
+            "baseUrl": "http://litellm.litellm.svc.cluster.local:4000/v1",
+            "apiKey": "${LITELLM_API_KEY}"
           }
         }
       },
-      gateway: {
-        port: 18789,
-        mode: "local",
-        bind: "lan",
-        auth: {
-          token: "${OPENCLAW_GATEWAY_TOKEN}"
-        }
-      },
-      web: {
-        enabled: true,
-        heartbeatSeconds: 60
-      },
-      logging: {
-        level: "info",
-        consoleLevel: "info",
-        consoleStyle: "pretty",
-        redactSensitive: "tools"
-      },
-      messages: {
-        responsePrefix: "🤖",
-        ackReaction: "👀",
-        ackReactionScope: "group-mentions",
-        queue: {
-          mode: "collect",
-          debounceMs: 1000,
-          cap: 20,
-          drop: "summarize"
-        },
-        inbound: {
-          debounceMs: 2000
-        }
-      }
+       "gateway": {
+         "mode": "local",
+         "port": 18789,
+         "bind": "lan",
+         "controlUi": { "enabled": true, "basePath": "/openclaw", "dangerouslyDisableDeviceAuth": true },
+         "auth": {
+           "mode": "token",
+           "token": "${OPENCLAW_GATEWAY_TOKEN}",
+           "allowTailscale": true
+         }
+       }
     }

@@ -100,9 +100,11 @@ spec:
           args:
             - |
               mkdir -p /home/node/.openclaw
+              chmod 700 /home/node/.openclaw
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+              chmod 600 /home/node/.openclaw/openclaw.json
               mkdir -p /workspace
-              chown 1000:1000 /workspace
+              chmod 777 /workspace
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
@@ -114,6 +116,7 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             runAsUser: 0
+            runAsNonRoot: false
             capabilities:
               drop: ['ALL']
 
@@ -131,6 +134,8 @@ spec:
               mountPath: /home/node/.openclaw
             - name: openclaw-workspace
               mountPath: /workspace
+            - name: openclaw-logs
+              mountPath: /var/log/openclaw
             - name: tmp
               mountPath: /tmp
           ports:
