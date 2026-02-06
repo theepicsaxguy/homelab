@@ -16,6 +16,7 @@ spec:
     # Backup only critical namespaces to minimize B2 transaction usage
     # All other namespaces can be recreated from Git
     includedNamespaces:
+      - ai
       - argocd
       - auth
       - babybuddy
