@@ -101,14 +101,20 @@ spec:
             - |
               mkdir -p /home/node/.openclaw
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
+<<<<<<< HEAD
+              mkdir -p /workspace
+              chown 1000:1000 /workspace
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: openclaw-workspace
+              mountPath: /workspace
             - name: config
               mountPath: /config
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
+            runAsUser: 0
             capabilities:
               drop: ['ALL']
 
@@ -124,6 +130,8 @@ spec:
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
+            - name: openclaw-workspace
+              mountPath: /workspace
             - name: tmp
               mountPath: /tmp
           ports:
