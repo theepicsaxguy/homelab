@@ -26,6 +26,7 @@ spec:
       - gateway
       - home-assistant
       - kubechecks
+      - media
       - monitoring
       - n8n
       - openclaw
