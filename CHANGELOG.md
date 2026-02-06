@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.0.0 (2026-02-06)
+
+## What's Changed
+* feat(k8s): add sectionName to OpenClaw HTTPRoute by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2184
+* chore(deps): update dependency langfuse to v3.13.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2185
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v5.2.0...v6.0.0
+
 ## 5.2.0 (2026-01-14)
 
 ## What's Changed
