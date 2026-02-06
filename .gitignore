@@ -52,3 +52,6 @@ vale_*.tar.gz
 skills/
 **venv/
 kubeconfig
+
+# OpenCode config with secrets
+opencode.json
