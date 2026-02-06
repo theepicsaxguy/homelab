@@ -1,0 +1,108 @@
+# Gatekeeper Helm Chart Values
+# Chart version 3.18.2 includes seccompProfile: RuntimeDefault by default
+
+replicas: 3
+
+# Controller manager resources
+controllerManager:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+# Audit component resources and settings
+audit:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+  auditInterval: 60s
+  constraintViolationLimit: 20
+  auditFromCache: true
+
+# Webhook configuration
+webhookTimeoutSeconds: 3
+validatingWebhookTimeoutSeconds: 3
+mutatingWebhookTimeoutSeconds: 3
+
+# Enable mutating webhook
+enableMutatingWebhook: true
+
+# Log level
+logLevel: INFO
+
+# Emit admission events
+emitAdmissionEvents: true
+emitAuditEvents: false
+
+# Failure policy
+failurePolicy: Ignore
+
+# Automatic namespace exemption - critical for gatekeeper-system
+postInstall:
+  labelNamespace:
+    enabled: true
+    image:
+      repository: openpolicyagent/gatekeeper-crds
+      tag: v3.18.2
+      pullPolicy: IfNotPresent
+  probeWebhook:
+    enabled: true
+    image:
+      repository: curlimages/curl
+      tag: latest
+      pullPolicy: IfNotPresent
+
+# Pre-delete configuration
+preUninstall:
+  deleteWebhooks:
+    enabled: true
+    image:
+      repository: openpolicyagent/gatekeeper-crds
+      tag: v3.18.2
+      pullPolicy: IfNotPresent
+
+# CRD configuration
+crd:
+  create: true
+
+# Upgrade CRDs
+upgradeCRDs:
+  enabled: true
+
+# Priority class
+priorityClassName: system-cluster-critical
+
+# Tolerations (for control plane nodes)
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: node.kubernetes.io/not-ready
+    operator: Exists
+    effect: NoExecute
+    tolerationSeconds: 120
+  - key: node.kubernetes.io/unreachable
+    operator: Exists
+    effect: NoExecute
+    tolerationSeconds: 120
+
+# Affinity rules
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - gatekeeper
+          topologyKey: kubernetes.io/hostname

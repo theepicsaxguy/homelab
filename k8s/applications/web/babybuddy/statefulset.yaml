@@ -48,15 +48,15 @@ spec:
           image: ghcr.io/linuxserver/babybuddy:2.7.1
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 0
+            runAsGroup: 0
             allowPrivilegeEscalation: true
             readOnlyRootFilesystem: false
             capabilities:
               add:
                 - SETUID
                 - SETGID
+                - SYS_ADMIN
               drop: []
           resources:
             requests:
