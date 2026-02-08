@@ -30,7 +30,7 @@ nodes_config = {
     mac_address    = "bc:24:11:64:5b:cb"
     startup_order  = 6
     vm_id          = 8201
-    root_disk_size = 40
+    root_disk_size = 60
     upgrade        = false
   }
   "work-01" = {
@@ -39,7 +39,7 @@ nodes_config = {
     mac_address    = "bc:24:11:c9:22:c3"
     startup_order  = 7
     vm_id          = 8202
-    root_disk_size = 40
+    root_disk_size = 60
     upgrade        = false
   }
   "work-02" = {
@@ -48,7 +48,7 @@ nodes_config = {
     mac_address    = "bc:24:11:6f:20:03"
     startup_order  = 8
     vm_id          = 8203
-    root_disk_size = 80
+    root_disk_size = 60
     upgrade        = false
   }
   # "work-04" = {
