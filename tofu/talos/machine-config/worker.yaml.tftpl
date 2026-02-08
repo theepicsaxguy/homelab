@@ -11,6 +11,14 @@ machine:
       - 10.96.0.10
     extraArgs:
       rotate-server-certificates: true
+    extraConfig:
+      imageMinimumGCAge: 1h
+      evictionHard:
+        imagefs.available: 1Gi
+      evictionSoft:
+        imagefs.available: 2Gi
+      evictionSoftGracePeriod:
+        imagefs.available: 5m
   %{ if igpu && gpu_node_exclusive }
   nodeTaints:
     gpu: "true:NoSchedule"

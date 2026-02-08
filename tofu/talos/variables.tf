@@ -102,6 +102,14 @@ variable "nodes" {
       {}
     )
     upgrade = optional(bool, false)
+    # Root disk configuration
+    root_disk_interface         = optional(string)
+    root_disk_iothread          = optional(bool)
+    root_disk_cache             = optional(string)
+    root_disk_discard           = optional(string)
+    root_disk_ssd               = optional(bool)
+    root_disk_file_format       = optional(string)
+    root_disk_size              = optional(number)
   }))
 
   validation {

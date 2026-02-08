@@ -17,7 +17,7 @@ serviceAccount:
 credentials:
   useSecret: true
   existingSecret: velero-minio-credentials
-  configuration:
+configuration:
   uploaderType: kopia
   uploaderConfig:
     parallelFilesUpload: 2
