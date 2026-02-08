@@ -1,16 +1,6 @@
 resource "null_resource" "external_secrets_kustomize" {
-  triggers = {
-    manifests = sha256(join("", [for f in fileset("${path.module}/../../../k8s/infrastructure/controllers/external-secrets", "*.yaml") : filesha256("${path.module}/../../../k8s/infrastructure/controllers/external-secrets/${f}")]))
-  }
-
   provisioner "local-exec" {
     command     = "kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
-    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
-  }
-
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "kustomize build --enable-helm . | kubectl delete -f - --ignore-not-found=true"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/external-secrets"
   }
 }
