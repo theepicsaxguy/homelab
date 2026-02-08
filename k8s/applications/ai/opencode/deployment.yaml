@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault  
       containers:  
       - name: opencode-web  
-        image: ghcr.io/chriswritescode-dev/opencode-manager:0.8.26  
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.8.27  
         securityContext:  
           runAsUser: 1000  
           runAsGroup: 1000  
