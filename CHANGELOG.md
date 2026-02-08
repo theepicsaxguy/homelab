@@ -1,5 +1,15 @@
 # Changelog
 
+## 7.0.0 (2026-02-08)
+
+## What's Changed
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2188
+* Feat/kubearmor talos cleanup by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2190
+* fix(bootstrap): remove triggers and destroy provisioners from bootstr… by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2191
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v6.0.0...v7.0.0
+
 ## 6.0.0 (2026-02-06)
 
 ## What's Changed
