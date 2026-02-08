@@ -1,8 +1,4 @@
 resource "null_resource" "argocd_kustomize" {
-  triggers = {
-    manifests = sha256(join("", [for f in fileset("${path.module}/../../../k8s/infrastructure/controllers/argocd", "*.yaml") : filesha256("${path.module}/../../../k8s/infrastructure/controllers/argocd/${f}")]))
-  }
-
   depends_on = [
     null_resource.wait_for_cert_manager,
     null_resource.wait_for_external_secrets,
@@ -11,12 +7,6 @@ resource "null_resource" "argocd_kustomize" {
 
   provisioner "local-exec" {
     command     = "kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
-    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/argocd"
-  }
-
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "kustomize build --enable-helm . | kubectl delete -f - --ignore-not-found=true"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/argocd"
   }
 }
@@ -31,10 +21,6 @@ resource "null_resource" "wait_for_argocd" {
 
 resource "null_resource" "infrastructure_project" {
   depends_on = [null_resource.wait_for_argocd]
-
-  triggers = {
-    git_repo = var.git_repository_url
-  }
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -63,19 +49,10 @@ resource "null_resource" "infrastructure_project" {
       EOF
     EOT
   }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete appproject infrastructure -n argocd --ignore-not-found=true"
-  }
 }
 
 resource "null_resource" "infrastructure_appset" {
   depends_on = [null_resource.infrastructure_project]
-
-  triggers = {
-    git_repo = var.git_repository_url
-  }
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -133,19 +110,10 @@ resource "null_resource" "infrastructure_appset" {
       EOF
     EOT
   }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete applicationset infrastructure -n argocd --ignore-not-found=true"
-  }
 }
 
 resource "null_resource" "applications_project" {
   depends_on = [null_resource.wait_for_argocd]
-
-  triggers = {
-    git_repo = var.git_repository_url
-  }
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -171,11 +139,6 @@ resource "null_resource" "applications_project" {
       EOF
     EOT
   }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete appproject applications -n argocd --ignore-not-found=true"
-  }
 }
 
 resource "null_resource" "applications_appset" {
@@ -183,10 +146,6 @@ resource "null_resource" "applications_appset" {
     null_resource.wait_for_argocd,
     null_resource.infrastructure_appset
   ]
-
-  triggers = {
-    git_repo = var.git_repository_url
-  }
 
   provisioner "local-exec" {
     command = <<-EOT
@@ -245,10 +204,5 @@ resource "null_resource" "applications_appset" {
                 - RespectIgnoreDifferences=true
       EOF
     EOT
-  }
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "kubectl delete applicationset applications -n argocd --ignore-not-found=true"
   }
 }

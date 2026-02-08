@@ -1,16 +1,6 @@
 resource "null_resource" "cert_manager_kustomize" {
-  triggers = {
-    manifests = sha256(join("", [for f in fileset("${path.module}/../../../k8s/infrastructure/controllers/cert-manager", "*.yaml") : filesha256("${path.module}/../../../k8s/infrastructure/controllers/cert-manager/${f}")]))
-  }
-
   provisioner "local-exec" {
-    command     = "kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
-    working_dir = "${path.module}/../../../k8s/infrastructure/controllers/cert-manager"
-  }
-
-  provisioner "local-exec" {
-    when        = destroy
-    command     = "kustomize build --enable-helm . | kubectl delete -f - --ignore-not-found=true"
+    command     = "kubectl delete job cert-manager-startupapicheck -n cert-manager --ignore-not-found=true && kustomize build --enable-helm . | kubectl apply -f - --server-side --force-conflicts"
     working_dir = "${path.module}/../../../k8s/infrastructure/controllers/cert-manager"
   }
 }
