@@ -54,13 +54,13 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   disk {
     datastore_id = each.value.datastore_id
-    interface    = lookup(each.value, "root_disk_interface", "scsi0")
-    iothread     = lookup(each.value, "root_disk_iothread", true)
-    cache        = lookup(each.value, "root_disk_cache", "writethrough")
-    discard      = lookup(each.value, "root_disk_discard", "on")
-    ssd          = lookup(each.value, "root_disk_ssd", true)
-    file_format  = lookup(each.value, "root_disk_file_format", "raw")
-    size         = lookup(each.value, "root_disk_size", 40)
+    interface    = coalesce(lookup(each.value, "root_disk_interface", null), "scsi0")
+    iothread     = coalesce(lookup(each.value, "root_disk_iothread", null), true)
+    cache        = coalesce(lookup(each.value, "root_disk_cache", null), "writethrough")
+    discard      = coalesce(lookup(each.value, "root_disk_discard", null), "on")
+    ssd          = coalesce(lookup(each.value, "root_disk_ssd", null), true)
+    file_format  = coalesce(lookup(each.value, "root_disk_file_format", null), "raw")
+    size         = coalesce(lookup(each.value, "root_disk_size", null), 40)
     file_id = proxmox_virtual_environment_download_file.iso[
       local.node_image_key[each.key]
     ].id
@@ -77,11 +77,11 @@ resource "proxmox_virtual_environment_vm" "this" {
     content {
       datastore_id = each.value.datastore_id
       interface    = "${disk.value.type}${disk.value.unit_number}"
-      iothread     = lookup(each.value, "additional_disk_iothread", true)
-      cache        = lookup(each.value, "additional_disk_cache", "writethrough")
-      discard      = lookup(each.value, "additional_disk_discard", "on")
-      ssd          = lookup(each.value, "additional_disk_ssd", true)
-      file_format  = lookup(each.value, "additional_disk_file_format", "raw")
+      iothread     = coalesce(lookup(each.value, "additional_disk_iothread", null), true)
+      cache        = coalesce(lookup(each.value, "additional_disk_cache", null), "writethrough")
+      discard      = coalesce(lookup(each.value, "additional_disk_discard", null), "on")
+      ssd          = coalesce(lookup(each.value, "additional_disk_ssd", null), true)
+      file_format  = coalesce(lookup(each.value, "additional_disk_file_format", null), "raw")
       size         = tonumber(replace(disk.value.size, "G", ""))
     }
   }

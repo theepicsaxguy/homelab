@@ -9,10 +9,10 @@ variable "defaults_worker" {
     igpu          = bool
     disks = map(object({
       device      = string
-      size        = optional(string)  # Optional - only needed if creating disk in Proxmox
-      type        = optional(string)  # Optional - only needed if creating disk in Proxmox
+      size        = optional(string) # Optional - only needed if creating disk in Proxmox
+      type        = optional(string) # Optional - only needed if creating disk in Proxmox
       mountpoint  = string
-      unit_number = optional(number)  # Optional - only needed if creating disk in Proxmox
+      unit_number = optional(number) # Optional - only needed if creating disk in Proxmox
     }))
   })
   default = {
