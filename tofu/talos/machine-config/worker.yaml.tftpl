@@ -28,6 +28,14 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
+    kubearmor.io/enforcer: bpf
+    kubearmor.io/runtime: containerd
+    kubearmor.io/socket: run_containerd_containerd.sock
+    kubearmor.io/btf: "yes"
+    kubearmor.io/seccomp: "yes"
+    kubearmor.io/apparmorfs: "no"
+    kubearmor.io/securityfs: "yes"
+    kubearmor.io/rand: talos-static
 %{ if igpu }
     gpu: "true"
 %{ endif }
