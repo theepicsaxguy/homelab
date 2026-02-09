@@ -30,7 +30,7 @@ metadata:
 spec:
   retentionPolicy: "30d"
   configuration:
-    destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
+    destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql-2
     endpointURL: https://truenas.peekoff.com:9000
     s3Credentials:
       accessKeyId:
