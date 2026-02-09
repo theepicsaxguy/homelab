@@ -10,4 +10,4 @@ helmCharts:
     releaseName: kubearmor-operator
     repo: https://kubearmor.github.io/charts
     valuesFile: operator-values.yaml
-    version: v1.6.6
+    version: v1.6.7
