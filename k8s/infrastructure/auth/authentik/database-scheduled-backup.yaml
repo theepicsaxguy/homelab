@@ -5,10 +5,12 @@ metadata:
   name: authentik-postgresql-backup
   namespace: auth
 spec:
-  schedule: "0 0 2 * * 4"
+  schedule: "0 0 2 * * *"  # Daily at 2 AM instead of weekly
   backupOwnerReference: self
   cluster:
-    name: authentik-postgresql
+    name: authentik-postgresql-restored
   method: plugin
   pluginConfiguration:
     name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: authentik-b2-store  # Backup to B2 for offsite storage
