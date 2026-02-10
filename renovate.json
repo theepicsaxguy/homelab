@@ -27,9 +27,25 @@
         "/\\.sh$/"
       ],
       "matchStrings": [
-        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+?)(?:=(?<depName>\\S+))?(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
+        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+)(?:=(?<depName>\\S+))?(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
         "https://github.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/",
         "https://raw.githubusercontent.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
+      ],
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://github\\.com/(?<depName>EssentialsX/Essentials|EssentialsX/EssentialsX-GUI|Multiverse/Multiverse-Core|Multiverse/Multiverse-SignPortals|MilkBowl/Vault|SniperTVmc/EssentialsX-GUI|EssentialsX)/releases/download/(?<currentValue>[^/]+)/"
+      ],
+      "datasourceTemplate": "github-releases"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/kustomization\\.yaml$"],
+      "matchStrings": [
+        "PAPER_BUILD=(?<currentValue>\\d+) # renovate: datasource=github-releases depName=PaperMC/paper"
       ],
       "datasourceTemplate": "github-releases"
     },
@@ -98,6 +114,25 @@
       "description": "Handle descheduler image from registry.k8s.io",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["registry.k8s.io/descheduler/descheduler"]
+    },
+    {
+      "groupName": "Minecraft Plugins",
+      "description": "Track GitHub-based Minecraft plugin updates",
+      "matchFileNames": ["k8s/applications/games/minecraft/plugins/plugins.txt"],
+      "matchPackageNames": [
+        "EssentialsX/Essentials",
+        "EssentialsX/EssentialsX-GUI", 
+        "Multiverse/Multiverse-Core",
+        "Multiverse/Multiverse-SignPortals",
+        "MilkBowl/Vault",
+        "PaperMC/paper"
+      ]
+    },
+    {
+      "groupName": "BedrockConnect",
+      "description": "Track BedrockConnect Docker image updates",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["pugmatt/bedrock-connect"]
     }
   ],
   "kubernetes": {
