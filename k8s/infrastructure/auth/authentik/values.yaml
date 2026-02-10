@@ -57,7 +57,7 @@ global:
   volumes:
     - name: db-creds
       secret:
-        secretName: authentik-postgresql-app
+        secretName: authentik-postgresql-restored-app
     - name: shm
       emptyDir:
         medium: Memory
