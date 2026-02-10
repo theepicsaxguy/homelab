@@ -2,5 +2,8 @@
     "chat.checkpoints.showFileChanges": true,
     "chat.customAgentInSubagent.enabled": true,
     "chat.useNestedAgentsMdFiles": true,
-    "github.copilot.chat.agent.autoFix": true
+    "github.copilot.chat.agent.autoFix": true,
+    "terminal.integrated.env.linux": {
+        "KUBECONFIG": "kubeconfig"
+    }
 }
