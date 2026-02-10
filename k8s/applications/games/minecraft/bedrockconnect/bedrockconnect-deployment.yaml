@@ -28,7 +28,7 @@ spec:
 
       containers:
         - name: bedrockconnect
-          image: pugmatt/bedrock-connect:1.64
+          image: pugmatt/bedrock-connect:1.65
 
           imagePullPolicy: IfNotPresent
           securityContext:
