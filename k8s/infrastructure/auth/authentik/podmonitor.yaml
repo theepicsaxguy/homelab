@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: postgresql
-      cnpg.io/cluster: authentik-postgresql
+      cnpg.io/cluster: authentik-postgresql-restored
   podMetricsEndpoints:
     - port: metrics
       path: /metrics

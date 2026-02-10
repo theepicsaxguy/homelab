@@ -57,7 +57,7 @@ global:
   volumes:
     - name: db-creds
       secret:
-        secretName: authentik-postgresql-app
+        secretName: authentik-postgresql-restored-app
     - name: shm
       emptyDir:
         medium: Memory
@@ -115,7 +115,7 @@ authentik:
     # -- Send PII (Personally identifiable information) data to sentry
     send_pii: false
   postgresql:
-    host: authentik-postgresql-rw
+    host: authentik-postgresql-restored-rw
     name: app
     user: file:///secrets/authentik/username
     password: file:///secrets/authentik/password

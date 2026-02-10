@@ -19,3 +19,7 @@ The CloudNativePG operator lives in `k8s/infrastructure/database/cloudnative-pg/
 ## Monitoring
 
 Prometheus rules in `rules.yaml` raise warnings for long transactions, replication lag, archiving failures, deadlocks, and other health issues. The Helm values also turn on the Grafana dashboard and PodMonitor to expose metrics automatically.
+
+## Troubleshooting
+
+For common issues and solutions, see the [CNPG Troubleshooting Guide](./cnpg-troubleshooting.md).
