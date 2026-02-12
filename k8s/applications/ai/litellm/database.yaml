@@ -79,7 +79,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: litellm-postgresql
+  name: litellm-postgresql-restored  # Different name to avoid WAL archive conflicts
   namespace: litellm
 spec:
   instances: 1
@@ -90,8 +90,9 @@ spec:
     storageClass: proxmox-csi
 
   walStorage:
-    size: 2Gi
+    size: 5Gi  # Increased from 2Gi to prevent future issues
     storageClass: proxmox-csi
+    resizeInUseVolumes: true
 
   resources:
     requests:

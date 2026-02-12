@@ -53,20 +53,20 @@ spec:
         - name: PGUSER
           valueFrom:
             secretKeyRef:
-              name: litellm-postgresql-app
+              name: litellm-postgresql-restored-app
               key: username
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
-              name: litellm-postgresql-app
+              name: litellm-postgresql-restored-app
               key: password
         - name: DATABASE_USER
           valueFrom:
             secretKeyRef:
-              name: litellm-postgresql-app
+              name: litellm-postgresql-restored-app
               key: username
         - name: DATABASE_URL
-          value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql-rw.litellm.svc.cluster.local:5432/app
+          value: postgres://$(PGUSER):$(PGPASSWORD)@litellm-postgresql-restored-rw.litellm.svc.cluster.local:5432/app
         - name: QDRANT_API_BASE
           value: "http://qdrant.qdrant.svc.cluster.local:6333"
         - name: SEPARATE_HEALTH_APP
