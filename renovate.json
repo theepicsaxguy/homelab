@@ -11,10 +11,17 @@
   ],
   "dependencyDashboard": true,
   "kustomize": {
-    "managerFilePatterns": ["/(^|/)kustomization\\.ya?ml(\\.j2)?$/"]
+    "managerFilePatterns": [
+      "**/kustomization.yaml",
+      "**/kustomization.yml",
+      "**/kustomization.yaml.j2",
+      "**/kustomization.yml.j2"
+    ]
   },
   "helm-values": {
-    "managerFilePatterns": ["/k8s/.+/values\\.yaml$/"]
+    "managerFilePatterns": [
+      "k8s/**/values.yaml"
+    ]
   },
   "customManagers": [
     {

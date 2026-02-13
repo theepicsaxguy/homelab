@@ -90,7 +90,7 @@ spec:
     storageClass: proxmox-csi
 
   walStorage:
-    size: 5Gi  # Increased from 2Gi to prevent future issues
+    size: 10Gi  # Increased from 2Gi to prevent future issues
     storageClass: proxmox-csi
     resizeInUseVolumes: true
 
