@@ -27,7 +27,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
-          image: redis:8.4.0-alpine
+          image: redis:8.6.0-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6379

@@ -15,8 +15,8 @@ network = {
 proxmox_cluster = "host3"
 
 versions = {
-  talos      = "v1.11.5" # renovate: github-releases=siderolabs/talos
-  kubernetes = "1.34.3"  # renovate: github-releases=kubernetes/kubernetes versioning=loose
+  talos      = "v1.12.4" # renovate: github-releases=siderolabs/talos
+  kubernetes = "1.35.1"  # renovate: github-releases=kubernetes/kubernetes versioning=loose
   #talos      = "v1.11.5"
   #kubernetes = "1.34.3"
 }
