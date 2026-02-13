@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ws-rewriter-config
+  namespace: gpt-researcher
+data:
+  Caddyfile: |
+    :8000 {
+      log {
+        level info
+      }
+      
+      # Rewrite /api/ws paths to /ws
+      handle /api/ws* {
+        uri strip_prefix /api
+        reverse_proxy gpt-researcher-backend:8000 {
+          transport http {
+            compression off
+          }
+          header_up X-Forwarded-For {http.request.remote.host}
+          header_up X-Forwarded-Proto https
+          header_up X-Forwarded-Host research.peekoff.com
+        }
+      }
+      
+      # Forward all other requests unchanged
+      reverse_proxy gpt-researcher-backend:8000 {
+        header_up X-Forwarded-For {http.request.remote.host}
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Host research.peekoff.com
+      }
+    }
+

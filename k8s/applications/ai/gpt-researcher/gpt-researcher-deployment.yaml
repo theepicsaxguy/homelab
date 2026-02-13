@@ -25,8 +25,9 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gpt-researcher
-          image: gptresearcher/gpt-researcher:latest
+          image: ghcr.io/assafelovic/gpt-researcher:pr-1608
           imagePullPolicy: IfNotPresent
+          command: ["python", "main.py", "--config_path", "/usr/src/app/config.json"]
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -56,6 +57,22 @@ spec:
                   key: LANGCHAIN_API_KEY
             - name: LOGGING_LEVEL
               value: "INFO"
+            # Environment variables take precedence over config.json for FastAPI requests
+            - name: EMBEDDING
+              value: "openai:azure/text-embedding-3-small"
+            - name: FAST_LLM
+              value: "openai:azure/gpt-5-nano"
+            - name: SMART_LLM
+              value: "openai:azure/gpt-5.2"
+            - name: STRATEGIC_LLM
+              value: "openai:azure/gpt-5.2"
+            # Deep Research Configuration - Controls research depth and breadth
+            - name: DEEP_RESEARCH_BREADTH
+              value: "4"
+            - name: DEEP_RESEARCH_DEPTH
+              value: "3"
+            - name: DEEP_RESEARCH_CONCURRENCY
+              value: "6"
           ports:
             - containerPort: 8000
               name: http
@@ -66,6 +83,9 @@ spec:
               mountPath: /usr/src/app/outputs
             - name: logs
               mountPath: /usr/src/app/logs
+            - name: config
+              mountPath: /usr/src/app/config.json
+              subPath: config.json
           readinessProbe:
             httpGet:
               path: /
@@ -99,3 +119,6 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: gpt-researcher-logs
+        - name: config
+          configMap:
+            name: gpt-researcher-config

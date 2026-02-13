@@ -16,16 +16,16 @@ spec:
         app.kubernetes.io/name: gptr-nextjs
     spec:
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: gptr-nextjs
-          image: gptresearcher/gptr-nextjs:latest
+          image: ghcr.io/assafelovic/gpt-researcher-frontend-nextjs:pr-1608
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -42,6 +42,9 @@ spec:
             - name: NEXT_PUBLIC_WS_HOST
               # Host only, no protocol. This ensures frontend constructs wss:// when served over HTTPS.
               value: "research.peekoff.com"
+            - name: NEXT_PUBLIC_WS_PATH
+              # Explicit WebSocket endpoint path
+              value: "/ws"
             - name: NODE_TLS_REJECT_UNAUTHORIZED
               value: "0"
           volumeMounts:
