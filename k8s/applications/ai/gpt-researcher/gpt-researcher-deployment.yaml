@@ -59,13 +59,13 @@ spec:
               value: "INFO"
             # Environment variables take precedence over config.json for FastAPI requests
             - name: EMBEDDING
-              value: "azure_openai:text-embedding-3-small"
+              value: "openai:azure/text-embedding-3-small"
             - name: FAST_LLM
-              value: "azure:gpt-5-nano"
+              value: "openai:azure/gpt-5-nano"
             - name: SMART_LLM
-              value: "azure:gpt-5.2"
+              value: "openai:azure/gpt-5.2"
             - name: STRATEGIC_LLM
-              value: "azure:gpt-5.2"
+              value: "openai:azure/gpt-5.2"
           ports:
             - containerPort: 8000
               name: http
