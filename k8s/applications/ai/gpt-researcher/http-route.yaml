@@ -12,6 +12,65 @@ spec:
   hostnames:
     - 'research.peekoff.com'
   rules:
+    # API and WebSocket routes go through the ws-rewriter service
+    # which handles URL rewriting for /api/ws -> /ws
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: Exact
+            value: /ws
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: Exact
+            value: /docs
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: Exact
+            value: /openapi.json
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /report
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /upload
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /files
+      backendRefs:
+        - name: ws-rewriter
+          namespace: gpt-researcher
+          port: 8000
+    # Frontend routes
     - matches:
         - path:
             type: PathPrefix
@@ -20,3 +79,5 @@ spec:
         - name: gptr-nextjs
           namespace: gpt-researcher
           port: 3000
+
+

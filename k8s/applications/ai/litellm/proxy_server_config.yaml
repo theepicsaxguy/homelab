@@ -132,46 +132,6 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: azure/gpt-5
-    litellm_params:
-      model: openai/gpt-5
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      # GPT-5 family (hosted) - expose a very large context window while keeping outputs bounded
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/gpt-5-chat
-    litellm_params:
-      model: openai/gpt-5-chat
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 5000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/gpt-5-codex
-    litellm_params:
-      model: openai/gpt-5-codex
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
   - model_name: azure/gpt-5.2-codex
     litellm_params:
       model: openai/gpt-5.2-codex
@@ -226,51 +186,6 @@ model_list:
       max_output_tokens: 32768
       input_cost_per_token: 0.000015
       output_cost_per_token: 0.00012
-
-  - model_name: azure/gpt-5.1
-    litellm_params:
-      model: openai/gpt-5.1
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 9107000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/gpt-5.1-chat
-    litellm_params:
-      model: openai/gpt-5.1-chat
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 5000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/gpt-5.1-codex
-    litellm_params:
-      model: openai/gpt-5.1-codex
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 9006000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
 
   - model_name: azure/gpt-5.1-codex-max
     litellm_params:
