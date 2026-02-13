@@ -66,6 +66,13 @@ spec:
               value: "openai:azure/gpt-5.2"
             - name: STRATEGIC_LLM
               value: "openai:azure/gpt-5.2"
+            # Deep Research Configuration - Controls research depth and breadth
+            - name: DEEP_RESEARCH_BREADTH
+              value: "4"
+            - name: DEEP_RESEARCH_DEPTH
+              value: "3"
+            - name: DEEP_RESEARCH_CONCURRENCY
+              value: "6"
           ports:
             - containerPort: 8000
               name: http
