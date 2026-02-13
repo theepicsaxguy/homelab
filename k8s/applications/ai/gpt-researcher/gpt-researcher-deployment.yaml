@@ -57,6 +57,15 @@ spec:
                   key: LANGCHAIN_API_KEY
             - name: LOGGING_LEVEL
               value: "INFO"
+            # Environment variables take precedence over config.json for FastAPI requests
+            - name: FAST_LLM
+              value: "azure:gpt-5-nano"
+            - name: SMART_LLM
+              value: "azure:gpt-5.2"
+            - name: STRATEGIC_LLM
+              value: "azure:gpt-5.2"
+            - name: EMBEDDING
+              value: "azure:text-embedding-3-small"
           ports:
             - containerPort: 8000
               name: http
