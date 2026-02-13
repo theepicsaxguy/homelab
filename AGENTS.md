@@ -140,7 +140,7 @@ Context is cumulative. Read in order:
 ## Quick-Start Reference
 
 ```bash
-# Universal validation
+# Documentation validation (only applies to docs files)
 pre-commit run --all-files
 pre-commit run --files <file-path>
 
@@ -150,6 +150,8 @@ pre-commit run --files <file-path>
 # Documentation: see website/AGENTS.md
 # Containers: see images/AGENTS.md
 ```
+
+Note: Pre-commit hooks are configured only for documentation files in `website/docs/`. For code changes, ensure compliance with the code style guidelines manually.
 
 ## Philosophy
 
