@@ -34,7 +34,7 @@
         "/\\.sh$/"
       ],
       "matchStrings": [
-        "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+)(?:=(?<depName>\\S+))?(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
+        "(?<currentValue>[\w+.\-]*)['\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+)=(?<depName>\\S+)(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
         "https://github.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/",
         "https://raw.githubusercontent.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
       ],
@@ -60,7 +60,7 @@
       "customType": "regex",
       "managerFilePatterns": ["/Dockerfile$/", "/Dockerfile\\..*$/"],
       "matchStrings": [
-        "ARG\\s+\\w+=(?<currentValue>[\\w+\\.\\-]*)['\"]?\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(versioning=(?<versioning>\\S+))?"
+        "ARG\\s+\\w+=(?<currentValue>[\w+.\-]*)['\"]?\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(versioning=(?<versioning>\\S+))?"
       ]
     }
   ],
