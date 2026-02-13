@@ -4,7 +4,7 @@
   "SIMILARITY_THRESHOLD": 0.42,
   "FAST_LLM": "azure/gpt-5-nano",
   "SMART_LLM": "azure/gpt-5.2",
-  "STRATEGIC_LLM": "azure/gpt-5-2",
+  "STRATEGIC_LLM": "azure/gpt-5.2",
   "LANGUAGE": "english",
   "CURATE_SOURCES": false,
   "FAST_TOKEN_LIMIT": 2000,
