@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velero-repo-maintenance-job-config
+  namespace: velero
+data:
+  global: |
+    {
+      "podSecurityContext": {
+        "runAsNonRoot": true,
+        "runAsUser": 65534,
+        "runAsGroup": 65534,
+        "fsGroup": 65534,
+        "seccompProfile": {
+          "type": "RuntimeDefault"
+        }
+      },
+      "containerSecurityContext": {
+        "allowPrivilegeEscalation": false,
+        "capabilities": {
+          "drop": ["ALL"]
+        },
+        "readOnlyRootFilesystem": true
+      }
+    }

@@ -15,6 +15,9 @@ spec:
       labels:
         app: zigbee2mqtt
     spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -23,9 +26,6 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
-        hostIPC: false
-        hostPID: false
-        hostNetwork: false
       initContainers:
       - name: seed-z2m-config
         image: busybox:1.37
