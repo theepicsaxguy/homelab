@@ -13,7 +13,30 @@ spec:
   sourceRepos:
     - '*'
   destinations:
-    - server: '*'
+    - namespace: 'argocd'
+      server: '*'
+    - namespace: 'auth'
+      server: '*'
+    - namespace: 'cert-manager'
+      server: '*'
+    - namespace: 'cnpg-system'
+      server: '*'
+    - namespace: 'external-secrets'
+      server: '*'
+    - namespace: 'gateway'
+      server: '*'
+    - namespace: 'kubearmor'
+      server: '*'
+    - namespace: 'kubechecks'
+      server: '*'
+    - namespace: 'kube-system'
+      server: '*'
+    - namespace: 'monitoring'
+      server: '*'
+    - namespace: 'security-system'
+      server: '*'
+    - namespace: 'velero'
+      server: '*'
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
