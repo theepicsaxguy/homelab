@@ -68,11 +68,11 @@ spec:
   instances: 2
   imageName: ghcr.io/cloudnative-pg/postgresql:17
   storage:
-    size: 20Gi
+    size: 40Gi
     storageClass: proxmox-csi
 
   walStorage:
-    size: 4Gi
+    size: 10Gi
     storageClass: proxmox-csi
 
   resources:
