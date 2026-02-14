@@ -40,7 +40,7 @@ spec:
             sizeLimit: 2Gi
       containers:
         - name: open-webui
-          image: ghcr.io/open-webui/open-webui:v0.8.0-slim
+          image: ghcr.io/open-webui/open-webui:v0.8.1-slim
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
