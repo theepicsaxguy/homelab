@@ -4,6 +4,7 @@ metadata:
   name: auth-minio-store
   namespace: auth
 spec:
+  retentionPolicy: "30d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/auth/auth-db
     endpointURL: https://truenas.peekoff.com:9000

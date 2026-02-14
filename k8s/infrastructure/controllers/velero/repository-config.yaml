@@ -10,9 +10,9 @@ data:
     {
       "cacheLimitMB": 8192,
       "compression": "lz4",
-      "fullMaintenanceInterval": "336h",
+      "fullMaintenanceInterval": "24h",
       "maintenanceMode": "periodic",
-      "maintenanceInterval": "336h",
+      "maintenanceInterval": "1h",
       "maxFileSizeBytes": 67108864,
       "chunkSizeBytes": 16777216
     }
