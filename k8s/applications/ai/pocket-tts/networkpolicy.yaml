@@ -1,0 +1,35 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: pocket-tts-network-policy
+  namespace: pocket-tts
+  labels:
+    app.kubernetes.io/name: pocket-tts
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: pocket-tts
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: litellm
+    toPorts:
+    - ports:
+      - port: "4000"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: qdrant
+    toPorts:
+    - ports:
+      - port: "6333"
+        protocol: TCP
+  - toFQDNs:
+    - matchName: "huggingface.co"
+    - matchName: "cdn-lfs.huggingface.co"
+    - matchName: "raw.githubusercontent.com"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+        app.kubernetes.io/name: envoy

@@ -1,0 +1,54 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: media-access
+  namespace: media
+  labels:
+    policy-type: media-audit
+spec:
+  endpointSelector: {}
+  description: "Allow media applications access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "8096"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
+      - port: "5055"
+        protocol: TCP
+      - port: "8983"
+        protocol: TCP
+      - port: "7878"
+        protocol: TCP
+      - port: "9696"
+        protocol: TCP
+      - port: "6767"
+        protocol: TCP
+      - port: "13378"
+        protocol: TCP
+      - port: "9000"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP
+      - port: "2049"
+        protocol: TCP

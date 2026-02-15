@@ -1,0 +1,36 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: headlessx-access
+  namespace: headlessx
+  labels:
+    app.kubernetes.io/name: headlessx
+    policy-type: web-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: headlessx
+  description: "Allow HeadlessX browser automation access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "3000"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP

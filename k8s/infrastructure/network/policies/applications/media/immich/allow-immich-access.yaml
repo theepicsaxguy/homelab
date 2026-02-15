@@ -1,0 +1,66 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: immich-access
+  namespace: immich
+  labels:
+    policy-type: media-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: server
+  description: "Allow Immich photo management access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "2283"
+        protocol: TCP
+      - port: "8081"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: immich
+        app.kubernetes.io/name: postgresql
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: immich
+        app.kubernetes.io/name: immich-redis-master
+    toPorts:
+    - ports:
+      - port: "6379"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: immich
+        app.kubernetes.io/name: machine-learning
+    toPorts:
+    - ports:
+      - port: "3003"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP
+      - port: "9000"
+        protocol: TCP

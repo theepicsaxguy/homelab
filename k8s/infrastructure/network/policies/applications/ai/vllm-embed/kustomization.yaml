@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- allow-vllm-embed-access.yaml
+namespace: vllm-embed
+labels:
+- pairs:
+    policy-type: ai-audit
+    network-policy: cilium-audit

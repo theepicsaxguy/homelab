@@ -7,9 +7,13 @@ resources:
 - auth
 - argocd
 - cert-manager
+- infrastructure
 - applications/ai
 - applications/automation
+- applications/media
+- applications/web
 - applications/games
+- applications/tools
 - applications/network
 labels:
 - pairs:

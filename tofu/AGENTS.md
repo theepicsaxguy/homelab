@@ -4,6 +4,8 @@ SCOPE: Infrastructure provisioning, VM management, and cluster bootstrapping
 INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: OpenTofu (Terraform fork), Proxmox API, Talos Linux, Cloud-init
 
+**PREREQUISITE: You must have read /AGENTS.md before working in this domain.**
+
 ## DOMAIN CONTEXT
 
 Purpose: Provision and manage all infrastructure resources including VMs, networking, load balancers, and Talos Linux cluster bootstrapping.

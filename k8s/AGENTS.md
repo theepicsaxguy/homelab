@@ -4,6 +4,8 @@ SCOPE: Kubernetes manifests, operators, and application workflows
 INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: Kubernetes, Kustomize, Helm, Argo CD, CNPG, Velero, Proxmox CSI
 
+**PREREQUISITE: You must have read /AGENTS.md before working in this domain.**
+
 ## DOMAIN PATTERNS
 
 ### Storage Pattern
@@ -400,6 +402,131 @@ spec:
 | **L7 Rules** | `toPorts.rules.http[]` | Same, but stricter nesting |
 
 **Fix Command:** Replace `spec.egress[0].ports` → `spec.egress[0].toPorts[0].ports`
+
+## SECURITY BASELINE
+
+All applications follow a "Assume the pod is compromised" philosophy. Security controls extend beyond securityContext to include network policies, secrets management, image scanning, and RBAC - all of which materially affect blast radius.
+
+### Network Policy Requirements
+
+**CiliumNetworkPolicy v2 is required for all applications.** Use default-deny ingress and egress policies to contain compromised workloads.
+
+#### Default-Deny Pattern
+Every namespace should have a default-deny network policy applied. All application-specific policies then explicitly allow required traffic.
+
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  endpointSelector: {}
+  ingress:
+  - fromEntities:
+    - kube-apiserver  # Allow kubelet API access
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-egress
+spec:
+  endpointSelector: {}
+  egress:
+  - toEntities:
+    - kube-apiserver  # Allow DNS and API access
+```
+
+#### Application Policy Template
+```yaml
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: <app-name>
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: <app-name>
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: <upstream-app>
+    toPorts:
+    - ports:
+      - port: "<port>"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+```
+
+### Pod Security Context Baseline
+
+```yaml
+spec:
+  hostNetwork: false
+  hostPID: false
+  hostIPC: false
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+    fsGroup: 1000  # Only when needed
+    supplementalGroups: []  # Only when needed
+```
+
+### Container Security Context Baseline
+
+```yaml
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  privileged: false
+  capabilities:
+    drop:
+      - ALL
+    add: []  # Or minimal required
+  seccompProfile:
+    type: RuntimeDefault
+  readOnlyRootFilesystem: true
+```
+
+### Blast Radius Controls
+
+| Layer | Control | Purpose |
+|-------|---------|---------|
+| **Pod** | Non-root user, seccomp RuntimeDefault | Limit container escape and host access |
+| **Container** | Drop ALL caps, read-only filesystem | Minimize kernel attack surface |
+| **Network** | Default-deny egress/ingress | Contain lateral movement |
+| **Secrets** | ExternalSecrets (Bitwarden) | Rotate credentials, audit access |
+| **Images** | Scan for CVEs, sign with Cosign | Verify supply chain integrity |
+| **RBAC** | Least-privilege service accounts | Limit API access |
+
+### Pod Security Admission
+
+Enforce `restricted` PSA level for most namespaces:
+```yaml
+metadata:
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+```
+
+### Admission Controls
+
+Implement ValidatingAdmissionPolicy to block:
+- Privileged containers
+- hostPath mounts
+- Missing required securityContext fields
+- Images not scanned for critical CVEs
 
 ## DISASTER RECOVERY
 

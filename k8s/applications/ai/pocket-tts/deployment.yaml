@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pocket-tts
+  namespace: pocket-tts
+  labels:
+    app.kubernetes.io/name: pocket-tts
+    app.kubernetes.io/part-of: ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pocket-tts
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pocket-tts
+    spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: pocket-tts
+        image: ghcr.io/teddybear082/pocket-tts-openai_streaming_server:sha-c8f5a32
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 49112
+          name: http
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        env:
+        - name: POCKET_TTS_HOST
+          value: "0.0.0.0"
+        - name: POCKET_TTS_PORT
+          value: "49112"
+        - name: POCKET_TTS_VOICES_DIR
+          value: "/app/voices"
+        - name: POCKET_TTS_LOG_LEVEL
+          value: "INFO"
+        - name: POCKET_TTS_STREAM_DEFAULT
+          value: "true"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 49112
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 49112
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: cache
+          mountPath: /home/pockettts/.cache/huggingface
+      volumes:
+      - name: cache
+        emptyDir:
+          sizeLimit: 1Gi
