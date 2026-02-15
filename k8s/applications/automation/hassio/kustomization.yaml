@@ -42,6 +42,11 @@ resources:
   - svc.yaml
   - statefulset.yaml
   - external-secret.yaml
+  - ha-mcp-externalsecret.yaml
+  - ha-mcp-deployment.yaml
+  - ha-mcp-service.yaml
+  - ha-mcp-http-route.yaml
+  - ha-mcp-network-policy.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
