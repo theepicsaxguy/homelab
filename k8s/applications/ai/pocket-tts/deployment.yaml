@@ -40,6 +40,7 @@ spec:
           capabilities:
             drop:
               - ALL
+          readOnlyRootFilesystem: true
           seccompProfile:
             type: RuntimeDefault
         env:
@@ -81,7 +82,17 @@ spec:
         volumeMounts:
         - name: cache
           mountPath: /home/pockettts/.cache/huggingface
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /app/logs
       volumes:
       - name: cache
         emptyDir:
           sizeLimit: 1Gi
+      - name: tmp
+        emptyDir:
+          sizeLimit: 100Mi
+      - name: logs
+        emptyDir:
+          sizeLimit: 50Mi
