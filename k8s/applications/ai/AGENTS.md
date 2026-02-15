@@ -134,6 +134,27 @@ spec:
         k8s:io.kubernetes.pod.namespace: gateway
 ```
 
+### OpenWebUI Patterns
+
+**Deployment**: StatefulSet in `open-webui` namespace, deployed via `kubectl apply -k k8s/applications/ai/openwebui/`.
+
+**Database**: SQLite at `/app/backend/data/webui.db` inside the PVC. The database contains ALL application data (users, chats, settings, RAG). This is not a cache — losing the database means losing all data.
+
+**Schema Migrations**: OpenWebUI uses alembic for database migrations. Migrations run automatically on startup.
+- Check current version: `sqlite3 /app/backend/data/webui.db "SELECT version_num FROM alembic_version;"`
+- Major version upgrades (e.g., 0.5→0.8) involve significant schema changes including new tables and columns
+- If a migration fails mid-way (e.g., "table already exists"), inspect which migrations already applied and stamp alembic_version to skip them: `sqlite3 webui.db "UPDATE alembic_version SET version_num='<target_revision>';"`
+- Migration source code is in the container at `/app/backend/open_webui/migrations/versions/`
+
+**Storage**: PVC `openwebui-data-open-webui-0` (StatefulSet volumeClaimTemplate). Contains:
+- `webui.db` — SQLite database (critical, can be 1GB+)
+- `uploads/` — User-uploaded files
+- `vector_db/` — ChromaDB vector embeddings for RAG
+
+**Recovery**: Follow PV Retain recovery in `k8s/AGENTS.md`. The application runs as UID 1000/GID 1000 — any data copy operations must preserve these permissions.
+
+**Startup Behavior**: Large database migrations on version upgrades can take significant time. The StatefulSet has extended startup/readiness probes to accommodate this. Do not reduce probe timeouts without understanding migration duration.
+
 ## AI-DOMAIN ANTI-PATTERNS
 
 ### Resource Management

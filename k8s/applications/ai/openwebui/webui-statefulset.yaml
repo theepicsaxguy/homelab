@@ -93,7 +93,7 @@ spec:
             - name: CORS_ALLOW_ORIGIN
               value: 'https://chat.peekoff.com'
             - name: STARTUP_TIMEOUT
-              value: '60'
+              value: '600'
             - name: USER_AGENT
               value: 'OpenWebUI/0.6.15'
             - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
@@ -138,23 +138,23 @@ spec:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 120
+            initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 30
-            failureThreshold: 20
+            failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 30
+            initialDelaySeconds: 5
+            periodSeconds: 15
             timeoutSeconds: 30
-            failureThreshold: 20
+            failureThreshold: 3
           startupProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 30
-            timeoutSeconds: 30
-            failureThreshold: 60
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 120
