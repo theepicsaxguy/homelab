@@ -22,20 +22,47 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: install-deps
+          image: ghcr.io/homeassistant-ai/ha-mcp:dev-907c176
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              /usr/local/bin/python -m venv /venv
+              /venv/bin/pip install --upgrade pip
+              /venv/bin/pip install fastmcp httpx jq textdistance pydantic python-dotenv truststore websockets
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: venv
+              mountPath: /venv
+            - name: tmp
+              mountPath: /tmp
       containers:
         - name: ha-mcp
           image: ghcr.io/homeassistant-ai/ha-mcp:dev-907c176
           imagePullPolicy: IfNotPresent
+          command:
+            - /venv/bin/fastmcp
+            - run
+            - fastmcp-http.json
           ports:
             - name: http
               containerPort: 8086
               protocol: TCP
           env:
+            - name: PYTHONPATH
+              value: "/app/src"
             - name: HOMEASSISTANT_URL
               valueFrom:
                 secretKeyRef:
@@ -48,6 +75,8 @@ spec:
                   key: HOMEASSISTANT_TOKEN
           securityContext:
             runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
@@ -60,20 +89,30 @@ spec:
               cpu: 500m
               memory: 512Mi
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: http
-              scheme: HTTP
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 2
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: http
-              scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 3
+          volumeMounts:
+            - name: venv
+              mountPath: /venv
+            - name: tmp
+              mountPath: /tmp
+            - name: cache
+              mountPath: /home/mcpuser/.cache
+      volumes:
+        - name: venv
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: cache
+          emptyDir: {}
