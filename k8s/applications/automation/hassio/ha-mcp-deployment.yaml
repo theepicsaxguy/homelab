@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ha-mcp
+  namespace: home-assistant
+  labels:
+    app.kubernetes.io/name: ha-mcp
+    app.kubernetes.io/instance: ha-mcp
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ha-mcp
+      app.kubernetes.io/instance: ha-mcp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ha-mcp
+        app.kubernetes.io/instance: ha-mcp
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: ha-mcp
+          image: ghcr.io/homeassistant-ai/ha-mcp:dev-907c176
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8086
+              protocol: TCP
+          env:
+            - name: HOMEASSISTANT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ha-mcp-secrets
+                  key: HOMEASSISTANT_URL
+            - name: HOMEASSISTANT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ha-mcp-secrets
+                  key: HOMEASSISTANT_TOKEN
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
