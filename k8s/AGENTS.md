@@ -401,6 +401,62 @@ spec:
 
 **Fix Command:** Replace `spec.egress[0].ports` → `spec.egress[0].toPorts[0].ports`
 
+## DISASTER RECOVERY
+
+### Recovery Priority Order
+When recovering stateful workloads, use this priority:
+1. **Velero restore** (preferred) — Full namespace restore with PodVolumeRestores.
+2. **Kopia direct access** — Check Kopia repository browser for snapshots.
+3. **Old PV with Retain policy** (fallback) — All PVCs use `proxmox-csi` with `Retain` reclaim policy. Old PVs persist on Proxmox after PVC/namespace deletion.
+
+### PV Retain Recovery Procedure
+All `proxmox-csi` PVs use `Retain` reclaim policy. When a PVC or namespace is deleted, the PV transitions to `Released` state but data remains on Proxmox.
+
+```bash
+# 1. Find old Released PVs
+kubectl get pv | grep Released
+
+# 2. Identify the correct PV (check creation date, capacity, volume handle)
+kubectl get pv <pv-name> -o yaml
+
+# 3. Clear claimRef to make PV Available
+kubectl patch pv <pv-name> --type json -p '[{"op":"remove","path":"/spec/claimRef"}]'
+
+# 4. Create PVC bound to the old PV
+# Set spec.volumeName to the PV name, match storageClassName and accessModes
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: <new-pvc-name>
+  namespace: <namespace>
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: proxmox-csi
+  volumeName: <pv-name>
+  resources:
+    requests:
+      storage: <size>
+EOF
+
+# 5. Copy data from old PV to current PVC using a temporary pod
+# Use UID/GID matching the application's securityContext
+```
+
+### Velero Known Issues
+- **Server instability**: Velero server crashes/restarts during long restore operations, marking in-progress restores as `Failed`
+- **PVR stuck in Prepared**: PodVolumeRestores may get stuck in `Prepared` state and never execute when server restarts mid-restore
+- **Error message**: `found a restore with status InProgress during server starting, mark it as Failed`
+- **Fallback**: If Velero restores fail repeatedly, use PV Retain recovery as an alternative
+
+### PodSecurity Policy
+Namespaces enforce `restricted` PodSecurity policy. Temporary debug/recovery pods must:
+- Run as non-root (UID 1000+ recommended)
+- Set `securityContext.allowPrivilegeEscalation: false`
+- Set `securityContext.seccompProfile.type: RuntimeDefault`
+- Set `securityContext.capabilities.drop: ["ALL"]`
+- Match the application's UID/GID for filesystem access (check StatefulSet securityContext)
+
 ## SPECIALIZED PATTERNS
 
 For domain-specific patterns, see:
