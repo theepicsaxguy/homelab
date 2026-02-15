@@ -8,6 +8,7 @@ resources:
 - games
 - tools
 - network
+- external
 labels:
 - pairs:
     policy-type: applications-audit

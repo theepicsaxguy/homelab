@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pocket-tts
+  labels:
+    app.kubernetes.io/name: pocket-tts
+    app.kubernetes.io/part-of: ai

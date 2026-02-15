@@ -4,6 +4,8 @@ SCOPE: Custom container images and Dockerfiles
 INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: Docker, Docker Compose, GitHub Actions
 
+**PREREQUISITE: You must have read /AGENTS.md before working in this domain.**
+
 ## DOMAIN CONTEXT
 
 Purpose: Define and build custom container images for homelab applications.
@@ -39,6 +41,8 @@ Use multiple FROM statements to create layers and discard build dependencies. Fi
 - Don't include secrets in Dockerfile
 - Use `.dockerignore` to exclude sensitive files
 - Keep base images updated with security patches
+- Sign images with Cosign for supply chain verification
+- Scan images for CVEs before deploying to cluster
 
 ### Optimization Pattern
 - Use `.dockerignore` to reduce build context size

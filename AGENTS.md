@@ -95,12 +95,17 @@ This repository serves as a learning sandbox for enterprise patterns. Every "ove
 
 ## AGENTS.md Discovery
 
-**ALWAYS read ALL AGENTS.md files from root to your working directory.**
+**MANDATORY: Read ALL AGENTS.md files from root to your working directory before any task.**
 
-Context is cumulative. Read in order:
-1. Root AGENTS.md (this file) - ALWAYS read first
-2. Domain AGENTS.md (k8s/, tofu/, website/, images/)
-3. Component AGENTS.md (if applicable)
+This is not optional. Every task requires understanding the cumulative context across all levels:
+1. Root AGENTS.md (this file) - **Always read first**
+2. Domain AGENTS.md (k8s/, tofu/, website/, images/) - Required for domain-specific work
+3. Component AGENTS.md (if applicable) - Required for application/infrastructure work
+
+**Keeping AGENTS.md Current:**
+- AGENTS.md files MUST be updated whenever patterns, workflows, or conventions change
+- Never complete a task without updating relevant AGENTS.md files if new information was learned
+- The Self-Healing Rule applies: if you need information not in the closest AGENTS.md, that file is incomplete - update it immediately
 
 **Self-Healing Rule:** If you need information not in the closest AGENTS.md, that file is incomplete - update it.
 
@@ -157,7 +162,7 @@ Note: Pre-commit hooks are configured only for documentation files in `website/d
 
 - GitOps is Law: All changes must go through Git
 - Automate Everything: If it can be scripted or managed by a controller, it should be
-- Security is Not an Afterthought: Non-root containers, network policies, externalized secrets by default
+- Security is Not an Afterthought: "Assume the pod is compromised" - non-root containers, default-deny network policies (Cilium v2), externalized secrets, image signing/scanning, and least-privilege RBAC by default
 
 ### CNPG Backup Strategy (Universal Reference)
 **Continuous WAL → MinIO (plugin), weekly base backups → B2 (backup section), both in externalClusters for recovery flexibility.**

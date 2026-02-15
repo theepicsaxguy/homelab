@@ -4,6 +4,8 @@ SCOPE: Docusaurus documentation site and build system
 INHERITS FROM: /AGENTS.md
 TECHNOLOGIES: Docusaurus 3.9.2, TypeScript 5.9, React 19, Node.js 20.18+, npm 10.0+
 
+**PREREQUISITE: You must have read /AGENTS.md before working in this domain.**
+
 ## DOMAIN CONTEXT
 
 Purpose: Build and maintain documentation website for homelab, including architecture documentation, operational guides, and troubleshooting procedures.

@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: unrar-access
+  namespace: unrar
+  labels:
+    policy-type: tools-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: unrar
+  description: "Allow Unrar access"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "2049"
+        protocol: TCP

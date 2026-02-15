@@ -1,0 +1,56 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: frigate-access
+  namespace: frigate
+  labels:
+    policy-type: automation-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: frigate
+  description: "Allow Frigate NVR access"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "5000"
+        protocol: TCP
+      - port: "1935"
+        protocol: TCP
+      - port: "8554"
+        protocol: TCP
+      - port: "8555"
+        protocol: TCP
+      - port: "8555"
+        protocol: UDP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: mqtt
+        app.kubernetes.io/name: mosquitto
+    toPorts:
+    - ports:
+      - port: "1883"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "554"
+        protocol: TCP
+      - port: "8554"
+        protocol: TCP

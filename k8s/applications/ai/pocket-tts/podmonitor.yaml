@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: pocket-tts
+  namespace: pocket-tts
+  labels:
+    app.kubernetes.io/name: pocket-tts
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pocket-tts
+  podMetricsEndpoints:
+  - port: http
+    path: /metrics

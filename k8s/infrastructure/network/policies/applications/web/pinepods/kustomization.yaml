@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- allow-pinepods-access.yaml
+namespace: pinepods
+labels:
+- pairs:
+    policy-type: web-audit
+    network-policy: cilium-audit
