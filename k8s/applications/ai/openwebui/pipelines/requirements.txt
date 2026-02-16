@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==3.14.1
+langfuse==3.14.2
 llama-index==0.14.14
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
