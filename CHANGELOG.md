@@ -1,5 +1,59 @@
 # Changelog
 
+## 7.0.0 (2026-02-16)
+
+## What's Changed
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2188
+* Feat/kubearmor talos cleanup by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2190
+* fix(bootstrap): remove triggers and destroy provisioners from bootstr… by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2191
+* Fix/tofu root disk mapping by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2192
+* fix(k8s): correct kyverno policy syntax and match logic by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2193
+* fix(deps): update dependency @easyops-cn/docusaurus-search-local to ^0.54.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2194
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2195
+* chore(deps): update terraform proxmox to v0.95.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2196
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2198
+* chore(deps): update dependency langfuse to v3.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2200
+* chore(deps): update helm release kube-prometheus-stack to v81.5.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2199
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2202
+* Fix(database)--update-MinIO-destination-path-for-authentik-PostgreSQL-backups by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2201
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2203
+* chore(deps): update helm release kubechecks to v3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2197
+* chore(vscode): add KUBECONFIG to terminal settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2204
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2205
+* fix(vscode): update KUBECONFIG path to use workspaceFolder variable by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2206
+* chore(deps): update dependency openai to v2.19.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2207
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2210
+* chore(deps): update all dependencies to v2.5.6 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2209
+* feat(minecraft): update plugins and add renovate tracking by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2208
+* feat(minecraft): update plugins and add renovate tracking by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2212
+* feat(database): update backup configurations and restore cluster references by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2213
+* feat(database): increase walStorage size to 10Gi for improved performance by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2214
+* fix(k8s): correct remote reference key for GPT researcher API key by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2215
+* Fix(renovate)--correct-regex-patterns-for-currentValue-matching-in-custom-managers by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2216
+* chore(deps): update helm release redis to v25 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2219
+* fix(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2218
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2217
+* chore(deps): update n8nio/n8n docker tag to v2.8.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2220
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.2.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2221
+* chore(deps): update dependency openai to v2.21.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2223
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2222
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2224
+* feat(k8s): add retention policies and fix Kopia maintenance intervals by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2225
+* Fix/security context policy violations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2226
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2227
+* feat(k8s): add disaster recovery docs and tune OpenWebUI probes by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2229
+* feat(k8s): add Home Assistant MCP deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2230
+* chore(deps): update helm release kube-prometheus-stack to v82 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2228
+* feat(k8s): add pocket-tts application and comprehensive network policies by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2231
+* fix tts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2232
+* chore(deps): update ghcr.io/chriswritescode-dev/opencode-manager docker tag to v0.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2233
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.15 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2234
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.8.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2235
+* Update logging and database request settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2236
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v6.0.0...v7.0.0
+
 ## 6.0.0 (2026-02-06)
 
 ## What's Changed
