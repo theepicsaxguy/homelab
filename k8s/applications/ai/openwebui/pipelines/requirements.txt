@@ -35,4 +35,4 @@ llama-index-readers-file==0.5.6
 llama-index-readers-llama-parse==0.5.1
 opencv-python==4.13.0.92
 opik==1.10.13
-transformers==5.1.0
+transformers==5.2.0
