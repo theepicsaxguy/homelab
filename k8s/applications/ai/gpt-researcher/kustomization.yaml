@@ -13,6 +13,8 @@ resources:
   - gptr-nextjs-deployment.yaml
   - gptr-nextjs-service.yaml
   - http-route.yaml
+  - ws-rewriter-configmap.yaml
+  - ws-rewriter-deployment.yaml
 
 configMapGenerator:
   - name: gpt-researcher-config
