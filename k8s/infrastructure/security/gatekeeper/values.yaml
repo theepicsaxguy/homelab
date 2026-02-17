@@ -93,6 +93,18 @@ tolerations:
     effect: NoExecute
     tolerationSeconds: 120
 
+# Operator security context
+operator:
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
 # Affinity rules
 affinity:
   podAntiAffinity:
