@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: ghcr.io/teddybear082/pocket-tts-openai_streaming_server:sha-c8f5a32
+        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-43990b5
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
@@ -86,6 +86,10 @@ spec:
           mountPath: /tmp
         - name: logs
           mountPath: /app/logs
+        - name: voices
+          mountPath: /app/voices
+        - name: data
+          mountPath: /app/data
       volumes:
       - name: cache
         emptyDir:
@@ -96,3 +100,9 @@ spec:
       - name: logs
         emptyDir:
           sizeLimit: 50Mi
+      - name: voices
+        persistentVolumeClaim:
+          claimName: pocket-tts-voices
+      - name: data
+        persistentVolumeClaim:
+          claimName: pocket-tts-data
