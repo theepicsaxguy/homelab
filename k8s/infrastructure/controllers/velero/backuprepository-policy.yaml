@@ -11,7 +11,7 @@ metadata:
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: BackupRepository
     policies.kyverno.io/description: >-
-      Sets maintenance frequency to 24 hours for Backblaze B2 repositories to reduce
+      Sets maintenance frequency to 7 days for Backblaze B2 repositories to reduce
       API transaction calls and stay within free tier daily limits. Backblaze has
       transaction caps that can be exceeded with frequent maintenance operations.
 spec:
@@ -33,6 +33,6 @@ spec:
       mutate:
         patchStrategicMerge:
           spec:
-            # Set maintenance to run once per day instead of default 1 hour
-            # This significantly reduces Backblaze B2 transaction API calls
-            maintenanceFrequency: 24h0m0s
+            # Set maintenance to run once per week instead of default 1 hour
+            # Backblaze B2 free tier has tight transaction limits
+            maintenanceFrequency: 168h0m0s

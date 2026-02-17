@@ -4,7 +4,6 @@ resources:
   - gatekeeper
   - kyverno
   - falco
-  - kubearmor
   - policies
   - monitoring.yaml
   - externalsecret.yaml

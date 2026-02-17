@@ -1,4 +1,0 @@
-kubearmorOperator:
-  args:
-    - --lsm=bpf
-autoDeploy: false
