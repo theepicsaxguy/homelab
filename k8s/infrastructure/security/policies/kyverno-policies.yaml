@@ -17,7 +17,7 @@ spec:
     exclude:
       any:
       - resources:
-          namespaces: ["security-system", "gatekeeper-system", "kube-system"]
+          namespaces: ["security-system", "gatekeeper-system", "kube-system", "kubearmor"]
     validate:
       message: "Containers must not run as root user (NSA/CISA 3.4.4)"
       pattern:
@@ -34,7 +34,7 @@ spec:
     exclude:
       any:
       - resources:
-          namespaces: ["security-system", "gatekeeper-system", "kube-system"]
+          namespaces: ["security-system", "gatekeeper-system", "kube-system", "kubearmor"]
     validate:
       message: "Containers must drop all Linux capabilities (NSA/CISA 5.1.5)"
       pattern:
@@ -61,7 +61,7 @@ spec:
     exclude:
       any:
       - resources:
-          namespaces: ["security-system", "gatekeeper-system", "kube-system"]
+          namespaces: ["security-system", "gatekeeper-system", "kube-system", "kubearmor"]
     validate:
       message: "Containers must have read-only root filesystem (NSA/CISA 4.2.1)"
       pattern:
@@ -85,7 +85,7 @@ spec:
     exclude:
       any:
       - resources:
-          namespaces: ["security-system", "gatekeeper-system", "kube-system"]
+          namespaces: ["security-system", "gatekeeper-system", "kube-system", "kubearmor"]
     validate:
       message: "Containers must not share host namespace (NSA/CISA 5.2.2)"
       pattern:
