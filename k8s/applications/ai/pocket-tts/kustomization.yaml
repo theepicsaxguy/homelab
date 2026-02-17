@@ -6,6 +6,7 @@ resources:
 - namespace.yaml
 - http-route.yaml
 - networkpolicy.yaml
+- pvc.yaml
 - deployment.yaml
 - service.yaml
 - podmonitor.yaml
