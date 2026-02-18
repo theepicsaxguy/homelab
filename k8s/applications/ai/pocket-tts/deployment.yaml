@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: ghcr.io/theepicsaxguy/openvox:sha-f7d8d7a # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/openvox
+        image: docker pull ghcr.io/theepicsaxguy/openvox:sha-02b535f # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/openvox
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
@@ -62,13 +62,17 @@ spec:
           value: "/home/pockettts/.cache"
         - name: TRANSFORMERS_CACHE
           value: "/home/pockettts/.cache/huggingface"
+        - name: TMPDIR
+          value: "/tmp"
         resources:
           requests:
             memory: "2Gi"
             cpu: "500m"
+            ephemeral-storage: "256Mi"
           limits:
             memory: "4Gi"
             cpu: "2000m"
+            ephemeral-storage: "1Gi"
         livenessProbe:
           httpGet:
             path: /health
@@ -94,6 +98,8 @@ spec:
           mountPath: /app/logs
         - name: data
           mountPath: /home/pockettts/.cache
+        - name: tmp
+          mountPath: /tmp
       volumes:
       - name: voices
         persistentVolumeClaim:
@@ -101,3 +107,6 @@ spec:
       - name: data
         persistentVolumeClaim:
           claimName: pocket-tts-data
+      - name: tmp
+        emptyDir:
+          sizeLimit: "512Mi"
