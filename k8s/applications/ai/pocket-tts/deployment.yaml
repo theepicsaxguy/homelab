@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-97ba479
+        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-b165ad1
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
@@ -40,7 +40,7 @@ spec:
           capabilities:
             drop:
               - ALL
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           seccompProfile:
             type: RuntimeDefault
         env:
@@ -80,26 +80,11 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 3
         volumeMounts:
-        - name: cache
-          mountPath: /home/pockettts/.cache/huggingface
-        - name: tmp
-          mountPath: /tmp
-        - name: logs
-          mountPath: /app/logs
         - name: voices
           mountPath: /app/voices
         - name: data
           mountPath: /app/data
       volumes:
-      - name: cache
-        emptyDir:
-          sizeLimit: 1Gi
-      - name: tmp
-        emptyDir:
-          sizeLimit: 100Mi
-      - name: logs
-        emptyDir:
-          sizeLimit: 50Mi
       - name: voices
         persistentVolumeClaim:
           claimName: pocket-tts-voices
