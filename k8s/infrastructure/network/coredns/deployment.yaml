@@ -20,6 +20,9 @@ spec:
       labels:
         k8s-app: kube-dns
     spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
       nodeSelector:
         kubernetes.io/os: linux
       affinity:
@@ -46,6 +49,11 @@ spec:
       containers:
         - name: coredns
           image: coredns/coredns:1.14.1
+          securityContext:
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
           imagePullPolicy: IfNotPresent
           resources:
             limits:

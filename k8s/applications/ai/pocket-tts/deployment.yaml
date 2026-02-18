@@ -8,6 +8,8 @@ metadata:
     app.kubernetes.io/part-of: ai
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: pocket-tts
@@ -28,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-6af2ce1 # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server
+        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-3545f8b # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
@@ -40,7 +42,7 @@ spec:
           capabilities:
             drop:
               - ALL
-          readOnlyRootFilesystem: false
+          readOnlyRootFilesystem: true
           seccompProfile:
             type: RuntimeDefault
         env:
@@ -56,6 +58,10 @@ spec:
           value: "true"
         - name: PYTHONUNBUFFERED
           value: "1"
+        - name: HF_HOME
+          value: "/home/pockettts/.cache"
+        - name: TRANSFORMERS_CACHE
+          value: "/home/pockettts/.cache/huggingface"
         resources:
           requests:
             memory: "2Gi"
@@ -84,6 +90,10 @@ spec:
           mountPath: /app/voices
         - name: data
           mountPath: /app/data
+        - name: data
+          mountPath: /app/logs
+        - name: data
+          mountPath: /home/pockettts/.cache
       volumes:
       - name: voices
         persistentVolumeClaim:

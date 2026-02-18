@@ -29,6 +29,9 @@ spec:
         app.kubernetes.io/instance: immich
         app.kubernetes.io/name: server
     spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
       automountServiceAccountToken: true
       containers:
         - env:
@@ -103,6 +106,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+            readOnlyRootFilesystem: false
           startupProbe:
             failureThreshold: 30
             httpGet:

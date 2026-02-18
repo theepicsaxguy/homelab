@@ -97,3 +97,102 @@ reportsController:
 crds:
   create: true
   install: true
+
+
+# Configuration
+config:
+
+  # -- Create the configmap.
+  create: true
+
+  # -- Preserve the configmap settings during upgrade.
+  preserve: true
+
+  # -- (string) The configmap name (required if `create` is `false`).
+  name: ~
+
+  # -- Additional annotations to add to the configmap.
+  annotations: {}
+
+  # -- Enable registry mutation for container images. Enabled by default.
+  enableDefaultRegistryMutation: true
+
+  # -- The registry hostname used for the image mutation.
+  defaultRegistry: docker.io
+
+  # -- Exclude groups
+  excludeGroups:
+    - system:nodes
+
+  # -- Exclude usernames
+  excludeUsernames: []
+    # - '!system:kube-scheduler'
+
+  # -- Exclude roles
+  excludeRoles: []
+
+  # -- Exclude roles
+  excludeClusterRoles: []
+
+  # -- Generate success events.
+  generateSuccessEvents: false
+
+  # -- Maximum cumulative size of context data during policy evaluation.
+  # Supports Kubernetes quantity format (e.g., 100Mi, 2Gi) or plain bytes (e.g., 2097152).
+  # Limits memory used by context variables to prevent unbounded growth.
+  # Increase if policies legitimately need large context data (e.g., processing large ConfigMaps).
+  # Set to 0 to disable the limit (not recommended for production).
+  # @default -- 2Mi
+  maxContextSize: ~
+
+  # -- Sets the threshold for the total number of UpdateRequests generated for mutateExisitng and generate policies.
+  updateRequestThreshold: 1000
+
+  # -- Defines the `namespaceSelector`/`objectSelector` in the webhook configurations.
+  # The Kyverno namespace is excluded if `excludeKyvernoNamespace` is `true` (default)
+  webhooks:
+    # Exclude namespaces
+    namespaceSelector:
+      matchExpressions:
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+          - kube-system
+    # Exclude objects
+    # objectSelector:
+    #   matchExpressions:
+    #   - key: webhooks.kyverno.io/exclude
+    #     operator: DoesNotExist
+
+  # -- Defines annotations to set on webhook configurations.
+  webhookAnnotations:
+    # Example to disable admission enforcer on AKS:
+    'admissions.enforcer/disabled': 'true'
+
+  # -- Defines labels to set on webhook configurations.
+  webhookLabels: {}
+    # Example to adopt webhook resources in ArgoCD:
+    # 'argocd.argoproj.io/instance': 'kyverno'
+
+  # -- Defines match conditions to set on webhook configurations (requires Kubernetes 1.27+).
+  matchConditions: []
+
+  # -- Exclude Kyverno namespace
+  # Determines if default Kyverno namespace exclusion is enabled for webhooks and resourceFilters
+  excludeKyvernoNamespace: true
+
+  # -- resourceFilter namespace exclude
+  # Namespaces to exclude from the default resourceFilters
+  resourceFiltersExcludeNamespaces: []
+
+  # -- resourceFilters exclude list
+  # Items to exclude from config.resourceFilters
+  resourceFiltersExclude: []
+
+  # -- resourceFilter namespace include
+  # Namespaces to include to the default resourceFilters
+  resourceFiltersIncludeNamespaces: []
+
+  # -- resourceFilters include list
+  # Items to include to config.resourceFilters
+  resourceFiltersInclude: []

@@ -37,6 +37,7 @@ spec:
             capabilities:
               drop:
                 - ALL
+            readOnlyRootFilesystem: false
             seccompProfile:
               type: RuntimeDefault
           ports:
