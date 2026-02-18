@@ -37,8 +37,7 @@
         "(?<currentValue>[\\w+\\.\\-]*)['\\\",;]*\\s*#\\s?renovate:\\s+(?<datasource>\\S+)=(?<depName>\\S+)(?:\\s+registry=(?<registryUrl>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?",
         "https://github.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/",
         "https://raw.githubusercontent.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/"
-      ],
-      "datasourceTemplate": "github-releases"
+      ]
     },
     {
       "customType": "regex",
