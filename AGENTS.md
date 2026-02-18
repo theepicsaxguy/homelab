@@ -126,6 +126,7 @@ This is not optional. Every task requires understanding the cumulative context a
 - Never use `--auto-approve` in tofu commands
 - Never use kubectl `--force`, `--grace-period=0`, or `--ignore-not-found` flags
 - Never modify CRD definitions without understanding operator compatibility
+ - Workload security: every workload spec must set `securityContext` at the pod and container level (including `initContainers`). Use `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, and `capabilities.drop: ["ALL"]`. Disable host namespace sharing by ensuring `hostNetwork`, `hostPID`, and `hostIPC` are `false` unless explicitly required and approved; approvals MUST be documented with a commented justification in the manifest.
 
 ### Operational Excellence  
 - Never apply changes directly to cluster - use GitOps
@@ -149,14 +150,10 @@ This is not optional. Every task requires understanding the cumulative context a
 pre-commit run --all-files
 pre-commit run --files <file-path>
 
-# Domain-specific commands
-# Kubernetes: see k8s/AGENTS.md
-# Infrastructure: see tofu/AGENTS.md  
-# Documentation: see website/AGENTS.md
-# Containers: see images/AGENTS.md
 ```
 
 Note: Pre-commit hooks are configured only for documentation files in `website/docs/`. For code changes, ensure compliance with the code style guidelines manually.
+
 
 ## Philosophy
 
@@ -170,3 +167,9 @@ Note: Pre-commit hooks are configured only for documentation files in `website/d
 - **Only Plugin Architecture**: Use ObjectStore CRD + barman-cloud plugin (legacy barman deployment is deprecated)
 - **Dual Destinations**: Configure in externalClusters - MinIO for fast local recovery, Backblaze B2 for disaster recovery
 - **Recovery Flexibility**: Both destinations enable recovery if one location becomes unavailable
+
+# Domain-specific commands
+Kubernetes: see k8s/AGENTS.md [k8s/AGENTS.md](k8s/AGENTS.md)
+Infrastructure: see tofu/AGENTS.md  [tofu/AGENTS.md](tofu/AGENTS.md)
+Documentation: see [website/AGENTS.md](website/AGENTS.md)
+Containers: see [images/AGENTS.md](images/AGENTS.md)
