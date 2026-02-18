@@ -41,6 +41,16 @@ spec:
             secretKeyRef:
               name: app-opencode-secrets
               key: AUTH_SECRET
+        - name: VAPID_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-opencode-secrets
+              key: VAPID_PUBLIC_KEY
+        - name: VAPID_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-opencode-secrets
+              key: VAPID_PRIVATE_KEY
         - name: AUTH_TRUSTED_ORIGINS
           value: "https://opencode.peekoff.com,http://localhost:5003,http://10.0.10.*:5003"
         - name: AUTH_SECURE_COOKIES
