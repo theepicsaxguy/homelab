@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: docker pull ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-3545f8b # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server
+        image: ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server:sha-3545f8b # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/pocket-tts-openai_streaming_server
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
