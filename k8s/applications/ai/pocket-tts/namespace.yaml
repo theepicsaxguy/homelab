@@ -5,3 +5,6 @@ metadata:
   labels:
     app.kubernetes.io/name: pocket-tts
     app.kubernetes.io/part-of: ai
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline
