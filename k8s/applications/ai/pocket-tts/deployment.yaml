@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: pocket-tts
-        image: ghcr.io/theepicsaxguy/openvox:sha-02b535f # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/openvox
+        image: ghcr.io/theepicsaxguy/openvox:v0.0.3 # renovate: datasource=docker depName=ghcr.io/theepicsaxguy/openvox
         imagePullPolicy: Always
         ports:
         - containerPort: 49112
