@@ -126,7 +126,7 @@ This is not optional. Every task requires understanding the cumulative context a
 - Never use `--auto-approve` in tofu commands
 - Never use kubectl `--force`, `--grace-period=0`, or `--ignore-not-found` flags
 - Never modify CRD definitions without understanding operator compatibility
- - Workload security: every workload spec must set `securityContext` at the pod and container level (including `initContainers`). Use `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, and `capabilities.drop: ["ALL"]`. Disable host namespace sharing by ensuring `hostNetwork`, `hostPID`, and `hostIPC` are `false` unless explicitly required and approved; approvals MUST be documented with a commented justification in the manifest.
+ - Workload security: every workload spec must set `securityContext` at the pod and container level (including `initContainers`). Use `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, and `capabilities.drop: ["ALL"]`. Always explicitly set `hostNetwork: false`, `hostPID: false`, and `hostIPC: false` in pod specs. If an exception is explicitly required and approved, record the approval and justification as an inline comment in the manifest.
 
 ### Operational Excellence  
 - Never apply changes directly to cluster - use GitOps

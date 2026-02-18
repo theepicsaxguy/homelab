@@ -18,6 +18,9 @@ spec:
       annotations:
         backup.velero.io/backup-volumes: data
     spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -36,6 +39,7 @@ spec:
             capabilities:
               drop:
                 - ALL
+            readOnlyRootFilesystem: false
           ports:
             - name: bedrock-udp
               containerPort: 19132

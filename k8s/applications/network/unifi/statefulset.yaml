@@ -23,6 +23,9 @@ spec:
       labels:
         app: unifi-controller
     spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
       securityContext:
         runAsUser: 999
         runAsGroup: 999
@@ -40,6 +43,7 @@ spec:
             capabilities:
               drop:
                 - ALL
+            readOnlyRootFilesystem: false
           resources:
             requests:
               cpu: "100m"
