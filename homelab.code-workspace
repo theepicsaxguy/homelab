@@ -76,6 +76,9 @@
       "**/node_modules": true,
       "**/*.tfstate*": true
     },
+    "terminal.integrated.env.linux": {
+      "KUBECONFIG": "${workspaceFolder}/kubeconfig"
+    },
     // Git settings
     "git.enableCommitSigning": false,
     "git.autofetch": true,
@@ -131,6 +134,7 @@
     "chat.useNestedAgentsMdFiles": true,
     "github.copilot.chat.agent.autoFix": true,
     "github.copilot.chat.customAgents.showOrganizationAndEnterpriseAgents": true,
+    "chat.includeReferencedInstructions": true,
   },
   "extensions": {
     "recommendations": [
