@@ -37,6 +37,8 @@ spec:
       server: '*'
     - namespace: 'velero'
       server: '*'
+    - namespace: '*'
+      server: '*'
   clusterResourceWhitelist:
     - group: "*"
       kind: "*"
@@ -58,6 +60,6 @@ spec:
       duration: 24h
       applications:
         - '*'
-      manualSync: true
+      manualSync: false
   orphanedResources:
     warn: true
