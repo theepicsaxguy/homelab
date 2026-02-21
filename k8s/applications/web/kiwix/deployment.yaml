@@ -25,23 +25,31 @@ spec:
       hostPID: false
       hostNetwork: false
       securityContext:
-        runAsNonRoot: false
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
         - name: kiwix-serve
           image: ghcr.io/kiwix/kiwix-serve:3.8.1
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
           env:
             # only allows 1 download at a time. uncomment download until downloaded. then comment it out again to avoid re-downloading on pod restarts.
             # https://download.kiwix.org/zim/wikipedia_en_all_maxi.zim
             # https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-06.zim
             # https://download.kiwix.org/zim/wikibooks/wikibooks_sv_all_maxi_2025-10.zim
-            - name: DOWNLOAD
-              value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
+            # - name: DOWNLOAD
+            #   value: "https://download.kiwix.org/zim/wikipedia/wikipedia_sv_all_maxi_2025-09.zim"
             - name: PORT
               value: '8080'
             - name: LANG
@@ -85,10 +93,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 2
             failureThreshold: 3
-          securityContext:
-            runAsNonRoot: false
-            allowPrivilegeEscalation: true
-            readOnlyRootFilesystem: false
           volumeMounts:
             - name: data
               mountPath: /data

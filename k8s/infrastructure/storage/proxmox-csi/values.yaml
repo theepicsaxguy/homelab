@@ -1,3 +1,6 @@
+existingConfigSecret: proxmox-csi-plugin
+existingConfigSecretKey: config.yaml
+
 storageClass:
   - name: proxmox-csi
     cache: writethrough
