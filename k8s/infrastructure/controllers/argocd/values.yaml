@@ -65,6 +65,15 @@ controller:
     limits:
       cpu: 500m
       memory: 2Gi
+  containerSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: [ALL]
 
 dex:
   enabled: true
@@ -74,12 +83,30 @@ dex:
       memory: 32Mi
     limits:
       memory: 256Mi
+  containerSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: [ALL]
 
 redis-ha:
   enabled: false
 
 redis:
   enabled: true
+  containerSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: [ALL]
   resources:
     requests:
       cpu: 50m
@@ -108,6 +135,15 @@ server:
       memory: 64Mi
     limits:
       memory: 1Gi
+  containerSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: [ALL]
 
 repoServer:
   autoscaling:
@@ -162,6 +198,15 @@ repoServer:
 
 applicationSet:
   replicas: 1
+  containerSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: [ALL]
   pdb:
     enabled: false
     minAvailable: 1
