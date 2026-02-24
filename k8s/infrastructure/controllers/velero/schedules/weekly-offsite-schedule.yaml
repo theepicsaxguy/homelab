@@ -20,16 +20,15 @@ spec:
       - argocd
       - auth
       - babybuddy
-      - cert-manager
       - cnpg-system
       - external-secrets
-      - gateway
       - home-assistant
-      - kubechecks
+      - litellm
       - media
-      - monitoring
-      - n8n
-      - openclaw
+      - perplexica
+      - karakeep
+      - gpt-researcher
+      - pocket-tts
 
     excludedNamespaces: []
 
