@@ -17,6 +17,11 @@ spec:
       - kube-system
       - default
       - kiwix
+      - cert-manager
+      - kubechecks
+      - gateway
+      - n8n
+      - vllm-embed
     includedResources:
       - '*'
     excludedResources:

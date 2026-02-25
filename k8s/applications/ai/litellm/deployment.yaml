@@ -47,6 +47,13 @@ spec:
         ports:
         - containerPort: 4000
         - containerPort: 4001
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "1000m"
         envFrom:
         - secretRef:
             name: litellm-secrets
@@ -98,7 +105,7 @@ spec:
             port: 4000
           initialDelaySeconds: 10
           periodSeconds: 10
-          timeoutSeconds: 2
+          timeoutSeconds: 5
           failureThreshold: 3
         readinessProbe:
           httpGet:
@@ -106,14 +113,14 @@ spec:
             port: 4000
           initialDelaySeconds: 10
           periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
+          timeoutSeconds: 10
+          failureThreshold: 5
         startupProbe:
           httpGet:
             path: /health/liveliness
             port: 4000
           failureThreshold: 30
-          periodSeconds: 2
+          periodSeconds: 5
         volumeMounts:
         - name: litellm-config
           mountPath: /app/proxy_server_config.yaml
