@@ -1309,6 +1309,7 @@ router_settings:
 
 general_settings:
   store_model_in_db: true
+  proxy_batch_write_at: 60
   store_prompts_in_spend_logs: true
   enforce_user_param: false
   background_health_checks: false
