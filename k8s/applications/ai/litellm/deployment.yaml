@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm-non_root:main-v1.81.8-nightly
+        image: ghcr.io/berriai/litellm-non_root:main-v1.81.12-stable.1
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
@@ -99,6 +99,8 @@ spec:
           value: "https://sso.peekoff.com/application/o/litellm/end-session/"
         - name: HOME
           value: /tmp
+        - name: LITELLM_MODE
+          value: "PRODUCTION"
         livenessProbe:
           httpGet:
             path: /health/liveliness

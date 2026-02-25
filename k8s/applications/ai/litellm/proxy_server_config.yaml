@@ -1263,18 +1263,22 @@ litellm_settings:
   callbacks: ["prometheus"]
   prometheus_initialize_budget_metrics: true
   require_auth_for_metrics_endpoint: false
-  cache: false
+  cache: true
+  # cache_params:
+  #   type: qdrant-semantic
+  #   qdrant_api_base: http://qdrant.qdrant.svc.cluster.local:6333
+  #   qdrant_api_key: os.environ/QDRANT_API_KEY
+  #   qdrant_semantic_cache_embedding_model: text-embedding-3-large
+  #   qdrant_collection_name: litellm_semantic_cache
+  #   qdrant_quantization_config: binary
+  #   qdrant_vector_size: 3072
+  #   similarity_threshold: 0.8
   cache_params:
-    type: qdrant-semantic
-    qdrant_api_base: http://qdrant.qdrant.svc.cluster.local:6333
-    qdrant_api_key: os.environ/QDRANT_API_KEY
-    qdrant_semantic_cache_embedding_model: text-embedding-3-large
-    qdrant_collection_name: litellm_semantic_cache
-    qdrant_quantization_config: binary
-    qdrant_vector_size: 3072
-    similarity_threshold: 0.8
+    type: redis
+    host: redis.litellm.svc.cluster.local
+    port: "6379"
     ttl: 600
-    supported_call_types: ["acompletion", "atext_completion"]
+    namespace: litellm
   json_logs: true
   turn_off_message_logging: true
   redact_user_api_key_info: true
@@ -1303,9 +1307,6 @@ router_settings:
     BadRequestErrorAllowedFails: 1000
   max_fallbacks: 3
   enable_tag_filtering: true
-  cache_responses: true
-  redis_host: redis.litellm.svc.cluster.local
-  redis_port: "6379"
 
 general_settings:
   store_model_in_db: true
