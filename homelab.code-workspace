@@ -77,7 +77,7 @@
       "**/*.tfstate*": true
     },
     "terminal.integrated.env.linux": {
-      "KUBECONFIG": "${workspaceFolder}/kubeconfig"
+      "KUBECONFIG": "${workspaceFolder:root}/kubeconfig"
     },
     // Git settings
     "git.enableCommitSigning": false,
