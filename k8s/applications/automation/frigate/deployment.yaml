@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: frigate
-          image: ghcr.io/blakeblackshear/frigate:0.16.4-tensorrt
+          image: ghcr.io/blakeblackshear/frigate:0.17.0-tensorrt
           env:
             - name: HOME
               value: /tmp/home
@@ -98,7 +98,7 @@ spec:
             - /bin/sh
             - -c
             - cp -r /usr/local/nginx/* /nginx/
-          image: ghcr.io/blakeblackshear/frigate:0.16.4-tensorrt
+          image: ghcr.io/blakeblackshear/frigate:0.17.0-tensorrt
           imagePullPolicy: IfNotPresent
           name: frigate-init-nginx
           securityContext:
