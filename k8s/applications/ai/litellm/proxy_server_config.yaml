@@ -1281,9 +1281,10 @@ litellm_settings:
     namespace: litellm
   json_logs: true
   turn_off_message_logging: true
+  AUTO_REDIRECT_UI_LOGIN_TO_SSO: true
   redact_user_api_key_info: true
   enable_json_schema_validation: true
-  set_verbose: true
+  # set_verbose: true  # Removed: use LITELLM_LOG env var instead
   drop_params: true
   extra_spend_tag_headers:
     - "X-OpenWebUI-User-Id"
@@ -1317,7 +1318,7 @@ general_settings:
   health_check_interval: 300
   health_check_details: true
   ui_access_mode: admin_only
-  max_response_size_mb: 25
+  # max_response_size_mb: 25  # Removed: enterprise-only option, suppress warning
   database_connection_pool_limit: 50
   database_connection_timeout: 60
   allow_requests_on_db_unavailable: true
