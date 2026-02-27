@@ -101,6 +101,8 @@ spec:
           value: /tmp
         - name: LITELLM_MODE
           value: "PRODUCTION"
+        - name: LITELLM_LOG
+          value: "DEBUG"
         livenessProbe:
           httpGet:
             path: /health/liveliness
