@@ -124,10 +124,6 @@
       "https://goauthentik.io/blueprints/schema.json": [
         "k8s/infrastructure/auth/authentik/extra/blueprints/*.yaml",
         "k8s/infrastructure/auth/authentik/extra/blueprints/apps-argocd.yaml"
-      ],
-      ".vscode/ciliumnetworkpolicy-v2.schema.json": [
-        "k8s/infrastructure/network/policies/**/allow-*.yaml",
-        "k8s/infrastructure/network/policies/clusterwide/default-deny-audit.yaml"
       ]
     },
     "chat.promptFilesLocations": {
