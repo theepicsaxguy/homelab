@@ -46,12 +46,12 @@ spec:
               containerPort: 19132
               protocol: UDP
           env:
-            # Force TLS 1.2 - Java's TLS 1.3 JSSE fails mid-handshake in Kubernetes/Cilium
-            # environments (Broken pipe during T13FinishedProducer) when fetching
-            # https://client.discovery.minecraft-services.net causing EncryptionUtils to
-            # fail to initialize, breaking all subsequent logins.
-            - name: JAVA_TOOL_OPTIONS
-              value: '-Djdk.tls.client.protocols=TLSv1.2'
+            # Skip Xbox Live token verification in BedrockConnect. Players are fully
+            # authenticated by Geyser+Floodgate (auth-type: floodgate) on the game server.
+            # Without this, BedrockConnect calls EncryptionUtils.getDiscoveryData() which
+            # fails with a TLS broken-pipe in Kubernetes/Cilium environments.
+            - name: BC_NOVERIFYUSERS
+              value: 'true'
             - name: BC_FEATURED_SERVERS
               value: 'false'
             - name: BC_DB_TYPE
