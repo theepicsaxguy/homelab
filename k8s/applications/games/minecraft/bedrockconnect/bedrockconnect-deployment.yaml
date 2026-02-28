@@ -33,9 +33,9 @@ spec:
 
       containers:
         - name: bedrockconnect
-          image: pugmatt/bedrock-connect:1.65
-
-          imagePullPolicy: IfNotPresent
+          image: pugmatt/bedrock-connect:dev
+          # TODO: update to 1.66+ when released - 1.65 has EncryptionUtils regression (NoClassDefFoundError on login)
+          imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
