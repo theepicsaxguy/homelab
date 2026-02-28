@@ -33,9 +33,8 @@ spec:
 
       containers:
         - name: bedrockconnect
-          image: pugmatt/bedrock-connect:dev
-          # TODO: update to 1.66+ when released - 1.65 has EncryptionUtils regression (NoClassDefFoundError on login)
-          imagePullPolicy: Always
+          image: pugmatt/bedrock-connect:1.65
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -47,6 +46,12 @@ spec:
               containerPort: 19132
               protocol: UDP
           env:
+            # Force TLS 1.2 - Java's TLS 1.3 JSSE fails mid-handshake in Kubernetes/Cilium
+            # environments (Broken pipe during T13FinishedProducer) when fetching
+            # https://client.discovery.minecraft-services.net causing EncryptionUtils to
+            # fail to initialize, breaking all subsequent logins.
+            - name: JAVA_TOOL_OPTIONS
+              value: '-Djdk.tls.client.protocols=TLSv1.2'
             - name: BC_FEATURED_SERVERS
               value: 'false'
             - name: BC_DB_TYPE
