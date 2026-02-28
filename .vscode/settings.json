@@ -3,7 +3,4 @@
     "chat.customAgentInSubagent.enabled": true,
     "chat.useNestedAgentsMdFiles": true,
     "github.copilot.chat.agent.autoFix": true,
-    "terminal.integrated.env.linux": {
-        "KUBECONFIG": "${workspaceFolder}/kubeconfig"
-    }
 }
