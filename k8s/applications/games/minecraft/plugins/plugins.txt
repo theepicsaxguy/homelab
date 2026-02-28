@@ -7,6 +7,6 @@ https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXCh
 https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXSpawn-2.21.2.jar
 https://github.com/Multiverse/Multiverse-Core/releases/download/5.5.2/multiverse-core-5.5.2.jar
 https://github.com/Multiverse/Multiverse-SignPortals/releases/download/5.0.2/multiverse-signportals-5.0.2.jar
-https://download.luckperms.net/1614/bukkit/loader/LuckPerms-Bukkit-5.5.26.jar
+https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar
 https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/66/artifact/target/WildLoaders-2025.2-b66.jar
 https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar
