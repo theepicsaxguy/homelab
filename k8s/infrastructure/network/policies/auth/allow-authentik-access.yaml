@@ -12,7 +12,7 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "9000"
@@ -20,7 +20,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: database
+        k8s:io.kubernetes.pod.namespace: database
         app.kubernetes.io/name: postgresql
     toPorts:
     - ports:

@@ -7,19 +7,19 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: unifi
+      app: unifi-controller
   description: "Allow UniFi controller management access"
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "8443"
         protocol: TCP
       - port: "8080"
         protocol: TCP
-  - fromEntities: ["world"]  # Direct management access
+  - fromEntities: ["world"]  # Direct management access from LAN/internet
     toPorts:
     - ports:
       - port: "8443"
@@ -33,4 +33,14 @@ spec:
       - port: "3478"
         protocol: UDP
       - port: "10001"
+        protocol: UDP
+  egress:
+  - toEntities: ["world"]  # UniFi cloud connectivity, firmware updates, MQTT broker
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "8883"
+        protocol: TCP
+      - port: "3478"
         protocol: UDP

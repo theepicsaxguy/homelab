@@ -8,40 +8,54 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: litellm
+      app: litellm
   description: "Allow LiteLLM proxy access"
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: open-webui
+        k8s:io.kubernetes.pod.namespace: open-webui
     toPorts:
     - ports:
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: perplexica
+        k8s:io.kubernetes.pod.namespace: perplexica
     toPorts:
     - ports:
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: openclaw
+        k8s:io.kubernetes.pod.namespace: openclaw
     toPorts:
     - ports:
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gpt-researcher
+        k8s:io.kubernetes.pod.namespace: gpt-researcher
+    toPorts:
+    - ports:
+      - port: "4000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: pocket-tts
+    toPorts:
+    - ports:
+      - port: "4000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: karakeep
     toPorts:
     - ports:
       - port: "4000"
@@ -49,23 +63,23 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: litellm
-        app.kubernetes.io/name: redis
+        k8s:io.kubernetes.pod.namespace: litellm
+        app: redis
     toPorts:
     - ports:
       - port: "6379"
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: qdrant
-        app.kubernetes.io/name: qdrant
+        k8s:io.kubernetes.pod.namespace: qdrant
+        app: qdrant
     toPorts:
     - ports:
       - port: "6333"
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: litellm
+        k8s:io.kubernetes.pod.namespace: litellm
         app.kubernetes.io/name: postgresql
     toPorts:
     - ports:
@@ -73,7 +87,7 @@ spec:
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:io.kubernetes.pod.namespace: kube-system
         k8s:k8s-app: kube-dns
     toPorts:
     - ports:

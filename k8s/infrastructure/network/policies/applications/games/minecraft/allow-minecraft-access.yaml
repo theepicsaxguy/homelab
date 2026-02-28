@@ -5,12 +5,10 @@ metadata:
   labels:
     policy-type: games-audit
 spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: minecraft
-  description: "Allow Minecraft server access"
+  endpointSelector: {}  # Applies to all pods in minecraft namespace (minecraft-bedrock + bedrockconnect)
+  description: "Allow Minecraft server access from game clients"
   ingress:
-  - fromEntities: ["world"]  # External game clients
+  - fromEntities: ["world"]  # External game clients (Java: 25565/TCP, Bedrock: 19132/UDP)
     toPorts:
     - ports:
       - port: "25565"

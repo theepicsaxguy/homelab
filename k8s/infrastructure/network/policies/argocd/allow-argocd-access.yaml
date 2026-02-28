@@ -12,7 +12,7 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "8080"
@@ -20,7 +20,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: argocd
+        k8s:io.kubernetes.pod.namespace: argocd
         app.kubernetes.io/name: redis
     toPorts:
     - ports:

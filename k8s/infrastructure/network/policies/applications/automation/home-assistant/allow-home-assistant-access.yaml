@@ -8,12 +8,12 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: hassio
+      app.kubernetes.io/name: home-assistant
   description: "Allow Home Assistant access"
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "8123"
@@ -21,23 +21,23 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: mqtt
-        app.kubernetes.io/name: mosquitto
+        k8s:io.kubernetes.pod.namespace: mqtt
+        app: mosquitto
     toPorts:
     - ports:
       - port: "1883"
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: zigbee2mqtt
-        app.kubernetes.io/name: zigbee2mqtt
+        k8s:io.kubernetes.pod.namespace: zigbee2mqtt
+        app: zigbee2mqtt
     toPorts:
     - ports:
       - port: "8080"
         protocol: TCP
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:io.kubernetes.pod.namespace: kube-system
         k8s:k8s-app: kube-dns
     toPorts:
     - ports:

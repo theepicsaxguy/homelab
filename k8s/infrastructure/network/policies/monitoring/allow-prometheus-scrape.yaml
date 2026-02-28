@@ -10,7 +10,8 @@ spec:
       app.kubernetes.io/name: prometheus
   description: "Allow Prometheus to scrape metrics cluster-wide"
   egress:
-  - toEndpoints: {}
+  - toEndpoints:
+    - {}
     toPorts:
     - ports:
       - port: "9090"

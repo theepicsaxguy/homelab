@@ -12,7 +12,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: monitoring
+        k8s:io.kubernetes.pod.namespace: monitoring
         app.kubernetes.io/name: minio
     toPorts:
     - ports:
