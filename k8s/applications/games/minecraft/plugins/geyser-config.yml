@@ -3,3 +3,5 @@ java:
 # Enable Global Linking for Bedrock-Java account linking
 remote:
   auth-type: floodgate
+gameplay:
+  xbox-achievements-enabled: true

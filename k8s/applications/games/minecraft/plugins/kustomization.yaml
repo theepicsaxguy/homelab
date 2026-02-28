@@ -18,7 +18,8 @@ configMapGenerator:
       - LEVEL_NAME=default
       - SEED=3256082097912188239
       - LEVEL_TYPE=DEFAULT
-      - ENFORCE_SECURE_PROFILE=true
+      - ENFORCE_SECURE_PROFILE=false
+      - JVM_OPTS=-DGeyser.PrintSecureChatInformation=false
       - DIFFICULTY=normal
       - ENABLE_STATUS=true
       - ENABLE_QUERY=true
