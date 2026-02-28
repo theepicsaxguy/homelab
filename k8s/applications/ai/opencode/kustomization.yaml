@@ -10,3 +10,4 @@ resources:
   - service.yaml
   - pvc.yaml
   - http-route.yaml
+  - policy-exception.yaml

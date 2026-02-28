@@ -16,21 +16,40 @@ spec:
     metadata:  
       labels:  
         app: opencode-web  
-    spec:  
-      securityContext:  
-        fsGroup: 1000  
-        seccompProfile:  
-          type: RuntimeDefault  
-      containers:  
-      - name: opencode-web  
-        image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0  
+    spec:
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: installer
+          image: mcr.microsoft.com/playwright:v1.53.0-jammy
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              mkdir -p /shared/bin /shared/.cache/ms-playwright
+              wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.1/kustomize_v5.4.1_linux_amd64
+              chmod +x /shared/bin/kustomize
+              npx playwright install --with-deps
+          securityContext:
+            runAsUser: 0
+            runAsNonRoot: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: shared-tools
+              mountPath: /shared
+      containers:
+      - name: opencode-web
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
         securityContext:  
           runAsUser: 1000  
           runAsGroup: 1000  
           runAsNonRoot: true  
           allowPrivilegeEscalation: false  
           capabilities:  
-            drop: ["ALL"]  
+            drop: ["ALL"]
         ports:
         - containerPort: 5003
         env:
@@ -55,11 +74,17 @@ spec:
           value: "https://opencode.peekoff.com,http://localhost:5003,http://10.0.10.*:5003"
         - name: AUTH_SECURE_COOKIES
           value: "true"
+        - name: PATH
+          value: "/shared/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/local/bin"
+        - name: PLAYWRIGHT_BROWSERS_PATH
+          value: "/shared/.cache/ms-playwright"
         volumeMounts:  
         - name: workspace  
           mountPath: /workspace  
         - name: data  
-          mountPath: /app/data  
+          mountPath: /app/data
+        - name: shared-tools
+          mountPath: /shared
         livenessProbe:  
           httpGet:  
             path: /api/health  
@@ -76,10 +101,13 @@ spec:
           periodSeconds: 30
           timeoutSeconds: 30  
           failureThreshold: 5  
-      volumes:  
-      - name: workspace  
-        persistentVolumeClaim:  
-          claimName: opencode-workspace-pvc  
-      - name: data  
-        persistentVolumeClaim:  
-          claimName: opencode-data-pvc  
+      volumes:
+      - name: workspace
+        persistentVolumeClaim:
+          claimName: opencode-workspace-pvc
+      - name: data
+        persistentVolumeClaim:
+          claimName: opencode-data-pvc
+      - name: shared-tools
+        emptyDir:
+          sizeLimit: 3Gi
