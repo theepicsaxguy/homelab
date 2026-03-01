@@ -21,6 +21,7 @@ configMapGenerator:
       - ENFORCE_SECURE_PROFILE=false
       - JVM_OPTS=-DGeyser.PrintSecureChatInformation=false
       - DIFFICULTY=normal
+      - SYNC_SKIP_NEWER_IN_DESTINATION=false
       - ENABLE_STATUS=true
       - ENABLE_QUERY=true
       - SERVER_NAME=PixelStack
@@ -41,6 +42,10 @@ configMapGenerator:
   - name: geyser-config
     files:
       - config.yml=geyser-config.yml
+  - name: luckperms-groups
+    files:
+      - default.yml=luckperms-group-default.yml
+      - admin.yml=luckperms-group-admin.yml
   - name: essentialsx-config
     files:
       - config.yml=essentialsx-config.yml

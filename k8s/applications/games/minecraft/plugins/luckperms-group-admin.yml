@@ -1,0 +1,9 @@
+name: admin
+permissions:
+- group.default
+- essentials.*
+- multiverse.*
+- floodgate
+- geyser
+- luckperms.*
+- minecraft.command.seed

@@ -59,6 +59,13 @@ spec:
               name: bedrockgui-config
               subPath: config.yml
               readOnly: true
+            - mountPath: /plugins/Geyser-Spigot/config.yml
+              name: geyser-config
+              subPath: config.yml
+              readOnly: true
+            - mountPath: /plugins/LuckPerms/yaml-storage/groups
+              name: luckperms-groups
+              readOnly: true
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -96,6 +103,12 @@ spec:
         - name: bedrockgui-config
           configMap:
             name: bedrockgui-config
+        - name: geyser-config
+          configMap:
+            name: geyser-config
+        - name: luckperms-groups
+          configMap:
+            name: luckperms-groups
   volumeClaimTemplates:
     - metadata:
         name: data
