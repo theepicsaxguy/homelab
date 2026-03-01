@@ -5,6 +5,7 @@ prefixes:
 permissions:
 - group.default
 - essentials.*
+- essentials.fly:value:false
 - multiverse.*
 - floodgate
 - geyser
