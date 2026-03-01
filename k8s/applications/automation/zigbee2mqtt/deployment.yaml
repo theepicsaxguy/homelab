@@ -7,6 +7,8 @@ metadata:
     app: zigbee2mqtt
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: zigbee2mqtt

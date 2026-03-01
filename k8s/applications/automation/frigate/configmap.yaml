@@ -25,17 +25,18 @@ data:
 
     record:
       enabled: true
-      retain:
+      motion:
         days: 15
-        mode: motion
       alerts:
         retain:
           days: 30
+          mode: all
         pre_capture: 30
         post_capture: 30
       detections:
         retain:
           days: 30
+          mode: all
         pre_capture: 30
         post_capture: 30
 
@@ -69,6 +70,11 @@ data:
           - person
 
     go2rtc:
+      # WebRTC fallback keeps high-quality stream when MSE times out (e.g. mobile/Safari). Port 8555 exposed via gateway TCPRoute (internal + external).
+      webrtc:
+        candidates:
+          - frigate.peekoff.com:8555
+          - stun:8555
       streams:
         vagga:
           - '{FRIGATE_RTSP_MAIN}'
@@ -80,6 +86,11 @@ data:
         enabled: true
         ui:
           order: 01
+        live:
+          # Default is Main (high quality). Sub optional for slow devices. Reliable main stream: camera H.264, AAC, I-frame interval = FPS.
+          streams:
+            Main Stream: vagga
+            Sub Stream: vagga_sub
         ffmpeg:
           output_args:
             record: preset-record-generic-audio-aac

@@ -1,0 +1,17 @@
+# Optional: routes TCP 8555 (go2rtc WebRTC) to Frigate on internal gateway only.
+# When MSE times out, WebRTC can provide high-quality fallback for clients on internal network.
+# Without this route, behavior is unchanged: MSE first, then jsmpeg (low-bandwidth) fallback.
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: frigate-webrtc
+  namespace: frigate
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+      port: 8555
+  rules:
+    - backendRefs:
+        - name: frigate
+          port: 8555

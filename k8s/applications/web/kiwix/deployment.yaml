@@ -42,7 +42,7 @@ spec:
             capabilities:
               drop:
                 - ALL
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
           env:
             # only allows 1 download at a time. uncomment download until downloaded. then comment it out again to avoid re-downloading on pod restarts.
             # https://download.kiwix.org/zim/wikipedia_en_all_maxi.zim
@@ -54,9 +54,10 @@ spec:
               value: '8080'
             - name: LANG
               value: swe
-          # rely on image's default entrypoint so it can expand globs
-          args:
-            - '*.zim'
+          command:
+            - /bin/sh
+            - -c
+            - exec kiwix-serve --port=8080 /data/*.zim
           ports:
             - containerPort: 8080
               name: http

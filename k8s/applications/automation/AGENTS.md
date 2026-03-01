@@ -120,6 +120,10 @@ The initContainer manages HA-managed configuration files via the `HA_SEED_ON_STA
 3. Apply via GitOps
 4. Verify camera ingestion in Frigate UI
 
+**Frigate Live View "Low quality mode"**:
+- Frigate tries MSE first; on timeout, buffering, or decode errors it falls back to jsmpeg (detect stream = "low bandwidth mode"). When MSE fails it may try WebRTC next (still high quality if WebRTC works).
+- To keep high-quality stream: (1) Camera: H.264, AAC, I-frame interval = frame rate so MSE starts quickly. (2) go2rtc `webrtc.candidates` set and port 8555 TCP+UDP exposed (e.g. at frigate hostname) so WebRTC fallback works externally. (3) In Frigate UI Settings, increase the live view timeout if streams often fall back. (4) Browser console: "Max error count exceeded", "Media playback has stalled", "Safari reported decoding errors" indicate the trigger.
+
 ## AUTOMATION-DOMAIN ANTI-PATTERNS
 
 ### Security & Access

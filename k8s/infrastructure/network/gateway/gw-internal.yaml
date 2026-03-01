@@ -56,3 +56,9 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - protocol: TCP
+      port: 8555
+      name: frigate-webrtc-tcp
+      allowedRoutes:
+        namespaces:
+          from: All
