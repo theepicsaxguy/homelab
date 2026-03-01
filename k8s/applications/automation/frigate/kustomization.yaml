@@ -7,7 +7,7 @@ resources:
 - http-route.yaml
 - configmap.yaml
 - service.yaml
-- deployment.yaml
+- statefulset.yaml
 - pvc-config.yaml
 - pvc-media.yaml
 

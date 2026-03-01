@@ -25,17 +25,18 @@ data:
 
     record:
       enabled: true
-      retain:
+      motion:
         days: 15
-        mode: motion
       alerts:
         retain:
           days: 30
+          mode: all
         pre_capture: 30
         post_capture: 30
       detections:
         retain:
           days: 30
+          mode: all
         pre_capture: 30
         post_capture: 30
 
