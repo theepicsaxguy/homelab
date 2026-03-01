@@ -10,3 +10,4 @@ https://github.com/Multiverse/Multiverse-SignPortals/releases/download/5.0.2/mul
 https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar
 https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/67/artifact/target/WildLoaders-2025.2-b67.jar
 https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar
+https://hangarcdn.papermc.io/plugins/Nolly/QuickSort/versions/1.0.0-release/PAPER/QuickSort-1.0.0-release.jar

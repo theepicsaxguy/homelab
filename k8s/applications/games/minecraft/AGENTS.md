@@ -196,6 +196,15 @@ configMapGenerator:
 - Clear separation between plugins
 - Scales to 20+ plugins
 
+### Chest and inventory sorting (QuickSort)
+
+QuickSort provides server-side chest and inventory sorting (reorder and stack only; no duplication). It is command-based so it works for Java and Bedrock (Geyser/Xbox) without shift-click.
+
+- **Sort player inventory**: `/qs` or `/quicksort`
+- **Sort currently open container** (chest, barrel, shulker): `/qs container` or `/quicksort container` (run while the container GUI is open)
+
+No ConfigMap or permissions; the plugin has no config file and allows all players by default. JAR is in `plugins.txt` via Hangar; Renovate tracks updates.
+
 ## Operational Considerations
 
 ### Cross-Platform Setup

@@ -97,6 +97,17 @@
     },
     {
       "customType": "regex",
+      "description": "Track QuickSort version via Hangar CDN",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://hangarcdn\\.papermc\\.io/plugins/Nolly/QuickSort/versions/(?<currentValue>[^/]+)/PAPER/QuickSort-[^/\\s]+\\.jar"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "TheNolle/quicksort-plugin",
+      "autoReplaceStringTemplate": "https://hangarcdn.papermc.io/plugins/Nolly/QuickSort/versions/{{{newVersion}}}/PAPER/QuickSort-{{{newVersion}}}.jar"
+    },
+    {
+      "customType": "regex",
       "description": "Track LuckPerms version and build number via metadata API",
       "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
       "matchStrings": [
