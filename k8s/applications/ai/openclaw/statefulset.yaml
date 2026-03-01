@@ -77,15 +77,6 @@ spec:
           type: RuntimeDefault
       
       volumes:
-        - name: openclaw-workspace
-          persistentVolumeClaim:
-            claimName: openclaw-workspace
-        - name: openclaw-config
-          persistentVolumeClaim:
-            claimName: openclaw-config
-        - name: openclaw-logs
-          persistentVolumeClaim:
-            claimName: openclaw-logs
         - name: tmp
           emptyDir:
             sizeLimit: 1Gi
@@ -149,6 +140,8 @@ spec:
               value: production
             - name: TERM
               value: xterm-256color
+            - name: OPENCLAW_GATEWAY_MODE
+              value: local
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
