@@ -29,6 +29,22 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: remove-old-quicksort
+          image: itzg/minecraft-server:java25-jdk
+          imagePullPolicy: Always
+          command: ["sh", "-c", "rm -f /data/plugins/*.jar"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - mountPath: /data
+              name: data
       containers:
         - name: main
           image: itzg/minecraft-server:java25-jdk
