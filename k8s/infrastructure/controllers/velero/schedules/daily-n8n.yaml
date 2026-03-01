@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-n8n
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: n8n
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - n8n
+    orLabelSelectors:
+      - matchLabels:
+          app.kubernetes.io/name: n8n
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

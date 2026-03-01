@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-frigate
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: frigate
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - frigate
+    orLabelSelectors:
+      - matchLabels:
+          app.kubernetes.io/name: frigate
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-zigbee2mqtt
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: zigbee2mqtt
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - zigbee2mqtt
+    orLabelSelectors:
+      - matchLabels:
+          app: zigbee2mqtt
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

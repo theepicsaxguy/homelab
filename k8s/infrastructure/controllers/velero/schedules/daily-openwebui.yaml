@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-openwebui
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: openwebui
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - open-webui
+    orLabelSelectors:
+      - matchLabels:
+          app: open-webui
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

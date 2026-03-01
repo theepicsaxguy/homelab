@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-sabnzbd
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: sabnzbd
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - media
+    orLabelSelectors:
+      - matchLabels:
+          app: sabnzbd
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h
