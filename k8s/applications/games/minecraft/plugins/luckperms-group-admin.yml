@@ -1,7 +1,7 @@
 name: admin
 prefixes:
 - "&c[&4⚡ &lAdmin&c ⚡] &r":
-    priority: 100
+    priority: 200
 permissions:
 - group.default
 - essentials.*

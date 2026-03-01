@@ -569,7 +569,8 @@ world-rewrite:
 # - Group weights can also be applied directly to group data, using the setweight command.
 # - This section allows weights to be set on a per-server basis.
 group-weight:
-#  admin: 10
+  default: 0
+  admin: 10
 
 # +----------------------------------------------------------------------------------------------+ #
 # |                                                                                              | #
