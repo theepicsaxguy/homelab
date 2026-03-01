@@ -1,0 +1,42 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: velero-backup-alerts
+  namespace: velero
+spec:
+  groups:
+    - name: velero.rules
+      rules:
+        - alert: VeleroBackupFailure
+          annotations:
+            description: >-
+              Velero backup {{ $labels.schedule }} has failed.
+              Check velero backup logs for details.
+            summary: Velero backup failure detected.
+          expr: |-
+            increase(velero_backup_failure_total{schedule!=""}[1h]) > 0
+          for: 0m
+          labels:
+            severity: warning
+        - alert: VeleroBackupPartialFailure
+          annotations:
+            description: >-
+              Velero backup {{ $labels.schedule }} completed with partial failures,
+              which often indicates storage issues.
+            summary: Velero backup partial failure detected.
+          expr: |-
+            increase(velero_backup_partial_failure_total{schedule!=""}[1h]) > 0
+          for: 0m
+          labels:
+            severity: warning
+        - alert: VeleroBackupNotRunRecently
+          annotations:
+            description: >-
+              No successful Velero backup has completed in the last 48 hours.
+              This may indicate storage full, scheduler issues, or broken repositories.
+            summary: No successful Velero backup in 48 hours.
+          expr: |-
+            time() - velero_backup_last_successful_timestamp{schedule!=""} > 48 * 60 * 60
+          for: 5m
+          labels:
+            severity: critical

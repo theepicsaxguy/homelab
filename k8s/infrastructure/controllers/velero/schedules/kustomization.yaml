@@ -2,7 +2,39 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - daily-schedule.yaml
-  - weekly-schedule.yaml
-  - weekly-offsite-schedule.yaml
-
+  # Daily local backups (14d TTL)
+  - daily-home-assistant.yaml
+  - daily-immich.yaml
+  - daily-n8n.yaml
+  - daily-unifi.yaml
+  - daily-babybuddy.yaml
+  - daily-minecraft.yaml
+  - daily-jellyfin.yaml
+  - daily-radarr.yaml
+  - daily-sonarr.yaml
+  - daily-prowlarr.yaml
+  - daily-sabnzbd.yaml
+  - daily-audiobookshelf.yaml
+  - daily-audiobookrequest.yaml
+  - daily-jellyseerr.yaml
+  - daily-openwebui.yaml
+  - daily-qdrant.yaml
+  - daily-karakeep.yaml
+  - daily-pinepods.yaml
+  - daily-frigate.yaml
+  - daily-mqtt.yaml
+  - daily-zigbee2mqtt.yaml
+  - daily-perplexica.yaml
+  - daily-openclaw.yaml
+  - daily-gpt-researcher.yaml
+  - daily-opencode.yaml
+  - daily-pocket-tts.yaml
+  # Weekly offsite backups (90d TTL, Backblaze B2)
+  - weekly-offsite-home-assistant.yaml
+  - weekly-offsite-immich.yaml
+  - weekly-offsite-babybuddy.yaml
+  - weekly-offsite-unifi.yaml
+  - weekly-offsite-minecraft.yaml
+  - weekly-offsite-n8n.yaml
+  - weekly-offsite-karakeep.yaml
+  - weekly-offsite-openwebui.yaml

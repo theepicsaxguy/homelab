@@ -10,7 +10,7 @@ data:
     {
       "cacheLimitMB": 8192,
       "compression": "lz4",
-      "fullMaintenanceInterval": "24h",
+      "fullMaintenanceInterval": "6h",
       "maintenanceMode": "periodic",
       "maintenanceInterval": "1h",
       "maxFileSizeBytes": 67108864,

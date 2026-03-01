@@ -1,0 +1,24 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-pocket-tts
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: pocket-tts
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - pocket-tts
+    orLabelSelectors:
+      - matchLabels:
+          app.kubernetes.io/name: pocket-tts
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

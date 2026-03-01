@@ -66,7 +66,7 @@ kubectl get pvc -n <namespace>
 - Bucket: `homelab-cnpg-b2/<namespace>/<cluster>`
 
 **Key Configuration**:
-- Retention Policy: Set `retentionPolicy: "30d"` in both ObjectStore specs
+- Retention Policy: Set `retentionPolicy: "14d"` on MinIO ObjectStores (local), `retentionPolicy: "30d"` on B2 ObjectStores (offsite DR)
 - ExternalSecrets: Create separate Bitwarden entries for access-key-id and secret-access-key
 - Backup Configuration: Use barmanObjectStore pointing to Backblaze B2 endpoint
 - Scheduled Backups: Create ScheduledBackup resource with cron schedule (e.g., Sundays at 02:00)
@@ -84,7 +84,7 @@ kubectl get pvc -n <namespace>
 ### Creating a New Cluster
 **Steps**:
 1. Create ExternalSecrets for backup credentials (2 separate Bitwarden entries)
-2. Create ObjectStore resources for MinIO and Backblaze B2 with `retentionPolicy: "30d"`
+2. Create ObjectStore resources for MinIO (`retentionPolicy: "14d"`) and Backblaze B2 (`retentionPolicy: "30d"`)
 3. Create Cluster manifest with backup configuration
 4. Create ScheduledBackup resource
 5. Apply via GitOps

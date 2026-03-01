@@ -1,0 +1,21 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-daily-minecraft
+  namespace: velero
+  labels:
+    backup-tier: daily
+    backup-app: minecraft
+spec:
+  schedule: "0 2 * * *"
+  template:
+    includedNamespaces:
+      - minecraft
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - storageclasses.storage.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: default
+    ttl: 336h

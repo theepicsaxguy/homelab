@@ -1,0 +1,33 @@
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: velero-weekly-offsite-immich
+  namespace: velero
+  labels:
+    backup-tier: weekly-offsite
+    backup-app: immich
+spec:
+  schedule: "0 3 * * 6"
+  template:
+    includedNamespaces:
+      - immich
+    orLabelSelectors:
+      - matchLabels:
+          app.kubernetes.io/instance: immich
+    includedResources:
+      - '*'
+    excludedResources:
+      - events
+      - events.events.k8s.io
+      - backups.velero.io
+      - restores.velero.io
+      - backuprepositories.velero.io
+      - podvolumebackups.velero.io
+      - podvolumerestores.velero.io
+      - endpoints
+      - endpointslices.discovery.k8s.io
+      - leases.coordination.k8s.io
+    defaultVolumesToFsBackup: true
+    storageLocation: backblaze-b2
+    ttl: 2160h
+    includeClusterResources: false
