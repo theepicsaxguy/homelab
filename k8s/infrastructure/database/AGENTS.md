@@ -161,6 +161,8 @@ kubectl describe backup <backup-name> -n <namespace>
 
 **Common Issues**: S3 credentials invalid, network issue, insufficient storage
 
+**After cluster rename**: Existing Backup CRs keep `spec.cluster.name` from when they were created. If the cluster was renamed (e.g. to `*-restored`), old Backup CRs reference the old name and report "Unknown cluster". ScheduledBackup in Git already points at the new cluster name. One-time cleanup: list and delete Backup CRs that reference the old cluster name (e.g. `kubectl get backup -n <namespace> -o json | jq -r '.items[] | select(.spec.cluster.name=="<old-cluster-name>") | .metadata.name' | xargs -r kubectl delete backup -n <namespace>`).
+
 ### Replication Issues
 **Check Replication Status**:
 ```bash

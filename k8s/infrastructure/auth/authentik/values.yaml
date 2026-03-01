@@ -218,6 +218,9 @@ worker:
   readinessProbe:
     timeoutSeconds: 5
   startupProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 30
     timeoutSeconds: 5
 postgresql:
   enabled: false

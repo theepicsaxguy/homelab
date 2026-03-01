@@ -57,7 +57,9 @@ spec:
           command:
             - /bin/sh
             - -c
-            - exec kiwix-serve --port=8080 /data/*.zim
+            - |
+              set -- /data/*.zim
+              [ -f "$1" ] && exec kiwix-serve --port=8080 --skipInvalid "$@" || exec kiwix-serve --port=8080 --skipInvalid
           ports:
             - containerPort: 8080
               name: http

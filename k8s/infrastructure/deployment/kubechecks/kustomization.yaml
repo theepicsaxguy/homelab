@@ -16,5 +16,3 @@ helmCharts:
     namespace: kubechecks
     valuesFile: values.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
