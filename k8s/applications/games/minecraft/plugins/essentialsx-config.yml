@@ -105,11 +105,12 @@ is-water-safe: false
 teleport-passenger-dismount: true
 
 # The delay, in seconds, required between /home, /tp, etc.
-teleport-cooldown: 0
+# Tuned for singleplayer balance.
+teleport-cooldown: 45
 
 # The delay, in seconds, before a player actually teleports.
 # If the player moves or gets attacked in this timeframe, the teleport is cancelled.
-teleport-delay: 0
+teleport-delay: 3
 
 # The delay, in seconds, during which a player can't be attacked by other players after being teleported by a command.
 # This also prevents the player from attacking others.
@@ -374,7 +375,7 @@ use-nbt-serialization-in-createkit: false
 # Essentials' colored sign support will be enabled when any sign type is enabled.
 # Note: 'color' is not an actual sign type; it enables using color codes on signs when the correct permissions are given.
 enabledSigns:
-  #- color
+  - color
   #- balance
   #- buy
   #- free
@@ -384,11 +385,11 @@ enabledSigns:
   #- repair
   #- gamemode
   #- heal
-  #- info
-  #- kit
-  #- mail
-  #- randomteleport
-  #- warp
+  - info
+  - kit
+  - mail
+  - randomteleport
+  - warp
   #- anvil
   #- cartography
   #- disposal
@@ -706,9 +707,11 @@ world-time-permissions: false
 # For example, to target commands starting with "ban" but not "banip", use:
 #  '^ban([^ip])( .*)?': 60 # 60-second /ban cooldown
 # Note: If you have a command that starts with ^, escape it using a backslash (\). E.g., \^command: 123
+# Cooldowns tuned for singleplayer (seconds). Per-kit delays can also be set in kits.yml.
 command-cooldowns:
-  #feed: 100 # 100-second cooldown on /feed command
-  #'*': 5 # 5-second cooldown on all commands
+  kit: 300
+  feed: 120
+  # warp/home/spawn/back use teleport-cooldown above
 
 # Whether command cooldowns should persist across server shutdowns.
 command-cooldown-persistence: true
