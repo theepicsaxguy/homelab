@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: installer
-          image: mcr.microsoft.com/playwright:v1.53.0-jammy
+          image: mcr.microsoft.com/playwright:v1.53.2-jammy
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
