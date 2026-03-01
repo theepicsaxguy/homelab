@@ -25,12 +25,12 @@ configMapGenerator:
     literals:
       - TYPE=PAPER
       - VERSION=1.21.11
-      - PAPER_BUILD=99
     files:
       - PLUGINS=plugins.txt
+  # Plugin configs: key = path under /data/plugins (__ = /)
   - name: geyser-config
     files:
-      - config.yml=geyser-config.yml
+      - Geyser-Spigot__config.yml=geyser-config.yml
 ```
 
 **Why this pattern:**
@@ -39,23 +39,16 @@ configMapGenerator:
 - Validates YAML during Kustomize build
 - Supports ConfigMap hashing for proper rollouts
 
-#### Mount Patterns
+#### Plugin configs: one mechanism for all plugins
 
-**Data Volume**: `/data` mount for:
-- World data (`/data/world`, `/data/world_nether`, `/data/world_the_end`)
-- Plugin installations (`/data/plugins`)
-- Server properties (`/data/server.properties`)
-- Logs (`/data/logs`)
+Every plugin’s config comes from ConfigMaps. No per-plugin mounts or init logic.
 
-**ConfigMap Mounts**: Individual files mounted from ConfigMaps:
-```yaml
-volumeMounts:
-  - mountPath: /data/config/geyser/config.yml
-    subPath: config.yml
-    readOnly: true
-```
+- **Path-style keys**: ConfigMap keys use double underscore as path separator. Example: `Essentials__config.yml` → `/data/plugins/Essentials/config.yml`; `LuckPerms__yaml-storage__groups__admin.yml` → `/data/plugins/LuckPerms/yaml-storage/groups/admin.yml`.
+- **Single projected volume**: All plugin ConfigMaps are combined in one `plugin-configs` projected volume.
+- **Generic init container** (`sync-plugin-configs`): On every pod start, copies each file from the projected volume into `/data/plugins/`, translating `__` to `/`. Plugins then read from `/data/plugins/<PluginFolder>/...` as usual. Git-backed config always wins after a sync/restart; works for 2 or 600 plugins without changing the StatefulSet’s volume or init logic.
+- **Adding a plugin**: (1) Add a configMapGenerator in `plugins/kustomization.yaml` with path-style keys (`PluginFolder__path__to__file`). (2) Add one entry to the `plugin-configs` projected volume `sources` in `base/statefulset.yaml`.
 
-**Never**: Mount entire ConfigMap as directory to `/data` - this conflicts with game server expectations.
+**Data volume**: `/data` holds world data, plugin JARs (downloaded by the server), and the config files written by the init container. Never mount a ConfigMap directly over `/data`.
 
 #### Secret Management
 
@@ -121,13 +114,13 @@ k8s/applications/games/minecraft/
 - Complex configs as files
 - Plugin list in `plugins.txt` for automated downloads
 
-**Adding New Plugins**:
-1. Add plugin to `plugins.txt`
-2. Create ConfigMap generator if plugin needs custom config
-3. Update `kustomization.yaml` to include new ConfigMap
-4. Test with `kustomize build .`
+**Adding a plugin (with config)**:
+1. Add plugin to `plugins.txt`.
+2. In `plugins/kustomization.yaml`, add a configMapGenerator with path-style keys: key = `PluginFolder__path__to__file` (double underscore = `/` under `/data/plugins`), value = your config file.
+3. In `base/statefulset.yaml`, add one entry under `volumes[plugin-configs].projected.sources` referencing the new ConfigMap name.
+4. Run `kustomize build k8s/applications/games/minecraft` to verify.
 
-**Scaling**: This structure supports 20+ plugins without conflicts.
+**Scaling**: Same pattern for any number of plugins; no changes to init container or main container mounts.
 
 ### Supporting Services (`bedrockconnect/`)
 
@@ -180,30 +173,34 @@ https://ci.ender.zone/job/EssentialsX/lastSuccessfulBuild/artifact/target/Essent
 - Direct download URLs
 - Game server downloads automatically on startup
 
-### Plugin Configuration
+### Plugin configuration (ConfigMaps for all)
 
-**Individual Configs**: Each plugin gets dedicated ConfigMap:
+Each plugin with config gets a ConfigMap whose keys use the path convention (`__` → `/` under `/data/plugins`). Example for one file per plugin, and for multiple files (e.g. LuckPerms groups):
+
 ```yaml
-configMapGenerator:
-  - name: essentialsx-config
-    files:
-      - config.yml=essentialsx-config.yml
+# One file: PluginFolder__config.yml = path Essentials/config.yml under /data/plugins
+- name: essentialsx-config
+  files:
+    - Essentials__config.yml=essentialsx-config.yml
+
+# Multiple files: nested paths
+- name: luckperms-groups
+  files:
+    - LuckPerms__yaml-storage__groups__default.yml=luckperms-group-default.yml
+    - LuckPerms__yaml-storage__groups__admin.yml=luckperms-group-admin.yml
 ```
 
-**Benefits**:
-- Easy to update individual plugin configs
-- ConfigMap changes trigger automatic pod restarts
-- Clear separation between plugins
-- Scales to 20+ plugins
+All such ConfigMaps are projected into one volume and synced by the generic init container. No plugin-specific mounts or init logic.
 
-### Chest and inventory sorting (QuickSort)
+### Chest and inventory sorting (CoreChestSort)
 
-QuickSort provides server-side chest and inventory sorting (reorder and stack only; no duplication). It is command-based so it works for Java and Bedrock (Geyser/Xbox) without shift-click.
+CoreChestSort provides lightweight chest and inventory sorting with a category-based system, GUI controls and configurable hotkeys. It respects protection plugins (Lands, WorldGuard, etc.).
 
-- **Sort player inventory**: `/qs` or `/quicksort`
-- **Sort currently open container** (chest, barrel, shulker): `/qs container` or `/quicksort container` (run while the container GUI is open)
+- **Chest/container sorting**: `/sort` or `/chestsort` (settings GUI), `/sort on|off|toggle` for auto chest sorting, `/sort hotkeys` for hotkey GUI.
+- **Inventory sorting**: `/invsort` or `/isort` (inventory only; hotbar untouched), `/invsort hotbar` (hotbar only), `/invsort on|off|toggle` for auto inventory sorting.
+- **Reload**: `/sort reload` (admin).
 
-No ConfigMap or permissions; the plugin has no config file and allows all players by default. JAR is in `plugins.txt` via [GitHub releases](https://github.com/TheNolle/quicksort-plugin/releases); Renovate tracks updates. An init container removes any existing `QuickSort*.jar` from `/data/plugins` before startup so the itzg image re-downloads from `plugins.txt` (the image skips download when the file already exists).
+Permissions are wired in LuckPerms: `chestsort.use` and `chestsort.use.inventory` for default group; `chestsort.reload` for admin. JAR is in `plugins.txt` via [Spigot](https://www.spigotmc.org/resources/corechestsort.132579/). An init container removes any existing `QuickSort*.jar` from `/data/plugins` before startup when migrating from QuickSort.
 
 ## Operational Considerations
 
