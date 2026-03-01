@@ -1,5 +1,109 @@
 # Changelog
 
+## 7.1.0 (2026-03-01)
+
+## What's Changed
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2237
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2240
+* chore(deps): update helm release kube-prometheus-stack to v82.0.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2239
+* chore(deps): update helm release kube-prometheus-stack to v82.0.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2241
+* chore(deps): update dependency posthog to >=7.9.0,<7.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2243
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.8.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2242
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2244
+* chore(deps): update helm release kube-prometheus-stack to v82.1.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2245
+* Fix/kyverno kubearmor exclude by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2246
+* chore(deps): update all dependencies to v1.19.1 (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2247
+* feat(k8s): update pocket-tts image and add PVCs for voices/data by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2249
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2250
+* fix(k8s): remove kubearmor and reduce IO storm sources by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2248
+* fix(k8s): run pocket-tts as non-root user by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2251
+* chore(deps): update linuxserver/unrar docker tag to v7.2.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2252
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.17 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2253
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2254
+* fix(k8s): update container images and enhance workload security guidelines by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2255
+* fix(k8s): add deployment strategy for pocket-tts by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2256
+* chore(deps): update dependency opik to v1.10.15 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2257
+* fix(deployment): update pocket-tts container image to use openvox version by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2258
+* Feat(secrets)--add-VAPID-keys-to-opencode-deployment-and-external-secret by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2259
+* fix(deployment): update pocket-tts image and enhance resource limits by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2260
+* chore(deps): update n8nio/n8n docker tag to v2.9.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2261
+* Update deployment.yaml by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2262
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2263
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2264
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2265
+* chore(deps): update ghcr.io/theepicsaxguy/openvox docker tag to v0.0.7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2266
+* chore(deps): update qdrant/qdrant docker tag to v1.17.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2267
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2268
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2269
+* chore(deps): update helm release descheduler to v0.35.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2270
+* chore(deps): update dependency llama-index-llms-openai to v0.6.19 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2271
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2273
+* Chore(settings)--update-terminal-and-chat-configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2272
+* chore(deps): update helm release kube-prometheus-stack to v82.2.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2274
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.2.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2275
+* fix(k8s): update security context for kiwix deployment by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2276
+* Fix/argocd groups mapping by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2277
+* Update pocket-tts image version to v0.0.10 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2278
+* chore(deps): update ghcr.io/theepicsaxguy/openvox docker tag to v0.0.11 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2279
+* chore(deps): update ghcr.io/theepicsaxguy/openvox docker tag to v0.0.12 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2280
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.21 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2281
+* chore(deps): update ghcr.io/theepicsaxguy/openvox docker tag to v0.0.13 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2282
+* chore(deps): update ghcr.io/karakeep-app/karakeep docker tag to v0.31.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2283
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2284
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.22 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2285
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.8.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2286
+* chore(deps): update getmeili/meilisearch docker tag to v1.36.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2287
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2288
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2289
+* chore(deps): update n8nio/n8n docker tag to v2.10.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2290
+* chore(deps): update dependency openai to v2.22.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2291
+* chore(deps): update terraform proxmox to v0.97.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2292
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.23 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2293
+* chore(deps): update dependency openai to v2.23.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2294
+* chore(deps): update dependency opik to v1.10.20 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2295
+* chore(deps): update helm release velero to v11.4.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2296
+* chore(deps): update helm release cert-manager to v1.19.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2297
+* chore(deps): update node.js to v24.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2298
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2299
+* chore(deps): update helm release redis to v25.3.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2301
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.2.24 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2302
+* Chore(k8s)--update-velero-schedules-to-include-additional-namespacescl by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2303
+* chore(deps): update n8nio/n8n docker tag to v2.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2304
+* chore(deps): update helm release kube-prometheus-stack to v82.4.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2305
+* chore(config): add proxy_batch_write_at setting to general_settings by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2306
+* chore(deps): update helm release authentik to v2026 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2300
+* chore(deps): update litellm image and enable caching in proxy config by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2307
+* chore(deps): update dependency opik to v1.10.21 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2308
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2309
+* chore(deps): update dependency vllm-project/vllm to v0.16.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2310
+* chore(deps): update helm release argo-cd to v9.4.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2311
+* chore(deps): update dependency opik to v1.10.22 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2312
+* chore(deps): update dependency opik to v1.10.23 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2313
+* chore(deps): update dependency huggingface-hub to v1.5.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2314
+* chore(deps): update helm release kube-prometheus-stack to v82.4.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2315
+* chore(deps): update ghcr.io/blakeblackshear/frigate docker tag to v0.17.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2318
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2317
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2319
+* Feat(litellm)--add-LITELLM_LOG-environment-variable-for-logging-level by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2320
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2321
+* chore(deps): update helm release kube-prometheus-stack to v82.4.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2323
+* chore(k8s): remove unrar application resources and configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2324
+* chore(deps): update mcr.microsoft.com/playwright docker tag to v1.53.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2325
+* chore(deps): update mcr.microsoft.com/playwright docker tag to v1.58.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2326
+* Feat/velero-per-app-schedules by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2327
+* chore(k8s): update deployment and policy exception configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2328
+* chore(deps): bump actions/upload-artifact from 6 to 7 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/2322
+* chore(deps): update dependency protobuf to v7 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2316
+* chore(deps): update koenkk/zigbee2mqtt docker tag to v2.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2329
+* Chore(minecraft)--adjust-teleport-and-command-cooldown-settings-for-balance by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2330
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2333
+* Fix(k8s)--update-OpenClaw-statefulset-and-deployment-configurations by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2332
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.8.6 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2334
+* fix(k8s): update OpenClaw command and Kiwix deployment script by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2335
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v7.0.0...v7.1.0
+
 ## 7.0.0 (2026-02-16)
 
 ## What's Changed
