@@ -114,7 +114,7 @@ spec:
       containers:
         - name: openclaw
           image: ghcr.io/openclaw/openclaw:2026.2.26
-          command: ["node", "dist/index.js", "gateway", "--port", "18789", "--bind", "lan"]
+          command: ["node", "dist/index.js", "gateway", "--port", "18789", "--bind", "lan", "--allow-unconfigured"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
