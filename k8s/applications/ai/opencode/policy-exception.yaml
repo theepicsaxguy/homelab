@@ -20,5 +20,6 @@ spec:
     - policyName: nsa-hardening-all-namespaces
       ruleNames:
         - require-non-root-containers
+        - require-read-only-root-filesystem
   podSecurity:
     - controlName: Running as Non-root
