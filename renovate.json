@@ -97,14 +97,14 @@
     },
     {
       "customType": "regex",
-      "description": "Track QuickSort version via Hangar CDN",
+      "description": "Track QuickSort version via GitHub releases",
       "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
       "matchStrings": [
-        "https://hangarcdn\\.papermc\\.io/plugins/Nolly/QuickSort/versions/(?<currentValue>[^/]+)/PAPER/QuickSort-[^/\\s]+\\.jar"
+        "https://github\\.com/TheNolle/quicksort-plugin/releases/download/(?<currentValue>[^/]+)/QuickSort-[^/\\s]+\\.jar"
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "TheNolle/quicksort-plugin",
-      "autoReplaceStringTemplate": "https://hangarcdn.papermc.io/plugins/Nolly/QuickSort/versions/{{{newVersion}}}/PAPER/QuickSort-{{{newVersion}}}.jar"
+      "autoReplaceStringTemplate": "https://github.com/TheNolle/quicksort-plugin/releases/download/{{{newVersion}}}/QuickSort-{{{newVersion}}}.jar"
     },
     {
       "customType": "regex",

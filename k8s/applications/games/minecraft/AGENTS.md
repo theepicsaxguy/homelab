@@ -203,7 +203,7 @@ QuickSort provides server-side chest and inventory sorting (reorder and stack on
 - **Sort player inventory**: `/qs` or `/quicksort`
 - **Sort currently open container** (chest, barrel, shulker): `/qs container` or `/quicksort container` (run while the container GUI is open)
 
-No ConfigMap or permissions; the plugin has no config file and allows all players by default. JAR is in `plugins.txt` via Hangar; Renovate tracks updates.
+No ConfigMap or permissions; the plugin has no config file and allows all players by default. JAR is in `plugins.txt` via [GitHub releases](https://github.com/TheNolle/quicksort-plugin/releases); Renovate tracks updates.
 
 ## Operational Considerations
 
