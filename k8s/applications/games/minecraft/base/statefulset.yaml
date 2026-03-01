@@ -29,6 +29,49 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+
+      initContainers:
+        - name: sync-plugin-configs
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              echo "=== sync-plugin-configs: starting ==="
+              rm -f /data/plugins/QuickSort*.jar 2>/dev/null || true
+              count=0
+              for f in /plugin-configs/*; do
+                [ -f "$f" ] || continue
+                key=$(basename "$f")
+                path=$(echo "$key" | sed 's/__/\//g')
+                dest="/data/plugins/$path"
+                echo "  $key -> $dest"
+                mkdir -p "$(dirname "$dest")"
+                cp "$f" "$dest"
+                count=$((count + 1))
+              done
+              if [ "$count" -eq 0 ]; then
+                echo "=== sync-plugin-configs: no files found in /plugin-configs ==="
+              else
+                echo "=== sync-plugin-configs: synced $count file(s) ==="
+              fi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /plugin-configs
+              name: plugin-configs
+              readOnly: true
+
       containers:
         - name: main
           image: itzg/minecraft-server:java25-jdk
@@ -47,25 +90,6 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
-            - mountPath: /plugins/LuckPerms/config.yml
-              name: luckperms-config
-              subPath: config.yml
-              readOnly: true
-            - mountPath: /plugins/WildLoaders/config.yml
-              name: wildloaders-config
-              subPath: config.yml
-              readOnly: true
-            - mountPath: /plugins/BedrockGUI/config.yml
-              name: bedrockgui-config
-              subPath: config.yml
-              readOnly: true
-            - mountPath: /plugins/Geyser-Spigot/config.yml
-              name: geyser-config
-              subPath: config.yml
-              readOnly: true
-            - mountPath: /plugins/LuckPerms/yaml-storage/groups
-              name: luckperms-groups
-              readOnly: true
           ports:
             - containerPort: 25565
               protocol: TCP
@@ -94,21 +118,21 @@ spec:
               memory: '6Gi'
               cpu: '6000m'
       volumes:
-        - name: luckperms-config
-          configMap:
-            name: luckperms-config
-        - name: wildloaders-config
-          configMap:
-            name: wildloaders-config
-        - name: bedrockgui-config
-          configMap:
-            name: bedrockgui-config
-        - name: geyser-config
-          configMap:
-            name: geyser-config
-        - name: luckperms-groups
-          configMap:
-            name: luckperms-groups
+        - name: plugin-configs
+          projected:
+            sources:
+              - configMap:
+                  name: geyser-config
+              - configMap:
+                  name: luckperms-config
+              - configMap:
+                  name: luckperms-groups
+              - configMap:
+                  name: essentialsx-config
+              - configMap:
+                  name: wildloaders-config
+              - configMap:
+                  name: bedrockgui-config
   volumeClaimTemplates:
     - metadata:
         name: data

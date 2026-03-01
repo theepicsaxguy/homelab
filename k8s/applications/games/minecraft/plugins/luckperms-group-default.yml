@@ -1,5 +1,9 @@
 name: default
-permissions: []
 prefixes:
 - "&2[&aPlayer&2] &r":
     priority: 100
+permissions:
+- chestsort.use:
+    value: true
+- chestsort.use.inventory:
+    value: true

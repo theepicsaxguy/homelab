@@ -97,6 +97,17 @@
     },
     {
       "customType": "regex",
+      "description": "Track QuickSort version via GitHub releases",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://github\\.com/TheNolle/quicksort-plugin/releases/download/(?<currentValue>[^/]+)/QuickSort-[^/\\s]+\\.jar"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "TheNolle/quicksort-plugin",
+      "autoReplaceStringTemplate": "https://github.com/TheNolle/quicksort-plugin/releases/download/{{{newVersion}}}/QuickSort-{{{newVersion}}}.jar"
+    },
+    {
+      "customType": "regex",
       "description": "Track LuckPerms version and build number via metadata API",
       "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
       "matchStrings": [

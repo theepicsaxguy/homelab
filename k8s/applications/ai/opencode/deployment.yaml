@@ -20,6 +20,7 @@ spec:
       securityContext:
         runAsNonRoot: false
         fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
       initContainers:
@@ -29,10 +30,10 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p /shared/bin /shared/.cache/ms-playwright
+              mkdir -p /shared/bin /shared/.cache
               wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.1/kustomize_v5.4.1_linux_amd64
               chmod +x /shared/bin/kustomize
-              npx playwright install --with-deps
+              cp -a /ms-playwright/. /shared/.cache/ms-playwright/
           securityContext:
             runAsUser: 0
             runAsNonRoot: false

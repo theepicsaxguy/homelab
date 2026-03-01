@@ -39,22 +39,25 @@ configMapGenerator:
       - USE_AIKAR_FLAGS=true
     files:
       - PLUGINS=plugins.txt
+  # Plugin configs use path-style keys: PluginFolder__path__to__file (__ = / under /data/plugins).
+  # One generic init container copies these into /data/plugins so every plugin uses ConfigMap content.
+  # Add a new plugin: add a configMapGenerator entry here and add its name to the plugin-configs projected volume in base/statefulset.yaml.
   - name: geyser-config
     files:
-      - config.yml=geyser-config.yml
-  - name: luckperms-groups
-    files:
-      - default.yml=luckperms-group-default.yml
-      - admin.yml=luckperms-group-admin.yml
-  - name: essentialsx-config
-    files:
-      - config.yml=essentialsx-config.yml
+      - Geyser-Spigot__config.yml=geyser-config.yml
   - name: luckperms-config
     files:
-      - config.yml=luckperms-config.yml
+      - LuckPerms__config.yml=luckperms-config.yml
+  - name: luckperms-groups
+    files:
+      - LuckPerms__yaml-storage__groups__default.yml=luckperms-group-default.yml
+      - LuckPerms__yaml-storage__groups__admin.yml=luckperms-group-admin.yml
+  - name: essentialsx-config
+    files:
+      - Essentials__config.yml=essentialsx-config.yml
   - name: wildloaders-config
     files:
-      - config.yml=wildloaders-config.yml
+      - WildLoaders__config.yml=wildloaders-config.yml
   - name: bedrockgui-config
     files:
-      - config.yml=bedrockgui-config.yml
+      - BedrockGUI__config.yml=bedrockgui-config.yml

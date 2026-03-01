@@ -1,12 +1,59 @@
 name: admin
 prefixes:
-- "&c[&4⚡ &lAdmin&c ⚡] &r":
-    priority: 100
+  - "&c[&4Admin] &r":
+      priority: 200
 permissions:
-- group.default
-- essentials.*
-- multiverse.*
-- floodgate
-- geyser
-- luckperms.*
-- minecraft.command.seed
+  - essentials.*: true
+  - multiverse.*: true
+  - luckperms.*: true
+  
+  - floodgate: true
+  - geyser: true
+  - chestsort.reload: true
+  - chestsort.use: true
+  - chestsort.use.inventory: true
+
+  - essentials.fly:
+      value: false
+  - essentials.god:
+      value: false
+  - essentials.vanish:
+      value: false
+  - essentials.gamemode.creative:
+      value: false
+  - essentials.gamemode.spectator:
+      value: false
+  - essentials.give:
+      value: false
+  - essentials.item:
+      value: false
+  - essentials.enchant:
+      value: false 
+  - essentials.repair:
+      value: false
+  - essentials.time:
+      value: false
+  - essentials.weather:
+      value: false
+
+  - minecraft.command.gamemode:
+      value: false
+  - minecraft.command.give:
+      value: false
+  - minecraft.command.teleport:
+      value: false
+  - minecraft.command.tp:
+      value: false
+  - minecraft.command.time:
+      value: false
+  - minecraft.command.weather:
+      value: false
+  - minecraft.command.seed:
+      value: false
+  - minecraft.command.kill:
+      value: false
+  - minecraft.command.stop:
+      value: false
+
+parents:
+  - default
