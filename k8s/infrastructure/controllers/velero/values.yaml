@@ -39,9 +39,9 @@ configuration:
         keepLatestMaintenanceJobs: 3
         podResources:
           cpuRequest: "100m"
-          cpuLimit: "200m"
-          memoryRequest: "128Mi"
-          memoryLimit: "256Mi"
+          cpuLimit: "500m"
+          memoryRequest: "256Mi"
+          memoryLimit: "512Mi"
         podSecurityContext:
           runAsNonRoot: true
           runAsUser: 65534

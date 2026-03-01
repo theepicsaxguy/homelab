@@ -12,6 +12,7 @@ resources:
   - backuprepository-policy.yaml
   - auto-cleanup-jobs-policy.yaml
   - maintenance-job-config.yaml
+  - prometheusrule.yaml
 
 helmCharts:
   - name: velero

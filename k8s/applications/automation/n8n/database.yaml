@@ -28,7 +28,7 @@ metadata:
   name: n8n-minio-store
   namespace: n8n
 spec:
-  retentionPolicy: "30d"
+  retentionPolicy: "14d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/n8n/n8n-db
     endpointURL: https://truenas.peekoff.com:9000
