@@ -20,6 +20,7 @@ spec:
       securityContext:
         runAsNonRoot: false
         fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
       initContainers:
