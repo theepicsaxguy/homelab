@@ -200,7 +200,7 @@ CoreChestSort provides lightweight chest and inventory sorting with a category-b
 - **Inventory sorting**: `/invsort` or `/isort` (inventory only; hotbar untouched), `/invsort hotbar` (hotbar only), `/invsort on|off|toggle` for auto inventory sorting.
 - **Reload**: `/sort reload` (admin).
 
-Permissions are wired in LuckPerms: `chestsort.use` and `chestsort.use.inventory` for default group; `chestsort.reload` for admin. JAR is in `plugins.txt` via [Spigot](https://www.spigotmc.org/resources/corechestsort.132579/). An init container removes any existing `QuickSort*.jar` from `/data/plugins` before startup when migrating from QuickSort.
+Permissions are wired in LuckPerms: `chestsort.use` and `chestsort.use.inventory` for default group; `chestsort.reload` for admin. JAR is in `plugins.txt` via [SpiGet API](https://api.spiget.org/v2/resources/132579/download) (Spigot’s direct download URL returns 403 for non-browser requests). An init container removes any existing `QuickSort*.jar` from `/data/plugins` before startup when migrating from QuickSort.
 
 ## Operational Considerations
 
