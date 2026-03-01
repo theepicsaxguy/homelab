@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
-  - gwclass-cilium.yaml
   - cert-peekoff.yaml
   - gw-external.yaml
   - gw-internal.yaml
