@@ -1,0 +1,12 @@
+name: admin
+prefixes:
+- "&c[&4⚡ &lAdmin&c ⚡] &r":
+    priority: 100
+permissions:
+- group.default
+- essentials.*
+- multiverse.*
+- floodgate
+- geyser
+- luckperms.*
+- minecraft.command.seed

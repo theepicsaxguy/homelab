@@ -13,63 +13,63 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: database
+        k8s:io.kubernetes.pod.namespace: database
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: gateway
+        k8s:io.kubernetes.pod.namespace: gateway
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: litellm
+        k8s:io.kubernetes.pod.namespace: litellm
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: n8n
+        k8s:io.kubernetes.pod.namespace: n8n
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: pinepods
+        k8s:io.kubernetes.pod.namespace: pinepods
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: immich
+        k8s:io.kubernetes.pod.namespace: immich
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: auth
+        k8s:io.kubernetes.pod.namespace: auth
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: babybuddy
+        k8s:io.kubernetes.pod.namespace: babybuddy
     toPorts:
     - ports:
       - port: "5432"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: kiwix
+        k8s:io.kubernetes.pod.namespace: kiwix
     toPorts:
     - ports:
       - port: "5432"

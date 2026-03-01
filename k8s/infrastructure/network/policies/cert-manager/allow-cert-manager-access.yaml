@@ -10,7 +10,7 @@ spec:
       app.kubernetes.io/name: cert-manager
   description: "Allow cert-manager webhook access"
   ingress:
-  - fromEndpoints: {}  # Allow webhook from any namespace
+  - fromEntities: ["cluster"]  # Allow webhook from any in-cluster namespace
     toPorts:
     - ports:
       - port: "9402"
@@ -18,7 +18,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:io.kubernetes.pod.namespace: kube-system
         k8s:k8s-app: kube-dns
     toPorts:
     - ports:

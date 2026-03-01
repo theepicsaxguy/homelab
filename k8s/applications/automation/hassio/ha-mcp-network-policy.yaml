@@ -13,7 +13,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.podNamespace: gateway
+            k8s:io.kubernetes.pod.namespace: gateway
       toPorts:
         - ports:
             - port: "8086"
@@ -21,14 +21,14 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.podNamespace: gateway
+            k8s:io.kubernetes.pod.namespace: gateway
       toPorts:
         - ports:
             - port: "443"
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.podNamespace: kube-system
+            k8s:io.kubernetes.pod.namespace: kube-system
             k8s:k8s-app: kube-dns
       toPorts:
         - ports:

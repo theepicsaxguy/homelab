@@ -1,0 +1,5 @@
+name: default
+permissions: []
+prefixes:
+- "&2[&aPlayer&2] &r":
+    priority: 100

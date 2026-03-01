@@ -7,15 +7,15 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: mosquitto
+      app: mosquitto
   description: "Allow MQTT broker access"
   ingress:
-  - fromEndpoints: {}  # Allow from any namespace for IoT devices
+  - fromEntities: ["cluster"]  # Allow from any in-cluster namespace for IoT integrations
     toPorts:
     - ports:
       - port: "1883"
         protocol: TCP
-  - fromEntities: ["world"]  # External MQTT clients
+  - fromEntities: ["world"]  # External MQTT clients (IoT devices on LAN/internet)
     toPorts:
     - ports:
       - port: "1883"

@@ -23,6 +23,22 @@
       "k8s/**/values.yaml"
     ]
   },
+  "customDatasources": {
+    "luckperms-bukkit": {
+      "defaultRegistryUrlTemplate": "https://metadata.luckperms.net/data/all",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": $substringAfter($substringBefore(downloads.bukkit, \".jar\"), \"LuckPerms-Bukkit-\"), \"digest\": $substringAfter($substringBefore(downloads.bukkit, \"/bukkit\"), \"luckperms.net/\")}]}"
+      ]
+    },
+    "wildloaders": {
+      "defaultRegistryUrlTemplate": "https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/lastSuccessfulBuild/api/json?tree=number,artifacts[fileName]",
+      "format": "json",
+      "transformTemplates": [
+        "{\"releases\": [{\"version\": $string(number), \"digest\": artifacts[fileName != \"WildLoadersAPI.jar\"][0].fileName}]}"
+      ]
+    }
+  },
   "customManagers": [
     {
       "customType": "regex",
@@ -46,8 +62,61 @@
         "https://github\\.com/(?<depName>EssentialsX/Essentials|EssentialsX/EssentialsX-GUI|Multiverse/Multiverse-Core|Multiverse/Multiverse-SignPortals|MilkBowl/Vault|SniperTVmc/EssentialsX-GUI|EssentialsX)/releases/download/(?<currentValue>[^/]+)/"
       ],
       "datasourceTemplate": "github-releases"
+    },    {
+      "customType": "regex",
+      "description": "Track GeyserMC Geyser version in download URL",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://download\\.geysermc\\.org/v2/projects/geyser/versions/(?<currentValue>[^/]+)/builds/latest/downloads/spigot"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "GeyserMC/Geyser",
+      "autoReplaceStringTemplate": "https://download.geysermc.org/v2/projects/geyser/versions/{{{newVersion}}}/builds/latest/downloads/spigot"
     },
     {
+      "customType": "regex",
+      "description": "Track GeyserMC Floodgate version in download URL",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://download\\.geysermc\\.org/v2/projects/floodgate/versions/(?<currentValue>[^/]+)/builds/latest/downloads/spigot"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "GeyserMC/Floodgate",
+      "autoReplaceStringTemplate": "https://download.geysermc.org/v2/projects/floodgate/versions/{{{newVersion}}}/builds/latest/downloads/spigot"
+    },
+    {
+      "customType": "regex",
+      "description": "Track WorldEdit version via Hangar CDN",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://hangarcdn\\.papermc\\.io/plugins/EngineHub/WorldEdit/versions/(?<currentValue>[^/]+)/PAPER/worldedit-bukkit-[^/\\s]+\\.jar"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "EngineHub/WorldEdit",
+      "autoReplaceStringTemplate": "https://hangarcdn.papermc.io/plugins/EngineHub/WorldEdit/versions/{{{newVersion}}}/PAPER/worldedit-bukkit-{{{newVersion}}}.jar"
+    },
+    {
+      "customType": "regex",
+      "description": "Track LuckPerms version and build number via metadata API",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://download\\.luckperms\\.net/(?<currentDigest>\\d+)/bukkit/loader/LuckPerms-Bukkit-(?<currentValue>[^/\\s]+)\\.jar"
+      ],
+      "datasourceTemplate": "custom.luckperms-bukkit",
+      "depNameTemplate": "LuckPerms",
+      "autoReplaceStringTemplate": "https://download.luckperms.net/{{{newDigest}}}/bukkit/loader/LuckPerms-Bukkit-{{{newVersion}}}.jar"
+    },
+    {
+      "customType": "regex",
+      "description": "Track WildLoaders build number via Jenkins API",
+      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
+      "matchStrings": [
+        "https://hub\\.bg-software\\.com/job/WildLoaders%20-%20Dev%20Builds/(?<currentValue>\\d+)/artifact/target/(?<currentDigest>WildLoaders-[^/\\s]+\\.jar)"
+      ],
+      "datasourceTemplate": "custom.wildloaders",
+      "depNameTemplate": "WildLoaders",
+      "autoReplaceStringTemplate": "https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/{{{newVersion}}}/artifact/target/{{{newDigest}}}"
+    },    {
       "customType": "regex",
       "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/kustomization\\.yaml$"],
       "matchStrings": [
@@ -124,15 +193,20 @@
     },
     {
       "groupName": "Minecraft Plugins",
-      "description": "Track GitHub-based Minecraft plugin updates",
+      "description": "Track all Minecraft plugin updates",
       "matchFileNames": ["k8s/applications/games/minecraft/plugins/plugins.txt"],
       "matchPackageNames": [
         "EssentialsX/Essentials",
-        "EssentialsX/EssentialsX-GUI", 
+        "SniperTVmc/EssentialsX-GUI",
         "Multiverse/Multiverse-Core",
         "Multiverse/Multiverse-SignPortals",
         "MilkBowl/Vault",
-        "PaperMC/paper"
+        "PaperMC/paper",
+        "GeyserMC/Geyser",
+        "GeyserMC/Floodgate",
+        "EngineHub/WorldEdit",
+        "LuckPerms",
+        "WildLoaders"
       ]
     },
     {

@@ -80,7 +80,7 @@ use-server-uuid-cache: false
 #
 # - A H2 database is the default option.
 # - If you want to edit data manually in "traditional" storage files, we suggest using YAML.
-storage-method: h2
+storage-method: yaml
 
 # The following block defines the settings for remote database storage methods.
 #

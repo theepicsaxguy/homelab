@@ -7,16 +7,20 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: qdrant
+      app: qdrant
   description: "Allow Qdrant vector database access"
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: opencode
+        k8s:io.kubernetes.pod.namespace: opencode
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: open-webui
+        k8s:io.kubernetes.pod.namespace: open-webui
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: perplexica
+        k8s:io.kubernetes.pod.namespace: perplexica
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: openclaw
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: karakeep
     toPorts:
     - ports:
       - port: "6333"

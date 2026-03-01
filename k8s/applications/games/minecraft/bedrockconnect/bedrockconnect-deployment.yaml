@@ -7,6 +7,8 @@ metadata:
     app.kubernetes.io/part-of: games
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: bedrockconnect
@@ -32,7 +34,6 @@ spec:
       containers:
         - name: bedrockconnect
           image: pugmatt/bedrock-connect:1.65
-
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -45,6 +46,12 @@ spec:
               containerPort: 19132
               protocol: UDP
           env:
+            # Skip Xbox Live token verification in BedrockConnect. Players are fully
+            # authenticated by Geyser+Floodgate (auth-type: floodgate) on the game server.
+            # Without this, BedrockConnect calls EncryptionUtils.getDiscoveryData() which
+            # fails with a TLS broken-pipe in Kubernetes/Cilium environments.
+            - name: BC_NOVERIFYUSERS
+              value: 'true'
             - name: BC_FEATURED_SERVERS
               value: 'false'
             - name: BC_DB_TYPE

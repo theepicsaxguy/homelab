@@ -13,14 +13,14 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: litellm
+        k8s:io.kubernetes.pod.namespace: litellm
     toPorts:
     - ports:
       - port: "8000"
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: open-webui
+        k8s:io.kubernetes.pod.namespace: open-webui
     toPorts:
     - ports:
       - port: "8000"
@@ -28,7 +28,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.podNamespace: kube-system
+        k8s:io.kubernetes.pod.namespace: kube-system
         k8s:k8s-app: kube-dns
     toPorts:
     - ports:

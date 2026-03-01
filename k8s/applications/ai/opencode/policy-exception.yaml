@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v2beta1
+kind: PolicyException
+metadata:
+  name: opencode-initcontainer-root
+  namespace: opencode
+  annotations:
+    description: "Exception for OpenCode initContainer that requires root to install Playwright browsers and Kustomize"
+spec:
+  exceptions:
+    - policyName: nsa-hardening-all-namespaces
+      ruleNames:
+        - require-non-root-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+                - Deployment
+              namespaces:
+                - opencode
+              names:
+                - opencode-web-*
+  podSecurity:
+    - controlName: Running as Non-root

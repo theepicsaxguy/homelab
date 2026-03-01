@@ -1,12 +1,12 @@
-https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
-https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+https://download.geysermc.org/v2/projects/geyser/versions/2.9.4/builds/latest/downloads/spigot
+https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/latest/downloads/spigot
 https://github.com/SniperTVmc/EssentialsX-GUI/releases/download/1.3.0/EssentialsX-GUI-1.3.0.jar
-https://mediafilez.forgecdn.net/files/7479/274/worldedit-bukkit-7.4.0.jar
+https://hangarcdn.papermc.io/plugins/EngineHub/WorldEdit/versions/7.4.0/PAPER/worldedit-bukkit-7.4.0.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsX-2.21.2.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXChat-2.21.2.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.21.2/EssentialsXSpawn-2.21.2.jar
 https://github.com/Multiverse/Multiverse-Core/releases/download/5.5.2/multiverse-core-5.5.2.jar
 https://github.com/Multiverse/Multiverse-SignPortals/releases/download/5.0.2/multiverse-signportals-5.0.2.jar
-https://download.luckperms.net/1614/bukkit/loader/LuckPerms-Bukkit-5.5.26.jar
-https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/66/artifact/target/WildLoaders-2025.2-b66.jar
+https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar
+https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/67/artifact/target/WildLoaders-2025.2-b67.jar
 https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar
