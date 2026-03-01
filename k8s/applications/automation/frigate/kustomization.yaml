@@ -5,6 +5,7 @@ resources:
 - namespace.yaml
 - externalsecret.yaml
 - http-route.yaml
+- tcp-route.yaml
 - configmap.yaml
 - service.yaml
 - statefulset.yaml
