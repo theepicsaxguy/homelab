@@ -54,15 +54,12 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - Request nvidia.com/gpu resources and schedule GPU workloads on gpu-node labeled nodes.
 - Use qdrant.ai.svc.cluster.local:6333 for vector storage and litellm.ai.svc.cluster.local:4000 for provider access.
 - Store AI models on PVCs labeled backup.velero.io/backup-tier=GFS; avoid emptyDir for model storage.
-- Treat OpenWebUI SQLite at /app/backend/data/webui.db as critical data; preserve UID/GID 1000 during recovery.
-- Keep OpenWebUI readiness and startup probes aligned with migration duration.
 </k8s_ai>
 
 <k8s_litellm>
 - Enable JWT auth with roles_jwt_field and jwt_litellm_role_map; avoid user_roles_jwt_field with jwt_litellm_role_map.
 - Set JWT_PUBLIC_KEY_URL to the Authentik JWKS endpoint and GENERIC_SCOPE to include roles.
 - Include proxy_admin in user_allowed_roles for admin UI access.
-- Test JWT token roles and proxy_admin assignment before closing SSO changes.
 </k8s_litellm>
 
 <k8s_automation>
@@ -76,10 +73,6 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - Avoid Longhorn for new media workloads.
 - Avoid Kubernetes backups for large NFS media libraries.
 </k8s_media>
-
-<k8s_web>
-- Exclude Kiwix content from Velero backups.
-</k8s_web>
 
 <k8s_games>
 - Use configMapGenerator with double underscore path keys to map into /data/plugins.
