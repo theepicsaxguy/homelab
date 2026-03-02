@@ -1,24 +1,25 @@
-apiVersion: apps/v1  
-kind: Deployment  
-metadata:  
-  name: opencode-web  
-  namespace: opencode  
-  labels:  
-    app: opencode-web  
-spec:  
-  replicas: 1  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencode-web
+  namespace: opencode
+  labels:
+    app: opencode-web
+spec:
+  replicas: 1
   strategy:
     type: Recreate
-  selector:  
-    matchLabels:  
-      app: opencode-web  
-  template:  
-    metadata:  
-      labels:  
-        app: opencode-web  
+  selector:
+    matchLabels:
+      app: opencode-web
+  template:
+    metadata:
+      labels:
+        app: opencode-web
     spec:
       securityContext:
-        runAsNonRoot: false
+        runAsNonRoot: true
+        runAsUser: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
@@ -31,12 +32,16 @@ spec:
           args:
             - |
               mkdir -p /shared/bin /shared/.cache
-              wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.1/kustomize_v5.4.1_linux_amd64
+              wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
               chmod +x /shared/bin/kustomize
               cp -a /ms-playwright/. /shared/.cache/ms-playwright/
+              export PLAYWRIGHT_BROWSERS_PATH=/shared/.cache/ms-playwright
+              npx playwright install chromium
+              chmod -R 755 /shared
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
+            allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
           volumeMounts:
@@ -45,13 +50,15 @@ spec:
       containers:
       - name: opencode-web
         image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
-        securityContext:  
-          runAsUser: 1000  
-          runAsGroup: 1000  
-          runAsNonRoot: true  
-          allowPrivilegeEscalation: false  
-          capabilities:  
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
             drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
         ports:
         - containerPort: 5003
         env:
@@ -80,19 +87,21 @@ spec:
           value: "/shared/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/local/bin"
         - name: PLAYWRIGHT_BROWSERS_PATH
           value: "/shared/.cache/ms-playwright"
-        volumeMounts:  
-        - name: workspace  
-          mountPath: /workspace  
-        - name: data  
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=512"
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+        - name: data
           mountPath: /app/data
         - name: shared-tools
           mountPath: /shared
-        livenessProbe:  
-          httpGet:  
-            path: /api/health  
-            port: 5003  
-          initialDelaySeconds: 40  
-          periodSeconds: 30  
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5003
+          initialDelaySeconds: 40
+          periodSeconds: 30
           timeoutSeconds: 30
           failureThreshold: 3
         readinessProbe:
@@ -101,8 +110,16 @@ spec:
             port: 5003
           initialDelaySeconds: 15
           periodSeconds: 30
-          timeoutSeconds: 30  
-          failureThreshold: 5  
+          timeoutSeconds: 30
+          failureThreshold: 5
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 5003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
       volumes:
       - name: workspace
         persistentVolumeClaim:
