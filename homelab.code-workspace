@@ -131,10 +131,11 @@
     },
     "chat.agent.enabled": true,
     "chat.customAgentInSubagent.enabled": true,
-    "chat.useNestedAgentsMdFiles": true,
+    "chat.useNestedAgentsMdFiles": false,
     "github.copilot.chat.agent.autoFix": true,
     "github.copilot.chat.customAgents.showOrganizationAndEnterpriseAgents": true,
     "chat.includeReferencedInstructions": true,
+    "chat.experimental.useSkillAdherencePrompt": true,
   },
   "extensions": {
     "recommendations": [

@@ -5,8 +5,8 @@ Homelab GitOps monorepo for enterprise-grade learning, built on Talos Kubernetes
 - prefer to use skills when relevant.
 - Apply all cluster changes through GitOps and Argo CD unless the user approves manual kustomzie and kubectl.
 - ensure to always aim for best practices.
-- workloads must specify limits for emptydir or resources.
-- always specify security even if false to be explicit, hostipc runasroot etc.
+- Always explicitly set pod spec hostNetwork false, hostPID false, hostIPC false; pod securityContext runAsNonRoot true, runAsUser, runAsGroup, fsGroup, fsGroupChangePolicy OnRootMismatch; container securityContext allowPrivilegeEscalation false, readOnlyRootFilesystem true, capabilities.drop ["ALL"]; and container resources cpu/memory requests and limits, even with custom values.
+- Workloads must specify limits for emptyDir and all resource volumes.
 - Run kustomize build --enable-helm on the changed path before commit.
 - Use Conventional Commits with type and scope.
 - Keep user-facing documentation in website/docs only.
@@ -39,10 +39,6 @@ Kubernetes manifests, operators, and GitOps workflows.
 - Use CNPG auto-generated <cluster-name>-app secrets for database credentials.
 - Use Kubernetes Secret created by kubectl for service-to-service credentials.
 - Pin container images to specific tags.
-- Set resource requests and limits on every workload.
-- Set pod and container securityContext on every workload.
-- Set hostNetwork false, hostPID false, and hostIPC false on every pod spec.
-- Set runAsNonRoot true, readOnlyRootFilesystem true, and capabilities.drop ["ALL"] on every container.
 - Use CiliumNetworkPolicy v2 for every application namespace.
 - Apply default-deny ingress and egress in each namespace.
 </k8s_rules>
