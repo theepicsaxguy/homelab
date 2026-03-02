@@ -28,7 +28,7 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - Use ExternalSecret with ClusterSecretStore bitwarden-backend; one Bitwarden item per secret value; refreshInterval 1h.
 - Avoid ExternalSecret for CNPG application credentials; use CNPG auto-generated <cluster-name>-app secrets instead.
 - Use Kubernetes Secret created by kubectl for service-to-service credentials.
-- Use CiliumNetworkPolicy v2 with default-deny ingress and egress in every application namespace.
+- Use CiliumNetworkPolicy v2 with default-deny ingress and egress in every application namespace; never use standard NetworkPolicy resources.
 </k8s_rules>
 <k8s_network>
 - Use Gateway API HTTPRoute for external access via external gateway 10.25.150.222.
