@@ -31,137 +31,56 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              set -euo pipefail
-              
-              # ============ PINNED VERSIONS ============
-              KUSTOMIZE_VERSION="v5.8.1"
-              HELM_VERSION="v4.1.1"
+              set -eu
+
               SHARED_BIN="/shared/bin"
               SHARED_CACHE="/shared/.cache"
-              
-              # Expected checksums from GitHub release pages
-              # Kustomize v5.8.1: https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.8.1
-              # Helm v4.1.1: https://github.com/helm/helm/releases/tag/v4.1.1
-              KUSTOMIZE_SHA256="029a7f0f4e1932c52a0476cf02a0fd855c0bb85694b82c338fc648dcb53a819d"
-              HELM_SHA256="e48b4f7de0cc75c8e96e1a122fb93556d48d468fd9f1892f1b3f989e4e0c1a23"
-              
-              # Cleanup temp on exit
-              cleanup() {
-                rm -f /tmp/kustomize.tar.gz /tmp/helm.tar.gz /tmp/checksums.txt
-              }
-              trap cleanup EXIT
-              
               export PATH="$SHARED_BIN:$PATH"
-              echo "[installer] Pinned versions: kustomize=$KUSTOMIZE_VERSION, helm=$HELM_VERSION"
+
               mkdir -p "$SHARED_BIN" "$SHARED_CACHE"
-              
-              # ============ DOWNLOAD WITH RETRY & BACKOFF ============
-              download_with_verify() {
-                local url="$1"
-                local output="$2"
-                local expected_sha256="$3"
-                local max_attempts=3
-                local attempt=1
-                
-                while [ $attempt -le $max_attempts ]; do
-                  echo "[installer] Downloading $(basename $output) (attempt $attempt/$max_attempts)..."
-                  if wget -q -O "$output" "$url" 2>/dev/null; then
-                    # Verify checksum
-                    actual_sha256=$(sha256sum "$output" | awk '{print $1}')
-                    if [ "$actual_sha256" = "$expected_sha256" ]; then
-                      echo "[installer] ✓ Checksum verified"
-                      return 0
-                    else
-                      echo "[ERROR] Checksum mismatch for $(basename $output)"
-                      echo "  Expected: $expected_sha256"
-                      echo "  Got:      $actual_sha256"
-                      rm -f "$output"
-                    fi
-                  fi
-                  
-                  attempt=$((attempt + 1))
-                  if [ $attempt -le $max_attempts ]; then
-                    delay=$((2 ** attempt - 2))
-                    echo "[installer] Retrying in ${delay}s..."
-                    sleep $delay
-                  fi
-                done
-                
-                echo "[ERROR] Failed to download and verify $(basename $output) after $max_attempts attempts"
-                return 1
-              }
-              
-              # ============ KUSTOMIZE INSTALLATION ============
-              if ! command -v kustomize >/dev/null 2>&1; then
-                echo "[installer] Installing kustomize $KUSTOMIZE_VERSION..."
-                cd /tmp
-                KUSTOMIZE_URL="https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
-                download_with_verify "$KUSTOMIZE_URL" "kustomize.tar.gz" "$KUSTOMIZE_SHA256" || exit 1
-                tar --no-same-owner -xzf kustomize.tar.gz
-                cp kustomize "$SHARED_BIN/"
-                chmod 755 "$SHARED_BIN/kustomize"
-              fi
-              
-              # Verify kustomize version exactly
-              echo "[installer] Verifying kustomize..."
-              KUSTOMIZE_INSTALLED=$(kustomize version 2>&1)
-              case "$KUSTOMIZE_INSTALLED" in
-                *"$KUSTOMIZE_VERSION"*)
-                  echo "[installer] ✓ kustomize $KUSTOMIZE_INSTALLED"
-                  ;;
-                *)
-                  echo "[ERROR] kustomize version mismatch: expected $KUSTOMIZE_VERSION, got $KUSTOMIZE_INSTALLED"
-                  exit 1
-                  ;;
-              esac
-              
-              # ============ HELM INSTALLATION ============
-              if ! command -v helm >/dev/null 2>&1; then
-                echo "[installer] Installing helm $HELM_VERSION..."
-                cd /tmp
-                HELM_URL="https://github.com/helm/helm/releases/download/${HELM_VERSION}/helm-${HELM_VERSION}-linux-amd64.tar.gz"
-                download_with_verify "$HELM_URL" "helm.tar.gz" "$HELM_SHA256" || exit 1
-                tar --no-same-owner -xzf helm.tar.gz
-                cp linux-amd64/helm "$SHARED_BIN/"
-                chmod 755 "$SHARED_BIN/helm"
-              fi
-              
-              # Verify helm version exactly
-              echo "[installer] Verifying helm..."
-              HELM_INSTALLED=$(helm version --short 2>&1)
-              if [ "${HELM_INSTALLED%%+*}" = "$HELM_VERSION" ]; then
-                echo "[installer] ✓ helm $HELM_INSTALLED"
+
+              if command -v curl >/dev/null 2>&1; then
+                FETCH="curl -fsSL"
+              elif command -v wget >/dev/null 2>&1; then
+                FETCH="wget -q -O -"
               else
-                echo "[ERROR] helm version mismatch: expected $HELM_VERSION, got $HELM_INSTALLED"
+                echo "[ERROR] curl or wget required but not found"
                 exit 1
               fi
-              
-              # ============ PLAYWRIGHT BROWSERS (FROM BASE IMAGE) ============
+
+              # kustomize (latest)
+              if ! command -v kustomize >/dev/null 2>&1; then
+                KUSTOMIZE_URL="$($FETCH https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | \
+                  grep browser_download_url | grep linux_amd64.tar.gz | head -n1 | cut -d '"' -f4)"
+                [ -n "$KUSTOMIZE_URL" ] || { echo "[ERROR] Could not resolve latest kustomize URL"; exit 1; }
+                $FETCH "$KUSTOMIZE_URL" > /tmp/kustomize.tar.gz
+                tar --no-same-owner -xzf /tmp/kustomize.tar.gz -C /tmp
+                cp /tmp/kustomize "$SHARED_BIN/"
+                chmod 755 "$SHARED_BIN/kustomize"
+              fi
+              echo "[installer] ✓ kustomize $(kustomize version 2>&1)"
+
+              # helm (latest via official script)
+              echo "[installer] Installing helm (latest via get-helm-4)..."
+              $FETCH https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 > /tmp/get_helm.sh
+              chmod 700 /tmp/get_helm.sh
+
+              export HELM_INSTALL_DIR="$SHARED_BIN"
+              export USE_SUDO="false"
+              export TAR_OPTIONS="--no-same-owner --no-same-permissions"
+
+              /tmp/get_helm.sh
+
+              echo "[installer] ✓ helm $(helm version --short 2>&1)"
+
+              # Playwright browsers
               if [ ! -d "$SHARED_CACHE/ms-playwright" ]; then
-                if [ -d /ms-playwright ]; then
-                  echo "[installer] Copying Playwright browsers from base image..."
-                  cp -a /ms-playwright/ "$SHARED_CACHE/ms-playwright/"
-                  echo "[installer] ✓ Playwright browsers ready"
-                else
-                  echo "[ERROR] Playwright source not found in base image"
-                  exit 1
-                fi
-              else
-                echo "[installer] ✓ Playwright already cached"
+                [ -d /ms-playwright ] || { echo "[ERROR] Playwright source not found"; exit 1; }
+                cp -a /ms-playwright/ "$SHARED_CACHE/ms-playwright/"
               fi
-              
-              # ============ CLEANUP PERMISSIONS ============
-              # Set ownership to match runtime UID/GID (1000:1000 from pod securityContext)
-              if [ "$(id -u)" = "0" ]; then
-                chown -R 1000:1000 /shared
-                echo "[installer] Ownership set to 1000:1000"
-              fi
-              
-              # Make shared/bin readable and executable
-              chmod 755 "$SHARED_BIN"
-              chmod -R 755 "$SHARED_BIN"/* 2>/dev/null || true
-              
-              echo "[installer] ✅ All tools verified and ready!"
+
+              chmod 755 "$SHARED_BIN" 2>/dev/null || true
+              chmod 755 "$SHARED_BIN"/* 2>/dev/null || true
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
