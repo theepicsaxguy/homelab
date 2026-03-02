@@ -1,42 +1,85 @@
-apiVersion: apps/v1  
-kind: Deployment  
-metadata:  
-  name: opencode-web  
-  namespace: opencode  
-  labels:  
-    app: opencode-web  
-spec:  
-  replicas: 1  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencode-web
+  namespace: opencode
+  labels:
+    app: opencode-web
+spec:
+  replicas: 1
   strategy:
     type: Recreate
-  selector:  
-    matchLabels:  
-      app: opencode-web  
-  template:  
-    metadata:  
-      labels:  
-        app: opencode-web  
+  selector:
+    matchLabels:
+      app: opencode-web
+  template:
+    metadata:
+      labels:
+        app: opencode-web
     spec:
       securityContext:
-        runAsNonRoot: false
+        runAsNonRoot: true
+        runAsUser: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
       initContainers:
         - name: installer
-          image: mcr.microsoft.com/playwright:v1.58.2-jammy
+          image: node:24.13.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p /shared/bin /shared/.cache
-              wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.1/kustomize_v5.4.1_linux_amd64
-              chmod +x /shared/bin/kustomize
-              cp -a /ms-playwright/. /shared/.cache/ms-playwright/
+              set -eu
+
+              SHARED_BIN="/shared/bin"
+
+              if command -v curl >/dev/null 2>&1; then
+                FETCH="curl -fsSL"
+              elif command -v wget >/dev/null 2>&1; then
+                FETCH="wget -q -O -"
+              else
+                echo "[ERROR] curl or wget required but not found"
+                exit 1
+              fi
+
+              mkdir -p "$SHARED_BIN"
+
+              # Kustomize (latest)
+              ARCH="$(uname -m)"
+              case "$ARCH" in
+                x86_64) KUSTOMIZE_ARCH="amd64" ;;
+                aarch64) KUSTOMIZE_ARCH="arm64" ;;
+                *) echo "[ERROR] Unsupported arch: $ARCH"; exit 1 ;;
+              esac
+
+              echo "[installer] Installing kustomize (latest)..."
+              KUSTOMIZE_URL="$($FETCH https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | \
+                grep browser_download_url | grep "linux_${KUSTOMIZE_ARCH}\.tar\.gz" | head -n1 | cut -d '"' -f4)"
+              [ -n "$KUSTOMIZE_URL" ] || { echo "[ERROR] Could not resolve latest kustomize URL"; exit 1; }
+              $FETCH "$KUSTOMIZE_URL" > /tmp/kustomize.tar.gz
+              tar --no-same-owner -xzf /tmp/kustomize.tar.gz -C /tmp
+              cp /tmp/kustomize "$SHARED_BIN/"
+              chmod 755 "$SHARED_BIN/kustomize"
+              echo "[installer] ✓ kustomize $(/shared/bin/kustomize version 2>&1)"
+
+              # Helm (latest via official script)
+              echo "[installer] Installing helm (latest via get-helm-4)..."
+              $FETCH https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 > /tmp/get_helm.sh
+              chmod 700 /tmp/get_helm.sh
+              export PATH="$SHARED_BIN:$PATH"
+              export HELM_INSTALL_DIR="$SHARED_BIN"
+              export USE_SUDO="false"
+              export TAR_OPTIONS="--no-same-owner --no-same-permissions"
+              /tmp/get_helm.sh
+              echo "[installer] ✓ helm $(/shared/bin/helm version --short 2>&1)"
+
+              echo "[installer] ✅ All tools verified and ready!"
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
+            allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
           volumeMounts:
@@ -45,13 +88,15 @@ spec:
       containers:
       - name: opencode-web
         image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
-        securityContext:  
-          runAsUser: 1000  
-          runAsGroup: 1000  
-          runAsNonRoot: true  
-          allowPrivilegeEscalation: false  
-          capabilities:  
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
             drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
         ports:
         - containerPort: 5003
         env:
@@ -76,23 +121,21 @@ spec:
           value: "https://opencode.peekoff.com,http://localhost:5003,http://10.0.10.*:5003"
         - name: AUTH_SECURE_COOKIES
           value: "true"
-        - name: PATH
-          value: "/shared/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/local/bin"
-        - name: PLAYWRIGHT_BROWSERS_PATH
-          value: "/shared/.cache/ms-playwright"
-        volumeMounts:  
-        - name: workspace  
-          mountPath: /workspace  
-        - name: data  
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=512"
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+        - name: data
           mountPath: /app/data
         - name: shared-tools
-          mountPath: /shared
-        livenessProbe:  
-          httpGet:  
-            path: /api/health  
-            port: 5003  
-          initialDelaySeconds: 40  
-          periodSeconds: 30  
+          mountPath: /usr/local
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5003
+          initialDelaySeconds: 40
+          periodSeconds: 30
           timeoutSeconds: 30
           failureThreshold: 3
         readinessProbe:
@@ -101,8 +144,47 @@ spec:
             port: 5003
           initialDelaySeconds: 15
           periodSeconds: 30
-          timeoutSeconds: 30  
-          failureThreshold: 5  
+          timeoutSeconds: 30
+          failureThreshold: 5
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 5003
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+      - name: playwright-mcp
+        image: mcr.microsoft.com/playwright:v1.58.2-jammy
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            set -eu
+            export HOME=/home/pwuser
+            export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+            export NPM_CONFIG_CACHE=/home/pwuser/.npm
+            export XDG_CONFIG_HOME=/home/pwuser/.config
+            npx @playwright/mcp@latest --host 127.0.0.1 --port 8931 --isolated --allowed-hosts '*'
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+          seccompProfile:
+            type: RuntimeDefault
+        volumeMounts:
+          - name: mcp-cache
+            mountPath: /home/pwuser/.cache
+          - name: mcp-npm
+            mountPath: /home/pwuser/.npm
+          - name: mcp-config
+            mountPath: /home/pwuser/.config
+          - name: mcp-tmp
+            mountPath: /tmp
       volumes:
       - name: workspace
         persistentVolumeClaim:
@@ -112,4 +194,16 @@ spec:
           claimName: opencode-data-pvc
       - name: shared-tools
         emptyDir:
+          sizeLimit: 1Gi
+      - name: mcp-cache
+        emptyDir:
           sizeLimit: 3Gi
+      - name: mcp-npm
+        emptyDir:
+          sizeLimit: 1Gi
+      - name: mcp-config
+        emptyDir:
+          sizeLimit: 128Mi
+      - name: mcp-tmp
+        emptyDir:
+          sizeLimit: 512Mi

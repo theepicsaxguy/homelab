@@ -1,175 +1,123 @@
-# Homelab - Repository Guidelines
+Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom images, and Docusaurus documentation.
 
-**You are working in an over-engineered GitOps homelab repository designed for enterprise learning.** This is not a typical homelab - every choice prioritizes production-grade patterns over simplicity to develop real-world skills.
+<Global_rules>
+- Use subagents when possible to save context.
+- Prefer to use skills when relevant.
+- Apply all cluster changes through GitOps and Argo CD unless the user approves manual kustomize and kubectl.
+- Always explicitly set pod spec hostNetwork false, hostPID false, hostIPC false; pod securityContext runAsNonRoot true, runAsUser, runAsGroup, fsGroup, fsGroupChangePolicy OnRootMismatch; container securityContext allowPrivilegeEscalation false, readOnlyRootFilesystem true, capabilities.drop ["ALL"]; and container resources cpu/memory requests and limits, even with custom values.
+- Workloads must specify limits for emptyDir and all resource volumes.
+- Run kustomize build --enable-helm on the changed path before commit.
+- Use Conventional Commits with type and scope.
+- Keep user-facing documentation in website/docs only.
+- Avoid new markdown files inside k8s, tofu, and images.
+- Avoid git commands unless the user requests them.
+- NEVER use --force, --grace-period=0, and --ignore-not-found.
+- Avoid secrets and generated artifacts in Git.
+- Pin container images to specific tags. Never vague tags like latest or main.
+</Global_rules>
 
-SCOPE: GitOps-managed homelab built on Kubernetes (Talos Linux) with Argo CD for continuous deployment
+<repo_paths>
+- /k8s
+- /tofu
+- /images
+- /website
+</repo_paths>
 
-## Repository Purpose
+<k8s>
+<k8s_rules>
+- Use ExternalSecret with ClusterSecretStore bitwarden-backend; one Bitwarden item per secret value; refreshInterval 1h.
+- Avoid ExternalSecret for CNPG application credentials; use CNPG auto-generated <cluster-name>-app secrets instead.
+- Use Kubernetes Secret created by kubectl for service-to-service credentials.
+- Use CiliumNetworkPolicy v2 with default-deny ingress and egress in every application namespace; never use standard NetworkPolicy resources.
+</k8s_rules>
+<k8s_network>
+- Use Gateway API HTTPRoute for external access via external gateway 10.25.150.222.
+- Use internal gateway for internal-only routes.
+- Use Cilium 1.18+ for TCP Gateway listeners.
+- Use Cloudflare DNS A record pointing to 10.25.150.222 for external routes.
+- Avoid NodePort for external services.
+- Avoid wildcard DNS certificates.
+</k8s_network>
+<k8s_backup>
+- Use Velero with Kopia filesystem backups for proxmox-csi volumes.
+- Use Velero restore before PV retain recovery; use PV retain recovery when Velero restore fails.
+</k8s_backup>
+<k8s_cnpg>
+- Use ObjectStore CRD with barman-cloud plugin only.
+- Store continuous WAL in MinIO with retentionPolicy 14d and weekly base backups in Backblaze B2 with retentionPolicy 30d.
+- Set plugin isWALArchiver true.
+- Use ScheduledBackup method plugin with pluginConfiguration name barman-cloud.cloudnative-pg.io.
+</k8s_cnpg>
+</k8s>
 
-Infrastructure-as-Code repository managing a Kubernetes-based homelab cluster. Infrastructure is provisioned with OpenTofu, and all Kubernetes manifests use Kustomize with GitOps deployment via Argo CD.
+<k8s_ai>
+- Request nvidia.com/gpu resources and schedule GPU workloads on gpu-node labeled nodes.
+- Use qdrant.ai.svc.cluster.local:6333 for vector storage and litellm.ai.svc.cluster.local:4000 for provider access.
+- Store AI models on PVCs labeled backup.velero.io/backup-tier=GFS; avoid emptyDir for model storage.
+</k8s_ai>
 
-## Architecture
+<k8s_litellm>
+- Enable JWT auth with roles_jwt_field and jwt_litellm_role_map; avoid user_roles_jwt_field with jwt_litellm_role_map.
+- Set JWT_PUBLIC_KEY_URL to the Authentik JWKS endpoint and GENERIC_SCOPE to include roles.
+- Include proxy_admin in user_allowed_roles for admin UI access.
+</k8s_litellm>
 
-### High-Level Structure
+<k8s_automation>
+- Keep MQTT internal-only; use Cilium TCP route for MQTT on Cilium 1.18+.
+- Run Zigbee coordinator on a separate VM; connect Zigbee2MQTT to the coordinator over network only.
+- Use HA_SEED_ON_STARTUP true to overwrite Home Assistant seed files; false to preserve Home Assistant-managed files.
+</k8s_automation>
 
-**Domain: k8s** - Kubernetes manifests, operators, and GitOps patterns → `/k8s/AGENTS.md`
-**Domain: tofu** - Infrastructure provisioning, VM management, cluster bootstrapping → `/tofu/AGENTS.md`
-**Domain: website** - Documentation site and build system → `/website/AGENTS.md`
-**Domain: images** - Custom container images and Dockerfiles → `/images/AGENTS.md`
+<k8s_media>
+- Use NFS PV with server truenas.peekoff.com path /mnt/media; mount via subPath for app-specific folders.
+- Avoid Longhorn for new media workloads.
+- Avoid Kubernetes backups for large NFS media libraries.
+</k8s_media>
 
-### Domain Communication
+<k8s_games>
+- Use configMapGenerator with double underscore path keys to map into /data/plugins.
+- Project all plugin ConfigMaps into one projected volume; use a sync init container to copy configs into /data/plugins.
+- Avoid mounting ConfigMaps directly over /data.
+- Avoid modifying volumeClaimTemplates after creation.
+</k8s_games>
 
-Changes flow: tofu → k8s (via cluster bootstrapping) → Argo CD GitOps sync
+<authentik>
+- Set blueprint schema reference and version 1 in each blueprint file.
+- Use identifiers for lookup and attrs for updates.
+- Use blueprint states present, created, must_created, and absent as intended.
+- Use !KeyOf and !Find for intra-blueprint references; !Env for secrets sourced from ExternalSecrets.
+- Use authentik_providers_oauth2.scopemapping for OAuth property mappings.
+</authentik>
 
-## Universal Standards
+<controllers>
+- Deploy Cert Manager before External Secrets, CNPG, and Argo CD.
+- Use Argo CD Helm chart version 9.2.3 with ApplicationSet Git generator for discovery.
+- Use Velero defaultVolumesToFsBackup true; avoid CSI snapshots for Proxmox CSI.
+</controllers>
 
-### Commits
+<storage>
+- Use StorageClass proxmox-csi on every PVC; reclaimPolicy Retain, cacheMode writethrough, filesystem ext4, mount option noatime.
+- Manage Proxmox CSI permissions with tofu/bootstrap/proxmox-csi-plugin using Proxmox user kubernetes-csi@pve.
+</storage>
 
-Follow Conventional Commits format enforced by commitlint:
-```
-<type>(<scope>): <description>
+<database>
+- Use at least two CNPG instances for HA.
+- Avoid shared databases across applications.
+</database>
 
-[optional body]
+<network>
+- Use Cilium kubeProxyReplacement enabled.
+</network>
 
-[optional footer]
-```
+<tofu>
+- Run tofu fmt and tofu validate before commit; produce tofu plan output for review.
+- Avoid tofu apply without explicit human approval; avoid --auto-approve, manual state file edits, and targeted apply unless explicitly approved.
+</tofu>
 
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
-Scopes: `k8s`, `infra`, `apps`, `docs`, `tofu`, `monitoring`, `network`, `storage`
-
-Breaking changes require footer: `BREAKING CHANGE: <description>`
-
-### Documentation
-
-**Where to document:**
-- `website/docs/` for user-facing documentation (matching structure)
-- `AGENTS.md` files only for developer/AI guidance
-- README.md for project overview
-- Inline comments for non-obvious implementation details
-
-**Rules:**
-- User-facing markdown MUST be in `website/docs/`
-- Never create markdown files in domain directories (k8s/, tofu/, images/)
-- Use imperative voice, present tense, no first-person plural or temporal language
-
-## Technology Stack
-
-**k8s:** Kubernetes, Kustomize, Helm, Argo CD
-**tofu:** OpenTofu, Proxmox API, Talos Linux  
-**website:** Docusaurus, TypeScript, React
-**images:** Docker, GitHub Actions
-
-## Code Style
-
-- Directories/files: kebab-case
-- TypeScript: camelCase variables, PascalCase classes/types
-- YAML/HCL: snake_case resources
-- YAML: 2-space indent, 120-char line length
-- TypeScript: single quotes, es5 trailing commas, 120-char width
-
-## Solution Standards
-
-**Enterprise at Home** - Production-grade only, no homelab shortcuts.
-
-Rank solutions from hardest/most-capable to simplest. Complexity is a feature, not a problem. Default to perfection - every change must hold up 10+ years without modifications.
-
-## Core Philosophy
-
-### Learning-First Approach
-This repository serves as a learning sandbox for enterprise patterns. Every "over-engineered" choice is intentional - complexity develops skills that translate directly to production environments.
-
-### Over-Engineering by Design  
-**Why complexity is a feature:** Homelab shortcuts don't teach enterprise resilience. Production systems require redundancy, observability, and automation - those patterns are learned here, not simplified away.
-
-### Complete Auditable State
-**Everything as Code rationale:** Full Git state representation enables instant rebuild capability and provides complete audit trails - exactly what enterprise environments require.
-
-### Production Simulation
-**Why no homelab shortcuts:** Enterprise environments can't take shortcuts. Learning proper patterns here prevents bad habits in professional environments.
-
-### Domain Integration Philosophy
-- **tofu → k8s**: Infrastructure bootstrapping enables application deployment
-- **k8s → website**: Documentation captures implementation reality  
-- **images → k8s**: Container security patterns extend to cluster security
-- **All → GitOps**: Changes flow through pipeline, never directly applied
-
-## AGENTS.md Discovery
-
-**MANDATORY: Read ALL AGENTS.md files from root to your working directory before any task.**
-
-This is not optional. Every task requires understanding the cumulative context across all levels:
-1. Root AGENTS.md (this file) - **Always read first**
-2. Domain AGENTS.md (k8s/, tofu/, website/, images/) - Required for domain-specific work
-3. Component AGENTS.md (if applicable) - Required for application/infrastructure work
-
-**Keeping AGENTS.md Current:**
-- AGENTS.md files MUST be updated whenever patterns, workflows, or conventions change
-- Never complete a task without updating relevant AGENTS.md files if new information was learned
-- The Self-Healing Rule applies: if you need information not in the closest AGENTS.md, that file is incomplete - update it immediately
-
-**Self-Healing Rule:** If you need information not in the closest AGENTS.md, that file is incomplete - update it.
-
-### Available AGENTS.md Files
-
-**Domain-level:** k8s/, tofu/, website/, images/
-
-**Component-level:**
-- Applications: ai/, automation/, media/, web/
-- Infrastructure: auth/authentik/, controllers/, database/, network/, storage/
-
-## Universal Anti-Patterns
-
-### Critical Security & Safety
-- Never commit secrets or credentials to Git
-- Never commit generated artifacts (build/, .tofu/, terraform.tfstate*)
-- Never run `tofu apply` without explicit human authorization
-- Never use `--auto-approve` in tofu commands
-- Never use kubectl `--force`, `--grace-period=0`, or `--ignore-not-found` flags
-- Never modify CRD definitions without understanding operator compatibility
- - Workload security: every workload spec must set `securityContext` at the pod and container level (including `initContainers`). Use `runAsNonRoot: true`, `readOnlyRootFilesystem: true`, and `capabilities.drop: ["ALL"]`. Always explicitly set `hostNetwork: false`, `hostPID: false`, and `hostIPC: false` in pod specs. If an exception is explicitly required and approved, record the approval and justification as an inline comment in the manifest.
-
-### Operational Excellence  
-- Never apply changes directly to cluster - use GitOps
-- Never guess resource names, connection strings, or secret keys - query to verify
-- Never skip validation steps before committing
-- Never delete resources without evidence from logs/events
-- Never ignore deprecation warnings - implement migration paths immediately
-- Never leave documentation stale after completing tasks
-- Never hallucinate YAML fields - use `kubectl explain` or official docs
-- Never create summary documentation about work performed
-- Never use git commands unless user asks for it
-
-### Documentation Integrity
-- Never create documentation from scratch for existing components - extend existing docs
-- Never reference AGENTS.md files from user-facing documentation
-
-## Quick-Start Reference
-
-```bash
-# Documentation validation (only applies to docs files)
-pre-commit run --all-files
-pre-commit run --files <file-path>
-
-```
-
-Note: Pre-commit hooks are configured only for documentation files in `website/docs/`. For code changes, ensure compliance with the code style guidelines manually.
-
-
-## Philosophy
-
-- GitOps is Law: All changes must go through Git
-- Automate Everything: If it can be scripted or managed by a controller, it should be
-- Security is Not an Afterthought: "Assume the pod is compromised" - non-root containers, default-deny network policies (Cilium v2), externalized secrets, image signing/scanning, and least-privilege RBAC by default
-
-### CNPG Backup Strategy (Universal Reference)
-**Continuous WAL → MinIO (plugin), weekly base backups → B2 (backup section), both in externalClusters for recovery flexibility.**
-
-- **Only Plugin Architecture**: Use ObjectStore CRD + barman-cloud plugin (legacy barman deployment is deprecated)
-- **Dual Destinations**: Configure in externalClusters - MinIO for fast local recovery, Backblaze B2 for disaster recovery
-- **Recovery Flexibility**: Both destinations enable recovery if one location becomes unavailable
-
-# Domain-specific commands
-Kubernetes: see k8s/AGENTS.md [k8s/AGENTS.md](k8s/AGENTS.md)
-Infrastructure: see tofu/AGENTS.md  [tofu/AGENTS.md](tofu/AGENTS.md)
-Documentation: see [website/AGENTS.md](website/AGENTS.md)
-Containers: see [images/AGENTS.md](images/AGENTS.md)
+<website>
+- Run npm run typecheck and npm run lint:all before commit.
+- Update sidebars.ts when adding new docs pages.
+- Avoid referencing AGENTS.md from documentation.
+- Avoid code blocks in documentation; link to source files by absolute path.
+- Avoid first-person plural and temporal language.
+</website>

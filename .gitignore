@@ -55,3 +55,4 @@ kubeconfig
 
 # OpenCode config with secrets
 opencode.json
+!.agents/**

@@ -18,6 +18,14 @@ spec:
     - ports:
       - port: "5003"
         protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        app: opencode-web
+        k8s:io.kubernetes.pod.namespace: opencode
+    toPorts:
+    - ports:
+      - port: "8931"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:
