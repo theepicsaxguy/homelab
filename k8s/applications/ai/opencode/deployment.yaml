@@ -33,7 +33,7 @@ spec:
             - |
               set -eu
 
-              SHARED_BIN="/shared/bin"
+              SHARED_BIN="/usr/local/bin"
               SHARED_CACHE="/shared/.cache"
               export PATH="$SHARED_BIN:$PATH"
 
@@ -89,7 +89,7 @@ spec:
               drop: ["ALL"]
           volumeMounts:
             - name: shared-tools
-              mountPath: /shared
+              mountPath: /usr/local/bin
       containers:
       - name: opencode-web
         image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
@@ -138,7 +138,7 @@ spec:
         - name: data
           mountPath: /app/data
         - name: shared-tools
-          mountPath: /shared
+          mountPath: /usr/local/bin
         livenessProbe:
           httpGet:
             path: /api/health
