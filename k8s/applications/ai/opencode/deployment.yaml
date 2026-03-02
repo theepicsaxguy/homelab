@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: installer
-          image: mcr.microsoft.com/playwright:v1.58.2-jammy
+          image: node:24.13.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
@@ -165,7 +165,7 @@ spec:
             export PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
             export NPM_CONFIG_CACHE=/home/pwuser/.npm
             export XDG_CONFIG_HOME=/home/pwuser/.config
-            npx @playwright/mcp@latest --host 127.0.0.1 --port 8931 --isolated
+            npx @playwright/mcp@latest --host 127.0.0.1 --port 8931 --isolated --allowed-hosts '*'
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
