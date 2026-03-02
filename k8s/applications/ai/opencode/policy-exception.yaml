@@ -7,13 +7,14 @@ metadata:
     description: "Exception for OpenCode initContainer that requires root to install Playwright browsers, Kustomize, and Helm."
 spec:
   match:
-    resources:
-      kinds:
-        - Deployment
-      namespaces:
-        - opencode
-      names:
-        - opencode-web
+    any:
+    - resources:
+        kinds:
+          - Deployment
+        namespaces:
+          - opencode
+        names:
+          - opencode-web
   exceptions:
     - policyName: nsa-hardening-all-namespaces
       ruleNames:
