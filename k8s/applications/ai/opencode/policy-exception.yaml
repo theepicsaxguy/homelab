@@ -4,22 +4,18 @@ metadata:
   name: opencode-initcontainer-root
   namespace: opencode
   annotations:
-    description: "Exception for OpenCode initContainer that requires root to install Playwright browsers and Kustomize"
+    description: "Exception for OpenCode initContainer that requires root to install Playwright browsers, Kustomize, and Helm."
 spec:
   match:
-    any:
-      - resources:
-          kinds:
-            - Pod
-            - Deployment
-          namespaces:
-            - opencode
-          names:
-            - opencode-web-*
+    resources:
+      kinds:
+        - Deployment
+      namespaces:
+        - opencode
+      names:
+        - opencode-web
   exceptions:
     - policyName: nsa-hardening-all-namespaces
       ruleNames:
         - require-non-root-containers
         - require-read-only-root-filesystem
-  podSecurity:
-    - controlName: Running as Non-root

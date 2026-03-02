@@ -31,23 +31,30 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -e
+              echo "[installer] Starting setup..."
               mkdir -p /shared/bin /shared/.cache /tmp/tools
-              # Install kustomize
-              wget -q -O /tmp/tools/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
+              echo "[installer] Downloading and installing kustomize v5.8.1..."
+              wget -O /tmp/tools/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
               tar -xzf /tmp/tools/kustomize.tar.gz -C /tmp/tools
               mv /tmp/tools/kustomize /shared/bin/
               chmod +x /shared/bin/kustomize
-              # Install helm
-              wget -q -O /tmp/tools/helm.tar.gz https://github.com/helm/helm/releases/download/v4.1.1/helm-v4.1.1-linux-amd64.tar.gz
+              echo "[installer] kustomize installed: $(kustomize version)"
+              echo "[installer] Downloading and installing helm v4.1.1..."
+              wget -O /tmp/tools/helm.tar.gz https://github.com/helm/helm/releases/download/v4.1.1/helm-v4.1.1-linux-amd64.tar.gz
               tar -xzf /tmp/tools/helm.tar.gz -C /tmp/tools
               mv /tmp/tools/linux-amd64/helm /shared/bin/
               chmod +x /shared/bin/helm
-              # Copy Playwright browsers
+              echo "[installer] helm installed: $(helm version --short)"
+              echo "[installer] Copying Playwright browsers..."
               cp -a /ms-playwright/. /shared/.cache/ms-playwright/
               export PLAYWRIGHT_BROWSERS_PATH=/shared/.cache/ms-playwright
+              echo "[installer] Installing chromium browser..."
               npx playwright install chromium
+              echo "[installer] Browser installation complete"
               chmod -R 755 /shared
               rm -rf /tmp/tools
+              echo "[installer] Setup complete!"
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
