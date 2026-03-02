@@ -31,13 +31,23 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              mkdir -p /shared/bin /shared/.cache
-              wget -q -O /shared/bin/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
+              mkdir -p /shared/bin /shared/.cache /tmp/tools
+              # Install kustomize
+              wget -q -O /tmp/tools/kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz
+              tar -xzf /tmp/tools/kustomize.tar.gz -C /tmp/tools
+              mv /tmp/tools/kustomize /shared/bin/
               chmod +x /shared/bin/kustomize
+              # Install helm
+              wget -q -O /tmp/tools/helm.tar.gz https://github.com/helm/helm/releases/download/v4.1.1/helm-v4.1.1-linux-amd64.tar.gz
+              tar -xzf /tmp/tools/helm.tar.gz -C /tmp/tools
+              mv /tmp/tools/linux-amd64/helm /shared/bin/
+              chmod +x /shared/bin/helm
+              # Copy Playwright browsers
               cp -a /ms-playwright/. /shared/.cache/ms-playwright/
               export PLAYWRIGHT_BROWSERS_PATH=/shared/.cache/ms-playwright
               npx playwright install chromium
               chmod -R 755 /shared
+              rm -rf /tmp/tools
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
