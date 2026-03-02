@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: kiwix-serve
-          image: ghcr.io/kiwix/kiwix-serve:3.8.1
+          image: ghcr.io/kiwix/kiwix-serve:3.8.2
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsNonRoot: true
