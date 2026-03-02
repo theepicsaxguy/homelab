@@ -26,18 +26,18 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: installer
-          image: mcr.microsoft.com/playwright:v1.58.2-jammy
+          image: node:24.13.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
             - |
               set -eu
 
-              SHARED_BIN="/usr/local/bin"
+              SHARED_PREFIX="/shared"
               SHARED_CACHE="/shared/.cache"
-              export PATH="$SHARED_BIN:$PATH"
+              SHARED_NPM_CACHE="/shared/.npm"
 
-              mkdir -p "$SHARED_BIN" "$SHARED_CACHE"
+              mkdir -p "$SHARED_PREFIX" "$SHARED_CACHE" "$SHARED_NPM_CACHE" "$SHARED_PREFIX/bin"
 
               if command -v curl >/dev/null 2>&1; then
                 FETCH="curl -fsSL"
@@ -48,39 +48,55 @@ spec:
                 exit 1
               fi
 
-              # kustomize (latest)
+              echo "[installer] Copying Node runtime into shared volume..."
+              cp -R /usr/local/* "$SHARED_PREFIX/"
+
+              export PATH="/shared/bin:/usr/local/bin:$PATH"
+              export NPM_CONFIG_PREFIX="$SHARED_PREFIX"
+              export NPM_CONFIG_CACHE="$SHARED_NPM_CACHE"
+
+              # ---- KUSTOMIZE (latest) ----
               if ! command -v kustomize >/dev/null 2>&1; then
+                ARCH="$(uname -m)"
+                case "$ARCH" in
+                  x86_64) KUSTOMIZE_ARCH="amd64" ;;
+                  aarch64) KUSTOMIZE_ARCH="arm64" ;;
+                  *) echo "[ERROR] Unsupported arch: $ARCH"; exit 1 ;;
+                esac
+
+                echo "[installer] Installing kustomize (latest)..."
                 KUSTOMIZE_URL="$($FETCH https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | \
-                  grep browser_download_url | grep linux_amd64.tar.gz | head -n1 | cut -d '"' -f4)"
+                  grep browser_download_url | grep "linux_${KUSTOMIZE_ARCH}\.tar\.gz" | head -n1 | cut -d '"' -f4)"
                 [ -n "$KUSTOMIZE_URL" ] || { echo "[ERROR] Could not resolve latest kustomize URL"; exit 1; }
                 $FETCH "$KUSTOMIZE_URL" > /tmp/kustomize.tar.gz
                 tar --no-same-owner -xzf /tmp/kustomize.tar.gz -C /tmp
-                cp /tmp/kustomize "$SHARED_BIN/"
-                chmod 755 "$SHARED_BIN/kustomize"
+                cp /tmp/kustomize "$SHARED_PREFIX/bin/"
+                chmod 755 "$SHARED_PREFIX/bin/kustomize"
               fi
               echo "[installer] ✓ kustomize $(kustomize version 2>&1)"
 
-              # helm (latest via official script)
+              # ---- HELM (latest via official script) ----
               echo "[installer] Installing helm (latest via get-helm-4)..."
               $FETCH https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 > /tmp/get_helm.sh
               chmod 700 /tmp/get_helm.sh
-
-              export HELM_INSTALL_DIR="$SHARED_BIN"
+              export HELM_INSTALL_DIR="$SHARED_PREFIX/bin"
               export USE_SUDO="false"
               export TAR_OPTIONS="--no-same-owner --no-same-permissions"
-
               /tmp/get_helm.sh
-
               echo "[installer] ✓ helm $(helm version --short 2>&1)"
 
-              # Playwright browsers
-              if [ ! -d "$SHARED_CACHE/ms-playwright" ]; then
-                [ -d /ms-playwright ] || { echo "[ERROR] Playwright source not found"; exit 1; }
-                cp -a /ms-playwright/ "$SHARED_CACHE/ms-playwright/"
-              fi
+              # ---- Playwright CLI + MCP ----
+              echo "[installer] Installing Playwright CLI + MCP..."
+              npm install -g playwright@latest @playwright/mcp@latest
 
-              chmod 755 "$SHARED_BIN" 2>/dev/null || true
-              chmod 755 "$SHARED_BIN"/* 2>/dev/null || true
+              export PLAYWRIGHT_BROWSERS_PATH="$SHARED_CACHE/ms-playwright"
+              npx playwright install
+
+              echo "[installer] ✓ node $(node -v)"
+              echo "[installer] ✓ npm $(npm -v)"
+              echo "[installer] ✓ npx $(npx -v)"
+              echo "[installer] ✓ playwright $(playwright --version 2>&1)"
+              echo "[installer] ✅ All tools verified and ready!"
           securityContext:
             runAsUser: 0
             runAsNonRoot: false
@@ -89,7 +105,9 @@ spec:
               drop: ["ALL"]
           volumeMounts:
             - name: shared-tools
-              mountPath: /usr/local/bin
+              mountPath: /shared
+            - name: shared-cache
+              mountPath: /shared/.cache
       containers:
       - name: opencode-web
         image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
@@ -126,8 +144,6 @@ spec:
           value: "https://opencode.peekoff.com,http://localhost:5003,http://10.0.10.*:5003"
         - name: AUTH_SECURE_COOKIES
           value: "true"
-        - name: PATH
-          value: "/shared/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/local/bin"
         - name: PLAYWRIGHT_BROWSERS_PATH
           value: "/shared/.cache/ms-playwright"
         - name: NODE_OPTIONS
@@ -138,7 +154,9 @@ spec:
         - name: data
           mountPath: /app/data
         - name: shared-tools
-          mountPath: /usr/local/bin
+          mountPath: /usr/local
+        - name: shared-cache
+          mountPath: /shared
         livenessProbe:
           httpGet:
             path: /api/health
@@ -171,5 +189,8 @@ spec:
         persistentVolumeClaim:
           claimName: opencode-data-pvc
       - name: shared-tools
+        emptyDir:
+          sizeLimit: 3Gi
+      - name: shared-cache
         emptyDir:
           sizeLimit: 3Gi
