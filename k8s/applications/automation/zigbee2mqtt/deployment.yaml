@@ -54,7 +54,7 @@ spec:
 
       containers:
         - name: zigbee2mqtt
-          image: koenkk/zigbee2mqtt:2.9.0
+          image: koenkk/zigbee2mqtt:2.9.1
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsNonRoot: true
