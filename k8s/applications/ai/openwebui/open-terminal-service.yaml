@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-terminal
+  namespace: open-webui
+spec:
+  selector:
+    app.kubernetes.io/name: open-terminal
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http

@@ -14,3 +14,8 @@ resources:
 - pipelines-pvc.yaml
 - pipelines-deployment.yaml
 - pipelines-service.yaml
+- open-terminal-deployment.yaml
+- open-terminal-service.yaml
+- open-terminal-pvc.yaml
+- open-terminal-externalsecret.yaml
+- open-terminal-network-policy.yaml
