@@ -212,16 +212,16 @@ worker:
       memory: 512Mi
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 2Gi
   livenessProbe:
-    timeoutSeconds: 5
+    timeoutSeconds: 15
   readinessProbe:
-    timeoutSeconds: 5
+    timeoutSeconds: 15
   startupProbe:
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 30
-    timeoutSeconds: 5
+    timeoutSeconds: 15
 postgresql:
   enabled: false
 
