@@ -33,7 +33,7 @@ spec:
             - |
               set -eu
 
-              SHARED_BIN="/shared/bin"
+              SHARED_BIN="/opt/shared-tools/bin"
 
               if command -v curl >/dev/null 2>&1; then
                 FETCH="curl -fsSL"
@@ -62,7 +62,7 @@ spec:
               tar --no-same-owner -xzf /tmp/kustomize.tar.gz -C /tmp
               cp /tmp/kustomize "$SHARED_BIN/"
               chmod 755 "$SHARED_BIN/kustomize"
-              echo "[installer] ✓ kustomize $(/shared/bin/kustomize version 2>&1)"
+              echo "[installer] ✓ kustomize $(/opt/shared-tools/bin/kustomize version 2>&1)"
 
               # Helm (latest via official script)
               echo "[installer] Installing helm (latest via get-helm-4)..."
@@ -73,7 +73,7 @@ spec:
               export USE_SUDO="false"
               export TAR_OPTIONS="--no-same-owner --no-same-permissions"
               /tmp/get_helm.sh
-              echo "[installer] ✓ helm $(/shared/bin/helm version --short 2>&1)"
+              echo "[installer] ✓ helm $(/opt/shared-tools/bin/helm version --short 2>&1)"
 
               echo "[installer] ✅ All tools verified and ready!"
           securityContext:
@@ -84,7 +84,7 @@ spec:
               drop: ["ALL"]
           volumeMounts:
             - name: shared-tools
-              mountPath: /shared
+              mountPath: /opt/shared-tools
       containers:
       - name: opencode-web
         image: ghcr.io/chriswritescode-dev/opencode-manager:0.9.0
@@ -123,13 +123,15 @@ spec:
           value: "true"
         - name: NODE_OPTIONS
           value: "--max-old-space-size=512"
+        - name: PATH
+          value: "/opt/shared-tools/bin:/opt/bun/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
         volumeMounts:
         - name: workspace
           mountPath: /workspace
         - name: data
           mountPath: /app/data
         - name: shared-tools
-          mountPath: /usr/local
+          mountPath: /opt/shared-tools
         livenessProbe:
           httpGet:
             path: /api/health
