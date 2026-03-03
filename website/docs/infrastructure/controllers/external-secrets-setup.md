@@ -39,7 +39,7 @@ kubectl create secret generic bitwarden-access-token \
 Define the Bitwarden provider configuration:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
   name: bitwarden
@@ -61,7 +61,7 @@ spec:
 Create a secret from a Bitwarden entry:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: my-application-secret
@@ -94,7 +94,7 @@ spec:
 Store and retrieve TLS certificates:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: tls-secret
@@ -129,7 +129,7 @@ spec:
 Template for application environment variables:
 
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: app-env
