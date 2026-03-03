@@ -48,7 +48,7 @@ spec:
             - name: HOME
               value: /home/user
             - name: OPEN_TERMINAL_LOG_DIR
-              value: /home/user/.local/state/open-terminal/logs
+              value: /tmp/open-terminal/logs
             - name: OPEN_TERMINAL_API_KEY
               valueFrom:
                 secretKeyRef:
