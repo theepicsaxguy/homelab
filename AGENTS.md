@@ -97,6 +97,7 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 
 <storage>
 - Use StorageClass proxmox-csi on every PVC; reclaimPolicy Retain, cacheMode writethrough, filesystem ext4, mount option noatime.
+- Use Deployment strategy type replace for workloads using proxmox-csi PVCs; proxmox-csi supports RWO (ReadWriteOnce) only, preventing rolling updates.
 - Manage Proxmox CSI permissions with tofu/bootstrap/proxmox-csi-plugin using Proxmox user kubernetes-csi@pve.
 </storage>
 

@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: open-terminal
-          image: ghcr.io/open-webui/open-terminal:sha-ff7fb06
+          image: ghcr.io/open-webui/open-terminal:sha-87b0dcf
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -45,6 +45,10 @@ spec:
               cpu: '1000m'
               memory: '2Gi'
           env:
+            - name: HOME
+              value: /home/user
+            - name: OPEN_TERMINAL_LOG_DIR
+              value: /tmp/open-terminal/logs
             - name: OPEN_TERMINAL_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -53,23 +57,12 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/user
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 15
-            timeoutSeconds: 10
-            failureThreshold: 3
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: open-terminal-data
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
