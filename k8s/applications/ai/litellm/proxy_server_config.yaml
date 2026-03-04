@@ -145,6 +145,21 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
+  - model_name: azure/gpt-5.3-codex
+    litellm_params:
+      model: openai/gpt-5.3-codex
+      api_key: "os.environ/openai_api_key_1"
+      api_base: "os.environ/openai_base_url_1"
+    default_litellm_params:
+      reasoning_effort: "medium"
+    model_info:
+      mode: responses
+      max_input_tokens: 10000000
+      max_output_tokens: 32768
+      input_cost_per_token: 0.00000125
+      output_cost_per_token: 0.00001
+      input_cost_per_token_cached: 0.00000013
+
   - model_name: azure/gpt-5-mini
     litellm_params:
       model: openai/gpt-5-mini
@@ -247,167 +262,6 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: azure/gpt-audio
-    litellm_params:
-      model: openai/gpt-audio
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: audio_transcription
-      max_input_tokens: 30000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.0000025
-      output_cost_per_token: 0.00001
-
-  - model_name: azure/gpt-image-1
-    litellm_params:
-      model: openai/gpt-image-1
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: image_generation
-      input_cost_per_token: 0.000005
-      output_cost_per_token: 0.00004
-
-  - model_name: azure/gpt-image-1-mini
-    litellm_params:
-      model: openai/gpt-image-1-mini
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: image_generation
-      input_cost_per_token: 0.000002
-      output_cost_per_token: 0.000008
-      input_cost_per_token_cached: 0.0000002
-
-
-  - model_name: azure/model-router
-    litellm_params:
-      model: openai/model-router
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: chat
-      max_input_tokens: 100000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: azure/o1
-    litellm_params:
-      model: openai/o1
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 30000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.000015
-      output_cost_per_token: 0.00006
-      input_cost_per_token_cached: 0.0000075
-
-
-  - model_name: azure/o3
-    litellm_params:
-      model: openai/o3
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.000002
-      output_cost_per_token: 0.000008
-      input_cost_per_token_cached: 0.0000005
-  - model_name: azure/o3-mini
-    litellm_params:
-      model: openai/o3-mini
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 50000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.0000011
-      output_cost_per_token: 0.0000044
-      input_cost_per_token_cached: 0.00000055
-
-  - model_name: azure/o3-pro
-    litellm_params:
-      model: openai/o3-pro
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 16000000
-      max_output_tokens: 4096
-
-  - model_name: azure/o4-mini
-    litellm_params:
-      model: openai/o4-mini
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.0000011
-      output_cost_per_token: 0.0000044
-
-  - model_name: azure/sora
-    litellm_params:
-      model: openai/sora
-      api_key: "os.environ/openai_api_key_1"
-      api_base: "os.environ/openai_base_url_1"
-    model_info:
-      mode: image_generation
-
-
-  - model_name: openai/gpt-5.1
-    litellm_params:
-      model: openai/gpt-5.1
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 9107000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: openai/gpt-5.1-chat
-    litellm_params:
-      model: openai/gpt-5.1-chat
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 5000000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
-
-  - model_name: openai/gpt-5.1-codex
-    litellm_params:
-      model: openai/gpt-5.1-codex
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    default_litellm_params:
-      reasoning_effort: "low"
-    model_info:
-      mode: responses
-      max_input_tokens: 9006000
-      max_output_tokens: 32768
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
 
   - model_name: openai/gpt-5.1-codex-max
     litellm_params:
@@ -469,152 +323,97 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: openai/gpt-audio
-    litellm_params:
-      model: openai/gpt-audio
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    model_info:
-      mode: audio_transcription
-      max_input_tokens: 30000000
-      max_output_tokens: 4096
-      input_cost_per_token: 0.0000025
-      output_cost_per_token: 0.00001
+# # Cerebras models
+#   - model_name: cerebras/zai-glm-4.6
+#     litellm_params:
+#       model: "cerebras/zai-glm-4.6"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
+#       default_litellm_params:
+#         temperature: 0.6
+#         top_p: 0.95
+#         max_tokens: 40960
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 40960
+#       supports_native_streaming: false
 
-  - model_name: openai/gpt-image-1
-    litellm_params:
-      model: openai/gpt-image-1
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    model_info:
-      mode: image_generation
-      input_cost_per_token: 0.000005
-      output_cost_per_token: 0.00004
+#   - model_name: cerebras/llama-3.3-70b
+#     litellm_params:
+#       model: "cerebras/llama-3.3-70b"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
 
-  - model_name: openai/gpt-image-1-mini
-    litellm_params:
-      model: openai/gpt-image-1-mini
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    model_info:
-      mode: image_generation
-      input_cost_per_token: 0.000002
-      output_cost_per_token: 0.000008
-      input_cost_per_token_cached: 0.0000002
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 2048
+#       supports_native_streaming: false
 
-  - model_name: openai/gpt-realtime
-    litellm_params:
-      model: openai/gpt-realtime
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    model_info:
-      mode: realtime
-      max_input_tokens: 100000
-      input_cost_per_token: 0.000004
-      output_cost_per_token: 0.000016
-      input_cost_per_token_cached: 0.0000004
-      max_output_tokens: 4096
+#   - model_name: cerebras/qwen-3-235b-a22b-instruct-2507
+#     litellm_params:
+#       model: "cerebras/qwen-3-235b-a22b-instruct-2507"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
+#       default_litellm_params:
+#         temperature: 0.7
+#         top_p: 0.8
+#         max_tokens: 20000
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 20000
+#       supports_native_streaming: false
 
-  - model_name: openai/sora
-    litellm_params:
-      model: openai/sora
-      api_key: "os.environ/openai_api_key_2"
-      api_base: "os.environ/openai_base_url_2"
-    model_info:
-      mode: image_generation
+#   - model_name: cerebras/qwen-3-32b
+#     litellm_params:
+#       model: "cerebras/qwen-3-32b"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
+#       default_litellm_params:
+#         temperature: 0.6
+#         top_p: 0.95
+#         max_tokens: 16382
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 16382
+#       supports_native_streaming: false
 
+#   - model_name: cerebras/gpt-oss-120b
+#     litellm_params:
+#       model: "cerebras/gpt-oss-120b"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
+#       default_litellm_params:
+#         temperature: 1
+#         top_p: 1
+#         max_tokens: 32768
+#         reasoning_effort: "low"
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 32768
+#       supports_native_streaming: false
 
-# Cerebras models
-  - model_name: cerebras/zai-glm-4.6
-    litellm_params:
-      model: "cerebras/zai-glm-4.6"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-      default_litellm_params:
-        temperature: 0.6
-        top_p: 0.95
-        max_tokens: 40960
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 40960
-      supports_native_streaming: false
+#   - model_name: cerebras/llama3.1-8b
+#     litellm_params:
+#       model: "cerebras/llama3.1-8b"
+#       api_key: "os.environ/CEREBRAS_API_KEY"
+#       api_base: "https://api.cerebras.ai/v1"
+#       custom_llm_provider: "cerebras"
 
-  - model_name: cerebras/llama-3.3-70b
-    litellm_params:
-      model: "cerebras/llama-3.3-70b"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 2048
-      supports_native_streaming: false
-
-  - model_name: cerebras/qwen-3-235b-a22b-instruct-2507
-    litellm_params:
-      model: "cerebras/qwen-3-235b-a22b-instruct-2507"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-      default_litellm_params:
-        temperature: 0.7
-        top_p: 0.8
-        max_tokens: 20000
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 20000
-      supports_native_streaming: false
-
-  - model_name: cerebras/qwen-3-32b
-    litellm_params:
-      model: "cerebras/qwen-3-32b"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-      default_litellm_params:
-        temperature: 0.6
-        top_p: 0.95
-        max_tokens: 16382
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 16382
-      supports_native_streaming: false
-
-  - model_name: cerebras/gpt-oss-120b
-    litellm_params:
-      model: "cerebras/gpt-oss-120b"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-      default_litellm_params:
-        temperature: 1
-        top_p: 1
-        max_tokens: 32768
-        reasoning_effort: "low"
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 32768
-      supports_native_streaming: false
-
-  - model_name: cerebras/llama3.1-8b
-    litellm_params:
-      model: "cerebras/llama3.1-8b"
-      api_key: "os.environ/CEREBRAS_API_KEY"
-      api_base: "https://api.cerebras.ai/v1"
-      custom_llm_provider: "cerebras"
-
-    model_info:
-      mode: chat
-      max_input_tokens: 100000
-      max_output_tokens: 2048
-      supports_native_streaming: false
+#     model_info:
+#       mode: chat
+#       max_input_tokens: 100000
+#       max_output_tokens: 2048
+#       supports_native_streaming: false
 
 # Mistral models
   # Frontier Models - Generalist
