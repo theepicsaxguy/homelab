@@ -22,7 +22,7 @@ langfuse==3.14.5
 llama-index==0.14.15
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
-llama-index-cli==0.5.4
+llama-index-cli==0.5.5
 llama-index-embeddings-openai==0.5.2
 llama-index-indices-managed-llama-cloud==0.9.4
 llama-index-legacy==0.9.48.post4
