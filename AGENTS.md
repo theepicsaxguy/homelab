@@ -5,6 +5,7 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - Prefer to use skills when relevant.
 - Apply all cluster changes through GitOps and Argo CD unless the user approves manual kustomize and kubectl.
 - Always explicitly set pod spec hostNetwork false, hostPID false, hostIPC false; pod securityContext runAsNonRoot true, runAsUser, runAsGroup, fsGroup, fsGroupChangePolicy OnRootMismatch; container securityContext allowPrivilegeEscalation false, readOnlyRootFilesystem true, capabilities.drop ["ALL"]; and container resources cpu/memory requests and limits, even with custom values.
+  - Note: hostNetwork, hostPID, and hostIPC are pod spec fields, not PodSecurityContext fields.
 - Workloads must specify limits for emptyDir and all resource volumes.
 - Run kustomize build --enable-helm on the changed path before commit.
 - Use Conventional Commits with type and scope.
