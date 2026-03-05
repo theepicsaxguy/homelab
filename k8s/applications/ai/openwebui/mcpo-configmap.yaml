@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcpo-config
+  namespace: open-webui
+data:
+  config.json: |
+    {
+      "mcpServers": {
+        "arxiv": {
+          "command": "uv",
+          "args": ["tool", "run", "arxiv-mcp-server"]
+        }
+      }
+    }
