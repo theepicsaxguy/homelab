@@ -1,22 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mcpo
+  name: mcp-proxy
   namespace: open-webui
   labels:
-    app: mcpo
+    app: mcp-proxy
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: mcpo
+      app: mcp-proxy
   template:
     metadata:
       labels:
-        app: mcpo
+        app: mcp-proxy
     spec:
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -25,42 +28,31 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
           type: RuntimeDefault
-        hostNetwork: false
-        hostPID: false
-        hostIPC: false
       containers:
-        - name: mcpo
-          image: ghcr.io/open-webui/mcpo:git-788ff92
+        - name: mcp-proxy
+          image: ghcr.io/tbxark/mcp-proxy:v0.43.2
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop: ['ALL']
-          command:
-            - mcpo
-            - --port
-            - "8000"
-            - --api-key
-            - "$(MCPO_API_KEY)"
-            - --config
-            - /app/config/config.json
           env:
-            - name: MCPO_API_KEY
+            - name: MCP_PROXY_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: app-openwebui-mcpo-api-key
-                  key: MCPO_API_KEY
+                  name: app-openwebui-mcp-proxy-auth
+                  key: MCP_PROXY_AUTH_TOKEN
           ports:
             - name: http
-              containerPort: 8000
+              containerPort: 9090
               protocol: TCP
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-            - name: mcpo-config
+            - name: mcp-proxy-config
               mountPath: /app/config
               readOnly: true
-            - name: mcpo-data
+            - name: mcp-proxy-data
               mountPath: /app/.mcpo
           resources:
             requests:
@@ -71,7 +63,7 @@ spec:
               memory: '2Gi'
           livenessProbe:
             httpGet:
-              path: /docs
+              path: /health
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
@@ -79,7 +71,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /docs
+              path: /health
               port: http
             initialDelaySeconds: 10
             periodSeconds: 15
@@ -89,9 +81,9 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 512Mi
-        - name: mcpo-config
+        - name: mcp-proxy-config
           configMap:
-            name: mcpo-config
-        - name: mcpo-data
+            name: mcp-proxy-config
+        - name: mcp-proxy-data
           emptyDir:
             sizeLimit: 1Gi

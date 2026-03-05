@@ -1,19 +1,19 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: mcpo
+  name: mcp-proxy
   namespace: open-webui
 spec:
   endpointSelector:
     matchLabels:
-      app: mcpo
+      app: mcp-proxy
   ingress:
     - fromEndpoints:
         - matchLabels:
             app: open-webui
       toPorts:
         - ports:
-            - port: "8000"
+            - port: "9090"
               protocol: TCP
   egress:
     - toEndpoints:

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mcp-proxy-config
+  namespace: open-webui
+data:
+  config.json: |
+    {
+      "mcpProxy": {
+        "addr": ":9090",
+        "name": "MCP Proxy",
+        "version": "1.0.0",
+        "type": "streamable-http",
+        "options": {
+          "logEnabled": true
+        }
+      },
+      "mcpServers": {
+        "arxiv": {
+          "command": "uv",
+          "args": ["tool", "run", "arxiv-mcp-server"],
+          "transportType": "streamable-http"
+        }
+      }
+    }
