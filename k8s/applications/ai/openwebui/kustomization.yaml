@@ -19,3 +19,8 @@ resources:
 - open-terminal-pvc.yaml
 - open-terminal-externalsecret.yaml
 - open-terminal-network-policy.yaml
+- mcpo-configmap.yaml
+- mcpo-external-secret.yaml
+- mcpo-deployment.yaml
+- mcpo-service.yaml
+- mcpo-network-policy.yaml

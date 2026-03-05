@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcpo
+  namespace: open-webui
+  labels:
+    app: mcpo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mcpo
+  template:
+    metadata:
+      labels:
+        app: mcpo
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+        hostNetwork: false
+        hostPID: false
+        hostIPC: false
+      containers:
+        - name: mcpo
+          image: ghcr.io/open-webui/mcpo:git-788ff92
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ['ALL']
+          command:
+            - mcpo
+            - --port
+            - "8000"
+            - --api-key
+            - "$(MCPO_API_KEY)"
+            - --config
+            - /app/config/config.json
+          env:
+            - name: MCPO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-openwebui-mcpo-api-key
+                  key: MCPO_API_KEY
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: mcpo-config
+              mountPath: /app/config
+              readOnly: true
+            - name: mcpo-data
+              mountPath: /app/.mcpo
+          resources:
+            requests:
+              cpu: '500m'
+              memory: '1Gi'
+            limits:
+              cpu: '1000m'
+              memory: '2Gi'
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /docs
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 512Mi
+        - name: mcpo-config
+          configMap:
+            name: mcpo-config
+        - name: mcpo-data
+          emptyDir:
+            sizeLimit: 1Gi
