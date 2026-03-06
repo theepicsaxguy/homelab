@@ -37,8 +37,8 @@ spec:
             capabilities:
               drop: ['ALL']
           env:
-            - name: UV_CACHE_DIR
-              value: /tmp/.uv-cache
+            - name: HOME
+              value: /home
             - name: MCP_PROXY_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -51,6 +51,10 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: home
+              mountPath: /home
+            - name: local-share
+              mountPath: /.local/share
             - name: mcp-proxy-config
               mountPath: /config
               readOnly: true
@@ -81,6 +85,12 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 512Mi
+        - name: home
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: local-share
+          emptyDir:
+            sizeLimit: 2Gi
         - name: mcp-proxy-config
           configMap:
             name: mcp-proxy-config
