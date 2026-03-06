@@ -50,7 +50,7 @@ spec:
             - name: tmp
               mountPath: /tmp
             - name: mcp-proxy-config
-              mountPath: /app/config
+              mountPath: /config
               readOnly: true
             - name: mcp-proxy-data
               mountPath: /app/.mcpo
@@ -62,16 +62,14 @@ spec:
               cpu: '1000m'
               memory: '2Gi'
           livenessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /health
+            tcpSocket:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 15
