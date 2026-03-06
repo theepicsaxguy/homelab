@@ -37,6 +37,8 @@ spec:
             capabilities:
               drop: ['ALL']
           env:
+            - name: UV_CACHE_DIR
+              value: /tmp/.uv-cache
             - name: MCP_PROXY_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -53,7 +55,7 @@ spec:
               mountPath: /config
               readOnly: true
             - name: mcp-proxy-data
-              mountPath: /app/.mcpo
+              mountPath: /app/data
           resources:
             requests:
               cpu: '500m'
