@@ -602,7 +602,7 @@ enable-ops: true
 #   will be de-opped unless they have the permission node, and the op/deop commands will be
 #   disabled.
 # - It is recommended that you use this option instead of assigning a single '*' permission.
-auto-op: true
+auto-op: false
 
 # Defines if "opped" players should be able to use all LuckPerms commands by default.
 #
