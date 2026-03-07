@@ -6,6 +6,8 @@ permissions:
   - essentials.*: true
   - multiverse.*: true
   - luckperms.*: true
+  - wildloaders.*: true
+  - cc.reload: true
   
   - floodgate: true
   - geyser: true
