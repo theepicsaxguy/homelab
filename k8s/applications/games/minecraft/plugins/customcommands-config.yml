@@ -1,4 +1,8 @@
+prefix: "[&6CustomCommands&r] "
+
 CustomCommands:
   wild:
     command: 'loader give {player} normal_loader 1 24h'
     message: ''
+
+Version: 3

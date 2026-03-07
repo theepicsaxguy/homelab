@@ -1,19 +1,20 @@
 name: admin
+parents:
+  - default
 prefixes:
   - "&c[&4Admin] &r":
       priority: 200
 permissions:
-  - essentials.*: true
-  - multiverse.*: true
-  - luckperms.*: true
-  - wildloaders.*: true
-  - cc.reload: true
-  
-  - floodgate: true
-  - geyser: true
-  - chestsort.reload: true
-  - chestsort.use: true
-  - chestsort.use.inventory: true
+  - essentials.*
+  - multiverse.*
+  - luckperms.*
+  - wildloaders.*
+  - cc.reload
+  - floodgate
+  - geyser
+  - chestsort.reload
+  - chestsort.use
+  - chestsort.use.inventory
 
   - essentials.fly:
       value: false
@@ -30,7 +31,7 @@ permissions:
   - essentials.item:
       value: false
   - essentials.enchant:
-      value: false 
+      value: false
   - essentials.repair:
       value: false
   - essentials.time:
@@ -56,6 +57,3 @@ permissions:
       value: false
   - minecraft.command.stop:
       value: false
-
-parents:
-  - default
