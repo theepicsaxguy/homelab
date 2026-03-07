@@ -133,6 +133,8 @@ spec:
                   name: wildloaders-config
               - configMap:
                   name: bedrockgui-config
+              - configMap:
+                  name: customcommands-config
   volumeClaimTemplates:
     - metadata:
         name: data

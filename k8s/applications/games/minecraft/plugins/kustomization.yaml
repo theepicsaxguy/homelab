@@ -61,3 +61,6 @@ configMapGenerator:
   - name: bedrockgui-config
     files:
       - BedrockGUI__config.yml=bedrockgui-config.yml
+  - name: customcommands-config
+    files:
+      - CustomCommands__config.yml=customcommands-config.yml
