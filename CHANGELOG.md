@@ -1,5 +1,54 @@
 # Changelog
 
+## 7.2.0 (2026-03-07)
+
+## What's Changed
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.8.8 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2340
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.3.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2342
+* chore(k8s): update shared tools path in deployment configuration by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2343
+* fix(deployment): specify chromium browser for Playwright MCP command by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2344
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2345
+* chore(deps): update dependency opik to v1.10.25 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2346
+* chore(deps): update helm release kube-prometheus-stack to v82.5.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2347
+* chore(deps): update helm release authentik to v2026.2.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2348
+* chore(deps): update helm release kube-prometheus-stack to v82.6.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2349
+* Fix(k8s)  update memory limits and timeouts for authentik worker by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2350
+* chore(deps): update helm release kube-prometheus-stack to v82.6.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2351
+* chore(deps): update helm release kube-prometheus-stack to v82.8.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2352
+* feat(litellm): add azure/gpt-5.3-codex model and remove deprecated models by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2353
+* chore(deps): update n8nio/n8n docker tag to v2.11.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2354
+* chore(deps): update dependency opik to v1.10.26 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2357
+* chore(deps): update dependency transformers to v5.3.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2358
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.3.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2359
+* chore(deps): update dependency llama-index-cli to v0.5.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2360
+* chore(deps): update dependency llama-index-llms-openai to v0.6.26 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2361
+* chore(deps): update helm release kube-prometheus-stack to v82.9.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2362
+* chore(deps): update dependency opik to v1.10.27 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2363
+* chore(deps): update dependency openai to v2.25.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2366
+* feat(ai): add mcpo with arxiv-mcp-server for OpenWebUI by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2365
+* chore(deps): bump docker/setup-buildx-action from 3 to 4 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/2364
+* chore(deps): bump docker/login-action from 3 to 4 by @dependabot[bot] in https://github.com/theepicsaxguy/homelab/pull/2356
+* chore(deps): update docker/login-action action to v4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2355
+* Feat/ai/mcp proxy v2 by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2367
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2369
+* chore(deps): update coredns/coredns docker tag to v1.14.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2370
+* chore(deps): update velero/velero-plugin-for-aws docker tag to v1.14.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2371
+* chore(deps): update dependency opik to v1.10.28 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2372
+* Fix(k8s)--correct-mcp-proxy-config-mount-path-and-probe-types by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2373
+* chore(deps): update dependency opik to v1.10.29 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2375
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2376
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2377
+* chore(deps): update dependency saifyxpro/headlessx to v2.0.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2378
+* chore(deps): update dependency vllm-project/vllm to v0.17.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2379
+* feat(minecraft): add CustomCommands plugin with /wild shortcut by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2380
+* fix(argocd): add games to ApplicationSet directories by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2381
+* fix(minecraft): use LuckPerms native YAML format and disable auto-op by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2382
+* chore(deps): update dependency saifyxpro/headlessx to v2.0.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2383
+* chore(deps): update helm release external-secrets to v2.1.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2384
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v7.1.0...v7.2.0
+
 ## 7.1.0 (2026-03-02)
 
 ## What's Changed
