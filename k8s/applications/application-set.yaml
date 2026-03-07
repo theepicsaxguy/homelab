@@ -23,6 +23,7 @@ spec:
           - path: k8s/applications/web
           - path: k8s/applications/network
           - path: k8s/applications/automation
+          - path: k8s/applications/games
           - path: k8s/applications/web/hypebot
             exclude: true
 
