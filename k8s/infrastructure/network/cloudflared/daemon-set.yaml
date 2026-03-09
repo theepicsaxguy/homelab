@@ -25,7 +25,7 @@ spec:
       hostIPC: false
       containers:
         - name: cloudflared
-          image: cloudflare/cloudflared:2026.2.0 # renovate: docker=cloudflare/cloudflared
+          image: cloudflare/cloudflared:2026.3.0 # renovate: docker=cloudflare/cloudflared
           imagePullPolicy: IfNotPresent
           args:
             - tunnel
