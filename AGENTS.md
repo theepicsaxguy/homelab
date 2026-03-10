@@ -19,6 +19,7 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - NEVER use --force, --grace-period=0, and --ignore-not-found.
 - Avoid secrets and generated artifacts in Git.
 - Pin container images to specific tags. Never vague tags like latest or main.
+- never create any markdown docuemnts, summary or analyzis etc if the user havent told you to do so.
 </Global_rules>
 
 <repo_paths>
