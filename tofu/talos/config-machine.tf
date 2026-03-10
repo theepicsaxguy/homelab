@@ -8,6 +8,9 @@ data "talos_machine_configuration" "this" {
   kubernetes_version = local.node_effective_kubernetes_versions[each.key]
 
   config_patches = each.value.machine_type == "controlplane" ? [
+    templatefile("${path.module}/machine-config/hostname-config.yaml.tftpl", {
+      hostname = each.key
+    }),
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
       hostname              = each.key
       node_name             = each.value.host_node
@@ -26,6 +29,9 @@ data "talos_machine_configuration" "this" {
     })
     ] : concat(
     [
+      templatefile("${path.module}/machine-config/hostname-config.yaml.tftpl", {
+        hostname = each.key
+      }),
       templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
         hostname              = each.key
         node_name             = each.value.host_node
@@ -56,6 +62,7 @@ resource "talos_machine_configuration_apply" "this" {
   node                        = each.value.ip
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this[each.key].machine_configuration
+  apply_mode                  = "auto"
 
   lifecycle {
     # Depend on THIS specific VM - triggers reapply when VM is replaced

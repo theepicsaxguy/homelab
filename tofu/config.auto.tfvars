@@ -15,8 +15,8 @@ network = {
 proxmox_cluster = "host3"
 
 versions = {
-  talos      = "v1.11.5"
-  kubernetes = "1.34.3"
+  talos      = "v1.12.5"
+  kubernetes = "1.35.2"
 }
 
 talos_image = {
@@ -25,7 +25,7 @@ talos_image = {
 }
 
 kubernetes_image = {
-  update_version = "1.34.3" # renovate: github-releases=kubernetes/kubernetes versioning=loose
+  update_version = "1.35.2" # renovate: github-releases=kubernetes/kubernetes versioning=loose
 }
 
 oidc = {
