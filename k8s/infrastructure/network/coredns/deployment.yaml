@@ -39,6 +39,9 @@ spec:
                 topologyKey: kubernetes.io/hostname
       serviceAccountName: coredns
       priorityClassName: system-cluster-critical
+      securityContext:
+        runAsNonRoot: false
+        fsGroupChangePolicy: OnRootMismatch
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
@@ -51,9 +54,12 @@ spec:
           image: coredns/coredns:1.14.2
           securityContext:
             readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+              add:
+                - NET_BIND_SERVICE
           imagePullPolicy: IfNotPresent
           resources:
             limits:
