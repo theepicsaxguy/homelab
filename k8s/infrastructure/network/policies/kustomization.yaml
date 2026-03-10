@@ -12,9 +12,7 @@ resources:
 - applications/automation
 - applications/media
 - applications/web
-- applications/games
 - applications/tools
-- applications/network
 labels:
 - pairs:
     policy-type: cilium-audit-policies
