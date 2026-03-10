@@ -63,9 +63,9 @@ spec:
             - name: FAST_LLM
               value: "openai:azure/gpt-5.1-codex-mini"
             - name: SMART_LLM
-              value: "openai:azure/gpt-5.4"
+              value: "openai:azure/gpt-5.3"
             - name: STRATEGIC_LLM
-              value: "openai:azure/gpt-5.4"
+              value: "openai:azure/gpt-5.3"
             # Deep Research Configuration - Controls research depth and breadth
             - name: DEEP_RESEARCH_BREADTH
               value: "4"
