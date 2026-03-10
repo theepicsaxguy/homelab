@@ -16,17 +16,15 @@ proxmox_cluster = "host3"
 
 versions = {
   talos      = "v1.11.5"
-  kubernetes = "1.35.2" # renovate: github-releases=kubernetes/kubernetes versioning=loose
-  #talos      = "v1.11.5"
-  #kubernetes = "1.34.3"
+  kubernetes = "1.34.3"
 }
-
-# Set to the current Kubernetes version running on the cluster
-# Only nodes with upgrade=true will upgrade to versions.kubernetes
-kubernetes_current_version = "1.34.3"
 
 talos_image = {
   update_version = "v1.12.5" # renovate: github-releases=siderolabs/talos
+}
+
+kubernetes_image = {
+  update_version = "1.34.3" # Keep same as current while upgrading Talos; change to 1.35.2 after Talos is upgraded
 }
 
 oidc = {
