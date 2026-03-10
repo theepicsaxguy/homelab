@@ -26,3 +26,35 @@ spec:
     - ports:
       - port: "6379"
         protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: argocd
+    toPorts:
+    - ports:
+      - port: "8081"
+        protocol: TCP
+      - port: "5556"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "6443"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP
+  - toEntities:
+    - world
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP

@@ -182,10 +182,12 @@ variable "versions" {
   })
 }
 
-variable "kubernetes_current_version" {
-  description = "Current Kubernetes version running on the cluster. Nodes with upgrade=false keep this version; nodes with upgrade=true upgrade to versions.kubernetes."
-  type        = string
-  default     = null # Will default to versions.kubernetes if not provided
+variable "kubernetes_image" {
+  description = "Kubernetes image configuration"
+  type = object({
+    update_version = optional(string) # Defaults to var.versions.kubernetes if not set
+  })
+  default = {}
 }
 
 variable "oidc" {

@@ -16,17 +16,16 @@ proxmox_cluster = "host3"
 
 versions = {
   talos      = "v1.11.5"
-  kubernetes = "1.35.2" # renovate: github-releases=kubernetes/kubernetes versioning=loose
-  #talos      = "v1.11.5"
-  #kubernetes = "1.34.3"
+  kubernetes = "1.34.3"
 }
 
-# Set to the current Kubernetes version running on the cluster
-# Only nodes with upgrade=true will upgrade to versions.kubernetes
-kubernetes_current_version = "1.34.3"
-
 talos_image = {
+  schematic_path = "talos/image/schematic.yaml.tftpl"
   update_version = "v1.12.5" # renovate: github-releases=siderolabs/talos
+}
+
+kubernetes_image = {
+  update_version = "1.34.3" # renovate: github-releases=kubernetes/kubernetes versioning=loose
 }
 
 oidc = {
@@ -41,7 +40,6 @@ lb_nodes = {
     mac_address   = "bc:24:11:aa:aa:05"
     startup_order = 1
     vm_id         = 8005
-    upgrade       = false
   }
   lb-01 = {
     host_node     = "host3"
@@ -49,6 +47,5 @@ lb_nodes = {
     mac_address   = "bc:24:11:aa:aa:06"
     startup_order = 2
     vm_id         = 8006
-    upgrade       = false
   }
 }

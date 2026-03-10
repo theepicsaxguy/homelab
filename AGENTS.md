@@ -1,8 +1,12 @@
 Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom images, and Docusaurus documentation.
 
 <Global_rules>
-- Use subagents when possible to save context.
-- Prefer to use skills when relevant.
+- Always use parallel subagents to save context, time and stay on track.
+- Use available skills for any task when possible. Skills encode established workflows.
+- Never log secrets, credentials, API keys, tokens, or connection strings.
+- All warnings must be resolved. Lint, type, complexity, and compiler warnings fail CI.
+- A PR must read like one author: match the naming, structure, DI style, and error handling shape of the surrounding code.
+- A file exceeding 300 lines likely has more than one responsibility and must be split.
 - Apply all cluster changes through GitOps and Argo CD unless the user approves manual kustomize and kubectl.
 - Always explicitly set pod spec hostNetwork false, hostPID false, hostIPC false; pod securityContext runAsNonRoot true, runAsUser, runAsGroup, fsGroup, fsGroupChangePolicy OnRootMismatch; container securityContext allowPrivilegeEscalation false, readOnlyRootFilesystem true, capabilities.drop ["ALL"]; and container resources cpu/memory requests and limits, even with custom values.
   - Note: hostNetwork, hostPID, and hostIPC are pod spec fields, not PodSecurityContext fields.
@@ -15,6 +19,7 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - NEVER use --force, --grace-period=0, and --ignore-not-found.
 - Avoid secrets and generated artifacts in Git.
 - Pin container images to specific tags. Never vague tags like latest or main.
+- never create any markdown docuemnts, summary or analyzis etc if the user havent told you to do so.
 </Global_rules>
 
 <repo_paths>

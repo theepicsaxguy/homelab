@@ -36,8 +36,9 @@ module "talos" {
 
   proxmox_datastore = var.proxmox_datastore
 
-  talos_image = var.talos_image
-  versions    = var.versions
+  talos_image      = var.talos_image
+  versions         = var.versions
+  kubernetes_image = var.kubernetes_image
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")
@@ -57,14 +58,13 @@ module "talos" {
   external_api_endpoint = var.external_api_endpoint
 
   cluster = {
-    name                       = var.cluster_name
-    endpoint                   = coalesce(var.external_api_endpoint, "api.${var.cluster_domain}")
-    gateway                    = var.network.gateway
-    vip                        = var.network.vip
-    talos_version              = var.versions.talos
-    proxmox_cluster            = var.proxmox_cluster
-    kubernetes_version         = var.versions.kubernetes
-    kubernetes_current_version = coalesce(var.kubernetes_current_version, var.versions.kubernetes)
+    name               = var.cluster_name
+    endpoint           = coalesce(var.external_api_endpoint, "api.${var.cluster_domain}")
+    gateway            = var.network.gateway
+    vip                = var.network.vip
+    talos_version      = var.versions.talos
+    proxmox_cluster    = var.proxmox_cluster
+    kubernetes_version = var.versions.kubernetes
   }
 
   network = var.network
