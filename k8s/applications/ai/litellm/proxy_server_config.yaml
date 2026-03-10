@@ -56,8 +56,8 @@ model_list:
       api_base: "os.environ/openai_base_url_1"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 4096
+      max_input_tokens: 272000
+      max_output_tokens: 128000
 
   - model_name: azure/embedding3large
     litellm_params:
@@ -89,8 +89,8 @@ model_list:
     model_info:
       mode: chat
       # Set a practical large context window for modern multipurpose GPT-4.x models
-      max_input_tokens: 5000000
-      max_output_tokens: 16384
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -102,8 +102,8 @@ model_list:
       api_base: "os.environ/openai_base_url_1"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 8192
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000025
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
@@ -117,8 +117,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 150000000
-      max_output_tokens: 4096
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000005
       output_cost_per_token: 0.0000004
       input_cost_per_token_cached: 0.00000001
@@ -131,8 +131,8 @@ model_list:
     model_info:
       mode: chat
       # Set a practical large context window for modern multipurpose GPT-4.x models
-      max_input_tokens: 5000000
-      max_output_tokens: 16384
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -146,8 +146,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -161,8 +161,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 8192
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000025
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
@@ -176,8 +176,8 @@ model_list:
       reasoning_effort: "medium"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -191,8 +191,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 8192
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000025
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
@@ -206,8 +206,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -221,8 +221,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 5000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -236,8 +236,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -251,8 +251,8 @@ model_list:
       reasoning_effort: "low"
     model_info:
       mode: responses
-      max_input_tokens: 5000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -265,8 +265,8 @@ model_list:
       api_base: "os.environ/openai_base_url_1"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -280,8 +280,8 @@ model_list:
       reasoning_effort: "medium"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -295,8 +295,8 @@ model_list:
       reasoning_effort: "medium"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
@@ -310,8 +310,8 @@ model_list:
       reasoning_effort: "medium"
     model_info:
       mode: responses
-      max_input_tokens: 10000000
-      max_output_tokens: 32768
+      max_input_tokens: 272000
+      max_output_tokens: 128000
       input_cost_per_token: 0.00000125
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
