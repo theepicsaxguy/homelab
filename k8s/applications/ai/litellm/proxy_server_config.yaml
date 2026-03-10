@@ -166,6 +166,7 @@ model_list:
       input_cost_per_token: 0.00000025
       output_cost_per_token: 0.000002
       input_cost_per_token_cached: 0.00000003
+      # Global pricing: Input $0.25, Output $2, Cached Input $0.03 per 1M tokens
 
   - model_name: openai/gpt-5.1-codex-max
     litellm_params:
@@ -208,9 +209,9 @@ model_list:
       mode: responses
       max_input_tokens: 272000
       max_output_tokens: 128000
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
+      input_cost_per_token: 0.00000175
+      output_cost_per_token: 0.000014
+      input_cost_per_token_cached: 0.00000018
 
   - model_name: azure/gpt-5.2-chat
     litellm_params:
@@ -223,9 +224,9 @@ model_list:
       mode: responses
       max_input_tokens: 272000
       max_output_tokens: 128000
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
+      input_cost_per_token: 0.00000175
+      output_cost_per_token: 0.000014
+      input_cost_per_token_cached: 0.00000018
 
   - model_name: openai/gpt-5.2
     litellm_params:
@@ -238,9 +239,9 @@ model_list:
       mode: responses
       max_input_tokens: 272000
       max_output_tokens: 128000
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
+      input_cost_per_token: 0.00000175
+      output_cost_per_token: 0.000014
+      input_cost_per_token_cached: 0.00000018
 
   - model_name: openai/gpt-5.2-chat
     litellm_params:
@@ -253,9 +254,9 @@ model_list:
       mode: responses
       max_input_tokens: 272000
       max_output_tokens: 128000
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
+      input_cost_per_token: 0.00000175
+      output_cost_per_token: 0.000014
+      input_cost_per_token_cached: 0.00000018
 
 
   - model_name: azure/gpt-5.2-codex
@@ -267,9 +268,9 @@ model_list:
       mode: responses
       max_input_tokens: 272000
       max_output_tokens: 128000
-      input_cost_per_token: 0.00000125
-      output_cost_per_token: 0.00001
-      input_cost_per_token_cached: 0.00000013
+      input_cost_per_token: 0.00000175
+      output_cost_per_token: 0.000014
+      input_cost_per_token_cached: 0.00000018
 
   - model_name: azure/gpt-5.3-codex
     litellm_params:
