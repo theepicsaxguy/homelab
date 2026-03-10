@@ -62,6 +62,7 @@ resource "talos_machine_configuration_apply" "this" {
   node                        = each.value.ip
   client_configuration        = talos_machine_secrets.this.client_configuration
   machine_configuration_input = data.talos_machine_configuration.this[each.key].machine_configuration
+  apply_mode                  = "auto"
 
   lifecycle {
     # Depend on THIS specific VM - triggers reapply when VM is replaced
