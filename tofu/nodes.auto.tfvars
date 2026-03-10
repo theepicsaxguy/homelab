@@ -31,7 +31,7 @@ nodes_config = {
     startup_order  = 6
     vm_id          = 8201
     root_disk_size = 60
-    upgrade        = false
+    upgrade        = true
   }
   "work-01" = {
     machine_type   = "worker"

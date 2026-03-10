@@ -77,7 +77,8 @@
       "**/*.tfstate*": true
     },
     "terminal.integrated.env.linux": {
-      "KUBECONFIG": "${workspaceFolder:root}/kubeconfig"
+      "KUBECONFIG": "${workspaceFolder:root}/tofu/output/kube-config.yaml",
+      "TALOSCONFIG": "${workspaceFolder:root}/tofu/output/talos-config.yaml"
     },
     // Git settings
     "git.enableCommitSigning": false,
