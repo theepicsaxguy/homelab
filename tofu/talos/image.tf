@@ -48,6 +48,12 @@ locals {
     coalesce(config.upgrade, false) ? local.target_version : local.effective_version
   }
 
+  # Per-node Kubernetes versions - only upgrade if upgrade = true
+  node_effective_kubernetes_versions = {
+    for name, config in var.nodes : name =>
+    coalesce(config.upgrade, false) ? var.cluster.kubernetes_version : var.cluster.kubernetes_current_version
+  }
+
   # Collect all version+host+schematic combinations needed
   # Key format: <host>-<std|gpu>-<version>
   image_download_list = flatten([

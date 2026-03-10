@@ -182,6 +182,12 @@ variable "versions" {
   })
 }
 
+variable "kubernetes_current_version" {
+  description = "Current Kubernetes version running on the cluster. Nodes with upgrade=false keep this version; nodes with upgrade=true upgrade to versions.kubernetes."
+  type        = string
+  default     = null # Will default to versions.kubernetes if not provided
+}
+
 variable "oidc" {
   description = "Optional OIDC provider configuration for Kubernetes API server."
   type = object({

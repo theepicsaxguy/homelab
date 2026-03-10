@@ -5,7 +5,7 @@ nodes_config = {
     mac_address   = "bc:24:11:e6:ba:07"
     startup_order = 3
     vm_id         = 8101
-    upgrade       = false
+    upgrade       = true
   }
   "ctrl-01" = {
     machine_type  = "controlplane"
