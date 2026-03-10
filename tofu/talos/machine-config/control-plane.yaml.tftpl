@@ -30,10 +30,7 @@ machine:
     modules:
       - name: nvme_tcp
       - name: vfio_pci
-  features:
-    stableHostname: false
   network:
-    hostname: ${hostname}
     interfaces:
       - interface: eth0
         dhcp: true
@@ -105,3 +102,7 @@ cluster:
   - name: coredns-bootstrap
     contents: |
       ${indent(6, coredns_install)}
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ${hostname}

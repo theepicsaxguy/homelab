@@ -30,10 +30,7 @@ machine:
       - name: nvme_tcp # NVMe over TCP, generally useful for storage
       - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
 
-  features:
-    stableHostname: false
-  network:
-    hostname: ${hostname}
+  network: {}
 
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
@@ -64,3 +61,7 @@ cluster:
   clusterName: ${cluster_domain}
   network:
     dnsDomain: ${cluster_domain}
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+hostname: ${hostname}
