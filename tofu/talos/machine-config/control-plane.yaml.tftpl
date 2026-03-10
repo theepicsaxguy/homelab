@@ -102,8 +102,3 @@ cluster:
   - name: coredns-bootstrap
     contents: |
       ${indent(6, coredns_install)}
----
-apiVersion: v1alpha1
-kind: HostnameConfig
-hostname: ${hostname}
-auto: ""
