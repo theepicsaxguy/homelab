@@ -61,11 +61,11 @@ spec:
             - name: EMBEDDING
               value: "openai:azure/text-embedding-3-small"
             - name: FAST_LLM
-              value: "openai:azure/gpt-5-nano"
+              value: "openai:azure/gpt-5.1-codex-mini"
             - name: SMART_LLM
-              value: "openai:azure/gpt-5.2"
+              value: "openai:azure/gpt-5.4"
             - name: STRATEGIC_LLM
-              value: "openai:azure/gpt-5.2"
+              value: "openai:azure/gpt-5.4"
             # Deep Research Configuration - Controls research depth and breadth
             - name: DEEP_RESEARCH_BREADTH
               value: "4"
