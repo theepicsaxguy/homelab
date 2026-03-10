@@ -22,14 +22,14 @@ variable "versions" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    name                        = string
-    endpoint                    = string
-    gateway                     = string
-    vip                         = string
-    talos_version               = string
-    proxmox_cluster             = string
-    kubernetes_version          = optional(string, "1.32.0")
-    kubernetes_current_version  = optional(string, "1.32.0")
+    name                       = string
+    endpoint                   = string
+    gateway                    = string
+    vip                        = string
+    talos_version              = string
+    proxmox_cluster            = string
+    kubernetes_version         = optional(string, "1.32.0")
+    kubernetes_current_version = optional(string, "1.32.0")
   })
 }
 
@@ -104,13 +104,13 @@ variable "nodes" {
     )
     upgrade = optional(bool, false)
     # Root disk configuration
-    root_disk_interface         = optional(string)
-    root_disk_iothread          = optional(bool)
-    root_disk_cache             = optional(string)
-    root_disk_discard           = optional(string)
-    root_disk_ssd               = optional(bool)
-    root_disk_file_format       = optional(string)
-    root_disk_size              = optional(number)
+    root_disk_interface   = optional(string)
+    root_disk_iothread    = optional(bool)
+    root_disk_cache       = optional(string)
+    root_disk_discard     = optional(string)
+    root_disk_ssd         = optional(bool)
+    root_disk_file_format = optional(string)
+    root_disk_size        = optional(number)
   }))
 
   validation {
