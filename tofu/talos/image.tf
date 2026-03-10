@@ -18,8 +18,13 @@ locals {
   effective_version = coalesce(var.talos_image.version, var.versions.talos)
   effective_update_version = coalesce(var.talos_image.update_version, var.versions.talos)
 
+  # Kubernetes versions - mirror Talos pattern
+  effective_k8s_version        = var.versions.kubernetes
+  effective_k8s_update_version = coalesce(var.kubernetes_image.update_version, var.versions.kubernetes)
+
   # Target version for upgrades
-  target_version = local.effective_update_version
+  target_version     = local.effective_update_version
+  target_k8s_version = local.effective_k8s_update_version
 
   # Simplified schematic configs - only one version per type (std/gpu)
   schematic_configs = merge(
@@ -46,6 +51,12 @@ locals {
   node_effective_versions = {
     for name, config in var.nodes : name =>
     coalesce(config.upgrade, false) ? local.target_version : local.effective_version
+  }
+
+  # Per-node Kubernetes versions - only upgrade if upgrade = true (same pattern as Talos)
+  node_effective_kubernetes_versions = {
+    for name, config in var.nodes : name =>
+    coalesce(config.upgrade, false) ? local.target_k8s_version : local.effective_k8s_version
   }
 
   # Collect all version+host+schematic combinations needed

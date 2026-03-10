@@ -19,6 +19,14 @@ variable "versions" {
   })
 }
 
+variable "kubernetes_image" {
+  description = "Kubernetes image configuration"
+  type = object({
+    update_version = optional(string) # Defaults to var.versions.kubernetes if not set
+  })
+  default = {}
+}
+
 variable "cluster" {
   description = "Cluster configuration"
   type = object({

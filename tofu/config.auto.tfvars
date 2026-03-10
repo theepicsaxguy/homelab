@@ -24,7 +24,7 @@ talos_image = {
 }
 
 kubernetes_image = {
-  update_version = "1.34.3" # renovate: github-releases=kubernetes/kubernetes versioning=loose
+  update_version = "1.35.2" # renovate: github-releases=kubernetes/kubernetes versioning=loose
 }
 
 oidc = {

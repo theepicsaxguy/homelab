@@ -36,8 +36,9 @@ module "talos" {
 
   proxmox_datastore = var.proxmox_datastore
 
-  talos_image = var.talos_image
-  versions    = var.versions
+  talos_image      = var.talos_image
+  versions         = var.versions
+  kubernetes_image = var.kubernetes_image
 
   cilium = {
     values  = file("${path.module}/../k8s/infrastructure/network/cilium/values.yaml")

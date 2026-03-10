@@ -182,6 +182,14 @@ variable "versions" {
   })
 }
 
+variable "kubernetes_image" {
+  description = "Kubernetes image configuration"
+  type = object({
+    update_version = optional(string) # Defaults to var.versions.kubernetes if not set
+  })
+  default = {}
+}
+
 variable "oidc" {
   description = "Optional OIDC provider configuration for Kubernetes API server."
   type = object({
