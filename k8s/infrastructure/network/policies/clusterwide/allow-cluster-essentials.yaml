@@ -6,6 +6,9 @@ metadata:
     policy-type: audit-baseline
 spec:
   endpointSelector: {}
+  enableDefaultDeny:
+    ingress: false
+    egress: false
   description: "Allow DNS and Kubernetes API access cluster-wide"
   egress:
   - toEndpoints:
