@@ -21,10 +21,6 @@ locals {
     sort([for name, config in var.nodes : name if config.machine_type == "worker"])
   )
 
-  # Note: target_version and node_effective_versions are defined in image.tf
-  # to avoid duplication. They're used here via local.target_version and
-  # local.node_effective_versions.
-
   # Nodes marked for upgrade
   nodes_marked_for_upgrade = [
     for name, config in var.nodes : name if coalesce(config.upgrade, false)
