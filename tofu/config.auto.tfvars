@@ -15,7 +15,7 @@ network = {
 proxmox_cluster = "host3"
 
 versions = {
-  talos      = "v1.11.5"
+  talos      = "v1.12.5"
   kubernetes = "1.34.3"
 }
 

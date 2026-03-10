@@ -30,6 +30,8 @@ machine:
     modules:
       - name: nvme_tcp
       - name: vfio_pci
+  features:
+    stableHostname: false
   network:
     hostname: ${hostname}
     interfaces:

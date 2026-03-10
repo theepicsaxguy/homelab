@@ -30,6 +30,8 @@ machine:
       - name: nvme_tcp # NVMe over TCP, generally useful for storage
       - name: vfio_pci # VFIO PCI passthrough, needed for any PCI passthrough
 
+  features:
+    stableHostname: false
   network:
     hostname: ${hostname}
 
