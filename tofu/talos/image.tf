@@ -15,13 +15,8 @@ locals {
   has_gpu_nodes = anytrue([for name, node in var.nodes : lookup(node, "igpu", false)])
 
   # Use versions from config.auto.tfvars as defaults
-  effective_version        = coalesce(var.talos_image.version, var.versions.talos)
+  effective_version = coalesce(var.talos_image.version, var.versions.talos)
   effective_update_version = coalesce(var.talos_image.update_version, var.versions.talos)
-
-  # Kubernetes versions - mirror Talos pattern
-  effective_k8s_version        = var.versions.kubernetes
-  effective_k8s_update_version = coalesce(var.kubernetes_image.update_version, var.versions.kubernetes)
-  target_k8s_version           = local.effective_k8s_update_version
 
   # Target version for upgrades
   target_version = local.effective_update_version
@@ -51,12 +46,6 @@ locals {
   node_effective_versions = {
     for name, config in var.nodes : name =>
     coalesce(config.upgrade, false) ? local.target_version : local.effective_version
-  }
-
-  # Per-node Kubernetes versions - only upgrade if upgrade = true (same pattern as Talos)
-  node_effective_kubernetes_versions = {
-    for name, config in var.nodes : name =>
-    coalesce(config.upgrade, false) ? local.target_k8s_version : local.effective_k8s_version
   }
 
   # Collect all version+host+schematic combinations needed

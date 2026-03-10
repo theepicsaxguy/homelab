@@ -19,14 +19,6 @@ variable "versions" {
   })
 }
 
-variable "kubernetes_image" {
-  description = "Kubernetes image configuration"
-  type = object({
-    update_version = optional(string) # Defaults to var.versions.kubernetes if not set
-  })
-  default = {}
-}
-
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
@@ -111,13 +103,13 @@ variable "nodes" {
     )
     upgrade = optional(bool, false)
     # Root disk configuration
-    root_disk_interface   = optional(string)
-    root_disk_iothread    = optional(bool)
-    root_disk_cache       = optional(string)
-    root_disk_discard     = optional(string)
-    root_disk_ssd         = optional(bool)
-    root_disk_file_format = optional(string)
-    root_disk_size        = optional(number)
+    root_disk_interface         = optional(string)
+    root_disk_iothread          = optional(bool)
+    root_disk_cache             = optional(string)
+    root_disk_discard           = optional(string)
+    root_disk_ssd               = optional(bool)
+    root_disk_file_format       = optional(string)
+    root_disk_size              = optional(number)
   }))
 
   validation {

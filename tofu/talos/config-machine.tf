@@ -5,39 +5,39 @@ data "talos_machine_configuration" "this" {
   talos_version      = var.cluster.talos_version
   machine_type       = each.value.machine_type
   machine_secrets    = talos_machine_secrets.this.machine_secrets
-  kubernetes_version = local.node_effective_kubernetes_versions[each.key]
+  kubernetes_version = var.cluster.kubernetes_version
 
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-      hostname              = each.key
-      node_name             = each.value.host_node
-      cluster_name          = var.cluster.proxmox_cluster
-      node_ip               = each.value.ip
-      cluster               = var.cluster
-      cluster_domain        = var.cluster_domain
+      hostname             = each.key
+      node_name            = each.value.host_node
+      cluster_name         = var.cluster.proxmox_cluster
+      node_ip              = each.value.ip
+      cluster              = var.cluster
+      cluster_domain       = var.cluster_domain
       external_api_endpoint = var.external_api_endpoint
-      cilium_values         = var.cilium.values
+      cilium_values        = var.cilium.values
       cilium_install        = var.cilium.install
       coredns_install       = var.coredns.install
-      oidc                  = var.oidc
-      network               = var.network
-      vip                   = var.network.vip
-      disks                 = each.value.disks
+      oidc                 = var.oidc
+      network              = var.network
+      vip                  = var.network.vip
+      disks                = each.value.disks
     })
     ] : concat(
     [
       templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-        hostname              = each.key
-        node_name             = each.value.host_node
-        cluster_name          = var.cluster.proxmox_cluster
-        node_ip               = each.value.ip
-        cluster               = var.cluster
-        cluster_domain        = var.cluster_domain
+        hostname             = each.key
+        node_name            = each.value.host_node
+        cluster_name         = var.cluster.proxmox_cluster
+        node_ip              = each.value.ip
+        cluster              = var.cluster
+        cluster_domain       = var.cluster_domain
         external_api_endpoint = var.external_api_endpoint
-        disks                 = each.value.disks
-        igpu                  = each.value.igpu
-        gpu_node_exclusive    = lookup(each.value, "gpu_node_exclusive", false)
-        vip                   = var.network.vip
+        disks                = each.value.disks
+        igpu                 = each.value.igpu
+        gpu_node_exclusive   = lookup(each.value, "gpu_node_exclusive", false)
+        vip                  = var.network.vip
       })
     ],
     # This conditionally adds the GPU patches

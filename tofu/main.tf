@@ -66,8 +66,6 @@ module "talos" {
     kubernetes_version = var.versions.kubernetes
   }
 
-  kubernetes_image = var.kubernetes_image
-
   network = var.network
 
   # Pass OIDC config to the module

@@ -24,7 +24,7 @@ talos_image = {
 }
 
 kubernetes_image = {
-  update_version = "1.34.3" # Keep same as current while upgrading Talos; change to 1.35.2 after Talos is upgraded
+  update_version = "1.34.3" # renovate: github-releases=kubernetes/kubernetes versioning=loose
 }
 
 oidc = {
@@ -39,7 +39,6 @@ lb_nodes = {
     mac_address   = "bc:24:11:aa:aa:05"
     startup_order = 1
     vm_id         = 8005
-    upgrade       = false
   }
   lb-01 = {
     host_node     = "host3"
@@ -47,6 +46,5 @@ lb_nodes = {
     mac_address   = "bc:24:11:aa:aa:06"
     startup_order = 2
     vm_id         = 8006
-    upgrade       = false
   }
 }
