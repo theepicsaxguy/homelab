@@ -16,7 +16,7 @@ proxmox_cluster = "host3"
 
 versions = {
   talos      = "v1.12.5"
-  kubernetes = "1.34.3"
+  kubernetes = "1.35.2"
 }
 
 talos_image = {
