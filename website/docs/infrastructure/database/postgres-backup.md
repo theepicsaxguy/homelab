@@ -152,7 +152,7 @@ metadata:
   namespace: <namespace>
 spec:
   instances: 1
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
 
   storage:
     size: 20Gi
@@ -367,7 +367,7 @@ metadata:
   namespace: auth
 spec:
   instances: 2
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
   storage:
     size: 20Gi
     storageClass: longhorn
