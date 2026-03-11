@@ -6,3 +6,4 @@ resources:
 - statefulset.yaml
 - service.yaml
 - admin-external-secret.yaml
+- clear-entities-cronjob.yaml
