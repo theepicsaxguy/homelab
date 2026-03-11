@@ -5,7 +5,7 @@ nodes_config = {
     mac_address   = "bc:24:11:e6:ba:07"
     startup_order = 3
     vm_id         = 8101
-    upgrade       = true
+    upgrade       = false
   }
   "ctrl-01" = {
     machine_type  = "controlplane"
@@ -14,7 +14,7 @@ nodes_config = {
     startup_order = 4
     vm_id         = 8102
     datastore_id  = "velocity"
-    upgrade       = true
+    upgrade       = false
   }
   "ctrl-02" = {
     machine_type  = "controlplane"
@@ -22,7 +22,7 @@ nodes_config = {
     mac_address   = "bc:24:11:1e:1d:2f"
     startup_order = 5
     vm_id         = 8103
-    upgrade       = true
+    upgrade       = false
   }
   "work-00" = {
     machine_type   = "worker"

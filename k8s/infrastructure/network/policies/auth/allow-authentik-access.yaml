@@ -17,6 +17,46 @@ spec:
     - ports:
       - port: "9000"
         protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: open-webui
+        app: open-webui
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: litellm
+        app: litellm
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: karakeep
+        app: karakeep-web
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: home-assistant
+        app.kubernetes.io/name: home-assistant
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: immich
+        app.kubernetes.io/name: server
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:

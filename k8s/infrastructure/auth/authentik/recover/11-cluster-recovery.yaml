@@ -8,7 +8,7 @@ metadata:
     recurring-job-group.longhorn.io/gfs: enabled
 spec:
   instances: 1
-  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
   enablePDB: false
   enableSuperuserAccess: true  # Required for recovery scripts that need postgres superuser access
 
