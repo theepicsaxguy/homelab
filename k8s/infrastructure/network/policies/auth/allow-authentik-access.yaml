@@ -17,6 +17,14 @@ spec:
     - ports:
       - port: "9000"
         protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: open-webui
+        app: open-webui
+    toPorts:
+    - ports:
+      - port: "9000"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:
