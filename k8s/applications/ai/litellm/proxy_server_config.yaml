@@ -287,9 +287,9 @@ model_list:
       output_cost_per_token: 0.00001
       input_cost_per_token_cached: 0.00000013
 
-  - model_name: azure/gpt-5.3
+  - model_name: azure/gpt-5.3-chat
     litellm_params:
-      model: openai/gpt-5.3
+      model: openai/gpt-5.3-chat
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -304,7 +304,7 @@ model_list:
 
   - model_name: azure/gpt-5.4
     litellm_params:
-      model: openai/gpt-5.3
+      model: openai/gpt-5.4
       api_key: "os.environ/openai_api_key_1"
       api_base: "os.environ/openai_base_url_1"
     default_litellm_params:
@@ -777,6 +777,40 @@ search_tools:
     model_info:
       mode: chat
       max_input_tokens: 32768
+
+# Anthropic models
+  - model_name: anthropic/claude-opus-4-6
+    litellm_params:
+      model: "anthropic/claude-opus-4-6"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 128000
+      input_cost_per_token: 0.000005
+      output_cost_per_token: 0.000025
+
+  - model_name: anthropic/claude-sonnet-4-6
+    litellm_params:
+      model: "anthropic/claude-sonnet-4-6"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 64000
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000015
+
+  - model_name: anthropic/claude-haiku-4-5
+    litellm_params:
+      model: "anthropic/claude-haiku-4-5"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 64000
+      input_cost_per_token: 0.000001
+      output_cost_per_token: 0.000005
 
 litellm_settings:
   callbacks: ["prometheus"]
