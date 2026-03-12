@@ -778,6 +778,40 @@ search_tools:
       mode: chat
       max_input_tokens: 32768
 
+# Anthropic models
+  - model_name: anthropic/claude-opus-4-6
+    litellm_params:
+      model: "anthropic/claude-opus-4-6"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 128000
+      input_cost_per_token: 0.000005
+      output_cost_per_token: 0.000025
+
+  - model_name: anthropic/claude-sonnet-4-6
+    litellm_params:
+      model: "anthropic/claude-sonnet-4-6"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 64000
+      input_cost_per_token: 0.000003
+      output_cost_per_token: 0.000015
+
+  - model_name: anthropic/claude-haiku-4-5
+    litellm_params:
+      model: "anthropic/claude-haiku-4-5"
+      api_key: "os.environ/ANTHROPIC_API_KEY"
+    model_info:
+      mode: messages
+      max_input_tokens: 200000
+      max_output_tokens: 64000
+      input_cost_per_token: 0.000001
+      output_cost_per_token: 0.000005
+
 litellm_settings:
   callbacks: ["prometheus"]
   prometheus_initialize_budget_metrics: true
