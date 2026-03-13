@@ -5,6 +5,7 @@ namespace: gpt-researcher
 
 resources:
   - namespace.yaml
+  - networkpolicy.yaml
   - externalsecret-litellm-api-key.yaml
   - externalsecret-gpt-researcher.yaml
   - pvc.yaml
