@@ -1,0 +1,124 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gpt-researcher-network-policy
+  namespace: gpt-researcher
+  labels:
+    app.kubernetes.io/name: gpt-researcher
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gpt-researcher
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: litellm
+        app: litellm
+    toPorts:
+    - ports:
+      - port: "4000"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      rules:
+        dns:
+          - matchPattern: "*"
+  - toFQDNs:
+    - matchName: "api.tavily.com"
+    - matchName: "api.smith.langchain.com"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gpt-researcher
+        app.kubernetes.io/name: ws-rewriter
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: ws-rewriter-network-policy
+  namespace: gpt-researcher
+  labels:
+    app.kubernetes.io/name: ws-rewriter
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ws-rewriter
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gpt-researcher
+        app.kubernetes.io/name: gpt-researcher
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      rules:
+        dns:
+          - matchPattern: "*"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+        app.kubernetes.io/name: envoy
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gptr-nextjs-network-policy
+  namespace: gpt-researcher
+  labels:
+    app.kubernetes.io/name: gptr-nextjs
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gptr-nextjs
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+      rules:
+        dns:
+          - matchPattern: "*"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+        app.kubernetes.io/name: envoy
+    toPorts:
+    - ports:
+      - port: "3000"
+        protocol: TCP
