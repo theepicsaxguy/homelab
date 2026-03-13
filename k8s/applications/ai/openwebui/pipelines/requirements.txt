@@ -3,7 +3,7 @@ qdrant-client[fastembed]==1.17.1
 # Core dependencies - widened protobuf range for grpcio-status
 protobuf>=7.34.0,<7.35.0
 llama-index-core==0.14.17
-openai==2.26.0
+openai==2.28.0
 huggingface-hub==1.7.1
 tokenizers==0.22.2
 packaging>=26,<26.1
