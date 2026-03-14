@@ -1,0 +1,43 @@
+_version: 31
+chunks:
+  entity-per-chunk-save-limit:
+    arrow: 16
+    ender_pearl: 16
+    experience_orb: 16
+    fireball: 8
+    small_fireball: 8
+    snowball: 8
+entities:
+  spawning:
+    alt-item-despawn-rate:
+      enabled: true
+      items:
+        cobblestone: 300
+        netherrack: 300
+        sand: 300
+        gravel: 300
+        dirt: 300
+        short_grass: 300
+        kelp: 300
+        bamboo: 300
+        sugar_cane: 300
+        twisting_vines: 300
+        weeping_vines: 300
+        oak_leaves: 300
+        spruce_leaves: 300
+        birch_leaves: 300
+        jungle_leaves: 300
+        acacia_leaves: 300
+        dark_oak_leaves: 300
+        mangrove_leaves: 300
+        cactus: 300
+        diorite: 300
+        granite: 300
+        andesite: 300
+        scaffolding: 300
+    despawn-time:
+      snowball: 300
+      llama_spit: 300
+    duplicate-uuid:
+      mode: SAFE_REGEN
+      safe-regen-delete-range: 32
