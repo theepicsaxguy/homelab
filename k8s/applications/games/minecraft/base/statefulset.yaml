@@ -45,7 +45,7 @@ spec:
                 [ -f "$f" ] || continue
                 key=$(basename "$f")
                 path=$(echo "$key" | sed 's/__/\//g')
-                dest="/data/plugins/$path"
+                dest="/data/$path"
                 echo "  $key -> $dest"
                 mkdir -p "$(dirname "$dest")"
                 cp "$f" "$dest"
@@ -112,10 +112,10 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              memory: '1Gi'
+              memory: '4Gi'
               cpu: '2000m'
             limits:
-              memory: '6Gi'
+              memory: '8Gi'
               cpu: '6000m'
       volumes:
         - name: plugin-configs
@@ -135,6 +135,8 @@ spec:
                   name: bedrockgui-config
               - configMap:
                   name: customcommands-config
+              - configMap:
+                  name: paper-world-defaults
   volumeClaimTemplates:
     - metadata:
         name: data
