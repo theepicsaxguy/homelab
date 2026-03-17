@@ -17,6 +17,9 @@ RUN git clone --depth 1 --branch "v${IMAGE_VERSION}" \
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
+# Patch missing `import os` in v3.4.3 websocket_manager (upstream bug)
+RUN sed -i '1s/^/import os\n/' backend/server/websocket_manager.py
+
 ###############################################################################
 # Stage 1: runtime — non-root, minimal image
 ###############################################################################
