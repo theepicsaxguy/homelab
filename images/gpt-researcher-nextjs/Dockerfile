@@ -16,7 +16,8 @@ RUN git clone --depth 1 --branch "v${IMAGE_VERSION}" \
 
 WORKDIR /src/frontend/nextjs
 
-RUN npm ci --prefer-offline
+# No lock file in upstream; --legacy-peer-deps matches upstream Dockerfile.dev
+RUN npm install --legacy-peer-deps
 
 ###############################################################################
 # Stage 1: runtime
@@ -37,4 +38,4 @@ USER 1001
 
 EXPOSE 3000
 
-CMD ["node_modules/.bin/next", "dev", "--turbopack"]
+CMD ["npm", "run", "dev"]
