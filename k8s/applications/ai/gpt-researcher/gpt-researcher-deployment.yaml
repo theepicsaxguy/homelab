@@ -32,6 +32,7 @@ spec:
           command: ["python", "main.py", "--config_path", "/usr/src/app/config.json"]
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             runAsNonRoot: true
             runAsUser: 1000
             capabilities:
@@ -88,6 +89,10 @@ spec:
             - name: config
               mountPath: /usr/src/app/config.json
               subPath: config.json
+            - name: tmp
+              mountPath: /tmp
+            - name: data
+              mountPath: /usr/src/app/data
           readinessProbe:
             httpGet:
               path: /
@@ -124,3 +129,9 @@ spec:
         - name: config
           configMap:
             name: gpt-researcher-config
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
+        - name: data
+          emptyDir:
+            sizeLimit: 512Mi
