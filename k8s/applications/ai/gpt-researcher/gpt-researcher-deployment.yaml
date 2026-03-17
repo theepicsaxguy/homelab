@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gpt-researcher
-          image: ghcr.io/assafelovic/gpt-researcher:pr-1608
+          image: ghcr.io/theepicsaxguy/gpt-researcher:3.4.3
           imagePullPolicy: IfNotPresent
           command: ["python", "main.py", "--config_path", "/usr/src/app/config.json"]
           securityContext:
