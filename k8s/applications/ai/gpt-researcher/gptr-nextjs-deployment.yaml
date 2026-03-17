@@ -25,7 +25,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gptr-nextjs
-          image: ghcr.io/theepicsaxguy/gpt-researcher-nextjs:3.4.3
+          image: ghcr.io/theepicsaxguy/gpt-researcher-nextjs:3.4.3-5fa0882
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -34,19 +34,19 @@ spec:
               drop: ['ALL']
           env:
             - name: CHOKIDAR_USEPOLLING
-              value: "true"
+              value: 'true'
             - name: LOGGING_LEVEL
-              value: "INFO"
+              value: 'INFO'
             - name: NEXT_PUBLIC_GPTR_API_URL
-              value: "https://research.peekoff.com/api"
+              value: 'https://research.peekoff.com/api'
             - name: NEXT_PUBLIC_WS_HOST
               # Host only, no protocol. This ensures frontend constructs wss:// when served over HTTPS.
-              value: "research.peekoff.com"
+              value: 'research.peekoff.com'
             - name: NEXT_PUBLIC_WS_PATH
               # Explicit WebSocket endpoint path
-              value: "/ws"
+              value: '/ws'
             - name: NODE_TLS_REJECT_UNAUTHORIZED
-              value: "0"
+              value: '0'
           volumeMounts:
             - name: nextjs-cache
               mountPath: /app/.next
@@ -71,11 +71,11 @@ spec:
             failureThreshold: 3
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: '250m'
+              memory: '512Mi'
             limits:
-              cpu: "1000m"
-              memory: "1Gi"
+              cpu: '1000m'
+              memory: '1Gi'
       volumes:
         - name: nextjs-cache
           emptyDir:
