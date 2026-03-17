@@ -15,7 +15,7 @@ data:
         respond "OK" 200
       }
 
-      # Rewrite /api/ws paths to /ws
+      # Strip /api prefix for paths the backend serves without it
       handle /api/ws* {
         uri strip_prefix /api
         reverse_proxy gpt-researcher-backend:8000 {
@@ -27,8 +27,17 @@ data:
           header_up X-Forwarded-Host research.peekoff.com
         }
       }
-      
-      # Forward all other requests unchanged
+
+      handle /api/outputs* {
+        uri strip_prefix /api
+        reverse_proxy gpt-researcher-backend:8000 {
+          header_up X-Forwarded-For {http.request.remote.host}
+          header_up X-Forwarded-Proto https
+          header_up X-Forwarded-Host research.peekoff.com
+        }
+      }
+
+      # Forward all other requests unchanged (e.g. /api/reports has /api in backend route)
       reverse_proxy gpt-researcher-backend:8000 {
         header_up X-Forwarded-For {http.request.remote.host}
         header_up X-Forwarded-Proto https
