@@ -9,7 +9,12 @@ data:
       log {
         level info
       }
-      
+
+      # Local health check — does not proxy to backend
+      handle /healthz {
+        respond "OK" 200
+      }
+
       # Rewrite /api/ws paths to /ws
       handle /api/ws* {
         uri strip_prefix /api

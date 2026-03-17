@@ -7,6 +7,8 @@ metadata:
     app.kubernetes.io/name: gpt-researcher
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: gpt-researcher
@@ -93,15 +95,15 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 15
             timeoutSeconds: 5
-            failureThreshold: 3
+            failureThreshold: 4
           livenessProbe:
             httpGet:
               path: /
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
-            timeoutSeconds: 5
-            failureThreshold: 3
+            timeoutSeconds: 10
+            failureThreshold: 6
           resources:
             requests:
               cpu: "500m"
