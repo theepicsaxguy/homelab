@@ -27,9 +27,9 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gpt-researcher
-          image: ghcr.io/theepicsaxguy/gpt-researcher:3.4.3
+          image: ghcr.io/theepicsaxguy/gpt-researcher:3.4.3-37d220a
           imagePullPolicy: IfNotPresent
-          command: ["python", "main.py", "--config_path", "/usr/src/app/config.json"]
+          command: ['python', 'main.py', '--config_path', '/usr/src/app/config.json']
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -47,7 +47,7 @@ spec:
                   name: app-gpt-researcher-litellm-api-key
                   key: OPENAI_API_KEY
             - name: OPENAI_BASE_URL
-              value: "http://litellm.litellm.svc.cluster.local"
+              value: 'http://litellm.litellm.svc.cluster.local'
             - name: TAVILY_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -59,23 +59,23 @@ spec:
                   name: gpt-researcher-secrets
                   key: LANGCHAIN_API_KEY
             - name: LOGGING_LEVEL
-              value: "INFO"
+              value: 'INFO'
             # Environment variables take precedence over config.json for FastAPI requests
             - name: EMBEDDING
-              value: "openai:azure/text-embedding-3-small"
+              value: 'openai:azure/text-embedding-3-small'
             - name: FAST_LLM
-              value: "openai:azure/gpt-5.1-codex-mini"
+              value: 'openai:azure/gpt-5.1-codex-mini'
             - name: SMART_LLM
-              value: "openai:azure/gpt-5.3-chat"
+              value: 'openai:azure/gpt-5.3-chat'
             - name: STRATEGIC_LLM
-              value: "openai:azure/gpt-5.3-chat"
+              value: 'openai:azure/gpt-5.3-chat'
             # Deep Research Configuration - Controls research depth and breadth
             - name: DEEP_RESEARCH_BREADTH
-              value: "4"
+              value: '4'
             - name: DEEP_RESEARCH_DEPTH
-              value: "3"
+              value: '3'
             - name: DEEP_RESEARCH_CONCURRENCY
-              value: "6"
+              value: '6'
           ports:
             - containerPort: 8000
               name: http
@@ -111,11 +111,11 @@ spec:
             failureThreshold: 6
           resources:
             requests:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: '500m'
+              memory: '512Mi'
             limits:
-              cpu: "2000m"
-              memory: "2Gi"
+              cpu: '2000m'
+              memory: '2Gi'
       volumes:
         - name: my-docs
           persistentVolumeClaim:
