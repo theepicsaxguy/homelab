@@ -85,7 +85,7 @@ spec:
             - name: ENABLE_SIGNUP
               value: 'false'
             - name: OPENID_PROVIDER_URL
-              value: 'http://authentik-server.auth.svc.cluster.local/application/o/openwebui/.well-known/openid-configuration'
+              value: 'https://sso.peekoff.com/application/o/openwebui/.well-known/openid-configuration'
             - name: OPENID_REDIRECT_URI
               value: 'https://chat.peekoff.com/oauth/oidc/callback'
             - name: ENABLE_OAUTH_SIGNUP

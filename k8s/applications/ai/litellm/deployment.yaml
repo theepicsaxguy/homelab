@@ -88,9 +88,9 @@ spec:
         - name: GENERIC_AUTHORIZATION_ENDPOINT
           value: "https://sso.peekoff.com/application/o/authorize/"
         - name: GENERIC_TOKEN_ENDPOINT
-          value: "http://authentik-server.auth.svc.cluster.local/application/o/token/"
+          value: "https://sso.peekoff.com/application/o/token/"
         - name: GENERIC_USERINFO_ENDPOINT
-          value: "http://authentik-server.auth.svc.cluster.local/application/o/userinfo/"
+          value: "https://sso.peekoff.com/application/o/userinfo/"
         - name: PROXY_BASE_URL
           value: "https://litellm.peekoff.com"
         - name: GENERIC_SCOPE
