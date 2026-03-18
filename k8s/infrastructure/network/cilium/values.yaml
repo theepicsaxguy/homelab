@@ -91,7 +91,7 @@ envoy:
     capabilities:
       keepCapNetBindService: true
       envoy: [NET_ADMIN, PERFMON, BPF]
-  streamIdleTimeoutDurationSeconds: 600
+  streamIdleTimeoutDurationSeconds: 0
   idleTimeoutDurationSeconds: 60
   connectTimeoutSeconds: 2
   maxConnectionDurationSeconds: 0
