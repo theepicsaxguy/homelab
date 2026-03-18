@@ -35,8 +35,6 @@ Homelab GitOps monorepo built on Talos Kubernetes with Argo CD, OpenTofu, custom
 - Avoid ExternalSecret for CNPG application credentials; use CNPG auto-generated <cluster-name>-app secrets instead.
 - Use Kubernetes Secret created by kubectl for service-to-service credentials.
 - Use CiliumNetworkPolicy v2 with default-deny ingress and egress in every application namespace; never use standard NetworkPolicy resources.
-- When using kubectl use `${workspaceFolder:root}/tofu/output/kube-config.yaml`.
-- When using talosctl use `${workspaceFolder:root}/tofu/output/talos-config.yaml`.
 </k8s_rules>
 <k8s_network>
 - Use Gateway API HTTPRoute for external access via external gateway 10.25.150.222.
