@@ -20,7 +20,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi-2"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 5Gi
@@ -31,7 +31,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi-2"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 20Gi
@@ -42,7 +42,7 @@ spec:
         backup.velero.io/backup-tier: GFS
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi-2"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 5Gi
@@ -53,7 +53,7 @@ spec:
         backup.velero.io/backup-tier: Daily
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "proxmox-csi-2"
+      storageClassName: "proxmox-csi"
       resources:
         requests:
           storage: 10Gi
@@ -91,11 +91,8 @@ spec:
           args:
             - |
               mkdir -p /home/node/.openclaw
-              chmod 700 /home/node/.openclaw
               cp /config/openclaw.json /home/node/.openclaw/openclaw.json
-              chmod 600 /home/node/.openclaw/openclaw.json
               mkdir -p /workspace
-              chmod 777 /workspace
           volumeMounts:
             - name: openclaw-data
               mountPath: /home/node/.openclaw
@@ -106,27 +103,8 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
-            runAsUser: 0
-            runAsNonRoot: false
-            capabilities:
-              drop: ['ALL']
-        - name: fix-permissions
-          image: busybox:1.36
-          command: ["sh", "-c"]
-          args:
-            - |
-              chown -R 1000:1000 /home/node/.openclaw
-              chown -R 1000:1000 /workspace
-          volumeMounts:
-            - name: openclaw-data
-              mountPath: /home/node/.openclaw
-            - name: openclaw-workspace
-              mountPath: /workspace
-          securityContext:
-            runAsUser: 0
-            runAsNonRoot: false
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            runAsNonRoot: true
             capabilities:
               drop: ['ALL']
 
