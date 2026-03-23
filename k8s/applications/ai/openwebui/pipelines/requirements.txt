@@ -4,7 +4,7 @@ qdrant-client[fastembed]==1.17.1
 protobuf>=7.34.0,<7.35.0
 llama-index-core==0.14.18
 openai==2.29.0
-huggingface-hub==1.7.1
+huggingface-hub==1.7.2
 tokenizers==0.22.2
 packaging>=26,<26.1
 numpy==2.4.3
@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==4.0.0
+langfuse==4.0.1
 llama-index==0.14.18
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
@@ -26,7 +26,7 @@ llama-index-cli==0.5.6
 llama-index-embeddings-openai==0.6.0
 llama-index-indices-managed-llama-cloud==0.11.0
 llama-index-legacy==0.9.48.post4
-llama-index-llms-openai==0.7.2
+llama-index-llms-openai==0.7.3
 llama-index-multi-modal-llms-openai==0.6.2
 # Comment out these until you actually need them:
 # llama-index-program-openai==0.3.2
@@ -34,5 +34,5 @@ llama-index-multi-modal-llms-openai==0.6.2
 llama-index-readers-file==0.6.0
 llama-index-readers-llama-parse==0.6.0
 opencv-python==4.13.0.92
-opik==1.10.43
+opik==1.10.45
 transformers==5.3.0

@@ -7,7 +7,7 @@
 ###############################################################################
 FROM alpine:3.23 AS source
 
-ARG IMAGE_VERSION=2.1.0 # renovate: github-releases=saifyxpro/HeadlessX
+ARG IMAGE_VERSION=2.1.1 # renovate: github-releases=saifyxpro/HeadlessX
 ARG HEADLESSX_REPO=https://github.com/saifyxpro/HeadlessX
 
 RUN apk add --no-cache git ca-certificates
