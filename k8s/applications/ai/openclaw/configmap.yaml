@@ -129,7 +129,7 @@ data:
         "providers": {
           "litellm": {
             "api": "openai-completions",
-            "baseUrl": "http://litellm.litellm.svc.cluster.local:4000/v1",
+            "baseUrl": "http://litellm.litellm.svc.cluster.local:80/v1",
             "apiKey": "${LITELLM_API_KEY}",
             "models": [
               { "id": "claude-sonnet-4-20250514", "name": "claude-sonnet-4-20250514" }
@@ -141,10 +141,10 @@ data:
         "mode": "local",
         "port": 18789,
         "bind": "lan",
+        "trustedProxies": ["10.244.0.0/16"],
         "controlUi": {
           "enabled": true,
           "basePath": "/openclaw",
-          "dangerouslyDisableDeviceAuth": true,
           "allowedOrigins": ["https://openclaw.peekoff.com"]
         },
         "auth": {
