@@ -1,0 +1,198 @@
+app-template:
+  openclawVersion: "2026.3.22"
+  chromiumVersion: "146.0.7680.154"
+
+  controllers:
+    main:
+      replicas: 1
+      strategy: Recreate
+
+      containers:
+        main:
+          image:
+            repository: ghcr.io/openclaw/openclaw
+            tag: "{{ .Values.app-template.openclawVersion }}"
+            pullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
+          env:
+            OPENCLAW_GATEWAY_MODE: local
+          envFrom:
+            - secretRef:
+                name: app-openclaw-gateway-token
+            - secretRef:
+                name: app-openclaw-slack-bot-token
+            - secretRef:
+                name: app-openclaw-slack-app-token
+            - secretRef:
+                name: app-openclaw-litellm-api-key
+
+  configMaps:
+    config:
+      enabled: true
+      data:
+        openclaw.json: |
+          {
+            "identity": {
+              "name": "Samantha",
+              "theme": "helpful sloth",
+              "emoji": "🦥"
+            },
+            "logging": {
+              "level": "info",
+              "file": "/var/log/openclaw/openclaw.log",
+              "consoleLevel": "info",
+              "consoleStyle": "pretty",
+              "redactSensitive": "tools"
+            },
+            "messages": {
+              "messagePrefix": "[openclaw]",
+              "responsePrefix": ">",
+              "ackReaction": "👀",
+              "ackReactionScope": "group-mentions"
+            },
+            "routing": {
+              "groupChat": {
+                "mentionPatterns": ["@openclaw", "openclaw"],
+                "historyLimit": 50
+              },
+              "queue": {
+                "mode": "collect",
+                "debounceMs": 1000,
+                "cap": 20,
+                "drop": "summarize"
+              }
+            },
+            "session": {
+              "scope": "per-sender",
+              "reset": {
+                "mode": "daily",
+                "atHour": 4,
+                "idleMinutes": 60
+              },
+              "resetTriggers": ["/new", "/reset"],
+              "store": "~/.openclaw/agents/default/sessions/sessions.json",
+              "typingIntervalSeconds": 5
+            },
+            "channels": {
+              "slack": {
+                "enabled": true,
+                "botToken": "${SLACK_BOT_TOKEN}",
+                "appToken": "${SLACK_APP_TOKEN}",
+                "channels": {
+                  "#general": { "allow": true, "requireMention": true }
+                },
+                "dm": { "enabled": true, "allowFrom": ["U123"] },
+                "slashCommand": {
+                  "enabled": true,
+                  "name": "openclaw",
+                  "sessionPrefix": "slack:slash",
+                  "ephemeral": true
+                }
+              }
+            },
+            "agents": {
+              "defaults": {
+                "workspace": "/workspace",
+                "userTimezone": "America/Chicago",
+                "model": {
+                  "provider": "litellm",
+                  "model": "claude-sonnet-4-20250514"
+                },
+                "thinkingDefault": "low",
+                "verboseDefault": "off",
+                "elevatedDefault": "on",
+                "timeoutSeconds": 600,
+                "typingIntervalSeconds": 5,
+                "maxConcurrent": 3,
+                "sandbox": {
+                  "mode": "non-main",
+                  "perSession": true,
+                  "workspaceRoot": "~/.openclaw/sandboxes",
+                  "docker": {
+                    "image": "openclaw-sandbox:bookworm-slim",
+                    "workdir": "/workspace",
+                    "readOnlyRoot": true,
+                    "tmpfs": ["/tmp", "/var/tmp", "/run"],
+                    "network": "none",
+                    "user": "1000:1000"
+                  },
+                  "browser": { "enabled": false }
+                }
+              }
+            },
+            "tools": {
+              "allow": ["exec", "process", "read", "write", "edit", "apply_patch"],
+              "deny": ["browser", "canvas"],
+              "exec": {
+                "backgroundMs": 10000,
+                "timeoutSec": 1800,
+                "cleanupMs": 1800000
+              },
+              "elevated": {
+                "enabled": true,
+                "allowFrom": {
+                  "whatsapp": ["+15555550123"],
+                  "telegram": ["123456789"],
+                  "discord": ["steipete"],
+                  "slack": ["U123"],
+                  "signal": ["+15555550123"],
+                  "imessage": ["user@example.com"],
+                  "webchat": ["session:demo"]
+                }
+              }
+            },
+            "models": {
+              "mode": "merge",
+              "providers": {
+                "litellm": {
+                  "api": "openai",
+                  "baseUrl": "http://litellm.litellm.svc.cluster.local:4000/v1",
+                  "apiKey": "${LITELLM_API_KEY}"
+                }
+              }
+            },
+            "gateway": {
+              "mode": "local",
+              "port": 18789,
+              "bind": "lan",
+              "controlUi": {
+                "enabled": true,
+                "basePath": "/openclaw",
+                "dangerouslyDisableDeviceAuth": true,
+                "allowedOrigins": ["https://openclaw.peekoff.com"]
+              },
+              "auth": {
+                "mode": "token",
+                "token": "${OPENCLAW_GATEWAY_TOKEN}",
+                "allowTailscale": true
+              }
+            }
+          }
+
+  persistence:
+    data:
+      enabled: true
+      type: persistentVolumeClaim
+      size: 5Gi
+      accessMode: ReadWriteOnce
+      storageClass: proxmox-csi-2
+      retain: true
+
+  defaultPodOptions:
+    securityContext:
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+
+  service:
+    main:
+      enabled: true
+      controller: main
+      ports:
+        http:
+          port: 18789

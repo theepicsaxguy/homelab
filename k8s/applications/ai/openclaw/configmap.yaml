@@ -8,11 +8,6 @@ metadata:
 data:
   openclaw.json: |
     {
-      "identity": {
-        "name": "Samantha",
-        "theme": "helpful sloth",
-        "emoji": "🦥"
-      },
       "logging": {
         "level": "info",
         "file": "/var/log/openclaw/openclaw.log",
@@ -24,9 +19,7 @@ data:
         "messagePrefix": "[openclaw]",
         "responsePrefix": ">",
         "ackReaction": "👀",
-        "ackReactionScope": "group-mentions"
-      },
-      "routing": {
+        "ackReactionScope": "group-mentions",
         "groupChat": {
           "mentionPatterns": ["@openclaw", "openclaw"],
           "historyLimit": 50
@@ -71,8 +64,7 @@ data:
           "workspace": "/workspace",
           "userTimezone": "America/Chicago",
           "model": {
-            "provider": "litellm",
-            "model": "claude-sonnet-4-20250514"
+            "primary": "litellm/claude-sonnet-4-20250514"
           },
           "thinkingDefault": "low",
           "verboseDefault": "off",
@@ -94,7 +86,22 @@ data:
             },
             "browser": { "enabled": false }
           }
-        }
+        },
+        "list": [
+          {
+            "id": "default",
+            "default": true,
+            "identity": {
+              "name": "Samantha",
+              "theme": "helpful sloth",
+              "emoji": "🦥"
+            },
+            "groupChat": {
+              "mentionPatterns": ["@openclaw", "openclaw"],
+              "historyLimit": 50
+            }
+          }
+        ]
       },
       "tools": {
         "allow": ["exec", "process", "read", "write", "edit", "apply_patch"],
@@ -121,21 +128,29 @@ data:
         "mode": "merge",
         "providers": {
           "litellm": {
-            "api": "openai",
-            "baseUrl": "http://litellm.litellm.svc.cluster.local:4000/v1",
-            "apiKey": "${LITELLM_API_KEY}"
+            "api": "openai-completions",
+            "baseUrl": "http://litellm.litellm.svc.cluster.local:80/v1",
+            "apiKey": "${LITELLM_API_KEY}",
+            "models": [
+              { "id": "claude-sonnet-4-20250514", "name": "claude-sonnet-4-20250514" }
+            ]
           }
         }
       },
-       "gateway": {
-         "mode": "local",
-         "port": 18789,
-         "bind": "lan",
-         "controlUi": { "enabled": true, "basePath": "/openclaw", "dangerouslyDisableDeviceAuth": true },
-         "auth": {
-           "mode": "token",
-           "token": "${OPENCLAW_GATEWAY_TOKEN}",
-           "allowTailscale": true
-         }
-       }
+      "gateway": {
+        "mode": "local",
+        "port": 18789,
+        "bind": "lan",
+        "trustedProxies": ["10.244.0.0/16"],
+        "controlUi": {
+          "enabled": true,
+          "basePath": "/openclaw",
+          "allowedOrigins": ["https://openclaw.peekoff.com"]
+        },
+        "auth": {
+          "mode": "token",
+          "token": "${OPENCLAW_GATEWAY_TOKEN}",
+          "allowTailscale": true
+        }
+      }
     }
