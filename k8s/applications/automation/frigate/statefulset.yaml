@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: frigate
-          image: ghcr.io/blakeblackshear/frigate:0.17.0
+          image: ghcr.io/blakeblackshear/frigate:0.17.1
           imagePullPolicy: IfNotPresent
           env:
             - name: HOME
@@ -104,7 +104,7 @@ spec:
             - /bin/sh
             - -c
             - cp -r /usr/local/nginx/* /nginx/
-          image: ghcr.io/blakeblackshear/frigate:0.17.0
+          image: ghcr.io/blakeblackshear/frigate:0.17.1
           imagePullPolicy: IfNotPresent
           name: frigate-init-nginx
           securityContext:
