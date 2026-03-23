@@ -131,7 +131,7 @@ data:
          "mode": "local",
          "port": 18789,
          "bind": "lan",
-         "controlUi": { "enabled": true, "basePath": "/openclaw", "dangerouslyDisableDeviceAuth": true },
+         "controlUi": { "enabled": true, "basePath": "/openclaw", "dangerouslyDisableDeviceAuth": true, "allowedOrigins": ["https://openclaw.peekoff.com"] },
          "auth": {
            "mode": "token",
            "token": "${OPENCLAW_GATEWAY_TOKEN}",
