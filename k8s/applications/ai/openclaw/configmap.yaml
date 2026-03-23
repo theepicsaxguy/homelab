@@ -64,8 +64,7 @@ data:
           "workspace": "/workspace",
           "userTimezone": "America/Chicago",
           "model": {
-            "provider": "litellm",
-            "model": "claude-sonnet-4-20250514"
+            "primary": "litellm/claude-sonnet-4-20250514"
           },
           "thinkingDefault": "low",
           "verboseDefault": "off",
@@ -129,9 +128,12 @@ data:
         "mode": "merge",
         "providers": {
           "litellm": {
-            "api": "openai",
+            "api": "openai-completions",
             "baseUrl": "http://litellm.litellm.svc.cluster.local:4000/v1",
-            "apiKey": "${LITELLM_API_KEY}"
+            "apiKey": "${LITELLM_API_KEY}",
+            "models": [
+              { "id": "claude-sonnet-4-20250514", "name": "claude-sonnet-4-20250514" }
+            ]
           }
         }
       },
