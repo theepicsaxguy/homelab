@@ -103,13 +103,23 @@ spec:
     - ports:
       - port: "9000"
         protocol: TCP
-  - toCIDR: ["10.0.0.0/8"]
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: vllm-embed
     toPorts:
     - ports:
-      - port: "443"
+      - port: "8000"
         protocol: TCP
-  - toEntities:
-    - world
+  - toFQDNs:
+    - matchName: "api.anthropic.com"
+    - matchName: "api.mistral.ai"
+    - matchName: "api.cerebras.ai"
+    - matchName: "api.tavily.com"
+    - matchName: "api.openai.com"
+    - matchName: "api.cloudflare.com"
+    - matchName: "gateway.ai.cloudflare.com"
+    - matchPattern: "*.openai.azure.com"
+    - matchName: "sso.peekoff.com"
     toPorts:
     - ports:
       - port: "443"
