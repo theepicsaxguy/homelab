@@ -21,6 +21,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: openclaw
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: karakeep
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: litellm
     toPorts:
     - ports:
       - port: "6333"
