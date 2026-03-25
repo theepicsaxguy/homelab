@@ -12,6 +12,13 @@ spec:
   ingress:
   - fromEndpoints:
     - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gateway
+    toPorts:
+    - ports:
+      - port: "6333"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
         k8s:io.kubernetes.pod.namespace: opencode
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: open-webui
@@ -21,6 +28,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: openclaw
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: karakeep
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: litellm
     toPorts:
     - ports:
       - port: "6333"

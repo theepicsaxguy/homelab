@@ -41,7 +41,7 @@ spec:
           capabilities:
             drop:
               - ALL
-          readOnlyRootFilesystem: false
+          readOnlyRootFilesystem: true
           seccompProfile:
             type: RuntimeDefault
         ports:
@@ -135,6 +135,8 @@ spec:
           mountPath: /app/cache
         - name: app-logs
           mountPath: /app/logs
+        - name: tmp
+          mountPath: /tmp
 
       volumes:
         - name: litellm-config
@@ -149,3 +151,6 @@ spec:
         - name: app-logs
           emptyDir:
             sizeLimit: 1Gi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 500Mi
