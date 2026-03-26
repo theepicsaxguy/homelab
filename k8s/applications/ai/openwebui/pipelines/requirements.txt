@@ -19,7 +19,7 @@ fastembed
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
 langfuse==4.0.1
-llama-index==0.14.18
+llama-index==0.14.19
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
 llama-index-cli==0.5.6
