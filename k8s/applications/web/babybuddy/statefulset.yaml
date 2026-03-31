@@ -45,7 +45,7 @@ spec:
               mountPath: /run
       containers:
         - name: babybuddy
-          image: ghcr.io/linuxserver/babybuddy:2.7.1
+          image: ghcr.io/linuxserver/babybuddy:2.8.0
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
