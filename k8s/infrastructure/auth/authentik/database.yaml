@@ -72,7 +72,7 @@ spec:
     storageClass: proxmox-csi
 
   walStorage:
-    size: 20Gi
+    size: 30Gi
     storageClass: proxmox-csi
 
   resources:
