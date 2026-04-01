@@ -157,7 +157,7 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 30
       - name: playwright-mcp
-        image: mcr.microsoft.com/playwright:v1.59.0-jammy
+        image: mcr.microsoft.com/playwright:v1.59.1-jammy
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args:
