@@ -33,7 +33,7 @@ RUN npm run build
 ###############################################################################
 # Stage 3: Production runtime
 ###############################################################################
-FROM mcr.microsoft.com/playwright:v1.59.0-noble
+FROM mcr.microsoft.com/playwright:v1.59.1-noble
 
 # Install system dependencies
 RUN apt-get update && \
