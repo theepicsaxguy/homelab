@@ -8,7 +8,7 @@ helmCharts:
     releaseName: falco
     repo: https://falcosecurity.github.io/charts
     valuesFile: falco-values.yaml
-    version: 8.0.1
+    version: 8.0.2
 patches:
   - target:
       kind: DaemonSet
