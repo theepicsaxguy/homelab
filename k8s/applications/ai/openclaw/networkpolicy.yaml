@@ -41,10 +41,10 @@ spec:
     - matchName: "api.slack.com"
     - matchName: "slack.com"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
-        app.kubernetes.io/name: envoy
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
   - fromEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: auth

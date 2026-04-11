@@ -10,9 +10,10 @@ spec:
       app.kubernetes.io/name: argocd-server
   description: "Allow ArgoCD server access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8080"

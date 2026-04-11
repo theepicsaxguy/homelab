@@ -11,9 +11,10 @@ spec:
       app.kubernetes.io/name: frigate
   description: "Allow Frigate NVR access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "5000"

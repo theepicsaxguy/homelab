@@ -11,9 +11,9 @@ spec:
       app.kubernetes.io/name: ha-mcp
   description: "Allow HA-MCP access from gateway and to Home Assistant"
   ingress:
-    - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gateway
+    - fromEntities:
+        - host
+        - remote-node
       toPorts:
         - ports:
             - port: "8086"

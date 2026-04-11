@@ -9,8 +9,6 @@ spec:
   destinations:
     - namespace: 'argocd'
       server: '*'
-    - namespace: 'unrar'
-      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

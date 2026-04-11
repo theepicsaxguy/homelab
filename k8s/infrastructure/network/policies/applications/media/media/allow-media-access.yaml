@@ -9,9 +9,10 @@ spec:
   endpointSelector: {}
   description: "Allow media applications access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8096"

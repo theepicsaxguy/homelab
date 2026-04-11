@@ -11,9 +11,10 @@ spec:
       app.kubernetes.io/name: n8n
   description: "Allow n8n workflow automation access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "5678"

@@ -79,10 +79,10 @@ spec:
         dns:
           - matchPattern: "*"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
-        app.kubernetes.io/name: envoy
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8000"
@@ -114,10 +114,10 @@ spec:
         dns:
           - matchPattern: "*"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
-        app.kubernetes.io/name: envoy
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "3000"

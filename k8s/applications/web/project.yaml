@@ -13,8 +13,6 @@ spec:
       server: '*'
     - namespace: 'babybuddy'
       server: '*'
-    - namespace: 'headlessx'
-      server: '*'
     - namespace: 'pinepods'
       server: '*'
     - namespace: 'tmail'

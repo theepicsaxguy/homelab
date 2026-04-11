@@ -11,9 +11,10 @@ spec:
       app: open-webui
   description: "Allow Open WebUI access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8080"

@@ -10,9 +10,10 @@ spec:
       app: unifi-controller
   description: "Allow UniFi controller management access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8443"
