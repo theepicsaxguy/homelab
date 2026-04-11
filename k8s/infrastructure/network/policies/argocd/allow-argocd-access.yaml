@@ -13,6 +13,7 @@ spec:
   - fromEntities:
     - host
     - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8080"

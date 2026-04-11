@@ -82,6 +82,7 @@ spec:
   - fromEntities:
     - host
     - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "8000"
@@ -116,6 +117,7 @@ spec:
   - fromEntities:
     - host
     - remote-node
+    - ingress
     toPorts:
     - ports:
       - port: "3000"

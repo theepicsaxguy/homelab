@@ -47,3 +47,4 @@ spec:
   - fromEntities:
     - host
     - remote-node
+    - ingress
