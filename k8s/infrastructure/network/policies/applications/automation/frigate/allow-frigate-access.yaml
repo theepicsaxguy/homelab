@@ -46,7 +46,7 @@ spec:
         protocol: UDP
       - port: "53"
         protocol: TCP
-  - toCIDR: ["10.0.0.0/8"]
+  - toCIDR: ["10.0.0.0/8", "192.168.0.0/16"]
     toPorts:
     - ports:
       - port: "443"
@@ -54,4 +54,10 @@ spec:
       - port: "554"
         protocol: TCP
       - port: "8554"
+        protocol: TCP
+  - toEntities:
+    - world
+    toPorts:
+    - ports:
+      - port: "443"
         protocol: TCP

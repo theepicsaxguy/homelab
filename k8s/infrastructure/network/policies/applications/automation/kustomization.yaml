@@ -4,6 +4,7 @@ resources:
 - home-assistant
 - zigbee2mqtt
 - frigate
+- mqtt
 labels:
 - pairs:
     policy-type: automation-audit
