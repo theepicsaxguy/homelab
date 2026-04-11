@@ -10,9 +10,9 @@ spec:
       app.kubernetes.io/name: authentik
   description: "Allow Authentik identity provider access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "9000"

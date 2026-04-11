@@ -11,9 +11,9 @@ spec:
       app: babybuddy
   description: "Allow BabyBuddy access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "8000"

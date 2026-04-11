@@ -11,9 +11,9 @@ spec:
       app: litellm
   description: "Allow LiteLLM proxy access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "4000"

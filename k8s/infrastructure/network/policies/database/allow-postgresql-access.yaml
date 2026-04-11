@@ -18,9 +18,9 @@ spec:
     - ports:
       - port: "5432"
         protocol: TCP
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "5432"

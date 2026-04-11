@@ -11,9 +11,9 @@ spec:
       app.kubernetes.io/name: perplexica
   description: "Allow Perplexica AI search access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "3000"

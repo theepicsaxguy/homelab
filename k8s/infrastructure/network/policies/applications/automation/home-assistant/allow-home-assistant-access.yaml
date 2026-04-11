@@ -11,9 +11,9 @@ spec:
       app.kubernetes.io/name: home-assistant
   description: "Allow Home Assistant access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "8123"

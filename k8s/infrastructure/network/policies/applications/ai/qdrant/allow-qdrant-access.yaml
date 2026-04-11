@@ -10,9 +10,9 @@ spec:
       app: qdrant
   description: "Allow Qdrant vector database access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "6333"

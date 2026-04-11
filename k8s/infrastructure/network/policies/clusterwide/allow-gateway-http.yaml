@@ -11,19 +11,9 @@ spec:
     egress: false
   description: "Allow HTTP/HTTPS traffic to/from gateway namespace cluster-wide"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
-    toPorts:
-    - ports:
-      - port: "80"
-        protocol: TCP
-      - port: "443"
-        protocol: TCP
-  egress:
-  - toEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "80"

@@ -11,9 +11,9 @@ spec:
       app.kubernetes.io/name: jmap-webmail
   description: "Allow JMAP Webmail access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "80"

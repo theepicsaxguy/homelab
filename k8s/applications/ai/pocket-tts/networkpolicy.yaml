@@ -44,7 +44,6 @@ spec:
     - matchName: "cdn-lfs.huggingface.co"
     - matchName: "raw.githubusercontent.com"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
-        app.kubernetes.io/name: envoy
+  - fromEntities:
+    - host
+    - remote-node

@@ -11,9 +11,9 @@ spec:
       app.kubernetes.io/name: kubechecks
   description: "Allow Kubechecks access"
   ingress:
-  - fromEndpoints:
-    - matchLabels:
-        k8s:io.kubernetes.pod.namespace: gateway
+  - fromEntities:
+    - host
+    - remote-node
     toPorts:
     - ports:
       - port: "8080"
