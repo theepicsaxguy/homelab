@@ -61,6 +61,7 @@ spec:
         protocol: TCP
       - port: "80"
         protocol: TCP
+  - toCIDR: ["172.16.0.0/12", "192.168.0.0/16"]
   - toEntities:
     - world
     toPorts:
