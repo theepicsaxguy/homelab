@@ -28,6 +28,8 @@ spec:
     - ports:
       - port: "6333"
         protocol: TCP
+      - port: "6334"
+        protocol: TCP
   - toEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: litellm
