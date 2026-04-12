@@ -53,6 +53,8 @@ spec:
         protocol: TCP
       - port: "554"
         protocol: TCP
+      - port: "8000"
+        protocol: TCP
       - port: "8554"
         protocol: TCP
   - toEntities:
