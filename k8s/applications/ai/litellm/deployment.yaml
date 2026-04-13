@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
       - name: litellm
-        image: ghcr.io/berriai/litellm-non_root:main-v1.81.12-stable.1
+        image: ghcr.io/berriai/litellm-non_root:v1.83.7.rc.1
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
@@ -99,6 +99,10 @@ spec:
           value: "https://sso.peekoff.com/application/o/litellm/end-session/"
         - name: HOME
           value: /tmp
+        - name: LITELLM_MIGRATION_DIR
+          value: /tmp/migrations
+        - name: AUTO_REDIRECT_UI_LOGIN_TO_SSO
+          value: "true"
         - name: LITELLM_MODE
           value: "PRODUCTION"
         - name: LITELLM_LOG

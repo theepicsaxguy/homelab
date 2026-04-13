@@ -43,7 +43,7 @@ populated.
 LiteLLM fronts the in-cluster vLLM embedding server. Open WebUI treats LiteLLM
 as an OpenAI-compatible backend with these environment variables:
 
-- `OPENAI_API_BASE_URL=http://litellm.litellm.svc.cluster.local:4000/v1`
+- `OPENAI_API_BASE_URL=http://litellm.litellm.svc.cluster.local:80/v1`
 - `OPENAI_API_KEY` from the `app-openwebui-litellm-api-key` ExternalSecret
 - `RAG_EMBEDDING_ENGINE=openai`
 - `RAG_EMBEDDING_MODEL=intfloat/e5-base-v2`

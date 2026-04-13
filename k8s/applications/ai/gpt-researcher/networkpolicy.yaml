@@ -17,6 +17,8 @@ spec:
         app: litellm
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - toEndpoints:
@@ -40,6 +42,9 @@ spec:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: gpt-researcher
         app.kubernetes.io/name: ws-rewriter
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gpt-researcher
+        app.kubernetes.io/name: gptr-nextjs
     toPorts:
     - ports:
       - port: "8000"
@@ -100,6 +105,14 @@ spec:
     matchLabels:
       app.kubernetes.io/name: gptr-nextjs
   egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: gpt-researcher
+        app.kubernetes.io/name: gpt-researcher
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
   - toEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: kube-system

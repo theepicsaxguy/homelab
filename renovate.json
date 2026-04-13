@@ -225,6 +225,12 @@
       "description": "Track BedrockConnect Docker image updates",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["pugmatt/bedrock-connect"]
+    },
+    {
+      "description": "LiteLLM tags use non-standard formats: main-vX.Y.Z-stable.N (old) or vX.Y.Z.rc.N (new)",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/berriai/litellm-non_root"],
+      "versioning": "regex:^(?:main-v|v)(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-stable\\.(?<build>\\d+)|\\.rc\\.(?<prerelease>\\d+))?$"
     }
   ],
   "kubernetes": {

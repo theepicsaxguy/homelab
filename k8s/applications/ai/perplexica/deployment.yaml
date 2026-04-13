@@ -42,7 +42,7 @@ spec:
                   key: LITELLM_API_KEY
                   optional: true
             - name: LITELLM_API_BASE
-              value: "http://litellm.litellm.svc.cluster.local"
+              value: "http://litellm.litellm.svc.cluster.local:80"
             - name: PERPLEXICA_BACKEND_URL
               value: "http://litellm.litellm.svc.cluster.local/api/search"
           securityContext:
