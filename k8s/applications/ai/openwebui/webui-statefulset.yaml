@@ -112,7 +112,7 @@ spec:
             - name: QDRANT_PREFER_GRPC
               value: 'false'
             - name: OPENAI_API_BASE_URL
-              value: 'http://litellm.litellm.svc.cluster.local:4000/v1'
+              value: 'http://litellm.litellm.svc.cluster.local:80/v1'
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:

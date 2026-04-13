@@ -17,6 +17,8 @@ spec:
     - ingress
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -24,6 +26,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: open-webui
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -31,6 +35,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: perplexica
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -38,6 +44,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: openclaw
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -45,6 +53,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: gpt-researcher
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -52,6 +62,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: pocket-tts
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - fromEndpoints:
@@ -59,6 +71,8 @@ spec:
         k8s:io.kubernetes.pod.namespace: karakeep
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   egress:

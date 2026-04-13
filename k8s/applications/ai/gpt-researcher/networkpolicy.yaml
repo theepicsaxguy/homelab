@@ -17,6 +17,8 @@ spec:
         app: litellm
     toPorts:
     - ports:
+      - port: "80"
+        protocol: TCP
       - port: "4000"
         protocol: TCP
   - toEndpoints:

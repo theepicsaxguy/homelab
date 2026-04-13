@@ -10,7 +10,7 @@ Pipelines run alongside OpenWebUI to handle OpenAI-compatible traffic on port `9
 - **Secrets**: The ExternalSecret `app-openwebui-pipelines-api-key` sources `PIPELINES_API_KEY` from Bitwarden and injects it into the container.
 - **Service**: The `pipelines` `ClusterIP` Service exposes port `9099` inside the `open-webui` namespace.
 - **Access**: OpenWebUI is automatically configured to connect to the pipelines service via the `PIPELINES_URL` and `PIPELINES_API_KEY` environment variables. The API key is sourced from the ExternalSecret `app-openwebui-pipelines-api-key`. Pipelines should appear automatically in the OpenWebUI admin panel.
-- **Upstream provider**: Configure pipeline valves in the OpenWebUI UI to call LiteLLM at `http://litellm.litellm.svc.cluster.local:4000/v1` with the existing LiteLLM API key.
+- **Upstream provider**: Configure pipeline valves in the OpenWebUI UI to call LiteLLM at `http://litellm.litellm.svc.cluster.local:80/v1` with the existing LiteLLM API key.
 
 ## Available Pipelines
 
