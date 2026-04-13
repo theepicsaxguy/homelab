@@ -121,6 +121,7 @@ spec:
     - matchName: "gateway.ai.cloudflare.com"
     - matchPattern: "*.openai.azure.com"
     - matchName: "sso.peekoff.com"
+    - matchName: "raw.githubusercontent.com"
     toPorts:
     - ports:
       - port: "443"
