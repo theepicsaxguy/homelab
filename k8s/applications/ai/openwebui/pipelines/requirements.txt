@@ -6,7 +6,7 @@ llama-index-core==0.14.20
 openai==2.31.0
 huggingface-hub==1.10.2
 tokenizers==0.22.2
-packaging>=26,<26.1
+packaging>=26,<26.2
 numpy==2.4.4
 posthog>=7.11.0,<7.12.0
 wrapt>=2,<2.2
