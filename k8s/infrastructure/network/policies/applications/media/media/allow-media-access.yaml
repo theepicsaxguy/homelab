@@ -62,3 +62,15 @@ spec:
         protocol: TCP
       - port: "2049"
         protocol: TCP
+  - toCIDR:
+    - 239.255.255.250/32
+    toPorts:
+    - ports:
+      - port: "1900"
+        protocol: UDP
+  - toCIDR:
+    - 0.0.0.0/0
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
