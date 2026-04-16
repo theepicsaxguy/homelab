@@ -20,6 +20,15 @@ spec:
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "6333"
+        protocol: TCP
+      - port: "6334"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
         k8s:io.kubernetes.pod.namespace: opencode
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: open-webui
