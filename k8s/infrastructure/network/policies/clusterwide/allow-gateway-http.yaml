@@ -9,7 +9,7 @@ spec:
   enableDefaultDeny:
     ingress: false
     egress: false
-  description: "Allow HTTP/HTTPS traffic to/from gateway namespace cluster-wide"
+  description: "Allow HTTP/HTTPS and Qdrant traffic to/from gateway namespace cluster-wide"
   ingress:
   - fromEntities:
     - host
@@ -20,4 +20,21 @@ spec:
       - port: "80"
         protocol: TCP
       - port: "443"
+        protocol: TCP
+      - port: "6333"
+        protocol: TCP
+      - port: "6334"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: gateway
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP
+      - port: "6333"
+        protocol: TCP
+      - port: "6334"
         protocol: TCP

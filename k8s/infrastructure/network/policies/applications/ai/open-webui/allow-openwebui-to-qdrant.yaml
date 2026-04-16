@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-openwebui-to-qdrant
+  namespace: qdrant
+  labels:
+    network-policy: ai-audit
+    policy-type: cilium-audit
+spec:
+  description: Allow traffic from the open-webui namespace to qdrant on TCP/6333
+  endpointSelector:
+    matchLabels:
+      app: qdrant
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.podNamespace: open-webui
+    toPorts:
+    - ports:
+      - port: "6333"
+        protocol: TCP

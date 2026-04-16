@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Cilium Hubble Check (namespace prompt)",
+      "type": "shell",
+      "command": "/home/develop/homelab/.agents/skills/cilium-hubble/scripts/hubble-check.sh",
+      "args": [
+        "${input:namespace}"
+      ],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "namespace",
+      "type": "promptString",
+      "description": "Enter the namespace to check with Hubble"
+    }
+  ]
+}
