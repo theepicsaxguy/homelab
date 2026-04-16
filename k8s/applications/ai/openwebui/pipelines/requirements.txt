@@ -4,7 +4,7 @@ qdrant-client[fastembed]==1.17.1
 protobuf>=7.34.0,<7.35.0
 llama-index-core==0.14.20
 openai==2.32.0
-huggingface-hub==1.10.2
+huggingface-hub==1.11.0
 tokenizers==0.22.2
 packaging>=26,<26.2
 numpy==2.4.4
@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==4.2.0
+langfuse==4.3.1
 llama-index==0.14.20
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
