@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: radarr
-          image: ghcr.io/home-operations/radarr:6.1.2.10359
+          image: ghcr.io/home-operations/radarr:6.2.0.10390
           ports:
             - name: http
               containerPort: 7878
