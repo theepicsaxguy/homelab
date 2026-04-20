@@ -17,16 +17,21 @@ http:
     - "172.16.0.0/12"
     - "192.168.0.0/16"
 
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
+auth_header:
+  username_header: X-ak-hass-user
+  debug: true
 
-
-wake_on_lan:
-
-
+openid:
+  client_id: !secret ha_oidc_client_id
+  client_secret: !secret ha_oidc_client_secret
+  configure_url: "https://sso.peekoff.com/application/o/home-assistant/.well-known/openid-configuration"
+  username_field: preferred_username
+  scope: "openid profile email"
+  block_login: false
+  openid_text: "Login with OpenID / OAuth2"
 
 bluetooth:
+
 ## Recorder ##
 recorder:
   purge_keep_days: 10
@@ -50,18 +55,14 @@ recorder:
       - sensor.date_time
     event_types:
       - browser_mod
-    entity_globs:
-      - input_number.flux_dum_*
-      - sensor.watchman_*
 
 ## Logger ##
 logger:
   default: critical
   logs:
-    # log level for HA core
     homeassistant.core: warning
-    # log level for MQTT integration
     homeassistant.components.mqtt: warning
+
 ## history ##
 history:
   include:
@@ -72,7 +73,6 @@ history:
       - light
       - binary_sensor
       - cover
-
   exclude:
     entities:
       - sensor.date
@@ -92,7 +92,7 @@ homeassistant:
   language: en
   country: SE
   currency: SEK
-  packages: !include_dir_named packages
+
 ## Lovelace Config ##
 lovelace:
   mode: storage
