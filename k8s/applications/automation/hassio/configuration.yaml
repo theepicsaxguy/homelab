@@ -30,36 +30,8 @@ openid:
   block_login: false
   openid_text: "Login with OpenID / OAuth2"
 
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
-
-
-## Components ##
-powercalc: !include components/powercalc.yaml
-wake_on_lan:
-swedish_calendar:
-spotcast: !include components/spotcast.yaml
-
-## Conf##
-input_boolean: !include conf/input_boolean.yaml
-input_number: !include conf/input_number.yaml
-light: !include conf/light.yaml
-sensor: !include conf/sensors.yaml
-template: !include conf/templates.yaml
-multiscrape: !include conf/scrape.yaml
-intent_script: !include conf/intent_script.yaml
-input_select: !include conf/input_select.yaml
-group: !include conf/groups.yaml
-binary_sensor: !include conf/binary_sensor.yaml
-input_datetime: !include conf/input_datetime.yaml
-notify: !include conf/notify.yaml
-alert: !include conf/alert.yaml
-switch: !include conf/switch.yaml
-
-
-
 bluetooth:
+
 ## Recorder ##
 recorder:
   purge_keep_days: 10
@@ -83,18 +55,14 @@ recorder:
       - sensor.date_time
     event_types:
       - browser_mod
-    entity_globs:
-      - input_number.flux_dum_*
-      - sensor.watchman_*
 
 ## Logger ##
 logger:
   default: critical
   logs:
-    # log level for HA core
     homeassistant.core: warning
-    # log level for MQTT integration
     homeassistant.components.mqtt: warning
+
 ## history ##
 history:
   include:
@@ -105,7 +73,6 @@ history:
       - light
       - binary_sensor
       - cover
-
   exclude:
     entities:
       - sensor.date
@@ -125,6 +92,7 @@ homeassistant:
   language: en
   country: SE
   currency: SEK
+
 ## Lovelace Config ##
 lovelace:
   mode: storage
