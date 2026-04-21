@@ -25,40 +25,6 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       initContainers:
-      - name: config-init
-        image: busybox:latest
-        env:
-        - name: HA_SEED_ON_STARTUP
-          value: "false"
-        command:
-        - sh
-        - -c
-        - |
-          mkdir -p /config/.storage
-
-          if [ "$HA_SEED_ON_STARTUP" = "true" ]; then
-            echo "HA_SEED_ON_STARTUP=true: Overwriting HA-managed config files from ConfigMaps"
-            cp -f /config-seed/automations.yaml /config/automations.yaml
-            cp -f /config-seed/scripts.yaml /config/scripts.yaml
-            cp -f /config-seed/scenes.yaml /config/scenes.yaml
-            cp -f /config-seed/lovelace.yaml /config/lovelace.yaml
-          else
-            echo "HA_SEED_ON_STARTUP=false: Copying HA-managed config files only if they don't exist"
-            [ ! -f /config/automations.yaml ] && cp /config-seed/automations.yaml /config/automations.yaml
-            [ ! -f /config/scripts.yaml ] && cp /config-seed/scripts.yaml /config/scripts.yaml
-            [ ! -f /config/scenes.yaml ] && cp /config-seed/scenes.yaml /config/scenes.yaml
-            [ ! -f /config/lovelace.yaml ] && cp /config-seed/lovelace.yaml /config/lovelace.yaml
-          fi
-
-          echo "Setting permissions for Home Assistant..."
-          chmod -R 755 /config
-          chown -R root:root /config
-          echo "Init complete"
-        volumeMounts:
-        - name: data
-          mountPath: /config
-        - name: seed-config
-          mountPath: /config-seed
       - name: volume-permissions
         image: busybox:1.37
         command: ["sh", "-c", "chmod -R 755 /config && chown -R root:root /config"]
@@ -101,15 +67,7 @@ spec:
               mountPath: /config/secrets.yaml
               readOnly: true
               subPath: secrets.yaml
-            - name: packages
-              mountPath: /config/packages
-              readOnly: true
-            - name: speech
-              mountPath: /config/speech
-              readOnly: true
-            - name: custom-sentences
-              mountPath: /config/custom_sentences
-              readOnly: true
+
           livenessProbe:
             httpGet:
               path: /
@@ -135,24 +93,12 @@ spec:
             items:
               - key: configuration.yaml
                 path: configuration.yaml
-        - name: seed-config
-          configMap:
-            name: ha-seed-config
         - name: secrets
           secret:
             secretName: hassio-secrets
             items:
               - key: secrets.yaml
                 path: secrets.yaml
-        - name: packages
-          configMap:
-            name: ha-packages-config
-        - name: speech
-          configMap:
-            name: ha-speech-config
-        - name: custom-sentences
-          configMap:
-            name: ha-custom-sentences
         - name: data
           persistentVolumeClaim:
             claimName: home-assistant-home-assistant-0
