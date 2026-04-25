@@ -18,6 +18,14 @@ spec:
     - ports:
       - port: "8080"
         protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kubechecks
+        app.kubernetes.io/name: kubechecks
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:
