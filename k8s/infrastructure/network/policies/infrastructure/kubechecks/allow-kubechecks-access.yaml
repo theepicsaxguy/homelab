@@ -20,12 +20,29 @@ spec:
       - port: "8080"
         protocol: TCP
   egress:
-  - toCIDR: ["10.0.0.0/8"]
+  - toEntities:
+    - kube-apiserver
     toPorts:
     - ports:
       - port: "443"
         protocol: TCP
-      - port: "80"
+      - port: "6443"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: argocd
+        app.kubernetes.io/name: argocd-server
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
+      - port: "443"
+        protocol: TCP
+  - toEntities:
+    - world
+    toPorts:
+    - ports:
+      - port: "443"
         protocol: TCP
   - toEndpoints:
     - matchLabels:

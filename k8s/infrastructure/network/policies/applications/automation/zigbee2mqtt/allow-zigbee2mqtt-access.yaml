@@ -11,6 +11,14 @@ spec:
       app: zigbee2mqtt
   description: "Allow Zigbee2MQTT access"
   ingress:
+  - fromEntities:
+    - host
+    - remote-node
+    - ingress
+    toPorts:
+    - ports:
+      - port: "8080"
+        protocol: TCP
   - fromEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: home-assistant

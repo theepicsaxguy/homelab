@@ -73,11 +73,18 @@ spec:
             memory: "4Gi"
             cpu: "2000m"
             ephemeral-storage: "1Gi"
-        livenessProbe:
+        startupProbe:
           httpGet:
             path: /health
             port: 49112
           initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 49112
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 3
@@ -85,7 +92,6 @@ spec:
           httpGet:
             path: /health
             port: 49112
-          initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
