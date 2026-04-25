@@ -30,7 +30,8 @@ spec:
         protocol: UDP
       - port: "53"
         protocol: TCP
-  - toCIDR: ["10.0.0.0/8"]
+  - toFQDNs:
+    - matchName: "truenas.peekoff.com"
     toPorts:
     - ports:
       - port: "443"

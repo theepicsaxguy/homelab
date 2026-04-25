@@ -53,5 +53,9 @@ spec:
         protocol: TCP
       - port: "80"
         protocol: TCP
+  - toFQDNs:
+    - matchName: "truenas.peekoff.com"
+    toPorts:
+    - ports:
       - port: "9000"
         protocol: TCP
