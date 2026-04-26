@@ -79,20 +79,6 @@ history:
       - sensor.time
       - sensor.date_time
 
-# Specifies media source directory
-homeassistant:
-  media_dirs:
-    local: /media
- # latitude: !secret zone_home_latitude
- # longitude: !secret zone_home_longitude
- # elevation: !secret zone_home_elevation
-  unit_system: metric
-  temperature_unit: C
-  time_zone: Europe/Stockholm
-  language: en
-  country: SE
-  currency: SEK
-
 ## Lovelace Config ##
 lovelace:
   mode: storage
