@@ -2,11 +2,11 @@
 default_config:
 
 # Load frontend themes from the themes folder
-frontend:
-  themes: !include_dir_merge_named themes
-  extra_module_url:
-    - /hacsfiles/lovelace-card-mod/card-mod.js
-    - /hacsfiles/Bubble-Card/bubble-pop-up-fix.js
+#frontend:
+#  themes: !include_dir_merge_named themes
+ # extra_module_url:
+ #   - /hacsfiles/lovelace-card-mod/card-mod.js
+ #   - /hacsfiles/Bubble-Card/bubble-pop-up-fix.js
 
 # HTTP settings for when behind a reverse proxy
 http:
@@ -83,9 +83,9 @@ history:
 homeassistant:
   media_dirs:
     local: /media
-  latitude: !secret zone_home_latitude
-  longitude: !secret zone_home_longitude
-  elevation: !secret zone_home_elevation
+ # latitude: !secret zone_home_latitude
+ # longitude: !secret zone_home_longitude
+ # elevation: !secret zone_home_elevation
   unit_system: metric
   temperature_unit: C
   time_zone: Europe/Stockholm
