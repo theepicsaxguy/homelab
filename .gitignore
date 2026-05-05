@@ -56,3 +56,5 @@ kubeconfig
 # OpenCode config with secrets
 opencode.json
 !.agents/**
+!.claude/**
+.claude/settings.local.json
