@@ -7,7 +7,7 @@
 # Stage 0: fetch source and install Node deps
 ###############################################################################
 FROM node:24-alpine AS build
-ARG IMAGE_VERSION=3.4.3 # renovate: github-releases=assafelovic/gpt-researcher
+ARG IMAGE_VERSION=3.4.4 # renovate: github-releases=assafelovic/gpt-researcher
 
 RUN apk add --no-cache git ca-certificates
 
