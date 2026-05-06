@@ -5,6 +5,7 @@ namespace: unifi
 resources:
 - namespace.yaml
 - cert-unifi.yaml
+- network-policy.yaml
 - statefulset.yaml
 - svc.yaml
 - svc-lb.yaml
