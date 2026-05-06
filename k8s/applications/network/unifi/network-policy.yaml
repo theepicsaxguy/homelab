@@ -42,3 +42,5 @@ spec:
               protocol: TCP
             - port: "3478"
               protocol: UDP
+            - port: "8883"
+              protocol: TCP
