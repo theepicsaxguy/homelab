@@ -9,3 +9,4 @@ resources:
 - svc.yaml
 - svc-lb.yaml
 - tls-route.yaml
+- network-policy.yaml

@@ -1,0 +1,44 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: unifi-controller
+  namespace: unifi
+spec:
+  endpointSelector:
+    matchLabels:
+      app: unifi-controller
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "8443"
+              protocol: TCP
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+            - port: "8443"
+              protocol: TCP
+            - port: "8843"
+              protocol: TCP
+            - port: "8880"
+              protocol: TCP
+            - port: "6789"
+              protocol: TCP
+            - port: "10001"
+              protocol: UDP
+            - port: "3478"
+              protocol: UDP
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "3478"
+              protocol: UDP

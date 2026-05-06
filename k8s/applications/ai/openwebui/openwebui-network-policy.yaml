@@ -1,0 +1,83 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: openwebui-access
+  namespace: open-webui
+spec:
+  endpointSelector:
+    matchLabels:
+      app: open-webui
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+        - ingress
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: qdrant
+            k8s:io.kubernetes.pod.namespace: qdrant
+      toPorts:
+        - ports:
+            - port: "6333"
+              protocol: TCP
+            - port: "6334"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: litellm
+            k8s:io.kubernetes.pod.namespace: litellm
+      toPorts:
+        - ports:
+            - port: "4000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: openwebui-pipelines
+            k8s:io.kubernetes.pod.namespace: open-webui
+      toPorts:
+        - ports:
+            - port: "9099"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: open-terminal
+            k8s:io.kubernetes.pod.namespace: open-webui
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: authentik
+            k8s:io.kubernetes.pod.namespace: auth
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - toCIDR:
+        - 10.0.0.0/8
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
