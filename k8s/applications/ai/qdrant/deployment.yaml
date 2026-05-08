@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: qdrant
-          image: qdrant/qdrant:v1.17.1
+          image: qdrant/qdrant:v1.18.0
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
