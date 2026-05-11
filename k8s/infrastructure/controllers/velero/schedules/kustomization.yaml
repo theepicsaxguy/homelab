@@ -29,6 +29,7 @@ resources:
   - daily-gpt-researcher.yaml
   - daily-opencode.yaml
   - daily-pocket-tts.yaml
+  - daily-trilium.yaml
   # Weekly offsite backups (90d TTL, Backblaze B2)
   - weekly-offsite-home-assistant.yaml
   - weekly-offsite-immich.yaml
@@ -38,3 +39,4 @@ resources:
   - weekly-offsite-n8n.yaml
   - weekly-offsite-karakeep.yaml
   - weekly-offsite-openwebui.yaml
+  - weekly-offsite-trilium.yaml
