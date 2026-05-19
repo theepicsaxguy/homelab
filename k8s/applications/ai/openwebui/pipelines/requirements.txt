@@ -8,7 +8,7 @@ huggingface-hub==1.15.0
 tokenizers==0.23.1
 packaging>=26,<26.3
 numpy==2.4.6
-posthog>=7.14.0,<7.15.0
+posthog>=7.15.0,<7.16.0
 wrapt>=2,<2.2
 tenacity>=8.2.0,<10.0.0
 
