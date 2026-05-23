@@ -26,7 +26,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       initContainers:
       - name: volume-permissions
-        image: busybox:1.37
+        image: busybox:1.38
         command: ["sh", "-c", "chmod -R 755 /config && chown -R root:root /config"]
         volumeMounts:
         - name: data
