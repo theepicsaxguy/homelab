@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       initContainers:
       - name: seed-z2m-config
-        image: busybox:1.37
+        image: busybox:1.38
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000

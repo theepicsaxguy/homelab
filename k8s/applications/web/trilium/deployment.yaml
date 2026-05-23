@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: chown-data
-          image: busybox:1.37
+          image: busybox:1.38
           command: ["sh", "-c", "chown -R 1000:1000 /home/node/trilium-data"]
           securityContext:
             runAsUser: 0
