@@ -27,7 +27,14 @@ spec:
       initContainers:
       - name: volume-permissions
         image: busybox:1.38
-        command: ["sh", "-c", "chmod -R 755 /config && chown -R root:root /config"]
+        command:
+          - sh
+          - -c
+          - |
+            chmod -R 755 /config && chown -R root:root /config
+            [ -f /config/automations.yaml ] || echo "[]" > /config/automations.yaml
+            [ -f /config/scripts.yaml ] || echo "{}" > /config/scripts.yaml
+            [ -f /config/scenes.yaml ] || echo "[]" > /config/scenes.yaml
         volumeMounts:
         - name: data
           mountPath: /config

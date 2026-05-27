@@ -8,6 +8,9 @@ default_config:
  #   - /hacsfiles/lovelace-card-mod/card-mod.js
  #   - /hacsfiles/Bubble-Card/bubble-pop-up-fix.js
 
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
 # HTTP settings for when behind a reverse proxy
 http:
   ip_ban_enabled: true
