@@ -53,9 +53,9 @@ spec:
           image: ghcr.io/homeassistant-ai/ha-mcp:latest@sha256:f8483e37a3513a08bf5e5d0f985d166ace2ad487a07a005b076c5e8615c32147
           imagePullPolicy: IfNotPresent
           command:
-            - /venv/bin/fastmcp
-            - run
-            - fastmcp-http.json
+            - /venv/bin/python
+            - -c
+            - "from ha_mcp.__main__ import main_web; main_web()"
           ports:
             - name: http
               containerPort: 8086
@@ -73,6 +73,11 @@ spec:
                 secretKeyRef:
                   name: ha-mcp-secrets
                   key: HOMEASSISTANT_TOKEN
+            - name: MCP_SECRET_PATH
+              valueFrom:
+                secretKeyRef:
+                  name: ha-mcp-secrets
+                  key: MCP_SECRET_PATH
           securityContext:
             runAsNonRoot: true
             runAsUser: 999
