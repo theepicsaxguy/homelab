@@ -20,10 +20,8 @@ spec:
             - port: "8086"
               protocol: TCP
   egress:
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: home-assistant
-            app.kubernetes.io/name: home-assistant
+    - toEntities:
+        - remote-node
       toPorts:
         - ports:
             - port: "8123"

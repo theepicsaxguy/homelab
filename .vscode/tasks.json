@@ -4,7 +4,7 @@
     {
       "label": "Cilium Hubble Check (namespace prompt)",
       "type": "shell",
-      "command": "/home/develop/homelab/.agents/skills/cilium-hubble/scripts/hubble-check.sh",
+      "command": "/home/develop/homelab/.claude/skills/cilium-hubble/scripts/hubble-check.sh",
       "args": [
         "${input:namespace}"
       ],
