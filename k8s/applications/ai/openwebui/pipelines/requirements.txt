@@ -8,7 +8,7 @@ huggingface-hub==1.16.1
 tokenizers==0.23.1
 packaging>=26,<26.3
 numpy==2.4.6
-posthog>=7.15.0,<7.16.0
+posthog>=7.16.1,<7.17.0
 wrapt>=2,<2.3
 tenacity>=8.2.0,<10.0.0
 
@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==4.6.1
+langfuse==4.7.0
 llama-index==0.14.22
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
