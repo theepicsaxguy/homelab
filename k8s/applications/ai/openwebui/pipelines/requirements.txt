@@ -8,7 +8,7 @@ huggingface-hub==1.17.0
 tokenizers==0.23.1
 packaging>=26,<26.3
 numpy==2.4.6
-posthog>=7.16.1,<7.17.0
+posthog>=7.17.0,<7.18.0
 wrapt>=2,<2.3
 tenacity>=8.2.0,<10.0.0
 
@@ -35,4 +35,4 @@ llama-index-readers-file==0.6.0
 llama-index-readers-llama-parse==0.6.1
 opencv-python==4.13.0.92
 opik==1.11.14
-transformers==5.9.0
+transformers==5.10.1
