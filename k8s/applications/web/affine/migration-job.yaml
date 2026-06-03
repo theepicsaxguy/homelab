@@ -45,10 +45,13 @@ spec:
             capabilities:
               drop:
                 - ALL
-          envFrom:
-            - secretRef:
-                name: es-affine-env
           env:
+            - name: REDIS_SERVER_HOST
+              value: redis.affine.svc.cluster.local
+            - name: AFFINE_REVISION
+              value: "0.26.7"
+            - name: AFFINE_INDEXER_ENABLED
+              value: "true"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
