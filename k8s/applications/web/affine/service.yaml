@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: affine
+  namespace: affine
+  labels:
+    app.kubernetes.io/name: affine
+    app.kubernetes.io/part-of: affine
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: affine
+  ports:
+    - name: http
+      port: 3010
+      targetPort: http
+      protocol: TCP
