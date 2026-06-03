@@ -54,7 +54,7 @@ spec:
             - name: AFFINE_REVISION
               value: "0.26.7"
             - name: AFFINE_INDEXER_ENABLED
-              value: "true"
+              value: "false"
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
