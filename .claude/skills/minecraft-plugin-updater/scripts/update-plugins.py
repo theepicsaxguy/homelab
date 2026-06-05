@@ -182,8 +182,27 @@ def find_resolver(url: str):
 # Paper MC version check
 # ---------------------------------------------------------------------------
 
+def _latest_stable_paper_build(version: str) -> int | None:
+    """Return the highest STABLE build number for a Paper version, or None."""
+    for host in ("https://fill.papermc.io", "https://api.papermc.io"):
+        try:
+            data = fetch_json(f"{host}/v2/projects/paper/versions/{version}/builds")
+            stable = [b["build"] for b in data["builds"] if b.get("channel") == "STABLE"]
+            return max(stable) if stable else None
+        except Exception:
+            continue
+    return None
+
+
 def check_paper_version():
-    """Check if a newer Paper MC version is available and update kustomization.yaml."""
+    """Check if a newer Paper MC version is available and update kustomization.yaml.
+
+    Paper switched versioning from 1.21.x (tracked in their v2 API) to a new
+    scheme (26.x.x displayed on papermc.io). The v2 API still lists versions as
+    1.21.x; itzg/minecraft-server accepts either form. We check the API for the
+    latest 1.21.x release and also try the version string from kustomization.yaml
+    directly to handle the transition gracefully.
+    """
     if not os.path.exists(KUSTOMIZATION_FILE):
         print("  [skip]  kustomization.yaml not found, skipping Paper version check")
         return
@@ -198,37 +217,41 @@ def check_paper_version():
 
     current_version = match.group(1)
 
+    # Determine latest from API (returns 1.21.x-style versions)
     try:
-        data = fetch_json("https://api.papermc.io/v2/projects/paper")
-        latest_version = data["versions"][-1]
+        data = fetch_json("https://fill.papermc.io/v2/projects/paper")
+        # Only consider stable final releases (no pre/rc suffixes)
+        stable_versions = [
+            v for v in data["versions"]
+            if not any(s in v for s in ("-pre", "-rc", "-beta"))
+        ]
+        api_latest = stable_versions[-1] if stable_versions else None
     except Exception as e:
-        print(f"  [WARN]  Could not check Paper version: {e}")
+        print(f"  [WARN]  Could not check Paper versions: {e}")
         return
 
-    if latest_version == current_version:
-        print(f"  [ok]    Paper {current_version} (latest)")
+    # If the current version isn't in the API (e.g. new 26.x.x scheme),
+    # report what the API says but don't overwrite — user controls the version.
+    if api_latest and current_version not in data["versions"]:
+        print(f"  [info]  Paper VERSION={current_version} (not in API; "
+              f"API latest={api_latest}). Update manually if needed.")
         return
 
-    # Check the latest build for the new version exists
-    try:
-        builds = fetch_json(
-            f"https://api.papermc.io/v2/projects/paper/versions/{latest_version}/builds"
-        )
-        if not builds.get("builds"):
-            print(f"  [WARN]  No builds found for Paper {latest_version}, keeping {current_version}")
-            return
-    except Exception as e:
-        print(f"  [WARN]  Could not verify Paper {latest_version} builds: {e}")
+    if not api_latest or api_latest == current_version:
+        build = _latest_stable_paper_build(current_version) if api_latest else None
+        suffix = f" (latest stable build #{build})" if build else ""
+        print(f"  [ok]    Paper {current_version}{suffix}")
         return
 
+    # There's a newer version in the API
     new_content = content.replace(
         f"- VERSION={current_version}",
-        f"- VERSION={latest_version}",
+        f"- VERSION={api_latest}",
     )
     with open(KUSTOMIZATION_FILE, "w") as f:
         f.write(new_content)
 
-    print(f"  [UP]    Paper {current_version} -> {latest_version}")
+    print(f"  [UP]    Paper {current_version} -> {api_latest}")
     return True
 
 

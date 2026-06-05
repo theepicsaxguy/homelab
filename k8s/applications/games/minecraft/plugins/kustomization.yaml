@@ -5,7 +5,7 @@ configMapGenerator:
   - name: minecraft-bedrock
     literals:
       - TYPE=PAPER
-      - VERSION=1.21.11
+      - VERSION=26.1.2
       - EULA=true
       - SERVER_PORT=25565
       - ONLINE_MODE=true
