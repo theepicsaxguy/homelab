@@ -1,5 +1,5 @@
-https://download.geysermc.org/v2/projects/geyser/versions/2.10.0/builds/latest/downloads/spigot
-https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/latest/downloads/spigot
+https://download.geysermc.org/v2/projects/geyser/versions/2.10.0/builds/1162/downloads/spigot
+https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/132/downloads/spigot
 https://github.com/SniperTVmc/EssentialsX-GUI/releases/download/1.5.0/EssentialsX-GUI-1.5.0.jar
 https://github.com/IntellectualSites/FastAsyncWorldEdit/releases/download/2.15.2/FastAsyncWorldEdit-Paper-2.15.2.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.22.0/EssentialsX-2.22.0.jar
