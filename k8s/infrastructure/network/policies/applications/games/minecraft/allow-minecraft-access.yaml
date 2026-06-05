@@ -15,3 +15,26 @@ spec:
         protocol: TCP
       - port: "19132"
         protocol: UDP
+  egress:
+  - toEntities: ["kube-apiserver"]
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toEntities: ["world"]  # Paper jar + plugin downloads from external hosts
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP

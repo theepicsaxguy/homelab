@@ -40,6 +40,7 @@ spec:
               set -e
               echo "=== sync-plugin-configs: starting ==="
               rm -f /data/plugins/QuickSort*.jar 2>/dev/null || true
+              rm -f /data/plugins/Geyser-Spigot.jar /data/plugins/floodgate-spigot.jar 2>/dev/null || true
               count=0
               for f in /plugin-configs/*; do
                 [ -f "$f" ] || continue
