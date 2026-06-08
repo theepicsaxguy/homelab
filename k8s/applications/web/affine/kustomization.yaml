@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - namespace.yaml
+  - minio-externalsecret.yaml
+  - database.yaml
+  - database-scheduled-backup.yaml
+  - redis.yaml
+  - pvc.yaml
+  - migration-job.yaml
+  - deployment.yaml
+  - service.yaml
+  - http-route.yaml
+  - network-policy.yaml

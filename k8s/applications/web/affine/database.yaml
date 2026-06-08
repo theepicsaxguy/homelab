@@ -1,0 +1,137 @@
+---
+# ExternalSecret for Backblaze B2 credentials (PostgreSQL backups)
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: b2-cnpg-credentials
+  namespace: affine
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: b2-cnpg-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-cnpg-access-key-id
+    - secretKey: AWS_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-cnpg-secret-access-key
+---
+# Local MinIO backup (fast recovery)
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: affine-minio-store
+  namespace: affine
+spec:
+  retentionPolicy: "14d"
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/affine/affine-postgresql
+    endpointURL: https://truenas.peekoff.com:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+# Offsite Backblaze B2 backup (disaster recovery)
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: affine-b2-store
+  namespace: affine
+spec:
+  retentionPolicy: "30d"
+  configuration:
+    destinationPath: s3://homelab-cnpg-b2/affine/affine-postgresql
+    endpointURL: https://s3.us-west-002.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: b2-cnpg-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: b2-cnpg-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: affine-postgresql
+  namespace: affine
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
+
+  storage:
+    size: 15Gi
+    storageClass: proxmox-csi
+
+  walStorage:
+    size: 3Gi
+    storageClass: proxmox-csi
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 200m
+    limits:
+      memory: 1Gi
+      cpu: 1000m
+
+  postgresql:
+    parameters:
+      max_connections: "100"
+      shared_buffers: "256MB"
+      effective_cache_size: "768MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2621kB"
+      huge_pages: "off"
+      min_wal_size: "1GB"
+      max_wal_size: "2GB"
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      enabled: true
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: affine-minio-store
+
+  externalClusters:
+    - name: affine-postgresql-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: affine-b2-store
+    - name: affine-postgresql-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: affine-minio-store
+
+  bootstrap:
+    initdb:
+      database: affine
+      owner: affine
+      postInitApplicationSQL:
+        - CREATE EXTENSION IF NOT EXISTS "vector";
+
+  monitoring:
+    enablePodMonitor: false
+
+  minSyncReplicas: 1
+  maxSyncReplicas: 1
+
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname

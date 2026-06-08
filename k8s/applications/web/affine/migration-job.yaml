@@ -1,0 +1,93 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: affine-migration
+  namespace: affine
+  labels:
+    app.kubernetes.io/name: affine-migration
+    app.kubernetes.io/part-of: affine
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: Replace=true
+spec:
+  completions: 1
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: affine-migration
+        app.kubernetes.io/part-of: affine
+    spec:
+      restartPolicy: OnFailure
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: affine-migration
+          image: ghcr.io/toeverything/affine:0.26.7
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - node ./scripts/self-host-predeploy.js
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: REDIS_SERVER_HOST
+              value: redis.affine.svc.cluster.local
+            - name: AFFINE_REVISION
+              value: "0.26.7"
+            - name: AFFINE_INDEXER_ENABLED
+              value: "false"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: affine-postgresql-app
+                  key: uri
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: affine-postgresql-app
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: affine-postgresql-app
+                  key: password
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: affine-postgresql-app
+                  key: dbname
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          volumeMounts:
+            - name: affine-storage
+              mountPath: /root/.affine/storage
+            - name: affine-config
+              mountPath: /root/.affine/config
+      volumes:
+        - name: affine-storage
+          persistentVolumeClaim:
+            claimName: affine-storage
+        - name: affine-config
+          persistentVolumeClaim:
+            claimName: affine-config
