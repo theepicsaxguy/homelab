@@ -1,21 +1,4 @@
 ---
-# Daily backup to TrueNAS MinIO (local, fast recovery)
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: litellm-postgresql-minio-backup
-  namespace: litellm
-spec:
-  schedule: "0 0 4 * * *"  # Daily at 4 AM
-  backupOwnerReference: self
-  cluster:
-    name: litellm-postgresql-restored  # Updated to restored cluster
-  method: plugin
-  pluginConfiguration:
-    name: barman-cloud.cloudnative-pg.io
-    parameters:
-      barmanObjectName: litellm-minio-store
----
 # Weekly backup to Backblaze B2 (offsite, disaster recovery)
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
