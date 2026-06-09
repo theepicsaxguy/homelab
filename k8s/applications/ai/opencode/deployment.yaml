@@ -87,7 +87,7 @@ spec:
               mountPath: /opt/shared-tools
       containers:
       - name: opencode-web
-        image: ghcr.io/chriswritescode-dev/opencode-manager:0.12.0
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.13.0
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
