@@ -1,0 +1,52 @@
+name: Update Minecraft Plugins
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-plugins:
+    name: Update Minecraft Plugins
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run plugin updater
+        run: |
+          python3 .claude/skills/minecraft-plugin-updater/scripts/update-plugins.py \
+            k8s/applications/games/minecraft/plugins/plugins.txt | tee /tmp/plugin-updates.txt
+
+      - name: Build PR body
+        id: body
+        run: |
+          {
+            echo 'content<<PREOF'
+            echo 'Automated plugin update.'
+            echo ''
+            echo '```'
+            cat /tmp/plugin-updates.txt
+            echo '```'
+            echo PREOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/update-minecraft-plugins
+          commit-message: 'chore(minecraft): update plugins'
+          title: 'chore(minecraft): update plugins'
+          body: ${{ steps.body.outputs.content }}
+          labels: dependencies
+          delete-branch: true
