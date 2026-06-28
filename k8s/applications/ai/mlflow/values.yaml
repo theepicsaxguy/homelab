@@ -15,14 +15,14 @@ artifactRoot:
     enabled: true
     bucket: mlflow-artifacts
     existingSecret:
-      name: longhorn-minio-credentials
+      name: mlflow-rustfs-credentials
       keyOfAccessKeyId: AWS_ACCESS_KEY_ID
       keyOfSecretAccessKey: AWS_SECRET_ACCESS_KEY
 
 extraEnvVars:
-  MLFLOW_S3_ENDPOINT_URL: "https://truenas.peekoff.com:9000"
+  MLFLOW_S3_ENDPOINT_URL: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
   AWS_DEFAULT_REGION: "us-east-1"
-  MLFLOW_TRACKING_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow/"
+  MLFLOW_REGISTRY_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow/"
 
 extraSecretNamesForEnvFrom:
   - mlflow-gitlab-tracking

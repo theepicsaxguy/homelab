@@ -38,8 +38,10 @@ spec:
         - ports:
             - port: "5432"
               protocol: TCP
-    - toFQDNs:
-        - matchName: "truenas.peekoff.com"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: rustfs
+            app.kubernetes.io/name: rustfs
       toPorts:
         - ports:
             - port: "9000"

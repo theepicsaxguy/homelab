@@ -29,7 +29,7 @@ spec:
             - -c
             - |
               mc --config-dir /tmp alias set rustfs http://rustfs-svc.rustfs.svc.cluster.local:9000 "$RUSTFS_ACCESS_KEY" "$RUSTFS_SECRET_KEY"
-              for bucket in gitlab-uploads gitlab-artifacts gitlab-lfs gitlab-packages gitlab-terraform-state gitlab-ci-secure-files gitlab-runner-cache; do
+              for bucket in gitlab-uploads gitlab-artifacts gitlab-lfs gitlab-packages gitlab-terraform-state gitlab-ci-secure-files gitlab-runner-cache mlflow-artifacts; do
                 mc --config-dir /tmp mb --ignore-existing rustfs/$bucket
               done
           envFrom:
