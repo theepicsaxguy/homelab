@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mlflow
+
+helmCharts:
+  - name: mlflow
+    repo: https://community-charts.github.io/helm-charts
+    version: 1.11.2
+    releaseName: mlflow
+    namespace: mlflow
+    valuesFile: values.yaml
+    includeCRDs: false
+
+resources:
+  - namespace.yaml
+  - minio-externalsecret.yaml
+  - database.yaml
+  - database-scheduled-backup.yaml
+  - http-route.yaml
+  - network-policy.yaml
+
+patches:
+  - target:
+      kind: ServiceAccount
+      name: mlflow
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow
+  - target:
+      kind: ConfigMap
+      name: mlflow-env-configmap
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow
+  - target:
+      kind: Secret
+      name: mlflow-env-secret
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow
+  - target:
+      kind: Service
+      name: mlflow
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow
+  - target:
+      kind: Deployment
+      name: mlflow
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow
+  - target:
+      kind: ConfigMap
+      name: mlflow-migrations
+    patch: |
+      - op: add
+        path: /metadata/namespace
+        value: mlflow

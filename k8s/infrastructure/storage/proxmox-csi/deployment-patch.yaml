@@ -25,3 +25,11 @@ spec:
       app.kubernetes.io/managed-by: argocd
       app.kubernetes.io/name: proxmox-csi-plugin
       dev.peekoff: storage
+  template:
+    spec:
+      containers:
+        - name: proxmox-csi-plugin-node
+          args:
+            - "-v=5"
+            - "--csi-address=unix:///csi/csi.sock"
+            - "--node-id=$(NODE_NAME)"

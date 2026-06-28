@@ -1,0 +1,71 @@
+gitlabUrl: https://gitlab.peekoff.com
+
+runners:
+  secret: gitlab-runner-token
+  config: |
+    [[runners]]
+      request_concurrency = 4
+      [runners.kubernetes]
+        namespace = "{{ default .Release.Namespace .Values.runners.jobNamespace }}"
+        image = "alpine:3.20"
+        privileged = false
+        [runners.kubernetes.pod_labels]
+          "app.kubernetes.io/name" = "gitlab-runner-job"
+      [runners.cache]
+        Type = "s3"
+        Path = "runner"
+        Shared = true
+        [runners.cache.s3]
+          ServerAddress = "rustfs-svc.rustfs.svc.cluster.local:9000"
+          BucketName = "gitlab-runner-cache"
+          BucketLocation = "us-east-1"
+          Insecure = true
+          AuthenticationType = "access-key"
+  cache:
+    secretName: gitlab-runner-cache
+
+concurrent: 4
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 100
+  runAsGroup: 65533
+  fsGroup: 65533
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop: ["ALL"]
+
+extraVolumes:
+  - name: runner-home
+    emptyDir:
+      sizeLimit: 500Mi
+  - name: runner-tmp
+    emptyDir:
+      sizeLimit: 200Mi
+
+extraVolumeMounts:
+  - name: runner-home
+    mountPath: /home/gitlab-runner
+  - name: runner-tmp
+    mountPath: /tmp
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

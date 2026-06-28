@@ -1,0 +1,97 @@
+---
+# Runner manager pod
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitlab-runner-manager
+  namespace: gitlab-runner
+spec:
+  endpointSelector:
+    matchLabels:
+      app: gitlab-runner
+  ingress: []
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities:
+        - kube-apiserver
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gitlab
+            release: gitlab
+      toPorts:
+        - ports:
+            - port: "8181"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: rustfs
+            app.kubernetes.io/name: rustfs
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+---
+# Job pods spawned by the Kubernetes executor
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitlab-runner-jobs
+  namespace: gitlab-runner
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gitlab-runner-job
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: gitlab-runner
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gitlab
+            release: gitlab
+      toPorts:
+        - ports:
+            - port: "8181"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: rustfs
+            app.kubernetes.io/name: rustfs
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
