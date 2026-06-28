@@ -14,6 +14,7 @@ helmCharts:
 resources:
   - namespace.yaml
   - minio-externalsecret.yaml
+  - gitlab-tracking-externalsecret.yaml
   - database.yaml
   - database-scheduled-backup.yaml
   - http-route.yaml

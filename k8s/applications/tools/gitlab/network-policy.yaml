@@ -130,6 +130,14 @@ spec:
     - fromEndpoints:
         - matchLabels:
             release: gitlab
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: mlflow
+            app.kubernetes.io/name: mlflow
+      toPorts:
+        - ports:
+            - port: "8181"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
