@@ -1,0 +1,118 @@
+# MLflow + GitLab integration template for training pipelines.
+# Include in your project's .gitlab-ci.yml:
+#
+#   include:
+#     - project: 'theepicsaxguy/homelab'
+#       ref: main
+#       file: '/k8s/applications/ai/mlflow/gitlab-ci-template.yml'
+#
+# Then extend the hidden jobs:
+#
+#   train:
+#     extends: .mlflow-train
+#     script:
+#       - python train.py   # must set MODEL_NAME, MODEL_VERSION, RUN_ID as dotenv artifacts
+#
+#   register:
+#     extends: .mlflow-register
+#     needs: [train]
+#
+# Required CI/CD variables (set in project settings, masked):
+#   none — secrets are injected from the cluster via /run/secrets/mlflow/
+
+variables:
+  MLFLOW_TRACKING_URI: "http://mlflow.mlflow.svc.cluster.local"
+  MLFLOW_REGISTRY_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow/"
+  GITLAB_PROJECT_API: "https://gitlab.peekoff.com/api/v4/projects/1"
+  GITLAB_TRIGGER_URL: "https://gitlab.peekoff.com/api/v4/projects/1/trigger/pipeline"
+  DEPLOYMENT_REF: "main"
+
+# Loads secrets from the cluster-mounted secret volume and exports them.
+# All subsequent script steps in the job inherit these exports.
+.mlflow-secrets:
+  before_script:
+    - export MLFLOW_TRACKING_TOKEN=$(cat "$MLFLOW_CI_SECRETS_PATH/MLFLOW_TRACKING_TOKEN")
+    - export GITLAB_TRIGGER_TOKEN=$(cat "$MLFLOW_CI_SECRETS_PATH/GITLAB_TRIGGER_TOKEN")
+
+# Base training job. Extend this and override `script` with your training code.
+# Your script must produce a dotenv artifact exporting MODEL_NAME, MODEL_VERSION,
+# and RUN_ID so downstream jobs can reference them.
+#
+# Example train.py tail:
+#   with open("mlflow.env", "w") as f:
+#       f.write(f"MODEL_NAME={model_name}\n")
+#       f.write(f"MODEL_VERSION={version}\n")
+#       f.write(f"RUN_ID={run.info.run_id}\n")
+.mlflow-train:
+  extends: .mlflow-secrets
+  artifacts:
+    reports:
+      dotenv: mlflow.env
+  script:
+    - echo "Override script in your job"
+  after_script:
+    # Link the MLflow run back to this CI job so GitLab UI shows the job/pipeline.
+    - |
+      if [ -n "$RUN_ID" ]; then
+        python3 - <<'EOF'
+      import os, mlflow
+      client = mlflow.MlflowClient(tracking_uri=os.environ["MLFLOW_TRACKING_URI"])
+      run_id = os.environ["RUN_ID"]
+      client.set_tag(run_id, "gitlab.CI_JOB_ID", os.environ.get("CI_JOB_ID", ""))
+      client.set_tag(run_id, "gitlab.CI_PIPELINE_ID", os.environ.get("CI_PIPELINE_ID", ""))
+      client.set_tag(run_id, "gitlab.CI_COMMIT_SHA", os.environ.get("CI_COMMIT_SHA", ""))
+      client.set_tag(run_id, "gitlab.CI_COMMIT_REF_NAME", os.environ.get("CI_COMMIT_REF_NAME", ""))
+      EOF
+      fi
+
+# Registers the model version (semver required by GitLab) and posts an MR note
+# if running in an MR pipeline. Triggers the deployment pipeline on success.
+# Needs the dotenv artifact from .mlflow-train.
+.mlflow-register:
+  extends: .mlflow-secrets
+  script:
+    - |
+      python3 - <<'EOF'
+      import os, mlflow
+      client = mlflow.MlflowClient(tracking_uri=os.environ["MLFLOW_TRACKING_URI"])
+      model_name = os.environ["MODEL_NAME"]
+      version    = os.environ["MODEL_VERSION"]
+      run_id     = os.environ["RUN_ID"]
+
+      # Register to GitLab model registry via MLFLOW_REGISTRY_URI on the server.
+      mv = client.create_model_version(
+          model_name,
+          source=f"runs:/{run_id}/model",
+          run_id=run_id,
+          tags={"gitlab.CI_JOB_ID": os.environ.get("CI_JOB_ID", "")},
+      )
+      print(f"Registered {model_name} v{version} (id={mv.version})")
+      EOF
+    # Post metric summary as MR note when running in an MR pipeline.
+    - |
+      if [ -n "$CI_MERGE_REQUEST_IID" ] && [ -n "$RUN_ID" ]; then
+        METRICS=$(python3 - <<'EOF'
+      import os, mlflow
+      client = mlflow.MlflowClient(tracking_uri=os.environ["MLFLOW_TRACKING_URI"])
+      run = client.get_run(os.environ["RUN_ID"])
+      lines = ["**MLflow run metrics for this MR:**", ""]
+      for k, v in run.data.metrics.items():
+          lines.append(f"- `{k}`: `{v}`")
+      lines += ["", f"Model: `{os.environ['MODEL_NAME']}` v`{os.environ['MODEL_VERSION']}`",
+                f"Run: [{os.environ['RUN_ID']}]($MLFLOW_TRACKING_URI/#/experiments)"]
+      print("\n".join(lines))
+      EOF
+      )
+        curl --silent --fail --request POST \
+          "${GITLAB_PROJECT_API}/merge_requests/${CI_MERGE_REQUEST_IID}/notes" \
+          --header "PRIVATE-TOKEN: ${MLFLOW_TRACKING_TOKEN}" \
+          --form "body=${METRICS}"
+      fi
+    # Trigger deployment pipeline with model coordinates as variables.
+    - |
+      curl --silent --fail --request POST "${GITLAB_TRIGGER_URL}" \
+        --form "token=${GITLAB_TRIGGER_TOKEN}" \
+        --form "ref=${DEPLOYMENT_REF}" \
+        --form "variables[MODEL_NAME]=${MODEL_NAME}" \
+        --form "variables[MODEL_VERSION]=${MODEL_VERSION}" \
+        --form "variables[RUN_ID]=${RUN_ID}"

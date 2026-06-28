@@ -17,6 +17,14 @@ spec:
         - ports:
             - port: "5000"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gitlab-runner
+            app.kubernetes.io/name: gitlab-runner-job
+      toPorts:
+        - ports:
+            - port: "5000"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:

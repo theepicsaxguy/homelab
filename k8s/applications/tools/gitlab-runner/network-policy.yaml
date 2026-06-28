@@ -87,6 +87,14 @@ spec:
         - ports:
             - port: "9000"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: mlflow
+            app.kubernetes.io/name: mlflow
+      toPorts:
+        - ports:
+            - port: "5000"
+              protocol: TCP
     - toEntities:
         - world
       toPorts:
