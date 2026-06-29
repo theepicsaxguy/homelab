@@ -22,10 +22,6 @@ artifactRoot:
 extraEnvVars:
   MLFLOW_S3_ENDPOINT_URL: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
   AWS_DEFAULT_REGION: "us-east-1"
-  MLFLOW_REGISTRY_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow/"
-
-extraSecretNamesForEnvFrom:
-  - mlflow-gitlab-tracking
 
 extraArgs:
   workers: "1"
@@ -49,10 +45,19 @@ podSecurityContext:
 
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false
+  readOnlyRootFilesystem: true
   capabilities:
     drop:
       - ALL
+
+extraVolumes:
+  - name: tmp
+    emptyDir:
+      sizeLimit: 500Mi
+
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp
 
 resources:
   requests:

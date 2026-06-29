@@ -21,11 +21,11 @@
 #   none — secrets are injected from the cluster via /run/secrets/mlflow/
 
 variables:
-  MLFLOW_TRACKING_URI: "http://mlflow.mlflow.svc.cluster.local"
-  MLFLOW_REGISTRY_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow/"
+  MLFLOW_TRACKING_URI: "https://gitlab.peekoff.com/api/v4/projects/1/ml/mlflow"
   GITLAB_PROJECT_API: "https://gitlab.peekoff.com/api/v4/projects/1"
   GITLAB_TRIGGER_URL: "https://gitlab.peekoff.com/api/v4/projects/1/trigger/pipeline"
   DEPLOYMENT_REF: "main"
+  MLFLOW_CI_SECRETS_PATH: "/run/secrets/mlflow"
 
 # Loads secrets from the cluster-mounted secret volume and exports them.
 # All subsequent script steps in the job inherit these exports.
@@ -79,14 +79,30 @@ variables:
       version    = os.environ["MODEL_VERSION"]
       run_id     = os.environ["RUN_ID"]
 
-      # Register to GitLab model registry via MLFLOW_REGISTRY_URI on the server.
+      # Register to GitLab model registry. GitLab ignores source/run_id args;
+      # set semver via gitlab.version tag. run_id is stored as a tag for traceability.
       mv = client.create_model_version(
           model_name,
-          source=f"runs:/{run_id}/model",
-          run_id=run_id,
-          tags={"gitlab.CI_JOB_ID": os.environ.get("CI_JOB_ID", "")},
+          source="",
+          tags={
+              "gitlab.version": version,
+              "gitlab.run_id": run_id,
+          },
       )
       print(f"Registered {model_name} v{version} (id={mv.version})")
+
+      # Link the model version's own run to this CI job (official GitLab pattern).
+      if os.getenv("GITLAB_CI"):
+          client.set_tag(mv.run_id, "gitlab.CI_JOB_ID", os.environ.get("CI_JOB_ID", ""))
+          client.set_tag(mv.run_id, "gitlab.CI_PIPELINE_ID", os.environ.get("CI_PIPELINE_ID", ""))
+
+      # Mirror training metrics onto the model version's run so they appear on the
+      # model version page in GitLab alongside the artifact.
+      training_run = client.get_run(run_id)
+      for key, value in training_run.data.metrics.items():
+          client.log_metric(mv.run_id, key, value)
+      for key, value in training_run.data.params.items():
+          client.log_param(mv.run_id, key, value)
       EOF
     # Post metric summary as MR note when running in an MR pipeline.
     - |
@@ -99,7 +115,7 @@ variables:
       for k, v in run.data.metrics.items():
           lines.append(f"- `{k}`: `{v}`")
       lines += ["", f"Model: `{os.environ['MODEL_NAME']}` v`{os.environ['MODEL_VERSION']}`",
-                f"Run: [{os.environ['RUN_ID']}]($MLFLOW_TRACKING_URI/#/experiments)"]
+                f"Run: [{os.environ['RUN_ID']}]({os.environ['MLFLOW_TRACKING_URI']}/#/experiments)"]
       print("\n".join(lines))
       EOF
       )
