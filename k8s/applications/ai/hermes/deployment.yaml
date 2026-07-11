@@ -73,13 +73,13 @@ spec:
           imagePullPolicy: IfNotPresent
           # Without this override the default entrypoint starts the interactive
           # CLI which exits immediately under non-interactive execution.
-          command: ["gateway", "run"]
+          command: ["hermes", "gateway", "run", "--no-supervise"]
           securityContext:
             runAsNonRoot: true
             runAsUser: 10010
             runAsGroup: 10010
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -131,7 +131,7 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: "200m"
+              cpu: "100m"
               memory: "512Mi"
             limits:
               cpu: "2000m"
@@ -144,7 +144,7 @@ spec:
             runAsUser: 10010
             runAsGroup: 10010
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -191,7 +191,7 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: "100m"
+              cpu: "50m"
               memory: "256Mi"
             limits:
               cpu: "1000m"
