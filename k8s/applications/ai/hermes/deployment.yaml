@@ -21,9 +21,9 @@ spec:
       hostPID: false
       hostNetwork: false
       securityContext:
-        # gosu-based entrypoints start as root and drop to UID 10010 at runtime
-        runAsNonRoot: false
-        runAsUser: 0
+        runAsNonRoot: true
+        runAsUser: 10010
+        runAsGroup: 10010
         fsGroup: 10010
         fsGroupChangePolicy: OnRootMismatch
         seccompProfile:
@@ -33,15 +33,11 @@ spec:
           image: busybox:1.37.0
           imagePullPolicy: IfNotPresent
           securityContext:
-            runAsUser: 0
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
           command:
             - sh
             - -c
@@ -50,7 +46,6 @@ spec:
               if [ ! -f /opt/data/config.yaml ]; then
                 sed "s/__LITELLM_API_KEY__/${LITELLM_API_KEY}/" /config/config.yaml > /opt/data/config.yaml
               fi
-              chown -R 10010:10010 /opt/data /workspace
           env:
             - name: LITELLM_API_KEY
               valueFrom:
@@ -77,14 +72,14 @@ spec:
           image: nousresearch/hermes-agent:v2026.7.7.2
           imagePullPolicy: IfNotPresent
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
-              add:
-                - SETUID
-                - SETGID
           env:
             - name: HERMES_UID
               value: "10010"
@@ -111,14 +106,14 @@ spec:
           image: ghcr.io/outsourc-e/hermes-workspace:main-1da76ae
           imagePullPolicy: IfNotPresent
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
               drop:
                 - ALL
-              add:
-                - SETUID
-                - SETGID
           env:
             - name: HERMES_PASSWORD
               valueFrom:

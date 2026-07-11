@@ -2,3 +2,9 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: hermes
+  labels:
+    app.kubernetes.io/name: hermes
+    app.kubernetes.io/part-of: ai
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/warn: baseline

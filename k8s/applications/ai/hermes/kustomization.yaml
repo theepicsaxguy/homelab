@@ -11,3 +11,4 @@ resources:
   - service.yaml
   - http-route.yaml
   - networkpolicy.yaml
+  - policy-exception.yaml
