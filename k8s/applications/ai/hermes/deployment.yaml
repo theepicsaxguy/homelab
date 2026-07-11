@@ -71,6 +71,9 @@ spec:
         - name: hermes-agent
           image: nousresearch/hermes-agent:v2026.7.7.2
           imagePullPolicy: IfNotPresent
+          # Without this override the default entrypoint starts the interactive
+          # CLI which exits immediately under non-interactive execution.
+          command: ["gateway", "run"]
           securityContext:
             runAsNonRoot: true
             runAsUser: 10010
@@ -85,11 +88,42 @@ spec:
               value: "10010"
             - name: HERMES_GID
               value: "10010"
+            - name: API_SERVER_ENABLED
+              value: "true"
+            - name: API_SERVER_HOST
+              value: "0.0.0.0"
+            - name: API_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: HERMES_API_TOKEN
+            - name: HERMES_DASHBOARD
+              value: "1"
+            - name: HERMES_DASHBOARD_HOST
+              value: "0.0.0.0"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
           ports:
             - name: gateway
               containerPort: 8642
             - name: dashboard
               containerPort: 9119
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8642
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8642
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data
@@ -129,6 +163,10 @@ spec:
               value: "http://localhost:8642"
             - name: HERMES_DASHBOARD_URL
               value: "http://localhost:9119"
+            - name: HERMES_HOME
+              value: "/home/workspace/.hermes"
+            - name: HERMES_WORKSPACE_DIR
+              value: "/workspace"
             - name: HOST
               value: "0.0.0.0"
             - name: PORT
