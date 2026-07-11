@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-agent-config
+  namespace: hermes
+data:
+  config.yaml: |
+    provider: openai
+    model: claude-sonnet-5
+    custom_providers:
+      - name: litellm-proxy
+        base_url: http://litellm.ai.svc.cluster.local:4000/v1
+        api_key: __LITELLM_API_KEY__
+        api_mode: chat_completions
