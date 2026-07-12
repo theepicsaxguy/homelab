@@ -152,7 +152,7 @@ spec:
             - name: HERMES_GID
               value: "10010"
             - name: HERMES_DASHBOARD_HOST
-              value: "0.0.0.0"
+              value: "127.0.0.1"
             - name: HERMES_DASHBOARD_PORT
               value: "9119"
           ports:
