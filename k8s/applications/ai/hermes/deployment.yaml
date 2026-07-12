@@ -95,6 +95,11 @@ spec:
                 secretKeyRef:
                   name: app-hermes-session-secrets
                   key: HERMES_API_TOKEN
+            - name: OPENCODE_ZEN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: OPENCODE_ZEN_API_KEY
           ports:
             - name: gateway
               containerPort: 8642
