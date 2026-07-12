@@ -43,20 +43,14 @@ spec:
             - -c
             - |
               mkdir -p /opt/data /workspace
-              sed -e "s/__CLOUDFLARE_ACCOUNT_ID__/${CLOUDFLARE_ACCOUNT_ID}/g" \
-                  -e "s/__CLOUDFLARE_AUTH_TOKEN__/${CLOUDFLARE_AUTH_TOKEN}/g" \
+              sed "s/__OPENCODE_API_KEY__/${OPENCODE_API_KEY}/g" \
                   /config/config.yaml > /opt/data/config.yaml
           env:
-            - name: CLOUDFLARE_ACCOUNT_ID
+            - name: OPENCODE_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-hermes-session-secrets
-                  key: CLOUDFLARE_ACCOUNT_ID
-            - name: CLOUDFLARE_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: app-hermes-session-secrets
-                  key: CLOUDFLARE_AUTH_TOKEN
+                  key: OPENCODE_API_KEY
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data

@@ -5,10 +5,10 @@ metadata:
   namespace: hermes
 data:
   config.yaml: |
-    provider: cloudflare-workers-ai
-    model: "@cf/moonshotai/kimi-k2.7-code"
+    provider: opencode-zen
+    model: kimi-k2.7-code
     custom_providers:
-      - name: cloudflare-workers-ai
-        base_url: https://api.cloudflare.com/client/v4/accounts/__CLOUDFLARE_ACCOUNT_ID__/ai/v1
-        api_key: __CLOUDFLARE_AUTH_TOKEN__
+      - name: opencode-zen
+        base_url: https://opencode.ai/zen/v1
+        api_key: __OPENCODE_API_KEY__
         api_mode: chat_completions
