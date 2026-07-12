@@ -76,9 +76,8 @@ spec:
         - name: hermes-agent
           image: nousresearch/hermes-agent:v2026.7.7.2
           imagePullPolicy: IfNotPresent
-          # Without this override the default entrypoint starts the interactive
-          # CLI which exits immediately under non-interactive execution.
-          command: ["hermes", "gateway", "run", "--no-supervise"]
+          # Override the default entrypoint which starts an interactive CLI.
+          command: ["hermes", "gateway", "run"]
           securityContext:
             runAsNonRoot: true
             runAsUser: 10010
@@ -102,17 +101,9 @@ spec:
                 secretKeyRef:
                   name: app-hermes-session-secrets
                   key: HERMES_API_TOKEN
-            - name: HERMES_DASHBOARD
-              value: "1"
-            - name: HERMES_DASHBOARD_HOST
-              value: "0.0.0.0"
-            - name: HERMES_DASHBOARD_PORT
-              value: "9119"
           ports:
             - name: gateway
               containerPort: 8642
-            - name: dashboard
-              containerPort: 9119
           livenessProbe:
             httpGet:
               path: /health
@@ -132,6 +123,8 @@ spec:
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data
+            - name: hermes-workspace-files
+              mountPath: /workspace
             - name: tmp-agent
               mountPath: /tmp
           resources:
@@ -141,6 +134,43 @@ spec:
             limits:
               cpu: "2000m"
               memory: "2Gi"
+        - name: hermes-dashboard
+          image: nousresearch/hermes-agent:v2026.7.7.2
+          imagePullPolicy: IfNotPresent
+          command: ["hermes", "dashboard"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HERMES_UID
+              value: "10010"
+            - name: HERMES_GID
+              value: "10010"
+            - name: HERMES_DASHBOARD_HOST
+              value: "0.0.0.0"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+          ports:
+            - name: dashboard
+              containerPort: 9119
+          volumeMounts:
+            - name: hermes-agent-data
+              mountPath: /opt/data
+            - name: tmp-dashboard
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
         - name: hermes-workspace
           image: ghcr.io/outsourc-e/hermes-workspace:main-1da76ae
           imagePullPolicy: IfNotPresent
@@ -217,3 +247,6 @@ spec:
         - name: tmp-workspace
           emptyDir:
             sizeLimit: 500Mi
+        - name: tmp-dashboard
+          emptyDir:
+            sizeLimit: 200Mi
