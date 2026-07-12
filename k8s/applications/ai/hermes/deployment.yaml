@@ -43,14 +43,14 @@ spec:
             - -c
             - |
               mkdir -p /opt/data /workspace
-              sed "s/__OPENCODE_API_KEY__/${OPENCODE_API_KEY}/g" \
+              sed "s/__OPENCODE_ZEN_API_KEY__/${OPENCODE_ZEN_API_KEY}/g" \
                   /config/config.yaml > /opt/data/config.yaml
           env:
-            - name: OPENCODE_API_KEY
+            - name: OPENCODE_ZEN_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-hermes-session-secrets
-                  key: OPENCODE_API_KEY
+                  key: OPENCODE_ZEN_API_KEY
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data

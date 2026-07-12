@@ -10,5 +10,5 @@ data:
     custom_providers:
       - name: opencode-zen
         base_url: https://opencode.ai/zen/v1
-        api_key: __OPENCODE_API_KEY__
+        api_key: __OPENCODE_ZEN_API_KEY__
         api_mode: chat_completions
