@@ -23,14 +23,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: litellm
-            app: litellm
-      toPorts:
-        - ports:
-            - port: "4000"
-              protocol: TCP
     - toEntities:
         - world
       toPorts:

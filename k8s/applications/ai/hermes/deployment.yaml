@@ -43,15 +43,20 @@ spec:
             - -c
             - |
               mkdir -p /opt/data /workspace
-              if [ ! -f /opt/data/config.yaml ]; then
-                sed "s/__LITELLM_API_KEY__/${LITELLM_API_KEY}/" /config/config.yaml > /opt/data/config.yaml
-              fi
+              sed -e "s/__CLOUDFLARE_ACCOUNT_ID__/${CLOUDFLARE_ACCOUNT_ID}/g" \
+                  -e "s/__CLOUDFLARE_AUTH_TOKEN__/${CLOUDFLARE_AUTH_TOKEN}/g" \
+                  /config/config.yaml > /opt/data/config.yaml
           env:
-            - name: LITELLM_API_KEY
+            - name: CLOUDFLARE_ACCOUNT_ID
               valueFrom:
                 secretKeyRef:
                   name: app-hermes-session-secrets
-                  key: LITELLM_API_KEY
+                  key: CLOUDFLARE_ACCOUNT_ID
+            - name: CLOUDFLARE_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: CLOUDFLARE_AUTH_TOKEN
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data
