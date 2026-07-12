@@ -102,6 +102,10 @@ spec:
                   key: OPENCODE_ZEN_API_KEY
             - name: HERMES_HOME
               value: "/opt/data"
+            - name: HERMES_DISABLE_LAZY_INSTALLS
+              value: "0"
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: "/opt/data/playwright-browsers"
           ports:
             - name: gateway
               containerPort: 8642
@@ -124,6 +128,9 @@ spec:
           volumeMounts:
             - name: hermes-agent-data
               mountPath: /opt/data
+            - name: hermes-agent-data
+              mountPath: /.agent-browser
+              subPath: agent-browser
             - name: hermes-workspace-files
               mountPath: /workspace
             - name: tmp-agent
