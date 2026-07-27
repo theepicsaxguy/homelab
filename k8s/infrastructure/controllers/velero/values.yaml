@@ -31,7 +31,7 @@ configuration:
       config:
         region: us-west-1
         s3ForcePathStyle: "true"
-        s3Url: https://truenas.peekoff.com:9000
+        s3Url: https://truenas.peekoff.com:30293
   repositoryMaintenanceJob:
     repositoryConfigData:
       name: "velero-repo-maintenance"

@@ -1,14 +1,15 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: database-backup-minio-access
+  name: affine-postgresql-backup
+  namespace: affine
   labels:
-    policy-type: database-audit
+    policy-type: web-audit
 spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: postgresql
-  description: "Allow PostgreSQL backup to RustFS on TrueNAS"
+  description: "Allow PostgreSQL WAL archiving to RustFS"
   egress:
   - toFQDNs:
     - matchName: "truenas.peekoff.com"

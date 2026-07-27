@@ -36,7 +36,7 @@ spec:
     - matchName: "truenas.peekoff.com"
     toPorts:
     - ports:
-      - port: "9000"
+      - port: "30293"
         protocol: TCP
   - toEndpoints:
     - matchLabels:

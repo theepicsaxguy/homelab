@@ -1,11 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- affine
-- babybuddy
-- jmap-webmail
-- kiwix
-- pinepods
+- allow-affine-access.yaml
+namespace: affine
 labels:
 - pairs:
     policy-type: web-audit
