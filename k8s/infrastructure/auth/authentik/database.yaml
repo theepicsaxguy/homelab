@@ -31,7 +31,7 @@ spec:
   retentionPolicy: "14d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/auth/authentik-postgresql
-    endpointURL: https://truenas.peekoff.com:9000
+    endpointURL: https://truenas.peekoff.com:30293
     s3Credentials:
       accessKeyId:
         name: longhorn-minio-credentials

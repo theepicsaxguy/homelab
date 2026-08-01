@@ -61,7 +61,7 @@ spec:
   egress:
   - toEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.pod.namespace: database
+        k8s:io.kubernetes.pod.namespace: auth
         app.kubernetes.io/name: postgresql
     toPorts:
     - ports:
@@ -106,13 +106,28 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: postgresql
-  description: "Allow PostgreSQL WAL archiving to RustFS"
+  description: "Allow PostgreSQL client connections and WAL archiving to RustFS"
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: authentik
+        k8s:io.kubernetes.pod.namespace: auth
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
   egress:
   - toFQDNs:
     - matchName: "truenas.peekoff.com"
     toPorts:
     - ports:
       - port: "30293"
+        protocol: TCP
+  - toEntities:
+    - world
+    toPorts:
+    - ports:
+      - port: "443"
         protocol: TCP
   - toEndpoints:
     - matchLabels:

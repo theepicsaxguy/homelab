@@ -31,7 +31,7 @@ spec:
   retentionPolicy: "14d"
   configuration:
     destinationPath: s3://homelab-postgres-backups/pinepods/pinepods-db
-    endpointURL: https://truenas.peekoff.com:9000
+    endpointURL: https://truenas.peekoff.com:30293
     s3Credentials:
       accessKeyId:
         name: longhorn-minio-credentials
@@ -83,7 +83,7 @@ spec:
   #     database: pinepods
   #     owner: app
   storage:
-    size: 40Gi
+    size: 60Gi
     storageClass: proxmox-csi
   monitoring:
     enablePodMonitor: false
