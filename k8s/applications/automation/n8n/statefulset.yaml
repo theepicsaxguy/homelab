@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: n8n
-          image: n8nio/n8n:2.26.0
+          image: n8nio/n8n:2.26.9
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
