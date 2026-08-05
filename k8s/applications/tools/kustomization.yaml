@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
 - project.yaml
 - it-tools
+- gitlab
+- gitlab-runner
+- rustfs

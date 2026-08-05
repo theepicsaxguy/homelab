@@ -1,0 +1,68 @@
+backendStore:
+  databaseMigration: true
+  postgres:
+    enabled: true
+    host: mlflow-postgresql-rw.mlflow.svc.cluster.local
+    port: 5432
+    database: app
+  existingDatabaseSecret:
+    name: mlflow-postgresql-app
+    passwordKey: password
+    usernameKey: username
+
+artifactRoot:
+  s3:
+    enabled: true
+    bucket: mlflow-artifacts
+    existingSecret:
+      name: mlflow-rustfs-credentials
+      keyOfAccessKeyId: AWS_ACCESS_KEY_ID
+      keyOfSecretAccessKey: AWS_SECRET_ACCESS_KEY
+
+extraEnvVars:
+  MLFLOW_S3_ENDPOINT_URL: "http://rustfs-svc.rustfs.svc.cluster.local:9000"
+  AWS_DEFAULT_REGION: "us-east-1"
+
+extraArgs:
+  workers: "1"
+
+serverAllowedHosts:
+  - "*"
+
+service:
+  type: ClusterIP
+  port: 80
+  containerPort: 5000
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+extraVolumes:
+  - name: tmp
+    emptyDir:
+      sizeLimit: 500Mi
+
+extraVolumeMounts:
+  - name: tmp
+    mountPath: /tmp
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 3Gi
