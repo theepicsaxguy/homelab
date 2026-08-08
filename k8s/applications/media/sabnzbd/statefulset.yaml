@@ -47,7 +47,7 @@ spec:
         fsGroup: 2501
       containers:
         - name: sabnzbd
-          image: ghcr.io/theepicsaxguy/sabnzbd:4.5.5
+          image: ghcr.io/theepicsaxguy/sabnzbd:5.0.4
           imagePullPolicy: IfNotPresent
           resources:
             requests:
