@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: install-deps
-          image: ghcr.io/homeassistant-ai/ha-mcp:latest@sha256:c6d5e0f65d5d2bec4be54f273c8bbe4eeaeb46460d27e5a63ba7bc865b864ce0
+          image: ghcr.io/homeassistant-ai/ha-mcp:latest@sha256:e1d76a6ee54e26054a13a6c04089824b76d4d370246239591a02a2e4445ad2c9
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -50,7 +50,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: ha-mcp
-          image: ghcr.io/homeassistant-ai/ha-mcp:latest@sha256:c6d5e0f65d5d2bec4be54f273c8bbe4eeaeb46460d27e5a63ba7bc865b864ce0
+          image: ghcr.io/homeassistant-ai/ha-mcp:latest@sha256:e1d76a6ee54e26054a13a6c04089824b76d4d370246239591a02a2e4445ad2c9
           imagePullPolicy: IfNotPresent
           command:
             - /venv/bin/python

@@ -1,15 +1,15 @@
-qdrant-client[fastembed]==1.18.0
+qdrant-client[fastembed]==1.19.0
 
 # Core dependencies - widened protobuf range for grpcio-status
 protobuf>=7.35.0,<7.36.0
 llama-index-core==0.14.22
-openai==2.41.0
-huggingface-hub==1.18.0
+openai==2.53.0
+huggingface-hub==1.27.0
 tokenizers==0.23.1
-packaging>=26,<26.3
-numpy==2.4.6
-posthog>=7.18.0,<7.19.0
-wrapt>=2,<2.3
+packaging>=26,<26.4
+numpy==2.5.1
+posthog>=7.38.3,<7.39.0
+wrapt>=2,<2.4
 tenacity>=8.2.0,<10.0.0
 
 # Additional packages (ensure compatibility with above pins)
@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==4.7.0
+langfuse==4.14.3
 llama-index==0.14.22
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
@@ -33,6 +33,6 @@ llama-index-multi-modal-llms-openai==0.6.2
 # llama-index-question-gen-openai==0.3.1
 llama-index-readers-file==0.6.0
 llama-index-readers-llama-parse==0.6.1
-opencv-python==4.13.0.92
-opik==2.0.63
-transformers==5.10.1
+opencv-python==4.14.0.94
+opik==2.2.23
+transformers==5.14.1

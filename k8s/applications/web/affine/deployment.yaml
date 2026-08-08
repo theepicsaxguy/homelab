@@ -36,7 +36,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: affine
-          image: ghcr.io/toeverything/affine:0.26.7
+          image: ghcr.io/toeverything/affine:0.27.3
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

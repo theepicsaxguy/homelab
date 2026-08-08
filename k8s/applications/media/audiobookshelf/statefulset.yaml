@@ -57,7 +57,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: audiobookshelf
-          image: ghcr.io/advplyr/audiobookshelf:2.35.0
+          image: ghcr.io/advplyr/audiobookshelf:2.36.0
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

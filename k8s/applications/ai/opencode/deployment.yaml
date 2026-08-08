@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: installer
-          image: node:24.16.0
+          image: node:24.19.0
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args:
@@ -87,7 +87,7 @@ spec:
               mountPath: /opt/shared-tools
       containers:
       - name: opencode-web
-        image: ghcr.io/chriswritescode-dev/opencode-manager:0.13.0
+        image: ghcr.io/chriswritescode-dev/opencode-manager:0.16.1
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -157,7 +157,7 @@ spec:
           timeoutSeconds: 5
           failureThreshold: 30
       - name: playwright-mcp
-        image: mcr.microsoft.com/playwright:v1.60.0-jammy
+        image: mcr.microsoft.com/playwright:v1.62.1-jammy
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args:
