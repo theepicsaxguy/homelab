@@ -33,7 +33,7 @@ spec:
   - toEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: immich
-        app.kubernetes.io/name: immich-redis-master
+        app.kubernetes.io/name: redis
     toPorts:
     - ports:
       - port: "6379"
@@ -89,8 +89,18 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: postgresql
-  description: "Allow PostgreSQL WAL archiving to RustFS"
+  description: "Allow PostgreSQL WAL archiving to RustFS and intra-cluster replication"
   egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: immich
+        app.kubernetes.io/name: postgresql
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+      - port: "8000"
+        protocol: TCP
   - toFQDNs:
     - matchName: "truenas.peekoff.com"
     toPorts:
