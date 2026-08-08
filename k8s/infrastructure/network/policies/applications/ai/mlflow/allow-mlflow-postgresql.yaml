@@ -1,0 +1,65 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: mlflow-postgresql
+  namespace: mlflow
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s:cnpg.io/cluster: mlflow-postgresql
+  description: "Allow MLflow PostgreSQL replication, WAL archiving, and app access"
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:cnpg.io/cluster: mlflow-postgresql
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+      - port: "8000"
+        protocol: TCP
+  - toFQDNs:
+    - matchName: "truenas.peekoff.com"
+    toPorts:
+    - ports:
+      - port: "30293"
+        protocol: TCP
+  - toFQDNs:
+    - matchName: "s3.us-west-002.backblazeb2.com"
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        app.kubernetes.io/name: mlflow
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:cnpg.io/cluster: mlflow-postgresql
+    toPorts:
+    - ports:
+      - port: "5432"
+        protocol: TCP
+  - fromEndpoints:
+    - matchLabels:
+        k8s:app.kubernetes.io/name: cloudnative-pg
+        k8s:io.kubernetes.pod.namespace: cnpg-system
+    toPorts:
+    - ports:
+      - port: "8000"
+        protocol: TCP
