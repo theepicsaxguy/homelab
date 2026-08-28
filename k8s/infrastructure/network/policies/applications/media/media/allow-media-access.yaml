@@ -42,6 +42,12 @@ spec:
         protocol: TCP
       - port: "7878"
         protocol: TCP
+      - port: "9696"
+        protocol: TCP
+      - port: "6767"
+        protocol: TCP
+      - port: "8080"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:
@@ -73,4 +79,6 @@ spec:
     toPorts:
     - ports:
       - port: "443"
+        protocol: TCP
+      - port: "563"
         protocol: TCP
