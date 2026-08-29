@@ -12,4 +12,8 @@ resources:
   - deployment.yaml
   - service.yaml
   - http-route.yaml
+  - mcp-externalsecret.yaml
+  - mcp-deployment.yaml
+  - mcp-service.yaml
+  - mcp-http-route.yaml
   - network-policy.yaml

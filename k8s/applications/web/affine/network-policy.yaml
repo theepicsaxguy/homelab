@@ -17,6 +17,13 @@ spec:
         - ports:
             - port: "3010"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: affine-mcp
+      toPorts:
+        - ports:
+            - port: "3010"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -41,6 +48,43 @@ spec:
       toPorts:
         - ports:
             - port: "5432"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: affine-mcp
+  namespace: affine
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: affine-mcp
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+        - ingress
+      toPorts:
+        - ports:
+            - port: "3000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: affine
+      toPorts:
+        - ports:
+            - port: "3010"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
