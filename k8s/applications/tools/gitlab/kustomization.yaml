@@ -1,0 +1,86 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: gitlab
+
+helmCharts:
+  - name: gitlab
+    repo: https://charts.gitlab.io
+    version: 10.1.1
+    releaseName: gitlab
+    namespace: gitlab
+    valuesFile: values.yaml
+    includeCRDs: false
+
+resources:
+  - namespace.yaml
+  - minio-externalsecret.yaml
+  - gitlab-secrets.yaml
+  - database.yaml
+  - database-scheduled-backup.yaml
+  - redis.yaml
+  - network-policy.yaml
+  - registry-pvc.yaml
+
+patches:
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: gitlab-gitlab
+    patch: |
+      - op: remove
+        path: /spec/rules/0/name
+      - op: remove
+        path: /spec/rules/1/name
+      - op: add
+        path: /spec/parentRefs/-
+        value:
+          group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal
+          namespace: gateway
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: gitlab-registry
+    patch: |
+      - op: add
+        path: /spec/parentRefs/-
+        value:
+          group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal
+          namespace: gateway
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: gitlab-kas
+    patch: |
+      - op: add
+        path: /spec/parentRefs/-
+        value:
+          group: gateway.networking.k8s.io
+          kind: Gateway
+          name: internal
+          namespace: gateway
+  - target:
+      kind: Deployment
+      name: gitlab-registry
+    patch: |
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: registry-data
+          persistentVolumeClaim:
+            claimName: gitlab-registry-data
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: registry-data
+          mountPath: /var/lib/registry
+      - op: replace
+        path: /spec/strategy
+        value:
+          type: Recreate
