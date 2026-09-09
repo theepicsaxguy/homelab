@@ -36,6 +36,12 @@ spec:
     - ports:
       - port: "8080"
         protocol: TCP
+  - toEntities:
+    - remote-node
+    toPorts:
+    - ports:
+      - port: "5580"
+        protocol: TCP
   - toEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: kube-system

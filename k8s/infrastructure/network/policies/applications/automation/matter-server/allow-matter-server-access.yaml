@@ -1,0 +1,39 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: matter-server-access
+  namespace: matter-server
+  labels:
+    policy-type: automation-audit
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: matter-server
+  description: "Allow Matter server access"
+  ingress:
+  - fromEntities:
+    - host
+    - remote-node
+    toPorts:
+    - ports:
+      - port: "5580"
+        protocol: TCP
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: kube-system
+        k8s:k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: UDP
+      - port: "53"
+        protocol: TCP
+  - toCIDR: ["10.0.0.0/8"]
+    toPorts:
+    - ports:
+      - port: "443"
+        protocol: TCP
+      - port: "80"
+        protocol: TCP
+  - toCIDR: ["172.16.0.0/12", "192.168.0.0/16"]

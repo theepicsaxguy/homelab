@@ -1,11 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- home-assistant
-- zigbee2mqtt
-- frigate
-- mqtt
-- matter-server
+- allow-matter-server-access.yaml
+namespace: matter-server
 labels:
 - pairs:
     policy-type: automation-audit
