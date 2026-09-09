@@ -15,8 +15,6 @@ spec:
       server: '*'
     - namespace: 'zigbee2mqtt'
       server: '*'
-    - namespace: 'n8n'
-      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'

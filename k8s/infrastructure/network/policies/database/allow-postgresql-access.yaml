@@ -35,13 +35,6 @@ spec:
         protocol: TCP
   - fromEndpoints:
     - matchLabels:
-        k8s:io.kubernetes.pod.namespace: n8n
-    toPorts:
-    - ports:
-      - port: "5432"
-        protocol: TCP
-  - fromEndpoints:
-    - matchLabels:
         k8s:io.kubernetes.pod.namespace: pinepods
     toPorts:
     - ports:
