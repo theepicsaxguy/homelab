@@ -8,3 +8,4 @@ resources:
 - hassio
 - zigbee2mqtt
 - n8n
+- matter-server
