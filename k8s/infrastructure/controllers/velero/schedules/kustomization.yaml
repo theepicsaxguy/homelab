@@ -5,7 +5,6 @@ resources:
   # Daily local backups (14d TTL)
   - daily-home-assistant.yaml
   - daily-immich.yaml
-  - daily-n8n.yaml
   - daily-unifi.yaml
   - daily-babybuddy.yaml
   - daily-minecraft.yaml
@@ -36,7 +35,6 @@ resources:
   - weekly-offsite-babybuddy.yaml
   - weekly-offsite-unifi.yaml
   - weekly-offsite-minecraft.yaml
-  - weekly-offsite-n8n.yaml
   - weekly-offsite-karakeep.yaml
   - weekly-offsite-openwebui.yaml
   - weekly-offsite-trilium.yaml
