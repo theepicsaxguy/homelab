@@ -30,7 +30,7 @@ spec:
   - toEndpoints:
     - matchLabels:
         k8s:io.kubernetes.pod.namespace: argocd
-        name: argocd-redis
+        app.kubernetes.io/name: argocd-redis
     toPorts:
     - ports:
       - port: "6379"
