@@ -48,6 +48,8 @@ spec:
         protocol: TCP
       - port: "8080"
         protocol: TCP
+      - port: "8096"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:
