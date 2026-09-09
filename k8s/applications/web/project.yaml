@@ -11,8 +11,6 @@ spec:
       server: '*'
     - namespace: 'web'
       server: '*'
-    - namespace: 'affine'
-      server: '*'
     - namespace: 'babybuddy'
       server: '*'
     - namespace: 'pinepods'
