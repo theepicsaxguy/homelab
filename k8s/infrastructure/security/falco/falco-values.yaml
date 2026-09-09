@@ -1,7 +1,7 @@
 driver:
   enabled: true
-  kind: ebpf
-  ebpf:
+  kind: modern_ebpf
+  modernEbpf:
     leastPrivileged: true
 falcosidekick:
   enabled: true
