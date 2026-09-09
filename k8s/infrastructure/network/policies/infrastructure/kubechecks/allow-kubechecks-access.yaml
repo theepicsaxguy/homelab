@@ -38,6 +38,14 @@ spec:
         protocol: TCP
       - port: "443"
         protocol: TCP
+  - toEndpoints:
+    - matchLabels:
+        k8s:io.kubernetes.pod.namespace: argocd
+        app.kubernetes.io/name: argocd-repo-server
+    toPorts:
+    - ports:
+      - port: "8081"
+        protocol: TCP
   - toEntities:
     - world
     toPorts:
