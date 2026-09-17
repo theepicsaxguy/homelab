@@ -1,5 +1,11 @@
 variable "proxmox_datastore" { type = string }
 
+variable "image_datastore" {
+  description = "File-based Proxmox datastore for the cloud image download (proxmox_datastore may be a zfspool, which cannot hold ISO/image files)"
+  type        = string
+  default     = "local"
+}
+
 variable "proxmox" {
   type = object({
     endpoint  = string

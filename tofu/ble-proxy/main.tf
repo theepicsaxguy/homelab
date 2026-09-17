@@ -6,10 +6,27 @@ resource "proxmox_virtual_environment_download_file" "debian_amd64" {
   for_each       = local.host_nodes
   node_name      = each.value
   content_type   = "iso"
-  datastore_id   = var.proxmox_datastore
+  datastore_id   = var.image_datastore
   file_name      = "debian-13-generic-amd64.img"
   url            = "https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.qcow2"
   upload_timeout = 800
+}
+
+moved {
+  from = proxmox_virtual_environment_hardware_mapping_usb.ble_dongle
+  to   = proxmox_hardware_mapping_usb.ble_dongle
+}
+
+resource "proxmox_hardware_mapping_usb" "ble_dongle" {
+  for_each = var.nodes
+  name     = "ble-proxy-${each.key}"
+  comment  = "TP-Link UB400 BLE dongle for Matter commissioning"
+  map = [
+    {
+      node = each.value.host_node
+      id   = each.value.usb_host
+    }
+  ]
 }
 
 resource "proxmox_virtual_environment_file" "cloudinit" {
@@ -50,7 +67,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   usb {
-    host = each.value.usb_host
+    mapping = proxmox_hardware_mapping_usb.ble_dongle[each.key].name
   }
 
   disk {
