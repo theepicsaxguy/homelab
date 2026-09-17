@@ -18,6 +18,17 @@ spec:
     - ports:
       - port: "5580"
         protocol: TCP
+  # Allows the internal Gateway's TCPRoute (matter-server-ble) to reach the
+  # /ble websocket endpoint; Cilium's Gateway API implementation proxies
+  # TCPRoute traffic through an in-cluster Envoy pod, so the source identity
+  # seen here is "cluster", not the BLE-proxy VM's own IP (same pattern as
+  # k8s/infrastructure/network/policies/applications/automation/mqtt).
+  - fromEntities:
+    - cluster
+    toPorts:
+    - ports:
+      - port: "5580"
+        protocol: TCP
   egress:
   - toEndpoints:
     - matchLabels:

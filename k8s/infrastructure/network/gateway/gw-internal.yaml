@@ -62,3 +62,9 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+    - protocol: TCP
+      port: 5580
+      name: matter-server-ble-tcp
+      allowedRoutes:
+        namespaces:
+          from: All

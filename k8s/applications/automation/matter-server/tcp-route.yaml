@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: matter-server-ble
+  namespace: matter-server
+spec:
+  parentRefs:
+    - name: internal
+      namespace: gateway
+      port: 5580
+  rules:
+    - backendRefs:
+        - name: matter-server
+          port: 5580
