@@ -16,3 +16,30 @@ spec:
     app.kubernetes.io/instance: matter-server
     app.kubernetes.io/name: matter-server
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matter-server-ble
+  namespace: matter-server
+  annotations:
+    io.cilium/lb-ipam-ips: 10.25.150.229
+spec:
+  type: LoadBalancer
+  ports:
+    - name: ws
+      port: 5580
+      protocol: TCP
+      targetPort: ws
+  selector:
+    app.kubernetes.io/instance: matter-server
+    app.kubernetes.io/name: matter-server
+# NOTE:
+#   We need this second Service because Cilium <=1.17.5 (and still on 1.19.4
+#   as observed 2026-09-17) drops pure-TCP Gateway listeners' ports from the
+#   Gateway's backing LoadBalancer Service. See:
+#   https://github.com/cilium/cilium/issues/38192  (TCP listener missing)
+#   https://github.com/cilium/cilium/issues/34821  (model source empty)
+#   Same workaround as mqtt/service.yaml (mosquitto-external). Remove this
+#   Service *and* re-add the tcp-route.yaml listener dependency once Cilium's
+#   Gateway API TCP listener support actually keeps the LB Service in sync.
