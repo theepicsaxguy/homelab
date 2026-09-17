@@ -62,5 +62,7 @@ ble_proxy_nodes = {
   }
 }
 
-# Internal Gateway (10.25.150.220) TCPRoute for matter-server's /ble endpoint
-matter_server_ble_url = "ws://10.25.150.220:5580/ble"
+# Dedicated LoadBalancer Service (matter-server-ble), not the internal Gateway's
+# TCPRoute: Cilium 1.19.4 still drops pure-TCP Gateway listeners from the
+# Gateway's backing Service (see k8s/applications/automation/matter-server/svc.yaml).
+matter_server_ble_url = "ws://10.25.150.229:5580/ble"
