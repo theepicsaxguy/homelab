@@ -232,6 +232,33 @@ variable "lb_store" {
   default     = "local"
 }
 
+variable "enable_ble_proxy" {
+  description = "Enable the Matter BLE proxy VM deployment"
+  type        = bool
+  default     = false
+}
+
+variable "ble_proxy_nodes" {
+  description = "Matter BLE proxy VMs (bridge a USB BLE dongle to matter-server's /ble endpoint)"
+  type = map(object({
+    host_node     = string
+    ip            = string
+    mac_address   = string
+    vm_id         = number
+    usb_host      = string
+    cpu           = optional(number)
+    ram_dedicated = optional(number)
+    datastore_id  = optional(string)
+  }))
+  default = {}
+}
+
+variable "matter_server_ble_url" {
+  description = "WebSocket URL of the matter-server BLE proxy endpoint (ws://<internal-gateway>:5580/ble)"
+  type        = string
+  default     = ""
+}
+
 variable "bootstrap_volumes" {
   description = "Bootstrap volumes for Kubernetes persistent volumes"
   type = map(object({

@@ -1,0 +1,31 @@
+#cloud-config
+package_update: true
+packages:
+  - python3-pip
+  - bluez
+  - qemu-guest-agent
+write_files:
+  - path: /etc/systemd/system/matter-ble-proxy.service
+    permissions: "0644"
+    owner: root:root
+    content: |
+      [Unit]
+      Description=Matter BLE proxy client for matterjs-server
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      DynamicUser=true
+      SupplementaryGroups=bluetooth
+      ExecStart=/usr/local/bin/matter-ble-proxy --server ${matter_server_ble_url}
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+runcmd:
+  - pip install --break-system-packages matter-ble-proxy
+  - systemctl daemon-reload
+  - systemctl enable --now qemu-guest-agent
+  - systemctl enable --now matter-ble-proxy

@@ -7,3 +7,4 @@ resources:
   - pvc.yaml
   - svc.yaml
   - statefulset.yaml
+  - tcp-route.yaml

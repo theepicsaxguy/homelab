@@ -90,6 +90,20 @@ module "lb" {
   lb_nodes          = var.lb_nodes
 }
 
+module "ble_proxy" {
+  count  = var.enable_ble_proxy ? 1 : 0
+  source = "./ble-proxy"
+  providers = {
+    proxmox = proxmox
+  }
+  proxmox               = var.proxmox
+  cluster_domain        = var.cluster_domain
+  proxmox_datastore     = var.proxmox_datastore
+  network               = var.network
+  nodes                 = var.ble_proxy_nodes
+  matter_server_ble_url = var.matter_server_ble_url
+}
+
 module "bootstrap_kubernetes" {
   source = "./bootstrap/kubernetes"
 

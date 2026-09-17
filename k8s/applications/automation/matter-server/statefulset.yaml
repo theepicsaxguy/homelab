@@ -42,6 +42,14 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: ["ALL"]
+              add: ["CHOWN"]
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 32Mi
           volumeMounts:
             - name: data
               mountPath: /data
@@ -54,6 +62,7 @@ spec:
             - /data
             - --log-level
             - info
+            - --ble-proxy
           ports:
             - name: ws
               containerPort: 5580

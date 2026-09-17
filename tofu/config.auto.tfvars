@@ -49,3 +49,18 @@ lb_nodes = {
     vm_id         = 8006
   }
 }
+
+enable_ble_proxy = true
+
+ble_proxy_nodes = {
+  ble-proxy-00 = {
+    host_node   = "host3"
+    ip          = "10.25.150.40"
+    mac_address = "bc:24:11:aa:aa:10"
+    vm_id       = 110
+    usb_host    = "0a12:0001" # TP-Link UB400 (CSR8510 A10)
+  }
+}
+
+# Internal Gateway (10.25.150.220) TCPRoute for matter-server's /ble endpoint
+matter_server_ble_url = "ws://10.25.150.220:5580/ble"
