@@ -82,6 +82,26 @@ def resolve_wildloaders() -> tuple[str, str]:
     return url, f"build-{build}"
 
 
+def resolve_essentialsx(module: str) -> tuple[str, str]:
+    """Latest successful EssentialsX build from ci.ender.zone.
+
+    EssentialsX tracks new Minecraft versions on its default branch and only
+    cuts releases occasionally: 2.22.0 predates Minecraft 26.x entirely and
+    logs "You are running an unsupported server version!" on this server. The
+    CI builds carry the 26.x support, so the modules are pinned to an explicit
+    build number here, the same way LuckPerms and WildLoaders are.
+    """
+    base = "https://ci.ender.zone/job/EssentialsX"
+    data = fetch_json(f"{base}/lastSuccessfulBuild/api/json")
+    build = data["number"]
+    prefix = f"{module}-"
+    filename = next(
+        a["fileName"] for a in data["artifacts"]
+        if a["fileName"].startswith(prefix) and a["fileName"].endswith(".jar")
+    )
+    return f"{base}/{build}/artifact/jars/{filename}", f"build-{build}"
+
+
 def resolve_modrinth(project_id: str) -> tuple[str, str]:
     """Latest Modrinth version for a project."""
     versions = fetch_json(f"https://api.modrinth.com/v2/project/{project_id}/version")
@@ -118,6 +138,21 @@ def _github_repo(repo: str, requires: str = "", excludes: tuple[str, ...] = ()):
     return matcher
 
 
+def _essentialsx_module(module: str):
+    """Match one EssentialsX CI jar by its exact artifact prefix.
+
+    The modules all live under the same job, so the jar filename is what
+    separates EssentialsX from EssentialsXChat and EssentialsXSpawn. Ordering
+    in RESOLVERS still matters: the bare module has to come last, since its
+    prefix is shared by the others up to the dash.
+    """
+    def matcher(url: str) -> bool:
+        if _host(url) != "ci.ender.zone":
+            return False
+        return urlparse(url).path.split("/")[-1].startswith(f"{module}-")
+    return matcher
+
+
 GEYSER_HOST = "download.geysermc.org"
 
 RESOLVERS = [
@@ -130,13 +165,12 @@ RESOLVERS = [
     (_github_repo("IntellectualSites/FastAsyncWorldEdit"),
      lambda _: resolve_github("IntellectualSites/FastAsyncWorldEdit",
                               "FastAsyncWorldEdit-Paper-*.jar")),
-    (_github_repo("EssentialsX/Essentials", requires="EssentialsXChat"),
-     lambda _: resolve_github("EssentialsX/Essentials", "EssentialsXChat-*.jar")),
-    (_github_repo("EssentialsX/Essentials", requires="EssentialsXSpawn"),
-     lambda _: resolve_github("EssentialsX/Essentials", "EssentialsXSpawn-*.jar")),
-    (_github_repo("EssentialsX/Essentials",
-                  excludes=("EssentialsXChat", "EssentialsXSpawn")),
-     lambda _: resolve_github("EssentialsX/Essentials", "EssentialsX-[0-9]*.jar")),
+    (_essentialsx_module("EssentialsXChat"),
+     lambda _: resolve_essentialsx("EssentialsXChat")),
+    (_essentialsx_module("EssentialsXSpawn"),
+     lambda _: resolve_essentialsx("EssentialsXSpawn")),
+    (_essentialsx_module("EssentialsX"),
+     lambda _: resolve_essentialsx("EssentialsX")),
     (_github_repo("Multiverse/Multiverse-Core"),
      lambda _: resolve_github("Multiverse/Multiverse-Core", "multiverse-core-*.jar")),
     (_github_repo("Multiverse/Multiverse-SignPortals"),
