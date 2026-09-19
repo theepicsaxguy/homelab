@@ -23,22 +23,6 @@
       "k8s/**/values.yaml"
     ]
   },
-  "customDatasources": {
-    "luckperms-bukkit": {
-      "defaultRegistryUrlTemplate": "https://metadata.luckperms.net/data/all",
-      "format": "json",
-      "transformTemplates": [
-        "{\"releases\": [{\"version\": $substringAfter($substringBefore(downloads.bukkit, \".jar\"), \"LuckPerms-Bukkit-\"), \"digest\": $substringAfter($substringBefore(downloads.bukkit, \"/bukkit\"), \"luckperms.net/\")}]}"
-      ]
-    },
-    "wildloaders": {
-      "defaultRegistryUrlTemplate": "https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/lastSuccessfulBuild/api/json?tree=number,artifacts[fileName]",
-      "format": "json",
-      "transformTemplates": [
-        "{\"releases\": [{\"version\": $string(number), \"digest\": artifacts[fileName != \"WildLoadersAPI.jar\"][0].fileName}]}"
-      ]
-    }
-  },
   "customManagers": [
     {
       "customType": "regex",
@@ -57,88 +41,10 @@
     },
     {
       "customType": "regex",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://github\\.com/(?<depName>EssentialsX/Essentials|EssentialsX/EssentialsX-GUI|Multiverse/Multiverse-Core|Multiverse/Multiverse-SignPortals|MilkBowl/Vault|SniperTVmc/EssentialsX-GUI|EssentialsX)/releases/download/(?<currentValue>[^/]+)/"
+      "managerFilePatterns": [
+        "/Dockerfile$/",
+        "/Dockerfile\\..*$/"
       ],
-      "datasourceTemplate": "github-releases"
-    },    {
-      "customType": "regex",
-      "description": "Track GeyserMC Geyser version in download URL",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://download\\.geysermc\\.org/v2/projects/geyser/versions/(?<currentValue>[^/]+)/builds/latest/downloads/spigot"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "GeyserMC/Geyser",
-      "autoReplaceStringTemplate": "https://download.geysermc.org/v2/projects/geyser/versions/{{{newVersion}}}/builds/latest/downloads/spigot"
-    },
-    {
-      "customType": "regex",
-      "description": "Track GeyserMC Floodgate version in download URL",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://download\\.geysermc\\.org/v2/projects/floodgate/versions/(?<currentValue>[^/]+)/builds/latest/downloads/spigot"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "GeyserMC/Floodgate",
-      "autoReplaceStringTemplate": "https://download.geysermc.org/v2/projects/floodgate/versions/{{{newVersion}}}/builds/latest/downloads/spigot"
-    },
-    {
-      "customType": "regex",
-      "description": "Track WorldEdit version via Hangar CDN",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://hangarcdn\\.papermc\\.io/plugins/EngineHub/WorldEdit/versions/(?<currentValue>[^/]+)/PAPER/worldedit-bukkit-[^/\\s]+\\.jar"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "EngineHub/WorldEdit",
-      "autoReplaceStringTemplate": "https://hangarcdn.papermc.io/plugins/EngineHub/WorldEdit/versions/{{{newVersion}}}/PAPER/worldedit-bukkit-{{{newVersion}}}.jar"
-    },
-    {
-      "customType": "regex",
-      "description": "Track QuickSort version via GitHub releases",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://github\\.com/TheNolle/quicksort-plugin/releases/download/(?<currentValue>[^/]+)/QuickSort-[^/\\s]+\\.jar"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "TheNolle/quicksort-plugin",
-      "autoReplaceStringTemplate": "https://github.com/TheNolle/quicksort-plugin/releases/download/{{{newVersion}}}/QuickSort-{{{newVersion}}}.jar"
-    },
-    {
-      "customType": "regex",
-      "description": "Track LuckPerms version and build number via metadata API",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://download\\.luckperms\\.net/(?<currentDigest>\\d+)/bukkit/loader/LuckPerms-Bukkit-(?<currentValue>[^/\\s]+)\\.jar"
-      ],
-      "datasourceTemplate": "custom.luckperms-bukkit",
-      "depNameTemplate": "LuckPerms",
-      "autoReplaceStringTemplate": "https://download.luckperms.net/{{{newDigest}}}/bukkit/loader/LuckPerms-Bukkit-{{{newVersion}}}.jar"
-    },
-    {
-      "customType": "regex",
-      "description": "Track WildLoaders build number via Jenkins API",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/plugins\\.txt$"],
-      "matchStrings": [
-        "https://hub\\.bg-software\\.com/job/WildLoaders%20-%20Dev%20Builds/(?<currentValue>\\d+)/artifact/target/(?<currentDigest>WildLoaders-[^/\\s]+\\.jar)"
-      ],
-      "datasourceTemplate": "custom.wildloaders",
-      "depNameTemplate": "WildLoaders",
-      "autoReplaceStringTemplate": "https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/{{{newVersion}}}/artifact/target/{{{newDigest}}}"
-    },    {
-      "customType": "regex",
-      "managerFilePatterns": ["/k8s/applications/games/minecraft/plugins/kustomization\\.yaml$"],
-      "matchStrings": [
-        "PAPER_BUILD=(?<currentValue>\\d+) # renovate: datasource=github-releases depName=PaperMC/paper"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "PaperMC/paper"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/Dockerfile$/", "/Dockerfile\\..*$/"],
       "matchStrings": [
         "ARG\\s+\\w+=(?<currentValue>[\\w+\\.\\-]*)['\\\"]?\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(versioning=(?<versioning>\\S+))?"
       ]
@@ -146,12 +52,10 @@
   ],
   "packageRules": [
     {
-      "matchCategories": ["docker"],
-      "registryUrls": ["registry.k8s.io"]
-    },
-    {
       "groupName": "Media containers",
-      "matchDatasources": ["docker"],
+      "matchDatasources": [
+        "docker"
+      ],
       "matchPackageNames": [
         "/^ghcr\\.io\\/onedr0p\\/.+$/",
         "/^ghcr\\.io\\/jellyfin\\/.+$/"
@@ -159,87 +63,100 @@
     },
     {
       "groupName": "Netbird",
-      "matchPackageNames": ["/docker.io/netbirdio/.*/"]
+      "matchPackageNames": [
+        "/docker.io/netbirdio/.*/"
+      ]
     },
     {
       "groupName": "Intel Device Plugins",
-      "matchPackageNames": ["/intel-device-plugins/.*/"]
+      "matchPackageNames": [
+        "/intel-device-plugins/.*/"
+      ]
     },
     {
       "groupName": "Cilium",
       "automerge": true,
-      "matchPackageNames": ["/cilium/.*/"]
+      "matchPackageNames": [
+        "/cilium/.*/"
+      ]
     },
     {
-      "matchManagers": ["terraform"],
-      "matchDepTypes": ["provider", "required_provider"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "terraform"
+      ],
+      "matchDepTypes": [
+        "provider",
+        "required_provider"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
-      "matchManagers": ["helm-values", "helm-requirements"],
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchManagers": [
+        "helm-values",
+        "helm-requirements"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
       "groupName": "external-secrets",
-      "matchPackageNames": ["/^ghcr.io/external-secrets//"]
+      "matchPackageNames": [
+        "/^ghcr.io/external-secrets//"
+      ]
     },
     {
       "groupName": "all dependencies",
-      "matchPackageNames": ["*"]
+      "matchPackageNames": [
+        "*"
+      ]
     },
     {
       "description": "Prevent automatic upgrades for Talos and Kubernetes versions in tofu/ - require manual review",
-      "matchFileNames": ["/tofu/.*\\.(tf|tfvars|tftpl)$/"],
-      "matchPackageNames": ["siderolabs/talos", "kubernetes/kubernetes"],
+      "matchFileNames": [
+        "/tofu/.*\\.(tf|tfvars|tftpl)$/"
+      ],
+      "matchPackageNames": [
+        "siderolabs/talos",
+        "kubernetes/kubernetes"
+      ],
       "automerge": false,
       "automergeType": "pr",
-      "schedule": ["before 10am on monday"]
-    },
-    {
-      "description": "Handle descheduler image from registry.k8s.io",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["registry.k8s.io/descheduler/descheduler"]
-    },
-    {
-      "groupName": "Minecraft Plugins",
-      "description": "Track all Minecraft plugin updates",
-      "matchFileNames": ["k8s/applications/games/minecraft/plugins/plugins.txt"],
-      "matchPackageNames": [
-        "EssentialsX/Essentials",
-        "SniperTVmc/EssentialsX-GUI",
-        "Multiverse/Multiverse-Core",
-        "Multiverse/Multiverse-SignPortals",
-        "MilkBowl/Vault",
-        "PaperMC/paper",
-        "GeyserMC/Geyser",
-        "GeyserMC/Floodgate",
-        "EngineHub/WorldEdit",
-        "LuckPerms",
-        "WildLoaders"
+      "schedule": [
+        "before 10am on monday"
       ]
     },
     {
       "groupName": "BedrockConnect",
       "description": "Track BedrockConnect Docker image updates",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["pugmatt/bedrock-connect"]
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "pugmatt/bedrock-connect"
+      ]
     },
     {
       "description": "LiteLLM tags use non-standard formats: main-vX.Y.Z-stable.N (old) or vX.Y.Z.rc.N (new)",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ghcr.io/berriai/litellm-non_root"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/berriai/litellm-non_root"
+      ],
       "versioning": "regex:^(?:main-v|v)(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-stable\\.(?<build>\\d+)|\\.rc\\.(?<prerelease>\\d+))?$"
     }
   ],
   "kubernetes": {
-    "managerFilePatterns": ["/k8s/.+\\.yaml$/", "/k8s/.+\\.yml$/"]
-  },
-  "hostRules": [
-    {
-      "hostType": "docker",
-      "matchHost": "registry.k8s.io"
-    }
-  ]
+    "managerFilePatterns": [
+      "/k8s/.+\\.yaml$/",
+      "/k8s/.+\\.yml$/"
+    ]
+  }
 }
