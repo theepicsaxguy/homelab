@@ -1,13 +1,13 @@
-https://download.geysermc.org/v2/projects/geyser/versions/2.11.2/builds/1235/downloads/spigot
-https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/140/downloads/spigot
+https://download.geysermc.org/v2/projects/geyser/versions/2.11.3/builds/1245/downloads/spigot
+https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/141/downloads/spigot
 https://github.com/SniperTVmc/EssentialsX-GUI/releases/download/1.5.0/EssentialsX-GUI-1.5.0.jar
-https://github.com/IntellectualSites/FastAsyncWorldEdit/releases/download/2.15.2/FastAsyncWorldEdit-Paper-2.15.2.jar
+https://github.com/IntellectualSites/FastAsyncWorldEdit/releases/download/2.15.3/FastAsyncWorldEdit-Paper-2.15.3.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.22.0/EssentialsX-2.22.0.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.22.0/EssentialsXChat-2.22.0.jar
 https://github.com/EssentialsX/Essentials/releases/download/2.22.0/EssentialsXSpawn-2.22.0.jar
 https://github.com/Multiverse/Multiverse-Core/releases/download/5.8.1/multiverse-core-5.8.1.jar
 https://github.com/Multiverse/Multiverse-SignPortals/releases/download/5.0.4/multiverse-signportals-5.0.4.jar
-https://download.luckperms.net/1671/bukkit/loader/LuckPerms-Bukkit-5.5.84.jar
+https://download.luckperms.net/1672/bukkit/loader/LuckPerms-Bukkit-5.5.85.jar
 https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/78/artifact/target/WildLoaders-2026.2-b78.jar
 https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar
 https://api.spiget.org/v2/resources/132579/download
