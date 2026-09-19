@@ -102,10 +102,63 @@ def resolve_essentialsx(module: str) -> tuple[str, str]:
     return f"{base}/{build}/artifact/jars/{filename}", f"build-{build}"
 
 
-def resolve_modrinth(project_id: str) -> tuple[str, str]:
-    """Latest Modrinth version for a project."""
+# Loaders that produce a jar this Paper server can actually load. Projects that
+# ship both a mod and a plugin artifact (Chunksmith) separate them by loader, so
+# filtering on these also picks the right file.
+PAPER_LOADERS = {"paper", "bukkit", "spigot", "folia", "purpur"}
+
+# Set by the CLI from VERSION= in kustomization.yaml. Modrinth versions declare
+# the Minecraft versions they support, so pinning to the server's version keeps
+# the updater from pulling a jar that has already dropped it.
+_target_minecraft_version: str | None = None
+
+
+def set_target_minecraft_version(version: str | None) -> None:
+    global _target_minecraft_version
+    _target_minecraft_version = version
+
+
+def _modrinth_project_id(url: str) -> str:
+    """Project id out of a Modrinth CDN URL: /data/<project>/versions/<v>/<file>."""
+    parts = urlparse(url).path.strip("/").split("/")
+    if len(parts) < 2 or parts[0] != "data":
+        raise ValueError(f"Not a Modrinth CDN download URL: {url}")
+    return parts[1]
+
+
+def resolve_modrinth(url: str) -> tuple[str, str]:
+    """Newest Modrinth release for the project the current URL points at.
+
+    The project is read from the URL rather than hardcoded, so a new Modrinth
+    plugin only needs its download URL added to plugins.txt.
+    """
+    project_id = _modrinth_project_id(url)
     versions = fetch_json(f"https://api.modrinth.com/v2/project/{project_id}/version")
-    latest = versions[0]
+
+    usable = [
+        v for v in versions
+        if v.get("version_type") == "release"
+        and PAPER_LOADERS.intersection(v.get("loaders", []))
+    ]
+    if not usable:
+        raise ValueError(
+            f"No Modrinth release for project {project_id} on a "
+            f"Paper-compatible loader"
+        )
+
+    # Prefer a release that declares the server's Minecraft version, but do not
+    # require it: plugins whose API surface never breaks (CustomCommands) stop
+    # refreshing their version list long before they stop working. Requiring an
+    # exact match would strand them on a stale pin forever.
+    if _target_minecraft_version is not None:
+        matching = [
+            v for v in usable
+            if _target_minecraft_version in v.get("game_versions", [])
+        ]
+        if matching:
+            usable = matching
+
+    latest = usable[0]
     return latest["files"][0]["url"], latest["version_number"]
 
 
@@ -182,8 +235,8 @@ RESOLVERS = [
      lambda _: resolve_luckperms()),
     (_from("hub.bg-software.com", "/job/WildLoaders"),
      lambda _: resolve_wildloaders()),
-    (_from("cdn.modrinth.com"),
-     lambda _: resolve_modrinth("gES9lvaL")),
+    # One entry covers every Modrinth plugin: the project comes from the URL.
+    (_from("cdn.modrinth.com"), resolve_modrinth),
     # Static redirect to the newest file; there is no version to track.
     (_from("api.spiget.org"), None),
 ]

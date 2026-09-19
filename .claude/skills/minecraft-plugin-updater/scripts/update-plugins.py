@@ -13,8 +13,8 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from http_util import url_ok  # noqa: E402
-from papermc import check_paper_version  # noqa: E402
-from resolvers import find_resolver  # noqa: E402
+from papermc import check_paper_version, configured_version  # noqa: E402
+from resolvers import find_resolver, set_target_minecraft_version  # noqa: E402
 
 REPO_MINECRAFT_PATH = "k8s/applications/games/minecraft"
 
@@ -91,6 +91,10 @@ def main():
     kustomization_file = os.path.join(
         os.path.dirname(os.path.abspath(plugins_file)), "kustomization.yaml"
     )
+
+    # Resolved before the plugin pass so version-aware sources (Modrinth) can
+    # refuse a jar that no longer supports the Paper version this server pins.
+    set_target_minecraft_version(configured_version(kustomization_file))
 
     print("=== Plugins ===")
     plugins_changed = update_plugins(plugins_file)
