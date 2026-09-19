@@ -120,10 +120,13 @@ spec:
             failureThreshold: 3
           resources:
             requests:
+              # The CPU request is the scheduling floor, not the ceiling: the
+              # server idles far below a core and bursts up to the limit under
+              # load. Requesting 2 cores only kept the pod unschedulable.
               memory: '4Gi'
-              cpu: '2000m'
+              cpu: '1000m'
             limits:
-              memory: '8Gi'
+              memory: '6Gi'
               cpu: '6000m'
       volumes:
         - name: plugin-configs
