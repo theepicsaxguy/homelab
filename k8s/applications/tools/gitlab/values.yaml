@@ -1,0 +1,206 @@
+global:
+  hosts:
+    domain: peekoff.com
+    https: true
+
+  gatewayApi:
+    enabled: true
+    gatewayRef:
+      name: external
+      namespace: gateway
+    installEnvoy: false
+    configureCertmanager: false
+    httpToHttpsRedirect: false
+
+  ingress:
+    enabled: false
+    configureCertmanager: false
+    provider: ""
+
+  psql:
+    host: gitlab-postgresql-rw.gitlab.svc.cluster.local
+    port: 5432
+    database: app
+    username: app
+    password:
+      useSecret: true
+      secret: gitlab-postgresql-app
+      key: password
+
+  redis:
+    host: redis.gitlab.svc.cluster.local
+    port: 6379
+    auth:
+      enabled: false
+
+  initialRootPassword:
+    secret: gitlab-initial-secrets
+    key: initial-root-password
+
+  smtp:
+    enabled: false
+
+  email:
+    from: ""
+    display_name: "GitLab"
+    reply_to: ""
+    subject_suffix: ""
+
+  appConfig:
+    object_store:
+      enabled: true
+      proxy_download: true
+      connection:
+        secret: gitlab-minio-connection
+        key: connection
+
+    uploads:
+      bucket: gitlab-uploads
+
+    artifacts:
+      bucket: gitlab-artifacts
+
+    lfs:
+      bucket: gitlab-lfs
+
+    packages:
+      bucket: gitlab-packages
+
+    terraformState:
+      bucket: gitlab-terraform-state
+
+    ciSecureFiles:
+      bucket: gitlab-ci-secure-files
+
+postgresql:
+  install: false
+
+redis:
+  install: false
+
+minio:
+  enabled: false
+
+nginx-ingress:
+  enabled: false
+
+certmanager-issuer:
+  email: "benjamin.sanden2@gmail.com"
+
+gitlab-runner:
+  install: false
+
+prometheus:
+  install: false
+
+grafana:
+  enabled: false
+
+registry:
+  enabled: true
+  gatewayRoute:
+    sectionName: ""
+  hpa:
+    behavior: {}
+  podDisruptionBudget:
+    enabled: false
+  storage:
+    secret: gitlab-registry-storage
+    key: config
+    extraKey: ""
+
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+    gatewayRoute:
+      sectionName: ""
+    hpa:
+      behavior: {}
+    podDisruptionBudget:
+      enabled: false
+    workerProcesses: 1
+    puma:
+      threads:
+        min: 2
+        max: 4
+      disableWorkerKiller: false
+      workerMaxMemory: 1200
+    resources:
+      requests:
+        cpu: 300m
+        memory: 1G
+      limits:
+        cpu: 2000m
+        memory: 2.5G
+    deployment:
+      strategy:
+        type: Recreate
+
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+    podDisruptionBudget:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2G
+
+  gitlab-shell:
+    minReplicas: 1
+    maxReplicas: 1
+    podDisruptionBudget:
+      enabled: false
+    resources:
+      requests:
+        cpu: 10m
+        memory: 20Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+
+  kas:
+    enabled: true
+    gatewayRoute:
+      sectionName: ""
+    podDisruptionBudget:
+      enabled: false
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  gitaly:
+    persistence:
+      storageClass: proxmox-csi
+      size: 50Gi
+    podDisruptionBudget:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 200Mi
+      limits:
+        cpu: 1000m
+        memory: 1G
+
+  toolbox:
+    backups:
+      objectStorage:
+        config:
+          secret: gitlab-minio-connection
+          key: connection
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi

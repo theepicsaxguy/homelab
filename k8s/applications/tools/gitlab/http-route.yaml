@@ -1,0 +1,75 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gitlab
+  namespace: gitlab
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - gitlab.peekoff.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: gitlab-webservice-default
+          port: 8181
+      timeouts:
+        request: 0s
+        backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gitlab-registry
+  namespace: gitlab
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - registry.peekoff.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: gitlab-registry
+          port: 5000
+      timeouts:
+        request: 0s
+        backendRequest: 0s
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gitlab-kas
+  namespace: gitlab
+spec:
+  parentRefs:
+    - name: external
+      namespace: gateway
+    - name: internal
+      namespace: gateway
+  hostnames:
+    - kas.peekoff.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: gitlab-kas
+          port: 8150
+      timeouts:
+        request: 0s
+        backendRequest: 0s
