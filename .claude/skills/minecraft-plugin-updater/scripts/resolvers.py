@@ -10,6 +10,7 @@ changes are visible in git.
 """
 
 from fnmatch import fnmatch
+from urllib.parse import urlparse
 
 from http_util import fetch_json
 
@@ -88,41 +89,69 @@ def resolve_modrinth(project_id: str) -> tuple[str, str]:
     return latest["files"][0]["url"], latest["version_number"]
 
 
-def _contains(fragment):
-    return lambda url: fragment in url
+def _host(url: str) -> str:
+    """Hostname of a URL, lowercased and without a port."""
+    return (urlparse(url).hostname or "").lower()
 
+
+def _from(host: str, path_fragment: str = ""):
+    """Match a URL by exact host, optionally also requiring a path fragment.
+
+    Matching the parsed hostname rather than a substring of the whole URL keeps
+    a lookalike domain (or a host smuggled into a query string) from routing to
+    the wrong resolver.
+    """
+    def matcher(url: str) -> bool:
+        return _host(url) == host and path_fragment in urlparse(url).path
+    return matcher
+
+
+def _github_repo(repo: str, requires: str = "", excludes: tuple[str, ...] = ()):
+    """Match a github.com release URL for a repo, refined by filename hints."""
+    def matcher(url: str) -> bool:
+        if _host(url) != "github.com":
+            return False
+        path = urlparse(url).path
+        if not path.startswith(f"/{repo}/"):
+            return False
+        return requires in path and not any(x in path for x in excludes)
+    return matcher
+
+
+GEYSER_HOST = "download.geysermc.org"
 
 RESOLVERS = [
-    (_contains("download.geysermc.org/v2/projects/geyser"),
+    (_from(GEYSER_HOST, "/projects/geyser/"),
      lambda _: resolve_geysermc("geyser")),
-    (_contains("download.geysermc.org/v2/projects/floodgate"),
+    (_from(GEYSER_HOST, "/projects/floodgate/"),
      lambda _: resolve_geysermc("floodgate")),
-    (_contains("SniperTVmc/EssentialsX-GUI"),
+    (_github_repo("SniperTVmc/EssentialsX-GUI"),
      lambda _: resolve_github("SniperTVmc/EssentialsX-GUI", "EssentialsX-GUI-*.jar")),
-    (_contains("IntellectualSites/FastAsyncWorldEdit"),
+    (_github_repo("IntellectualSites/FastAsyncWorldEdit"),
      lambda _: resolve_github("IntellectualSites/FastAsyncWorldEdit",
                               "FastAsyncWorldEdit-Paper-*.jar")),
-    (lambda url: "EssentialsX/Essentials" in url and "EssentialsXChat" in url,
+    (_github_repo("EssentialsX/Essentials", requires="EssentialsXChat"),
      lambda _: resolve_github("EssentialsX/Essentials", "EssentialsXChat-*.jar")),
-    (lambda url: "EssentialsX/Essentials" in url and "EssentialsXSpawn" in url,
+    (_github_repo("EssentialsX/Essentials", requires="EssentialsXSpawn"),
      lambda _: resolve_github("EssentialsX/Essentials", "EssentialsXSpawn-*.jar")),
-    (lambda url: "EssentialsX/Essentials" in url
-                 and "EssentialsXChat" not in url and "EssentialsXSpawn" not in url,
+    (_github_repo("EssentialsX/Essentials",
+                  excludes=("EssentialsXChat", "EssentialsXSpawn")),
      lambda _: resolve_github("EssentialsX/Essentials", "EssentialsX-[0-9]*.jar")),
-    (lambda url: "Multiverse/Multiverse-Core" in url and "SignPortals" not in url,
+    (_github_repo("Multiverse/Multiverse-Core"),
      lambda _: resolve_github("Multiverse/Multiverse-Core", "multiverse-core-*.jar")),
-    (_contains("Multiverse/Multiverse-SignPortals"),
+    (_github_repo("Multiverse/Multiverse-SignPortals"),
      lambda _: resolve_github("Multiverse/Multiverse-SignPortals",
                               "multiverse-signportals-*.jar")),
-    (_contains("MilkBowl/Vault"),
+    (_github_repo("MilkBowl/Vault"),
      lambda _: resolve_github("MilkBowl/Vault", "Vault.jar")),
-    (_contains("luckperms"),
+    (_from("download.luckperms.net"),
      lambda _: resolve_luckperms()),
-    (_contains("WildLoaders"),
+    (_from("hub.bg-software.com", "/job/WildLoaders"),
      lambda _: resolve_wildloaders()),
-    (lambda url: "modrinth.com" in url or "gES9lvaL" in url,
+    (_from("cdn.modrinth.com"),
      lambda _: resolve_modrinth("gES9lvaL")),
-    (_contains("api.spiget.org"), None),  # static redirect, no version to track
+    # Static redirect to the newest file; there is no version to track.
+    (_from("api.spiget.org"), None),
 ]
 
 
