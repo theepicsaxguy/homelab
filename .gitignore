@@ -59,3 +59,6 @@ opencode.json
 !.claude/**
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+# The !.claude/** negation above re-includes everything under .claude, which
+# defeats the global __pycache__/ rule for the skill scripts.
+.claude/**/__pycache__/

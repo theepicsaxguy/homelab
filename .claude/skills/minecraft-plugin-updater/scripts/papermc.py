@@ -47,6 +47,15 @@ def _latest_released_version(candidates: list[str]) -> tuple[str, int] | None:
     return None
 
 
+def configured_version(kustomization_file: str) -> str | None:
+    """VERSION= currently pinned in kustomization.yaml, or None."""
+    if not os.path.exists(kustomization_file):
+        return None
+    with open(kustomization_file) as f:
+        match = re.search(r"- VERSION=(\S+)", f.read())
+    return match.group(1) if match else None
+
+
 def check_paper_version(kustomization_file: str) -> bool:
     """Update VERSION= in kustomization.yaml to the newest released Paper.
 
