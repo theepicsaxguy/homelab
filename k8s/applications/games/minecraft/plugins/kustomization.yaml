@@ -35,10 +35,11 @@ configMapGenerator:
       - RATE_LIMIT=0
       - NETWORK_COMPRESSION_THRESHOLD=256
       - PLAYER_IDLE_TIMEOUT=30
-      # Heap must fit inside the container memory request with room for
-      # metaspace, threads and direct buffers, or the JVM grows past what the
-      # scheduler reserved and the pod becomes the first eviction candidate.
-      - MEMORY=3G
+      # The heap deliberately exceeds the 4Gi memory request: work-02 has only
+      # ~1.4Gi of unreserved memory left, so the request cannot be raised to
+      # cover it. The 8Gi limit keeps the JVM from being OOM-killed, but the
+      # pod is an eviction candidate if the node comes under memory pressure.
+      - MEMORY=6G
       - USE_AIKAR_FLAGS=true
     files:
       - PLUGINS=plugins.txt
