@@ -1,9 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- allow-affine-access.yaml
-namespace: affine
-labels:
-- pairs:
-    policy-type: web-audit
-    network-policy: cilium-audit
