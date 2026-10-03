@@ -4,7 +4,7 @@
 ###############################################################################
 # Stage 0: build unrar from source (matches LSIO pattern)
 ###############################################################################
-FROM alpine:3.23 AS unrar-build
+FROM alpine:3.24 AS unrar-build
 ARG UNRAR_VER=6.2.12
 
 RUN apk add --no-cache build-base ca-certificates curl tar \
@@ -17,8 +17,8 @@ RUN apk add --no-cache build-base ca-certificates curl tar \
 ###############################################################################
 # Stage 1: build SABnzbd from source + venv (includes native deps)
 ###############################################################################
-FROM alpine:3.23 AS sab-build
-ARG IMAGE_VERSION=5.0.4 # renovate: github-releases=sabnzbd/sabnzbd
+FROM alpine:3.24 AS sab-build
+ARG IMAGE_VERSION=5.1.3 # renovate: github-releases=sabnzbd/sabnzbd
 
 RUN apk add --no-cache \
      git ca-certificates tzdata \
@@ -36,7 +36,7 @@ RUN python3 -m venv /venv \
 ###############################################################################
 # Stage 2: runtime (Kubernetes-ready)
 ###############################################################################
-FROM alpine:3.23
+FROM alpine:3.24
 
 RUN apk add --no-cache \
      ca-certificates tzdata tini \
