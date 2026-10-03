@@ -52,7 +52,7 @@ spec:
               value: /cache
             - name: TZ
               value: Europe/Stockholm
-          image: ghcr.io/immich-app/immich-machine-learning:v3.1.0
+          image: ghcr.io/immich-app/immich-machine-learning:v3.2.4
           imagePullPolicy: IfNotPresent
           resources:
             requests:

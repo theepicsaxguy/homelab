@@ -3,8 +3,8 @@
 ###############################################################################
 # Stage 0: fetch source and install Python deps
 ###############################################################################
-FROM python:3.12-slim AS build
-ARG IMAGE_VERSION=3.5.0 # renovate: github-releases=assafelovic/gpt-researcher
+FROM python:3.14-slim AS build
+ARG IMAGE_VERSION=3.7.0 # renovate: github-releases=assafelovic/gpt-researcher
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git ca-certificates \
@@ -23,7 +23,7 @@ RUN sed -i '1s/^/import os\n/' backend/server/websocket_manager.py
 ###############################################################################
 # Stage 1: runtime — non-root, minimal image
 ###############################################################################
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 RUN groupadd -g 3000 researcher \
     && useradd -u 1000 -g 3000 -m -s /bin/sh -d /usr/src/app researcher

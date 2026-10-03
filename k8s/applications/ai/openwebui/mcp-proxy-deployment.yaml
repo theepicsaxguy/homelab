@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mcp-proxy
-          image: ghcr.io/tbxark/mcp-proxy:v0.43.2
+          image: ghcr.io/tbxark/mcp-proxy:v0.58.0
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

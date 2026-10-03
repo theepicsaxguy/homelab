@@ -5,7 +5,7 @@
 ###############################################################################
 # Stage 1: Clone HeadlessX source
 ###############################################################################
-FROM alpine:3.23 AS source
+FROM alpine:3.24 AS source
 
 ARG IMAGE_VERSION=2.1.2 # renovate: github-releases=saifyxpro/HeadlessX
 ARG HEADLESSX_REPO=https://github.com/saifyxpro/HeadlessX
@@ -33,7 +33,7 @@ RUN npm run build
 ###############################################################################
 # Stage 3: Production runtime
 ###############################################################################
-FROM mcr.microsoft.com/playwright:v1.60.0-noble
+FROM mcr.microsoft.com/playwright:v1.63.0-noble
 
 # Install system dependencies
 RUN apt-get update && \
