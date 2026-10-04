@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - project.yaml
+- gateway-api-crds
 - cilium
 - cloudflared
 - gateway
