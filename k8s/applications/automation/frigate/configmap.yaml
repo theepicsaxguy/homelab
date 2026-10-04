@@ -59,7 +59,6 @@ data:
 
     snapshots:
       enabled: true
-      clean_copy: false
       timestamp: true
       bounding_box: true
 
