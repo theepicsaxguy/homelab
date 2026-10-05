@@ -30,7 +30,7 @@ ARG IMAGE_VERSION=v0.30.0 # renovate: github-releases=vllm-project/vllm
 #
 
 ######################### COMMON BASE IMAGE #########################
-FROM ubuntu:24.04 AS base-common
+FROM ubuntu:26.04 AS base-common
 
 WORKDIR /workspace/
 
