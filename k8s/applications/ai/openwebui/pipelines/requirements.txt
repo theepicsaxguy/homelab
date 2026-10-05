@@ -34,5 +34,5 @@ llama-index-multi-modal-llms-openai==0.6.2
 llama-index-readers-file==0.7.0
 llama-index-readers-llama-parse==0.7.0
 opencv-python==5.0.0.93
-opik==2.2.88
+opik==2.2.89
 transformers==5.18.0
