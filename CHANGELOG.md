@@ -1,5 +1,40 @@
 # Changelog
 
+## 7.2.1 (2026-10-10)
+
+## What's Changed
+* chore(deps): update dependency vllm-project/vllm to v0.31.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2733
+* chore(deps): update dependency opik to v2.2.89 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2735
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2736
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2737
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2739
+* chore(deps): update anthropics/claude-code-action action to v1.0.242 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2740
+* chore(deps): update anthropics/claude-code-action action to v1.0.243 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2741
+* chore(deps): update dependency opik to v2.2.92 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2742
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2743
+* chore(deps): update anthropics/claude-code-action action to v1.0.244 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2744
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2745
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2747
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2748
+* chore(deps): update anthropics/claude-code-action action to v1.0.245 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2749
+* chore(deps): update ghcr.io/berriai/litellm-non_root docker tag to v1.104.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2750
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2751
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2752
+* chore(deps): update dependency opik to v2.2.95 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2753
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2755
+* chore(deps): update anthropics/claude-code-action action to v1.0.246 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2754
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2756
+* chore(deps): update dependency posthog to >=7.67.0,<7.68.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2758
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2757
+* chore(deps): update helm release argo-cd to v10.10.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2759
+* chore(deps): update dependency openai to v3.27.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2760
+* chore(deps): update dependency openai to v3.28.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2762
+* chore(deps): update anthropics/claude-code-action action to v1.0.248 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2761
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2763
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v7.2.0...v7.2.1
+
 ## 7.2.0 (2026-10-05)
 
 ## What's Changed
