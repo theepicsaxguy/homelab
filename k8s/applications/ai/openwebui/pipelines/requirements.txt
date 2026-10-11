@@ -7,7 +7,7 @@ openai==3.28.0
 huggingface-hub==2.2.0
 tokenizers==0.23.3
 packaging>=26,<26.4
-numpy==2.5.3
+numpy==2.5.4
 posthog>=7.67.0,<7.68.0
 wrapt>=2,<2.6
 tenacity>=8.2.0,<10.0.0
