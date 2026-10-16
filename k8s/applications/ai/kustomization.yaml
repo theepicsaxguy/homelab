@@ -13,3 +13,4 @@ resources:
 - gpt-researcher
 - openclaw
 - pocket-tts
+- mlflow
