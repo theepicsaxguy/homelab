@@ -44,7 +44,7 @@ spec:
             sizeLimit: 2Gi
       containers:
         - name: web
-          image: ghcr.io/karakeep-app/karakeep:0.33.2
+          image: ghcr.io/karakeep-app/karakeep:0.34.0
           securityContext:
             allowPrivilegeEscalation: true
             readOnlyRootFilesystem: true
