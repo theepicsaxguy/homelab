@@ -55,7 +55,7 @@ spec:
               mountPath: /data
       containers:
         - name: matter-server
-          image: ghcr.io/matter-js/matterjs-server:1.5.0
+          image: ghcr.io/matter-js/matterjs-server:1.5.2
           imagePullPolicy: IfNotPresent
           args:
             - --storage-path

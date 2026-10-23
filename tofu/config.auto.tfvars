@@ -21,7 +21,7 @@ versions = {
 
 talos_image = {
   schematic_path = "talos/image/schematic.yaml.tftpl"
-  update_version = "v1.14.2" # renovate: github-releases=siderolabs/talos
+  update_version = "v1.14.4" # renovate: github-releases=siderolabs/talos
 }
 
 kubernetes_image = {
