@@ -80,6 +80,51 @@ spec:
               name: plugin-configs
               readOnly: true
 
+        # mc-image-helper fails on GitHub release downloads: the redirect response
+        # headers (~10.7KB) exceed netty's HTTP/2 limit of 10240. curl handles them.
+        - name: fetch-github-plugins
+          image: itzg/minecraft-server:java25-jdk
+          command:
+            - bash
+            - -c
+            - |
+              set -euo pipefail
+              mkdir -p /data/plugins
+              for url in \
+                https://github.com/SniperTVmc/EssentialsX-GUI/releases/download/1.5.0/EssentialsX-GUI-1.5.0.jar \
+                https://github.com/IntellectualSites/FastAsyncWorldEdit/releases/download/2.16.1/FastAsyncWorldEdit-Paper-2.16.1.jar \
+                https://github.com/Multiverse/Multiverse-Core/releases/download/5.8.2-pre.2/multiverse-core-5.8.2-pre.2.jar \
+                https://github.com/Multiverse/Multiverse-SignPortals/releases/download/5.0.4/multiverse-signportals-5.0.4.jar \
+                https://github.com/MilkBowl/Vault/releases/download/1.7.3/Vault.jar; do
+                name=$(basename "$url")
+                if [ -s "/data/plugins/$name" ]; then
+                  echo "$name already present"
+                  continue
+                fi
+                curl -fsSL --retry 5 --retry-delay 5 -o "/data/plugins/$name.tmp" "$url"
+                mv "/data/plugins/$name.tmp" "/data/plugins/$name"
+                echo "downloaded $name"
+              done
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          resources:
+            requests:
+              memory: '64Mi'
+              cpu: '50m'
+            limits:
+              memory: '256Mi'
+              cpu: '500m'
+          volumeMounts:
+            - mountPath: /data
+              name: data
+
       containers:
         - name: main
           image: itzg/minecraft-server:java25-jdk
