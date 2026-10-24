@@ -1,5 +1,82 @@
 # Changelog
 
+## 7.2.1 (2026-10-24)
+
+## What's Changed
+* chore(deps): update dependency vllm-project/vllm to v0.31.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2733
+* chore(deps): update dependency opik to v2.2.89 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2735
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2736
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2737
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2739
+* chore(deps): update anthropics/claude-code-action action to v1.0.242 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2740
+* chore(deps): update anthropics/claude-code-action action to v1.0.243 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2741
+* chore(deps): update dependency opik to v2.2.92 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2742
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2743
+* chore(deps): update anthropics/claude-code-action action to v1.0.244 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2744
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2745
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2747
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2748
+* chore(deps): update anthropics/claude-code-action action to v1.0.245 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2749
+* chore(deps): update ghcr.io/berriai/litellm-non_root docker tag to v1.104.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2750
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2751
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2752
+* chore(deps): update dependency opik to v2.2.95 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2753
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2755
+* chore(deps): update anthropics/claude-code-action action to v1.0.246 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2754
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2756
+* chore(deps): update dependency posthog to >=7.67.0,<7.68.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2758
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2757
+* chore(deps): update helm release argo-cd to v10.10.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2759
+* chore(deps): update dependency openai to v3.27.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2760
+* chore(deps): update dependency openai to v3.28.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2762
+* chore(deps): update anthropics/claude-code-action action to v1.0.248 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2761
+* chore(deps): update ghcr.io/home-assistant/home-assistant docker tag to v2026.10.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2763
+* chore(deps): update dependency numpy to v2.5.4 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2764
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2765
+* chore(deps): update ghcr.io/berriai/litellm-non_root docker tag to v1.105.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2766
+* chore(deps): update dependency openai to v3.29.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2767
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.10.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2768
+* chore(deps): update getmeili/meilisearch docker tag to v1.55.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2769
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2770
+* chore(deps): update dependency posthog to >=7.68.0,<7.69.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2771
+* chore(deps): update dependency llama-index-llms-openai to v0.8.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2772
+* chore(deps): update python docker tag to v3.15 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2773
+* chore(deps): update helm release gpu-operator to v26.7.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2774
+* chore(deps): update dependency opik to v2.2.99 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2775
+* chore(deps): update ghcr.io/openclaw/openclaw docker tag to v2026.10.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2776
+* chore(deps): update ghcr.io/blakeblackshear/frigate docker tag to v0.18.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2777
+* chore(deps): update dependency posthog to >=7.69.0,<7.70.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2778
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2779
+* chore(deps): update dependency openai to v3.31.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2780
+* chore(deps): update dependency opik to v2.2.100 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2781
+* chore(deps): update dependency langfuse to v4.18.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2782
+* chore(deps): update mcr.microsoft.com/playwright docker tag to v1.64.1 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2783
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2785
+* chore(deps): update ghcr.io/open-webui/open-webui docker tag to v0.12.2 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2786
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2787
+* chore(deps): update helm release argo-cd to v10.10.5 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2788
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2789
+* chore(deps): update all dependencies (major) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2746
+* chore(minecraft): update plugins by @github-actions[bot] in https://github.com/theepicsaxguy/homelab/pull/2738
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2784
+* chore(deps): update dependency posthog to >=7.72.0,<7.73.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2793
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2794
+* chore(deps): update coredns/coredns docker tag to v1.15.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2795
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2797
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2798
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2800
+* chore(deps): update dependency huggingface-hub to v2.3.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2801
+* chore(deps): update helm release argo-cd to v10.11.0 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2803
+* chore(minecraft): update plugins by @github-actions[bot] in https://github.com/theepicsaxguy/homelab/pull/2792
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2790
+* chore(deps): update all dependencies (minor) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2805
+* chore(deps): update all dependencies (patch) by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2804
+* fix(minecraft): fetch GitHub plugins with curl by @theepicsaxguy in https://github.com/theepicsaxguy/homelab/pull/2806
+* chore(deps): update ghcr.io/berriai/litellm-non_root docker tag to v1.106.3 by @renovate[bot] in https://github.com/theepicsaxguy/homelab/pull/2807
+
+
+**Full Changelog**: https://github.com/theepicsaxguy/homelab/compare/v7.2.0...v7.2.1
+
 ## 7.2.0 (2026-10-05)
 
 ## What's Changed
