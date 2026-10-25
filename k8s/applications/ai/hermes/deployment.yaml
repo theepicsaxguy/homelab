@@ -1,0 +1,260 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hermes
+  namespace: hermes
+  labels:
+    app.kubernetes.io/name: hermes
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hermes
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hermes
+    spec:
+      hostIPC: false
+      hostPID: false
+      hostNetwork: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10010
+        runAsGroup: 10010
+        fsGroup: 10010
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-config
+          image: busybox:1.37.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /opt/data /workspace
+              sed "s/__OPENCODE_ZEN_API_KEY__/${OPENCODE_ZEN_API_KEY}/g" \
+                  /config/config.yaml > /opt/data/config.yaml
+          env:
+            - name: OPENCODE_ZEN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: OPENCODE_ZEN_API_KEY
+          volumeMounts:
+            - name: hermes-agent-data
+              mountPath: /opt/data
+            - name: hermes-workspace-files
+              mountPath: /workspace
+            - name: hermes-agent-config
+              mountPath: /config
+              readOnly: true
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              cpu: "200m"
+              memory: "64Mi"
+      containers:
+        - name: hermes-agent
+          image: nousresearch/hermes-agent:v2026.7.7.2
+          imagePullPolicy: IfNotPresent
+          # Override the default entrypoint which starts an interactive CLI.
+          command: ["hermes", "gateway", "run"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HERMES_UID
+              value: "10010"
+            - name: HERMES_GID
+              value: "10010"
+            - name: API_SERVER_ENABLED
+              value: "true"
+            - name: API_SERVER_HOST
+              value: "0.0.0.0"
+            - name: API_SERVER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: HERMES_API_TOKEN
+            - name: OPENCODE_ZEN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: OPENCODE_ZEN_API_KEY
+            - name: HERMES_HOME
+              value: "/opt/data"
+            - name: HERMES_DISABLE_LAZY_INSTALLS
+              value: "0"
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: "/opt/data/playwright-browsers"
+          ports:
+            - name: gateway
+              containerPort: 8642
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8642
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8642
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: hermes-agent-data
+              mountPath: /opt/data
+            - name: hermes-agent-data
+              mountPath: /.agent-browser
+              subPath: agent-browser
+            - name: hermes-workspace-files
+              mountPath: /workspace
+            - name: tmp-agent
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+        - name: hermes-dashboard
+          image: nousresearch/hermes-agent:v2026.7.7.2
+          imagePullPolicy: IfNotPresent
+          command: ["hermes", "dashboard"]
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HERMES_UID
+              value: "10010"
+            - name: HERMES_GID
+              value: "10010"
+            - name: HERMES_DASHBOARD_HOST
+              value: "127.0.0.1"
+            - name: HERMES_DASHBOARD_PORT
+              value: "9119"
+          ports:
+            - name: dashboard
+              containerPort: 9119
+          volumeMounts:
+            - name: hermes-agent-data
+              mountPath: /opt/data
+            - name: tmp-dashboard
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+        - name: hermes-workspace
+          image: ghcr.io/outsourc-e/hermes-workspace:main-1da76ae
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10010
+            runAsGroup: 10010
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HERMES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: HERMES_PASSWORD
+            - name: HERMES_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-hermes-session-secrets
+                  key: HERMES_API_TOKEN
+            - name: HERMES_API_URL
+              value: "http://localhost:8642"
+            - name: HERMES_DASHBOARD_URL
+              value: "http://localhost:9119"
+            - name: HERMES_HOME
+              value: "/home/workspace/.hermes"
+            - name: HERMES_WORKSPACE_DIR
+              value: "/workspace"
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+            - name: COOKIE_SECURE
+              value: "1"
+            - name: TRUST_PROXY
+              value: "1"
+            - name: HERMES_UID
+              value: "10010"
+            - name: HERMES_GID
+              value: "10010"
+          ports:
+            - name: http
+              containerPort: 3000
+          volumeMounts:
+            - name: hermes-agent-data
+              mountPath: /home/workspace/.hermes
+            - name: hermes-workspace-files
+              mountPath: /workspace
+            - name: tmp-workspace
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+      volumes:
+        - name: hermes-agent-data
+          persistentVolumeClaim:
+            claimName: hermes-agent-data
+        - name: hermes-workspace-files
+          persistentVolumeClaim:
+            claimName: hermes-workspace-files
+        - name: hermes-agent-config
+          configMap:
+            name: hermes-agent-config
+        - name: tmp-agent
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: tmp-workspace
+          emptyDir:
+            sizeLimit: 500Mi
+        - name: tmp-dashboard
+          emptyDir:
+            sizeLimit: 200Mi
