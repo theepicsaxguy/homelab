@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: prowlarr
-          image: ghcr.io/home-operations/prowlarr:2.6.5.5623
+          image: ghcr.io/home-operations/prowlarr:2.6.6.5717
           ports:
             - name: http
               containerPort: 9696
