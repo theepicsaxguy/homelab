@@ -33,7 +33,7 @@ spec:
 
       containers:
         - name: bedrockconnect
-          image: pugmatt/bedrock-connect:1.72.0
+          image: pugmatt/bedrock-connect:1.72.1
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
