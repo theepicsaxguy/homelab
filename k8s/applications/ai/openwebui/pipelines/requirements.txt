@@ -3,12 +3,12 @@ qdrant-client[fastembed]==1.20.0
 # Core dependencies - widened protobuf range for grpcio-status
 protobuf>=7.36.2,<7.37.0
 llama-index-core==0.14.25
-openai==3.40.0
-huggingface-hub==2.3.0
+openai==3.42.0
+huggingface-hub==2.4.0
 tokenizers==0.23.3
 packaging>=26,<26.4
 numpy==2.5.4
-posthog>=7.76.0,<7.77.0
+posthog>=7.81.1,<7.82.0
 wrapt>=2,<2.6
 tenacity>=8.2.0,<10.0.0
 
@@ -18,7 +18,7 @@ fastembed
 # google-ai-generativelanguage==0.10.0
 # google-cloud-aiplatform==1.135.0
 # grpcio-status==1.76.0
-langfuse==5.0.4
+langfuse==5.1.0
 llama-index==0.14.25
 # Comment out these until you actually need them:
 # llama-index-agent-openai==0.4.12
@@ -35,4 +35,4 @@ llama-index-readers-file==0.7.0
 llama-index-readers-llama-parse==0.7.0
 opencv-python==5.0.0.93
 opik==2.2.127
-transformers==5.21.0
+transformers==5.22.1
