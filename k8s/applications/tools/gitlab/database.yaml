@@ -1,0 +1,136 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: b2-cnpg-credentials
+  namespace: gitlab
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: bitwarden-backend
+    kind: ClusterSecretStore
+  target:
+    name: b2-cnpg-credentials
+    creationPolicy: Owner
+  data:
+    - secretKey: AWS_ACCESS_KEY_ID
+      remoteRef:
+        key: backblaze-b2-cnpg-access-key-id
+    - secretKey: AWS_SECRET_ACCESS_KEY
+      remoteRef:
+        key: backblaze-b2-cnpg-secret-access-key
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: gitlab-minio-store
+  namespace: gitlab
+spec:
+  retentionPolicy: "14d"
+  configuration:
+    destinationPath: s3://homelab-postgres-backups/gitlab/gitlab-postgresql-2026-06
+    endpointURL: https://truenas.peekoff.com:9000
+    s3Credentials:
+      accessKeyId:
+        name: longhorn-minio-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: longhorn-minio-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: gitlab-b2-store
+  namespace: gitlab
+spec:
+  retentionPolicy: "30d"
+  configuration:
+    destinationPath: s3://homelab-cnpg-b2/gitlab/gitlab-postgresql-2026-06
+    endpointURL: https://s3.us-west-002.backblazeb2.com
+    s3Credentials:
+      accessKeyId:
+        name: b2-cnpg-credentials
+        key: AWS_ACCESS_KEY_ID
+      secretAccessKey:
+        name: b2-cnpg-credentials
+        key: AWS_SECRET_ACCESS_KEY
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: gitlab-postgresql
+  namespace: gitlab
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.7
+
+  storage:
+    size: 20Gi
+    storageClass: proxmox-csi
+
+  walStorage:
+    size: 10Gi
+    storageClass: proxmox-csi
+    resizeInUseVolumes: true
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 50m
+    limits:
+      memory: 1Gi
+      cpu: 1000m
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "256MB"
+      effective_cache_size: "768MB"
+      maintenance_work_mem: "64MB"
+      checkpoint_completion_target: "0.9"
+      wal_buffers: "16MB"
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: "2621kB"
+      huge_pages: "off"
+      min_wal_size: "512MB"
+      max_wal_size: "1GB"
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      enabled: true
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: gitlab-minio-store
+
+  externalClusters:
+    - name: gitlab-postgresql-b2-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: gitlab-b2-store
+    - name: gitlab-postgresql-minio-backup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: gitlab-minio-store
+
+  managed:
+    roles:
+      - name: app
+        ensure: present
+        login: true
+        superuser: false
+        createdb: false
+        createrole: false
+        inherit: true
+        replication: false
+        connectionLimit: -1
+
+  monitoring:
+    enablePodMonitor: false
+
+  affinity:
+    enablePodAntiAffinity: false

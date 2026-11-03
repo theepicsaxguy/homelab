@@ -1,0 +1,179 @@
+---
+# Policy for our custom Redis deployment
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitlab-redis
+  namespace: gitlab
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gitlab-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            release: gitlab
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+---
+# Policy for CNPG PostgreSQL cluster
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitlab-postgresql
+  namespace: gitlab
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s:cnpg.io/cluster: gitlab-postgresql
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            release: gitlab
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:cnpg.io/cluster: gitlab-postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: cnpg-system
+            k8s:app.kubernetes.io/name: cloudnative-pg
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:cnpg.io/cluster: gitlab-postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "truenas.peekoff.com"
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "s3.us-west-002.backblazeb2.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+---
+# Policy for all Helm-managed GitLab components (release: gitlab)
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: gitlab-app
+  namespace: gitlab
+spec:
+  endpointSelector:
+    matchLabels:
+      release: gitlab
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+        - ingress
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+            - port: "8181"
+              protocol: TCP
+            - port: "5000"
+              protocol: TCP
+            - port: "8150"
+              protocol: TCP
+            - port: "8151"
+              protocol: TCP
+            - port: "8153"
+              protocol: TCP
+            - port: "9236"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            release: gitlab
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: mlflow
+            app.kubernetes.io/name: mlflow
+      toPorts:
+        - ports:
+            - port: "8181"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            k8s:cnpg.io/cluster: gitlab-postgresql
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: gitlab-redis
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            release: gitlab
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: rustfs
+            app.kubernetes.io/name: rustfs
+      toPorts:
+        - ports:
+            - port: "9000"
+              protocol: TCP

@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: gitlab-runner
+
+helmCharts:
+  - name: gitlab-runner
+    repo: https://charts.gitlab.io
+    version: 0.89.1
+    releaseName: gitlab-runner
+    namespace: gitlab-runner
+    valuesFile: values.yaml
+    includeCRDs: false
+
+resources:
+  - namespace.yaml
+  - externalsecret.yaml
+  - network-policy.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: gitlab-runner
+    patch: |
+      - op: add
+        path: /spec/template/spec/hostNetwork
+        value: false
+      - op: add
+        path: /spec/template/spec/hostPID
+        value: false
+      - op: add
+        path: /spec/template/spec/hostIPC
+        value: false

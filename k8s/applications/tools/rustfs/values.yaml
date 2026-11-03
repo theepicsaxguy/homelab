@@ -1,0 +1,72 @@
+mode:
+  standalone:
+    enabled: true
+    strategy:
+      type: Recreate
+  distributed:
+    enabled: false
+
+replicaCount: 1
+
+image:
+  rustfs:
+    repository: rustfs/rustfs
+    tag: "1.0.0-beta.8"
+    pullPolicy: IfNotPresent
+  initImage:
+    repository: busybox
+    tag: "1.37.0"
+    pullPolicy: IfNotPresent
+
+secret:
+  existingSecret: rustfs-credentials
+
+config:
+  rustfs:
+    volumes: "/data"
+    address: ":9000"
+    console_enable: "true"
+    console_address: ":9001"
+    log_level: "info"
+    region: "us-east-1"
+    obs_log_directory: ""
+    obs_environment: "production"
+
+storageclass:
+  name: proxmox-csi-2
+  dataStorageSize: 50Gi
+
+ingress:
+  enabled: false
+
+gatewayApi:
+  enabled: false
+
+affinity:
+  podAntiAffinity:
+    enabled: false
+  nodeAffinity: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  capabilities:
+    drop: ["ALL"]
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
