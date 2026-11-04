@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hermes-agent-config
+  namespace: hermes
+data:
+  config.yaml: |
+    provider: opencode-zen
+    model: kimi-k2.7-code
+    custom_providers:
+      - name: opencode-zen
+        base_url: https://opencode.ai/zen/v1
+        api_key: __OPENCODE_ZEN_API_KEY__
+        api_mode: chat_completions
+    approvals:
+      mode: off
+      cron_mode: approve

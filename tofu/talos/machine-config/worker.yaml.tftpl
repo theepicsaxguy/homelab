@@ -41,6 +41,7 @@ machine:
     kubearmor.io/apparmorfs: "no"
     kubearmor.io/securityfs: "yes"
     kubearmor.io/rand: talos-static
+    csi.proxmox.sinextra.dev/max-volume-attachments: "30"
 %{ if igpu }
     gpu: "true"
 %{ endif }

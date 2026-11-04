@@ -23,6 +23,8 @@ spec:
       server: '*'
     - namespace: 'opencode'
       server: '*'
+    - namespace: 'hermes'
+      server: '*'
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
