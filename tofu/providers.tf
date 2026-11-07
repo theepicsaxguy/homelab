@@ -2,7 +2,7 @@ terraform {
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 3.4.0" # This ensures you get the latest 2.37.x version
+      version = "~> 3.5.0" # This ensures you get the latest 2.37.x version
     }
     helm = {
       source  = "hashicorp/helm"
@@ -10,7 +10,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.118.1"
+      version = "0.120.0"
     }
     talos = {
       source  = "siderolabs/talos"
