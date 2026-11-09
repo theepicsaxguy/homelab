@@ -1,10 +1,10 @@
-https://download.geysermc.org/v2/projects/geyser/versions/2.12.0/builds/1265/downloads/spigot
+https://download.geysermc.org/v2/projects/geyser/versions/2.12.1/builds/1298/downloads/spigot
 https://download.geysermc.org/v2/projects/floodgate/versions/2.2.5/builds/141/downloads/spigot
-https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsX-2.22.1-dev+27-e70bdb8.jar
-https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXChat-2.22.1-dev+27-e70bdb8.jar
-https://ci.ender.zone/job/EssentialsX/1832/artifact/jars/EssentialsXSpawn-2.22.1-dev+27-e70bdb8.jar
-https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
-https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/80/artifact/target/WildLoaders-2026.3-b80.jar
+https://ci.ender.zone/job/EssentialsX/1833/artifact/jars/EssentialsX-2.22.1-dev+28-f8724e2.jar
+https://ci.ender.zone/job/EssentialsX/1833/artifact/jars/EssentialsXChat-2.22.1-dev+28-f8724e2.jar
+https://ci.ender.zone/job/EssentialsX/1833/artifact/jars/EssentialsXSpawn-2.22.1-dev+28-f8724e2.jar
+https://download.luckperms.net/1678/bukkit/loader/LuckPerms-Bukkit-5.5.91.jar
+https://hub.bg-software.com/job/WildLoaders%20-%20Dev%20Builds/81/artifact/target/WildLoaders-2026.3-b81.jar
 https://api.spiget.org/v2/resources/132579/download
 https://cdn.modrinth.com/data/gES9lvaL/versions/a1OYe1wv/CustomCommands-1.4.jar
-https://cdn.modrinth.com/data/4BeAEBIb/versions/MsSa6z1v/chunksmith-4.6.0%2B26.x-plugin.jar
+https://cdn.modrinth.com/data/4BeAEBIb/versions/X3xpWAkq/chunksmith-4.8.0%2B26.x-plugin.jar
