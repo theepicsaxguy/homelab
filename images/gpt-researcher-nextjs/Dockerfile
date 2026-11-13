@@ -6,7 +6,7 @@
 ###############################################################################
 # Stage 0: fetch source and install Node deps
 ###############################################################################
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 ARG IMAGE_VERSION=3.7.0 # renovate: github-releases=assafelovic/gpt-researcher
 
 RUN apk add --no-cache git ca-certificates
@@ -22,7 +22,7 @@ RUN npm install --legacy-peer-deps
 ###############################################################################
 # Stage 1: runtime
 ###############################################################################
-FROM node:24-alpine
+FROM node:26-alpine
 
 RUN addgroup -g 1001 nextjs \
     && adduser -S -u 1001 -G nextjs nextjs
