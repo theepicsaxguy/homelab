@@ -4,7 +4,7 @@
 # Stage 0: fetch source and install Python deps
 ###############################################################################
 FROM python:3.15-slim AS build
-ARG IMAGE_VERSION=3.7.0 # renovate: github-releases=assafelovic/gpt-researcher
+ARG IMAGE_VERSION=3.8.0 # renovate: github-releases=assafelovic/gpt-researcher
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git ca-certificates \
