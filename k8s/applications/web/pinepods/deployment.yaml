@@ -31,7 +31,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: init-horust
-          image: madeofpendletonwool/pinepods:0.9.0
+          image: madeofpendletonwool/pinepods:0.9.2
           command:
             - sh
             - -c
@@ -46,7 +46,7 @@ spec:
           volumeMounts: []
       containers:
         - name: pinepods
-          image: madeofpendletonwool/pinepods:0.9.0
+          image: madeofpendletonwool/pinepods:0.9.2
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: true
